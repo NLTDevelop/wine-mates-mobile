@@ -17,11 +17,11 @@ class ColorTheme implements IColorTheme {
     }
 
     get theme() {
-        return this.themeStore.data || 'dark';
+        return this.themeStore.data || 'light';
     }
 
     get colors() {
-        return this.allThemeColorsStore.data?.[this.theme] || COLORS.dark;
+        return this.allThemeColorsStore.data?.[this.theme] || COLORS.light;
     }
 
     get fonts() {
@@ -47,7 +47,7 @@ class ColorTheme implements IColorTheme {
     };
 }
 
-const themeStore = new MobXRepository<TTheme>('dark');
+const themeStore = new MobXRepository<TTheme>('light');
 const allThemeColorsStore = new MobXRepository<{ [key: string]: IColors }>(
     COLORS,
 );

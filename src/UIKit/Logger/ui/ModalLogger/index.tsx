@@ -11,7 +11,6 @@ export const ModalLogger = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const renderItem = useCallback(({ item }: any) => <LoggerItem item={item} />, []);
-
     const keyExtractor = useCallback((item: ILog) => item.id, []);
 
     const onClose = useCallback(() => {

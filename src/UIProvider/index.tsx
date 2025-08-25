@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import React, { createContext, FC, useContext } from 'react';
+import { createContext, useContext } from 'react';
 import { ILocalization } from './localization/ILocalization';
 import { localization } from './localization/Localization';
 import { colorTheme } from './theme/ColorTheme';
@@ -15,7 +15,7 @@ interface IProps {
     children: React.ReactNode | React.ReactNode[];
 }
 
-export const UIProvider: FC<IProps> = observer(({ children }) => {
+export const UIProvider = observer(({ children }: IProps) => {
     const value = {
         colors: colorTheme.colors,
         setTheme: colorTheme.setTheme,
