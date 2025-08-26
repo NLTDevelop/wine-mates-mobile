@@ -40,7 +40,7 @@ export const ToastConfig = () => {
                         style={styles.container}
                         contentContainerStyle={[
                             styles.content,
-                            { backgroundColor: colors.error_strong },
+                            { backgroundColor: colors.error },
                         ]}
                         text1Style={styles.text}
                         text2Style={styles.text}

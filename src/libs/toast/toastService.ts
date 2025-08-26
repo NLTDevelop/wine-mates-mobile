@@ -16,7 +16,7 @@ class ToastService {
         Toast.show({
             type: 'error',
             text1,
-            text2: text2,
+            text2,
             topOffset: 60,
             autoHide: !persist,
         });
@@ -26,7 +26,7 @@ class ToastService {
         Toast.show({
             type: 'info',
             text1,
-            text2: undefined,
+            text2,
             topOffset: 60,
         });
     }
@@ -35,7 +35,7 @@ class ToastService {
         Toast.show({
             type: 'warning',
             text1,
-            text2: text2,
+            text2,
             topOffset: 60,
             autoHide: !persist,
         });

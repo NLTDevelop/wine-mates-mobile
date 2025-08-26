@@ -22,7 +22,7 @@ export const getStyles = (colors: IColors) => {
         text: {
             fontSize: scaleFontSize(14),
             lineHeight: scaleLineHeight(20),
-            fontFamily: 'Montserrat',
+            fontFamily: 'VisueltPro-Medium',
             fontWeight: '600',
             color: colors.text_inverted,
             textAlign: 'center',
