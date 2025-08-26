@@ -15,11 +15,11 @@ export const getStyles = (colors: IColors) => {
         },
         name: {
             fontSize: 16,
-            color: colors.text_strong,
+            color: colors.text,
         },
         text: {
             flex: 1,
-            color: colors.text_strong,
+            color: colors.text,
             textAlign: 'justify',
             marginHorizontal: 10,
         },

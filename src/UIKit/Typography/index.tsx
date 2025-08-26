@@ -4,11 +4,11 @@ import { useUiContext } from '../../UIProvider';
 import { getStyle } from './styles';
 
 interface IProps extends TextProps {
-    variant: 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+    variant: 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body_400' | 'body_500' | 'subtitle_12_400';
     text?: string | number;
 }
 
-export const Typography = memo(({ variant = 'h6', text, ...props }: IProps) => {
+export const Typography = memo(({ variant = 'body_500', text, ...props }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyle(colors), [colors]);
 

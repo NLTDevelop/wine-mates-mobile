@@ -1,38 +1,28 @@
 import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { IColors } from '../../UIProvider/theme/IColors';
-import { scaleFontSize, scaleHorizontal, scaleLineHeight, scaleVertical } from '../../utils';
+import { scaleHorizontal, scaleVertical } from '../../utils';
 
-export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'floating', disabled?: boolean) => {
+export const getStyles = (colors: IColors, type: 'main' | 'secondary') => {
     const MAIN_CONTAINER: ViewStyle = {
-        height: scaleVertical(40),
+        height: scaleVertical(48),
         flexDirection: 'row',
         gap: scaleHorizontal(8),
         borderWidth: 1,
-        borderColor: disabled ? colors.card : colors.primary_secondary,
+        borderColor: colors.primary,
         paddingHorizontal: scaleHorizontal(8),
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: disabled ? colors.card : colors.primary_secondary,
-        borderRadius: 24,
+        backgroundColor: colors.primary,
+        borderRadius: 12,
     };
     const MAIN_TEXT: TextStyle = {
-        fontFamily: 'Manrope',
-        fontSize: scaleFontSize(16),
-        lineHeight: scaleLineHeight(20),
-        fontWeight: '600',
         textAlign: 'center',
-        color: disabled ? colors.text_light : colors.background,
+        color: colors.text_inverted,
     };
     const CONTAINERS = {
         main: MAIN_CONTAINER,
         secondary: {
             ...MAIN_CONTAINER,
-            borderColor: colors.border_light,
-            backgroundColor: 'transparent',
-        },
-        floating: {
-            ...MAIN_CONTAINER,
-            borderWidth: 0,
             backgroundColor: 'transparent',
         },
     };
@@ -40,11 +30,7 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'floatin
         main: MAIN_TEXT,
         secondary: {
             ...MAIN_TEXT,
-            color: colors.primary_secondary,
-        },
-        floating: {
-            ...MAIN_TEXT,
-            color: colors.primary_secondary,
+            color: colors.text,
         },
     };
     const styles = StyleSheet.create({

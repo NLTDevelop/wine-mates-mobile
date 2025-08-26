@@ -5,12 +5,12 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: colors.card,
+            backgroundColor: colors.background,
         },
         header: {
             height: 50,
             width: '100%',
-            backgroundColor: colors.card,
+            backgroundColor: colors.info,
             paddingRight: 20,
             shadowColor: colors.background,
             shadowOffset: {

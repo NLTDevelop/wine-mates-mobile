@@ -14,31 +14,52 @@ export const getStyle = (colors: IColors) => {
         h3: {
             fontSize: scaleFontSize(24),
             lineHeight: scaleLineHeight(30),
-            fontFamily: 'Manrope-Regular',
-            fontWeight: '800',
+            fontFamily: 'VisueltPro-Medium',
+            fontWeight: '500',
             color: colors.text,
         },
         h4: {
             fontSize: scaleFontSize(20),
             lineHeight: scaleLineHeight(26),
-            fontFamily: 'Manrope-Regular',
-            fontWeight: '700',
+            fontFamily: 'VisueltPro-Medium',
+            fontWeight: '500',
             color: colors.text,
         },
         h5: {
-            fontSize: scaleFontSize(18),
-            lineHeight: scaleLineHeight(22),
-            fontFamily: 'Manrope-Regular',
-            fontWeight: '700',
+            fontSize: scaleFontSize(16),
+            lineHeight: scaleLineHeight(20),
+            fontFamily: 'VisueltPro-Medium',
+            fontWeight: '500',
             color: colors.text,
         },
         h6: {
             fontSize: scaleFontSize(16),
             lineHeight: scaleLineHeight(20),
-            fontFamily: 'Manrope-Regular',
+            fontFamily: 'VisueltPro-Regular',
+            fontWeight: '400',
+            color: colors.text,
+        },
+        body_400: {
+            fontSize: scaleFontSize(14),
+            lineHeight: scaleLineHeight(18),
+            fontFamily: 'VisueltPro-Regular',
+            fontWeight: '400',
+            color: colors.text,
+        },
+        body_500: {
+            fontSize: scaleFontSize(14),
+            lineHeight: scaleLineHeight(18),
+            fontFamily: 'VisueltPro-Medium',
             fontWeight: '500',
             color: colors.text,
         },
+        subtitle_12_400: {
+            fontSize: scaleFontSize(12),
+            lineHeight: scaleLineHeight(16),
+            fontFamily: 'VisueltPro-Regular',
+            fontWeight: '400',
+            color: colors.text,
+        }
     });
     return styles;
 };

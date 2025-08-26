@@ -50,7 +50,7 @@ class Localization implements ILocalization {
     }
 
     get locale() {
-        return this.localizationStore.data || 'uk';
+        return this.localizationStore.data || 'en';
     }
 
     setTranslation = (translations: any) => {
@@ -71,5 +71,5 @@ class Localization implements ILocalization {
     };
 }
 
-const localizationStore = new MobXRepository<string>('uk');
+const localizationStore = new MobXRepository<string>('en');
 export const localization = new Localization(localizationStore, storage);

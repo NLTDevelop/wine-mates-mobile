@@ -8,7 +8,7 @@ interface IProps extends TouchableOpacityProps {
     containerStyle?: ViewStyle | ViewStyle[];
     textStyle?: TextStyle;
     text: string;
-    type?: 'main' | 'secondary' | 'floating';
+    type?: 'main' | 'secondary';
     RightAccessory?: React.ReactNode;
     LeftAccessory?: React.ReactNode;
     inProgress?: boolean;
@@ -16,7 +16,7 @@ interface IProps extends TouchableOpacityProps {
 
 export const Button = memo(({ text, type = 'main', disabled, RightAccessory, LeftAccessory, containerStyle, textStyle, inProgress, ...props }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, type, disabled), [colors, disabled, type]);
+    const styles = useMemo(() => getStyles(colors, type), [colors, disabled, type]);
 
     return (
         <TouchableOpacity {...props} disabled={inProgress || disabled} style={[styles.container, containerStyle]}>
@@ -27,7 +27,7 @@ export const Button = memo(({ text, type = 'main', disabled, RightAccessory, Lef
             ) : (
                 <>
                     {LeftAccessory}
-                    <Typography variant="h6" text={text} numberOfLines={1} style={[styles.text, textStyle]} />
+                    <Typography variant="body_500" text={text} numberOfLines={1} style={[styles.text, textStyle]} />
                     {RightAccessory}
                 </>
             )}
