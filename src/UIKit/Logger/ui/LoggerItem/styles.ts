@@ -7,7 +7,7 @@ export const getStyles = (colors: IColors) => {
             marginVertical: 10,
             marginHorizontal: 10,
             borderRadius: 8,
-            backgroundColor: colors.background,
+            backgroundColor: colors.background_light,
         },
         button: {
             justifyContent: 'center',

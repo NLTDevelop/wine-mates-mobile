@@ -5,7 +5,7 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: colors.background,
+            backgroundColor: colors.info,
         },
         header: {
             height: 50,
