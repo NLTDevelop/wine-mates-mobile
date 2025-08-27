@@ -10,7 +10,7 @@ interface IProps extends TextInputProps {
     RightAccessory?: React.ReactNode;
     LeftAccessory?: React.ReactNode;
     label?: string;
-    error?: string;
+    error?: boolean;
     containerStyle?: ViewStyle;
     inputContainerStyle?: ViewStyle;
 }

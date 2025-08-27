@@ -23,20 +23,23 @@ export const useSignIn = () => {
         setError(false);
     };
 
-    const onAuthorize = async () => {
-        setIsLoading(true);
-        const response = await userService.signIn(form);
-        if (response.isError) {
-            setError(true)
-            toastService.showError(
-                localization.t('common.errorHappened'),
-                response.message || localization.t('common.somethingWentWrong'),
-            );
-        } else {
-            navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
+    const onAuthorize = useCallback(async () => {
+        try {
+            setIsLoading(true);
+            const response = await userService.signIn(form);
+            if (response.isError) {
+                setError(true)
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    response.message || localization.t('common.somethingWentWrong'),
+                );
+            } else {
+                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
+            }
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
-    };
+    }, [navigation]);
 
     const forgotPasswordPress = useCallback(() => {
         navigation.navigate('ForgotPasswordView');
