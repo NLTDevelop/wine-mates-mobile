@@ -1,6 +1,8 @@
 {
     "common": {
-        "logo": "WineMates"
+        "logo": "WineMates",
+        "errorHappened": "Error happened",
+        "somethingWentWrong": "Something went wrong."
     },
     "authentication": {
         "welcome": "Welcome to",
@@ -10,6 +12,18 @@
         "terms_part1": "By using WineMate, you accept the ",
         "terms_part2": "Terms of Service",
         "terms_part3": " and ",
-        "terms_part4": "Privacy Policy"
+        "terms_part4": "Privacy Policy",
+        "email": "E-mail",
+        "password": "Password",
+        "forgotPassword": "Forgot your password?",
+        "or": "or",
+        "continueWithGoogle": "Continue with Google",
+        "continueWithApple": "Continue with Apple",
+        "haveAnAccount": "Don’t have an account? ",
+        "signUp": "Sign Up",
+        "somethingNotCorrect": "Something not correct",
+        "sendCode": "Send code",
+        "resetYourPassword": "Reset your password",
+        "resetPasswordDescription": "Enter the email associated with your account, and we’ll send a code to reset your password."
     }
 }

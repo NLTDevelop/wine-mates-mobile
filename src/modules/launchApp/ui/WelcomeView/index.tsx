@@ -7,10 +7,12 @@ import { Typography } from '../../../../UIKit/Typography';
 import { Gradient } from '../../../../UIKit/Gradient';
 import FastImage from '@d11/react-native-fast-image';
 import { Button } from '../../../../UIKit/Button';
+import { useWelcome } from '../../presenters/useWelcome';
 
 export const WelcomeView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const { handleSignInPress } = useWelcome();
 
     return (
         <ScreenContainer edges={[]}>
@@ -30,7 +32,7 @@ export const WelcomeView = () => {
                 />
                 <View style={styles.buttonContainer}>
                     <Button text={t('authentication.join')} onPress={() => {}} />
-                    <Button text={t('authentication.signIn')} onPress={() => {}} type="secondary" />
+                    <Button text={t('authentication.signIn')} onPress={handleSignInPress} type="secondary" />
                 </View>
                 <View style={styles.termsContainer}>
                     <Typography

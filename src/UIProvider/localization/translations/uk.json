@@ -1,15 +1,29 @@
 {
     "common": {
-        "logo": "WineMates"
+        "logo": "WineMates",
+        "errorHappened": "Сталася помилка",
+        "somethingWentWrong": "Щось пішло не так."
     },
     "authentication": {
         "welcome": "Ласкаво просимо до",
         "welcomeDescription": "Відкривайте для себе нові вина, фіксуйте свої враження та спілкуйтеся з іншими любителями вина.",
         "signIn": "Увійти",
         "join": "Приєднатися зараз",
-        "terms_part1": "By using WineMate, you accept the ",
-        "terms_part2": "Terms of Service",
-        "terms_part3": " and ",
-        "terms_part4": "Privacy Policy"
+        "terms_part1": "Використовуючи WineMate, ви приймаєте ",
+        "terms_part2": "Умови користування",
+        "terms_part3": " та ",
+        "terms_part4": "Політику конфіденційності",
+        "email": "E-mail",
+        "password": "Пароль",
+        "forgotPassword": "Забули пароль?",
+        "or": "або",
+        "continueWithGoogle": "Продовжити з Google",
+        "continueWithApple": "Продовжити з Apple",
+        "haveAnAccount": "Немаєте облікового запису? ",
+        "signUp": "Зареєструватися",
+        "somethingNotCorrect": "Щось не так",
+        "sendCode": "Надіслати код",
+        "resetYourPassword": "Скиньте ваш пароль",
+        "resetPasswordDescription": "Введіть електронну адресу, пов'язану з вашим обліковим записом, і ми надішлемо вам код для скидання пароля."
     }
 }

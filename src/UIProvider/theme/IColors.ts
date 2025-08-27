@@ -2,8 +2,13 @@ export type TTheme = 'light' | 'dark';
 
 export type IColors = {
     background: string;
+    background_secondary: string;
     background_light: string;
+    border_light: string;
     border: string;
+    border_strong: string;
+
+    shadow: string;
 
     text: string;
     text_light: string;

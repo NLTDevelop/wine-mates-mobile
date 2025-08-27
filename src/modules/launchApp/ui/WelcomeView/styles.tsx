@@ -26,7 +26,6 @@ export const getStyles = (colors: IColors) => {
         description: {
             color: colors.text_light,
             textAlign: 'center',
-            width: scaleHorizontal(296),
             marginBottom: scaleVertical(87),
         },
         image: {

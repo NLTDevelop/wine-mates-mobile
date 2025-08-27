@@ -1,14 +1,15 @@
 import { ReactNode, useMemo } from 'react';
-import { Text, View, TouchableOpacity, ViewStyle } from 'react-native';
+import { View, TouchableOpacity, ViewStyle } from 'react-native';
 import { useUiContext } from '../../UIProvider';
 import { getStyles } from './styles';
-import { ArrowIcon } from '../../assets/icons/common/ArrowIcon';
 import { useBackButton } from './presenters/useBackButton';
+import { ArrowIcon } from '../../assets/icons/ArrowIcon';
+import { Typography } from '../Typography';
+import { scaleVertical } from '../../utils';
 
 interface IProps {
     title?: string;
     titleComponent?: ReactNode;
-    backIconColor?: string;
     titleContainerStyle?: ViewStyle;
     onPressBack?: () => void;
     backDisabled?: boolean;
@@ -17,7 +18,7 @@ interface IProps {
 }
 
 export const HeaderWithBackButton = ({ title, titleComponent, backDisabled, rightComponent, containerStyle,
-    titleContainerStyle, backIconColor, onPressBack,
+    titleContainerStyle, onPressBack,
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -26,19 +27,23 @@ export const HeaderWithBackButton = ({ title, titleComponent, backDisabled, righ
 
     return (
         <View style={[styles.container, containerStyle]}>
-            {backDisabled ? null : (
+            {backDisabled ? (
+                <View style={styles.empty} />
+            ) : (
                 <TouchableOpacity style={styles.button} onPress={onGoBack}>
-                    <ArrowIcon color={backIconColor || colors.icon_middle} />
+                    <ArrowIcon width={scaleVertical(20)} height={scaleVertical(20)} />
                 </TouchableOpacity>
             )}
-            <View style={[styles.titleContainer, { paddingRight: backDisabled ? 0 : 50 }, titleContainerStyle]}>
-                {titleComponent
-                    ? titleComponent
-                    : <Text style={styles.title} numberOfLines={1}>
-                        {title}
-                    </Text>}
+
+            <View style={[styles.titleContainer, titleContainerStyle]}>
+                {titleComponent ? (
+                    titleComponent
+                ) : (
+                    <Typography text={title} variant="h3" numberOfLines={1} />
+                )}
             </View>
-            {rightComponent}
+
+            {rightComponent ?? <View style={styles.empty} />}
         </View>
     );
 };
