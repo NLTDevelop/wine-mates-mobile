@@ -1,3 +1,15 @@
 {
-    
+    "common": {
+        "logo": "WineMates"
+    },
+    "authentication": {
+        "welcome": "Welcome to",
+        "welcomeDescription": "Discover new wines, capture your impressions, and connect with fellow wine lovers.",
+        "signIn": "Sign In",
+        "join": "Join Now",
+        "terms_part1": "By using WineMate, you accept the ",
+        "terms_part2": "Terms of Service",
+        "terms_part3": " and ",
+        "terms_part4": "Privacy Policy"
+    }
 }

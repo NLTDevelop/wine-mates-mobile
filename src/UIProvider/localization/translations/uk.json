@@ -1,3 +1,15 @@
 {
-    
+    "common": {
+        "logo": "WineMates"
+    },
+    "authentication": {
+        "welcome": "Ласкаво просимо до",
+        "welcomeDescription": "Відкривайте для себе нові вина, фіксуйте свої враження та спілкуйтеся з іншими любителями вина.",
+        "signIn": "Увійти",
+        "join": "Приєднатися зараз",
+        "terms_part1": "By using WineMate, you accept the ",
+        "terms_part2": "Terms of Service",
+        "terms_part3": " and ",
+        "terms_part4": "Privacy Policy"
+    }
 }
