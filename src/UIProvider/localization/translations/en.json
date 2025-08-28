@@ -1,6 +1,9 @@
 {
     "common": {
-        "logo": "WineMates"
+        "logo": "WineMates",
+        "errorHappened": "Error happened",
+        "somethingWentWrong": "Something went wrong.",
+        "save": "Save"
     },
     "authentication": {
         "welcome": "Welcome to",
@@ -10,6 +13,32 @@
         "terms_part1": "By using WineMate, you accept the ",
         "terms_part2": "Terms of Service",
         "terms_part3": " and ",
-        "terms_part4": "Privacy Policy"
+        "terms_part4": "Privacy Policy",
+        "email": "E-mail",
+        "password": "Password",
+        "forgotPassword": "Forgot your password?",
+        "or": "or",
+        "continueWithGoogle": "Continue with Google",
+        "continueWithApple": "Continue with Apple",
+        "haveAnAccount": "Don’t have an account? ",
+        "signUp": "Sign Up",
+        "somethingNotCorrect": "Something not correct",
+        "sendCode": "Send code",
+        "resetYourPassword": "Reset your password",
+        "resetPasswordDescription": "Enter the email associated with your account, and we’ll send a code to reset your password.",
+        "otpDescription": "To reset your password, enter a code we sent to ",
+        "resetPassword": "Reset password",
+        "receiveCode": "Didn’t receive a code?",
+        "resend": "Resend",
+        "incompleteCode": "Incomplete code entered",
+        "emailIsRequired": "Email is required",
+        "invalidEmail": "Invalid email",
+        "createNewPassword": "Create new password",
+        "newPasswordDescription": "Create a password with at least 8 letters or numbers.",
+        "newPassword": "New password",
+        "confirmNewPassword": "Confirm new password",
+        "newPasswordIsRequired": "New password is required",
+        "confirmNewPasswordIsRequired": "Confirm new Password is required",
+        "confirmPasswordError": "Passwords do not match"
     }
 }

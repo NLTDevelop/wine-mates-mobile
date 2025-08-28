@@ -1,10 +1,11 @@
 import { I18n } from 'i18n-js';
+import * as RNLocalize from 'react-native-localize';
 import uk from './translations/uk.json';
 import en from './translations/en.json';
-import { ILocalization } from './ILocalization';
 import { IRepository } from '../../repository/IRepository';
 import { MobXRepository } from '../../repository/MobXRepository';
 import { IStorage, storage } from '../../libs/storage';
+import { ILocalization } from './ILocalization';
 
 class Localization implements ILocalization {
     private i18n!: I18n;
@@ -13,21 +14,37 @@ class Localization implements ILocalization {
         this.i18n = new I18n();
         this.i18n.enableFallback = true;
         this.i18n.translations = { uk, en };
+
         this.load();
     }
 
     private load = () => {
         try {
-            const language = this.storage.get('LANGUAGE');
-            if (language) {
+            let language = this.storage.get('LANGUAGE');
+
+            if (!language) {
+                const locales = RNLocalize.getLocales();
+                if (locales && locales.length > 0) {
+                    const deviceLang = locales[0].languageCode;
+                    if (Object.keys(this.i18n.translations).includes(deviceLang)) {
+                        language = deviceLang;
+                    } else {
+                        language = 'en';
+                    }
+                } else {
+                    language = 'en';
+                }
                 this.localizationStore.save(language);
+                this.persistLanguage(language);
             }
+
             const translations = this.storage.get('TRANSLATIONS');
             if (translations) {
                 this.i18n.translations = translations;
             }
         } catch (error) {
             console.warn('Localization -> load: ', error);
+            this.localizationStore.save('en');
         }
     };
 
@@ -66,8 +83,13 @@ class Localization implements ILocalization {
     };
 
     setLocale = (locale: string) => {
-        this.localizationStore.save(locale);
-        this.persistLanguage(locale);
+        if (Object.keys(this.i18n.translations).includes(locale)) {
+            this.localizationStore.save(locale);
+            this.persistLanguage(locale);
+        } else {
+            this.localizationStore.save('en');
+            this.persistLanguage('en');
+        }
     };
 }
 

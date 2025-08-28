@@ -7,56 +7,62 @@ import { Typography } from '../../../../UIKit/Typography';
 import { Gradient } from '../../../../UIKit/Gradient';
 import FastImage from '@d11/react-native-fast-image';
 import { Button } from '../../../../UIKit/Button';
+import { useWelcome } from '../../presenters/useWelcome';
 
 export const WelcomeView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const { handleSignInPress } = useWelcome();
 
     return (
         <ScreenContainer edges={[]}>
             <Gradient />
             <View style={styles.container}>
-                <Typography text={t('authentication.welcome')} variant="h5" style={styles.text} />
-                <Typography text={t('common.logo')} variant="h2" style={styles.logo} />
-                <Typography
-                    text={t('authentication.welcomeDescription')}
-                    variant="body_400"
-                    style={styles.description}
-                />
-                <FastImage
-                    source={require('../../../../assets/images/welcome.png')}
-                    style={styles.image}
-                    resizeMode={'cover'}
-                />
-                <View style={styles.buttonContainer}>
-                    <Button text={t('authentication.join')} onPress={() => {}} />
-                    <Button text={t('authentication.signIn')} onPress={() => {}} type="secondary" />
+                <View>
+                    <Typography text={t('authentication.welcome')} variant="h5" style={styles.text} />
+                    <Typography text={t('common.logo')} variant="h2" style={styles.logo} />
+                    <Typography
+                        text={t('authentication.welcomeDescription')}
+                        variant="body_400"
+                        style={styles.description}
+                    />
+                    <FastImage
+                        source={require('../../../../assets/images/welcome.png')}
+                        style={styles.image}
+                        resizeMode={'cover'}
+                    />
                 </View>
-                <View style={styles.termsContainer}>
-                    <Typography
-                        variant="subtitle_12_400"
-                        style={styles.termsText}
-                        text={t('authentication.terms_part1')}
-                    />
-                    <TouchableOpacity onPress={() => Linking.openURL(`https://www.google.com/`)}>
+                <View style={styles.footer}>
+                    <View style={styles.buttonContainer}>
+                        <Button text={t('authentication.join')} onPress={() => {}} />
+                        <Button text={t('authentication.signIn')} onPress={handleSignInPress} type="secondary" />
+                    </View>
+                    <View style={styles.termsContainer}>
                         <Typography
                             variant="subtitle_12_400"
-                            style={styles.linkText}
-                            text={t('authentication.terms_part2')}
+                            style={styles.termsText}
+                            text={t('authentication.terms_part1')}
                         />
-                    </TouchableOpacity>
-                    <Typography
-                        variant="subtitle_12_400"
-                        style={styles.termsText}
-                        text={t('authentication.terms_part3')}
-                    />
-                    <TouchableOpacity onPress={() => Linking.openURL(`https://www.google.com/`)}>
+                        <TouchableOpacity onPress={() => Linking.openURL(`https://www.google.com/`)}>
+                            <Typography
+                                variant="subtitle_12_400"
+                                style={styles.linkText}
+                                text={t('authentication.terms_part2')}
+                            />
+                        </TouchableOpacity>
                         <Typography
                             variant="subtitle_12_400"
-                            style={styles.linkText}
-                            text={t('authentication.terms_part4')}
+                            style={styles.termsText}
+                            text={t('authentication.terms_part3')}
                         />
-                    </TouchableOpacity>
+                        <TouchableOpacity onPress={() => Linking.openURL(`https://www.google.com/`)}>
+                            <Typography
+                                variant="subtitle_12_400"
+                                style={styles.linkText}
+                                text={t('authentication.terms_part4')}
+                            />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </ScreenContainer>

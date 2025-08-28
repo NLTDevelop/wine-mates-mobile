@@ -8,6 +8,6 @@ export const Gradient = () => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
-        <LinearGradient colors={[colors.background_light, colors.background]} style={styles.gradient}/>
+        <LinearGradient colors={[colors.background_secondary, colors.background]} style={styles.gradient}/>
     );
 };

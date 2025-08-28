@@ -2,7 +2,7 @@ import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { IColors } from '../../UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '../../utils';
 
-export const getStyles = (colors: IColors, type: 'main' | 'secondary') => {
+export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth') => {
     const MAIN_CONTAINER: ViewStyle = {
         height: scaleVertical(48),
         flexDirection: 'row',
@@ -19,16 +19,27 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary') => {
         textAlign: 'center',
         color: colors.text_inverted,
     };
-    const CONTAINERS = {
+    const CONTAINERS: Record<typeof type, ViewStyle> = {
         main: MAIN_CONTAINER,
         secondary: {
             ...MAIN_CONTAINER,
-            backgroundColor: 'transparent',
+            backgroundColor: colors.background,
+        },
+        auth: {
+            ...MAIN_CONTAINER,
+            justifyContent: 'space-between',
+            backgroundColor: colors.background,
+            borderColor: colors.border_light,
         },
     };
-    const TEXT = {
+
+    const TEXT: Record<typeof type, TextStyle> = {
         main: MAIN_TEXT,
         secondary: {
+            ...MAIN_TEXT,
+            color: colors.text,
+        },
+        auth: {
             ...MAIN_TEXT,
             color: colors.text,
         },
