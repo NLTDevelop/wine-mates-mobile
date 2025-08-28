@@ -8,30 +8,38 @@ import { Button } from '../../../../UIKit/Button';
 import { CustomInput } from '../../../../UIKit/CustomInput';
 import { HeaderWithBackButton } from '../../../../UIKit/HeaderWithBackButton';
 import { SignUpFooter } from '../components/SignUpFooter';
-import { useForgotPassword } from '../../presenters/useForgotPassword';
 import { Warning } from '../components/Warning';
+import { useCreateNewPassword } from '../../presenters/useCreateNewPassword';
 
-export const ForgotPasswordView = () => {
+export const CreateNewPasswordView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { email, onChangeEmail, isLoading, handleSendPress, isError } = useForgotPassword();
+    const { form, onChangePassword, onChangeConfirmPassword, isLoading, handleSavePress, isError } = useCreateNewPassword();
 
     return (
         <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
             <View style={styles.container}>
                 <View>
-                    <Typography text={t('authentication.resetYourPassword')} variant="h3" style={styles.title} />
+                    <Typography text={t('authentication.createNewPassword')} variant="h3" style={styles.title} />
                     <Typography
-                        text={t('authentication.resetPasswordDescription')}
+                        text={t('authentication.newPasswordDescription')}
                         variant="body_400"
                         style={styles.text}
                     />
                     <CustomInput
-                        keyboardType="email-address"
-                        value={email}
-                        onChangeText={onChangeEmail}
+                        secureTextEntry
                         autoCapitalize="none"
-                        placeholder={t('authentication.email')}
+                        value={form.password}
+                        onChangeText={onChangePassword}
+                        placeholder={t('authentication.newPassword')}
+                        error={isError.status}
+                    />
+                     <CustomInput
+                        secureTextEntry
+                        autoCapitalize="none"
+                        value={form.confirmPassword}
+                        onChangeText={onChangeConfirmPassword}
+                        placeholder={t('authentication.confirmNewPassword')}
                         error={isError.status}
                         containerStyle={styles.input}
                     />
@@ -39,8 +47,8 @@ export const ForgotPasswordView = () => {
                 </View>
                 <View style={styles.footer}>
                     <Button
-                        text={t('authentication.sendCode')}
-                        onPress={handleSendPress}
+                        text={t('common.save')}
+                        onPress={handleSavePress}
                         type="secondary"
                         inProgress={isLoading}
                     />

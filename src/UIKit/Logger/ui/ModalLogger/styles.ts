@@ -1,11 +1,17 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '../../../../UIProvider/theme/IColors';
+import { initialWindowMetrics } from 'react-native-safe-area-context';
+
+const INSET_TOP = initialWindowMetrics?.insets.top || 0;
+const INSET_BOTTOM = initialWindowMetrics?.insets.bottom || 0;
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
             backgroundColor: colors.info,
+            paddingTop: INSET_TOP,
+            paddingBottom: INSET_BOTTOM,
         },
         header: {
             height: 50,

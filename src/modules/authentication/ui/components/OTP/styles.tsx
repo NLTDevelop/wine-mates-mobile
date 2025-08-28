@@ -6,23 +6,21 @@ export const getStyles = (colors: IColors) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.background_inverted,
+      backgroundColor: colors.background,
+      marginBottom: scaleVertical(16),
     },
-
     cell: {
-      fontFamily: 'Montserrat-Medium',
-      fontSize: scaleFontSize(19),
-      lineHeight: scaleVertical(27),
       textAlign: 'center',
     },
-
-    focusCell: {
-      borderColor: colors.text,
+    error: {
+      borderColor: colors.error,
     },
-
+    focusCell: {
+      borderColor: colors.border_strong,
+    },
     inputContainer: {
-      height: scaleVertical(60),
-      width: scaleHorizontal(45),
+      height: scaleVertical(56),
+      width: scaleHorizontal(80),
       borderWidth: 1,
       borderColor: colors.border,
       padding: 0,

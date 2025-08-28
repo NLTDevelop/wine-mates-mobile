@@ -21,15 +21,6 @@ export const getStyles = (colors: IColors) => {
             borderBottomWidth: 1,
             borderBottomColor: colors.text,
         },
-        errorContainer: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: scaleHorizontal(7),
-            marginTop: scaleVertical(6),
-        },
-        errorText: {
-            color: colors.error,
-        },
         forgotButton: {
             marginTop: scaleVertical(12),
             marginBottom: scaleVertical(16),

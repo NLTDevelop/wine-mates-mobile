@@ -6,7 +6,7 @@ export const getStyle = (colors: IColors) => {
     const styles = StyleSheet.create({
         h2: {
             fontSize: scaleFontSize(40),
-            lineHeight: scaleLineHeight(56),
+            lineHeight: scaleLineHeight(48),
             fontFamily: 'VisueltPro-Bold',
             fontWeight: '700',
             color: colors.text,

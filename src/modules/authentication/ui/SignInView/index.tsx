@@ -13,6 +13,7 @@ import { GoogleIcon } from '../../../../assets/icons/GoogleIcon';
 import { scaleVertical } from '../../../../utils';
 import { ErrorIcon } from '../../../../assets/icons/ErrorIcon';
 import { SignUpFooter } from '../components/SignUpFooter';
+import { Warning } from '../components/Warning';
 
 export const SignInView = () => {
     const { t, colors } = useUiContext();
@@ -42,16 +43,7 @@ export const SignInView = () => {
                         error={error}
                         containerStyle={styles.passwordInput}
                     />
-                    {error && (
-                        <View style={styles.errorContainer}>
-                            <ErrorIcon />
-                            <Typography
-                                text={t('authentication.somethingNotCorrect')}
-                                variant="subtitle_12_400"
-                                style={styles.errorText}
-                            />
-                        </View>
-                    )}
+                    {error && (<Warning warningText={t('authentication.somethingNotCorrect')}/>)}
                     <TouchableOpacity onPress={forgotPasswordPress} style={styles.forgotButton}>
                         <Typography text={t('authentication.forgotPassword')} variant="body_500" style={styles.text} />
                     </TouchableOpacity>

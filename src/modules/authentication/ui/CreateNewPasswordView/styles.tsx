@@ -17,7 +17,7 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
             textAlign: 'center',
             marginBottom: scaleVertical(16),
-            marginHorizontal: scaleHorizontal(24),
+            marginHorizontal: scaleHorizontal(65),
             lineHeight: scaleLineHeight(22),
         },
         input: {

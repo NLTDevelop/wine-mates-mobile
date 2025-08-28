@@ -2,7 +2,8 @@
     "common": {
         "logo": "WineMates",
         "errorHappened": "Сталася помилка",
-        "somethingWentWrong": "Щось пішло не так."
+        "somethingWentWrong": "Щось пішло не так.",
+        "save": "Зберегти"
     },
     "authentication": {
         "welcome": "Ласкаво просимо до",
@@ -24,6 +25,20 @@
         "somethingNotCorrect": "Щось не так",
         "sendCode": "Надіслати код",
         "resetYourPassword": "Скиньте ваш пароль",
-        "resetPasswordDescription": "Введіть електронну адресу, пов'язану з вашим обліковим записом, і ми надішлемо вам код для скидання пароля."
+        "resetPasswordDescription": "Введіть електронну адресу, пов'язану з вашим обліковим записом, і ми надішлемо вам код для скидання пароля.",
+        "otpDescription": "TЩоб скинути пароль, введіть код, який ми надіслали на адресу",
+        "resetPassword": "Скинути пароль",
+        "receiveCode": "Не отримали код?",
+        "resend": "Надіслати повторно",
+        "incompleteCode":"Введено неповний код",
+        "emailIsRequired": "Потрібно вказати електронну пошту",
+        "invalidEmail": "Невірна електронна адреса",
+        "createNewPassword": "Створити новий пароль",
+        "newPasswordDescription": "Створіть пароль щонайменше з 8 літер або цифр.",
+        "newPassword": "Новий пароль",
+        "confirmNewPassword": "Підтвердьте новий пароль",
+        "newPasswordIsRequired": "Потрібен новий пароль",
+        "confirmNewPasswordIsRequired": "Потрібно підтвердити новий пароль",
+        "confirmPasswordError": "Паролі не збігаються"
     }
 }
