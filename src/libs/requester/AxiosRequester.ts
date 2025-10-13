@@ -1,9 +1,9 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { IRequester } from './IRequester/IRequester';
 import { IResponse } from './IRequester/IResponse';
-// import { userModel } from '../../modules-one-platform/base/entities/users/UserModel';
-// import { isIOS } from '../../utils';
-import { loggerModel } from '../../UIKit/Logger/entity/loggerModel';
+// import { userModel } from '@/modules-one-platform/base/entities/users/UserModel';
+// import { isIOS } from '@/utils';
+import { loggerModel } from '@/UIKit/Logger/entity/loggerModel';
 
 
 class AxiosRequester implements IRequester {

@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SplashView } from '../../modules/launchApp/ui/SplashView';
-import { WelcomeView } from '../../modules/launchApp/ui/WelcomeView';
-import { SignInView } from '../../modules/authentication/ui/SignInView';
-import { ForgotPasswordView } from '../../modules/authentication/ui/ForgotPasswordView';
-import { OTPView } from '../../modules/authentication/ui/OTPView';
-import { CreateNewPasswordView } from '../../modules/authentication/ui/CreateNewPasswordView';
-import { MyLevelView } from '../../modules/registration/ui/MyLevelView';
+import { SplashView } from '@/modules/launchApp/ui/SplashView';
+import { WelcomeView } from '@/modules/launchApp/ui/WelcomeView';
+import { SignInView } from '@/modules/authentication/ui/SignInView';
+import { ForgotPasswordView } from '@/modules/authentication/ui/ForgotPasswordView';
+import { OTPView } from '@/modules/authentication/ui/OTPView';
+import { CreateNewPasswordView } from '@/modules/authentication/ui/CreateNewPasswordView';
+import { MyLevelView } from '@/modules/registration/ui/MyLevelView';
 import { RegistrationView } from '@/modules/registration/ui/RegistrationView';
 
 const Stack = createNativeStackNavigator();

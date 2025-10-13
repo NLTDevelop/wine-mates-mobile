@@ -2,9 +2,9 @@ import { I18n } from 'i18n-js';
 import * as RNLocalize from 'react-native-localize';
 import uk from './translations/uk.json';
 import en from './translations/en.json';
-import { IRepository } from '../../repository/IRepository';
-import { MobXRepository } from '../../repository/MobXRepository';
-import { IStorage, storage } from '../../libs/storage';
+import { IRepository } from '@/repository/IRepository';
+import { MobXRepository } from '@/repository/MobXRepository';
+import { IStorage, storage } from '@/libs/storage';
 import { ILocalization } from './ILocalization';
 
 class Localization implements ILocalization {

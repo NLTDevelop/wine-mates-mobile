@@ -1,6 +1,6 @@
-import { ErrorIcon } from '../../assets/icons/ErrorIcon';
-import { InfoIcon } from '../../assets/icons/InfoIcon';
-import { SuccessIcon } from '../../assets/icons/SuccessIcon';
+import { ErrorIcon } from '@/assets/icons/ErrorIcon';
+import { InfoIcon } from '@/assets/icons/InfoIcon';
+import { SuccessIcon } from '@/assets/icons/SuccessIcon';
 import { CustomToast, ToastTypesEnum } from './ui/CustomToast';
 
 export const toastConfig = {

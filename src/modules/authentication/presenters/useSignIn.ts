@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
-import { toastService } from '../../../libs/toast/toastService';
-import { useValidator } from '../../../hooks/useValidator';
-import { userService } from '../../../entities/users/UserService';
-import { localization } from '../../../UIProvider/localization/Localization';
+import { toastService } from '@/libs/toast/toastService';
+import { useValidator } from '@/hooks/useValidator';
+import { userService } from '@/entities/users/UserService';
+import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export const useSignIn = () => {

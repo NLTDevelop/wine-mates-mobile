@@ -1,9 +1,9 @@
 import { ReactNode, useMemo } from 'react';
 import { View } from 'react-native';
 import { getStyles } from './styles';
-import { useUiContext } from '../../../../UIProvider';
-import { Typography } from '../../../../UIKit/Typography';
-import { colorTheme } from '../../../../UIProvider/theme/ColorTheme';
+import { useUiContext } from '@/UIProvider';
+import { Typography } from '@/UIKit/Typography';
+import { colorTheme } from '@/UIProvider/theme/ColorTheme';
 
 export enum ToastTypesEnum {
     success = 'success',

@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { useUiContext } from '../../../../UIProvider';
-import { ILog } from '../../entity/loggerModel';
+import { useUiContext } from '@/UIProvider';
+import { ILog } from '@/UIKit/Logger/entity/loggerModel';
 import { getStyles } from './styles';
 
 interface IProps {

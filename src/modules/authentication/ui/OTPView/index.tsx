@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { View } from 'react-native';
-import { useUiContext } from '../../../../UIProvider';
-import { ScreenContainer } from '../../../../UIKit/ScreenContainer';
-import { Typography } from '../../../../UIKit/Typography';
-import { Button } from '../../../../UIKit/Button';
-import { HeaderWithBackButton } from '../../../../UIKit/HeaderWithBackButton';
-import { SignUpFooter } from '../components/SignUpFooter';
-import { OTP } from '../components/OTP';
-import { useOTP } from '../../presenters/useOTP';
-import { Warning } from '../components/Warning';
-import { TextButton } from '../components/TextButton';
+import { useUiContext } from '@/UIProvider';
+import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { Typography } from '@/UIKit/Typography';
+import { Button } from '@/UIKit/Button';
+import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
+import { SignUpFooter } from '@/modules/authentication/ui/components/SignUpFooter';
+import { OTP } from '@/modules/authentication/ui/components/OTP';
+import { useOTP } from '@/modules/authentication/presenters/useOTP';
+import { Warning } from '@/modules/authentication/ui/components/Warning';
+import { TextButton } from '@/modules/authentication/ui/components/TextButton';
 
 export const OTPView = () => {
     const { t, colors } = useUiContext();

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { IColors } from '../../../../../UIProvider/theme/IColors';
-import { scaleFontSize, scaleHorizontal, scaleVertical } from '../../../../../utils';
+import { IColors } from '@/UIProvider/theme/IColors';
+import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
   const styles = StyleSheet.create({

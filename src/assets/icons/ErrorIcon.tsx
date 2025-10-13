@@ -1,5 +1,5 @@
 import Svg, { Circle, Path } from 'react-native-svg';
-import { scaleVertical } from '../../utils';
+import { scaleVertical } from '@/utils';
 
 interface IProps {
     width?: number;

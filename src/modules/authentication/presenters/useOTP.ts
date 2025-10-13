@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
 import { useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
-import { localization } from '../../../UIProvider/localization/Localization';
+import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const CELL_COUNT = 4;

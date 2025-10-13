@@ -1,10 +1,10 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { MainStackNavigator } from '../stackNavigator';
-import { useUiContext } from '../../UIProvider';
-import { useNetworkStatus } from '../../hooks/useNetworkStatus';
-import { createNavigationContainerRef } from '@react-navigation/native';
-import { Logger } from '../../UIKit/Logger/ui/Logger';
+import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native';
+import { MainStackNavigator } from '@/navigation/stackNavigator';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { Logger } from '@/UIKit/Logger/ui/Logger';
+import { useUiContext } from '@/UIProvider';
 import { observer } from 'mobx-react';
+
 
 type RootStackParamList = {
     PublicProfileView: { id: string };

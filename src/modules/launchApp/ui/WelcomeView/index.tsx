@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { Linking, TouchableOpacity, View } from 'react-native';
-import { useUiContext } from '../../../../UIProvider';
-import { ScreenContainer } from '../../../../UIKit/ScreenContainer';
-import { Typography } from '../../../../UIKit/Typography';
-import { Gradient } from '../../../../UIKit/Gradient';
+import { useUiContext } from '@/UIProvider';
+import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { Typography } from '@/UIKit/Typography';
+import { Gradient } from '@/UIKit/Gradient';
 import FastImage from '@d11/react-native-fast-image';
-import { Button } from '../../../../UIKit/Button';
-import { useWelcome } from '../../presenters/useWelcome';
-import { RedLineIcon } from '../../../../assets/icons/RedLineIcon';
+import { Button } from '@/UIKit/Button';
+import { useWelcome } from '@/modules/launchApp/presenters/useWelcome';
+import { RedLineIcon } from '@/assets/icons/RedLineIcon';
 
 export const WelcomeView = () => {
     const { t, colors } = useUiContext();
@@ -31,7 +31,7 @@ export const WelcomeView = () => {
                         <RedLineIcon />
                     </View>
                     <FastImage
-                        source={require('../../../../assets/images/welcome.png')}
+                        source={require('@/assets/images/welcome.png')}
                         style={styles.image}
                         resizeMode={'cover'}
                     />

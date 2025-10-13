@@ -1,19 +1,19 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { TouchableOpacity, View } from 'react-native';
-import { useUiContext } from '../../../../UIProvider';
-import { ScreenContainer } from '../../../../UIKit/ScreenContainer';
-import { Typography } from '../../../../UIKit/Typography';
-import { Button } from '../../../../UIKit/Button';
-import { CustomInput } from '../../../../UIKit/CustomInput';
-import { useSignIn } from '../../presenters/useSignIn';
-import { HeaderWithBackButton } from '../../../../UIKit/HeaderWithBackButton';
-import { AppleIcon } from '../../../../assets/icons/AppleIcon';
-import { GoogleIcon } from '../../../../assets/icons/GoogleIcon';
-import { scaleVertical } from '../../../../utils';
-import { ErrorIcon } from '../../../../assets/icons/ErrorIcon';
-import { SignUpFooter } from '../components/SignUpFooter';
-import { Warning } from '../components/Warning';
+import { useUiContext } from '@/UIProvider';
+import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { Typography } from '@/UIKit/Typography';
+import { Button } from '@/UIKit/Button';
+import { CustomInput } from '@/UIKit/CustomInput';
+import { useSignIn } from '@/modules/authentication/presenters/useSignIn';
+import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
+import { AppleIcon } from '@/assets/icons/AppleIcon';
+import { GoogleIcon } from '@/assets/icons/GoogleIcon';
+import { scaleVertical } from '@/utils';
+import { ErrorIcon } from '@/assets/icons/ErrorIcon';
+import { SignUpFooter } from '@/modules/authentication/ui/components/SignUpFooter';
+import { Warning } from '@/modules/authentication/ui/components/Warning';
 
 export const SignInView = () => {
     const { t, colors } = useUiContext();

@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
-import { localization } from '../../../UIProvider/localization/Localization';
-import { useValidator } from '../../../hooks/useValidator';
+import { localization } from '@/UIProvider/localization/Localization';
+import { useValidator } from '@/hooks/useValidator';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export const useForgotPassword = () => {

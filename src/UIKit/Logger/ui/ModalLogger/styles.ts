@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { IColors } from '../../../../UIProvider/theme/IColors';
+import { IColors } from '@/UIProvider/theme/IColors';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
 const INSET_TOP = initialWindowMetrics?.insets.top || 0;

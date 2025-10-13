@@ -1,6 +1,6 @@
 import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
-import { IColors } from '../../UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '../../utils';
+import { IColors } from '@/UIProvider/theme/IColors';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth') => {
     const MAIN_CONTAINER: ViewStyle = {

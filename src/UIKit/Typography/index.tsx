@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import { Text, TextProps } from 'react-native';
-import { useUiContext } from '../../UIProvider';
+import { useUiContext } from '@/UIProvider';
 import { getStyle } from './styles';
 
 interface IProps extends TextProps {

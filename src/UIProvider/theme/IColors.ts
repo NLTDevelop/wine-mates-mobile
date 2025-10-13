@@ -10,6 +10,10 @@ export type IColors = {
     border_light: string;
     border_strong: string;
 
+    card: string;
+
+    notification: string;
+
     shadow: string;
 
     text: string;

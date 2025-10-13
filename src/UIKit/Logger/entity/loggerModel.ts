@@ -1,4 +1,4 @@
-import { MobXRepository } from '../../../repository/MobXRepository';
+import { MobXRepository } from '@/repository/MobXRepository';
 
 export interface ILog {
     type: 'request' | 'response' | 'error' | 'library';

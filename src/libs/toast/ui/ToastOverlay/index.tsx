@@ -1,7 +1,7 @@
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import { scaleVertical } from '../../../../utils';
 import { toastConfig } from '../../ToastConfig';
+import { scaleVertical } from '@/utils';
 
 export const ToastOverlay = () => {
     const insets = useSafeAreaInsets();

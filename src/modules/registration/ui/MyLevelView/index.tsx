@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { View } from 'react-native';
-import { useUiContext } from '../../../../UIProvider';
-import { ScreenContainer } from '../../../../UIKit/ScreenContainer';
-import { Typography } from '../../../../UIKit/Typography';
-import { HeaderWithBackButton } from '../../../../UIKit/HeaderWithBackButton';
-import { SignInFooter } from '../components/SignInFooter';
-import { LevelButton } from '../components/LevelButton';
-import { WineLoverIcon } from '../../../../assets/icons/WineLoverIcon';
-import { WineExpertIcon } from '../../../../assets/icons/WineExpertIcon';
-import { WinemakerIcon } from '../../../../assets/icons/WinemakerIcon';
-import { useMyLevel } from '../../presenters/useMyLevel';
+import { useUiContext } from '@/UIProvider';
+import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { Typography } from '@/UIKit/Typography';
+import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
+import { SignInFooter } from '@/modules/registration/ui/components/SignInFooter';
+import { LevelButton } from '@/modules/registration/ui/components/LevelButton';
+import { WineLoverIcon } from '@/assets/icons/WineLoverIcon';
+import { WineExpertIcon } from '@/assets/icons/WineExpertIcon';
+import { WinemakerIcon } from '@/assets/icons/WinemakerIcon';
+import { useMyLevel } from '@/modules/registration/presenters/useMyLevel';
 
 export const MyLevelView = () => {
     const { t, colors } = useUiContext();

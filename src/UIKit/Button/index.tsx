@@ -1,8 +1,8 @@
 import { useMemo, memo } from 'react';
 import { ActivityIndicator, View, ViewStyle, TouchableOpacity, TextStyle, TouchableOpacityProps, } from 'react-native';
-import { useUiContext } from '../../UIProvider';
+import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { Typography } from '../Typography';
+import { Typography } from '@/UIKit/Typography';
 
 interface IProps extends TouchableOpacityProps {
     containerStyle?: ViewStyle | ViewStyle[];
