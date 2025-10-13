@@ -1,7 +1,7 @@
 import { IRequester, IResponse, requester } from "../../libs/requester";
 import { ILinks, links } from "../../Links";
 import { UserSignInDto } from "./dto/UserSignIn.dto";
-import { IUser } from "./IUser";
+import { IUser } from "./types/IUser";
 import { userModel } from "./UserModel";
 
 

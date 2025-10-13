@@ -30,7 +30,7 @@
         "resetPassword": "Скинути пароль",
         "receiveCode": "Не отримали код?",
         "resend": "Надіслати повторно",
-        "incompleteCode":"Введено неповний код",
+        "incompleteCode": "Введено неповний код",
         "emailIsRequired": "Потрібно вказати електронну пошту",
         "invalidEmail": "Невірна електронна адреса",
         "createNewPassword": "Створити новий пароль",
@@ -40,5 +40,13 @@
         "newPasswordIsRequired": "Потрібен новий пароль",
         "confirmNewPasswordIsRequired": "Потрібно підтвердити новий пароль",
         "confirmPasswordError": "Паролі не збігаються"
+    },
+    "registration": {
+        "haveAnAccount": "Вже маєте обліковий запис?",
+        "myLevelInWine": "Мій рівень у вині",
+        "myLevelDescription": "Оберіть свою роль у світі вина та спілкуйтеся з тими, хто поділяє вашу пристрасть",
+        "wineLover": "Любитель вина",
+        "wineExpert": "Винний експерт",
+        "winemaker": "Винороб"
     }
 }

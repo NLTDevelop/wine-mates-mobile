@@ -1,7 +1,7 @@
+import { ErrorIcon } from '../../assets/icons/ErrorIcon';
+import { InfoIcon } from '../../assets/icons/InfoIcon';
+import { SuccessIcon } from '../../assets/icons/SuccessIcon';
 import { CustomToast, ToastTypesEnum } from './ui/CustomToast';
-import { SuccessIcon } from '../../assets/icons/common/SuccessIcon';
-import { ErrorIcon } from '../../assets/icons/common/ErrorIcon';
-import { InfoIcon } from '../../assets/icons/common/InfoIcon';
 
 export const toastConfig = {
     success: (props: any) => (

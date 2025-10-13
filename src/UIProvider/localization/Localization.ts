@@ -67,7 +67,8 @@ class Localization implements ILocalization {
     }
 
     get locale() {
-        return this.localizationStore.data || 'en';
+        // return this.localizationStore.data || 'en';
+        return 'en';
     }
 
     setTranslation = (translations: any) => {

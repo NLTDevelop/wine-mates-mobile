@@ -22,9 +22,9 @@ interface IProps {
 const getBackgroundColor = (type: ToastTypesEnum) => {
     const toastColor = {
         [ToastTypesEnum.success]: colorTheme.colors.success,
-        [ToastTypesEnum.error]: colorTheme.colors.pyro,
-        [ToastTypesEnum.info]: colorTheme.colors.blue_100,
-        [ToastTypesEnum.warning]: colorTheme.colors.orange_100,
+        [ToastTypesEnum.error]: colorTheme.colors.error,
+        [ToastTypesEnum.info]: colorTheme.colors.info,
+        [ToastTypesEnum.warning]: colorTheme.colors.warning,
     };
 
     return toastColor[type];
@@ -40,7 +40,7 @@ export const CustomToast = ({ text1, text2, Icon, type }: IProps) => {
             {Icon}
             <View style={styles.textContainer}>
                 <Typography text={text1} variant="h6" style={styles.text} />
-                {text2 && <Typography text={text2} variant="subtitle_12_500" style={styles.text} />}
+                {text2 && <Typography text={text2} variant="subtitle_12_400" style={styles.text} />}
             </View>
         </View>
     );

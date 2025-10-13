@@ -6,6 +6,7 @@ import { SignInView } from '../../modules/authentication/ui/SignInView';
 import { ForgotPasswordView } from '../../modules/authentication/ui/ForgotPasswordView';
 import { OTPView } from '../../modules/authentication/ui/OTPView';
 import { CreateNewPasswordView } from '../../modules/authentication/ui/CreateNewPasswordView';
+import { MyLevelView } from '../../modules/registration/ui/MyLevelView';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,7 @@ export const MainStackNavigator = observer(() => {
         <Stack.Screen name="ForgotPasswordView" component={ForgotPasswordView} />
         <Stack.Screen name="OTPView" component={OTPView} />
         <Stack.Screen name="CreateNewPasswordView" component={CreateNewPasswordView} />
+        <Stack.Screen name="MyLevelView" component={MyLevelView} />
     </Stack.Navigator>
     );
 });

@@ -1,4 +1,5 @@
 import Svg, { Path } from 'react-native-svg';
+import { scaleVertical } from '../../utils';
 
 interface IProps {
     width?: number;
@@ -6,8 +7,8 @@ interface IProps {
     color?: string;
 }
 
-export const ArrowIcon = ({ width, height, color }: IProps) => (
-    <Svg width={width || 20} height={height || 20} viewBox="0 0 20 20">
+export const ArrowIcon = ({ width = 20, height = 20, color }: IProps) => (
+    <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 20 20" fill='none'>
         <Path
             stroke={color || '#000'}
             strokeLinecap="round"

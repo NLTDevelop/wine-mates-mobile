@@ -30,7 +30,7 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
             textAlign: 'center',
             marginHorizontal: scaleHorizontal(22),
-            lineHeight: scaleLineHeight(22),
+            lineHeight: scaleLineHeight(20),
             marginBottom: scaleVertical(87),
         },
         image: {

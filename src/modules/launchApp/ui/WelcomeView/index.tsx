@@ -12,7 +12,7 @@ import { useWelcome } from '../../presenters/useWelcome';
 export const WelcomeView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { handleSignInPress } = useWelcome();
+    const { handleSignInPress, handleJoinNowPress } = useWelcome();
 
     return (
         <ScreenContainer edges={[]}>
@@ -34,7 +34,7 @@ export const WelcomeView = () => {
                 </View>
                 <View style={styles.footer}>
                     <View style={styles.buttonContainer}>
-                        <Button text={t('authentication.join')} onPress={() => {}} />
+                        <Button text={t('authentication.join')} onPress={handleJoinNowPress} />
                         <Button text={t('authentication.signIn')} onPress={handleSignInPress} type="secondary" />
                     </View>
                     <View style={styles.termsContainer}>
