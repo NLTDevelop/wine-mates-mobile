@@ -8,6 +8,7 @@ import { Gradient } from '../../../../UIKit/Gradient';
 import FastImage from '@d11/react-native-fast-image';
 import { Button } from '../../../../UIKit/Button';
 import { useWelcome } from '../../presenters/useWelcome';
+import { RedLineIcon } from '../../../../assets/icons/RedLineIcon';
 
 export const WelcomeView = () => {
     const { t, colors } = useUiContext();
@@ -26,6 +27,9 @@ export const WelcomeView = () => {
                         variant="body_400"
                         style={styles.description}
                     />
+                    <View style={styles.redLineContainer}>
+                        <RedLineIcon />
+                    </View>
                     <FastImage
                         source={require('../../../../assets/images/welcome.png')}
                         style={styles.image}

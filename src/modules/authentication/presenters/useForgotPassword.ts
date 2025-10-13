@@ -1,11 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { useState } from 'react';
 import { localization } from '../../../UIProvider/localization/Localization';
 import { useValidator } from '../../../hooks/useValidator';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export const useForgotPassword = () => {
-    const navigation = useNavigation<StackNavigationProp<any>>();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { validateEmail } = useValidator();
     const [email, setEmail] = useState('');
     const [isError, setIsError] = useState({ status: false, errorText: '' });

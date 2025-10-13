@@ -3,7 +3,8 @@
         "logo": "WineMates",
         "errorHappened": "Сталася помилка",
         "somethingWentWrong": "Щось пішло не так.",
-        "save": "Зберегти"
+        "save": "Зберегти",
+        "continue": "Продовжити"
     },
     "authentication": {
         "welcome": "Ласкаво просимо до",
@@ -47,6 +48,8 @@
         "myLevelDescription": "Оберіть свою роль у світі вина та спілкуйтеся з тими, хто поділяє вашу пристрасть",
         "wineLover": "Любитель вина",
         "wineExpert": "Винний експерт",
-        "winemaker": "Винороб"
+        "winemaker": "Винороб",
+        "getStarted": "Давайте почнемо",
+        "email": "Електронна пошта"
     }
 }

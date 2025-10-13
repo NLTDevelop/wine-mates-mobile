@@ -1,10 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { useState } from 'react';
 import { localization } from '../../../UIProvider/localization/Localization';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export const useCreateNewPassword = () => {
-    const navigation = useNavigation<StackNavigationProp<any>>();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [form, setForm] = useState({ password: '', confirmPassword: '' });
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const [isLoading, setIsLoading] = useState(false);

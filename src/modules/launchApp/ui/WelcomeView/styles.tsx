@@ -33,6 +33,14 @@ export const getStyles = (colors: IColors) => {
             lineHeight: scaleLineHeight(20),
             marginBottom: scaleVertical(87),
         },
+        redLineContainer: {
+            position: 'absolute',
+            top: scaleVertical(300),
+            left: scaleHorizontal(-120),
+            width: scaleHorizontal(600),
+            height: scaleVertical(140),
+            overflow: 'visible',
+        },
         image: {
             width: scaleHorizontal(343),
             height: scaleVertical(120),

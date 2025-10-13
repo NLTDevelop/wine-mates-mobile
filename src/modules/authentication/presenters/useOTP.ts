@@ -1,13 +1,13 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { useCallback, useEffect, useState } from 'react';
 import { useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import { localization } from '../../../UIProvider/localization/Localization';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const CELL_COUNT = 4;
 
 export const useOTP = () => {
-    const navigation = useNavigation<StackNavigationProp<any>>();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { email } = useRoute().params as { email: string };
     const [value, setValue] = useState('');
     const [isError, setIsError] = useState({ status: false, errorText: '' });

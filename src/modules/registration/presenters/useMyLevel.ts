@@ -1,19 +1,19 @@
 import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export const useMyLevel = () => {
-    const navigation = useNavigation<StackNavigationProp<any>>();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const handleWineLoverPress = () => {
-        navigation.navigate('');
+        navigation.navigate('RegistrationView');
     };
 
     const handleWineExpertPress = () => {
-        navigation.navigate('');
+        navigation.navigate('RegistrationView');
     };
 
     const handleWinemakerPress = () => {
-        navigation.navigate('');
+        navigation.navigate('RegistrationView');
     };
 
     return { handleWineLoverPress, handleWineExpertPress, handleWinemakerPress };
