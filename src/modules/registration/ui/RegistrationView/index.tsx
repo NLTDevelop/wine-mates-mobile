@@ -8,8 +8,8 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { SignInFooter } from '@/modules/registration/ui/components/SignInFooter';
 import { Button } from '@/UIKit/Button';
 import { CustomInput } from '@/UIKit/CustomInput';
+import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { useRegistration } from '../../presenters/useRegistration';
-import { PhoneInputField } from '../components/PhoneInputField';
 
 export const RegistrationView = () => {
     const { t, colors } = useUiContext();

@@ -5,15 +5,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
-import { Country } from '@/modules/registration/presenters/usePhoneInputField';
-import { useCountryPickerModal } from '@/modules/registration/presenters/useCountryPickerModal';
+import { useCountryPickerModal } from '@/libs/countryCodePicker/presenters/useCountryPickerModal';
 import { CrossIcon } from '@/assets/icons/CrossIcon';
 import { CountryListItem } from '../CountryListItem';
 import { SearchBar } from '@/UIKit/SearchBar';
+import { ICountry } from '../../types/ICountry';
 
 interface IProps {
     modalRef: RefObject<BottomSheetModal | null>;
-    handleCountryPress: (item: Country) => void;
+    handleCountryPress: (item: ICountry) => void;
     handleClose: () => void;
 }
 
@@ -33,9 +33,9 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
         [handleClose],
     );
 
-    const keyExtractor = useCallback((item: Country) => item.cca2, []);
+    const keyExtractor = useCallback((item: ICountry) => item.cca2, []);
     const renderItem = useCallback(
-        ({ item }: { item: Country }) => <CountryListItem item={item} handleCountryPress={handleCountryPress} />,
+        ({ item }: { item: ICountry }) => <CountryListItem item={item} handleCountryPress={handleCountryPress} />,
         [handleCountryPress],
     );
 

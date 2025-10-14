@@ -4,11 +4,11 @@ import Flag from 'react-native-round-flags';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
-import { Country } from '@/modules/registration/presenters/usePhoneInputField';
+import { ICountry } from '../../types/ICountry';
 
 interface IProps {
-  item: Country;
-  handleCountryPress: (item: Country) => void;
+  item: ICountry;
+  handleCountryPress: (item: ICountry) => void;
 }
 
 export const CountryListItem = memo(({ item, handleCountryPress }: IProps) => {

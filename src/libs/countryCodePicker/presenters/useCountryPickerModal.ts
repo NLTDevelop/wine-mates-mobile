@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import countries from 'world-countries';
-import { Country } from './usePhoneInputField';
 import { localization } from '@/UIProvider/localization/Localization';
 import { countryDisplayNames } from '@/UIProvider/localization/translations/countryDisplayNames';
+import { ICountry } from '../types/ICountry';
 
 type RegionDisplayNames = {
     of: (code: string) => string | undefined;
@@ -46,7 +46,7 @@ const buildDisplayNames = (locale: string): RegionDisplayNames | null => {
     }
 };
 
-const getLocalizedCountries = (locale: string, displayNames: RegionDisplayNames | null): Country[] => {
+const getLocalizedCountries = (locale: string, displayNames: RegionDisplayNames | null): ICountry[] => {
     const resolvedLocale = locale.toLowerCase();
     const translationKey = iso2ToWorldCountriesTranslation[resolvedLocale];
     const customNames = countryDisplayNames[resolvedLocale] || null;
@@ -70,16 +70,12 @@ const getLocalizedCountries = (locale: string, displayNames: RegionDisplayNames 
 
 export const useCountryPickerModal = () => {
     const [search, setSearch] = useState('');
-
-    // ✅ Используем текущую локаль приложения
     const locale = localization.locale || 'en';
 
     const displayNames = useMemo(() => buildDisplayNames(locale), [locale]);
 
     const localizedCountries = useMemo(() => {
-        return getLocalizedCountries(locale, displayNames).sort((a, b) =>
-            a.name.localeCompare(b.name, locale),
-        );
+        return getLocalizedCountries(locale, displayNames).sort((a, b) => a.name.localeCompare(b.name, locale));
     }, [locale, displayNames]);
 
     const countriesData = useMemo(() => {
@@ -87,9 +83,7 @@ export const useCountryPickerModal = () => {
 
         if (!query) return localizedCountries;
 
-        return localizedCountries.filter(country =>
-            country.name.toLocaleLowerCase(locale).includes(query),
-        );
+        return localizedCountries.filter(country => country.name.toLocaleLowerCase(locale).includes(query));
     }, [search, locale, localizedCountries]);
 
     return { countriesData, search, setSearch };

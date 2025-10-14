@@ -1,18 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as RNLocalize from 'react-native-localize';
-import { AsYouType } from 'libphonenumber-js';
+import { AsYouType, CountryCode } from 'libphonenumber-js';
 import countries from 'world-countries';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-
-export type Country = {
-    name: string;
-    cca2: string;
-    callingCode: string;
-};
+import { ICountry } from '../types/ICountry';
 
 export const usePhoneInputField = (onChangeText: (value: string) => void) => {
     const lang = RNLocalize.getLocales()[0]?.languageCode || 'eng';
-    const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+    const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const countryModalRef = useRef<BottomSheetModal>(null);
@@ -37,7 +32,7 @@ export const usePhoneInputField = (onChangeText: (value: string) => void) => {
                             matched.translations?.[lang]?.common ||
                             matched.translations?.eng?.common ||
                             matched.name.common,
-                        cca2: matched.cca2,
+                        cca2: matched.cca2 as CountryCode,
                         callingCode: `${code}`,
                     });
                 } else {
@@ -71,19 +66,28 @@ export const usePhoneInputField = (onChangeText: (value: string) => void) => {
         countryModalRef.current?.present();
     }, [countryModalRef]);
 
-    const handleCountryPress = useCallback((item: Country) => {
-        setSelectedCountry({ name: item.name, cca2: item.cca2, callingCode: `${item.callingCode}` });
-        setVisible(false);
-        countryModalRef.current?.dismiss();
-    }, [countryModalRef]);
+    const handleCountryPress = useCallback(
+        (item: ICountry) => {
+            setSelectedCountry({ name: item.name, cca2: item.cca2, callingCode: `${item.callingCode}` });
+            setVisible(false);
+            countryModalRef.current?.dismiss();
+        },
+        [countryModalRef],
+    );
 
     const handleClose = useCallback(() => {
         setVisible(false);
         countryModalRef.current?.dismiss();
-    }, [countryModalRef]); 
+    }, [countryModalRef]);
 
-    return { 
-        loading, selectedCountry, visible, handleCountryPress, formatPhone, countryModalRef, handleCountryCodePress,
-        handleClose
+    return {
+        loading,
+        selectedCountry,
+        visible,
+        handleCountryPress,
+        formatPhone,
+        countryModalRef,
+        handleCountryCodePress,
+        handleClose,
     };
 };
