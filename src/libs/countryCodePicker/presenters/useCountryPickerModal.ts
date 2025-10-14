@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type SetStateAction } from 'react';
 import countries from 'world-countries';
 import { localization } from '@/UIProvider/localization/Localization';
 import { countryDisplayNames } from '@/UIProvider/localization/translations/countryDisplayNames';
@@ -86,5 +86,9 @@ export const useCountryPickerModal = () => {
         return localizedCountries.filter(country => country.name.toLocaleLowerCase(locale).includes(query));
     }, [search, locale, localizedCountries]);
 
-    return { countriesData, search, setSearch };
+    const handleSearchChange = useCallback((value: SetStateAction<string>) => {
+        setSearch(value);
+    }, []);
+
+    return { countriesData, search, setSearch: handleSearchChange };
 };

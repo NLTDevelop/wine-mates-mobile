@@ -1,24 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as RNLocalize from 'react-native-localize';
-import { AsYouType, CountryCode } from 'libphonenumber-js';
+import { getExampleNumber, CountryCode } from 'libphonenumber-js';
+import examples from 'libphonenumber-js/examples.mobile.json';
 import countries from 'world-countries';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { ICountry } from '../types/ICountry';
 
-export const usePhoneInputField = (onChangeText: (value: string) => void) => {
-    const lang = RNLocalize.getLocales()[0]?.languageCode || 'eng';
+export const usePhoneInputField = (onChangeText: (value: string) => void, clearPhone?: () => void) => {
+    const lang = RNLocalize.getLocales()[0]?.languageCode || 'en';
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const countryModalRef = useRef<BottomSheetModal>(null);
 
-    // 🔹 Определение страны (SIM → локаль → fallback)
     useEffect(() => {
         const detectCountry = async () => {
             try {
-                // Пытаемся получить страну по системной локали
                 const localeCountry = RNLocalize.getCountry() || 'US';
-
                 const matched = countries.find(c => c.cca2.toLowerCase() === localeCountry.toLowerCase());
 
                 if (matched) {
@@ -52,42 +50,62 @@ export const usePhoneInputField = (onChangeText: (value: string) => void) => {
                 setLoading(false);
             }
         };
+
         detectCountry();
     }, [lang]);
 
-    const formatPhone = (text: string) => {
-        if (!selectedCountry) return;
-        const formatter = new AsYouType(selectedCountry.cca2);
-        onChangeText(formatter.input(text));
-    };
+    const getMaxDigits = useCallback((countryCode: CountryCode): number => {
+        try {
+            const example = getExampleNumber(countryCode, examples);
+            return example?.nationalNumber?.length || 15;
+        } catch {
+            return 15;
+        }
+    }, []);
+
+    const handlePhoneChange = useCallback(
+        (text: string) => {
+            if (!selectedCountry) return;
+
+            let cleaned = text.replace(/[^\d+]/g, '');
+
+            const callingCode = selectedCountry.callingCode.replace('+', '');
+
+            if (cleaned === `+${callingCode}`) {
+                cleaned = '';
+            }
+
+            const maxDigits = getMaxDigits(selectedCountry.cca2);
+            const digitsOnly = cleaned.replace(/\D/g, '').slice(0, maxDigits);
+
+            onChangeText(digitsOnly);
+        },
+        [selectedCountry, onChangeText, getMaxDigits],
+    );
 
     const handleCountryCodePress = useCallback(() => {
         setVisible(true);
         countryModalRef.current?.present();
-    }, [countryModalRef]);
+    }, []);
 
-    const handleCountryPress = useCallback(
-        (item: ICountry) => {
-            setSelectedCountry({ name: item.name, cca2: item.cca2, callingCode: `${item.callingCode}` });
-            setVisible(false);
-            countryModalRef.current?.dismiss();
-        },
-        [countryModalRef],
-    );
+    const handleCountryPress = useCallback((item: ICountry) => {
+        setSelectedCountry({
+            name: item.name,
+            cca2: item.cca2,
+            callingCode: `${item.callingCode}`,
+        });
+        clearPhone?.();
+        setVisible(false);
+        countryModalRef.current?.dismiss();
+    }, [clearPhone]);
 
     const handleClose = useCallback(() => {
         setVisible(false);
         countryModalRef.current?.dismiss();
-    }, [countryModalRef]);
+    }, []);
 
     return {
-        loading,
-        selectedCountry,
-        visible,
-        handleCountryPress,
-        formatPhone,
-        countryModalRef,
-        handleCountryCodePress,
-        handleClose,
+        loading, selectedCountry, visible, handleCountryPress, handlePhoneChange, countryModalRef,
+        handleCountryCodePress, handleClose,
     };
 };

@@ -14,8 +14,8 @@ import { useRegistration } from '../../presenters/useRegistration';
 export const RegistrationView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { email, phone, isError, onChangeEmail, onChangePhone } = useRegistration();
-   
+    const { email, phone, isError, onChangeEmail, onChangePhone, clearPhone } = useRegistration();
+
     return (
         <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
             <View style={styles.container}>
@@ -23,7 +23,12 @@ export const RegistrationView = () => {
                     <Typography text={t('registration.getStarted')} variant="h3" style={styles.title} />
                     <Typography text={'Wine lover'} variant="body_500" style={styles.role} />
                     <View style={styles.formContainer}>
-                        <PhoneInputField value={phone} onChangeText={onChangePhone} placeholder={t('registration.mobileNumber')}/>
+                        <PhoneInputField
+                            value={phone}
+                            onChangeText={onChangePhone}
+                            placeholder={t('registration.mobileNumber')}
+                            clearPhone={clearPhone}
+                        />
                         <CustomInput
                             autoCapitalize="none"
                             value={email}
