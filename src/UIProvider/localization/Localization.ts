@@ -8,7 +8,7 @@ import { IStorage, storage } from '@/libs/storage';
 import { ILocalization } from './ILocalization';
 
 class Localization implements ILocalization {
-    private i18n!: I18n;
+    private i18n: I18n;
 
     constructor(private localizationStore: IRepository<string>, private storage: IStorage) {
         this.i18n = new I18n();
@@ -42,9 +42,13 @@ class Localization implements ILocalization {
             if (translations) {
                 this.i18n.translations = translations;
             }
+
+            this.i18n.locale = language;
+            this.localizationStore.save(language);
         } catch (error) {
             console.warn('Localization -> load: ', error);
             this.localizationStore.save('en');
+            this.i18n.locale = 'en';
         }
     };
 
@@ -67,8 +71,7 @@ class Localization implements ILocalization {
     }
 
     get locale() {
-        // return this.localizationStore.data || 'en';
-        return 'en';
+        return this.localizationStore.data || 'en';
     }
 
     setTranslation = (translations: any) => {
@@ -80,17 +83,16 @@ class Localization implements ILocalization {
 
     t = (key: string, params: Record<string, any> = {}) => {
         const locale = this.localizationStore.data;
-        return this.i18n.t(key, { locale: locale, ...params });
+        return this.i18n.t(key, { locale, ...params });
     };
 
     setLocale = (locale: string) => {
-        if (Object.keys(this.i18n.translations).includes(locale)) {
-            this.localizationStore.save(locale);
-            this.persistLanguage(locale);
-        } else {
-            this.localizationStore.save('en');
-            this.persistLanguage('en');
-        }
+        const supported = Object.keys(this.i18n.translations).includes(locale) ? locale : 'en';
+
+        this.localizationStore.save(supported);
+        this.persistLanguage(supported);
+
+        this.i18n.locale = supported;
     };
 }
 

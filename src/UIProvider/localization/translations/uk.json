@@ -4,7 +4,8 @@
         "errorHappened": "Сталася помилка",
         "somethingWentWrong": "Щось пішло не так.",
         "save": "Зберегти",
-        "continue": "Продовжити"
+        "continue": "Продовжити",
+        "search": "Пошук..."
     },
     "authentication": {
         "welcome": "Ласкаво просимо до",
@@ -51,6 +52,7 @@
         "winemaker": "Винороб",
         "getStarted": "Давайте почнемо",
         "email": "Електронна пошта",
-        "mobileNumber": "Номер мобільного телефону"
+        "mobileNumber": "Номер телефону",
+        "countryCode": "Код країни"
     }
 }

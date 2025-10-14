@@ -2,44 +2,47 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors) =>
-    StyleSheet.create({
-        row: {
+export const getStyles = (colors: IColors) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
             flexDirection: 'row',
             alignItems: 'center',
-            gap: scaleHorizontal(12),
+            gap: scaleHorizontal(6),
         },
-        countryPill: {
+        pickerButton: {
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center',
             borderWidth: 1,
             borderColor: colors.border,
             borderRadius: 12,
-            height: scaleVertical(50),
-            paddingHorizontal: scaleHorizontal(12),
-            backgroundColor: colors.card,
+            backgroundColor: colors.background,
+            minHeight: scaleVertical(48),
+            padding: scaleVertical(12),
         },
-        flagCircle: {
-            width: 24,
-            height: 24,
-            borderRadius: 12,
-            overflow: 'hidden',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: scaleHorizontal(8),
+        input: {
+            flex: 1,
+            marginBottom: 0,
         },
-        flagImage: {
-            width: 24,
-            height: 24,
-            borderRadius: 12,
+        flag: {
+            width: scaleVertical(20),
+            height: scaleVertical(20),
+            borderRadius: scaleVertical(20),
         },
         codeText: {
-            color: colors.text,
-            fontWeight: '600',
+            marginLeft: scaleHorizontal(8),
+            marginRight: scaleHorizontal(2),
         },
-        caret: {
-            marginLeft: scaleHorizontal(6),
-            opacity: 0.6,
+        loaderContainer: {
+            height: scaleVertical(50),
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: scaleHorizontal(12),
+            backgroundColor: colors.background,
         },
     });
+
+    return styles;
+};

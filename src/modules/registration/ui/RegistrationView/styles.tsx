@@ -27,6 +27,10 @@ export const getStyles = (colors: IColors) => {
         footer: {
             gap: scaleVertical(24),
         },
+        contentContainer: {
+            flex: 1,
+            alignItems: 'center',
+          },
     });
     return styles;
 };

@@ -13,6 +13,10 @@ export const COLORS: { light: IColors } = {
         
         shadow: '#000000', //done
 
+        card: '#000000',
+
+        notification: '#000000',
+
         text: '#000000',// done
         text_inverted: '#FFFFFF', // done
         text_primary: '#910D0D', // done

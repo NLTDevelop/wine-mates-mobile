@@ -1,0 +1,85 @@
+import { RefObject, useCallback, useMemo } from 'react';
+import { View, TouchableOpacity } from 'react-native';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetFlatList, WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useUiContext } from '@/UIProvider';
+import { Typography } from '@/UIKit/Typography';
+import { getStyles } from './styles';
+import { Country } from '@/modules/registration/presenters/usePhoneInputField';
+import { useCountryPickerModal } from '@/modules/registration/presenters/useCountryPickerModal';
+import { CrossIcon } from '@/assets/icons/CrossIcon';
+import { CountryListItem } from '../CountryListItem';
+import { SearchBar } from '@/UIKit/SearchBar';
+
+interface IProps {
+    modalRef: RefObject<BottomSheetModal | null>;
+    handleCountryPress: (item: Country) => void;
+    handleClose: () => void;
+}
+
+export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleClose }: IProps) => {
+    const { colors, t } = useUiContext();
+    const { top, bottom } = useSafeAreaInsets();
+    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
+    const { countriesData, search, setSearch } = useCountryPickerModal();
+
+    const maxSnapPoint = WINDOW_HEIGHT - top;
+    const snapPoints = useMemo(() => [maxSnapPoint], [maxSnapPoint]);
+
+    const renderBackdrop = useCallback(
+        (props: any) => (
+            <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} onPress={handleClose} />
+        ),
+        [handleClose],
+    );
+
+    const keyExtractor = useCallback((item: Country) => item.cca2, []);
+    const renderItem = useCallback(
+        ({ item }: { item: Country }) => <CountryListItem item={item} handleCountryPress={handleCountryPress} />,
+        [handleCountryPress],
+    );
+
+    return (
+        <BottomSheetModal
+            ref={modalRef}
+            index={0}
+            snapPoints={snapPoints}
+            handleComponent={() => null}
+            backdropComponent={renderBackdrop}
+            enableDynamicSizing={false}
+            backgroundStyle={styles.container}
+        >
+            <View style={styles.headerContainer}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={handleClose} style={styles.closeContainer}>
+                        <CrossIcon />
+                    </TouchableOpacity>
+                    <Typography variant="h4" text={t('registration.countryCode')} style={styles.title} />
+                </View>
+                <SearchBar
+                    value={search}
+                    onChangeText={setSearch}
+                    placeholder={t('common.search')}
+                    keyboardType="phone-pad"
+                    containerStyle={styles.searchContainer}
+                />
+            </View>
+            <BottomSheetFlatList
+                data={countriesData}
+                keyExtractor={keyExtractor}
+                renderItem={renderItem}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.listContentContainer}
+                initialNumToRender={15}
+                maxToRenderPerBatch={15}
+                windowSize={15}
+                removeClippedSubviews={false}
+                scrollEventThrottle={16}
+                decelerationRate="fast"
+                bounces={false}
+                overScrollMode="never"
+                alwaysBounceVertical={false}
+            />
+        </BottomSheetModal>
+    );
+};

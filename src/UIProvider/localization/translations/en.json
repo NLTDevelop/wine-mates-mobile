@@ -4,7 +4,8 @@
         "errorHappened": "Error happened",
         "somethingWentWrong": "Something went wrong.",
         "save": "Save",
-        "continue": "Continue"
+        "continue": "Continue",
+        "search": "Search..."
     },
     "authentication": {
         "welcome": "Welcome to",
@@ -51,6 +52,7 @@
         "winemaker": "Winemaker",
         "getStarted": "Let’s get started",
         "email": "E-mail",
-        "mobileNumber": "Mobile number"
+        "mobileNumber": "Mobile number",
+        "countryCode": "Country Code"
     }
 }

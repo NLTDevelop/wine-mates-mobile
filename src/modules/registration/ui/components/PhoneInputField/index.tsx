@@ -1,81 +1,70 @@
-import React, { useMemo, useState } from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
-import CountrySelect, { ICountry } from 'react-native-country-select';
+import { useMemo } from 'react';
+import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import Flag from 'react-native-round-flags';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { CustomInput } from '@/UIKit/CustomInput';
-import { getStyles } from './styles';
 import { scaleVertical } from '@/utils';
-import * as RNLocalize from 'react-native-localize';
+import { getStyles } from './styles';
+import { usePhoneInputField } from '@/modules/registration/presenters/usePhoneInputField';
+import { CustomInput } from '@/UIKit/CustomInput';
+import { ArrowDownIcon } from '@/assets/icons/ArrowDownIcon';
+import { CountryPickerBottomSheet } from '../CountryPickerBottomSheet';
 
 interface IProps {
-  value: string;
-  onChangeText: (value: string) => void;
+    value: string;
+    onChangeText: (value: string) => void;
+    errorText?: string;
+    placeholder?: string;
+    editable?: boolean;
 }
 
-export const PhoneInputField = ({ value, onChangeText }: IProps) => {
-  const { colors, t } = useUiContext();
-  const styles = useMemo(() => getStyles(colors), [colors]);
+export const PhoneInputField = ({ value, onChangeText, errorText, placeholder, editable = true }: IProps) => {
+    const { colors } = useUiContext();
+    const styles = useMemo(() => getStyles(colors), [colors]);
+    const { loading, selectedCountry, visible, handleCountryPress, formatPhone, countryModalRef, handleCountryCodePress,
+        handleClose } = usePhoneInputField(onChangeText);
 
-  const deviceCountry = (RNLocalize.getCountry?.() || 'UA').toUpperCase();
-  const [visible, setVisible] = useState(false);
+    if (loading || !selectedCountry) {
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator color={colors.text_light} />
+            </View>
+        );
+    }
 
-  const [country, setCountry] = useState<ICountry | null>(null);
+    return (
+        <>
+            <View style={styles.container}>
+                <TouchableOpacity disabled={!editable} style={styles.pickerButton} onPress={handleCountryCodePress}>
+                    <Flag code={selectedCountry.cca2} style={styles.flag} />
+                    <Typography variant="h6" style={styles.codeText}>
+                        {selectedCountry.callingCode}
+                    </Typography>
+                    <ArrowDownIcon width={16} height={16} rotate={visible ? 180 : 0} strokeWidth={2} />
+                </TouchableOpacity>
+                <CustomInput
+                    value={value}
+                    onChangeText={formatPhone}
+                    placeholder={placeholder}
+                    keyboardType="phone-pad"
+                    placeholderTextColor={colors.text_light}
+                    containerStyle={styles.input}
+                />
+            </View>
 
-  const fallbackDial = '+380';
-  const fallbackFlagUri = `https://flagcdn.com/w160/${deviceCountry.toLowerCase()}.png`;
+            {errorText ? (
+                <Typography
+                    variant="body_500"
+                    style={{
+                        color: colors.error,
+                        marginTop: scaleVertical(4),
+                    }}
+                >
+                    {errorText}
+                </Typography>
+            ) : null}
 
-  const dialCode = country?.cca2 ?? fallbackDial;
-  const flagUri = country?.flag ?? fallbackFlagUri;
-  console.log(flagUri)
-
-  const handleSelect = (item: ICountry) => {
-    setCountry(item);
-    setVisible(false);
-  };
-
-  const handlePhoneChange = (text: string) => {
-    const digits = text.replace(/\D/g, '').replace(/^0+/, '');
-    onChangeText(digits);
-  };
-
-  return (
-    <View style={styles.row}>
-      <TouchableOpacity
-        style={styles.countryPill}
-        onPress={() => setVisible(true)}
-        activeOpacity={0.8}
-      >
-        <View style={styles.flagCircle}>
-        <Typography variant="body_500" style={styles.codeText}>
-          {flagUri}
-        </Typography>
-        </View>
-        <Typography variant="body_500" style={styles.codeText}>
-          {dialCode}
-        </Typography>
-        <Typography variant="body_500" style={styles.caret}>
-          ▾
-        </Typography>
-      </TouchableOpacity>
-
-      <CustomInput
-        value={value}
-        onChangeText={handlePhoneChange}
-        keyboardType="phone-pad"
-        placeholder={t('registration.mobileNumber')}
-        containerStyle={{ marginBottom: 0, flex: 1 }}
-        inputContainerStyle={{ height: scaleVertical(50) }}
-      />
-
-      <CountrySelect
-        visible={visible}
-        onClose={() => setVisible(false)}
-        onSelect={handleSelect}
-        // только те стили/пропсы, которые поддерживает твоя версия:
-        // modalStyle={{ backgroundColor: colors.background }}
-        style={{}} // если допустимо
-      />
-    </View>
-  );
+            <CountryPickerBottomSheet modalRef={countryModalRef} handleCountryPress={handleCountryPress} handleClose={handleClose}/>
+        </>
+    );
 };
