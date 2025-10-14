@@ -1,9 +1,9 @@
 import { IColors, IFonts, TTheme } from './IColors';
 import { COLORS } from './Colors';
-import { MobXRepository } from '../../repository/MobXRepository';
-import { IRepository } from '../../repository/IRepository';
+import { MobXRepository } from '@/repository/MobXRepository';
+import { IRepository } from '@/repository/IRepository';
 import { IColorTheme } from './IColorTheme';
-import { IStorage, storage } from '../../libs/storage';
+import { IStorage, storage } from '@/libs/storage';
 import { FONTS } from './Fonts';
 
 class ColorTheme implements IColorTheme {

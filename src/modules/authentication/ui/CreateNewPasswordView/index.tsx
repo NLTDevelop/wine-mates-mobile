@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { View } from 'react-native';
-import { useUiContext } from '../../../../UIProvider';
-import { ScreenContainer } from '../../../../UIKit/ScreenContainer';
-import { Typography } from '../../../../UIKit/Typography';
-import { Button } from '../../../../UIKit/Button';
-import { CustomInput } from '../../../../UIKit/CustomInput';
-import { HeaderWithBackButton } from '../../../../UIKit/HeaderWithBackButton';
-import { SignUpFooter } from '../components/SignUpFooter';
-import { Warning } from '../components/Warning';
-import { useCreateNewPassword } from '../../presenters/useCreateNewPassword';
+import { useUiContext } from '@/UIProvider';
+import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { Typography } from '@/UIKit/Typography';
+import { Button } from '@/UIKit/Button';
+import { CustomInput } from '@/UIKit/CustomInput';
+import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
+import { SignUpFooter } from '@/modules/authentication/ui/components/SignUpFooter';
+import { Warning } from '@/modules/authentication/ui/components/Warning';
+import { useCreateNewPassword } from '@/modules/authentication/presenters/useCreateNewPassword';
 
 export const CreateNewPasswordView = () => {
     const { t, colors } = useUiContext();

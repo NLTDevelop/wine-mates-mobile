@@ -4,12 +4,18 @@ export const COLORS: { light: IColors } = {
     light: {
         background: '#FFFFFF', // done
         background_secondary: '#FFF5EB', // done
+        background_light: '#E4E4E4', //done
+        background_middle: '#F0F0F0', //done
+        
         border: '#E4E4E4', // done
         border_strong: '#000000', //done
         border_light: '#E4E4E4', //done
-        background_light: '#E4E4E4', //done
         
         shadow: '#000000', //done
+
+        card: '#000000',
+
+        notification: '#000000',
 
         text: '#000000',// done
         text_inverted: '#FFFFFF', // done

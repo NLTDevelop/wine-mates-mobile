@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, ViewStyle, View } from 'react-native';
 import { Edge, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useUiContext } from '../../UIProvider';
+import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { ScrollView } from 'react-native-gesture-handler';
 

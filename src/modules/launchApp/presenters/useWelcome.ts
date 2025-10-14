@@ -1,12 +1,16 @@
 import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export const useWelcome = () => {
-    const navigation = useNavigation<StackNavigationProp<any>>();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const handleSignInPress = () => {
         navigation.navigate('SignInView');
     };
 
-    return { handleSignInPress };
+    const handleJoinNowPress = () => {
+        navigation.navigate('MyLevelView');
+    };
+
+    return { handleSignInPress, handleJoinNowPress };
 };

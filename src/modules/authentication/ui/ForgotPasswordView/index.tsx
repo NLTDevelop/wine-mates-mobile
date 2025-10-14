@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { View } from 'react-native';
-import { useUiContext } from '../../../../UIProvider';
-import { ScreenContainer } from '../../../../UIKit/ScreenContainer';
-import { Typography } from '../../../../UIKit/Typography';
-import { Button } from '../../../../UIKit/Button';
-import { CustomInput } from '../../../../UIKit/CustomInput';
-import { HeaderWithBackButton } from '../../../../UIKit/HeaderWithBackButton';
-import { SignUpFooter } from '../components/SignUpFooter';
-import { useForgotPassword } from '../../presenters/useForgotPassword';
-import { Warning } from '../components/Warning';
+import { useUiContext } from '@/UIProvider';
+import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { Typography } from '@/UIKit/Typography';
+import { Button } from '@/UIKit/Button';
+import { CustomInput } from '@/UIKit/CustomInput';
+import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
+import { SignUpFooter } from '@/modules/authentication/ui/components/SignUpFooter';
+import { useForgotPassword } from '@/modules/authentication/presenters/useForgotPassword';
+import { Warning } from '@/modules/authentication/ui/components/Warning';
 
 export const ForgotPasswordView = () => {
     const { t, colors } = useUiContext();

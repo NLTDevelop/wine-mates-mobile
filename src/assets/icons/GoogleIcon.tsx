@@ -1,12 +1,13 @@
 import Svg, { ClipPath, Defs, G, Path } from 'react-native-svg';
+import { scaleVertical } from '@/utils';
 
 interface IProps {
     width?: number;
     height?: number;
 }
 
-export const GoogleIcon = ({ width, height }: IProps) => (
-    <Svg width={width || 24} height={height || 24} viewBox="0 0 24 24">
+export const GoogleIcon = ({ width = 24, height = 24 }: IProps) => (
+    <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 24 24">
         <G fillRule="evenodd" clipPath="url(#a)" clipRule="evenodd">
             <Path
                 fill="#FBBC05"

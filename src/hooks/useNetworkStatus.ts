@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import NetInfo from '@react-native-community/netinfo';
-import { useUiContext } from '../UIProvider';
-import { toastService } from '../libs/toast/toastService';
+import { useUiContext } from '@/UIProvider';
+import { toastService } from '@/libs/toast/toastService';
 import Toast from 'react-native-toast-message';
 
 export const useNetworkStatus = () => {

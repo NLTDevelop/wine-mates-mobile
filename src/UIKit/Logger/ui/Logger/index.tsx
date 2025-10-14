@@ -1,10 +1,10 @@
 import { observer } from 'mobx-react';
 import { useCallback, useMemo } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { useUiContext } from '../../../../UIProvider';
-import { LoggerIcon } from '../LoggerIcon';
-import { ModalLogger } from '../ModalLogger';
-import { loggerModel } from '../../entity/loggerModel';
+import { useUiContext } from '@/UIProvider';
+import { LoggerIcon } from '@/UIKit/Logger/ui/LoggerIcon';
+import { ModalLogger } from '@/UIKit/Logger/ui/ModalLogger';
+import { loggerModel } from '@/UIKit/Logger/entity/loggerModel';
 import { getStyles } from './styles';
 
 export const Logger = observer(() => {

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { TouchableOpacity, View } from 'react-native';
-import { useUiContext } from '../../../../../UIProvider';
-import { Typography } from '../../../../../UIKit/Typography';
+import { useUiContext } from '@/UIProvider';
+import { Typography } from '@/UIKit/Typography';
 
 export const SignUpFooter = () => {
     const { t, colors } = useUiContext();

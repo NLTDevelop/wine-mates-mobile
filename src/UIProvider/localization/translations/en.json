@@ -3,7 +3,9 @@
         "logo": "WineMates",
         "errorHappened": "Error happened",
         "somethingWentWrong": "Something went wrong.",
-        "save": "Save"
+        "save": "Save",
+        "continue": "Continue",
+        "search": "Search..."
     },
     "authentication": {
         "welcome": "Welcome to",
@@ -40,5 +42,17 @@
         "newPasswordIsRequired": "New password is required",
         "confirmNewPasswordIsRequired": "Confirm new Password is required",
         "confirmPasswordError": "Passwords do not match"
+    },
+    "registration": {
+        "haveAnAccount": "Already have an account?",
+        "myLevelInWine": "My level in wine",
+        "myLevelDescription": "Pick your role in the wine world and connect with those who share your passion",
+        "wineLover": "Wine lover",
+        "wineExpert": "Wine expert",
+        "winemaker": "Winemaker",
+        "getStarted": "Let’s get started",
+        "email": "E-mail",
+        "mobileNumber": "Mobile number",
+        "countryCode": "Country Code"
     }
 }

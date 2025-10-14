@@ -1,13 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
 import { useCallback, useState } from 'react';
-import { toastService } from '../../../libs/toast/toastService';
-import { useValidator } from '../../../hooks/useValidator';
-import { userService } from '../../../entities/users/UserService';
-import { localization } from '../../../UIProvider/localization/Localization';
+import { toastService } from '@/libs/toast/toastService';
+import { useValidator } from '@/hooks/useValidator';
+import { userService } from '@/entities/users/UserService';
+import { localization } from '@/UIProvider/localization/Localization';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export const useSignIn = () => {
-    const navigation = useNavigation<StackNavigationProp<any>>();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { validateEmail, validatePassword } = useValidator();
     const [form, setForm] = useState({ email: '', password: '' });
     const [error, setError] = useState(false);

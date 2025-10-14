@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
 import { getStyle } from './styles';
-import { useUiContext } from '../../../../../UIProvider';
-import { Typography } from '../../../../../UIKit/Typography';
+import { useUiContext } from '@/UIProvider';
+import { Typography } from '@/UIKit/Typography';
 
 interface IProps {
   onPress: () => void;

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { IColors } from '../../../../UIProvider/theme/IColors';
+import { IColors } from '@/UIProvider/theme/IColors';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
-import { scaleHorizontal, scaleLineHeight, scaleVertical } from '../../../../utils';
+import { scaleHorizontal, scaleLineHeight, scaleVertical } from '@/utils';
 
 const INSET_TOP = initialWindowMetrics?.insets.top || 0;
 const INSET_BOTTOM = initialWindowMetrics?.insets.bottom || 0;
@@ -30,8 +30,16 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
             textAlign: 'center',
             marginHorizontal: scaleHorizontal(22),
-            lineHeight: scaleLineHeight(22),
+            lineHeight: scaleLineHeight(20),
             marginBottom: scaleVertical(87),
+        },
+        redLineContainer: {
+            position: 'absolute',
+            top: scaleVertical(300),
+            left: scaleHorizontal(-120),
+            width: scaleHorizontal(600),
+            height: scaleVertical(140),
+            overflow: 'visible',
         },
         image: {
             width: scaleHorizontal(343),

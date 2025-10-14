@@ -1,10 +1,10 @@
 import { memo, useState, useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
-import { TextInput, View, Text, TouchableOpacity, ViewStyle, TextInputProps } from 'react-native';
-import { useUiContext } from '../../UIProvider';
-import { Typography } from '../../UIKit/Typography';
+import { TextInput, View, TouchableOpacity, ViewStyle, TextInputProps } from 'react-native';
+import { useUiContext } from '@/UIProvider';
+import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
-import { EyeIcon } from '../../assets/icons/EyeIcon';
-import { EyeOffIcon } from '../../assets/icons/EyeOffIcon';
+import { EyeIcon } from '@/assets/icons/EyeIcon';
+import { EyeOffIcon } from '@/assets/icons/EyeOffIcon';
 
 interface IProps extends TextInputProps {
     RightAccessory?: React.ReactNode;

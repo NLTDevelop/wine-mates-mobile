@@ -1,6 +1,6 @@
-import { IStorage, storage } from "../../libs/storage";
-import { MobXRepository } from "../../repository/MobXRepository";
-import { IUser } from "./IUser";
+import { IStorage, storage } from "@/libs/storage";
+import { MobXRepository } from "@/repository/MobXRepository";
+import { IUser } from "./types/IUser";
 
 export interface IUserModel {
   token: string | null;

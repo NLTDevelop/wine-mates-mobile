@@ -1,18 +1,19 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { Linking, TouchableOpacity, View } from 'react-native';
-import { useUiContext } from '../../../../UIProvider';
-import { ScreenContainer } from '../../../../UIKit/ScreenContainer';
-import { Typography } from '../../../../UIKit/Typography';
-import { Gradient } from '../../../../UIKit/Gradient';
+import { useUiContext } from '@/UIProvider';
+import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { Typography } from '@/UIKit/Typography';
+import { Gradient } from '@/UIKit/Gradient';
 import FastImage from '@d11/react-native-fast-image';
-import { Button } from '../../../../UIKit/Button';
-import { useWelcome } from '../../presenters/useWelcome';
+import { Button } from '@/UIKit/Button';
+import { useWelcome } from '@/modules/launchApp/presenters/useWelcome';
+import { RedLineIcon } from '@/assets/icons/RedLineIcon';
 
 export const WelcomeView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { handleSignInPress } = useWelcome();
+    const { handleSignInPress, handleJoinNowPress } = useWelcome();
 
     return (
         <ScreenContainer edges={[]}>
@@ -26,15 +27,18 @@ export const WelcomeView = () => {
                         variant="body_400"
                         style={styles.description}
                     />
+                    <View style={styles.redLineContainer}>
+                        <RedLineIcon />
+                    </View>
                     <FastImage
-                        source={require('../../../../assets/images/welcome.png')}
+                        source={require('@/assets/images/welcome.png')}
                         style={styles.image}
                         resizeMode={'cover'}
                     />
                 </View>
                 <View style={styles.footer}>
                     <View style={styles.buttonContainer}>
-                        <Button text={t('authentication.join')} onPress={() => {}} />
+                        <Button text={t('authentication.join')} onPress={handleJoinNowPress} />
                         <Button text={t('authentication.signIn')} onPress={handleSignInPress} type="secondary" />
                     </View>
                     <View style={styles.termsContainer}>

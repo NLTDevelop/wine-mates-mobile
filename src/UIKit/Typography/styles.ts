@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { IColors } from '../../UIProvider/theme/IColors';
-import { scaleFontSize, scaleLineHeight } from '../../utils';
+import { IColors } from '@/UIProvider/theme/IColors';
+import { scaleFontSize, scaleLineHeight } from '@/utils';
 
 export const getStyle = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -19,8 +19,8 @@ export const getStyle = (colors: IColors) => {
             color: colors.text,
         },
         h4: {
-            fontSize: scaleFontSize(20),
-            lineHeight: scaleLineHeight(26),
+            fontSize: scaleFontSize(18),
+            lineHeight: scaleLineHeight(22),
             fontFamily: 'VisueltPro-Medium',
             fontWeight: '500',
             color: colors.text,

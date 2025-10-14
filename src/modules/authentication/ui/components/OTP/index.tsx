@@ -1,10 +1,10 @@
 import { RefObject, useMemo } from 'react';
 import { CodeField, Cursor, RenderCellOptions } from 'react-native-confirmation-code-field';
-import { useUiContext } from '../../../../../UIProvider';
+import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { TextInput, View } from 'react-native';
-import { isIOS } from '../../../../../utils';
-import { Typography } from '../../../../../UIKit/Typography';
+import { isIOS } from '@/utils';
+import { Typography } from '@/UIKit/Typography';
 
 interface IProps {
     value: string;

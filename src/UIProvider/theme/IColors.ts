@@ -4,9 +4,15 @@ export type IColors = {
     background: string;
     background_secondary: string;
     background_light: string;
-    border_light: string;
+    background_middle: string;
+
     border: string;
+    border_light: string;
     border_strong: string;
+
+    card: string;
+
+    notification: string;
 
     shadow: string;
 
