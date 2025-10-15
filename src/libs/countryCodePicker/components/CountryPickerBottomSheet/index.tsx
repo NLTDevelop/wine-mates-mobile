@@ -60,7 +60,6 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
                     value={search}
                     onChangeText={setSearch}
                     placeholder={t('common.search')}
-                    keyboardType="phone-pad"
                     containerStyle={styles.searchContainer}
                 />
             </View>

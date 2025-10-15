@@ -20,7 +20,7 @@ interface IProps {
 export const PhoneInputField = ({ value, onChangeText, placeholder, editable = true, clearPhone }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { loading, selectedCountry, visible, handleCountryPress, handlePhoneChange, countryModalRef,
+    const { loading, selectedCountry, visible, handleCountryPress, handlePhoneChange, countryModalRef, maxLength,
         handleCountryCodePress, handleClose } = usePhoneInputField(onChangeText, clearPhone);
 
     return (
@@ -46,6 +46,7 @@ export const PhoneInputField = ({ value, onChangeText, placeholder, editable = t
                         placeholderTextColor={colors.text_light}
                         containerStyle={styles.input}
                         editable={editable}
+                        maxLength={maxLength}
                     />
                 </View>
             )}
