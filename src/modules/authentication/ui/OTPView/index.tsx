@@ -17,6 +17,7 @@ export const OTPView = () => {
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { email, props, getCellOnLayoutHandler, ref, value, handleOTPValueChange, isError, isLoading, handleResetPress,
         CELL_COUNT, timer, isResendDisabled, handleResendCode } = useOTP();
+    const formattedTimerValue = timer.toString().padStart(2, '0');
 
     return (
         <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
@@ -44,7 +45,11 @@ export const OTPView = () => {
                     <View style={styles.resendContainer}>
                         <Typography text={t('authentication.receiveCode')} variant="body_400" style={styles.text} />
                         <TextButton
-                            text={isResendDisabled ? `${t('authentication.resend')} (0:${timer})` : t('authentication.resend')}
+                            text={
+                                isResendDisabled
+                                    ? `${t('authentication.resend')} (0:${formattedTimerValue})`
+                                    : t('authentication.resend')
+                            }
                             onPress={handleResendCode}
                             textStyles={isResendDisabled ? styles.textButtonDisabled : styles.textButtonText}
                             disabled={isResendDisabled}

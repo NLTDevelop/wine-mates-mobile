@@ -20,6 +20,7 @@ export const getStyles = (colors: IColors) => {
         },
         text: {
             flexShrink: 1,
+            color: colors.text_inverted,
         },
     });
     return styles;

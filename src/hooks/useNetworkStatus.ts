@@ -1,26 +1,26 @@
-import { useEffect, useRef } from 'react';
-import NetInfo from '@react-native-community/netinfo';
-import { useUiContext } from '@/UIProvider';
-import { toastService } from '@/libs/toast/toastService';
-import Toast from 'react-native-toast-message';
+import { useEffect, useCallback } from 'react';
+import { addEventListener, fetch } from '@react-native-community/netinfo';
+import { appStateModel } from '@/entities/appState/AppStateModel';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export const useNetworkStatus = () => {
-    const { t } = useUiContext();
-    const isToastVisibleRef = useRef(false);
+    const { debouncedWrapper } = useDebounce((isConnected: boolean) => {
+        appStateModel.network = isConnected;
+    }, 1000);
 
     useEffect(() => {
-        const unsubscribe = NetInfo.addEventListener(state => {
-            if (!state.isConnected) {
-                toastService.showWarning(t('networkError'), undefined, true);
-                isToastVisibleRef.current = true;
-            } else {
-                if (isToastVisibleRef.current) {
-                    Toast.hide();
-                    isToastVisibleRef.current = false;
-                }
-            }
+        const unsubscribe = addEventListener(state => {
+            debouncedWrapper(!!state.isConnected);
         });
 
-        return () => unsubscribe();
-    }, [t]);
+        return unsubscribe;
+    }, [debouncedWrapper]);
+
+    const handleRetry = useCallback(() => {
+        fetch().then(state => {
+            appStateModel.network = !!state.isConnected;
+        });
+    }, []);
+
+    return { handleRetry };
 };

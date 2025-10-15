@@ -14,7 +14,7 @@ import { Warning } from '@/modules/authentication/ui/components/Warning';
 export const ForgotPasswordView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { email, onChangeEmail, isLoading, handleSendPress, isError } = useForgotPassword();
+    const { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled } = useForgotPassword();
 
     return (
         <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
@@ -43,6 +43,7 @@ export const ForgotPasswordView = () => {
                         onPress={handleSendPress}
                         type="secondary"
                         inProgress={isLoading}
+                        disabled={isSendDisabled}
                     />
                     <SignUpFooter />
                 </View>

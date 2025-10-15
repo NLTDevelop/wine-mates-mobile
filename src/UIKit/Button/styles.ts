@@ -2,7 +2,7 @@ import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth') => {
+export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth', disabled?: boolean) => {
     const MAIN_CONTAINER: ViewStyle = {
         height: scaleVertical(48),
         flexDirection: 'row',
@@ -13,6 +13,7 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth') 
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: colors.primary,
+        opacity: disabled ? 0.4 : 1,
         borderRadius: 12,
     };
     const MAIN_TEXT: TextStyle = {

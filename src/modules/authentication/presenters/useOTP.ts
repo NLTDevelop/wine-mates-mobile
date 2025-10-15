@@ -1,8 +1,9 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useOTPTimer } from '@/modules/authentication/presenters/useOTPTimer';
 
 const CELL_COUNT = 4;
 
@@ -15,23 +16,7 @@ export const useOTP = () => {
     const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value, setValue });
     const [isLoading, setIsLoading] = useState(false);
 
-    const [timer, setTimer] = useState(59);
-    const [isResendDisabled, setIsResendDisabled] = useState(true);
-
-    useEffect(() => {
-        if (timer === 0) {
-            setIsResendDisabled(false);
-            return;
-        }
-
-        setIsResendDisabled(true);
-
-        const timeout = setTimeout(() => {
-            setTimer(prevState => prevState - 1);
-        }, 1000);
-
-        return () => clearTimeout(timeout);
-    }, [timer]);
+    const { remaining, isActive, start: startTimer } = useOTPTimer();
 
     const handleOTPValueChange = (otp: string) => {
         setIsError({ status: false, errorText: '' });
@@ -56,13 +41,13 @@ export const useOTP = () => {
     const handleResendCode = useCallback(() => {
         try {
             //TODO
-            setTimer(59);
+            startTimer();
         } finally {
         }
-    }, []);
+    }, [startTimer]);
 
     return { 
         email, props, getCellOnLayoutHandler, ref, value, handleOTPValueChange, isError, isLoading, handleResetPress, 
-        CELL_COUNT, timer, isResendDisabled, handleResendCode
+        CELL_COUNT, timer: remaining, isResendDisabled: isActive, handleResendCode
     };
 };

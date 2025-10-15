@@ -1,11 +1,19 @@
 {
     "common": {
         "logo": "WineMates",
-        "errorHappened": "Сталася помилка",
-        "somethingWentWrong": "Щось пішло не так.",
-        "save": "Зберегти",
-        "continue": "Продовжити",
-        "search": "Пошук..."
+        "errorHappened": "Error happened",
+        "somethingWentWrong": "Something went wrong.",
+        "save": "Save",
+        "continue": "Continue",
+        "search": "Search...",
+        "tryAgain": "Спробуйте ще раз",
+        "retry": "Повторити спробу"
+    },
+    "errors": {
+        "somethingWentWrong": "Вибачте, щось пішло не так",
+        "tryAgain": "Будь ласка, спробуйте ще раз",
+        "noConnection": "Немає з'єднання",
+        "reconnect": "Схоже, ви офлайн. Підключіться знову, щоб продовжити."
     },
     "authentication": {
         "welcome": "Ласкаво просимо до",
