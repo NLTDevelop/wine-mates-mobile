@@ -1,9 +1,9 @@
 import { IColors, IFonts, TTheme } from './IColors';
 import { COLORS } from './Colors';
-import { MobXRepository } from '../../repository/MobXRepository';
-import { IRepository } from '../../repository/IRepository';
+import { MobXRepository } from '@/repository/MobXRepository';
+import { IRepository } from '@/repository/IRepository';
 import { IColorTheme } from './IColorTheme';
-import { IStorage, storage } from '../../libs/storage';
+import { IStorage, storage } from '@/libs/storage';
 import { FONTS } from './Fonts';
 
 class ColorTheme implements IColorTheme {
@@ -17,11 +17,11 @@ class ColorTheme implements IColorTheme {
     }
 
     get theme() {
-        return this.themeStore.data || 'dark';
+        return this.themeStore.data || 'light';
     }
 
     get colors() {
-        return this.allThemeColorsStore.data?.[this.theme] || COLORS.dark;
+        return this.allThemeColorsStore.data?.[this.theme] || COLORS.light;
     }
 
     get fonts() {
@@ -47,7 +47,7 @@ class ColorTheme implements IColorTheme {
     };
 }
 
-const themeStore = new MobXRepository<TTheme>('dark');
+const themeStore = new MobXRepository<TTheme>('light');
 const allThemeColorsStore = new MobXRepository<{ [key: string]: IColors }>(
     COLORS,
 );

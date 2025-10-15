@@ -1,33 +1,54 @@
 import { I18n } from 'i18n-js';
+import * as RNLocalize from 'react-native-localize';
 import uk from './translations/uk.json';
 import en from './translations/en.json';
+import { IRepository } from '@/repository/IRepository';
+import { MobXRepository } from '@/repository/MobXRepository';
+import { IStorage, storage } from '@/libs/storage';
 import { ILocalization } from './ILocalization';
-import { IRepository } from '../../repository/IRepository';
-import { MobXRepository } from '../../repository/MobXRepository';
-import { IStorage, storage } from '../../libs/storage';
 
 class Localization implements ILocalization {
-    private i18n!: I18n;
+    private i18n: I18n;
 
     constructor(private localizationStore: IRepository<string>, private storage: IStorage) {
         this.i18n = new I18n();
         this.i18n.enableFallback = true;
         this.i18n.translations = { uk, en };
+
         this.load();
     }
 
     private load = () => {
         try {
-            const language = this.storage.get('LANGUAGE');
-            if (language) {
+            let language = this.storage.get('LANGUAGE');
+
+            if (!language) {
+                const locales = RNLocalize.getLocales();
+                if (locales && locales.length > 0) {
+                    const deviceLang = locales[0].languageCode;
+                    if (Object.keys(this.i18n.translations).includes(deviceLang)) {
+                        language = deviceLang;
+                    } else {
+                        language = 'en';
+                    }
+                } else {
+                    language = 'en';
+                }
                 this.localizationStore.save(language);
+                this.persistLanguage(language);
             }
+
             const translations = this.storage.get('TRANSLATIONS');
             if (translations) {
                 this.i18n.translations = translations;
             }
+
+            this.i18n.locale = language;
+            this.localizationStore.save(language);
         } catch (error) {
             console.warn('Localization -> load: ', error);
+            this.localizationStore.save('en');
+            this.i18n.locale = 'en';
         }
     };
 
@@ -50,7 +71,7 @@ class Localization implements ILocalization {
     }
 
     get locale() {
-        return this.localizationStore.data || 'uk';
+        return this.localizationStore.data || 'en';
     }
 
     setTranslation = (translations: any) => {
@@ -62,14 +83,18 @@ class Localization implements ILocalization {
 
     t = (key: string, params: Record<string, any> = {}) => {
         const locale = this.localizationStore.data;
-        return this.i18n.t(key, { locale: locale, ...params });
+        return this.i18n.t(key, { locale, ...params });
     };
 
     setLocale = (locale: string) => {
-        this.localizationStore.save(locale);
-        this.persistLanguage(locale);
+        const supported = Object.keys(this.i18n.translations).includes(locale) ? locale : 'en';
+
+        this.localizationStore.save(supported);
+        this.persistLanguage(supported);
+
+        this.i18n.locale = supported;
     };
 }
 
-const localizationStore = new MobXRepository<string>('uk');
+const localizationStore = new MobXRepository<string>('en');
 export const localization = new Localization(localizationStore, storage);
