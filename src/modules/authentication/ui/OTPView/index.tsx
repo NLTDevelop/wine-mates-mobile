@@ -25,7 +25,7 @@ export const OTPView = () => {
                     <Typography text={t('authentication.resetYourPassword')} variant="h3" style={styles.title} />
                     <View style={styles.textContainer}>
                         <Typography variant="body_400" style={styles.descriptionText}>
-                            {t('authentication.otpDescription')}
+                            {`${t('authentication.otpDescription')} `}
                             <Typography text={email} variant="body_400" />
                         </Typography>
                     </View>

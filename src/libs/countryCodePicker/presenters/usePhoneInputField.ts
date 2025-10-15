@@ -11,6 +11,7 @@ export const usePhoneInputField = (onChangeText: (value: string) => void, clearP
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [maxLength, setMaxLength] = useState<number>(15);
     const countryModalRef = useRef<BottomSheetModal>(null);
 
     useEffect(() => {
@@ -19,68 +20,40 @@ export const usePhoneInputField = (onChangeText: (value: string) => void, clearP
                 const localeCountry = RNLocalize.getCountry() || 'US';
                 const matched = countries.find(c => c.cca2.toLowerCase() === localeCountry.toLowerCase());
 
-                if (matched) {
-                    const code =
-                        matched.idd?.root && matched.idd?.suffixes
-                            ? `${matched.idd.root}${matched.idd.suffixes[0]}`
-                            : '';
+                const fallback = { name: 'Ukraine', cca2: 'UA' as CountryCode, callingCode: '+380' };
+                const country = matched
+                    ? {
+                          name:
+                              matched.translations?.[lang]?.common ||
+                              matched.translations?.eng?.common ||
+                              matched.name.common,
+                          cca2: matched.cca2 as CountryCode,
+                          callingCode: `${matched.idd?.root || ''}${matched.idd?.suffixes?.[0] || ''}`,
+                      }
+                    : fallback;
 
-                    setSelectedCountry({
-                        name:
-                            matched.translations?.[lang]?.common ||
-                            matched.translations?.eng?.common ||
-                            matched.name.common,
-                        cca2: matched.cca2 as CountryCode,
-                        callingCode: `${code}`,
-                    });
-                } else {
-                    setSelectedCountry({
-                        name: 'Ukraine',
-                        cca2: 'UA',
-                        callingCode: '+380',
-                    });
-                }
+                setSelectedCountry(country);
+                const example = getExampleNumber(country.cca2, examples);
+                setMaxLength(example?.nationalNumber?.length || 15);
             } catch {
-                setSelectedCountry({
-                    name: 'Ukraine',
-                    cca2: 'UA',
-                    callingCode: '+380',
-                });
+                setSelectedCountry({ name: 'Ukraine', cca2: 'UA', callingCode: '+380' });
+                setMaxLength(9);
             } finally {
                 setLoading(false);
             }
         };
-
         detectCountry();
     }, [lang]);
-
-    const getMaxDigits = useCallback((countryCode: CountryCode): number => {
-        try {
-            const example = getExampleNumber(countryCode, examples);
-            return example?.nationalNumber?.length || 15;
-        } catch {
-            return 15;
-        }
-    }, []);
 
     const handlePhoneChange = useCallback(
         (text: string) => {
             if (!selectedCountry) return;
-
             let cleaned = text.replace(/[^\d+]/g, '');
-
             const callingCode = selectedCountry.callingCode.replace('+', '');
-
-            if (cleaned === `+${callingCode}`) {
-                cleaned = '';
-            }
-
-            const maxDigits = getMaxDigits(selectedCountry.cca2);
-            const digitsOnly = cleaned.replace(/\D/g, '').slice(0, maxDigits);
-
-            onChangeText(digitsOnly);
+            if (cleaned === `+${callingCode}`) cleaned = '';
+            onChangeText(cleaned.replace(/\D/g, ''));
         },
-        [selectedCountry, onChangeText, getMaxDigits],
+        [selectedCountry, onChangeText],
     );
 
     const handleCountryCodePress = useCallback(() => {
@@ -88,16 +61,21 @@ export const usePhoneInputField = (onChangeText: (value: string) => void, clearP
         countryModalRef.current?.present();
     }, []);
 
-    const handleCountryPress = useCallback((item: ICountry) => {
-        setSelectedCountry({
-            name: item.name,
-            cca2: item.cca2,
-            callingCode: `${item.callingCode}`,
-        });
-        clearPhone?.();
-        setVisible(false);
-        countryModalRef.current?.dismiss();
-    }, [clearPhone]);
+    const handleCountryPress = useCallback(
+        (item: ICountry) => {
+            setSelectedCountry({
+                name: item.name,
+                cca2: item.cca2,
+                callingCode: `${item.callingCode}`,
+            });
+            const example = getExampleNumber(item.cca2, examples);
+            setMaxLength(example?.nationalNumber?.length || 15);
+            clearPhone?.();
+            setVisible(false);
+            countryModalRef.current?.dismiss();
+        },
+        [clearPhone],
+    );
 
     const handleClose = useCallback(() => {
         setVisible(false);
@@ -105,7 +83,7 @@ export const usePhoneInputField = (onChangeText: (value: string) => void, clearP
     }, []);
 
     return {
-        loading, selectedCountry, visible, handleCountryPress, handlePhoneChange, countryModalRef,
-        handleCountryCodePress, handleClose,
+        loading, selectedCountry, visible, handleCountryPress, handlePhoneChange, countryModalRef, handleCountryCodePress,
+        handleClose, maxLength,
     };
 };
