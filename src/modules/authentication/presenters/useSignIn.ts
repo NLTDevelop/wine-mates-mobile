@@ -14,7 +14,7 @@ export const useSignIn = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const onChangeEmail = (value: string) => {
-        setForm(prev => ({ ...prev, email: value?.toLowerCase() || '' }));
+        setForm(prev => ({ ...prev, email: value || '' }));
         setError(false);
     };
 
@@ -39,7 +39,7 @@ export const useSignIn = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [navigation]);
+    }, [navigation, form]);
 
     const forgotPasswordPress = useCallback(() => {
         navigation.navigate('ForgotPasswordView');

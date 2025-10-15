@@ -11,7 +11,6 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { AppleIcon } from '@/assets/icons/AppleIcon';
 import { GoogleIcon } from '@/assets/icons/GoogleIcon';
 import { scaleVertical } from '@/utils';
-import { ErrorIcon } from '@/assets/icons/ErrorIcon';
 import { SignUpFooter } from '@/modules/authentication/ui/components/SignUpFooter';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
 

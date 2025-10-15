@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
-import { scaleHorizontal, scaleLineHeight, scaleVertical } from '@/utils';
+import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 
 const INSET_TOP = initialWindowMetrics?.insets.top || 0;
 const INSET_BOTTOM = initialWindowMetrics?.insets.bottom || 0;
@@ -30,7 +30,7 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
             textAlign: 'center',
             marginHorizontal: scaleHorizontal(22),
-            lineHeight: scaleLineHeight(20),
+            lineHeight: scaleFontSize(14) * 1.4,
             marginBottom: scaleVertical(87),
         },
         redLineContainer: {

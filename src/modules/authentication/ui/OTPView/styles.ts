@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleLineHeight, scaleVertical } from '@/utils';
+import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -22,8 +22,7 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
             textAlign: 'center',
             maxWidth: scaleHorizontal(294),
-            lineHeight: scaleLineHeight(22),
-        
+            lineHeight: scaleFontSize(14) * 1.4,
         },
         otpContainer: {
             height: scaleVertical(56),

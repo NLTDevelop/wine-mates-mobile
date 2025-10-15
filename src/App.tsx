@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ToastOverlay } from './libs/toast/ui/ToastOverlay';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import React from 'react';
+import { StatusBar } from 'react-native';
 
 export const App = () => (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -15,13 +16,14 @@ export const App = () => (
 );
 
 const ThemedApp = () => {
-    const { colors } = useUiContext();
+    const { colors, theme } = useUiContext();
 
     return (
         <SafeAreaProvider style={{ flex: 1, backgroundColor: colors.background }}>
             <BottomSheetModalProvider>
                 <RootNavigator />
                 <ToastOverlay />
+                <StatusBar barStyle={theme === 'light' ? 'dark-content' : 'dark-content'} backgroundColor={colors.background}/>
             </BottomSheetModalProvider>
         </SafeAreaProvider>
     );

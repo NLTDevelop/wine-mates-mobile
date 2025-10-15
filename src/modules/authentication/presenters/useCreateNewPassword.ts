@@ -10,12 +10,12 @@ export const useCreateNewPassword = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const onChangePassword = (value: string) => {
-        setForm(prev => ({ ...prev, password: value }));
+        setForm(prev => ({ ...prev, password: value || ''}));
         setIsError({ status: false, errorText: '' });
     };
     
     const onChangeConfirmPassword = (value: string) => {
-        setForm(prev => ({ ...prev, confirmPassword: value?.toLowerCase() || '' }));
+        setForm(prev => ({ ...prev, confirmPassword: value || '' }));
         setIsError({ status: false, errorText: '' });
     };
 
