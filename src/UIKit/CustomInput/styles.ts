@@ -26,9 +26,9 @@ export const getStyles = (colors: IColors, isFocused: boolean) => (
             fontFamily: 'VisueltPro-Regular',
             fontSize: scaleFontSize(16),
             fontWeight: '400',
-            lineHeight: scaleFontSize(20),
             paddingVertical: 0,
             color: colors.text,
+            includeFontPadding: false
         },
         inputMultiline:{
             paddingVertical: scaleVertical(8),

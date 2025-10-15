@@ -14,15 +14,16 @@ interface IProps extends TouchableOpacityProps {
     inProgress?: boolean;
 }
 
-export const Button = memo(({ text, type = 'main', disabled, RightAccessory, LeftAccessory, containerStyle, textStyle, inProgress, ...props }: IProps) => {
+export const ButtonComponent = ({ text, type = 'main', disabled, RightAccessory, LeftAccessory, containerStyle,
+    textStyle, inProgress, ...props }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, type), [colors, disabled, type]);
+    const styles = useMemo(() => getStyles(colors, type, disabled), [colors, disabled, type]);
 
     return (
         <TouchableOpacity {...props} disabled={inProgress || disabled} style={[styles.container, containerStyle]}>
             {inProgress ? (
                 <View style={styles.absoluteSheet}>
-                    <ActivityIndicator color={colors.background} size="small" />
+                    <ActivityIndicator color={colors.primary} size="small" />
                 </View>
             ) : (
                 <>
@@ -33,5 +34,7 @@ export const Button = memo(({ text, type = 'main', disabled, RightAccessory, Lef
             )}
         </TouchableOpacity>
     );
-},
-);
+};
+
+export const Button = memo(ButtonComponent);
+Button.displayName = 'Button';

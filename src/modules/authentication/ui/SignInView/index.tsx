@@ -11,72 +11,79 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { AppleIcon } from '@/assets/icons/AppleIcon';
 import { GoogleIcon } from '@/assets/icons/GoogleIcon';
 import { scaleVertical } from '@/utils';
-import { ErrorIcon } from '@/assets/icons/ErrorIcon';
 import { SignUpFooter } from '@/modules/authentication/ui/components/SignUpFooter';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
+import { WithErrorHandler } from '@/UIKit/ErrorHandler';
+import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 
 export const SignInView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { form, error, disabled, onChangeEmail, onChangePassword, onAuthorize, forgotPasswordPress, isLoading } =
-        useSignIn();
+    const { form, error, disabled, onChangeEmail, onChangePassword, onAuthorize, forgotPasswordPress, isLoading, 
+        retrySignIn, isAuthError } = useSignIn();
 
     return (
-        <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
-            <View style={styles.container}>
-                <View>
-                    <Typography text={t('authentication.signIn')} variant="h3" style={styles.title} />
-                    <CustomInput
-                        keyboardType="email-address"
-                        value={form.email}
-                        onChangeText={onChangeEmail}
-                        autoCapitalize="none"
-                        placeholder={t('authentication.email')}
-                        error={error}
-                    />
-                    <CustomInput
-                        secureTextEntry
-                        autoCapitalize="none"
-                        value={form.password}
-                        onChangeText={onChangePassword}
-                        placeholder={t('authentication.password')}
-                        error={error}
-                        containerStyle={styles.passwordInput}
-                    />
-                    {error && (<Warning warningText={t('authentication.somethingNotCorrect')}/>)}
-                    <TouchableOpacity onPress={forgotPasswordPress} style={styles.forgotButton}>
-                        <Typography text={t('authentication.forgotPassword')} variant="body_500" style={styles.text} />
-                    </TouchableOpacity>
-                    <Button
-                        text={t('authentication.signIn')}
-                        onPress={onAuthorize}
-                        type="secondary"
-                        disabled={disabled}
-                        inProgress={isLoading}
-                    />
-                    <View style={styles.separator}>
-                        <View style={styles.line} />
-                        <Typography text={t('authentication.or')} variant="body_500" />
-                        <View style={styles.line} />
+        <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
+            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
+                <View style={styles.container}>
+                    <View>
+                        <Typography text={t('authentication.signIn')} variant="h3" style={styles.title} />
+                        <CustomInput
+                            keyboardType="email-address"
+                            value={form.email}
+                            onChangeText={onChangeEmail}
+                            autoCapitalize="none"
+                            placeholder={t('authentication.email')}
+                            error={error}
+                        />
+                        <CustomInput
+                            secureTextEntry
+                            autoCapitalize="none"
+                            value={form.password}
+                            onChangeText={onChangePassword}
+                            placeholder={t('authentication.password')}
+                            error={error}
+                            containerStyle={styles.passwordInput}
+                        />
+                        {error && <Warning warningText={t('authentication.somethingNotCorrect')} />}
+                        <TouchableOpacity onPress={forgotPasswordPress} style={styles.forgotButton}>
+                            <Typography
+                                text={t('authentication.forgotPassword')}
+                                variant="body_500"
+                                style={styles.text}
+                            />
+                        </TouchableOpacity>
+                        <Button
+                            text={t('authentication.signIn')}
+                            onPress={onAuthorize}
+                            type="secondary"
+                            disabled={disabled}
+                            inProgress={isLoading}
+                        />
+                        <View style={styles.separator}>
+                            <View style={styles.line} />
+                            <Typography text={t('authentication.or')} variant="body_500" />
+                            <View style={styles.line} />
+                        </View>
+                        <Button
+                            text={t('authentication.continueWithGoogle')}
+                            onPress={() => {}}
+                            LeftAccessory={<GoogleIcon height={scaleVertical(24)} width={scaleVertical(24)} />}
+                            RightAccessory={<View style={styles.empty} />}
+                            containerStyle={styles.googleButton}
+                            type="auth"
+                        />
+                        <Button
+                            text={t('authentication.continueWithApple')}
+                            onPress={() => {}}
+                            LeftAccessory={<AppleIcon height={scaleVertical(24)} width={scaleVertical(24)} />}
+                            RightAccessory={<View style={styles.empty} />}
+                            type="auth"
+                        />
                     </View>
-                    <Button
-                        text={t('authentication.continueWithGoogle')}
-                        onPress={() => {}}
-                        LeftAccessory={<GoogleIcon height={scaleVertical(24)} width={scaleVertical(24)} />}
-                        RightAccessory={<View style={styles.empty} />}
-                        containerStyle={styles.googleButton}
-                        type="auth"
-                    />
-                    <Button
-                        text={t('authentication.continueWithApple')}
-                        onPress={() => {}}
-                        LeftAccessory={<AppleIcon height={scaleVertical(24)} width={scaleVertical(24)} />}
-                        RightAccessory={<View style={styles.empty} />}
-                        type="auth"
-                    />
+                    <SignUpFooter />
                 </View>
-                <SignUpFooter />
-            </View>
-        </ScreenContainer>
+            </ScreenContainer>
+        </WithErrorHandler>
     );
 };

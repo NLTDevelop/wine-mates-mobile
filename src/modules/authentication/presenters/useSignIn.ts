@@ -11,10 +11,11 @@ export const useSignIn = () => {
     const { validateEmail, validatePassword } = useValidator();
     const [form, setForm] = useState({ email: '', password: '' });
     const [error, setError] = useState(false);
+    const [isAuthError, setIsAuthError] = useState(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const onChangeEmail = (value: string) => {
-        setForm(prev => ({ ...prev, email: value?.toLowerCase() || '' }));
+        setForm(prev => ({ ...prev, email: value || '' }));
         setError(false);
     };
 
@@ -28,7 +29,7 @@ export const useSignIn = () => {
             setIsLoading(true);
             const response = await userService.signIn(form);
             if (response.isError) {
-                setError(true)
+                setIsAuthError(true)
                 toastService.showError(
                     localization.t('common.errorHappened'),
                     response.message || localization.t('common.somethingWentWrong'),
@@ -39,13 +40,21 @@ export const useSignIn = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [navigation]);
+    }, [navigation, form]);
 
     const forgotPasswordPress = useCallback(() => {
         navigation.navigate('ForgotPasswordView');
     }, [navigation]);
 
+    const retrySignIn = useCallback(() => {
+        setIsAuthError(false);
+        onAuthorize();
+      }, [onAuthorize]);
+
     const disabled = !validateEmail(form.email).isValid || !validatePassword(form.password).isValid;
 
-    return { form, error, disabled, onChangeEmail, onChangePassword, onAuthorize, forgotPasswordPress, isLoading };
+    return { 
+        form, error, disabled, onChangeEmail, onChangePassword, onAuthorize, forgotPasswordPress, isLoading, retrySignIn,
+        isAuthError
+    };
 };

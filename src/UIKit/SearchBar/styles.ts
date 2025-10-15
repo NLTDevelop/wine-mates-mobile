@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '../../UIProvider/theme/IColors';
-import { scaleFontSize, scaleHorizontal, scaleLineHeight, scaleVertical } from '../../utils';
+import { scaleFontSize, scaleHorizontal, scaleVertical } from '../../utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -29,8 +29,8 @@ export const getStyles = (colors: IColors) => {
             fontFamily: 'VisueltPro-Regular',
             fontWeight: '400',
             fontSize: scaleFontSize(16),
-            lineHeight: scaleLineHeight(20),
+            includeFontPadding: false,
         },
     });
     return styles;
-}
+};

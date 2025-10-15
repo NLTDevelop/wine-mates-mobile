@@ -40,7 +40,7 @@ export const CustomToast = ({ text1, text2, Icon, type }: IProps) => {
             {Icon}
             <View style={styles.textContainer}>
                 <Typography text={text1} variant="h6" style={styles.text} />
-                {text2 && <Typography text={text2} variant="subtitle_12_400" style={styles.text} />}
+                {text2 && <Typography text={text2} variant="body_400" style={styles.text} />}
             </View>
         </View>
     );

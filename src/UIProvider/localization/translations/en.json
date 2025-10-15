@@ -5,7 +5,15 @@
         "somethingWentWrong": "Something went wrong.",
         "save": "Save",
         "continue": "Continue",
-        "search": "Search..."
+        "search": "Search...",
+        "tryAgain": "Try again",
+        "retry": "Retry"
+    },
+    "errors": {
+        "somethingWentWrong": "Sorry, something went wrong",
+        "tryAgain": "Please try again",
+        "noConnection": "No connection",
+        "reconnect": "It looks like you’re offline. Reconnect to continue"
     },
     "authentication": {
         "welcome": "Welcome to",
