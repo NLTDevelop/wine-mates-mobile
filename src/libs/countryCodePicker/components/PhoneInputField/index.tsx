@@ -54,6 +54,7 @@ export const PhoneInputField = ({ value, onChangeText, placeholder, editable = t
                 modalRef={countryModalRef}
                 handleCountryPress={handleCountryPress}
                 handleClose={handleClose}
+                showCountryCode
             />
         </>
     );

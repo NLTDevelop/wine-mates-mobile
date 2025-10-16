@@ -1,11 +1,11 @@
 {
     "common": {
         "logo": "WineMates",
-        "errorHappened": "Error happened",
-        "somethingWentWrong": "Something went wrong.",
-        "save": "Save",
-        "continue": "Continue",
-        "search": "Search...",
+        "errorHappened": "Сталася помилка",
+        "somethingWentWrong": "Щось пішло не так.",
+        "save": "Зберегти",
+        "continue": "Продовжити",
+        "search": "Пошук...",
         "tryAgain": "Спробуйте ще раз",
         "retry": "Повторити спробу"
     },
@@ -61,6 +61,7 @@
         "getStarted": "Давайте почнемо",
         "email": "Електронна пошта",
         "mobileNumber": "Номер телефону",
-        "countryCode": "Код країни"
+        "countryCode": "Код країни",
+        "country": "Країна"
     }
 }

@@ -61,6 +61,7 @@
         "getStarted": "Let’s get started",
         "email": "E-mail",
         "mobileNumber": "Mobile number",
-        "countryCode": "Country Code"
+        "countryCode": "Country Code",
+        "country": "Country"
     }
 }

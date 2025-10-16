@@ -3,5 +3,5 @@ interface IConfig {
 }
 
 export const config: IConfig = {
-    domain: 'https://winemate.com',
+    domain: 'https://wine-mates.pp.ua/api/v1/',
 };

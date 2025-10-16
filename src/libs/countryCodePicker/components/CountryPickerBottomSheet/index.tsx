@@ -15,9 +15,10 @@ interface IProps {
     modalRef: RefObject<BottomSheetModal | null>;
     handleCountryPress: (item: ICountry) => void;
     handleClose: () => void;
+    showCountryCode?: boolean;
 }
 
-export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleClose }: IProps) => {
+export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleClose, showCountryCode = false}: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
@@ -35,8 +36,8 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
 
     const keyExtractor = useCallback((item: ICountry) => item.cca2, []);
     const renderItem = useCallback(
-        ({ item }: { item: ICountry }) => <CountryListItem item={item} handleCountryPress={handleCountryPress} />,
-        [handleCountryPress],
+        ({ item }: { item: ICountry }) => <CountryListItem item={item} handleCountryPress={handleCountryPress} showCountryCode={showCountryCode}/>,
+        [handleCountryPress, showCountryCode],
     );
 
     return (

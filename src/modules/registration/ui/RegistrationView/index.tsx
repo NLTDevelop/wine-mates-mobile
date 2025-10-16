@@ -10,6 +10,7 @@ import { Button } from '@/UIKit/Button';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { useRegistration } from '../../presenters/useRegistration';
+import { CountrySelector } from '../components/CountrySelector';
 
 export const RegistrationView = () => {
     const { t, colors } = useUiContext();
@@ -34,8 +35,10 @@ export const RegistrationView = () => {
                             value={email}
                             onChangeText={onChangeEmail}
                             placeholder={t('registration.email')}
+                            containerStyle={styles.input}
                             error={isError.status}
                         />
+                        <CountrySelector />
                     </View>
                 </View>
                 <View style={styles.footer}>
