@@ -24,13 +24,16 @@ export const getStyles = (colors: IColors) => {
         formContainer: {
             gap: scaleVertical(16),
         },
+        input: {
+            marginBottom: 0,
+        },
         footer: {
             gap: scaleVertical(24),
         },
         contentContainer: {
             flex: 1,
             alignItems: 'center',
-          },
+        },
     });
     return styles;
 };

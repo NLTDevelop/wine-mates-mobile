@@ -6,7 +6,7 @@ export interface ILinks {
 }
 
 class Links implements ILinks {
-    private _domain = `${config.domain}/api/`;
+    private _domain = `${config.domain}`;
     private _links = {
         auth: 'auth',
         changePassword: 'change-password',

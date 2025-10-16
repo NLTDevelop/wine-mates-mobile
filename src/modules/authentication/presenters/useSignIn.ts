@@ -29,11 +29,11 @@ export const useSignIn = () => {
             setIsLoading(true);
             const response = await userService.signIn(form);
             if (response.isError) {
-                setIsAuthError(true)
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    response.message || localization.t('common.somethingWentWrong'),
-                );
+                if (response.message) {
+                    toastService.showError(localization.t('common.errorHappened'), response.message);
+                } else {
+                    setIsAuthError(true);
+                }
             } else {
                 navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
             }

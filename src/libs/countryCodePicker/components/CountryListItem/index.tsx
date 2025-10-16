@@ -9,9 +9,10 @@ import { ICountry } from '../../types/ICountry';
 interface IProps {
   item: ICountry;
   handleCountryPress: (item: ICountry) => void;
+  showCountryCode: boolean;
 }
 
-export const CountryListItem = memo(({ item, handleCountryPress }: IProps) => {
+export const CountryListItem = memo(({ item, handleCountryPress, showCountryCode }: IProps) => {
   const { colors } = useUiContext();
   const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -21,7 +22,7 @@ export const CountryListItem = memo(({ item, handleCountryPress }: IProps) => {
         <Flag code={item.cca2} style={styles.flag} />
         <Typography variant="h5" text={item.name} style={styles.name}/>
       </View>
-      <Typography variant="h6" text={item.callingCode} style={styles.text} />
+      {showCountryCode && <Typography variant="h6" text={item.callingCode} style={styles.text} />}
     </TouchableOpacity>
   );
 });
