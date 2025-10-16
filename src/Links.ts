@@ -2,21 +2,21 @@ import { config } from './config';
 
 export interface ILinks {
     auth: string;
-    changePassword: string;
+    resetPassword: string;
 }
 
 class Links implements ILinks {
     private _domain = `${config.domain}`;
     private _links = {
         auth: 'auth',
-        changePassword: 'change-password',
+        resetPassword: 'reset-password',
     };
 
     public get auth() {
         return `${this._domain}${this._links.auth}`;
     }
-    public get changePassword() {
-        return `${this._domain}${this._links.changePassword}`;
+    public get resetPassword() {
+        return `${this._domain}${this._links.resetPassword}`;
     }
 }
 
