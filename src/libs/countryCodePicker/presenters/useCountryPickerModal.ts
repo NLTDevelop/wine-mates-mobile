@@ -53,13 +53,12 @@ const getLocalizedCountries = (locale: string, displayNames: RegionDisplayNames 
 
     return countries.map((c: any) => {
         const manualOverrides: Record<string, string> = {
-            AQ: '+672',
-            HM: '+672',
+            AQ: '+672', // Antarctica (uses Australian territory code)
+            HM: '+672', // Heard and McDonald Islands (also managed by Australia)
         };
 
         const phoneCode =
-            manualOverrides[c.cca2] ||
-            (c.idd?.root && c.idd?.suffixes ? `${c.idd.root}${c.idd.suffixes[0]}` : '');
+            manualOverrides[c.cca2] || (c.idd?.root && c.idd?.suffixes ? `${c.idd.root}${c.idd.suffixes[0]}` : '');
 
         const localizedName =
             customNames?.[c.cca2] ||

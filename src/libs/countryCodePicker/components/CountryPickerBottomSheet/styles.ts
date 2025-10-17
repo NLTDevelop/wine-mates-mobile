@@ -28,8 +28,10 @@ export const getStyles = (colors: IColors, insetBottom: number) => {
             marginHorizontal: scaleHorizontal(16),
             marginBottom: scaleVertical(24),
         },
-        listContentContainer: {
+        scrollContentContainer: {
             flexGrow: 1,
+        },
+        listContentContainer: {
             rowGap: scaleVertical(24),
             paddingBottom: insetBottom + scaleVertical(16),
         },
