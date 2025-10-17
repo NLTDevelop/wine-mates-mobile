@@ -22,7 +22,6 @@ export const getStyles = (colors: IColors, isFocused: boolean) => (
         },
         input: {
             flex: 1,
-            verticalAlign: 'top',
             fontFamily: 'VisueltPro-Regular',
             fontSize: scaleFontSize(16),
             fontWeight: '400',
@@ -31,6 +30,7 @@ export const getStyles = (colors: IColors, isFocused: boolean) => (
             includeFontPadding: false
         },
         inputMultiline:{
+            textAlignVertical: 'top',
             paddingVertical: scaleVertical(8),
         },
         iconContainer: {

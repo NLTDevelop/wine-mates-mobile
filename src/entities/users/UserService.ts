@@ -5,6 +5,7 @@ import { IUser } from './types/IUser';
 import { userModel } from './UserModel';
 import { ResetPasswordRequestDto } from './dto/ResetPasswordRequest.dto';
 import { ResetPasswordVerifyDto } from './dto/ResetPasswordVerify.dto';
+import { ResetPasswordConfirmDto } from './dto/ResetPasswordConfirm.dto';
 
 class UserService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -17,7 +18,7 @@ class UserService {
                 data: body,
             });
             if (!response.isError) {
-                userModel.token = response.data?.access.token;
+                userModel.token = response.data?.accessToken;
             }
             return response;
         } catch (error) {
@@ -26,16 +27,14 @@ class UserService {
         }
     };
 
-    resetPasswordRequest = async (body: ResetPasswordRequestDto): Promise<{}> => {
+    resetPasswordRequest = async (body: ResetPasswordRequestDto): Promise<IResponse<{}>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
                 url: `${this._links.resetPassword}`,
                 data: body,
             });
-            if (!response.isError) {
-                userModel.token = response.data?.access.token;
-            }
+
             return response;
         } catch (error) {
             console.warn('UserService -> resetPasswordRequest: ', error);
@@ -43,16 +42,14 @@ class UserService {
         }
     };
 
-    verifyResetCode = async (body: ResetPasswordVerifyDto): Promise<{}> => {
+    verifyResetCode = async (body: ResetPasswordVerifyDto): Promise<IResponse<{}>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
                 url: `${this._links.resetPassword}/verify`,
                 data: body,
             });
-            if (!response.isError) {
-                userModel.token = response.data?.access.token;
-            }
+
             return response;
         } catch (error) {
             console.warn('UserService -> verifyResetCode: ', error);
@@ -60,16 +57,14 @@ class UserService {
         }
     };
 
-    confirmPasswordReset = async (body: UserSignInDto): Promise<{}> => {
+    confirmPasswordReset = async (body: ResetPasswordConfirmDto): Promise<IResponse<{}>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
                 url: `${this._links.resetPassword}/confirm`,
                 data: body,
             });
-            if (!response.isError) {
-                userModel.token = response.data?.access.token;
-            }
+
             return response;
         } catch (error) {
             console.warn('UserService -> confirmPasswordReset: ', error);

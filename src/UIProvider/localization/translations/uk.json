@@ -15,6 +15,10 @@
         "noConnection": "Немає з'єднання",
         "reconnect": "Схоже, ви офлайн. Підключіться знову, щоб продовжити."
     },
+    "tabNavigator": {
+        "homeTabLabel": "Головна",
+        "youTabLabel": "Ви"
+    },
     "authentication": {
         "welcome": "Ласкаво просимо до",
         "welcomeDescription": "Відкривайте для себе нові вина, фіксуйте свої враження та спілкуйтеся з іншими любителями вина.",
@@ -62,6 +66,17 @@
         "email": "Електронна пошта",
         "mobileNumber": "Номер телефону",
         "countryCode": "Код країни",
-        "country": "Країна"
+        "country": "Країна",
+        "personalDetails": "Особисті дані",
+        "firstName": "Ім'я",
+        "firstNameExample": "наприклад, Даніель, а не «Ден»",
+        "lastName": "Прізвище",
+        "occupation": "Професія",
+        "wineryName": "Назва виноробні"
+    },
+    "wineLevel": {
+        "lover" : "Любитель вина",
+        "expert": "Винний експерт",
+        "creator": "Винороб"
     }
 }

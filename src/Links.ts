@@ -9,7 +9,7 @@ class Links implements ILinks {
     private _domain = `${config.domain}`;
     private _links = {
         auth: 'auth',
-        resetPassword: 'reset-password',
+        resetPassword: 'auth/reset-password',
     };
 
     public get auth() {

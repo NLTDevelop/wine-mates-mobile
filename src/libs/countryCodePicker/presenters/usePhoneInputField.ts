@@ -6,7 +6,13 @@ import countries from 'world-countries';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { ICountry } from '../types/ICountry';
 
-export const usePhoneInputField = (onChangeText: (value: string) => void, clearPhone?: () => void) => {
+interface IProps  {
+    onChangeText: (value: string) => void,
+    clearPhone?: () => void,
+    onChangeCountryCode?: (code: string) => void
+}
+
+export const usePhoneInputField = ({onChangeText, clearPhone, onChangeCountryCode} : IProps) => {
     const lang = RNLocalize.getLocales()[0]?.languageCode || 'en';
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
     const [visible, setVisible] = useState(false);
@@ -44,6 +50,12 @@ export const usePhoneInputField = (onChangeText: (value: string) => void, clearP
         };
         detectCountry();
     }, [lang]);
+
+    useEffect(() => {
+        if (selectedCountry?.callingCode && onChangeCountryCode) {
+            onChangeCountryCode(selectedCountry.callingCode);
+        }
+    }, [selectedCountry?.callingCode, onChangeCountryCode]);
 
     const handlePhoneChange = useCallback(
         (text: string) => {

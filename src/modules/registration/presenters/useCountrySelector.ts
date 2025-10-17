@@ -1,7 +1,8 @@
+import { ICountry } from '@/libs/countryCodePicker/types/ICountry';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useCallback, useRef, useState } from 'react';
 
-export const useCountrySelector = () => {
+export const useCountrySelector = (onChangeCountry: (country: ICountry) => void) => {
     const countryModalRef = useRef<BottomSheetModal>(null);
     const [isOpened, setIsOpened] = useState(false);
 
@@ -15,12 +16,11 @@ export const useCountrySelector = () => {
         countryModalRef.current?.present();
     }, []);
 
-    const handleCountryPress = useCallback(() => {
-        //TODO: add Country data
-        console.log('Select!');
+    const handleCountryPress = useCallback((country: ICountry) => {
+        onChangeCountry(country);
         setIsOpened(false);
         countryModalRef.current?.dismiss();
-    }, []);
+    }, [onChangeCountry]);
 
     return { countryModalRef, handleClose, handlePress, isOpened, handleCountryPress };
 };

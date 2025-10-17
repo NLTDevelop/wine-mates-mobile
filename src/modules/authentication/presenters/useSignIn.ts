@@ -10,18 +10,17 @@ export const useSignIn = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { validateEmail, validatePassword } = useValidator();
     const [form, setForm] = useState({ email: '', password: '' });
-    const [error, setError] = useState(false);
-    const [isAuthError, setIsAuthError] = useState(false);
+    const [isError, setIsError] = useState({ status: false, errorText: '' });
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const onChangeEmail = (value: string) => {
         setForm(prev => ({ ...prev, email: value || '' }));
-        setError(false);
+        setIsError({ status: false, errorText: '' });
     };
 
     const onChangePassword = (value: string) => {
         setForm(prev => ({ ...prev, password: value }));
-        setError(false);
+        setIsError({ status: false, errorText: '' });
     };
 
     const onAuthorize = useCallback(async () => {
@@ -31,8 +30,9 @@ export const useSignIn = () => {
             if (response.isError) {
                 if (response.message) {
                     toastService.showError(localization.t('common.errorHappened'), response.message);
+                    setIsError({ status: true, errorText: response.message });
                 } else {
-                    setIsAuthError(true);
+                    setIsError({ status: true, errorText: '' });
                 }
             } else {
                 navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
@@ -47,14 +47,13 @@ export const useSignIn = () => {
     }, [navigation]);
 
     const retrySignIn = useCallback(() => {
-        setIsAuthError(false);
+        setIsError({ status: false, errorText: '' });
         onAuthorize();
-      }, [onAuthorize]);
+    }, [onAuthorize]);
 
     const disabled = !validateEmail(form.email).isValid || !validatePassword(form.password).isValid;
 
     return { 
-        form, error, disabled, onChangeEmail, onChangePassword, onAuthorize, forgotPasswordPress, isLoading, retrySignIn,
-        isAuthError
+        form, isError, disabled, onChangeEmail, onChangePassword, onAuthorize, forgotPasswordPress, isLoading, retrySignIn,
     };
 };
