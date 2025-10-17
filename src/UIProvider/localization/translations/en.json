@@ -72,7 +72,8 @@
         "firstNameExample": "e.g., Daniel, not “Dan”",
         "lastName": "Last name",
         "occupation": "Occupation",
-        "wineryName": "Winery name"
+        "wineryName": "Winery name",
+        "birthday": "Birthday (dd/mm/yyyy)"
     },
     "wineLevel": {
         "lover" : "Wine lover",

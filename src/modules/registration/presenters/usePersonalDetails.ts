@@ -17,7 +17,7 @@ export const usePersonalDetails = () => {
         setIsError({ status: false, errorText: '' });
     }, []);
 
-    const onChangeBirthDay = useCallback((value: string) => {
+    const onChangeBirthday = useCallback((value: string) => {
         setForm(prev => ({ ...prev, birthDay: value || '' }));
         setIsError({ status: false, errorText: '' });
     }, []);
@@ -51,7 +51,7 @@ export const usePersonalDetails = () => {
     }, [navigation]);
 
     return { 
-        form, onChangeFirstName, onChangeLastName, onChangeBirthDay, onChangeOccupation, handleNextPress, onChangeWineryName,
+        form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
         isError
     };
 };

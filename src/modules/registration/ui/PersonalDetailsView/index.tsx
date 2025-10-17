@@ -12,11 +12,12 @@ import { usePersonalDetails } from '../../presenters/usePersonalDetails';
 import { registerUserModel } from '@/entities/users/RegisterUserModel';
 import { observer } from 'mobx-react';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { BirthdaySelector } from '../components/BirthdaySelector';
 
 export const PersonalDetailsView = observer(() => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { form, onChangeFirstName, onChangeLastName, onChangeBirthDay, onChangeOccupation, handleNextPress, onChangeWineryName,
+    const { form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
         isError } = usePersonalDetails();
 
     return (
@@ -53,6 +54,8 @@ export const PersonalDetailsView = observer(() => {
                             containerStyle={styles.input}
                             error={isError.status}
                         />
+
+                        <BirthdaySelector date={form.birthDay} onChangeBirthdayDate={onChangeBirthday}/>
                         {registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT && (
                             <CustomInput
                                 autoCapitalize="none"

@@ -72,7 +72,8 @@
         "firstNameExample": "наприклад, Даніель, а не «Ден»",
         "lastName": "Прізвище",
         "occupation": "Професія",
-        "wineryName": "Назва виноробні"
+        "wineryName": "Назва виноробні",
+        "birthday": "Дата народження (дд/мм/рррр)"
     },
     "wineLevel": {
         "lover" : "Любитель вина",
