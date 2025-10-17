@@ -15,6 +15,10 @@
         "noConnection": "No connection",
         "reconnect": "It looks like you’re offline. Reconnect to continue"
     },
+    "tabNavigator": {
+        "homeTabLabel": "Home",
+        "youTabLabel": "You"
+    },
     "authentication": {
         "welcome": "Welcome to",
         "welcomeDescription": "Discover new wines, capture your impressions, and connect with fellow wine lovers.",
@@ -62,6 +66,18 @@
         "email": "E-mail",
         "mobileNumber": "Mobile number",
         "countryCode": "Country Code",
-        "country": "Country"
+        "country": "Country",
+        "personalDetails": "Personal details",
+        "firstName": "First name",
+        "firstNameExample": "e.g., Daniel, not “Dan”",
+        "lastName": "Last name",
+        "occupation": "Occupation",
+        "wineryName": "Winery name",
+        "birthday": "Birthday (dd/mm/yyyy)"
+    },
+    "wineLevel": {
+        "lover" : "Wine lover",
+        "expert": "Wine expert",
+        "creator": "Winemaker"
     }
 }

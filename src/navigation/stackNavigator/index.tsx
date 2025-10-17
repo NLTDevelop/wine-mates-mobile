@@ -8,6 +8,8 @@ import { OTPView } from '@/modules/authentication/ui/OTPView';
 import { CreateNewPasswordView } from '@/modules/authentication/ui/CreateNewPasswordView';
 import { MyLevelView } from '@/modules/registration/ui/MyLevelView';
 import { RegistrationView } from '@/modules/registration/ui/RegistrationView';
+import { TabNavigator } from '../tabNavigator';
+import { PersonalDetailsView } from '@/modules/registration/ui/PersonalDetailsView';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +23,8 @@ export const MainStackNavigator = observer(() => {
         <Stack.Screen name="CreateNewPasswordView" component={CreateNewPasswordView} />
         <Stack.Screen name="MyLevelView" component={MyLevelView} />
         <Stack.Screen name="RegistrationView" component={RegistrationView} />
+        <Stack.Screen name="PersonalDetailsView" component={PersonalDetailsView} />
+        <Stack.Screen name="TabNavigator" component={TabNavigator} />
     </Stack.Navigator>
     );
 });

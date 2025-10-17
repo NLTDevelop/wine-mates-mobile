@@ -15,13 +15,14 @@ interface IProps {
     placeholder?: string;
     editable?: boolean;
     clearPhone?: () => void;
+    onChangeCountryCode?: (code: string) => void;
 }
 
-export const PhoneInputField = ({ value, onChangeText, placeholder, editable = true, clearPhone }: IProps) => {
+export const PhoneInputField = ({ value, onChangeText, placeholder, editable = true, clearPhone, onChangeCountryCode }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { loading, selectedCountry, visible, handleCountryPress, handlePhoneChange, countryModalRef, maxLength,
-        handleCountryCodePress, handleClose } = usePhoneInputField(onChangeText, clearPhone);
+        handleCountryCodePress, handleClose } = usePhoneInputField({onChangeText, clearPhone, onChangeCountryCode});
 
     return (
         <>

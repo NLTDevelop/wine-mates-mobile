@@ -1,6 +1,6 @@
 import { RefObject, useCallback, useMemo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetFlatList, WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
+import { View, TouchableOpacity, FlatList } from 'react-native';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView, WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -18,7 +18,7 @@ interface IProps {
     showCountryCode?: boolean;
 }
 
-export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleClose, showCountryCode = false}: IProps) => {
+export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleClose, showCountryCode = false }: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
@@ -36,7 +36,9 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
 
     const keyExtractor = useCallback((item: ICountry) => item.cca2, []);
     const renderItem = useCallback(
-        ({ item }: { item: ICountry }) => <CountryListItem item={item} handleCountryPress={handleCountryPress} showCountryCode={showCountryCode}/>,
+        ({ item }: { item: ICountry }) => (
+            <CountryListItem item={item} handleCountryPress={handleCountryPress} showCountryCode={showCountryCode} />
+        ),
         [handleCountryPress, showCountryCode],
     );
 
@@ -49,6 +51,7 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
             backdropComponent={renderBackdrop}
             enableDynamicSizing={false}
             backgroundStyle={styles.container}
+            enablePanDownToClose={false}
         >
             <View style={styles.headerContainer}>
                 <View style={styles.header}>
@@ -64,22 +67,22 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
                     containerStyle={styles.searchContainer}
                 />
             </View>
-            <BottomSheetFlatList
-                data={countriesData}
-                keyExtractor={keyExtractor}
-                renderItem={renderItem}
+
+            <BottomSheetScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.listContentContainer}
-                initialNumToRender={15}
-                maxToRenderPerBatch={15}
-                windowSize={15}
-                removeClippedSubviews={false}
-                scrollEventThrottle={16}
-                decelerationRate="fast"
-                bounces={false}
-                overScrollMode="never"
-                alwaysBounceVertical={false}
-            />
+                contentContainerStyle={styles.scrollContentContainer}
+            >
+                <FlatList
+                    data={countriesData}
+                    keyExtractor={keyExtractor}
+                    renderItem={renderItem}
+                    scrollEnabled={false}
+                    removeClippedSubviews={true}
+                    initialNumToRender={25}
+                    contentContainerStyle={styles.listContentContainer}
+                    windowSize={7}
+                />
+            </BottomSheetScrollView>
         </BottomSheetModal>
     );
 };

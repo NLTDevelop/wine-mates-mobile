@@ -4,50 +4,79 @@ import { useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation
 import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useOTPTimer } from '@/modules/authentication/presenters/useOTPTimer';
+import { toastService } from '@/libs/toast/toastService';
+import { userService } from '@/entities/users/UserService';
 
 const CELL_COUNT = 4;
 
 export const useOTP = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const { remaining, isActive, start: startTimer } = useOTPTimer();
     const { email } = useRoute().params as { email: string };
     const [value, setValue] = useState('');
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
     const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value, setValue });
     const [isLoading, setIsLoading] = useState(false);
-
-    const { remaining, isActive, start: startTimer } = useOTPTimer();
+    const [isResending, setIsResending] = useState(false);
+    const isResendDisabled = isActive || isResending
 
     const handleOTPValueChange = (otp: string) => {
         setIsError({ status: false, errorText: '' });
         setValue(otp);
     };
 
-    const handleResetPress = useCallback(() => {
+    const handleResetPress = useCallback(async () => {
         try {
             if (value.length < CELL_COUNT) {
                 setIsError({ status: true, errorText: localization.t('authentication.incompleteCode') });
                 return;
             }
-              
+
             setIsLoading(true);
-            //TODO
-            navigation.navigate('CreateNewPasswordView');
+            const response = await userService.verifyResetCode({ email, code: value });
+
+            if (response.isError) {
+                if (response.message) {
+                    toastService.showError(localization.t('common.errorHappened'), response.message);
+                    setIsError({ status: true, errorText: response.message });
+                } else {
+                    setIsError({ status: true, errorText: ''});
+                }
+            } else {
+                navigation.navigate('CreateNewPasswordView', { email });
+            }
         } finally {
             setIsLoading(false);
         }
-    }, [navigation, value]);
+    }, [navigation, value, email]);
 
-    const handleResendCode = useCallback(() => {
+    const handleResendCode = useCallback(async () => {
         try {
-            //TODO
-            startTimer();
+            setIsResending(true);
+
+            const response = await userService.resetPasswordRequest({ email });
+
+            if (response.isError) {
+                if (response.message) {
+                    toastService.showError(localization.t('common.errorHappened'), response.message);
+                } else {
+                    setIsError({ status: true, errorText: ''});
+                }
+            } else {
+                startTimer();
+            }
         } finally {
+            setIsResending(false);
         }
-    }, [startTimer]);
+    }, [startTimer, email]);
+
+    const handleRetry = useCallback(() => {
+        setIsError({ status: false, errorText: '' });
+    }, []);
 
     return { 
         email, props, getCellOnLayoutHandler, ref, value, handleOTPValueChange, isError, isLoading, handleResetPress, 
-        CELL_COUNT, timer: remaining, isResendDisabled: isActive, handleResendCode
+        CELL_COUNT, timer: remaining, isResendDisabled, handleResendCode, handleRetry
     };
 };

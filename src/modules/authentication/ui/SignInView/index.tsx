@@ -19,11 +19,14 @@ import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 export const SignInView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { form, error, disabled, onChangeEmail, onChangePassword, onAuthorize, forgotPasswordPress, isLoading, 
-        retrySignIn, isAuthError } = useSignIn();
+    const { form, isError, disabled, onChangeEmail, onChangePassword, onAuthorize, forgotPasswordPress, isLoading, 
+        retrySignIn } = useSignIn();
 
     return (
-        <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
+        <WithErrorHandler
+            error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null}
+            onRetry={retrySignIn}
+        >
             <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
                 <View style={styles.container}>
                     <View>
@@ -34,7 +37,7 @@ export const SignInView = () => {
                             onChangeText={onChangeEmail}
                             autoCapitalize="none"
                             placeholder={t('authentication.email')}
-                            error={error}
+                            error={isError.status}
                         />
                         <CustomInput
                             secureTextEntry
@@ -42,10 +45,10 @@ export const SignInView = () => {
                             value={form.password}
                             onChangeText={onChangePassword}
                             placeholder={t('authentication.password')}
-                            error={error}
+                            error={isError.status}
                             containerStyle={styles.passwordInput}
                         />
-                        {error && <Warning warningText={t('authentication.somethingNotCorrect')} />}
+                        {isError.status && <Warning warningText={isError.errorText} />}
                         <TouchableOpacity onPress={forgotPasswordPress} style={styles.forgotButton}>
                             <Typography
                                 text={t('authentication.forgotPassword')}

@@ -1,9 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useValidator } from '@/hooks/useValidator';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useOTPTimer } from '@/modules/authentication/presenters/useOTPTimer';
+import { userService } from '@/entities/users/UserService';
+import { toastService } from '@/libs/toast/toastService';
 
 export const useForgotPassword = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -18,7 +20,7 @@ export const useForgotPassword = () => {
         setEmail(text);
     };
 
-    const handleSendPress = () => {
+    const handleSendPress = useCallback(async () => {
         try {
             if (isActive) return;
 
@@ -31,13 +33,29 @@ export const useForgotPassword = () => {
             }
 
             setIsLoading(true);
-            //TODO
-            startTimer();
-            navigation.navigate('OTPView', { email });
+
+            const response = await userService.resetPasswordRequest({ email });
+
+            if (response.isError) {
+                if (response.message) {
+                    toastService.showError(localization.t('common.errorHappened'), response.message);
+                    setIsError({ status: true, errorText: response.message });
+                } else {
+                    setIsError({ status: true, errorText: ''});
+                }
+            } else {
+                startTimer();
+                navigation.navigate('OTPView', { email });
+            }
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [email, isActive, navigation, startTimer, validateEmail]);
 
-    return { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled: isActive };
+    const handleRetry = useCallback(() => {
+        setIsError({ status: false, errorText: '' });
+        handleSendPress();
+    }, [handleSendPress]);
+
+    return { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled: isActive, handleRetry };
 };
