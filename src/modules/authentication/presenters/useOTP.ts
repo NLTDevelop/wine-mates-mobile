@@ -39,6 +39,7 @@ export const useOTP = () => {
             if (response.isError) {
                 if (response.message) {
                     toastService.showError(localization.t('common.errorHappened'), response.message);
+                    setIsError({ status: true, errorText: response.message });
                 } else {
                     setIsError({ status: true, errorText: ''});
                 }
