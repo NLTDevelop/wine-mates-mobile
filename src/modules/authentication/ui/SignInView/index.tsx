@@ -10,17 +10,21 @@ import { useSignIn } from '@/modules/authentication/presenters/useSignIn';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { AppleIcon } from '@/assets/icons/AppleIcon';
 import { GoogleIcon } from '@/assets/icons/GoogleIcon';
-import { scaleVertical } from '@/utils';
+import { isIOS, scaleVertical } from '@/utils';
 import { SignUpFooter } from '@/modules/authentication/ui/components/SignUpFooter';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
+import { useGoogleSignIn } from '../../presenters/useGoogleSignIn';
+import { useAppleIdSignIn } from '../../presenters/useAppleIdSignIn';
 
 export const SignInView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { form, isError, disabled, onChangeEmail, onChangePassword, onAuthorize, forgotPasswordPress, isLoading, 
         retrySignIn } = useSignIn();
+    const { isGoogleLoginLoading, handleGoogleSignIn } = useGoogleSignIn();
+    const { isAppleLoginLoading, handleAppleSignIn } = useAppleIdSignIn();
 
     return (
         <WithErrorHandler
@@ -70,19 +74,21 @@ export const SignInView = () => {
                         </View>
                         <Button
                             text={t('authentication.continueWithGoogle')}
-                            onPress={() => {}}
+                            onPress={handleGoogleSignIn}
                             LeftAccessory={<GoogleIcon height={scaleVertical(24)} width={scaleVertical(24)} />}
                             RightAccessory={<View style={styles.empty} />}
                             containerStyle={styles.googleButton}
+                            inProgress={isGoogleLoginLoading}
                             type="auth"
                         />
-                        <Button
+                        {isIOS && <Button
                             text={t('authentication.continueWithApple')}
-                            onPress={() => {}}
+                            onPress={handleAppleSignIn}
                             LeftAccessory={<AppleIcon height={scaleVertical(24)} width={scaleVertical(24)} />}
                             RightAccessory={<View style={styles.empty} />}
+                            inProgress={isAppleLoginLoading}
                             type="auth"
-                        />
+                        />}
                     </View>
                     <SignUpFooter />
                 </View>

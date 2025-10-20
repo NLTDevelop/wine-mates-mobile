@@ -4,8 +4,8 @@ import { RootNavigator } from './navigation/rootNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ToastOverlay } from './libs/toast/ui/ToastOverlay';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import React from 'react';
 import { StatusBar } from 'react-native';
+import { useGoogleConfig } from './hooks/useGoogleConfig';
 
 export const App = () => (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -17,6 +17,7 @@ export const App = () => (
 
 const ThemedApp = () => {
     const { colors, theme } = useUiContext();
+    useGoogleConfig();
 
     return (
         <SafeAreaProvider style={{ flex: 1, backgroundColor: colors.background }}>
