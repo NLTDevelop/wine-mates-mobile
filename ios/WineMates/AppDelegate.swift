@@ -2,6 +2,7 @@ import UIKit
 import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
+import GoogleSignIn
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -29,6 +30,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       launchOptions: launchOptions
     )
 
+    return true
+  }
+
+  func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+  ) -> Bool {
+    // Google Sign-In обработка
+    if GIDSignIn.sharedInstance.handle(url) {
+      return true
+    }
+
+    // Apple Sign-In не требует отдельного SDK-обработчика — просто возвращаем true
+    if url.scheme?.starts(with: Bundle.main.bundleIdentifier ?? "") == true {
+      return true
+    }
+
+    // На всякий случай возвращаем true для любых собственных URL
     return true
   }
 }

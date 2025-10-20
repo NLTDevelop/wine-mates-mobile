@@ -5,11 +5,13 @@ import { Typography } from '../../UIKit/Typography';
 // import { TabBarIcon } from './components/TabBarIcon';
 import { HomeView } from '@/modules/home/ui/HomeView';
 import { PersonalProfileView } from '@/modules/personalProfile/ui/PersonalProfileView';
+import { useIsUserAuthorized } from '@/hooks/useIsUserAuthorized';
 
 const Tab = createBottomTabNavigator();
 
 export const TabNavigator = observer(() => {
     const { colors, t } = useUiContext();
+    useIsUserAuthorized();
 
     return (
         <Tab.Navigator initialRouteName="HomeView" screenOptions={{ headerShown: false }} detachInactiveScreens={false}>

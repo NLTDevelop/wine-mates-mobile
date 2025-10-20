@@ -2,11 +2,12 @@ import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLe
 import { registerUserModel } from '@/entities/users/RegisterUserModel';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useCallback } from 'react';
 
 export const useMyLevel = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const handleWineLoverPress = () => {
+    const handleWineLoverPress = useCallback(() => {
         registerUserModel.user = {
             email: '',
             password: '',
@@ -18,9 +19,9 @@ export const useMyLevel = () => {
             birthday: '',
         }
         navigation.navigate('RegistrationView');
-    };
+    }, [navigation]);
 
-    const handleWineExpertPress = () => {
+    const handleWineExpertPress = useCallback(() => {
         registerUserModel.user = {
             email: '',
             password: '',
@@ -33,9 +34,9 @@ export const useMyLevel = () => {
             occupation: '',
         }
         navigation.navigate('RegistrationView');
-    };
+    }, [navigation]);
 
-    const handleWinemakerPress = () => {
+    const handleWinemakerPress = useCallback(() => {
         registerUserModel.user = {
             email: '',
             password: '',
@@ -48,7 +49,7 @@ export const useMyLevel = () => {
             wineryName: '',
         }
         navigation.navigate('RegistrationView');
-    };
+    }, [navigation]);
 
     return { handleWineLoverPress, handleWineExpertPress, handleWinemakerPress };
 };

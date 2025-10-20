@@ -9,11 +9,14 @@ import FastImage from '@d11/react-native-fast-image';
 import { Button } from '@/UIKit/Button';
 import { useWelcome } from '@/modules/launchApp/presenters/useWelcome';
 import { RedLineIcon } from '@/assets/icons/RedLineIcon';
+import { ConfirmationModal } from '@/UIKit/ConfirmationModal';
+import { useConfirmationModal } from '@/UIKit/ConfirmationModal/presenters/useConfirmationModal';
 
 export const WelcomeView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { handleSignInPress, handleJoinNowPress } = useWelcome();
+    const { isVisible, onShowModal, onHide } = useConfirmationModal();
+    const { handleSignInPress, handleJoinNowPress } = useWelcome(onHide);
 
     return (
         <ScreenContainer edges={[]}>
@@ -38,7 +41,7 @@ export const WelcomeView = () => {
                 </View>
                 <View style={styles.footer}>
                     <View style={styles.buttonContainer}>
-                        <Button text={t('authentication.join')} onPress={handleJoinNowPress} />
+                        <Button text={t('authentication.join')} onPress={onShowModal} />
                         <Button text={t('authentication.signIn')} onPress={handleSignInPress} type="secondary" />
                     </View>
                     <View style={styles.termsContainer}>
@@ -69,6 +72,13 @@ export const WelcomeView = () => {
                     </View>
                 </View>
             </View>
+            <ConfirmationModal
+                isVisible={isVisible}
+                onHide={onHide}
+                onConfirm={handleJoinNowPress}
+                title={t('registration.birthdayTitle')}
+                description={t('registration.birthdayDescription')}
+            />
         </ScreenContainer>
     );
 };

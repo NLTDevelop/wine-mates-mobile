@@ -1,28 +1,38 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { ArrowDownIcon } from '@/assets/icons/ArrowDownIcon';
-import { useBirthdaySelector } from '@/modules/registration/presenters/useBirthdaySelector';
+import { format } from 'date-fns';
 
 interface IProps {
-    date: string | null
-    onChangeBirthdayDate: (date: string) => void
+    date: string | null;
+    handlePress: () => void;
+    isOpened: boolean;
+    isError: boolean;
 }
 
-export const BirthdaySelector = ({ date, onChangeBirthdayDate }: IProps) => {
+export const BirthdaySelector = ({ date, handlePress, isOpened, isError }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { handlePress, isOpened } = useBirthdaySelector(onChangeBirthdayDate);
+    const formattedDate = useMemo(() => {
+        if (!date) return '';
+        const selectedDate = new Date(date);
+        try {
+            const formatted = format(selectedDate, 'dd/MM/yyyy');
+            return `${t('registration.birthdayWithoutFormat')} (${formatted})`;
+        } catch {
+            return `${t('registration.birthday')}`;
+        }
+    }, [date, t]);
 
     return (
-        <>
-            <TouchableOpacity style={styles.container} onPress={handlePress}>
-                <Typography variant="h6" text={date || t('registration.birthday')} />
+        <View>
+            <TouchableOpacity style={isError ? styles.containerError : styles.container} onPress={handlePress}>
+                <Typography variant="h6" text={formattedDate || t('registration.birthday')} />
                 <ArrowDownIcon rotate={isOpened ? 180 : 0} />
             </TouchableOpacity>
-          
-        </>
+        </View>
     );
 };

@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (colors: IColors, bottomInset: number) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -23,6 +23,7 @@ export const getStyles = (colors: IColors) => {
         },
         formContainer: {
             gap: scaleVertical(16),
+            marginBottom: scaleVertical(16),
         },
         exampleText: {
             marginLeft: scaleHorizontal(16),
@@ -38,6 +39,13 @@ export const getStyles = (colors: IColors) => {
         contentContainer: {
             flex: 1,
             alignItems: 'center',
+        },
+        pickerWrapper: {
+            width: '100%',
+            backgroundColor: colors.background_grey,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingBottom: bottomInset,
         },
     });
     return styles;
