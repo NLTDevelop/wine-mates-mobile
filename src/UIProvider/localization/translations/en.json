@@ -7,7 +7,8 @@
         "continue": "Continue",
         "search": "Search...",
         "tryAgain": "Try again",
-        "retry": "Retry"
+        "retry": "Retry",
+        "agreeAndContinue": "Agree and continue"
     },
     "errors": {
         "somethingWentWrong": "Sorry, something went wrong",
@@ -75,7 +76,9 @@
         "wineryName": "Winery name",
         "birthday": "Birthday (dd/mm/yyyy)",
         "birthdayWithoutFormat": "Birthday",
-        "birthdayError": "You must be at least 18 years old."
+        "birthdayError": "You must be at least 18 years old.",
+        "birthdayTitle": "To sign up, you need to be at least 18 years.",
+        "birthdayDescription": "Your birthday won’t be shared with other people who use WineMates"
     },
     "wineLevel": {
         "lover" : "Wine lover",
