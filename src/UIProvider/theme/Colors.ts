@@ -6,6 +6,7 @@ export const COLORS: { light: IColors } = {
         background_secondary: '#FFF5EB', // done
         background_light: '#E4E4E4', //done
         background_middle: '#F0F0F0', //done
+        background_grey: '#D0D3D9', // done
         
         border: '#E4E4E4', // done
         border_strong: '#000000', //done

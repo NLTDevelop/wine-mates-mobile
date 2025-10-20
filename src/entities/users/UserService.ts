@@ -6,6 +6,7 @@ import { userModel } from './UserModel';
 import { ResetPasswordRequestDto } from './dto/ResetPasswordRequest.dto';
 import { ResetPasswordVerifyDto } from './dto/ResetPasswordVerify.dto';
 import { ResetPasswordConfirmDto } from './dto/ResetPasswordConfirm.dto';
+import { IRegisterUser } from './types/IRegisterUser';
 
 class UserService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -23,6 +24,24 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> signIn: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    signUp = async (body: IRegisterUser): Promise<IResponse<IUser>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.auth}/sign-up`,
+                data: body,
+            });
+           
+            if (!response.isError) {
+                userModel.token = response.data?.accessToken;
+            }
+            return response;
+        } catch (error) {
+            console.warn('UserService -> signUp: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

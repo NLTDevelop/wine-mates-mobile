@@ -73,7 +73,9 @@
         "lastName": "Last name",
         "occupation": "Occupation",
         "wineryName": "Winery name",
-        "birthday": "Birthday (dd/mm/yyyy)"
+        "birthday": "Birthday (dd/mm/yyyy)",
+        "birthdayWithoutFormat": "Birthday",
+        "birthdayError": "You must be at least 18 years old."
     },
     "wineLevel": {
         "lover" : "Wine lover",

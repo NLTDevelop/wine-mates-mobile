@@ -13,16 +13,23 @@ import { registerUserModel } from '@/entities/users/RegisterUserModel';
 import { observer } from 'mobx-react';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { BirthdaySelector } from '../components/BirthdaySelector';
+import DatePicker from 'react-native-date-picker';
+import { useBirthdaySelector } from '../../presenters/useBirthdaySelector';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Warning } from '@/modules/authentication/ui/components/Warning';
 
 export const PersonalDetailsView = observer(() => {
-    const { t, colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const { t, colors, locale, theme } = useUiContext();
+    const { bottom } = useSafeAreaInsets(); 
+    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
     const { form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
-        isError } = usePersonalDetails();
+        isError, isDisabled } = usePersonalDetails();
+    const { handlePress, isOpened, pickerDate, setPickerDate } = useBirthdaySelector(onChangeBirthday);
+    const bottomInset = useMemo(() => ({paddingBottom: isOpened ? 0 : bottom}), [bottom, isOpened]);
 
     return (
-        <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
-            <View style={styles.container}>
+        <ScreenContainer edges={['top']} headerComponent={<HeaderWithBackButton />} scrollEnabled>
+            <View style={[styles.container, bottomInset]}>
                 <View style={styles.mainContainer}>
                     <Typography text={t('registration.personalDetails')} variant="h3" style={styles.title} />
                     <Typography
@@ -38,7 +45,6 @@ export const PersonalDetailsView = observer(() => {
                                 onChangeText={onChangeFirstName}
                                 placeholder={t('registration.firstName')}
                                 containerStyle={styles.input}
-                                error={isError.status}
                             />
                             <Typography
                                 variant="subtitle_12_400"
@@ -52,10 +58,11 @@ export const PersonalDetailsView = observer(() => {
                             onChangeText={onChangeLastName}
                             placeholder={t('registration.lastName')}
                             containerStyle={styles.input}
-                            error={isError.status}
                         />
-
-                        <BirthdaySelector date={form.birthDay} onChangeBirthdayDate={onChangeBirthday}/>
+                        <View>
+                            <BirthdaySelector date={form.birthday} handlePress={handlePress} isOpened={isOpened} isError={isError.status}/>
+                            {isError.status && <Warning warningText={isError.errorText} />}
+                        </View>
                         {registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT && (
                             <CustomInput
                                 autoCapitalize="none"
@@ -63,7 +70,6 @@ export const PersonalDetailsView = observer(() => {
                                 onChangeText={onChangeOccupation}
                                 placeholder={t('registration.occupation')}
                                 containerStyle={styles.input}
-                                error={isError.status}
                             />
                         )}
                         {registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR && (
@@ -73,16 +79,26 @@ export const PersonalDetailsView = observer(() => {
                                 onChangeText={onChangeWineryName}
                                 placeholder={t('registration.wineryName')}
                                 containerStyle={styles.input}
-                                error={isError.status}
                             />
                         )}
                     </View>
                 </View>
                 <View style={styles.footer}>
-                    <Button text={t('common.continue')} onPress={handleNextPress} type="secondary" />
+                    <Button text={t('common.continue')} onPress={handleNextPress} type="secondary" disabled={isDisabled}/>
                     <SignInFooter />
                 </View>
             </View>
+            {isOpened && (
+                <View style={styles.pickerWrapper}>
+                    <DatePicker
+                        locale={locale}
+                        mode="date"
+                        date={pickerDate}
+                        onDateChange={setPickerDate}
+                        theme={theme}
+                    />
+                </View>
+            )}
         </ScreenContainer>
     );
 });

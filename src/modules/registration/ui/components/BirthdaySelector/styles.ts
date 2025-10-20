@@ -15,6 +15,17 @@ export const getStyles = (colors: IColors) => {
             paddingVertical: scaleVertical(14),
             paddingHorizontal: scaleHorizontal(16),
         },
+        containerError: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: colors.background,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: colors.error,
+            paddingVertical: scaleVertical(14),
+            paddingHorizontal: scaleHorizontal(16),
+        }
     });
     return styles;
 };

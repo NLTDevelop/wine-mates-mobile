@@ -44,6 +44,6 @@ export const getStyles = (colors: IColors, isFocused: boolean) => (
         },
         errorText: {
             color: colors.error,
-            marginTop: 4,
+            marginTop: scaleVertical(4),
         },
     }));

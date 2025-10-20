@@ -73,7 +73,9 @@
         "lastName": "Прізвище",
         "occupation": "Професія",
         "wineryName": "Назва виноробні",
-        "birthday": "Дата народження (дд/мм/рррр)"
+        "birthday": "Дата народження (дд/мм/рррр)",
+        "birthdayWithoutFormat": "Дата народження",
+        "birthdayError": "Вам має бути щонайменше 18 років."
     },
     "wineLevel": {
         "lover" : "Любитель вина",
