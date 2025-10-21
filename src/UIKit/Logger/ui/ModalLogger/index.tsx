@@ -18,7 +18,7 @@ export const ModalLogger = observer(() => {
     }, []);
 
     return (
-        <Modal visible={loggerModel.isVisibleLogs}>
+        <Modal visible={loggerModel.isVisibleLogs} statusBarTranslucent>
             <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.button} onPress={onClose}>
@@ -29,7 +29,7 @@ export const ModalLogger = observer(() => {
                     data={loggerModel.logs}
                     renderItem={renderItem}
                     keyExtractor={keyExtractor}
-                    style={styles.container}
+                    style={styles.list}
                 />
             </View>
         </Modal>

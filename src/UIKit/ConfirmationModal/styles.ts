@@ -1,5 +1,5 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors) => {
@@ -7,6 +7,8 @@ export const getStyles = (colors: IColors) => {
         modal: {
             justifyContent: 'center',
             alignItems: 'center',
+            marginVertical: 0,
+            marginHorizontal: scaleHorizontal(16),
         },
         modalContent: {
             width: '100%',
@@ -21,7 +23,7 @@ export const getStyles = (colors: IColors) => {
         text: {
             color: colors.text_light,
             textAlign: 'center',
-            marginBottom: scaleVertical(24)
+            marginBottom: scaleVertical(24),
         },
     });
 

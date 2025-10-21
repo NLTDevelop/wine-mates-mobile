@@ -33,6 +33,7 @@ export const ConfirmationModal = ({ isVisible, onHide, onConfirm, description, i
             useNativeDriver={true}
             useNativeDriverForBackdrop={true}
             hideModalContentWhileAnimating={true}
+            statusBarTranslucent
         >
             <View style={styles.modalContent}>
                 <Typography style={styles.title} variant="h4" text={title} />

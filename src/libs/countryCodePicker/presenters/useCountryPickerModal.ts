@@ -1,38 +1,21 @@
-import { useCallback, useMemo, useState, type SetStateAction } from 'react';
+import { useCallback, useEffect, useMemo, useState, useDeferredValue, type SetStateAction } from 'react';
 import countries from 'world-countries';
 import { localization } from '@/UIProvider/localization/Localization';
 import { countryDisplayNames } from '@/UIProvider/localization/translations/countryDisplayNames';
 import { ICountry } from '../types/ICountry';
 
-type RegionDisplayNames = {
-    of: (code: string) => string | undefined;
-};
+// --- Cache to prevent recalculations across modal instances ---
+let cachedCountries: ICountry[] | null = null;
+let cachedLocale: string | null = null;
 
+type RegionDisplayNames = { of: (code: string) => string | undefined };
+
+// Localized ISO language mapping
 const iso2ToWorldCountriesTranslation: Record<string, string> = {
-    ar: 'ara',
-    cs: 'ces',
-    de: 'deu',
-    et: 'est',
-    fi: 'fin',
-    fr: 'fra',
-    hr: 'hrv',
-    hu: 'hun',
-    it: 'ita',
-    ja: 'jpn',
-    ko: 'kor',
-    nl: 'nld',
-    fa: 'per',
-    pl: 'pol',
-    pt: 'por',
-    ru: 'rus',
-    sk: 'slk',
-    es: 'spa',
-    sr: 'srp',
-    sv: 'swe',
-    tr: 'tur',
-    ur: 'urd',
-    zh: 'zho',
-    uk: 'ukr',
+  ar: 'ara', cs: 'ces', de: 'deu', et: 'est', fi: 'fin', fr: 'fra',
+  hr: 'hrv', hu: 'hun', it: 'ita', ja: 'jpn', ko: 'kor', nl: 'nld',
+  fa: 'per', pl: 'pol', pt: 'por', ru: 'rus', sk: 'slk', es: 'spa',
+  sr: 'srp', sv: 'swe', tr: 'tur', ur: 'urd', zh: 'zho', uk: 'ukr',
 };
 
 const buildDisplayNames = (locale: string): RegionDisplayNames | null => {
@@ -53,8 +36,8 @@ const getLocalizedCountries = (locale: string, displayNames: RegionDisplayNames 
 
     return countries.map((c: any) => {
         const manualOverrides: Record<string, string> = {
-            AQ: '+672', // Antarctica (uses Australian territory code)
-            HM: '+672', // Heard and McDonald Islands (also managed by Australia)
+            AQ: '+672',
+            HM: '+672',
         };
 
         const phoneCode =
@@ -76,25 +59,62 @@ const getLocalizedCountries = (locale: string, displayNames: RegionDisplayNames 
 
 export const useCountryPickerModal = () => {
     const [search, setSearch] = useState('');
+    const [countriesData, setCountriesData] = useState<ICountry[]>([]);
+    const [isReady, setReady] = useState(false);
     const locale = localization.locale || 'en';
+    const deferredSearch = useDeferredValue(search);
 
-    const displayNames = useMemo(() => buildDisplayNames(locale), [locale]);
+    // Asynchronous loading without UI blocking
+    useEffect(() => {
+        let canceled = false;
 
-    const localizedCountries = useMemo(() => {
-        return getLocalizedCountries(locale, displayNames).sort((a, b) => a.name.localeCompare(b.name, locale));
-    }, [locale, displayNames]);
+        if (cachedCountries && cachedLocale === locale) {
+            setTimeout(() => {
+                if (!canceled) {
+                    setCountriesData(cachedCountries!);
+                    setReady(true);
+                }
+            }, 0);
+            return;
+        }
 
-    const countriesData = useMemo(() => {
-        const query = search.trim().toLocaleLowerCase(locale);
+        // Delayed launch so as not to block the transition
+        const idle = (globalThis as any).requestIdleCallback || setTimeout;
 
-        if (!query) return localizedCountries;
+        const taskId = idle(() => {
+            if (canceled) return;
 
-        return localizedCountries.filter(country => country.name.toLocaleLowerCase(locale).includes(query));
-    }, [search, locale, localizedCountries]);
+            const displayNames = buildDisplayNames(locale);
+            const list = getLocalizedCountries(locale, displayNames).sort((a, b) =>
+                a.name.localeCompare(b.name, locale),
+            );
+
+            cachedCountries = list;
+            cachedLocale = locale;
+
+            setCountriesData(list);
+            setReady(true);
+        });
+
+        return () => {
+            canceled = true;
+            if (typeof (globalThis as any).cancelIdleCallback === 'function') {
+                (globalThis as any).cancelIdleCallback(taskId);
+            } else {
+                clearTimeout(taskId);
+            }
+        };
+    }, [locale]);
+
+    const filteredCountries = useMemo(() => {
+        const query = deferredSearch.trim().toLocaleLowerCase(locale);
+        if (!query) return countriesData;
+        return countriesData.filter(country => country.name.toLocaleLowerCase(locale).includes(query));
+    }, [deferredSearch, locale, countriesData]);
 
     const handleSearchChange = useCallback((value: SetStateAction<string>) => {
         setSearch(value);
     }, []);
 
-    return { countriesData, search, setSearch: handleSearchChange };
+    return { countriesData: filteredCountries, search, setSearch: handleSearchChange, isReady };
 };

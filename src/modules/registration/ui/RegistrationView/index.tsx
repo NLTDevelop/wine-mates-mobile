@@ -10,7 +10,7 @@ import { Button } from '@/UIKit/Button';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { useRegistration } from '../../presenters/useRegistration';
-import { CountrySelector } from '../components/CountrySelector';
+import { CountrySelector } from '../../../../libs/countryCodePicker/components/CountrySelector';
 import { registerUserModel } from '@/entities/users/RegisterUserModel';
 import { observer } from 'mobx-react';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
