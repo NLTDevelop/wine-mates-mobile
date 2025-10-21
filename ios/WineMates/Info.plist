@@ -58,7 +58,7 @@
 			<dict>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>com.googleusercontent.apps.69205747975-2claj5bq8pt35tdgiuvhbjgp3oel7mpe</string>
+					<string>com.googleusercontent.apps.96389565889-q3d53db8ep1de1tn2omj47d4csgmjfhg</string>
 					<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 				</array>
 			</dict>
