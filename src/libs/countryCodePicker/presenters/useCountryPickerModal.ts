@@ -8,6 +8,7 @@ type RegionDisplayNames = {
     of: (code: string) => string | undefined;
 };
 
+//TODO: Check after world-countries lib next updates
 const iso2ToWorldCountriesTranslation: Record<string, string> = {
     ar: 'ara',
     cs: 'ces',
@@ -52,6 +53,7 @@ const getLocalizedCountries = (locale: string, displayNames: RegionDisplayNames 
     const customNames = countryDisplayNames[resolvedLocale] || null;
 
     return countries.map((c: any) => {
+        //TODO: Check after world-countries lib next updates
         const manualOverrides: Record<string, string> = {
             AQ: '+672', // Antarctica (uses Australian territory code)
             HM: '+672', // Heard and McDonald Islands (also managed by Australia)

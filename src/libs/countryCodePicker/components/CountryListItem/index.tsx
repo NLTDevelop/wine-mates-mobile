@@ -6,6 +6,7 @@ import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { ICountry } from '../../types/ICountry';
 
+//TODO: Check after world-countries lib next updates
 const FLAG_ALIASES: Record<string, string> = {
     UM: 'US', // Віддалені острови США → 🇺🇸
     DM: 'LC', // Домініка → 🇱🇨
@@ -30,6 +31,7 @@ export const CountryListItem = memo(({ item, handleCountryPress, showCountryCode
     const styles = useMemo(() => getStyles(colors), [colors]);
     const firstLetter = item.name?.[0]?.toUpperCase() || '?';
 
+    //TODO: Check after world-countries lib next updates
     const renderFlag = () => {
         if (item.cca2 === 'BY') {
             return (
