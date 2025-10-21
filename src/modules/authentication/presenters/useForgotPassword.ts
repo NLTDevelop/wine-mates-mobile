@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useValidator } from '@/hooks/useValidator';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -14,6 +14,10 @@ export const useForgotPassword = () => {
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const [isLoading, setIsLoading] = useState(false);
     const { isActive, start: startTimer } = useOTPTimer();
+    const isSendDisabled = useMemo(() => {
+        const noEmail = email.trim().length === 0;
+        return noEmail || isError.status || isActive;
+    }, [email, isError.status, isActive]);
 
     const onChangeEmail = (text: string) => {
         setIsError({ status: false, errorText: '' });
@@ -57,5 +61,5 @@ export const useForgotPassword = () => {
         handleSendPress();
     }, [handleSendPress]);
 
-    return { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled: isActive, handleRetry };
+    return { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled, handleRetry };
 };

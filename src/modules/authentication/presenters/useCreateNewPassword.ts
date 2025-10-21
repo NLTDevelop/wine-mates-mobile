@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { userService } from '@/entities/users/UserService';
@@ -11,6 +11,11 @@ export const useCreateNewPassword = () => {
     const [form, setForm] = useState({ password: '', confirmPassword: '' });
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const [isLoading, setIsLoading] = useState(false);
+    const isDisabled = useMemo(() => {
+        const baseRequired = [form.password, form.confirmPassword];
+        const hasEmptyBase = baseRequired.some(field => !field.trim());
+        return hasEmptyBase || isError.status;
+    }, [form, isError]);
 
     const onChangePassword = useCallback((value: string) => {
         setForm(prev => ({ ...prev, password: value || '' }));
@@ -63,5 +68,7 @@ export const useCreateNewPassword = () => {
         handleSavePress();
     }, [handleSavePress]);
 
-    return { form, onChangePassword, onChangeConfirmPassword, isLoading, handleSavePress, isError, handleRetry };
+    return { 
+        form, onChangePassword, onChangeConfirmPassword, isLoading, handleSavePress, isError, handleRetry, isDisabled
+    };
 };

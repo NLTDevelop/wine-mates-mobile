@@ -27,6 +27,7 @@ export const useGoogleSignIn = () => {
                     localization.t('common.errorHappened'),
                     response.message || localization.t('errors.somethingWentWrong'),
                 );
+                await GoogleSignin.signOut().catch((error) => {console.warn('Google signOut error: ', JSON.stringify(error))});
                 return;
             }
 

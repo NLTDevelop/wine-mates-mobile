@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -19,7 +19,8 @@ export const useOTP = () => {
     const [props, getCellOnLayoutHandler] = useClearByFocusCell({ value, setValue });
     const [isLoading, setIsLoading] = useState(false);
     const [isResending, setIsResending] = useState(false);
-    const isResendDisabled = isActive || isResending
+    const isResendDisabled = useMemo(() => isActive || isResending, [isActive, isResending]);
+    const isResetDisabled = useMemo(() => value.length < 4 || isError.status, [value, isError.status]);
 
     const handleOTPValueChange = (otp: string) => {
         setIsError({ status: false, errorText: '' });
@@ -77,6 +78,6 @@ export const useOTP = () => {
 
     return { 
         email, props, getCellOnLayoutHandler, ref, value, handleOTPValueChange, isError, isLoading, handleResetPress, 
-        CELL_COUNT, timer: remaining, isResendDisabled, handleResendCode, handleRetry
+        CELL_COUNT, timer: remaining, isResendDisabled, handleResendCode, handleRetry, isResetDisabled
     };
 };
