@@ -9,16 +9,16 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: colors.info,
+            backgroundColor: colors.background_grey,
             paddingTop: INSET_TOP,
             paddingBottom: INSET_BOTTOM,
         },
         header: {
             height: 50,
             width: '100%',
-            backgroundColor: colors.info,
+            backgroundColor: colors.background_grey,
             paddingRight: 20,
-            shadowColor: colors.background,
+            shadowColor: colors.border_strong,
             shadowOffset: {
                 width: 0,
                 height: 2,
@@ -41,6 +41,10 @@ export const getStyles = (colors: IColors) => {
             fontWeight: '500',
             color: colors.primary,
         },
+        list: {
+            flex: 1,
+            paddingVertical: 16,
+        }
     });
     return styles;
 };
