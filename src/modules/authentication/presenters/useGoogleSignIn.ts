@@ -16,7 +16,7 @@ export const useGoogleSignIn = () => {
             await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
             await GoogleSignin.signIn();
 
-            const token = (await GoogleSignin.getTokens()).accessToken;
+            const token = (await GoogleSignin.getTokens()).idToken;
 
             await GoogleSignin.hasPlayServices();
 

@@ -8,6 +8,7 @@ import { ResetPasswordVerifyDto } from './dto/ResetPasswordVerify.dto';
 import { ResetPasswordConfirmDto } from './dto/ResetPasswordConfirm.dto';
 import { IRegisterUser } from './types/IRegisterUser';
 import { GoogleSignInDto } from './dto/GoogleSignIn.dto';
+import { localization } from '@/UIProvider/localization/Localization';
 
 class UserService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -79,7 +80,7 @@ class UserService {
         }
     };
 
-    verifyResetCode = async (body: ResetPasswordVerifyDto): Promise<IResponse<{}>> => {
+    verifyResetCode = async (body: ResetPasswordVerifyDto): Promise<IResponse<IUser>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -94,9 +95,15 @@ class UserService {
         }
     };
 
-    confirmPasswordReset = async (body: ResetPasswordConfirmDto): Promise<IResponse<{}>> => {
+    confirmPasswordReset = async (body: ResetPasswordConfirmDto, token: string): Promise<IResponse<{}>> => {
         try {
             const response = await this._requester.request({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Accept-Language': localization.locale,
+                    'Authorization': `Bearer ${token}`,
+                },
                 method: 'POST',
                 url: `${this._links.resetPassword}/confirm`,
                 data: body,

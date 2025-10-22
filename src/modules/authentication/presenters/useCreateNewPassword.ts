@@ -4,10 +4,11 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
+import { userModel } from '@/entities/users/UserModel';
 
 export const useCreateNewPassword = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { email } = useRoute().params as { email: string };
+    const { email, token } = useRoute().params as { email: string, token: string };
     const [form, setForm] = useState({ password: '', confirmPassword: '' });
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +47,7 @@ export const useCreateNewPassword = () => {
 
             setIsLoading(true);
 
-            const response = await userService.confirmPasswordReset({ email, newPassword: form.password });
+            const response = await userService.confirmPasswordReset({ email, newPassword: form.password }, token);
 
             if (response.isError) {
                 if (response.message) {
@@ -56,12 +57,13 @@ export const useCreateNewPassword = () => {
                     setIsError({ status: true, errorText: '' });
                 }
             } else {
-                navigation.navigate('SignInView', undefined, { pop: true });
+                userModel.token = token;
+                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
             }
         } finally {
             setIsLoading(false);
         }
-    }, [email, form, navigation]);
+    }, [email, form, navigation, token]);
 
     const handleRetry = useCallback(() => {
         setIsError({ status: false, errorText: '' });
