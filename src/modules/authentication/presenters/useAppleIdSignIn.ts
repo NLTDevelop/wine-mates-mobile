@@ -22,7 +22,7 @@ export const useAppleIdSignIn = () => {
             const response = await appleAuth.performRequest({
                 requestedOperation: appleAuth.Operation.LOGIN,
                 requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-            });
+            })
 
             if (response.identityToken) {
                 const signInResponse = await userService.appleSignIn({ token: response.identityToken });
