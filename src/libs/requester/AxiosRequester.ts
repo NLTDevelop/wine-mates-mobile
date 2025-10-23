@@ -35,6 +35,7 @@ class AxiosRequester implements IRequester {
             });
         } catch (error: any) {
             console.warn('AxiosRequester -> request: ', JSON.stringify(config, null, 2), error);
+            console.warn('AxiosRequester -> request error: ', error?.response?.data?.message || '-----------');
             loggerModel.add('error', `AxiosRequester -> request -> ${config.url}: `, JSON.stringify(error, null, 3));
             return {
                 isError: true,
