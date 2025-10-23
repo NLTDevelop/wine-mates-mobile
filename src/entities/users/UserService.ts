@@ -7,7 +7,7 @@ import { ResetPasswordRequestDto } from './dto/ResetPasswordRequest.dto';
 import { ResetPasswordVerifyDto } from './dto/ResetPasswordVerify.dto';
 import { ResetPasswordConfirmDto } from './dto/ResetPasswordConfirm.dto';
 import { IRegisterUser } from './types/IRegisterUser';
-import { GoogleSignInDto } from './dto/GoogleSignIn.dto';
+import { ProvidersSignIn } from './dto/ProvidersSignIn.dto';
 import { localization } from '@/UIProvider/localization/Localization';
 
 class UserService {
@@ -30,7 +30,7 @@ class UserService {
         }
     };
 
-    googleSignIn = async (body: GoogleSignInDto): Promise<IResponse<IUser>> => {
+    googleSignIn = async (body: ProvidersSignIn): Promise<IResponse<IUser>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -43,6 +43,23 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> googleSignIn: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    appleSignIn = async (body: ProvidersSignIn): Promise<IResponse<IUser>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.auth}/apple`,
+                data: body,
+            });
+            if (!response.isError) {
+                userModel.token = response.data?.accessToken;
+            }
+            return response;
+        } catch (error) {
+            console.warn('UserService -> appleSignIn: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

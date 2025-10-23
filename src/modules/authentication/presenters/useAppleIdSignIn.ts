@@ -1,3 +1,4 @@
+import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
@@ -14,7 +15,7 @@ export const useAppleIdSignIn = () => {
             setIsAppleLoginLoading(true);
 
             if (!appleAuth.isSupported) {
-                console.warn('Apple Sign-In не поддерживается на этом устройстве');
+                console.warn('Apple Sign-In is not supported.');
                 return;
             }
 
@@ -24,14 +25,22 @@ export const useAppleIdSignIn = () => {
             });
 
             if (response.identityToken) {
-                console.log('✅ Авторизация успешна');
-                console.log('User ID:', response.user);
+                const signInResponse = await userService.appleSignIn({ token: response.identityToken });
 
-                console.log('Identity token:', response.identityToken);
+                if (signInResponse.isError) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        signInResponse.message || localization.t('errors.somethingWentWrong'),
+                    );
+                    return;
+                }
 
-                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator'}] });
+                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
             } else {
-                console.log('❌ Токен не получен — возможно, отмена пользователем.');
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('errors.somethingWentWrong'),
+                );
             }
         } catch (error: any) {
             console.warn('Error in handleAppleSignIn: ', JSON.stringify(error));
