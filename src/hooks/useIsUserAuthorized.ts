@@ -1,3 +1,4 @@
+import { featuresModel } from '@/entities/features/FeaturesModel';
 import { userModel } from '@/entities/users/UserModel';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
@@ -18,6 +19,7 @@ export const useIsUserAuthorized = () => {
     const onExit = async () => {
         try {
             userModel.clear();
+            featuresModel.clear();
 
             await GoogleSignin.signOut().catch(() => {});
         } finally {

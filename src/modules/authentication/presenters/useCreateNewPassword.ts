@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
 import { userModel } from '@/entities/users/UserModel';
+import { featuresService } from '@/entities/features/FeaturesService';
 
 export const useCreateNewPassword = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -58,6 +59,7 @@ export const useCreateNewPassword = () => {
                 }
             } else {
                 userModel.token = token;
+                featuresService.list();
                 navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
             }
         } finally {

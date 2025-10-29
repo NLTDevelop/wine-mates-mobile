@@ -1,4 +1,4 @@
-import Svg, { Defs, G, Image, Mask, Path, Pattern, Rect, Use } from 'react-native-svg';
+import { Svg, Defs, G, Image, Mask, Path, Pattern, Rect, Use } from 'react-native-svg';
 import { scaleVertical } from '@/utils';
 
 interface IProps {

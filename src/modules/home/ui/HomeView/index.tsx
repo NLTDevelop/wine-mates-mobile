@@ -11,7 +11,7 @@ export const HomeView = () => {
 
     return (
         // <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
-        <ScreenContainer edges={['top', 'bottom']}>
+        <ScreenContainer edges={['top']}>
             <View style={styles.container}>
                 <Typography text={'Home Screen'} variant="h3" />
             </View>
