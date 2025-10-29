@@ -18,6 +18,9 @@
     },
     "tabNavigator": {
         "homeTabLabel": "Home",
+        "eventMap": "Event map",
+        "scanner": "Scanner",
+        "feed": "Feed",
         "youTabLabel": "You"
     },
     "authentication": {

@@ -1,3 +1,4 @@
+import { featuresService } from '@/entities/features/FeaturesService';
 import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -35,6 +36,7 @@ export const useAppleIdSignIn = () => {
                     return;
                 }
 
+                featuresService.list();
                 navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
             } else {
                 toastService.showError(

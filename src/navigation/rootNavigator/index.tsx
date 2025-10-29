@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
-import { MainStackNavigator } from '@/navigation/stackNavigator';
+import { MainStackNavigator } from '@/navigation/baseStackNavigator';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { useUiContext } from '@/UIProvider';
 import { Logger } from '@/UIKit/Logger/ui/Logger';

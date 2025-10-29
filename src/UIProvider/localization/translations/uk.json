@@ -18,6 +18,9 @@
     },
     "tabNavigator": {
         "homeTabLabel": "Головна",
+        "eventMap": "Карта подій",
+        "scanner": "Сканер",
+        "feed": "Новини",
         "youTabLabel": "Ви"
     },
     "authentication": {

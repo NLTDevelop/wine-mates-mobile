@@ -5,6 +5,7 @@ import { userService } from '@/entities/users/UserService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { featuresService } from '@/entities/features/FeaturesService';
 
 export const useGoogleSignIn = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -31,6 +32,7 @@ export const useGoogleSignIn = () => {
                 return;
             }
 
+            featuresService.list();
             navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
         } catch (error) {
             console.warn('Error in handleGoogleSignIn: ', JSON.stringify(error));

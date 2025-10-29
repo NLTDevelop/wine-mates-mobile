@@ -1,4 +1,4 @@
-import Svg, { ClipPath, Defs, G, Path } from 'react-native-svg';
+import { Svg, ClipPath, Defs, G, Path } from 'react-native-svg';
 import { scaleVertical } from '@/utils';
 
 interface IProps {
