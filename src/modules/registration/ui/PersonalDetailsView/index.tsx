@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
-import { getStyles } from './styles';
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
@@ -17,15 +16,23 @@ import DatePicker from 'react-native-date-picker';
 import { useBirthdaySelector } from '../../presenters/useBirthdaySelector';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
+import { getStyles } from './styles';
 
 export const PersonalDetailsView = observer(() => {
     const { t, colors, locale, theme } = useUiContext();
-    const { bottom } = useSafeAreaInsets(); 
-    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
+    const { bottom } = useSafeAreaInsets();
+    const styles = useMemo(() => getStyles(colors), [colors]);
+
     const { form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
         isError, isDisabled } = usePersonalDetails();
-    const { handlePress, isOpened, pickerDate, setPickerDate } = useBirthdaySelector(onChangeBirthday);
-    const bottomInset = useMemo(() => ({paddingBottom: isOpened ? 0 : bottom}), [bottom, isOpened]);
+
+    const { handlePress, isOpened, pickerDate, setPickerDate } =
+        useBirthdaySelector(onChangeBirthday);
+
+    const bottomInset = useMemo(
+        () => ({ paddingBottom: isOpened ? 0 : bottom }),
+        [bottom, isOpened],
+    );
 
     return (
         <ScreenContainer edges={['top']} headerComponent={<HeaderWithBackButton />} scrollEnabled>
@@ -45,6 +52,7 @@ export const PersonalDetailsView = observer(() => {
                                 onChangeText={onChangeFirstName}
                                 placeholder={t('registration.firstName')}
                                 containerStyle={styles.input}
+                                onFocus={() => isOpened && handlePress()}
                             />
                             <Typography
                                 variant="subtitle_12_400"
@@ -58,9 +66,15 @@ export const PersonalDetailsView = observer(() => {
                             onChangeText={onChangeLastName}
                             placeholder={t('registration.lastName')}
                             containerStyle={styles.input}
+                            onFocus={() => isOpened && handlePress()}
                         />
                         <View>
-                            <BirthdaySelector date={form.birthday} handlePress={handlePress} isOpened={isOpened} isError={isError.status}/>
+                            <BirthdaySelector
+                                date={form.birthday}
+                                handlePress={handlePress}
+                                isOpened={isOpened}
+                                isError={isError.status}
+                            />
                             {isError.status && <Warning warningText={isError.errorText} />}
                         </View>
                         {registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT && (
@@ -70,6 +84,7 @@ export const PersonalDetailsView = observer(() => {
                                 onChangeText={onChangeOccupation}
                                 placeholder={t('registration.occupation')}
                                 containerStyle={styles.input}
+                                onFocus={() => isOpened && handlePress()}
                             />
                         )}
                         {registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR && (
@@ -79,25 +94,34 @@ export const PersonalDetailsView = observer(() => {
                                 onChangeText={onChangeWineryName}
                                 placeholder={t('registration.wineryName')}
                                 containerStyle={styles.input}
+                                onFocus={() => isOpened && handlePress()}
                             />
                         )}
                     </View>
                 </View>
                 <View style={styles.footer}>
-                    <Button text={t('common.continue')} onPress={handleNextPress} type="secondary" disabled={isDisabled}/>
+                    <Button
+                        text={t('common.continue')}
+                        onPress={handleNextPress}
+                        type="secondary"
+                        disabled={isDisabled}
+                    />
                     <SignInFooter />
                 </View>
             </View>
             {isOpened && (
-                <View style={styles.pickerWrapper}>
-                    <DatePicker
-                        locale={locale}
-                        mode="date"
-                        date={pickerDate}
-                        onDateChange={setPickerDate}
-                        theme={theme}
-                    />
-                </View>
+                <>
+                    <View style={styles.pickerWrapper}>
+                        <DatePicker
+                            locale={locale}
+                            mode="date"
+                            date={pickerDate}
+                            onDateChange={setPickerDate}
+                            theme={theme}
+                        />
+                    </View>
+                    <Pressable style={styles.backdrop} onPress={handlePress} />
+                </>
             )}
         </ScreenContainer>
     );
