@@ -44,7 +44,7 @@ export const CreatePasswordView = () => {
                             autoCapitalize="none"
                             value={form.password}
                             onChangeText={onChangePassword}
-                            placeholder={t('authentication.newPassword')}
+                            placeholder={t('registration.createPassword')}
                             error={isError.status}
                         />
                         <CustomInput
@@ -52,7 +52,7 @@ export const CreatePasswordView = () => {
                             autoCapitalize="none"
                             value={form.confirmPassword}
                             onChangeText={onChangeConfirmPassword}
-                            placeholder={t('authentication.confirmNewPassword')}
+                            placeholder={t('registration.confirmPassword')}
                             error={isError.status}
                             containerStyle={styles.input}
                         />

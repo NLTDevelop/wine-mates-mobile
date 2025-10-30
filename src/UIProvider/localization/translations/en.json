@@ -35,7 +35,7 @@
         "email": "E-mail",
         "password": "Password",
         "forgotPassword": "Forgot your password?",
-        "or": "or",
+        "or": "Or",
         "continueWithGoogle": "Continue with Google",
         "continueWithApple": "Continue with Apple",
         "haveAnAccount": "Don’t have an account? ",
@@ -57,7 +57,8 @@
         "confirmNewPassword": "Confirm new password",
         "newPasswordIsRequired": "New password is required",
         "confirmNewPasswordIsRequired": "Confirm new Password is required",
-        "confirmPasswordError": "Passwords do not match"
+        "confirmPasswordError": "Passwords do not match",
+        "enterConfirmationCode": "Enter the confirmation code"
     },
     "registration": {
         "haveAnAccount": "Already have an account?",
@@ -81,7 +82,9 @@
         "birthdayWithoutFormat": "Birthday",
         "birthdayError": "You must be at least 18 years old.",
         "birthdayTitle": "To sign up, you need to be at least 18 years.",
-        "birthdayDescription": "Your birthday won’t be shared with other people who use WineMates"
+        "birthdayDescription": "Your birthday won’t be shared with other people who use WineMates",
+        "createPassword": "Create password",
+        "confirmPassword": "Confirm password"
     },
     "wineLevel": {
         "lover" : "Wine lover",

@@ -34,9 +34,8 @@ export const useGoogleSignIn = () => {
 
             featuresService.list();
             navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
-        } catch (error) {
+        } catch (error: any) {
             console.warn('Error in handleGoogleSignIn: ', JSON.stringify(error));
-            toastService.showError(localization.t('common.errorHappened'), localization.t('errors.somethingWentWrong'));
         } finally {
             setIsGoogleLoginLoading(false);
         }

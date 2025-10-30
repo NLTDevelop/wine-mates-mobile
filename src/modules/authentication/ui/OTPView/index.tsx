@@ -26,7 +26,7 @@ export const OTPView = () => {
             <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
                 <View style={styles.container}>
                     <View>
-                        <Typography text={t('authentication.resetYourPassword')} variant="h3" style={styles.title} />
+                        <Typography text={t('authentication.enterConfirmationCode')} variant="h3" style={styles.title} />
                         <View style={styles.textContainer}>
                             <Typography variant="body_400" style={styles.descriptionText}>
                                 {`${t('authentication.otpDescription')} `}

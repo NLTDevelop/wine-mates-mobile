@@ -35,7 +35,7 @@
         "email": "E-mail",
         "password": "Пароль",
         "forgotPassword": "Забули пароль?",
-        "or": "або",
+        "or": "Aбо",
         "continueWithGoogle": "Продовжити з Google",
         "continueWithApple": "Продовжити з Apple",
         "haveAnAccount": "Немаєте облікового запису? ",
@@ -57,7 +57,8 @@
         "confirmNewPassword": "Підтвердьте новий пароль",
         "newPasswordIsRequired": "Потрібен новий пароль",
         "confirmNewPasswordIsRequired": "Потрібно підтвердити новий пароль",
-        "confirmPasswordError": "Паролі не збігаються"
+        "confirmPasswordError": "Паролі не збігаються",
+        "enterConfirmationCode": "Введіть код підтвердження"
     },
     "registration": {
         "haveAnAccount": "Вже маєте обліковий запис?",
@@ -81,7 +82,9 @@
         "birthdayWithoutFormat": "Дата народження",
         "birthdayError": "Вам має бути щонайменше 18 років.",
         "birthdayTitle": "Щоб зареєструватися, вам потрібно бути щонайменше 18 років.",
-        "birthdayDescription": "Вашу дату народження не буде передано іншим користувачам WineMates"
+        "birthdayDescription": "Вашу дату народження не буде передано іншим користувачам WineMates",
+        "createPassword": "Створити пароль",
+        "confirmPassword": "Підтвердьте пароль"
     },
     "wineLevel": {
         "lover": "Любитель вина",
