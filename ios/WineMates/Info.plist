@@ -28,6 +28,10 @@
 		<string>$(CURRENT_PROJECT_VERSION)</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true />
+		<key>NSCameraUsageDescription</key>
+		<string>$(NSCameraUsageDescription)</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>$(NSPhotoLibraryUsageDescription)</string>
 		<key>NSAppTransportSecurity</key>
 		<dict>
 			<key>NSAllowsArbitraryLoads</key>
@@ -36,7 +40,7 @@
 			<true />
 		</dict>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string></string>
+		<string>$(NSLocationWhenInUseUsageDescription)</string>
 		<key>RCTNewArchEnabled</key>
 		<true />
 		<key>UILaunchStoryboardName</key>

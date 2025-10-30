@@ -11,6 +11,7 @@ import { RegistrationView } from '@/modules/registration/ui/RegistrationView';
 import { TabNavigator } from '../tabNavigator';
 import { PersonalDetailsView } from '@/modules/registration/ui/PersonalDetailsView';
 import { CreatePasswordView } from '@/modules/registration/ui/CreatePasswordView';
+import { ScanResultView } from '@/modules/scanner/ui/ScanResultView';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ export const MainStackNavigator = observer(() => {
         <Stack.Screen name="PersonalDetailsView" component={PersonalDetailsView} />
         <Stack.Screen name="TabNavigator" component={TabNavigator} />
         <Stack.Screen name="CreatePasswordView" component={CreatePasswordView} />
+        <Stack.Screen name="ScanResultView" component={ScanResultView} />
     </Stack.Navigator>
     );
 });

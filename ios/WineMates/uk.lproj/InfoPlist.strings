@@ -1,0 +1,3 @@
+"NSCameraUsageDescription" = "Доступ до камери потрібен, щоб робити фото в застосунку.";
+"NSPhotoLibraryUsageDescription" = "Дозвольте доступ до галереї, щоб обирати фото.";
+"NSLocationWhenInUseUsageDescription" = "Потрібен доступ до локації для роботи функцій застосунку.";
