@@ -10,7 +10,6 @@ export const getStyles = (colors: IColors, isBottomPadding?: boolean, scrollEnab
         },
         keyboardAvoidingContainer: {
             flex: 1,
-            backgroundColor: colors.background,
             paddingBottom: !scrollEnabled && isBottomPadding ? initialWindowMetrics?.insets.bottom : 0,
         },
         scroll: {

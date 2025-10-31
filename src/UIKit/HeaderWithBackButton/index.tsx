@@ -18,11 +18,10 @@ interface IProps {
 }
 
 export const HeaderWithBackButton = ({ title, titleComponent, backDisabled, rightComponent, containerStyle,
-    titleContainerStyle, onPressBack,
+    titleContainerStyle, onPressBack
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-
     const { onGoBack } = useBackButton(onPressBack);
 
     return (

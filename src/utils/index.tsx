@@ -33,3 +33,14 @@ export const scaleLineHeight = (lineHeight: number = 1): number => {
 
     return result;
 };
+
+export const declOfWord = (num: number, word: Array<string>): string => {
+    const cases = [2, 0, 1, 1, 1, 2];
+    if (Array.isArray(word)) {
+        return `${num} ${
+            // @ts-ignore
+            word[num % 100 > 4 && num % 100 < 20 ? 2 : cases[num % 10 < 5 ? num % 10 : 5]] || word[2]
+        }`;
+    }
+    return '';
+};

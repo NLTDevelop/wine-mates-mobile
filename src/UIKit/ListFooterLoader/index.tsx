@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import { LinearGradient } from 'react-native-linear-gradient';
+import { ActivityIndicator } from 'react-native';
 
-export const Gradient = () => {
+export const ListFooterLoader = () => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    return (
-        <LinearGradient colors={[colors.background_secondary, colors.background]} style={styles.gradient}/>
-    );
+    return <ActivityIndicator style={styles.listLoader} color={colors.primary} size="large" />;
 };

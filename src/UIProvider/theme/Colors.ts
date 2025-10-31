@@ -3,6 +3,7 @@ import { IColors } from './IColors';
 export const COLORS: { light: IColors } = {
     light: {
         background: '#FFFFFF', // done
+        background_inverted: '#000000', //done
         background_secondary: '#FFF5EB', // done
         background_light: '#E4E4E4', //done
         background_middle: '#F0F0F0', //done

@@ -6,6 +6,7 @@ export const getStyles = (colors: IColors, topInset: number, bottomInset: number
     const styles = StyleSheet.create({
         container: {
             flex: 1,
+            backgroundColor: colors.background_inverted,
         },
         topBar: {
             position: 'absolute',

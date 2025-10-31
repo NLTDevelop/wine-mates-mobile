@@ -21,44 +21,46 @@ export const ScannerView = () => {
     const { appState, torch, setTorch, handleGalleryPress, handleTakePhotoPress, handleCrossPress, handleCreatePress, cameraRef,
         device, hasPermission } = useScanner();
 
-    if (!hasPermission || !device) return null;
-
     return (
         <View style={styles.container}>
-            <Camera
-                ref={cameraRef}
-                isActive={isFocused && appState === 'active'}
-                device={device}
-                torch={torch}
-                photo
-                style={StyleSheet.absoluteFill}
-            />
-            <View style={styles.topBar}>
-                <TouchableOpacity onPress={handleCrossPress} style={styles.button}>
-                    <CrossIcon color={colors.icon} width={20} height={20} />
-                </TouchableOpacity>
+            {!hasPermission || !device ? null : (
+                <>
+                    <Camera
+                        ref={cameraRef}
+                        isActive={isFocused && appState === 'active'}
+                        device={device}
+                        torch={torch}
+                        photo
+                        style={StyleSheet.absoluteFill}
+                    />
+                    <View style={styles.topBar}>
+                        <TouchableOpacity onPress={handleCrossPress} style={styles.button}>
+                            <CrossIcon color={colors.icon} width={20} height={20} />
+                        </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => setTorch(torch === 'on' ? 'off' : 'on')} style={styles.button}>
-                    {torch === 'on' ? (
-                        <FlashActiveIcon color={colors.icon} width={20} height={20} />
-                    ) : (
-                        <FlashInactiveIcon color={colors.icon} width={20} height={20} />
-                    )}
-                </TouchableOpacity>
-            </View>
-            <View style={styles.bottomBar}>
-                <TouchableOpacity onPress={handleGalleryPress} style={styles.bottomButtons}>
-                    <GalleryIcon color={colors.icon} width={24} height={24} />
-                </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setTorch(torch === 'on' ? 'off' : 'on')} style={styles.button}>
+                            {torch === 'on' ? (
+                                <FlashActiveIcon color={colors.icon} width={20} height={20} />
+                            ) : (
+                                <FlashInactiveIcon color={colors.icon} width={20} height={20} />
+                            )}
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.bottomBar}>
+                        <TouchableOpacity onPress={handleGalleryPress} style={styles.bottomButtons}>
+                            <GalleryIcon color={colors.icon} width={24} height={24} />
+                        </TouchableOpacity>
 
-                <TouchableOpacity onPress={handleTakePhotoPress} style={styles.mainShotButton}>
-                    <View style={styles.mainShotInner} />
-                </TouchableOpacity>
+                        <TouchableOpacity onPress={handleTakePhotoPress} style={styles.mainShotButton}>
+                            <View style={styles.mainShotInner} />
+                        </TouchableOpacity>
 
-                <TouchableOpacity onPress={handleCreatePress} style={styles.bottomButtons}>
-                    <AddFileIcon color={colors.icon} width={24} height={24} />
-                </TouchableOpacity>
-            </View>
+                        <TouchableOpacity onPress={handleCreatePress} style={styles.bottomButtons}>
+                            <AddFileIcon color={colors.icon} width={24} height={24} />
+                        </TouchableOpacity>
+                    </View>
+                </>
+            )}
         </View>
     );
 };

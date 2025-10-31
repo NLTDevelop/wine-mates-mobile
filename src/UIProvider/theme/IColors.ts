@@ -2,6 +2,7 @@ export type TTheme = 'light' | 'dark';
 
 export type IColors = {
     background: string;
+    background_inverted: string;
     background_secondary: string;
     background_light: string;
     background_middle: string;

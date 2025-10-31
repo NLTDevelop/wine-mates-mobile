@@ -4,6 +4,7 @@ import { Edge, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Gradient } from '../Gradient';
 
 interface IProps {
     edges?: Edge[];
@@ -15,9 +16,11 @@ interface IProps {
     headerComponent?: React.ReactNode;
     isKeyboardAvoiding?: boolean;
     isBottomPadding?: boolean;
+    withGradient?: boolean;
 }
 
-export const ScreenContainer = ({ isBottomPadding, isKeyboardAvoiding, headerComponent, edges, children, scrollEnabled = false, keyboardShouldPersistTaps = true, containerStyle, contentContainerStyle }: IProps) => {
+export const ScreenContainer = ({ isBottomPadding, isKeyboardAvoiding, headerComponent, edges, children, scrollEnabled = false,
+    keyboardShouldPersistTaps = true, containerStyle, contentContainerStyle, withGradient = false }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors, isBottomPadding, scrollEnabled), [colors, isBottomPadding, scrollEnabled]);
     const safeAreaInsets = useSafeAreaInsets();
@@ -46,6 +49,7 @@ export const ScreenContainer = ({ isBottomPadding, isKeyboardAvoiding, headerCom
 
     return (
         <View style={[styles.container, edgesStyle]} >
+            {withGradient && <Gradient />}
             {!!headerComponent && headerComponent}
             <KeyboardAvoidingView enabled={isKeyboardAvoiding} style={[styles.keyboardAvoidingContainer, containerStyle]} behavior={avoidingBehavior} onStartShouldSetResponder={keyboardShouldPersistTaps ? Keyboard.dismiss : undefined as any}>
                 {scrollEnabled
