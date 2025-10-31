@@ -97,6 +97,9 @@
         "results": "Results",
         "resultsTitle": "Select the option that best matches your result. Or add manually your wine",
         "addWine": "Add wine manually",
-        "reviewCount": ["review", "reviews", "reviews"]
+        "reviewCount": ["review", "reviews", "reviews"],
+        "whatsInYourGlass": "What’s in your glass?",
+        "enterData": "(Enter data manually or scan the label)",
+        "tasteWine": "Taste Wine"
     }
 }
