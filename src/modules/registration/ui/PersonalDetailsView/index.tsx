@@ -21,7 +21,7 @@ import { getStyles } from './styles';
 export const PersonalDetailsView = observer(() => {
     const { t, colors, locale, theme } = useUiContext();
     const { bottom } = useSafeAreaInsets();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
 
     const { form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
         isError, isDisabled } = usePersonalDetails();

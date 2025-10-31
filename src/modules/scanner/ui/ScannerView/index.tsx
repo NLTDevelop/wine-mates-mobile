@@ -19,9 +19,9 @@ export const ScannerView = () => {
     const isFocused = useIsFocused();
 
     const { appState, torch, setTorch, handleGalleryPress, handleTakePhotoPress, handleCrossPress, handleCreatePress, cameraRef,
-        device } = useScanner();
+        device, hasPermission } = useScanner();
 
-    if (!device) return null;
+    if (!hasPermission || !device) return null;
 
     return (
         <View style={styles.container}>
@@ -33,7 +33,6 @@ export const ScannerView = () => {
                 photo
                 style={StyleSheet.absoluteFill}
             />
-
             <View style={styles.topBar}>
                 <TouchableOpacity onPress={handleCrossPress} style={styles.button}>
                     <CrossIcon color={colors.icon} width={20} height={20} />
@@ -47,7 +46,6 @@ export const ScannerView = () => {
                     )}
                 </TouchableOpacity>
             </View>
-
             <View style={styles.bottomBar}>
                 <TouchableOpacity onPress={handleGalleryPress} style={styles.bottomButtons}>
                     <GalleryIcon color={colors.icon} width={24} height={24} />
