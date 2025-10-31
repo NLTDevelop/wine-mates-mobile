@@ -46,7 +46,6 @@ export const useAppleIdSignIn = () => {
             }
         } catch (error: any) {
             console.warn('Error in handleAppleSignIn: ', JSON.stringify(error));
-            toastService.showError(localization.t('common.errorHappened'), localization.t('errors.somethingWentWrong'));
         } finally {
             setIsAppleLoginLoading(false);
         }

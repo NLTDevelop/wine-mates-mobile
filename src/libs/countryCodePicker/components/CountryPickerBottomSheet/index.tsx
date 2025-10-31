@@ -51,7 +51,8 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
             backdropComponent={renderBackdrop}
             enableDynamicSizing={false}
             backgroundStyle={styles.container}
-            enablePanDownToClose={false}
+            enablePanDownToClose={true}
+            onDismiss={handleClose}
         >
             <View style={styles.headerContainer}>
                 <View style={styles.header}>

@@ -42,8 +42,8 @@ export const getStyles = (colors: IColors) => {
             overflow: 'visible',
         },
         image: {
-            width: scaleHorizontal(343),
-            height: scaleVertical(120),
+            width: '100%',
+            aspectRatio: 343 / 120,
         },
         buttonContainer: {
             gap: scaleVertical(12),

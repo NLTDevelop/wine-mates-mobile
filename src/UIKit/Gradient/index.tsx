@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import LinearGradient from 'react-native-linear-gradient';
+import { LinearGradient } from 'react-native-linear-gradient';
 
 export const Gradient = () => {
     const { colors } = useUiContext();

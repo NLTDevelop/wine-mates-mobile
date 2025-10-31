@@ -36,9 +36,14 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
         footer: {
             gap: scaleVertical(24),
         },
-        contentContainer: {
-            flex: 1,
-            alignItems: 'center',
+        backdrop: {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0)',
+            zIndex: 20,
         },
         pickerWrapper: {
             width: '100%',
@@ -46,7 +51,9 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
             justifyContent: 'center',
             alignItems: 'center',
             paddingBottom: bottomInset,
+            zIndex: 21,
         },
     });
+
     return styles;
 };

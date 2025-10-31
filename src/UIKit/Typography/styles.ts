@@ -51,6 +51,12 @@ export const getStyle = (colors: IColors) => {
             fontFamily: 'VisueltPro-Regular',
             fontWeight: '400',
             color: colors.text,
+        },
+        subtitle_12_500: {
+            fontSize: scaleFontSize(12),
+            fontFamily: 'VisueltPro-Medium',
+            fontWeight: '500',
+            color: colors.text,
         }
     });
     return styles;
