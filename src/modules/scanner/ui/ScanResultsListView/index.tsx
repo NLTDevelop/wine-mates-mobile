@@ -18,7 +18,7 @@ export const ScanResultsListView = () => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { data, isLoading, onRefresh, onEndReached, handleItemPress, handleAddWinePress } = useScannerResultsList();
-    const { refreshControl, refreshing } = useRefresh(onRefresh);
+    const { refreshControl } = useRefresh(onRefresh);
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
@@ -37,7 +37,6 @@ export const ScanResultsListView = () => {
                 <FlatList
                     onEndReached={onEndReached}
                     refreshControl={refreshControl}
-                    refreshing={refreshing}
                     data={data || []}
                     keyExtractor={keyExtractor}
                     renderItem={renderItem}
