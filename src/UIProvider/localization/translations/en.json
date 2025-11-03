@@ -100,6 +100,24 @@
         "reviewCount": ["review", "reviews", "reviews"],
         "whatsInYourGlass": "What’s in your glass?",
         "enterData": "(Enter data manually or scan the label)",
-        "tasteWine": "Taste Wine"
+        "tasteWine": "Taste Wine",
+        "winery": "Winery",
+        "vintageYear": "Vintage year",
+        "wineName":"Wine name"
+    },
+    "wine": {
+        "look": "Look",
+        "lookDescription": "Select the main color of your wine, then refine it by choosing the exact shade",
+        "letsSmell": "Let’s Smell",
+        "selectColor": "Select color",
+        "selectShade": "Select shade",
+        "result": "Result",
+        "selectedParameters": "Selected Parameters",
+        "selectMousse": "Select mousse",
+        "selectPerlage": "Select perlage",
+        "TypeOfWine": "Type of wine",
+        "wineryName": "Winery name",
+        "grapeVariety": "Grape variety",
+        "vintage": "Vintage:"
     }
 }

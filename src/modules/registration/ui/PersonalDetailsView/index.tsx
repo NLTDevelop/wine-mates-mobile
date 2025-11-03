@@ -25,10 +25,7 @@ export const PersonalDetailsView = observer(() => {
 
     const { form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
         isError, isDisabled } = usePersonalDetails();
-
-    const { handlePress, isOpened, pickerDate, setPickerDate } =
-        useBirthdaySelector(onChangeBirthday);
-
+    const { handlePress, isOpened, pickerDate, setPickerDate } =  useBirthdaySelector(onChangeBirthday);
     const bottomInset = useMemo(
         () => ({ paddingBottom: isOpened ? 0 : bottom }),
         [bottom, isOpened],
