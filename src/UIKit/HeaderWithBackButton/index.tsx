@@ -5,7 +5,6 @@ import { getStyles } from './styles';
 import { useBackButton } from './presenters/useBackButton';
 import { ArrowIcon } from '@/assets/icons/ArrowIcon';
 import { Typography } from '@/UIKit/Typography';
-import { scaleVertical } from '@/utils';
 
 interface IProps {
     title?: string;
@@ -30,7 +29,7 @@ export const HeaderWithBackButton = ({ title, titleComponent, backDisabled, righ
                 <View style={styles.empty} />
             ) : (
                 <TouchableOpacity style={styles.button} onPress={onGoBack}>
-                    <ArrowIcon width={scaleVertical(20)} height={scaleVertical(20)} />
+                    <ArrowIcon width={20} height={20} />
                 </TouchableOpacity>
             )}
 

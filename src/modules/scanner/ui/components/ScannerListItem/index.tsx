@@ -22,32 +22,41 @@ export const ScannerListItem = ({ item, onPress }: IProps) => {
         <TouchableOpacity style={styles.container} onPress={onPress}>
             <FastImage source={{ uri: item.image_url }} style={styles.image} />
             <View style={styles.mainContainer}>
-                <Typography variant="h6" text={`${item.name} ${item.vintage}`} numberOfLines={2} style={styles.title} />
-                <View style={styles.rateContainer}>
-                    <StarIcon />
-                    <Typography variant="subtitle_12_500" text={item.review_average} />
+                <View style={styles.subContainer}>
                     <Typography
-                        variant="subtitle_12_400"
-                        text={`(${declOfWord(
-                            item.review_count,
-                            t('scanner.reviewCount') as unknown as Array<string>,
-                        )})`}
-                        style={styles.text}
-                    />
-                </View>
-                <View style={styles.userRow}>
-                    <Avatar
-                        avatarUrl={item.user.image_url}
-                        fullname={`${item.user.firstName} ${item.user.lastName}`}
-                        size={24}
-                    />
-                    <Typography
-                        text={`${item.user.firstName} ${item.user.lastName}`}
-                        numberOfLines={1}
+                        variant="h6"
+                        text={`${item.name} ${item.vintage}`}
+                        numberOfLines={2}
                         style={styles.title}
                     />
+                    <View style={styles.rateContainer}>
+                        <StarIcon />
+                        <Typography variant="subtitle_12_500" text={item.review_average} />
+                        <Typography
+                            variant="subtitle_12_400"
+                            text={`(${declOfWord(
+                                item.review_count,
+                                t('scanner.reviewCount') as unknown as Array<string>,
+                            )})`}
+                            style={styles.text}
+                        />
+                    </View>
                 </View>
-                <Typography variant="body_400" text={item.description} numberOfLines={3} style={styles.text} />
+                <View style={styles.subContainer}>
+                    <View style={styles.userRow}>
+                        <Avatar
+                            avatarUrl={item.user.image_url}
+                            fullname={`${item.user.firstName} ${item.user.lastName}`}
+                            size={24}
+                        />
+                        <Typography
+                            text={`${item.user.firstName} ${item.user.lastName}`}
+                            numberOfLines={1}
+                            style={styles.title}
+                        />
+                    </View>
+                    <Typography variant="body_400" text={item.description} numberOfLines={3} style={styles.text} />
+                </View>
             </View>
         </TouchableOpacity>
     );

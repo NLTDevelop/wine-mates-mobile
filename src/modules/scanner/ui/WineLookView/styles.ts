@@ -14,11 +14,22 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
             marginBottom: scaleVertical(24),
         },
-        input: {
-            marginBottom: 0,
+        label: {
+            marginBottom: scaleVertical(12),
         },
-        mainContainer: {
-            gap: scaleVertical(12),
+        colorsContainer: {
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            columnGap: scaleHorizontal(8),
+            rowGap: scaleVertical(12),
+            marginBottom: scaleVertical(24),
+        },
+        resultColor: {
+            borderRadius: 12,
+            width: scaleHorizontal(109),
+            height: scaleVertical(50),
+            marginBottom: scaleVertical(24),
         },
         button: {
             marginBottom: scaleVertical(16),

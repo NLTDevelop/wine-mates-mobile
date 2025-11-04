@@ -15,7 +15,7 @@ export const getStyles = (colors: IColors) => {
             shadowOpacity: 0.12,
             shadowRadius: 3,
             shadowOffset: { width: 0, height: 2 },
-            elevation: 4,
+            elevation: 3,
         },
         image: {
             width: scaleHorizontal(116),
@@ -24,6 +24,9 @@ export const getStyles = (colors: IColors) => {
         },
         mainContainer: {
             maxWidth: scaleHorizontal(191),
+            justifyContent: 'space-between',
+        },
+        subContainer: {
             gap: scaleVertical(4),
         },
         title: {

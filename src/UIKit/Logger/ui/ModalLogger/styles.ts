@@ -24,7 +24,7 @@ export const getStyles = (colors: IColors) => {
                 height: 2,
             },
             shadowOpacity: 0.1,
-            elevation: 4,
+            elevation: 3,
             zIndex: 2,
             alignItems: 'center',
             flexDirection: 'row',

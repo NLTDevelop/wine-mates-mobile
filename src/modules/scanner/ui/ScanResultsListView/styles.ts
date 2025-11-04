@@ -18,6 +18,7 @@ export const getStyles = (colors: IColors) => {
             marginBottom: scaleVertical(24),
         },
         contentContainerStyle: {
+            paddingTop: scaleVertical(8),
             paddingBottom: scaleVertical(16),
             paddingHorizontal: scaleHorizontal(16),
             flexGrow: 1,
