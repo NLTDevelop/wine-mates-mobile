@@ -11,6 +11,7 @@ import { useWineLook } from '../../presenters/useWineLook';
 import { SimpleSlider } from '../components/SimpleSlider';
 import { ShadeSelector } from '../components/ShadeSelector';
 import { CloseButton } from '../components/CloseButton';
+import { SelectedParameters } from '../components/SelectedParameters';
 
 interface IColor {
     color: string;
@@ -34,12 +35,14 @@ export const WineLookView = () => {
             <View style={styles.container}>
                 <View>
                     <Typography text={t('wine.lookDescription')} variant="body_400" style={styles.title} />
+
                     <Typography text={t('wine.selectColor')} variant="h4" style={styles.label} />
                     <View style={styles.colorsContainer}>
                         {data.colors.map((item: IColor, index: number) => (
                             <ColorButton key={index} color={item} isActive={false} onPress={() => {}} />
                         ))}
                     </View>
+
                     <Typography text={t('wine.selectShade')} variant="h4" style={styles.label} />
                     <ShadeSelector value={shade} onChange={setShade} selectedColor={data.colors[3].color}/>
 
@@ -51,6 +54,8 @@ export const WineLookView = () => {
 
                     <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
                     <SimpleSlider value={perlage} onChange={setPerlage}/>
+
+                    <SelectedParameters details={data.details}/>
                 </View>
                 <Button text={t('wine.letsSmell')} onPress={() => {}} containerStyle={styles.button} />
             </View>

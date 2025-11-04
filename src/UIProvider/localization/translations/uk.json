@@ -115,10 +115,10 @@
         "selectedParameters": "Обрані параметри",
         "selectMousse": "Оберіть піну",
         "selectPerlage": "Оберіть перляж",
-        "TypeOfWine": "Тип вина",
+        "typeOfWine": "Тип вина",
         "wineryName": "Назва виноробні",
         "grapeVariety": "Сорт винограду",
-        "vintage": "Винтаж:",
+        "vintage": "Винтаж",
         "pale": "Блідий",
         "deep": "Глибокий",
         "medium": "Середній"

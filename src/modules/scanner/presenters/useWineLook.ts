@@ -27,6 +27,12 @@ const MockedData = {
             colorName: 'green',
         },
     ],
+    details: {
+        typeOfWine: "Orange wine",
+        wineryName: "Halytski Pagorby (Galician Hills)",
+        grapeVariety: "Muscat",
+        vintage: "2024"
+    }
 };
 
 export const useWineLook = () => {
