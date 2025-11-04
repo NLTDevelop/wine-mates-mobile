@@ -32,6 +32,7 @@ const MockedData = {
 export const useWineLook = () => {
     const [perlage, setPerlage] = useState(0);
     const [mousse, setMousse] = useState(0);
+    const [shade, setShade] = useState(1);
     
-    return { data: MockedData, perlage, setPerlage, mousse, setMousse };
+    return { data: MockedData, perlage, setPerlage, mousse, setMousse, shade, setShade };
 };

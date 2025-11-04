@@ -10,6 +10,8 @@ import { scaleVertical } from '@/utils';
 const MIN = 1;
 const MAX = 10;
 const MARKER = scaleVertical(32);
+const MARKER_INNER = scaleVertical(22);
+const TRACK_HEIGHT = scaleVertical(16);
 
 interface IProps {
     value?: number;
@@ -18,13 +20,13 @@ interface IProps {
 
 export const SimpleSlider = memo(({ value = MIN, onChange }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, MARKER), [colors]);
+    const styles = useMemo(() => getStyles(colors, MARKER, TRACK_HEIGHT), [colors]);
 
     const progress = (value - MIN) / (MAX - MIN);
     const baseWidth = styles.slider.width * progress;
 
     const fillWidth = Math.max(0, Math.min(styles.slider.width, baseWidth + MARKER / 2));
-    const customMarker = useCallback(() => <SliderMark/>,[]);
+    const customMarker = useCallback(() => <SliderMark size={MARKER} trackHeight={TRACK_HEIGHT} innerSize={MARKER_INNER}/>,[]);
 
     return (
       <View style={styles.container}>
@@ -43,7 +45,7 @@ export const SimpleSlider = memo(({ value = MIN, onChange }: IProps) => {
                 sliderLength={styles.slider.width}
                 containerStyle={styles.slider}
                 trackStyle={styles.track}
-                selectedStyle={{ backgroundColor: 'transparent' }}
+                selectedStyle={styles.selected}
                 unselectedStyle={styles.unselected}
                 customMarker={customMarker}
             />

@@ -3,9 +3,15 @@ import { View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 
-export const SliderMark = () => {
+interface IProps {
+    size: number,
+    trackHeight: number,
+    innerSize: number,
+}
+
+export const SliderMark = ({ size, trackHeight, innerSize }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors, size, trackHeight, innerSize), [colors, size, trackHeight, innerSize]);
 
     return (
         <View style={styles.markerWrapper}>

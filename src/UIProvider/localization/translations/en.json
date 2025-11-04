@@ -118,6 +118,9 @@
         "TypeOfWine": "Type of wine",
         "wineryName": "Winery name",
         "grapeVariety": "Grape variety",
-        "vintage": "Vintage:"
+        "vintage": "Vintage:",
+        "pale": "Pale",
+        "deep": "Deep",
+        "medium": "Medium"
     }
 }

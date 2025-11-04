@@ -24,6 +24,9 @@ export const getStyles = (colors: IColors) => {
         },
         mainContainer: {
             maxWidth: scaleHorizontal(191),
+            justifyContent: 'space-between',
+        },
+        subContainer: {
             gap: scaleVertical(4),
         },
         title: {

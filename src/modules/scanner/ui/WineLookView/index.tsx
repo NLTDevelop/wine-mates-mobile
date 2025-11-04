@@ -9,6 +9,8 @@ import { Button } from '@/UIKit/Button';
 import { ColorButton } from '../components/ColorButton';
 import { useWineLook } from '../../presenters/useWineLook';
 import { SimpleSlider } from '../components/SimpleSlider';
+import { ShadeSelector } from '../components/ShadeSelector';
+import { CloseButton } from '../components/CloseButton';
 
 interface IColor {
     color: string;
@@ -19,14 +21,14 @@ export const WineLookView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, perlage, setPerlage, mousse, setMousse } = useWineLook();
+    const { data, perlage, setPerlage, mousse, setMousse, shade, setShade } = useWineLook();
 
     return (
         // <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
         <ScreenContainer
             edges={['top', 'bottom']}
             withGradient
-            headerComponent={<HeaderWithBackButton title={t('wine.look')} />}
+            headerComponent={<HeaderWithBackButton title={t('wine.look')} rightComponent={<CloseButton onPress={() => {}}/>}/>}
             scrollEnabled
         >
             <View style={styles.container}>
@@ -39,6 +41,7 @@ export const WineLookView = () => {
                         ))}
                     </View>
                     <Typography text={t('wine.selectShade')} variant="h4" style={styles.label} />
+                    <ShadeSelector value={shade} onChange={setShade} selectedColor={data.colors[3].color}/>
 
                     <Typography text={t('wine.result')} variant="h4" style={styles.label} />
                     <View style={[styles.resultColor, { backgroundColor: data.colors[3].color }]} />

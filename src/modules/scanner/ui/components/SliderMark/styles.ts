@@ -1,16 +1,11 @@
 import { StyleSheet } from 'react-native';
-import { scaleVertical } from '@/utils';
 import { IColors } from '@/UIProvider/theme/IColors';
 
-const TRACK_H = scaleVertical(16);
-const MARKER = scaleVertical(34);
-const MARKER_INNER = scaleVertical(22);
-
-export const getStyles = (colors: IColors) =>
+export const getStyles = (colors: IColors, MARKER: number, TRACK_HEIGHT: number, MARKER_INNER: number) =>
     StyleSheet.create({
       markerWrapper: {
         position: 'absolute',
-        top: -(MARKER / 2 - TRACK_H / 2),
+        top: -(MARKER / 2 - TRACK_HEIGHT / 2),
         width: MARKER,
         height: MARKER,
         justifyContent: 'center',
@@ -31,7 +26,7 @@ export const getStyles = (colors: IColors) =>
         shadowOpacity: 0.15,
         shadowOffset: { width: 0, height: 1 },
         shadowRadius: 2,
-        elevation: 6,
+        elevation: 3,
       },
       markerInner: {
         width: MARKER_INNER,
