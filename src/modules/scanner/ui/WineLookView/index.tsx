@@ -50,7 +50,7 @@ export const WineLookView = () => {
                     <SimpleSlider value={mousse} onChange={setMousse} />
 
                     <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
-                    <SimpleSlider value={perlage} onChange={setPerlage} />
+                    <SimpleSlider value={perlage} onChange={setPerlage}/>
                 </View>
                 <Button text={t('wine.letsSmell')} onPress={() => {}} containerStyle={styles.button} />
             </View>

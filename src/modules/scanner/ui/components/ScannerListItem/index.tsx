@@ -55,8 +55,8 @@ export const ScannerListItem = ({ item, onPress }: IProps) => {
                             style={styles.title}
                         />
                     </View>
+                    <Typography variant="body_400" text={item.description} numberOfLines={3} style={styles.text} />
                 </View>
-                <Typography variant="body_400" text={item.description} numberOfLines={3} style={styles.text} />
             </View>
         </TouchableOpacity>
     );
