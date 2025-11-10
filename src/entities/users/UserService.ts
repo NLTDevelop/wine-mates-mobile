@@ -9,6 +9,7 @@ import { ResetPasswordConfirmDto } from './dto/ResetPasswordConfirm.dto';
 import { IRegisterUser } from './types/IRegisterUser';
 import { ProvidersSignIn } from './dto/ProvidersSignIn.dto';
 import { localization } from '@/UIProvider/localization/Localization';
+import { EmailValidation } from './dto/EmailValidation.dto';
 
 class UserService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -26,6 +27,20 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> signIn: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    validateEmail = async (body: EmailValidation): Promise<IResponse<string>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.auth}/validate-email`,
+                data: body,
+            });
+            return response;
+        } catch (error) {
+            console.warn('UserService -> validateEmail: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

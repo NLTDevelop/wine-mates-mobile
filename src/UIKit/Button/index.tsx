@@ -1,5 +1,5 @@
 import { useMemo, memo } from 'react';
-import { ActivityIndicator, View, ViewStyle, TouchableOpacity, TextStyle, TouchableOpacityProps, } from 'react-native';
+import { ActivityIndicator, View, ViewStyle, TouchableOpacity, TextStyle, TouchableOpacityProps, Keyboard, } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { Typography } from '@/UIKit/Typography';
@@ -20,7 +20,7 @@ export const ButtonComponent = ({ text, type = 'main', disabled, RightAccessory,
     const styles = useMemo(() => getStyles(colors, type, disabled), [colors, disabled, type]);
 
     return (
-        <TouchableOpacity {...props} disabled={inProgress || disabled} style={[styles.container, containerStyle]}>
+        <TouchableOpacity {...props} disabled={inProgress || disabled} style={[styles.container, containerStyle]} onPressIn={Keyboard.dismiss}>
             {inProgress ? (
                 <View style={styles.absoluteSheet}>
                     <ActivityIndicator color={colors.primary} size="small" />
