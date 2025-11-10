@@ -1,5 +1,7 @@
 import { config } from './config';
 
+const isDev = false;
+
 export interface ILinks {
     auth: string;
     resetPassword: string;
@@ -8,7 +10,7 @@ export interface ILinks {
 }
 
 class Links implements ILinks {
-    private _domain = `${config.domain}`;
+    private _domain = isDev ? `${config.devDomain}` : `${config.domain}`;
     private _links = {
         auth: 'auth',
         resetPassword: 'auth/reset-password',

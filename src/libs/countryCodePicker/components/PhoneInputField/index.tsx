@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, ActivityIndicator, Keyboard } from 'react-native';
 import Flag from 'react-native-round-flags';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -32,7 +32,12 @@ export const PhoneInputField = ({ value, onChangeText, placeholder, editable = t
                 </View>
             ) : (
                 <View style={styles.container}>
-                    <TouchableOpacity disabled={!editable} style={styles.pickerButton} onPress={handleCountryCodePress}>
+                    <TouchableOpacity
+                        disabled={!editable}
+                        style={styles.pickerButton}
+                        onPressIn={Keyboard.dismiss}
+                        onPress={handleCountryCodePress}
+                    >
                         <Flag code={selectedCountry.cca2} style={styles.flag} />
                         <Typography variant="h6" style={styles.codeText}>
                             {selectedCountry.callingCode}
