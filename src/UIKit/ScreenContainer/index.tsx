@@ -1,31 +1,35 @@
 import { useMemo } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, ViewStyle, View } from 'react-native';
+import { ViewStyle, View, Keyboard, Pressable } from 'react-native';
 import { Edge, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { ScrollView } from 'react-native-gesture-handler';
 import { Gradient } from '../Gradient';
+import { KeyboardAwareScrollView, KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { isIOS, scaleVertical } from '@/utils';
 
 interface IProps {
     edges?: Edge[];
     children?: React.ReactNode;
     scrollEnabled?: boolean;
-    keyboardShouldPersistTaps?: boolean;
     containerStyle?: ViewStyle;
     contentContainerStyle?: ViewStyle;
     headerComponent?: React.ReactNode;
-    isKeyboardAvoiding?: boolean;
-    isBottomPadding?: boolean;
     withGradient?: boolean;
 }
 
-export const ScreenContainer = ({ isBottomPadding, isKeyboardAvoiding, headerComponent, edges, children, scrollEnabled = false,
-    keyboardShouldPersistTaps = true, containerStyle, contentContainerStyle, withGradient = false }: IProps) => {
+export const ScreenContainer = ({
+    headerComponent,
+    edges,
+    children,
+    scrollEnabled = false,
+    containerStyle,
+    contentContainerStyle,
+    withGradient = false,
+}: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, isBottomPadding, scrollEnabled), [colors, isBottomPadding, scrollEnabled]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
     const safeAreaInsets = useSafeAreaInsets();
-
-    const avoidingBehavior: 'padding' | undefined = Platform.select({ ios: 'padding', android: undefined }) || undefined;
+    const bottomOffset = useMemo(() => (isIOS ? scaleVertical(24) : 0), []);
 
     const edgesStyle = useMemo(() => {
         const result: any = {};
@@ -48,24 +52,30 @@ export const ScreenContainer = ({ isBottomPadding, isKeyboardAvoiding, headerCom
     }, [safeAreaInsets, edges]);
 
     return (
-        <View style={[styles.container, edgesStyle]} >
+        <View style={[styles.mainContainer, edgesStyle]}>
             {withGradient && <Gradient />}
             {!!headerComponent && headerComponent}
-            <KeyboardAvoidingView enabled={isKeyboardAvoiding} style={[styles.keyboardAvoidingContainer, containerStyle]} behavior={avoidingBehavior} onStartShouldSetResponder={keyboardShouldPersistTaps ? Keyboard.dismiss : undefined as any}>
-                {scrollEnabled
-                    ? <ScrollView
-                        scrollEnabled={scrollEnabled}
-                        bounces={false}
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
-                        style={styles.scroll}
-                        keyboardDismissMode="interactive"
-                        keyboardShouldPersistTaps={'handled'}
-                    >
+
+            {scrollEnabled ? (
+                <KeyboardAwareScrollView
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                    keyboardDismissMode="on-drag"
+                    contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
+                    style={styles.scroll}
+                    bottomOffset={bottomOffset}
+                >
+                    <Pressable style={styles.container} onPress={Keyboard.dismiss}>
                         {children}
-                    </ScrollView>
-                    : children}
-            </KeyboardAvoidingView>
+                    </Pressable>
+                </KeyboardAwareScrollView>
+            ) : (
+                <KeyboardAvoidingView style={[styles.container, containerStyle]}>
+                    <Pressable style={styles.container} onPress={Keyboard.dismiss}>
+                        {children}
+                    </Pressable>
+                </KeyboardAvoidingView>
+            )}
         </View>
     );
 };

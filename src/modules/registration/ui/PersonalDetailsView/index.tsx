@@ -32,7 +32,7 @@ export const PersonalDetailsView = observer(() => {
     );
 
     return (
-        <ScreenContainer edges={['top']} headerComponent={<HeaderWithBackButton />} scrollEnabled>
+        <ScreenContainer edges={['top']} headerComponent={<HeaderWithBackButton />} scrollEnabled >
             <View style={[styles.container, bottomInset]}>
                 <View style={styles.mainContainer}>
                     <Typography text={t('registration.personalDetails')} variant="h3" style={styles.title} />

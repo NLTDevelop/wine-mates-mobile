@@ -1,5 +1,5 @@
 import { useImperativeHandle, useRef, useState } from 'react';
-import type { TextInput, TextInputProps } from 'react-native';
+import { type TextInput, type TextInputProps } from 'react-native';
 
 interface UseCustomInputParams extends TextInputProps {
     secureTextEntry?: boolean;

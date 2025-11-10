@@ -6,6 +6,7 @@ import { ToastOverlay } from './libs/toast/ui/ToastOverlay';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { StatusBar } from 'react-native';
 import { useGoogleConfig } from './hooks/useGoogleConfig';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 export const App = () => (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -20,12 +21,17 @@ const ThemedApp = () => {
     useGoogleConfig();
 
     return (
-        <SafeAreaProvider style={{ flex: 1, backgroundColor: colors.background }}>
-            <BottomSheetModalProvider>
-                <RootNavigator />
-                <ToastOverlay />
-                <StatusBar barStyle={theme === 'light' ? 'dark-content' : 'dark-content'} backgroundColor={colors.background}/>
-            </BottomSheetModalProvider>
-        </SafeAreaProvider>
+        <KeyboardProvider>
+            <SafeAreaProvider style={{ flex: 1, backgroundColor: colors.background }}>
+                <BottomSheetModalProvider>
+                    <RootNavigator />
+                    <ToastOverlay />
+                    <StatusBar
+                        translucent
+                        barStyle={theme === 'light' ? 'dark-content' : 'dark-content'}
+                    />
+                </BottomSheetModalProvider>
+            </SafeAreaProvider>
+        </KeyboardProvider>
     );
 };
