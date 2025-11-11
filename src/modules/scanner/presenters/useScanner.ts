@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppState } from '@react-native-community/hooks';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Camera, TakePhotoOptions, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
@@ -8,6 +8,7 @@ import { Camera, TakePhotoOptions, useCameraDevice, useCameraPermission } from '
 export const useScanner = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const appState = useAppState();
+    const isFocused = useIsFocused();
     const cameraRef = useRef<Camera>(null);
     const [torch, setTorch] = useState<'on' | 'off'>('off');
     const { hasPermission, requestPermission } = useCameraPermission();
@@ -18,6 +19,12 @@ export const useScanner = () => {
             requestPermission();
         }
     }, [hasPermission, requestPermission]);
+
+    useEffect(() => {
+        if (appState !== 'active' || !isFocused) {
+            Promise.resolve().then(() => setTorch('off'));
+        }
+    }, [appState, isFocused]);
 
     const handleGalleryPress = () => {
         launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, quality: 1 }, response => {
@@ -48,6 +55,7 @@ export const useScanner = () => {
     };
 
     const handleCrossPress = () => {
+        setTorch('off');
         navigation.goBack();
     };
 
