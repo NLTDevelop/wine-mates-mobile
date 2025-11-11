@@ -20,6 +20,7 @@ export const useSignIn = () => {
     };
 
     const onChangePassword = (value: string) => {
+        if (value.includes(' ')) return;
         setForm(prev => ({ ...prev, password: value }));
         setIsError({ status: false, errorText: '' });
     };

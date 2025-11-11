@@ -20,11 +20,13 @@ export const useCreateNewPassword = () => {
     }, [form, isError]);
 
     const onChangePassword = useCallback((value: string) => {
+        if (value.includes(' ')) return;
         setForm(prev => ({ ...prev, password: value || '' }));
         setIsError({ status: false, errorText: '' });
     }, []);
 
     const onChangeConfirmPassword = useCallback((value: string) => {
+        if (value.includes(' ')) return;
         setForm(prev => ({ ...prev, confirmPassword: value || '' }));
         setIsError({ status: false, errorText: '' });
     }, []);
