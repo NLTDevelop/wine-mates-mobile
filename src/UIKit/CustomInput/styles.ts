@@ -14,7 +14,6 @@ export const getStyles = (colors: IColors, isFocused: boolean) => (
             minHeight: scaleVertical(48),
             paddingVertical: 0,
             alignItems: 'center',
-            paddingHorizontal: scaleHorizontal(16),
             borderWidth: 1,
             borderColor: isFocused ? colors.border_strong : colors.border,
             borderRadius: 12,
@@ -23,11 +22,12 @@ export const getStyles = (colors: IColors, isFocused: boolean) => (
         input: {
             flex: 1,
             fontFamily: 'VisueltPro-Regular',
+            height: "100%",
+            paddingHorizontal: scaleHorizontal(16),
             fontSize: scaleFontSize(16),
             fontWeight: '400',
             paddingVertical: 0,
             color: colors.text,
-            includeFontPadding: false
         },
         inputMultiline:{
             textAlignVertical: 'top',

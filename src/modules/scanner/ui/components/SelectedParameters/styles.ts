@@ -1,5 +1,5 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors) => {
@@ -14,15 +14,16 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'space-between',
             backgroundColor: colors.background,
         },
-        row: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
+        itemContainer: {
+            minHeight: scaleVertical(48),
+            paddingVertical: scaleVertical(14),
+            paddingHorizontal: scaleHorizontal(16),
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 12,
         },
         label: {
             color: colors.text_light,
-        },
-        text: {
             flexShrink: 1,
         },
     });

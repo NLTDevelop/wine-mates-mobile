@@ -28,7 +28,7 @@ export const RegistrationView = observer(() => {
             error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null}
             onRetry={handleRetry}
         >
-            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding>
+            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding scrollEnabled>
                 <View style={styles.container}>
                     <View style={styles.mainContainer}>
                         <Typography text={t('registration.getStarted')} variant="h3" style={styles.title} />

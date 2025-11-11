@@ -23,7 +23,7 @@ export const ForgotPasswordView = () => {
             error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null}
             onRetry={handleRetry}
         >
-            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding>
+            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding scrollEnabled>
                 <View style={styles.container}>
                     <View>
                         <Typography text={t('authentication.resetYourPassword')} variant="h3" style={styles.title} />

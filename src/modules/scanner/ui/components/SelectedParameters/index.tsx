@@ -5,17 +5,9 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { ArrowDownIcon } from '@/assets/icons/ArrowDownIcon';
 import { useSelectedParameters } from '@/modules/scanner/presenters/useSelectedParameters';
+import { wineModel } from '@/entities/wine/WineModel';
 
-interface IProps {
-    details: {
-        typeOfWine: string;
-        wineryName: string;
-        grapeVariety: string;
-        vintage: string;
-    };
-}
-
-export const SelectedParameters = ({ details }: IProps) => {
+export const SelectedParameters = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { isOpened, onPress } = useSelectedParameters();
@@ -28,21 +20,29 @@ export const SelectedParameters = ({ details }: IProps) => {
             </TouchableOpacity>
             {isOpened && (
                 <>
-                    <View style={styles.row}>
-                        <Typography variant="h6" text={`${t('wine.typeOfWine')}: `} style={styles.label} />
-                        <Typography variant="h5" text={details.typeOfWine} style={styles.text} />
+                    <View style={styles.itemContainer}>
+                        <Typography variant="h6" text={wineModel.base?.typeOfWine || t('wine.typeOfWine')} style={styles.label} />
                     </View>
-                    <View style={styles.row}>
-                        <Typography variant="h6" text={`${t('wine.wineryName')}: `} style={styles.label} />
-                        <Typography variant="h5" text={details.wineryName} style={styles.text} />
+                    <View style={styles.itemContainer}>
+                        <Typography variant="h6" text={wineModel.base?.colorOfWine || t('wine.colorOfWine')} style={styles.label} />
                     </View>
-                    <View style={styles.row}>
-                        <Typography variant="h6" text={`${t('wine.grapeVariety')}: `} style={styles.label} />
-                        <Typography variant="h5" text={details.grapeVariety} style={styles.text}/>
+                    <View style={styles.itemContainer}>
+                        <Typography variant="h6" text={wineModel.base?.country || t('wine.country')} style={styles.label} />
                     </View>
-                    <View style={styles.row}>
-                        <Typography variant="h6" text={`${t('wine.vintage')}: `} style={styles.label} />
-                        <Typography variant="h5" text={details.vintage} style={styles.text}/>
+                    <View style={styles.itemContainer}>
+                        <Typography variant="h6" text={wineModel.base?.region || t('wine.region')} style={styles.label} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Typography variant="h6" text={wineModel.base?.winery|| t('wine.wineryName')} style={styles.label} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Typography variant="h6" text={wineModel.base?.grapeVariety || t('wine.grapeVariety')} style={styles.label} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Typography variant="h6" text={wineModel.base?.vintageYear || t('wine.vintage')} style={styles.label} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Typography variant="h6" text={wineModel.base?.wineName || t('wine.wineName')} style={styles.label} />
                     </View>
                 </>
             )}

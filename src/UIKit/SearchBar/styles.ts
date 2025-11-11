@@ -7,10 +7,10 @@ export const getStyles = (colors: IColors) => {
         container: {
             backgroundColor: colors.background,
             borderRadius: 12,
+            paddingHorizontal: scaleVertical(12),
             flexDirection: 'row',
             minHeight: scaleVertical(48),
             alignItems: 'center',
-            paddingHorizontal: scaleVertical(12),
             gap: scaleHorizontal(8),
             borderWidth: 1,
             borderColor: colors.border_light,
@@ -24,12 +24,12 @@ export const getStyles = (colors: IColors) => {
         input: {
             paddingHorizontal: 0,
             paddingVertical: 0,
+            height: "100%",
             flex: 1,
             color: colors.text,
             fontFamily: 'VisueltPro-Regular',
             fontWeight: '400',
             fontSize: scaleFontSize(16),
-            includeFontPadding: false,
         },
     });
     return styles;

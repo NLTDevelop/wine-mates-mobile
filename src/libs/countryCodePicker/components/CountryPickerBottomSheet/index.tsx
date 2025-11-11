@@ -1,6 +1,6 @@
 import { RefObject, useCallback, useMemo } from 'react';
-import { View, TouchableOpacity, FlatList } from 'react-native';
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView, WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
+import { View, TouchableOpacity } from 'react-native';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetFlatList, WINDOW_HEIGHT} from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -23,24 +23,15 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
     const { countriesData, search, setSearch } = useCountryPickerModal();
-
-    const maxSnapPoint = WINDOW_HEIGHT - top;
-    const snapPoints = useMemo(() => [maxSnapPoint], [maxSnapPoint]);
-
-    const renderBackdrop = useCallback(
-        (props: any) => (
-            <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} onPress={handleClose} />
-        ),
-        [handleClose],
-    );
+    const snapPoints = useMemo(() => [WINDOW_HEIGHT], []);
+    const renderBackdrop = useCallback((props: any) => (
+        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} onPress={handleClose} />
+    ), [handleClose]);
 
     const keyExtractor = useCallback((item: ICountry) => item.cca2, []);
-    const renderItem = useCallback(
-        ({ item }: { item: ICountry }) => (
-            <CountryListItem item={item} handleCountryPress={handleCountryPress} showCountryCode={showCountryCode} />
-        ),
-        [handleCountryPress, showCountryCode],
-    );
+    const renderItem = useCallback(({ item }: { item: ICountry }) => (
+        <CountryListItem item={item} handleCountryPress={handleCountryPress} showCountryCode={showCountryCode} />
+    ), [handleCountryPress, showCountryCode]);
 
     return (
         <BottomSheetModal
@@ -48,42 +39,36 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
             index={0}
             snapPoints={snapPoints}
             handleComponent={() => null}
-            backdropComponent={renderBackdrop}
             enableDynamicSizing={false}
+            backdropComponent={renderBackdrop}
             backgroundStyle={styles.container}
-            enablePanDownToClose={true}
+            topInset={top}
+            enablePanDownToClose
             onDismiss={handleClose}
         >
-            <View style={styles.headerContainer}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={handleClose} style={styles.closeContainer}>
-                        <CrossIcon />
-                    </TouchableOpacity>
-                    <Typography variant="h4" text={t('registration.countryCode')} style={styles.title} />
-                </View>
-                <SearchBar
-                    value={search}
-                    onChangeText={setSearch}
-                    placeholder={t('common.search')}
-                    containerStyle={styles.searchContainer}
-                />
+            <View style={styles.header}>
+                <TouchableOpacity onPress={handleClose} style={styles.closeContainer} hitSlop={20}>
+                    <CrossIcon />
+                </TouchableOpacity>
+                <Typography variant="h4" text={t('registration.countryCode')} style={styles.title} />
             </View>
-
-            <BottomSheetScrollView
+            <SearchBar
+                value={search}
+                onChangeText={setSearch}
+                placeholder={t('common.search')}
+                containerStyle={styles.searchContainer}
+            />
+            <BottomSheetFlatList
+                data={countriesData}
+                keyExtractor={keyExtractor}
+                renderItem={renderItem}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.scrollContentContainer}
-            >
-                <FlatList
-                    data={countriesData}
-                    keyExtractor={keyExtractor}
-                    renderItem={renderItem}
-                    scrollEnabled={false}
-                    removeClippedSubviews={true}
-                    initialNumToRender={25}
-                    contentContainerStyle={styles.listContentContainer}
-                    windowSize={7}
-                />
-            </BottomSheetScrollView>
+                contentContainerStyle={styles.listContentContainer}
+                initialNumToRender={30}
+                windowSize={30}
+                maxToRenderPerBatch={60}
+                removeClippedSubviews
+            />
         </BottomSheetModal>
     );
 };

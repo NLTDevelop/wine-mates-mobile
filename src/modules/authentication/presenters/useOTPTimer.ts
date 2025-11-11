@@ -72,12 +72,10 @@ export const stopOtpTimer = () => {
     startedAt = null;
     duration = DEFAULT_DURATION;
     stopInterval();
-    if (timerState.isActive || timerState.remaining !== 0) {
-        updateState({
-            isActive: false,
-            remaining: 0,
-        });
-    }
+    updateState({
+        isActive: false,
+        remaining: 0,
+    });
 };
 
 const subscribe = (listener: () => void) => {

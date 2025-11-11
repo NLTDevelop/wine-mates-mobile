@@ -11,6 +11,7 @@ export const getStyles = (colors: IColors) => {
         },
         mainContainer: {
             flex: 1,
+            marginBottom: scaleVertical(16),
         },
         title: {
             textAlign: 'center',
