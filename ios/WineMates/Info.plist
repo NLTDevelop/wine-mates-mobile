@@ -71,5 +71,22 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>VisueltPro-Black.ttf</string>
+		<string>VisueltPro-BlackItalic.ttf</string>
+		<string>VisueltPro-Bold.ttf</string>
+		<string>VisueltPro-BoldItalic.ttf</string>
+		<string>VisueltPro-ExtraLight.ttf</string>
+		<string>VisueltPro-ExtraLightItalic.ttf</string>
+		<string>VisueltPro-Italic.ttf</string>
+		<string>VisueltPro-Light.ttf</string>
+		<string>VisueltPro-LightItalic.ttf</string>
+		<string>VisueltPro-Medium.ttf</string>
+		<string>VisueltPro-MediumItalic.ttf</string>
+		<string>VisueltPro-Regular.ttf</string>
+		<string>VisueltPro-Thin.ttf</string>
+		<string>VisueltPro-ThinItalic.ttf</string>
+	</array>
 </dict>
 </plist>
