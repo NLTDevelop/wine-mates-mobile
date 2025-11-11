@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ViewStyle, View, Keyboard, Pressable } from 'react-native';
+import { ViewStyle, View, Keyboard, Pressable, ScrollView } from 'react-native';
 import { Edge, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
@@ -15,16 +15,11 @@ interface IProps {
     contentContainerStyle?: ViewStyle;
     headerComponent?: React.ReactNode;
     withGradient?: boolean;
+    isKeyboardAvoiding?: boolean;
 }
 
-export const ScreenContainer = ({
-    headerComponent,
-    edges,
-    children,
-    scrollEnabled = false,
-    containerStyle,
-    contentContainerStyle,
-    withGradient = false,
+export const ScreenContainer = ({ headerComponent, edges, children, scrollEnabled = false, containerStyle, contentContainerStyle,
+    withGradient = false, isKeyboardAvoiding = false,
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -56,25 +51,43 @@ export const ScreenContainer = ({
             {withGradient && <Gradient />}
             {!!headerComponent && headerComponent}
 
-            {scrollEnabled ? (
-                <KeyboardAwareScrollView
-                    showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps="handled"
-                    keyboardDismissMode="on-drag"
-                    contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
-                    style={styles.scroll}
-                    bottomOffset={bottomOffset}
-                >
-                    <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-                        {children}
-                    </Pressable>
-                </KeyboardAwareScrollView>
+            {isKeyboardAvoiding ? (
+                <>
+                    {scrollEnabled ? (
+                        <KeyboardAwareScrollView
+                            showsVerticalScrollIndicator={false}
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
+                            style={styles.scroll}
+                            bottomOffset={bottomOffset}
+                        >
+                            <Pressable style={styles.container} onPress={Keyboard.dismiss}>
+                                {children}
+                            </Pressable>
+                        </KeyboardAwareScrollView>
+                    ) : (
+                        <KeyboardAvoidingView style={[styles.container, containerStyle]}>
+                            <Pressable style={styles.container} onPress={Keyboard.dismiss}>
+                                {children}
+                            </Pressable>
+                        </KeyboardAvoidingView>
+                    )}
+                </>
             ) : (
-                <KeyboardAvoidingView style={[styles.container, containerStyle]}>
-                    <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-                        {children}
-                    </Pressable>
-                </KeyboardAvoidingView>
+                <>
+                    {scrollEnabled ? (
+                        <ScrollView
+                            showsVerticalScrollIndicator={false}
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
+                            style={styles.scroll}
+                        >
+                            {children}
+                        </ScrollView>
+                    ) : (
+                        <View style={[styles.container, containerStyle]}>{children}</View>
+                    )}
+                </>
             )}
         </View>
     );

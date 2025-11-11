@@ -25,7 +25,7 @@ export const CreatePasswordView = () => {
             error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null}
             onRetry={handleRetry}
         >
-            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
+            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding>
                 <View style={styles.container}>
                     <View>
                         <Typography text={t('authentication.password')} variant="h3" style={styles.title} />

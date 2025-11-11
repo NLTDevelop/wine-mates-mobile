@@ -7,24 +7,52 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12171862833D4F179B249BED /* VisueltPro-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C69680A94B054402B8A11130 /* VisueltPro-Regular.ttf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		2B63E9CDBD6C43719200899E /* VisueltPro-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9DCB09864F974E179059C5B3 /* VisueltPro-Italic.ttf */; };
+		537D06C196114218AE0433C7 /* VisueltPro-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D1B6651104414E4090495EE3 /* VisueltPro-LightItalic.ttf */; };
+		54573229B7AF45E784CA32F1 /* VisueltPro-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2F903465CC4090939C0FA1 /* VisueltPro-ExtraLight.ttf */; };
 		62CB31E18A709FA278588A51 /* libPods-WineMates.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C2649C0065EA4F137D89BCC /* libPods-WineMates.a */; };
+		65A679BDE9B840BCB9AD846A /* VisueltPro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4AC90502631043EDBE3317B8 /* VisueltPro-Bold.ttf */; };
+		6BE1D4BD51AA473F9818C04D /* VisueltPro-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C77DB67AF1624667A3971DAE /* VisueltPro-Light.ttf */; };
+		6EAF96466F994232B210A93C /* VisueltPro-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1AF2E0DFABDC499A873A6696 /* VisueltPro-Medium.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		7F290FFED5784D3DBA146146 /* VisueltPro-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B34EBCD2A0844BF281D0D111 /* VisueltPro-MediumItalic.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		9451281F99B0410289E51B18 /* VisueltPro-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 99BC82B635014C81B88F0D80 /* VisueltPro-Black.ttf */; };
+		94E61AA94EA44CC6B4F9178F /* VisueltPro-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CB8A24AA4A18481F8C523F94 /* VisueltPro-BlackItalic.ttf */; };
+		96603BA13635435EA14741B5 /* VisueltPro-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4689DF25C9674AA6B6579662 /* VisueltPro-Thin.ttf */; };
 		96A7D9C1F1D19245D865B360 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		C74BA9355E714E54A4C0089F /* VisueltPro-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2F8413BBD2824C299C52B104 /* VisueltPro-ThinItalic.ttf */; };
+		DCA3BF4F96DB43E29A0D8BB1 /* VisueltPro-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7CE6F5995F604DF5A2ED6A90 /* VisueltPro-BoldItalic.ttf */; };
+		EECFA2D539B6436DB2E3ADB7 /* VisueltPro-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D91CDD03A5894DE6B22D3E57 /* VisueltPro-ExtraLightItalic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* WineMates.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WineMates.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = WineMates/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = WineMates/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1AF2E0DFABDC499A873A6696 /* VisueltPro-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Medium.ttf"; path = "../src/assets/fonts/VisueltPro-Medium.ttf"; sourceTree = "<group>"; };
 		2EF6B73202CB024434D7C93B /* Pods-WineMates.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WineMates.debug.xcconfig"; path = "Target Support Files/Pods-WineMates/Pods-WineMates.debug.xcconfig"; sourceTree = "<group>"; };
+		2F8413BBD2824C299C52B104 /* VisueltPro-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-ThinItalic.ttf"; path = "../src/assets/fonts/VisueltPro-ThinItalic.ttf"; sourceTree = "<group>"; };
+		4689DF25C9674AA6B6579662 /* VisueltPro-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Thin.ttf"; path = "../src/assets/fonts/VisueltPro-Thin.ttf"; sourceTree = "<group>"; };
+		4AC90502631043EDBE3317B8 /* VisueltPro-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Bold.ttf"; path = "../src/assets/fonts/VisueltPro-Bold.ttf"; sourceTree = "<group>"; };
+		5F2F903465CC4090939C0FA1 /* VisueltPro-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-ExtraLight.ttf"; path = "../src/assets/fonts/VisueltPro-ExtraLight.ttf"; sourceTree = "<group>"; };
 		63B8B5942EA69114003821D6 /* WineMates.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WineMates.entitlements; path = WineMates/WineMates.entitlements; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = WineMates/AppDelegate.swift; sourceTree = "<group>"; };
 		7C2649C0065EA4F137D89BCC /* libPods-WineMates.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WineMates.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7CE6F5995F604DF5A2ED6A90 /* VisueltPro-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-BoldItalic.ttf"; path = "../src/assets/fonts/VisueltPro-BoldItalic.ttf"; sourceTree = "<group>"; };
 		7FA5E01F4CCE1E3AA0C31DAF /* Pods-WineMates.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WineMates.release.xcconfig"; path = "Target Support Files/Pods-WineMates/Pods-WineMates.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = WineMates/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		99BC82B635014C81B88F0D80 /* VisueltPro-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Black.ttf"; path = "../src/assets/fonts/VisueltPro-Black.ttf"; sourceTree = "<group>"; };
+		9DCB09864F974E179059C5B3 /* VisueltPro-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Italic.ttf"; path = "../src/assets/fonts/VisueltPro-Italic.ttf"; sourceTree = "<group>"; };
 		AA0000000000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = WineMates/Info.plist; sourceTree = "<group>"; };
+		B34EBCD2A0844BF281D0D111 /* VisueltPro-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-MediumItalic.ttf"; path = "../src/assets/fonts/VisueltPro-MediumItalic.ttf"; sourceTree = "<group>"; };
+		C69680A94B054402B8A11130 /* VisueltPro-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Regular.ttf"; path = "../src/assets/fonts/VisueltPro-Regular.ttf"; sourceTree = "<group>"; };
+		C77DB67AF1624667A3971DAE /* VisueltPro-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Light.ttf"; path = "../src/assets/fonts/VisueltPro-Light.ttf"; sourceTree = "<group>"; };
+		CB8A24AA4A18481F8C523F94 /* VisueltPro-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-BlackItalic.ttf"; path = "../src/assets/fonts/VisueltPro-BlackItalic.ttf"; sourceTree = "<group>"; };
+		D1B6651104414E4090495EE3 /* VisueltPro-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-LightItalic.ttf"; path = "../src/assets/fonts/VisueltPro-LightItalic.ttf"; sourceTree = "<group>"; };
+		D91CDD03A5894DE6B22D3E57 /* VisueltPro-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-ExtraLightItalic.ttf"; path = "../src/assets/fonts/VisueltPro-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -77,6 +105,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				D3CE80F92A6445259A8C7063 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -98,6 +127,28 @@
 				7FA5E01F4CCE1E3AA0C31DAF /* Pods-WineMates.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		D3CE80F92A6445259A8C7063 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				99BC82B635014C81B88F0D80 /* VisueltPro-Black.ttf */,
+				CB8A24AA4A18481F8C523F94 /* VisueltPro-BlackItalic.ttf */,
+				4AC90502631043EDBE3317B8 /* VisueltPro-Bold.ttf */,
+				7CE6F5995F604DF5A2ED6A90 /* VisueltPro-BoldItalic.ttf */,
+				5F2F903465CC4090939C0FA1 /* VisueltPro-ExtraLight.ttf */,
+				D91CDD03A5894DE6B22D3E57 /* VisueltPro-ExtraLightItalic.ttf */,
+				9DCB09864F974E179059C5B3 /* VisueltPro-Italic.ttf */,
+				C77DB67AF1624667A3971DAE /* VisueltPro-Light.ttf */,
+				D1B6651104414E4090495EE3 /* VisueltPro-LightItalic.ttf */,
+				1AF2E0DFABDC499A873A6696 /* VisueltPro-Medium.ttf */,
+				B34EBCD2A0844BF281D0D111 /* VisueltPro-MediumItalic.ttf */,
+				C69680A94B054402B8A11130 /* VisueltPro-Regular.ttf */,
+				4689DF25C9674AA6B6579662 /* VisueltPro-Thin.ttf */,
+				2F8413BBD2824C299C52B104 /* VisueltPro-ThinItalic.ttf */,
+			);
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -163,6 +214,20 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				96A7D9C1F1D19245D865B360 /* PrivacyInfo.xcprivacy in Resources */,
+				9451281F99B0410289E51B18 /* VisueltPro-Black.ttf in Resources */,
+				94E61AA94EA44CC6B4F9178F /* VisueltPro-BlackItalic.ttf in Resources */,
+				65A679BDE9B840BCB9AD846A /* VisueltPro-Bold.ttf in Resources */,
+				DCA3BF4F96DB43E29A0D8BB1 /* VisueltPro-BoldItalic.ttf in Resources */,
+				54573229B7AF45E784CA32F1 /* VisueltPro-ExtraLight.ttf in Resources */,
+				EECFA2D539B6436DB2E3ADB7 /* VisueltPro-ExtraLightItalic.ttf in Resources */,
+				2B63E9CDBD6C43719200899E /* VisueltPro-Italic.ttf in Resources */,
+				6BE1D4BD51AA473F9818C04D /* VisueltPro-Light.ttf in Resources */,
+				537D06C196114218AE0433C7 /* VisueltPro-LightItalic.ttf in Resources */,
+				6EAF96466F994232B210A93C /* VisueltPro-Medium.ttf in Resources */,
+				7F290FFED5784D3DBA146146 /* VisueltPro-MediumItalic.ttf in Resources */,
+				12171862833D4F179B249BED /* VisueltPro-Regular.ttf in Resources */,
+				96603BA13635435EA14741B5 /* VisueltPro-Thin.ttf in Resources */,
+				C74BA9355E714E54A4C0089F /* VisueltPro-ThinItalic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,13 +258,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -236,13 +297,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

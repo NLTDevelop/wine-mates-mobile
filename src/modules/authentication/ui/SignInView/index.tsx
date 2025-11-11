@@ -31,7 +31,7 @@ export const SignInView = () => {
             error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null}
             onRetry={retrySignIn}
         >
-            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
+            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding>
                 <View style={styles.container}>
                     <View>
                         <Typography text={t('authentication.signIn')} variant="h3" style={styles.title} />
