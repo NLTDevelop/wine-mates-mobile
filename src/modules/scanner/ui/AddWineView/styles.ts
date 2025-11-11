@@ -16,9 +16,11 @@ export const getStyles = (colors: IColors) => {
         },
         input: {
             marginBottom: 0,
+            backgroundColor: colors.background,
         },
         mainContainer: {
             gap: scaleVertical(12),
+            marginBottom: scaleVertical(16),
         },
         button: {
             marginBottom: scaleVertical(16),

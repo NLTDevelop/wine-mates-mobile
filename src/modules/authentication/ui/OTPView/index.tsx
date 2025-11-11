@@ -23,7 +23,7 @@ export const OTPView = () => {
 
     return (
         <WithErrorHandler error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null} onRetry={handleRetry}>
-            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding>
+            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding scrollEnabled>
                 <View style={styles.container}>
                     <View>
                         <Typography text={t('authentication.enterConfirmationCode')} variant="h3" style={styles.title} />

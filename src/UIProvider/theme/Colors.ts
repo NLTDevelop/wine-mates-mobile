@@ -23,6 +23,7 @@ export const COLORS: { light: IColors } = {
         text_inverted: '#FFFFFF', // done
         text_primary: '#910D0D', // done
         text_light: '#757575', // done
+        text_middle: '#575757', // done
 
         icon: '#000000', // done
 

@@ -22,6 +22,7 @@ export type IColors = {
     text_light: string;
     text_inverted: string;
     text_primary: string;
+    text_middle: string;
 
     icon: string;
 
