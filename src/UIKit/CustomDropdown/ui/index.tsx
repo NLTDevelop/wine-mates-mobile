@@ -27,18 +27,8 @@ export const CustomDropdown = ({ placeholder, onPress, data, withSearch = false,
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { value, isOpen, search, filteredData, setSearch, handleSelect, setIsOpen } = useCustomDropdown(onPress, data);
-
-    const handleOpen = async () => {
-        if (isLoadingError && onRetry) {
-            const success = await onRetry();
-            if (success) {
-                setIsOpen(true);
-            }
-        } else {
-            setIsOpen(true);
-        }
-    };
+    const { value, isOpen, search, filteredData, setSearch, handleSelect, setIsOpen, handleOpen }
+        = useCustomDropdown({onPress, data, isLoadingError, onRetry});
 
     return (
         <View style={styles.container}>

@@ -20,7 +20,7 @@ export const ButtonComponent = ({ text, type = 'main', disabled, RightAccessory,
     const styles = useMemo(() => getStyles(colors, type, disabled), [colors, disabled, type]);
 
     return (
-        <TouchableOpacity {...props} disabled={inProgress || disabled} style={[styles.container, containerStyle]} onPressIn={Keyboard.dismiss}>
+        <TouchableOpacity {...props} activeOpacity={type === "main" ? 0.9: 0.5} disabled={inProgress || disabled} style={[styles.container, containerStyle]} onPressIn={Keyboard.dismiss}>
             {inProgress ? (
                 <View style={styles.absoluteSheet}>
                     <ActivityIndicator color={colors.primary} size="small" />
