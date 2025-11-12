@@ -4,6 +4,8 @@ import { IList } from '../IList';
 import { IWineListItem } from './types/IWineListItem';
 import { wineListModel } from './WineListModel';
 import { IWineListParams } from './types/IWineListParams';
+import { IWineColorShade } from './types/IWineColorShade';
+import { wineModel } from './WineModel';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -29,23 +31,21 @@ class WineService {
         }
     };
 
-    getColorsWithShades = async (params: IWineListParams): Promise<IResponse<IList<IWineListItem>>> => {
+    getColorsWithShades = async (params: { colorId: string }): Promise<IResponse<IWineColorShade[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
-                url: `${this._links.wine}`,
+                url: `${this._links.wineColorShades}`,
                 params,
             });
+          
             if (!response.isError) {
-                if (params.offset === 0) {
-                    wineListModel.list = response.data;
-                } else {
-                    wineListModel.append(response.data);
-                }
+               wineModel.colorsShades = response.data;
             }
+            
             return response;
         } catch (error) {
-            console.warn('WineService -> list: ', error);
+            console.warn('WineService -> getColorsWithShades: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
