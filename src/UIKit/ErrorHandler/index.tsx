@@ -9,9 +9,10 @@ interface IProps {
   error: ErrorType;
   onRetry: () => void;
   children: ReactNode;
+  isLoading?: boolean;
 }
 
-export const WithErrorHandler = ({ error, onRetry, children }: IProps) => {
+export const WithErrorHandler = ({ error, onRetry, children, isLoading = false}: IProps) => {
   return (
     <Animated.View
       entering={FadeIn.duration(250)}
@@ -19,7 +20,7 @@ export const WithErrorHandler = ({ error, onRetry, children }: IProps) => {
       layout={LinearTransition.springify().stiffness(180).damping(16)}
       style={{ flex: 1 }}
     >
-      {error ? <ErrorStateView type={error} onRetry={onRetry} /> : children}
+      {error ? <ErrorStateView type={error} onRetry={onRetry} isLoading={isLoading}/> : <>{children}</>}
     </Animated.View>
   );
 };

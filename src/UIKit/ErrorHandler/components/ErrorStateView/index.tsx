@@ -8,16 +8,18 @@ import { ConnectionErrorIcon } from '@/assets/icons/ConnectionErrorIcon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/UIKit/Button';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
+import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 
 interface IProps {
     type: ErrorTypeEnum;
     onRetry: () => void;
+    isLoading?: boolean;
 }
 
-export const ErrorStateView = ({ type, onRetry }: IProps) => {
+export const ErrorStateView = ({ type, onRetry, isLoading = false }: IProps) => {
     const { colors, t } = useUiContext();
-    const { bottom } = useSafeAreaInsets();
-    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
+    const { bottom, top } = useSafeAreaInsets();
+    const styles = useMemo(() => getStyles(colors, bottom, top), [colors, bottom, top]);
 
     const { icon, title, subtitle, buttonText } = useMemo(() => {
         const data = {
@@ -39,12 +41,15 @@ export const ErrorStateView = ({ type, onRetry }: IProps) => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.headerContainer}>
+                <HeaderWithBackButton />
+            </View>
             <View style={styles.mainContainer}>
                 {icon}
                 <Typography variant="h4" text={title} style={styles.title} />
                 <Typography variant="body_400" text={subtitle} style={styles.subtitle} />
             </View>
-            <Button text={buttonText} onPress={onRetry} type='secondary'/>
+            <Button text={buttonText} onPress={onRetry} type='secondary' inProgress={isLoading}/>
         </View>
     );
 };

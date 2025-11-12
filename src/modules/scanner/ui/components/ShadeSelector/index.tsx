@@ -6,6 +6,7 @@ import { useUiContext } from '@/UIProvider';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { ShadeSliderMark } from '../ShadeSliderMark';
 import { Typography } from '@/UIKit/Typography';
+import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
 
 const MIN = 1;
 const MAX = 3;
@@ -17,22 +18,30 @@ const SLIDER_LENGTH = scaleHorizontal(343) - MARKER;
 interface IProps {
     value?: number;
     onChange?: (v: number) => void;
-    selectedColor: string;
+    colorShades: IWineColorShade;
 }
 
-export const ShadeSelector = memo(({ value = MIN, onChange, selectedColor }: IProps) => {
+export const ShadeSelector = memo(({ value = MIN, onChange, colorShades }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors, MARKER, TRACK_HEIGHT, SLIDER_LENGTH), [colors]);
-
-    const customMarker = useCallback(
-        () => <ShadeSliderMark size={MARKER} innerSize={MARKER_INNER} selectedColor={selectedColor} trackHeight={TRACK_HEIGHT}/>,
-        [selectedColor],
+    const currentColor = useMemo(
+        () => (value === 1 ? colorShades.tonePale : value === 2 ? colorShades.toneMedium : colorShades.toneDeep),
+        [value, colorShades],
     );
+
+    const customMarker = useCallback(() => (
+        <ShadeSliderMark
+            size={MARKER}
+            innerSize={MARKER_INNER}
+            selectedColor={currentColor}
+            trackHeight={TRACK_HEIGHT}
+        />
+    ), [currentColor]);
 
     return (
         <View style={styles.container}>
             <View style={styles.trackBackground}>
-                <View style={[ styles.leftSide, { backgroundColor: value === 1 ? colors.unselectedSlider : selectedColor }]}/>
+                <View style={[ styles.leftSide, { backgroundColor: value === 1 ? colors.unselectedSlider : currentColor }]}/>
                 <View style={[styles.rightSide, { backgroundColor: colors.unselectedSlider }]} />
             </View>
             <MultiSlider
@@ -45,7 +54,7 @@ export const ShadeSelector = memo(({ value = MIN, onChange, selectedColor }: IPr
                 sliderLength={SLIDER_LENGTH}
                 containerStyle={styles.slider}
                 trackStyle={styles.track}
-                selectedStyle={{ backgroundColor: selectedColor }}
+                selectedStyle={{ backgroundColor: currentColor }}
                 unselectedStyle={styles.unselected}
                 customMarker={customMarker}
             />

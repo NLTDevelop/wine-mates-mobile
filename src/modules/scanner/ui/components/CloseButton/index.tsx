@@ -3,14 +3,13 @@ import { TouchableOpacity } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { CrossIcon } from '@/assets/icons/CrossIcon';
+import { useCloseButton } from '@/modules/scanner/presenters/useCloseButton';
 
-interface IProps {
-    onPress: () => void;
-}
-
-export const CloseButton = ({ onPress }: IProps) => {
+export const CloseButton = () => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+
+    const { onPress } = useCloseButton();
 
     return (
         <TouchableOpacity style={styles.button} onPress={onPress}>
