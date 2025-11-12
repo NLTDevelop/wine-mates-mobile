@@ -60,7 +60,8 @@
         "newPasswordIsRequired": "Потрібен новий пароль",
         "confirmNewPasswordIsRequired": "Потрібно підтвердити новий пароль",
         "confirmPasswordError": "Паролі не збігаються",
-        "enterConfirmationCode": "Введіть код підтвердження"
+        "enterConfirmationCode": "Введіть код підтвердження",
+        "passwordLengthError": "Ваш пароль має містити щонайменше 8 символів."
     },
     "registration": {
         "haveAnAccount": "Вже маєте обліковий запис?",

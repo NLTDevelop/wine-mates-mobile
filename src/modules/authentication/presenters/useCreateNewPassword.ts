@@ -37,6 +37,10 @@ export const useCreateNewPassword = () => {
                 return setIsError({ status: true, errorText: localization.t('authentication.newPasswordIsRequired') });
             }
 
+            if (form.password.length < 8) {
+                return setIsError({ status: true, errorText: localization.t('authentication.passwordLengthError') });
+            }
+
             if (form.confirmPassword.length === 0) {
                 return setIsError({
                     status: true,

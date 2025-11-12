@@ -1,7 +1,14 @@
 import { useState, useMemo } from 'react';
 import { IDropdownItem } from '../types/IDropdownItem';
 
-export const useCustomDropdown = (onPress: (item: string) => void, data: IDropdownItem[]) => {
+interface IProps {
+    onPress: (item: string) => void;
+    data: IDropdownItem[];
+    isLoadingError: boolean;
+    onRetry?: () => Promise<boolean>;
+}
+
+export const useCustomDropdown = ({onPress, data, isLoadingError, onRetry}: IProps) => {
     const [value, setValue] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
@@ -18,5 +25,16 @@ export const useCustomDropdown = (onPress: (item: string) => void, data: IDropdo
         setIsOpen(false);
     };
 
-    return { value, isOpen, search, filteredData, handleSelect, setSearch, setIsOpen };
+    const handleOpen = async () => {
+        if (isLoadingError && onRetry) {
+            const success = await onRetry();
+            if (success) {
+                setIsOpen(true);
+            }
+        } else {
+            setIsOpen(true);
+        }
+    };
+
+    return { value, isOpen, search, filteredData, handleSelect, setSearch, setIsOpen, handleOpen };
 };

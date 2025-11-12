@@ -1,3 +1,4 @@
+import { wineModel } from '@/entities/wine/WineModel';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -6,6 +7,7 @@ export const useCloseButton = () => {
 
     const onPress = () => {
         navigation.navigate('ScanResultsListView', undefined, { pop: true });
+        wineModel.clear();
     };
 
     return { onPress };

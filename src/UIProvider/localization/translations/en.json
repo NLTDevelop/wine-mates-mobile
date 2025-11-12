@@ -60,7 +60,8 @@
         "newPasswordIsRequired": "New password is required",
         "confirmNewPasswordIsRequired": "Confirm new Password is required",
         "confirmPasswordError": "Passwords do not match",
-        "enterConfirmationCode": "Enter the confirmation code"
+        "enterConfirmationCode": "Enter the confirmation code",
+        "passwordLengthError": "Your password must be at least 8 characters long."
     },
     "registration": {
         "haveAnAccount": "Already have an account?",
