@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { useMemo } from 'react';
 import { getStyles } from './styles';
@@ -30,6 +30,8 @@ export const ConfirmationModal = ({ isVisible, onHide, onConfirm, description, i
             animationOutTiming={400}
             backdropOpacity={0.5}
             style={styles.modal}
+            deviceHeight={Dimensions.get('screen').height}
+            deviceWidth={Dimensions.get('screen').width}
             useNativeDriver={true}
             useNativeDriverForBackdrop={true}
             hideModalContentWhileAnimating={true}

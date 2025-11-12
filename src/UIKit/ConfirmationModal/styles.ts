@@ -7,7 +7,9 @@ export const getStyles = (colors: IColors) => {
         modal: {
             justifyContent: 'center',
             alignItems: 'center',
-            marginVertical: 0,
+            margin: 0,
+            marginBottom: 0,
+            marginTop: 0,
             marginHorizontal: scaleHorizontal(16),
         },
         modalContent: {

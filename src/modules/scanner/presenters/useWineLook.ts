@@ -39,7 +39,7 @@ export const useWineLook = () => {
                 setIsError(false);
             }
         } catch(error) {
-            console.error(JSON.stringify(error));
+            console.error(JSON.stringify(error, null, 2));
         } finally {
             setIsLoading(false);
         }
