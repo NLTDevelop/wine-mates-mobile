@@ -18,7 +18,7 @@ export const useWineColor = (typeId: number | null | undefined) => {
             }
 
             try {
-                const response = await wineService.getColors({ wineTypeId: String(typeId) });
+                const response = await wineService.getColors({ wineTypeId: typeId });
 
                 if (response.isError || !response.data) {
                     toastService.showError(

@@ -4,11 +4,13 @@ import { IWineLook } from './types/IWineLook';
 import { IWineColorShade } from './types/IWineColorShade';
 import { IWineType } from './types/IWineType';
 import { IWineColor } from './types/IWineColors';
+import { IWineSmell } from './types/IWineSmell';
 
 export interface IWineListModel {
     base: IWineBase | null;
     look: IWineLook | null;
     colorsShades: IWineColorShade[] | null;
+    smells: IWineSmell[] | null;
     wineTypes: IWineType[] | null;
     colors: IWineColor[] | null;
     clear: () => void;
@@ -19,6 +21,7 @@ class WineModel implements IWineListModel {
     private lookRepository = new MobXRepository<IWineLook | null>(null);
     private colorsShadesRepository = new MobXRepository<IWineColorShade[] | null>(null);
     private typesRepository = new MobXRepository<IWineType[] | null>(null);
+    private smellsRepository = new MobXRepository<IWineSmell[] | null>(null);
     private colorsRepository = new MobXRepository<IWineColor[] | null>(null);
 
     public get base() {
@@ -61,11 +64,20 @@ class WineModel implements IWineListModel {
         this.colorsShadesRepository.save(value);
     }
 
+    public get smells() {
+        return this.smellsRepository.data;
+    }
+
+    public set smells(value: IWineSmell[] | null) {
+        this.smellsRepository.save(value);
+    }
+
     public clear() {
         this.base = null;
         this.look = null;
         this.colors = null;
         this.colorsShades = null;
+        this.smells = null;
     }
 }
 

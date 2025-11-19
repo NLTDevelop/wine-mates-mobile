@@ -88,21 +88,20 @@ export const useAddWine = () => {
     }, []);
 
     const handleNextPress = useCallback(async () => {
-        wineModel.base = form;
+        const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
+
+        wineModel.base = {
+            ...form,
+            typeOfWine: {
+                ...form.typeOfWine,
+                isSparkling: selectedType?.isSparkling
+            }
+        };
         navigation.navigate('WineLookView');
     }, [navigation, form]);
 
-    return {
-        form,
-        onChangeWinery,
-        onChangeGrapeVariety,
-        onChangeVintageYear,
-        onChangeWineName,
-        handleNextPress,
-        isDisabled,
-        onChangeType,
-        onChangeColor,
-        onChangeCountry,
-        onChangeRegion,
+    return { 
+        form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress,
+        isDisabled, onChangeType, onChangeColor, onChangeCountry, onChangeRegion,
     };
 };

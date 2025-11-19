@@ -29,6 +29,7 @@ export const useWineTypes = () => {
                             label,
                             value: label,
                             id: type.id,
+                            isSparkling: type.isSparkling,
                         };
                     }),
                 );

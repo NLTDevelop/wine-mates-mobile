@@ -1,6 +1,7 @@
 export interface IWineBaseValue {
     id: number | null;
     value: string;
+    isSparkling?: boolean;
 }
 
 export interface IWineBase {

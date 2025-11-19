@@ -17,6 +17,8 @@ import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
+import { NextLongArrowIcon } from '@/assets/icons/NextLongArrowIcon';
+import { wineModel } from '@/entities/wine/WineModel';
 
 
 export const WineLookView = observer(() => {
@@ -24,16 +26,20 @@ export const WineLookView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades,
-        currentColor, isLoading, onSelectColor } = useWineLook();
+        currentColor, isLoading, onSelectColor, handlePressNext } = useWineLook();
+
+        console.log(wineModel.base?.typeOfWine.isSparkling)
         
     return (
-        <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getColorsWithShades} isLoading={isLoading}>
+        <WithErrorHandler
+            error={isError ? ErrorTypeEnum.ERROR : null}
+            onRetry={getColorsWithShades}
+            isLoading={isLoading}
+        >
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={
-                    <HeaderWithBackButton title={t('wine.look')} rightComponent={<CloseButton />} />
-                }
+                headerComponent={<HeaderWithBackButton title={t('wine.look')} rightComponent={<CloseButton />} />}
                 scrollEnabled
             >
                 {!data || !selectedColor || isLoading ? (
@@ -61,15 +67,24 @@ export const WineLookView = observer(() => {
                             <Typography text={t('wine.result')} variant="h4" style={styles.label} />
                             <View style={[styles.resultColor, { backgroundColor: currentColor }]} />
 
-                            <Typography text={t('wine.selectMousse')} variant="h4" style={styles.label} />
-                            <SimpleSlider value={mousse} onChange={setMousse} />
+                            {wineModel.base?.typeOfWine.isSparkling && (
+                                <>
+                                    <Typography text={t('wine.selectMousse')} variant="h4" style={styles.label} />
+                                    <SimpleSlider value={mousse} onChange={setMousse} />
 
-                            <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
-                            <SimpleSlider value={perlage} onChange={setPerlage} />
+                                    <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
+                                    <SimpleSlider value={perlage} onChange={setPerlage} />
+                                </>
+                            )}
 
                             <SelectedParameters />
                         </View>
-                        <Button text={t('wine.letsSmell')} onPress={() => {}} containerStyle={styles.button} />
+                        <Button
+                            text={t('wine.letsSmell')}
+                            onPress={handlePressNext}
+                            containerStyle={styles.button}
+                            RightAccessory={<NextLongArrowIcon />}
+                        />
                     </View>
                 )}
             </ScreenContainer>

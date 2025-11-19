@@ -90,7 +90,7 @@
         "confirmPassword": "Confirm password"
     },
     "wineLevel": {
-        "lover" : "Wine lover",
+        "lover": "Wine lover",
         "expert": "Wine expert",
         "creator": "Winemaker"
     },
@@ -123,6 +123,8 @@
         "wineName": "Wine name",
         "pale": "Pale",
         "deep": "Deep",
-        "medium": "Medium"
+        "medium": "Medium",
+        "smell": "Smell",
+        "smellDescription": "Select the main color of your wine, then refine it by choosing the exact shade"
     }
 }

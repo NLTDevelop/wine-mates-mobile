@@ -3,10 +3,12 @@ import { wineModel } from "@/entities/wine/WineModel";
 import { wineService } from "@/entities/wine/WineService";
 import { toastService } from "@/libs/toast/toastService";
 import { localization } from "@/UIProvider/localization/Localization";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export const useWineLook = () => {
-    const data = wineModel.colorsShades;
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(true);
     const [perlage, setPerlage] = useState(0);
     const [mousse, setMousse] = useState(0);
@@ -16,6 +18,7 @@ export const useWineLook = () => {
     const currentColor = useMemo(() =>
         shade === 1 ? selectedColor?.tonePale : shade === 2 ? selectedColor?.toneMedium : selectedColor?.toneDeep,
     [shade, selectedColor]);
+    const data = wineModel.colorsShades;
 
     const getColorsWithShades = useCallback(async () => {
         try {
@@ -59,9 +62,26 @@ export const useWineLook = () => {
         setSelectedColor(color);
         setShade(1);
     }, []);
+
+    const handlePressNext = useCallback(() => {
+        if (!currentColor) return;
+
+        if (wineModel.base?.typeOfWine.isSparkling) {
+            wineModel.look = {
+                color: currentColor,
+                mousse,
+                perlage,
+            }
+        } else {
+            wineModel.look = {
+                color: currentColor,
+            }
+        }
+        navigation.navigate('WineSmellView');
+    }, [navigation, currentColor, mousse, perlage]);
     
     return { 
         data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades, currentColor,
-        isLoading, onSelectColor
+        isLoading, onSelectColor, handlePressNext
     };
 };
