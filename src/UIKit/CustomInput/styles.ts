@@ -21,7 +21,7 @@ export const getStyles = (colors: IColors, isFocused: boolean) => (
         },
         input: {
             flex: 1,
-            fontFamily: 'Visuelt Pro',
+            fontFamily: 'VisueltPro-Regular',
             height: "100%",
             paddingHorizontal: scaleHorizontal(16),
             fontSize: scaleFontSize(16),

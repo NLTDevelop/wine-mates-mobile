@@ -27,7 +27,7 @@ export const getStyles = (colors: IColors) => {
             height: "100%",
             flex: 1,
             color: colors.text,
-            fontFamily: 'Visuelt Pro',
+            fontFamily: 'VisueltPro-Regular',
             fontWeight: '400',
             fontSize: scaleFontSize(16),
         },
