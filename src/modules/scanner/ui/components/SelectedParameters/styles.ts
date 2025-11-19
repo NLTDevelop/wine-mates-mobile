@@ -12,7 +12,6 @@ export const getStyles = (colors: IColors) => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backgroundColor: colors.background,
         },
         itemContainer: {
             minHeight: scaleVertical(48),
@@ -23,7 +22,7 @@ export const getStyles = (colors: IColors) => {
             borderRadius: 12,
         },
         label: {
-            color: colors.text_light,
+            color: colors.text,
             flexShrink: 1,
         },
     });

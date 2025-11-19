@@ -1,10 +1,15 @@
+export interface IWineBaseValue {
+    id: number | null;
+    value: string;
+}
+
 export interface IWineBase {
-    typeOfWine: string;
-    colorOfWine: string;
-    country: string;
-    region: string;
-    winery: string;
-    grapeVariety: string;
-    vintageYear: string;
-    wineName: string;
+    typeOfWine: IWineBaseValue;
+    colorOfWine: IWineBaseValue;
+    country: IWineBaseValue;
+    region: IWineBaseValue;
+    winery: IWineBaseValue;
+    grapeVariety: IWineBaseValue;
+    vintageYear: IWineBaseValue;
+    wineName: IWineBaseValue;
 }

@@ -4,19 +4,12 @@ import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) =>
     StyleSheet.create({
-        container: {
+        dropdown: {
             borderWidth: 1,
             borderRadius: 12,
             borderColor: colors.border_light,
-            height: scaleVertical(48),
-            backgroundColor: colors.background,
-        },
-        dropdown: {
-            // borderWidth: 1,
-            // borderRadius: 12,
-            // borderColor: colors.border_light,
             paddingHorizontal: scaleHorizontal(12),
-            height: scaleVertical(48),
+            minHeight: scaleVertical(48),
             justifyContent: 'center',
             backgroundColor: colors.background,
         },
@@ -30,9 +23,12 @@ export const getStyles = (colors: IColors) =>
         },
         placeholder: {
             fontSize: scaleFontSize(16),
-            fontFamily: 'VisueltPro-Regular',
+            fontFamily: 'Visuelt Pro',
             fontWeight: '400',
             color: colors.text,
+        },
+        dropdownDisabled: {
+            opacity: 0.5,
         },
         itemContainer: {
             flexDirection: 'row',

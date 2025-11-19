@@ -13,16 +13,16 @@ import { useWineTypes } from '../../presenters/useWineTypes';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
-import { useWineColor } from '../../presenters/useWineСolor';
+import { useWineColor } from '../../presenters/useWineColor';
+import { observer } from 'mobx-react-lite';
 
-export const AddWineView = () => {
+export const AddWineView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-
     const { form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress, isDisabled,
         onChangeType, onChangeColor, onChangeCountry, onChangeRegion } = useAddWine();
     const { typeData, getTypes, isLoading, isError } = useWineTypes();
-    const { colorsData, isErrorColors, isLoadingColors, retryGetColors } = useWineColor(form.typeOfWine);
+    const { colorsData } = useWineColor(form.typeOfWine.id);
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getTypes} isLoading={isLoading}>
@@ -44,59 +44,61 @@ export const AddWineView = () => {
                                     data={typeData}
                                     placeholder={t('wine.typeOfWine')}
                                     onPress={onChangeType}
+                                    selectedValue={form.typeOfWine.value}
                                 />
                                 <CustomDropdown
                                     data={colorsData}
                                     placeholder={t('wine.colorOfWine')}
                                     onPress={onChangeColor}
-                                    isLoadingError={isErrorColors}
-                                    isLoading={isLoadingColors}
-                                    onRetry={retryGetColors}
+                                    selectedValue={form.colorOfWine.value}
+                                    disabled={!colorsData.length}
                                 />
                                 <CustomDropdown
                                     data={[
-                                        { label: 'red', value: 'Red' },
-                                        { label: 'blue', value: 'Blue' },
-                                        { label: 'green', value: 'Green' },
+                                        { id: 1, label: 'red', value: 'Red' },
+                                        { id: 2, label: 'blue', value: 'Blue' },
+                                        { id: 3, label: 'green', value: 'Green' },
                                     ]}
                                     placeholder={t('wine.country')}
                                     onPress={onChangeCountry}
+                                    selectedValue={form.country.value}
                                     withSearch
                                 />
                                 <CustomDropdown
                                     data={[
-                                        { label: 'red', value: 'Red' },
-                                        { label: 'blue', value: 'Blue' },
-                                        { label: 'green', value: 'Green' },
+                                        { id: 1, label: 'red', value: 'Red' },
+                                        { id: 2, label: 'blue', value: 'Blue' },
+                                        { id: 3, label: 'green', value: 'Green' },
                                     ]}
                                     placeholder={t('wine.region')}
                                     onPress={onChangeRegion}
+                                    selectedValue={form.region.value}
                                     withSearch
                                 />
                                 <CustomInput
                                     autoCapitalize="none"
-                                    value={form.winery}
+                                    value={form.winery.value}
                                     onChangeText={onChangeWinery}
                                     placeholder={t('wine.wineryName')}
                                     containerStyle={styles.input}
                                 />
                                 <CustomInput
                                     autoCapitalize="none"
-                                    value={form.grapeVariety}
+                                    value={form.grapeVariety.value}
                                     onChangeText={onChangeGrapeVariety}
                                     placeholder={t('wine.grapeVariety')}
                                     containerStyle={styles.input}
                                 />
                                 <CustomInput
                                     autoCapitalize="none"
-                                    value={form.vintageYear}
+                                    value={form.vintageYear.value}
                                     onChangeText={onChangeVintageYear}
                                     placeholder={t('wine.vintage')}
                                     containerStyle={styles.input}
                                 />
                                 <CustomInput
                                     autoCapitalize="none"
-                                    value={form.wineName}
+                                    value={form.wineName.value}
                                     onChangeText={onChangeWineName}
                                     placeholder={t('wine.wineName')}
                                     containerStyle={styles.input}
@@ -114,4 +116,4 @@ export const AddWineView = () => {
             </ScreenContainer>
         </WithErrorHandler>
     );
-};
+});

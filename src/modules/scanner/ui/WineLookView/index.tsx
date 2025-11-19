@@ -16,9 +16,10 @@ import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
 import { Loader } from '@/UIKit/Loader';
+import { observer } from 'mobx-react-lite';
 
 
-export const WineLookView = () => {
+export const WineLookView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -74,4 +75,4 @@ export const WineLookView = () => {
             </ScreenContainer>
         </WithErrorHandler>
     );
-};
+});

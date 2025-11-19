@@ -1,17 +1,21 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { IDropdownItem } from '../types/IDropdownItem';
 
 interface IProps {
-    onPress: (item: string) => void;
+    onPress: (item: IDropdownItem) => void;
     data: IDropdownItem[];
-    isLoadingError: boolean;
-    onRetry?: () => Promise<boolean>;
+    onSelect?: () => Promise<boolean>;
+    selectedValue?: string | null;
 }
 
-export const useCustomDropdown = ({onPress, data, isLoadingError, onRetry}: IProps) => {
-    const [value, setValue] = useState<string | null>(null);
+export const useCustomDropdown = ({ onPress, data, onSelect, selectedValue = null }: IProps) => {
+    const [value, setValue] = useState<string | null>(selectedValue);
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
+
+    useEffect(() => {
+        Promise.resolve().then(() => setValue(selectedValue || null));
+    }, [selectedValue]);
 
     const filteredData = useMemo(() => {
         if (!search.trim()) return data;
@@ -21,19 +25,13 @@ export const useCustomDropdown = ({onPress, data, isLoadingError, onRetry}: IPro
 
     const handleSelect = (item: IDropdownItem) => {
         setValue(item.value);
-        onPress(item.value);
+        onPress(item);
         setIsOpen(false);
+        onSelect?.();
     };
 
     const handleOpen = async () => {
-        if (isLoadingError && onRetry) {
-            const success = await onRetry();
-            if (success) {
-                setIsOpen(true);
-            }
-        } else {
-            setIsOpen(true);
-        }
+        setIsOpen(true);
     };
 
     return { value, isOpen, search, filteredData, handleSelect, setSearch, setIsOpen, handleOpen };
