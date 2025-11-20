@@ -38,7 +38,6 @@ export const getStyles = (colors: IColors) => {
         },
         buttonText: {
             fontSize: 18,
-            fontWeight: '500',
             color: colors.primary,
         },
         list: {

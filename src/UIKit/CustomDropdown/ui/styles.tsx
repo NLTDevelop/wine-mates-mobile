@@ -24,7 +24,6 @@ export const getStyles = (colors: IColors) =>
         placeholder: {
             fontSize: scaleFontSize(16),
             fontFamily: 'VisueltPro-Regular',
-            fontWeight: '400',
             color: colors.text,
         },
         dropdownDisabled: {

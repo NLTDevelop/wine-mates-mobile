@@ -28,7 +28,6 @@ export const getStyles = (colors: IColors) => {
             flex: 1,
             color: colors.text,
             fontFamily: 'VisueltPro-Regular',
-            fontWeight: '400',
             fontSize: scaleFontSize(16),
         },
     });
