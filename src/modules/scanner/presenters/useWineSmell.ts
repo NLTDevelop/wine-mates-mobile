@@ -3,19 +3,22 @@ import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 
 export interface ISelectedSmell {
     id: number;
-    color: string | null;
-    value: string;
+    colorHex: string | null;
+    name: string;
     subgroupId?: number | null;
     groupId?: number | null;
     aroma?: IAroma;
 }
 
 export const useWineSmell = (onHide: () => void) => {
-    const initialData = wineModel.smells;
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
     const [data, setData] = useState<IWineSmell[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isOpened, setIsOpened] = useState(false);
@@ -23,6 +26,7 @@ export const useWineSmell = (onHide: () => void) => {
     const [selected, setSelected] = useState<ISelectedSmell[]>([]);
     const [search, setSearch] = useState('');
     const [isError, setIsError] = useState(false);
+    const initialData = wineModel.smells;
 
     const getSmells = useCallback(async () => {
         try {
@@ -58,6 +62,7 @@ export const useWineSmell = (onHide: () => void) => {
     useEffect(() => {
         return () => {
             wineModel.smells = null;
+            wineModel.selectedSmells = null;
         };
     }, []);
 
@@ -80,8 +85,8 @@ export const useWineSmell = (onHide: () => void) => {
     const onItemPress = useCallback((item: IAroma, subgroupId?: number | null, groupId?: number | null) => {
         const addedSmell: ISelectedSmell = {
             id: item.id,
-            color: item.colorHex,
-            value: item.name || item.nameEn,
+            colorHex: item.colorHex,
+            name: item.name || item.nameEn,
             subgroupId,
             groupId,
             aroma: item,
@@ -155,14 +160,19 @@ export const useWineSmell = (onHide: () => void) => {
             ...prevState,
             { 
                 id: Date.now() + Math.floor(Math.random() * 10000),
-                color: null,
-                value: text,
+                colorHex: null,
+                name: text,
             },
         ]);
     }, []);
 
+    const handleNextPress = useCallback(() => {
+        wineModel.selectedSmells = selected.map(item => item.id);
+        navigation.navigate('WineTasteView');
+    }, [navigation, selected]);
+
     return { 
         data, selected, isError, getSmells, isLoading, search, setSearch, isOpened, onItemPress, toggleList, selectedIndex,
-        handleLeftPress, handleRightPress, handleAddCustomSmell, onSelectedItemPress
+        handleLeftPress, handleRightPress, handleAddCustomSmell, onSelectedItemPress, handleNextPress
     };
 };

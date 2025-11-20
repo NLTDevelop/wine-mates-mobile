@@ -8,7 +8,7 @@ export const getStyles = (colors: IColors, backgroundColor: string) => {
             borderRadius: 12,
             paddingHorizontal: scaleHorizontal(12),
             justifyContent: 'center',
-            minHeight: scaleVertical(40),
+            minHeight: scaleVertical(48),
             backgroundColor,
         },
         text: {

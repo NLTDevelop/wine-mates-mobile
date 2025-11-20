@@ -4,9 +4,10 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { IAroma, ISmellSubgroup } from '@/entities/wine/types/IWineSmell';
+import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 
 interface IProps {
-    item: ISmellSubgroup | IAroma;
+    item: ISmellSubgroup | IAroma | IWineTaste;
     onPress: () => void;
 }
 

@@ -14,6 +14,8 @@ import { CreatePasswordView } from '@/modules/registration/ui/CreatePasswordView
 import { ScanResultView } from '@/modules/scanner/ui/ScanResultView';
 import { WineLookView } from '@/modules/scanner/ui/WineLookView';
 import { WineSmellView } from '@/modules/scanner/ui/WineSmellView';
+import { WineTasteView } from '@/modules/scanner/ui/WineTasteView';
+import { WineTasteCharacteristicsView } from '@/modules/scanner/ui/WineTasteCharacteristicsView';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,7 +34,9 @@ export const MainStackNavigator = observer(() => {
         <Stack.Screen name="CreatePasswordView" component={CreatePasswordView} />
         <Stack.Screen name="ScanResultView" component={ScanResultView} />
         <Stack.Screen name="WineLookView" component={WineLookView} options={{gestureEnabled: false}}/>
-        <Stack.Screen name="WineSmellView" component={WineSmellView} options={{gestureEnabled: false}}/>
+        <Stack.Screen name="WineSmellView" component={WineSmellView}/>
+        <Stack.Screen name="WineTasteView" component={WineTasteView}/>
+        <Stack.Screen name="WineTasteCharacteristicsView" component={WineTasteCharacteristicsView} options={{gestureEnabled: false}}/>
     </Stack.Navigator>
     );
 });

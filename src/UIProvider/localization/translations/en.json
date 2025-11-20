@@ -127,6 +127,10 @@
         "smell": "Smell",
         "smellDescription": "Select the main smell of your wine, then refine it by choosing the exact shade",
         "addCustomSmell": "Add custom smell",
-        "letsTaste": "Let’s Taste"
+        "letsTaste": "Let’s Taste",
+        "taste": "Taste",
+        "tasteDescription": "Select the main taste of your wine",
+        "addCustomTaste": "Add custom taste",
+        "tasteCharacteristics": "Taste characteristics"
     }
 }

@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { wineModel } from '@/entities/wine/WineModel';
 import { IWineBase, IWineBaseValue } from '@/entities/wine/types/IWineBase';
@@ -54,6 +54,10 @@ export const useAddWine = () => {
 
         return hasEmptyBase;
     }, [form]);
+
+    useEffect(() => {
+        return () => wineModel.clear();
+    }, []);
 
     const onChangeType= useCallback((item: IDropdownItem) => {
         setForm(prev => ({ ...prev, typeOfWine: fromDropdown(item), colorOfWine: createValue() }));

@@ -23,9 +23,6 @@ export const getStyles = (colors: IColors) => {
             rowGap: scaleVertical(7),
             paddingRight: isIOS ? scaleHorizontal(16) : 0,
         },
-        searchContainer: {
-            marginBottom: scaleVertical(12),
-        },
         input: {
             marginBottom: scaleVertical(16),
         },
