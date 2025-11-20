@@ -22,19 +22,30 @@ import { SmellListItem } from '../components/SmellListItem';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { useAddItem } from '../../presenters/useAddItem';
 import { AddButton } from '../components/AddButton';
+import { useSelectModal } from '../../presenters/useSelectModal';
+import { SelectModal } from '../components/SelectModal';
 
 export const WineSmellView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, selected, isError, getSmells, isLoading, search, setSearch, isOpened, onItemPress, toggleList,
-        selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell } = useWineSmell();
+    const { isVisible, onShowModal, onHide, selectData, selectedSubgroup, groupId } = useSelectModal();
+    const { data, selected, isError, getSmells, isLoading, search, setSearch, isOpened, onItemPress, toggleList, onSelectedItemPress,
+        selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell } = useWineSmell(onHide);
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
 
     const keyExtractor = useCallback((item: ISmellSubgroup, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(
-        ({ item }: { item: ISmellSubgroup }) => <SmellListItem item={item} onPress={() => onItemPress(item)} />,
-    [onItemPress]);
+        ({ item }: { item: ISmellSubgroup }) => (
+            <SmellListItem item={item} onPress={() => onShowModal(data[selectedIndex].id, item)} />
+        ),
+    [data, onShowModal, selectedIndex]);
+
+    const visibleSubgroups = useMemo(() => {
+        const currentGroup = data[selectedIndex];
+        if (!currentGroup) return [];
+        return currentGroup.subgroups.filter(subgroup => subgroup.aromas.length > 0);
+    }, [data, selectedIndex]);
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getSmells} isLoading={isLoading}>
@@ -58,40 +69,50 @@ export const WineSmellView = observer(() => {
                                 containerStyle={styles.searchContainer}
                             />
                             <SmellGroupSelector
-                                data={selected}
+                                data={data}
                                 isOpened={isOpened}
+                                selectedIndex={selectedIndex}
                                 onPress={toggleList}
                                 handleLeftPress={handleLeftPress}
                                 handleRightPress={handleRightPress}
                             />
                             {isOpened && (
                                 <FlatList
-                                    data={data[selectedIndex].subgroups}
+                                    data={visibleSubgroups}
                                     keyExtractor={keyExtractor}
                                     renderItem={renderItem}
                                     style={styles.list}
                                     contentContainerStyle={styles.contentContainer}
+                                    nestedScrollEnabled={true}
                                 />
                             )}
                             <CustomInput
                                 value={text}
                                 onChangeText={setText}
                                 maxLength={40}
-                                placeholder={t('authentication.confirmNewPassword')}
-                                RightAccessory={<AddButton onPress={handleAddPress}/>}
+                                placeholder={t('wine.addCustomSmell')}
+                                RightAccessory={<AddButton onPress={handleAddPress} />}
                                 containerStyle={styles.input}
                             />
-                            <SelectedItemsList data={selected} onPress={() => {}} />
+                            {selected.length > 0 && <SelectedItemsList data={selected} onPress={onSelectedItemPress} />}
                             <SelectedParameters />
                         </View>
                         <Button
-                            text={t('wine.letsSmell')}
+                            text={t('wine.letsTaste')}
                             onPress={() => {}}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}
                         />
                     </View>
                 )}
+                <SelectModal
+                    isVisible={isVisible}
+                    onHide={onHide}
+                    onItemPress={onItemPress}
+                    data={selectData}
+                    subgroupId={selectedSubgroup?.id ?? null}
+                    groupId={groupId}
+                />
             </ScreenContainer>
         </WithErrorHandler>
     );

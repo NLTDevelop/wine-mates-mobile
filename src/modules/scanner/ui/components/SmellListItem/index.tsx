@@ -3,16 +3,16 @@ import { TouchableOpacity } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { ISmellSubgroup } from '@/entities/wine/types/IWineSmell';
+import { IAroma, ISmellSubgroup } from '@/entities/wine/types/IWineSmell';
 
 interface IProps {
-    item: ISmellSubgroup;
+    item: ISmellSubgroup | IAroma;
     onPress: () => void;
 }
 
 export const SmellListItem = ({ item, onPress }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, item.colorHex), [colors, item]);
+    const styles = useMemo(() => getStyles(colors, item.colorHex ?? colors.primary), [colors, item]);
 
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>

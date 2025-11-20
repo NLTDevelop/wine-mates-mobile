@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, FlatList} from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ArrowIcon } from '@/assets/icons/ArrowIcon';
 import { NextLongArrowIcon } from '@/assets/icons/NextLongArrowIcon';
-import { FlatList } from 'react-native-gesture-handler';
 import { SelectedItems } from '../SelectedItem';
 import { ISelectedSmell } from '@/modules/scanner/presenters/useWineSmell';
+import { useSelectedItemsList } from '@/modules/scanner/presenters/useSelectedItemsList';
 
 interface IProps {
     data: ISelectedSmell[];
@@ -16,6 +16,7 @@ interface IProps {
 export const SelectedItemsList = ({ data, onPress }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const { listRef, onScroll, scrollLeft, scrollRight } = useSelectedItemsList();
 
     const keyExtractor = useCallback((item: ISelectedSmell, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(
@@ -25,10 +26,12 @@ export const SelectedItemsList = ({ data, onPress }: IProps) => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button} onPress={() => {}}>
+            <TouchableOpacity style={styles.button} onPress={scrollLeft}>
                 <ArrowIcon width={16} height={16} />
             </TouchableOpacity>
+
             <FlatList
+                ref={listRef}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 data={data}
@@ -36,9 +39,12 @@ export const SelectedItemsList = ({ data, onPress }: IProps) => {
                 renderItem={renderItem}
                 style={styles.list}
                 contentContainerStyle={styles.contentContainer}
+                onScroll={onScroll}
+                scrollEventThrottle={16}
             />
-            <TouchableOpacity style={styles.button} onPress={() => {}}>
-                <NextLongArrowIcon width={16} height={16} color={colors.icon}/>
+
+            <TouchableOpacity style={styles.button} onPress={scrollRight}>
+                <NextLongArrowIcon width={16} height={16} color={colors.icon} />
             </TouchableOpacity>
         </View>
     );

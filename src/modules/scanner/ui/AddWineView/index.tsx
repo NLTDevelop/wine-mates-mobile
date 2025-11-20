@@ -27,7 +27,7 @@ export const AddWineView = observer(() => {
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getTypes} isLoading={isLoading}>
             <ScreenContainer
-                edges={['top']}
+                edges={['top', 'bottom']}
                 withGradient
                 headerComponent={<HeaderWithBackButton title={t('scanner.whatsInYourGlass')} />}
                 isKeyboardAvoiding

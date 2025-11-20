@@ -57,6 +57,7 @@ export const ScreenContainer = ({ headerComponent, edges, children, scrollEnable
                         <KeyboardAwareScrollView
                             showsVerticalScrollIndicator={false}
                             keyboardShouldPersistTaps="handled"
+                            nestedScrollEnabled
                             contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
                             style={styles.scroll}
                             bottomOffset={bottomOffset}
@@ -79,6 +80,7 @@ export const ScreenContainer = ({ headerComponent, edges, children, scrollEnable
                         <ScrollView
                             showsVerticalScrollIndicator={false}
                             keyboardShouldPersistTaps="handled"
+                            nestedScrollEnabled
                             contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
                             style={styles.scroll}
                         >

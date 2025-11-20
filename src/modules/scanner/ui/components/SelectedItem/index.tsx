@@ -12,7 +12,7 @@ interface IProps {
 
 export const SelectedItems = ({ item, onPress }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, item.color), [colors, item]);
+    const styles = useMemo(() => getStyles(colors, item.color || colors.success), [colors, item]);
 
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>

@@ -5,6 +5,7 @@ export const useAddItem = (addToSelected: (text: string) => void) => {
 
     const handleAddPress = useCallback(() => {
         addToSelected(text);
+        setText('');
     }, [addToSelected, text]);
 
     return { text, setText, handleAddPress };

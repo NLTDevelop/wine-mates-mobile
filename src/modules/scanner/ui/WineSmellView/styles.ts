@@ -15,9 +15,11 @@ export const getStyles = (colors: IColors) => {
             marginBottom: scaleVertical(16),
         },
         list: {
-            flexGrow: 1,
+            maxHeight: scaleVertical(322),
+            marginBottom: scaleVertical(16),
         },
         contentContainer: {
+            flexGrow: 1,
             rowGap: scaleVertical(7),
         },
         searchContainer: {
