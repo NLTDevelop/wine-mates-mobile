@@ -21,28 +21,60 @@ export const SelectedParameters = () => {
             {isOpened && (
                 <>
                     <View style={styles.itemContainer}>
-                        <Typography variant="h6" text={wineModel.base?.typeOfWine || t('wine.typeOfWine')} style={styles.label} />
+                        <Typography
+                            variant="h6"
+                            text={wineModel.base?.typeOfWine?.value || t('wine.typeOfWine')}
+                            style={styles.label}
+                        />
                     </View>
                     <View style={styles.itemContainer}>
-                        <Typography variant="h6" text={wineModel.base?.colorOfWine || t('wine.colorOfWine')} style={styles.label} />
+                        <Typography
+                            variant="h6"
+                            text={wineModel.base?.colorOfWine?.value || t('wine.colorOfWine')}
+                            style={styles.label}
+                        />
                     </View>
                     <View style={styles.itemContainer}>
-                        <Typography variant="h6" text={wineModel.base?.country || t('wine.country')} style={styles.label} />
+                        <Typography
+                            variant="h6"
+                            text={wineModel.base?.country?.value || t('wine.country')}
+                            style={styles.label}
+                        />
                     </View>
                     <View style={styles.itemContainer}>
-                        <Typography variant="h6" text={wineModel.base?.region || t('wine.region')} style={styles.label} />
+                        <Typography
+                            variant="h6"
+                            text={wineModel.base?.region?.value || t('wine.region')}
+                            style={styles.label}
+                        />
                     </View>
                     <View style={styles.itemContainer}>
-                        <Typography variant="h6" text={wineModel.base?.winery|| t('wine.wineryName')} style={styles.label} />
+                        <Typography
+                            variant="h6"
+                            text={wineModel.base?.winery?.value || t('wine.wineryName')}
+                            style={styles.label}
+                        />
                     </View>
                     <View style={styles.itemContainer}>
-                        <Typography variant="h6" text={wineModel.base?.grapeVariety || t('wine.grapeVariety')} style={styles.label} />
+                        <Typography
+                            variant="h6"
+                            text={wineModel.base?.grapeVariety?.value || t('wine.grapeVariety')}
+                            style={styles.label}
+                        />
                     </View>
                     <View style={styles.itemContainer}>
-                        <Typography variant="h6" text={wineModel.base?.vintageYear || t('wine.vintage')} style={styles.label} />
+                        <Typography
+                            variant="h6"
+                            text={wineModel.base?.vintageYear?.value || t('wine.vintage')}
+                            style={styles.label}
+                        />
                     </View>
                     <View style={styles.itemContainer}>
-                        <Typography variant="h6" text={wineModel.base?.wineName || t('wine.wineName')} style={styles.label} />
+                        <Typography
+                            variant="h6"
+                            text={wineModel.base?.wineName?.value || t('wine.wineName')}
+                            style={styles.label}
+                        />
                     </View>
                 </>
             )}

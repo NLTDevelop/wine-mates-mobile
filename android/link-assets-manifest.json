@@ -2,59 +2,59 @@
   "migIndex": 1,
   "data": [
     {
-      "path": "src/assets/fonts/VisueltPro-Black.ttf",
+      "path": "assets/fonts/VisueltPro-Black.ttf",
       "sha1": "28417cda0c1ccfacd69271822f99d4d2ed86c1b1"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-BlackItalic.ttf",
+      "path": "assets/fonts/VisueltPro-BlackItalic.ttf",
       "sha1": "f555c57d187426fc91a776b8f7e347ae6e888900"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-Bold.ttf",
+      "path": "assets/fonts/VisueltPro-Bold.ttf",
       "sha1": "b00e438aa74ceff75ad9b98ede84ee18be74c986"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-BoldItalic.ttf",
+      "path": "assets/fonts/VisueltPro-BoldItalic.ttf",
       "sha1": "9e6811df4271d780a4ed0c6f8529c69b93b13017"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-ExtraLight.ttf",
+      "path": "assets/fonts/VisueltPro-ExtraLight.ttf",
       "sha1": "ff2989b8a4036d70c2223d0feaa4f501d35c57e0"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-ExtraLightItalic.ttf",
+      "path": "assets/fonts/VisueltPro-ExtraLightItalic.ttf",
       "sha1": "303844962d9adc18b9c32a3a1d0ab07aefa20deb"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-Italic.ttf",
+      "path": "assets/fonts/VisueltPro-Italic.ttf",
       "sha1": "d3548dccf88084cce83f0d627acf6c29450b59db"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-Light.ttf",
+      "path": "assets/fonts/VisueltPro-Light.ttf",
       "sha1": "12d518d1c48a00da0e6ff1251b6f00b43e234cc7"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-LightItalic.ttf",
+      "path": "assets/fonts/VisueltPro-LightItalic.ttf",
       "sha1": "bde752e2074aae00c8abb82cb46f6cb0266feadf"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-Medium.ttf",
+      "path": "assets/fonts/VisueltPro-Medium.ttf",
       "sha1": "142c2af17ac36014b047d0b5a33018ede70bb7d8"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-MediumItalic.ttf",
+      "path": "assets/fonts/VisueltPro-MediumItalic.ttf",
       "sha1": "1a2aaf3a54bd079d73a39a1bcde4f160e4353df8"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-Regular.ttf",
+      "path": "assets/fonts/VisueltPro-Regular.ttf",
       "sha1": "f528c89093bbad1607626219fd977cf889eee041"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-Thin.ttf",
+      "path": "assets/fonts/VisueltPro-Thin.ttf",
       "sha1": "bd38b3465658587273bbca006b4bb1e2cb858b5a"
     },
     {
-      "path": "src/assets/fonts/VisueltPro-ThinItalic.ttf",
+      "path": "assets/fonts/VisueltPro-ThinItalic.ttf",
       "sha1": "196b1b52531df87c1a74eeaad118cabcfb76aa2d"
     }
   ]

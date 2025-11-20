@@ -25,7 +25,6 @@ export const getStyles = (colors: IColors, isFocused: boolean) => (
             height: "100%",
             paddingHorizontal: scaleHorizontal(16),
             fontSize: scaleFontSize(16),
-            fontWeight: '400',
             paddingVertical: 0,
             color: colors.text,
         },

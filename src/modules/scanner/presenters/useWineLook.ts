@@ -3,39 +3,42 @@ import { wineModel } from "@/entities/wine/WineModel";
 import { wineService } from "@/entities/wine/WineService";
 import { toastService } from "@/libs/toast/toastService";
 import { localization } from "@/UIProvider/localization/Localization";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export const useWineLook = () => {
-    const data = wineModel.colorsShades;
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(true);
     const [perlage, setPerlage] = useState(0);
     const [mousse, setMousse] = useState(0);
     const [shade, setShade] = useState(1);
-    const [selectedColor, setSelectedColor] = useState(data ? data[0] : null);
+    const [selectedColor, setSelectedColor] = useState<IWineColorShade | null>(null);
     const [isError, setIsError] = useState(false);
     const currentColor = useMemo(() =>
         shade === 1 ? selectedColor?.tonePale : shade === 2 ? selectedColor?.toneMedium : selectedColor?.toneDeep,
     [shade, selectedColor]);
+    const data = wineModel.colorsShades;
 
     const getColorsWithShades = useCallback(async () => {
         try {
-            if (!wineModel.base?.colorOfWine) return;
+            if (!wineModel.base?.colorOfWine?.id) return;
 
             setIsLoading(true);
 
             const payload = {
-                colorId: wineModel.base?.colorOfWine,
+                colorId: String(wineModel.base?.colorOfWine.id),
             };
     
             const response = await wineService.getColorsWithShades(payload);
     
-            if (response.isError) {
+            if (response.isError || !response.data) {
                 if (response.message) {
                     toastService.showError(localization.t('common.errorHappened'), response.message);
                     setIsError(true);
-                } else {
                 }
             } else {
+                setSelectedColor(response.data[0]);
                 setIsError(false);
             }
         } catch(error) {
@@ -49,13 +52,37 @@ export const useWineLook = () => {
         getColorsWithShades();
     }, [getColorsWithShades]);
 
+    useEffect(() => {
+        return () => {
+            wineModel.colorsShades = null;
+            wineModel.look = null;
+        };
+    }, []);
+
     const onSelectColor = useCallback((color: IWineColorShade) => {
         setSelectedColor(color);
         setShade(1);
     }, []);
+
+    const handlePressNext = useCallback(() => {
+        if (!currentColor) return;
+
+        if (wineModel.base?.typeOfWine.isSparkling) {
+            wineModel.look = {
+                color: currentColor,
+                mousse,
+                perlage,
+            }
+        } else {
+            wineModel.look = {
+                color: currentColor,
+            }
+        }
+        navigation.navigate('WineSmellView');
+    }, [navigation, currentColor, mousse, perlage]);
     
     return { 
         data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades, currentColor,
-        isLoading, onSelectColor
+        isLoading, onSelectColor, handlePressNext
     };
 };

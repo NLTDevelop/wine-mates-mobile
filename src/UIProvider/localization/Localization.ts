@@ -20,31 +20,36 @@ class Localization implements ILocalization {
 
     private load = () => {
         try {
-            let language = this.storage.get('LANGUAGE');
-
-            if (!language) {
-                const locales = RNLocalize.getLocales();
-                if (locales && locales.length > 0) {
-                    const deviceLang = locales[0].languageCode;
-                    if (Object.keys(this.i18n.translations).includes(deviceLang)) {
-                        language = deviceLang;
-                    } else {
-                        language = 'en';
-                    }
-                } else {
-                    language = 'en';
-                }
-                this.localizationStore.save(language);
-                this.persistLanguage(language);
+            const supportedLocales = Object.keys(this.i18n.translations);
+    
+            let savedLanguage = this.storage.get('LANGUAGE');
+    
+            const locales = RNLocalize.getLocales();
+            const deviceLang = locales?.[0]?.languageCode;
+    
+            let finalLanguage: string | null = null;
+    
+            if (deviceLang && supportedLocales.includes(deviceLang)) {
+                finalLanguage = deviceLang;
+            } else {
+                finalLanguage = savedLanguage ?? null;
             }
-
+    
+            if (!finalLanguage) {
+                finalLanguage = 'en';
+            }
+    
+            if (finalLanguage !== savedLanguage) {
+                this.persistLanguage(finalLanguage);
+            }
+    
             const translations = this.storage.get('TRANSLATIONS');
             if (translations) {
                 this.i18n.translations = translations;
             }
-
-            this.i18n.locale = language;
-            this.localizationStore.save(language);
+            
+            this.i18n.locale = finalLanguage;
+            this.localizationStore.save(finalLanguage);
         } catch (error) {
             console.warn('Localization -> load: ', error);
             this.localizationStore.save('en');

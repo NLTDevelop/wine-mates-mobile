@@ -20,7 +20,6 @@ export const getStyles = (colors: IColors) => {
         colorsContainer: {
             flexDirection: 'row',
             flexWrap: 'wrap',
-            justifyContent: 'space-between',
             columnGap: scaleHorizontal(8),
             rowGap: scaleVertical(12),
             marginBottom: scaleVertical(24),

@@ -6,7 +6,7 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth', 
     const MAIN_CONTAINER: ViewStyle = {
         height: scaleVertical(48),
         flexDirection: 'row',
-        gap: scaleHorizontal(8),
+        gap: scaleHorizontal(4),
         borderWidth: 1,
         borderColor: colors.primary,
         paddingHorizontal: scaleHorizontal(8),

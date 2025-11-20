@@ -7,55 +7,46 @@ export const getStyle = (colors: IColors) => {
         h2: {
             fontSize: scaleFontSize(40),
             fontFamily: 'VisueltPro-Bold',
-            fontWeight: '700',
             color: colors.text,
         },
         h3: {
             fontSize: scaleFontSize(24),
             fontFamily: 'VisueltPro-Medium',
-            fontWeight: '500',
             color: colors.text,
         },
         h4: {
             fontSize: scaleFontSize(18),
             fontFamily: 'VisueltPro-Medium',
-            fontWeight: '500',
             color: colors.text,
         },
         h5: {
             fontSize: scaleFontSize(16),
             fontFamily: 'VisueltPro-Medium',
-            fontWeight: '500',
             color: colors.text,
         },
         h6: {
             fontSize: scaleFontSize(16),
             fontFamily: 'VisueltPro-Regular',
-            fontWeight: '400',
             color: colors.text,
         },
         body_400: {
             fontSize: scaleFontSize(14),
             fontFamily: 'VisueltPro-Regular',
-            fontWeight: '400',
             color: colors.text,
         },
         body_500: {
             fontSize: scaleFontSize(14),
             fontFamily: 'VisueltPro-Medium',
-            fontWeight: '500',
             color: colors.text,
         },
         subtitle_12_400: {
             fontSize: scaleFontSize(12),
             fontFamily: 'VisueltPro-Regular',
-            fontWeight: '400',
             color: colors.text,
         },
         subtitle_12_500: {
             fontSize: scaleFontSize(12),
             fontFamily: 'VisueltPro-Medium',
-            fontWeight: '500',
             color: colors.text,
         }
     });

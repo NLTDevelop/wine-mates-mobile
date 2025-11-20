@@ -1,0 +1,119 @@
+import { useCallback, useMemo } from 'react';
+import { getStyles } from './styles';
+import { FlatList, View } from 'react-native';
+import { useUiContext } from '@/UIProvider';
+import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { Typography } from '@/UIKit/Typography';
+import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
+import { Button } from '@/UIKit/Button';
+import { CloseButton } from '../components/CloseButton';
+import { SelectedParameters } from '../components/SelectedParameters';
+import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
+import { WithErrorHandler } from '@/UIKit/ErrorHandler';
+import { Loader } from '@/UIKit/Loader';
+import { observer } from 'mobx-react-lite';
+import { NextLongArrowIcon } from '@/assets/icons/NextLongArrowIcon';
+import { useWineSmell } from '../../presenters/useWineSmell';
+import { SearchBar } from '@/UIKit/SearchBar';
+import { SelectedItemsList } from '../components/SelectedItemsList';
+import { SmellGroupSelector } from '../components/SmellGroupSelector';
+import { ISmellSubgroup } from '@/entities/wine/types/IWineSmell';
+import { SmellListItem } from '../components/SmellListItem';
+import { CustomInput } from '@/UIKit/CustomInput';
+import { useAddItem } from '../../presenters/useAddItem';
+import { AddButton } from '../components/AddButton';
+import { useSelectModal } from '../../presenters/useSelectModal';
+import { SelectModal } from '../components/SelectModal';
+
+export const WineSmellView = observer(() => {
+    const { colors, t } = useUiContext();
+    const styles = useMemo(() => getStyles(colors), [colors]);
+
+    const { isVisible, onShowModal, onHide, selectData, selectedSubgroup, groupId } = useSelectModal();
+    const { data, selected, isError, getSmells, isLoading, search, setSearch, isOpened, onItemPress, toggleList, onSelectedItemPress,
+        selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell, handleNextPress } = useWineSmell(onHide);
+    const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
+
+    const keyExtractor = useCallback((item: ISmellSubgroup, index: number) => `${item.id}-${index}`, []);
+    const renderItem = useCallback(
+        ({ item }: { item: ISmellSubgroup }) => (
+            <SmellListItem item={item} onPress={() => onShowModal(data[selectedIndex].id, item)} />
+        ),
+    [data, onShowModal, selectedIndex]);
+
+    const visibleSubgroups = useMemo(() => {
+        const currentGroup = data[selectedIndex];
+        if (!currentGroup) return [];
+        return currentGroup.subgroups.filter(subgroup => subgroup.aromas.length > 0);
+    }, [data, selectedIndex]);
+
+    return (
+        <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getSmells} isLoading={isLoading}>
+            <ScreenContainer
+                edges={['top', 'bottom']}
+                withGradient
+                headerComponent={<HeaderWithBackButton title={t('wine.smell')} rightComponent={<CloseButton />} />}
+                scrollEnabled
+                isKeyboardAvoiding
+            >
+                {!data || data.length === 0 || isLoading ? (
+                    <Loader />
+                ) : (
+                    <View style={styles.container}>
+                        <View>
+                            <Typography text={t('wine.smellDescription')} variant="body_400" style={styles.title} />
+                            <SearchBar
+                                value={search}
+                                onChangeText={setSearch}
+                                placeholder={t('common.search')}
+                                containerStyle={styles.searchContainer}
+                            />
+                            <SmellGroupSelector
+                                data={data}
+                                isOpened={isOpened}
+                                selectedIndex={selectedIndex}
+                                onPress={toggleList}
+                                handleLeftPress={handleLeftPress}
+                                handleRightPress={handleRightPress}
+                            />
+                            {isOpened && visibleSubgroups.length > 0 && (
+                                <FlatList
+                                    data={visibleSubgroups}   
+                                    keyExtractor={keyExtractor}
+                                    renderItem={renderItem}
+                                    style={styles.list}
+                                    contentContainerStyle={styles.contentContainer}
+                                    nestedScrollEnabled={true}
+                                />
+                            )}
+                            <CustomInput
+                                value={text}
+                                onChangeText={setText}
+                                maxLength={40}
+                                placeholder={t('wine.addCustomSmell')}
+                                RightAccessory={<AddButton onPress={handleAddPress} />}
+                                containerStyle={styles.input}
+                            />
+                            {selected.length > 0 && <SelectedItemsList data={selected} onPress={onSelectedItemPress} />}
+                            <SelectedParameters />
+                        </View>
+                        <Button
+                            text={t('wine.letsTaste')}
+                            onPress={handleNextPress}
+                            containerStyle={styles.button}
+                            RightAccessory={<NextLongArrowIcon />}
+                        />
+                    </View>
+                )}
+                <SelectModal
+                    isVisible={isVisible}
+                    onHide={onHide}
+                    onItemPress={onItemPress}
+                    data={selectData}
+                    subgroupId={selectedSubgroup?.id ?? null}
+                    groupId={groupId}
+                />
+            </ScreenContainer>
+        </WithErrorHandler>
+    );
+});
