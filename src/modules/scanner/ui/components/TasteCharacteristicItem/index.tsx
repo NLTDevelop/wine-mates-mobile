@@ -17,9 +17,9 @@ export const TasteCharacteristicItem = ({ item, onChange }: IProps) => {
 
     return (
         <View style={styles.container}>
-            <Typography text={item.title} variant="body_500" />
+            {/* <Typography text={item.title} variant="body_500" />
             <Typography text={item.description} variant="body_500" />
-            <Slider min={1} max={10} value={} onChange={onChange} selectedColor={item.hexColor} />
+            <Slider min={1} max={10} value={} onChange={onChange} selectedColor={item.hexColor} /> */}
         </View>
     );
 };
