@@ -131,6 +131,7 @@
         "taste": "Taste",
         "tasteDescription": "Select the main taste of your wine",
         "addCustomTaste": "Add custom taste",
-        "tasteCharacteristics": "Taste characteristics"
+        "tasteCharacteristics": "Taste characteristics",
+        "letsRate": "Let’s rate it"
     }
 }

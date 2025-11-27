@@ -3,7 +3,7 @@ import { DimensionValue, ViewStyle, View, LayoutChangeEvent } from 'react-native
 import { getStyle } from './styles';
 import { useUiContext } from '../../UIProvider';
 import { scaleVertical } from '../../utils';
-import FastImage from '@d11/react-native-fast-image';
+import { FasterImageView } from '@rraut/react-native-faster-image';
 import { Typography } from '../Typography';
 
 interface IProps {
@@ -51,9 +51,8 @@ const AvatarComponent = ({ containerStyle = {}, avatarUrl, fullname, size = 40 }
             key={avatarUrl}
         >
             {avatarUrl ? (
-                <FastImage
-                    source={{ uri: avatarUrl, priority: FastImage.priority.high }}
-                    resizeMode="cover"
+                <FasterImageView
+                    source={{ uri: avatarUrl, resizeMode: 'cover' }}
                     style={[styles.avatar, sizeStyle]}
                 />
             ) : (

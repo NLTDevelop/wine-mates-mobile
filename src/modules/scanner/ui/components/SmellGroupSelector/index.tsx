@@ -27,7 +27,7 @@ export const SmellGroupSelector = ({ data, selectedIndex, isOpened, onPress, han
                 <ArrowIcon width={20} height={20} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.mainContainer} onPress={onPress}>
-                <Typography text={data[selectedIndex].nameEn || data[selectedIndex].name} variant="h6" />
+                <Typography text={data[selectedIndex].name} variant="h6" />
                 <ArrowDownIcon rotate={isOpened ? 180 : 0} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleRightPress}>

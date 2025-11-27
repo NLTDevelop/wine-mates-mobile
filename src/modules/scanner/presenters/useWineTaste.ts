@@ -82,8 +82,6 @@ export const useWineTaste = () => {
                 id: Date.now() + Math.floor(Math.random() * 10000),
                 colorHex: null,
                 name: text,
-                nameEn: text,
-                nameUa: text,
             },
         ]);
     }, []);

@@ -20,14 +20,21 @@ export const WineTasteCharacteristicsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, isError, getTasteCharacteristics, isLoading, handleNextPress } = useWineTasteCharacteristics();
+    const { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues,
+        isPremiumUser } = useWineTasteCharacteristics();
 
     const keyExtractor = useCallback((item: IWineTasteCharacteristics, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(
         ({ item }: { item: IWineTasteCharacteristics }) => (
-            <TasteCharacteristicItem item={item} onChange={() => {}} />
+            <TasteCharacteristicItem
+                item={item}
+                value={sliderValues[item.id] ?? 1}
+                onChange={value => handleSliderChange(item.id, value)}
+                isPremiumUser={isPremiumUser}
+            />
         ),
-    []);
+        [handleSliderChange, sliderValues, isPremiumUser],
+    );
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getTasteCharacteristics} isLoading={isLoading}>
@@ -36,16 +43,15 @@ export const WineTasteCharacteristicsView = observer(() => {
                 withGradient
                 headerComponent={<HeaderWithBackButton title={t('wine.tasteCharacteristics')} rightComponent={<CloseButton />} />}
                 scrollEnabled
-                isKeyboardAvoiding
             >
-                {!data|| data.length === 0 || isLoading ? (
+                {!data || data.length === 0 || isLoading ? (
                     <Loader />
                 ) : (
                     <View style={styles.container}>
                         <View>
                             {data.length > 0 && (
                                 <FlatList
-                                    data={data}  
+                                    data={data}
                                     keyExtractor={keyExtractor}
                                     renderItem={renderItem}
                                     style={styles.list}
@@ -53,10 +59,10 @@ export const WineTasteCharacteristicsView = observer(() => {
                                     nestedScrollEnabled={true}
                                 />
                             )}
-                            <SelectedParameters />
+                            <SelectedParameters containerStyle={styles.selectedParameters}/>
                         </View>
                         <Button
-                            text={t('wine.letsTaste')}
+                            text={t('wine.letsRate')}
                             onPress={handleNextPress}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}

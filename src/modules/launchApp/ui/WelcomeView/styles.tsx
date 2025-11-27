@@ -1,7 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const IMAGE_RATIO = 343 / 120;
 
 const INSET_TOP = initialWindowMetrics?.insets.top || 0;
 const INSET_BOTTOM = initialWindowMetrics?.insets.bottom || 0;
@@ -41,9 +44,15 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(140),
             overflow: 'visible',
         },
+        imageWrapper: {
+            width: SCREEN_WIDTH - scaleHorizontal(32),
+            aspectRatio: IMAGE_RATIO,
+            alignSelf: 'center',
+        },
+
         image: {
             width: '100%',
-            aspectRatio: 343 / 120,
+            height: '100%',
         },
         buttonContainer: {
             gap: scaleVertical(12),

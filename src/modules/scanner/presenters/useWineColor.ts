@@ -32,7 +32,7 @@ export const useWineColor = (typeId: number | null | undefined) => {
                 if (isMounted) {
                     setColorsData(
                         response.data.map((color: IWineColor) => {
-                            const label = color.nameEn || color.name;
+                            const label = color.name;
                             return { label, value: label, id: color.id };
                         }),
                     );

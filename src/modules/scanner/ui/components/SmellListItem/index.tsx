@@ -17,7 +17,7 @@ export const SmellListItem = ({ item, onPress }: IProps) => {
 
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>
-            <Typography text={item.nameEn || item.name} variant="body_500" style={styles.text} numberOfLines={1}/>
+            <Typography text={item.name} variant="body_500" style={styles.text} numberOfLines={1}/>
         </TouchableOpacity>
     );
 };

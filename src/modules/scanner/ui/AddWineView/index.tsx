@@ -95,6 +95,7 @@ export const AddWineView = observer(() => {
                                     onChangeText={onChangeVintageYear}
                                     placeholder={t('wine.vintage')}
                                     containerStyle={styles.input}
+                                    keyboardType='numeric'
                                 />
                                 <CustomInput
                                     autoCapitalize="none"

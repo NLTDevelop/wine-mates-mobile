@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ViewStyle, View, Keyboard, Pressable, ScrollView } from 'react-native';
+import { ViewStyle, View, Keyboard, Pressable, ScrollView, RefreshControlProps } from 'react-native';
 import { Edge, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
@@ -16,10 +16,11 @@ interface IProps {
     headerComponent?: React.ReactNode;
     withGradient?: boolean;
     isKeyboardAvoiding?: boolean;
+    refreshControl?: React.ReactElement<RefreshControlProps>;
 }
 
 export const ScreenContainer = ({ headerComponent, edges, children, scrollEnabled = false, containerStyle, contentContainerStyle,
-    withGradient = false, isKeyboardAvoiding = false,
+    withGradient = false, isKeyboardAvoiding = false, refreshControl,
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -61,6 +62,8 @@ export const ScreenContainer = ({ headerComponent, edges, children, scrollEnable
                             contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
                             style={styles.scroll}
                             bottomOffset={bottomOffset}
+                            refreshControl={refreshControl}
+                            bounces={!!refreshControl}
                         >
                             <Pressable style={styles.container} onPress={Keyboard.dismiss}>
                                 {children}
@@ -83,6 +86,8 @@ export const ScreenContainer = ({ headerComponent, edges, children, scrollEnable
                             nestedScrollEnabled
                             contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
                             style={styles.scroll}
+                            refreshControl={refreshControl}
+                            bounces={!!refreshControl}
                         >
                             {children}
                         </ScrollView>

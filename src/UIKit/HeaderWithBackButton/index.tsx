@@ -37,7 +37,7 @@ export const HeaderWithBackButton = ({ title, titleComponent, backDisabled, righ
                 {titleComponent ? (
                     titleComponent
                 ) : (
-                    <Typography text={title} variant="h3" numberOfLines={1} />
+                    <Typography text={title} variant="h3" numberOfLines={1} style={styles.title}/>
                 )}
             </View>
 

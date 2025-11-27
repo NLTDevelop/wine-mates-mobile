@@ -86,7 +86,7 @@ export const useWineSmell = (onHide: () => void) => {
         const addedSmell: ISelectedSmell = {
             id: item.id,
             colorHex: item.colorHex,
-            name: item.name || item.nameEn,
+            name: item.name,
             subgroupId,
             groupId,
             aroma: item,

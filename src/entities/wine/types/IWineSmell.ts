@@ -1,7 +1,5 @@
 export interface IAroma {
     id: number;
-    nameUa: string;
-    nameEn: string;
     name: string;
     colorHex: string;
     sortNumber: number;
@@ -9,8 +7,6 @@ export interface IAroma {
 
 export interface ISmellSubgroup {
     id: number;
-    nameUa: string;
-    nameEn: string;
     name: string;
     colorHex: string;
     sortNumber: number;
@@ -19,8 +15,6 @@ export interface ISmellSubgroup {
 
 export interface IWineSmell {
     id: number;
-    nameUa: string;
-    nameEn: string;
     name: string;
     colorHex: string;
     sortNumber: number;

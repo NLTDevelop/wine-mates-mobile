@@ -131,6 +131,7 @@
         "taste": "Смак",
         "tasteDescription": "Виберіть основний смак вашого вина",
         "addCustomTaste": "Додайте власний смак",
-        "tasteCharacteristics": "Смакові характеристики"
+        "tasteCharacteristics": "Смакові якості",
+        "letsRate": "Давайте оцінимо це"
     }
 }

@@ -27,8 +27,6 @@ export const WineLookView = observer(() => {
 
     const { data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades,
         currentColor, isLoading, onSelectColor, handlePressNext } = useWineLook();
-
-        console.log(wineModel.base?.typeOfWine.isSparkling)
         
     return (
         <WithErrorHandler
