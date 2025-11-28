@@ -16,6 +16,7 @@ import { WineLookView } from '@/modules/scanner/ui/WineLookView';
 import { WineSmellView } from '@/modules/scanner/ui/WineSmellView';
 import { WineTasteView } from '@/modules/scanner/ui/WineTasteView';
 import { WineTasteCharacteristicsView } from '@/modules/scanner/ui/WineTasteCharacteristicsView';
+import { WineReviewView } from '@/modules/scanner/ui/WineReviewView';
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,7 @@ export const MainStackNavigator = observer(() => {
         <Stack.Screen name="WineSmellView" component={WineSmellView}/>
         <Stack.Screen name="WineTasteView" component={WineTasteView}/>
         <Stack.Screen name="WineTasteCharacteristicsView" component={WineTasteCharacteristicsView} options={{gestureEnabled: false}}/>
+        <Stack.Screen name="WineReviewView" component={WineReviewView} options={{gestureEnabled: false}}/>
     </Stack.Navigator>
     );
 });

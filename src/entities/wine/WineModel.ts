@@ -6,19 +6,20 @@ import { IWineType } from './types/IWineType';
 import { IWineColor } from './types/IWineColors';
 import { IWineSmell } from './types/IWineSmell';
 import { IWineTaste } from './types/IWineTaste';
-import { IWineTasteCharacteristics } from './types/IWineTasteCharacteristics';
+import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
+import { IWineSelectedSmell } from './types/IWineSelectedSmell';
 
 export interface IWineListModel {
     base: IWineBase | null;
     look: IWineLook | null;
     colorsShades: IWineColorShade[] | null;
     smells: IWineSmell[] | null;
-    selectedSmells: number[] | null;
+    selectedSmells: IWineSelectedSmell[] | null;
     wineTypes: IWineType[] | null;
     colors: IWineColor[] | null;
     tastes: IWineTaste[] | null;
     selectedTastes: IWineTaste[] | null;
-    tasteCharacteristics: IWineTasteCharacteristics[] | null;
+    tasteCharacteristics: IWineTasteCharacteristic[] | null;
     clear: () => void;
 }
 
@@ -29,10 +30,10 @@ class WineModel implements IWineListModel {
     private typesRepository = new MobXRepository<IWineType[] | null>(null);
     private colorsRepository = new MobXRepository<IWineColor[] | null>(null);
     private smellsRepository = new MobXRepository<IWineSmell[] | null>(null);
-    private selectedSmellsRepository = new MobXRepository<number[] | null>(null);
+    private selectedSmellsRepository = new MobXRepository<IWineSelectedSmell[] | null>(null);
     private tastesRepository = new MobXRepository<IWineTaste[] | null>(null);
     private selectedTastesRepository = new MobXRepository<IWineTaste[] | null>(null);
-    private tasteCharacteristicsRepository = new MobXRepository<IWineTasteCharacteristics[] | null>(null);
+    private tasteCharacteristicsRepository = new MobXRepository<IWineTasteCharacteristic[] | null>(null);
 
     public get base() {
         return this.baseRepository.data;
@@ -86,7 +87,7 @@ class WineModel implements IWineListModel {
         return this.selectedSmellsRepository.data;
     }
 
-    public set selectedSmells(value: number[] | null) {
+    public set selectedSmells(value: IWineSelectedSmell[] | null) {
         this.selectedSmellsRepository.save(value);
     }
 
@@ -110,7 +111,7 @@ class WineModel implements IWineListModel {
         return this.tasteCharacteristicsRepository.data;
     }
 
-    public set tasteCharacteristics(value: IWineTasteCharacteristics[] | null) {
+    public set tasteCharacteristics(value: IWineTasteCharacteristic[] | null) {
         this.tasteCharacteristicsRepository.save(value);
     }
 

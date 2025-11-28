@@ -1,3 +1,4 @@
+import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
 import { IAroma, IWineSmell } from '@/entities/wine/types/IWineSmell';
 import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
@@ -7,15 +8,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 
-export interface ISelectedSmell {
-    id: number;
-    colorHex: string | null;
-    name: string;
-    subgroupId?: number | null;
-    groupId?: number | null;
-    aroma?: IAroma;
-}
-
 export const useWineSmell = (onHide: () => void) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -23,7 +15,7 @@ export const useWineSmell = (onHide: () => void) => {
     const [isLoading, setIsLoading] = useState(true);
     const [isOpened, setIsOpened] = useState(false);
     const [selectedIndex, setSelectedIndex] =  useState(0);
-    const [selected, setSelected] = useState<ISelectedSmell[]>([]);
+    const [selected, setSelected] = useState<IWineSelectedSmell[]>([]);
     const [search, setSearch] = useState('');
     const [isError, setIsError] = useState(false);
     const initialData = wineModel.smells;
@@ -83,7 +75,7 @@ export const useWineSmell = (onHide: () => void) => {
     }, [initialData]);
 
     const onItemPress = useCallback((item: IAroma, subgroupId?: number | null, groupId?: number | null) => {
-        const addedSmell: ISelectedSmell = {
+        const addedSmell: IWineSelectedSmell = {
             id: item.id,
             colorHex: item.colorHex,
             name: item.name,
@@ -112,7 +104,7 @@ export const useWineSmell = (onHide: () => void) => {
         onHide();
     }, [onHide]);
 
-    const onSelectedItemPress = useCallback((item: ISelectedSmell) => {
+    const onSelectedItemPress = useCallback((item: IWineSelectedSmell) => {
         if (item.subgroupId && item.groupId && item.aroma) {
             setData(prevState =>
                 prevState.map(group => {
@@ -167,7 +159,7 @@ export const useWineSmell = (onHide: () => void) => {
     }, []);
 
     const handleNextPress = useCallback(() => {
-        wineModel.selectedSmells = selected.map(item => item.id);
+        wineModel.selectedSmells = selected.map(item => item);
         navigation.navigate('WineTasteView');
     }, [navigation, selected]);
 

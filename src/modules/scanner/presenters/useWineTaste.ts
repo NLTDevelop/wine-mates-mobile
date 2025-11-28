@@ -88,7 +88,7 @@ export const useWineTaste = () => {
 
     const handleNextPress = useCallback(() => {
         wineModel.selectedTastes = selected;
-        // navigation.navigate('WineTasteCharacteristicsView');
+        navigation.navigate('WineTasteCharacteristicsView');
     }, [navigation, selected]);
 
     return { 

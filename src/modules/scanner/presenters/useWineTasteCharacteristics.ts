@@ -8,97 +8,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-
-const MOCK_DATA = [
-    {
-        id: 1,
-        name: "Солодкість",
-        description: "Якийсь опис",
-        levels: ['Сухе', 'Напів сухе', 'Солодке', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе'],
-        colorHex: "#111111",
-        isPremium: false,
-    },
-
-    {
-        id: 2,
-        name: "Солодкість",
-        description: "Якийсь опис",
-        levels: ['Сухе', 'Напів сухе', 'Солодке', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе'],
-        colorHex: "red",
-        isPremium: false,
-    },
-
-    {
-        id: 3,
-        name: "Солодкість",
-        description: "Якийсь опис",
-        levels: ['Сухе', 'Напів сухе', 'Солодке', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе'],
-        colorHex: "green",
-        isPremium: false,
-    },
-
-    {
-        id: 4,
-        name: "Солодкість",
-        description: "Якийсь опис",
-        levels: ['Сухе', 'Напів сухе', 'Солодке', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе'],
-        colorHex: "yellow",
-        isPremium: true,
-    },
-
-    {
-        id: 5,
-        name: "Солодкість",
-        description: "Якийсь опис",
-        levels: ['Сухе', 'Напів сухе', 'Солодке', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе'],
-        colorHex: "blue",
-        isPremium: true,
-    },
-
-    {
-        id: 6,
-        name: "Солодкість",
-        description: "Якийсь опис",
-        levels: ['Сухе', 'Напів сухе', 'Солодке', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе'],
-        colorHex: "pink",
-        isPremium: true,
-    },
-
-    {
-        id: 7,
-        name: "Солодкість",
-        description: "Якийсь опис",
-        levels: ['Сухе', 'Напів сухе', 'Солодке', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе'],
-        colorHex: "orange",
-        isPremium: true,
-    },
-    {
-        id: 8,
-        name: "Солодкість",
-        description: "Якийсь опис",
-        levels: ['Сухе', 'Напів сухе', 'Солодке', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе'],
-        colorHex: "orange",
-        isPremium: true,
-    },
-    {
-        id: 9,
-        name: "Солодкість",
-        description: "Якийсь опис",
-        levels: ['Сухе', 'Напів сухе', 'Солодке', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе'],
-        colorHex: "orange",
-        isPremium: true,
-    },
-    {
-        id: 10,
-        name: "Солодкість",
-        description: "Якийсь опис",
-        levels: ['Сухе', 'Напів сухе', 'Солодке', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе', 'Напів сухе'],
-        colorHex: "orange",
-        isPremium: true,
-    },
-]
-
-
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -108,8 +17,7 @@ export const useWineTasteCharacteristics = () => {
     const data = wineModel.tasteCharacteristics;
     const isPremiumUser = useMemo(
         () => featuresModel.features?.find(feature => feature.key === FeaturesKeysEnum.TASTING_NOTES)?.isEnabled || false,
-        [],
-    );
+    []);
 
     const getTasteCharacteristics = useCallback(async () => {
         try {
@@ -117,22 +25,20 @@ export const useWineTasteCharacteristics = () => {
 
             setIsLoading(true);
 
-            // const payload = {
-            //     colorId: wineModel.base?.colorOfWine.id,
-            // };
+            const payload = {
+                wineColorId: wineModel.base?.colorOfWine.id,
+            };
 
-            // const response = await wineService.getTastes(payload);
+            const response = await wineService.getTastesCharacteristics(payload);
 
-            // if (response.isError || !response.data) {
-            //     if (response.message) {
-            //         toastService.showError(localization.t('common.errorHappened'), response.message);
-            //         setIsError(true);
-            //     }
-            // } else {
-            //     setIsError(false);
-            // }
-
-            wineModel.tasteCharacteristics = MOCK_DATA;
+            if (response.isError || !response.data) {
+                if (response.message) {
+                    toastService.showError(localization.t('common.errorHappened'), response.message);
+                    setIsError(true);
+                }
+            } else {
+                setIsError(false);
+            }
         } catch (error) {
             console.error('getTasteCharacteristics error: ', JSON.stringify(error, null, 2));
         } finally {
@@ -186,7 +92,7 @@ export const useWineTasteCharacteristics = () => {
             }));
         }
 
-        // navigation.navigate('WineTasteCharacteristicsView');
+        navigation.navigate('WineReviewView');
     }, [data, navigation, sliderValues]);
 
     return { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues, isPremiumUser };

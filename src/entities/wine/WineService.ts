@@ -10,6 +10,7 @@ import { IWineType } from './types/IWineType';
 import { IWineColor } from './types/IWineColors';
 import { IWineSmell } from './types/IWineSmell';
 import { IWineTaste } from './types/IWineTaste';
+import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -120,6 +121,25 @@ class WineService {
           
             if (!response.isError) {
                wineModel.tastes = response.data;
+            }
+            
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getTastes: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getTastesCharacteristics = async (params: { wineColorId: number }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineTasteCharacteristic}`,
+                params,
+            });
+          
+            if (!response.isError) {
+               wineModel.tasteCharacteristics = response.data;
             }
             
             return response;

@@ -1,12 +1,12 @@
 import { useCallback, useRef } from 'react';
 import { FlatList } from 'react-native';
-import { ISelectedSmell } from './useWineSmell';
 import { scaleHorizontal } from '@/utils';
+import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
 
 const SCROLL_STEP = scaleHorizontal(100);
 
 export const useSelectedItemsList = () => {
-    const listRef = useRef<FlatList<ISelectedSmell>>(null);
+    const listRef = useRef<FlatList<IWineSelectedSmell>>(null);
     const currentOffsetRef = useRef(0);
 
     const onScroll = useCallback(e => {

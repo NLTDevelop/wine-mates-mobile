@@ -13,8 +13,8 @@ import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@/assets/icons/NextLongArrowIcon';
 import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics';
-import { IWineTasteCharacteristics } from '@/entities/wine/types/IWineTasteCharacteristics';
 import { TasteCharacteristicItem } from '../components/TasteCharacteristicItem';
+import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 
 export const WineTasteCharacteristicsView = observer(() => {
     const { colors, t } = useUiContext();
@@ -23,9 +23,9 @@ export const WineTasteCharacteristicsView = observer(() => {
     const { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues,
         isPremiumUser } = useWineTasteCharacteristics();
 
-    const keyExtractor = useCallback((item: IWineTasteCharacteristics, index: number) => `${item.id}-${index}`, []);
+    const keyExtractor = useCallback((item: IWineTasteCharacteristic, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(
-        ({ item }: { item: IWineTasteCharacteristics }) => (
+        ({ item }: { item: IWineTasteCharacteristic }) => (
             <TasteCharacteristicItem
                 item={item}
                 value={sliderValues[item.id] ?? 1}

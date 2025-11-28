@@ -4,14 +4,14 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Slider } from '@/UIKit/Slider';
-import { IWineTasteCharacteristics } from '@/entities/wine/types/IWineTasteCharacteristics';
 import { BlurView } from '@sbaiahmed1/react-native-blur';
 import { LockIcon } from '@/assets/icons/LockIcon';
 import { useIsFocused } from '@react-navigation/native';
 import { isIOS } from '@/utils';
+import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 
 interface IProps {
-    item: IWineTasteCharacteristics;
+    item: IWineTasteCharacteristic;
     value: number;
     onChange: (value: number) => void;
     isPremiumUser: boolean;
