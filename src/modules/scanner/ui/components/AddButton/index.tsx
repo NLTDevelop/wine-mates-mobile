@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { PlusIcon } from '@/assets/icons/PlusIcon';
+import { PlusIcon } from '../../../../../../assets/icons/PlusIcon';
 
 interface IProps {
     onPress: () => void;

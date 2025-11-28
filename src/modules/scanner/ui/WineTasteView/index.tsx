@@ -12,7 +12,7 @@ import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
-import { NextLongArrowIcon } from '@/assets/icons/NextLongArrowIcon';
+import { NextLongArrowIcon } from '../../../../../assets/icons/NextLongArrowIcon';
 import { SelectedItemsList } from '../components/SelectedItemsList';
 import { SmellListItem } from '../components/SmellListItem';
 import { CustomInput } from '@/UIKit/CustomInput';

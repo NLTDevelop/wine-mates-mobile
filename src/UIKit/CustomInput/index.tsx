@@ -3,8 +3,8 @@ import { TextInput, View, TouchableOpacity, ViewStyle, TextInputProps } from 're
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
-import { EyeIcon } from '@/assets/icons/EyeIcon';
-import { EyeOffIcon } from '@/assets/icons/EyeOffIcon';
+import { EyeIcon } from '../../../assets/icons/EyeIcon';
+import { EyeOffIcon } from '../../../assets/icons/EyeOffIcon';
 import { useCustomInput } from './presenters/useCustomInput';
 
 interface IProps extends TextInputProps {

@@ -5,7 +5,7 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { FasterImageView } from '@rraut/react-native-faster-image';
-import { StarIcon } from '@/assets/icons/StartIcon';
+import { StarIcon } from '../../../../../../assets/icons/StartIcon';
 import { declOfWord } from '@/utils';
 import { Avatar } from '@/UIKit/Avatar';
 

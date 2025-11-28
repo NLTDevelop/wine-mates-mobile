@@ -25,7 +25,7 @@ export const EmptyListView = observer(({ text, description, image, BottomElement
             </View>
             : isNothingFound
                 ? <View style={styles.container}>
-                    <Image source={require("../../assets/images/nothing_found.png")} style={styles.image} />
+                    <Image source={require("../../../assets/images/nothing_found.png")} style={styles.image} />
                     <Typography variant='h5' style={styles.title} >{t('common.nothingFoundTitle')}</Typography>
                     <Typography variant='body_500' style={styles.description} >{t('common.nothingFoundDescription')}</Typography>
                 </View>

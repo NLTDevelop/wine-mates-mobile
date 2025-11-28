@@ -1,7 +1,7 @@
 import { View, TextInput, TextInputProps, ViewStyle, TouchableOpacity } from 'react-native';
 import { useUiContext } from '../../UIProvider';
 import { getStyles } from './styles';
-import { CrossIcon } from '@/assets/icons/CrossIcon';
+import { CrossIcon } from '../../../assets/icons/CrossIcon';
 import { useSearchBar } from './presenters/useSearchBar';
 
 interface IProps extends TextInputProps {

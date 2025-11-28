@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import { ArrowIcon } from '@/assets/icons/ArrowIcon';
-import { NextLongArrowIcon } from '@/assets/icons/NextLongArrowIcon';
+import { ArrowIcon } from '../../../../../../assets/icons/ArrowIcon';
+import { NextLongArrowIcon } from '../../../../../../assets/icons/NextLongArrowIcon';
 import { Typography } from '@/UIKit/Typography';
-import { ArrowDownIcon } from '@/assets/icons/ArrowDownIcon';
+import { ArrowDownIcon } from '../../../../../../assets/icons/ArrowDownIcon';
 import { IWineSmell } from '@/entities/wine/types/IWineSmell';
 
 interface IProps {
