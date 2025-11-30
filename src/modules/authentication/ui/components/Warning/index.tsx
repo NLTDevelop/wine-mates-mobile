@@ -2,7 +2,7 @@ import { View } from 'react-native';
 import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import { ErrorIcon } from '@/assets/icons/ErrorIcon';
+import { ErrorIcon } from '../../../../../../assets/icons/ErrorIcon';
 import { Typography } from '@/UIKit/Typography';
 
 interface IProps {

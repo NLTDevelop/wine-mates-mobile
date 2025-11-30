@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo } from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -16,10 +16,12 @@ interface IProps {
     value: number;
     onChange: (v: number) => void;
     selectedColor: string;
-    withSections?: boolean
+    withSections?: boolean;
+    containerStyle?: ViewStyle;
+    disabled?: boolean;
 }
 
-export const Slider = memo(({ min, max, value, onChange, selectedColor, withSections = true}: IProps) => {
+export const Slider = memo(({ min, max, value, onChange, selectedColor, withSections = true, containerStyle, disabled =false }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors, MARKER, TRACK_HEIGHT, SLIDER_LENGTH), [colors]);
 
@@ -40,7 +42,7 @@ export const Slider = memo(({ min, max, value, onChange, selectedColor, withSect
     );
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, containerStyle]} pointerEvents={disabled ? "none" : "auto"}>
             {/* If required full width */}
             {/* <View style={styles.trackBackground}>
                 <View

@@ -3,7 +3,7 @@ import { getStyles } from './styles';
 import { Keyboard, TouchableOpacity } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { ArrowDownIcon } from '@/assets/icons/ArrowDownIcon';
+import { ArrowDownIcon } from '../../../../../assets/icons/ArrowDownIcon';
 import { CountryPickerBottomSheet } from '@/libs/countryCodePicker/components/CountryPickerBottomSheet';
 import { useCountrySelector } from '@/libs/countryCodePicker/presenters/useCountrySelector';
 import { ICountry } from '@/libs/countryCodePicker/types/ICountry';

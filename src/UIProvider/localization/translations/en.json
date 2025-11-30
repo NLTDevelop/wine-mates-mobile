@@ -10,6 +10,7 @@
         "retry": "Retry",
         "agreeAndContinue": "Agree and continue",
         "nothingFoundTitle": "Nothing Found",
+        "next": "Next",
         "nothingFoundDescription": "We couldn't find any results for your query. Please check your spelling or try different keywords."
     },
     "errors": {
@@ -128,9 +129,18 @@
         "smellDescription": "Select the main smell of your wine, then refine it by choosing the exact shade",
         "addCustomSmell": "Add custom smell",
         "letsTaste": "Let’s Taste",
-        "taste": "Taste",
         "tasteDescription": "Select the main taste of your wine",
         "addCustomTaste": "Add custom taste",
-        "tasteCharacteristics": "Taste characteristics"
+        "tasteCharacteristics": "Taste characteristics",
+        "letsRate": "Let’s rate it",
+        "review": "Review",
+        "rateThisWine": "Rate this wine",
+        "tastingResult": "Tasting result",
+        "enterReview": "Share you review",
+        "notes": "Favorite Notes",
+        "color": "Color",
+        "aroma": "Aroma",
+        "taste": "Taste",
+        "details": "Details"
     }
 }

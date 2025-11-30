@@ -49,8 +49,8 @@ export const useScanner = () => {
             if (photo?.path) {
                 navigation.navigate('ScanResultsListView', { image: photo });
             }
-        } catch (e) {
-            console.log('❌ Error taking photo:', e);
+        } catch (error) {
+            console.error('❌ Error taking photo:', JSON.stringify(error, null, 2));
         }
     };
 

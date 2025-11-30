@@ -16,8 +16,10 @@ export const getStyles = (colors: IColors) => {
             borderColor: colors.border_light,
         },
         button: {
-            height: scaleVertical(20),
-            width: scaleVertical(20),
+            height: scaleVertical(24),
+            width: scaleVertical(24),
+            borderRadius: scaleVertical(24),
+            backgroundColor: colors.background_grey,
             justifyContent: 'center',
             alignItems: 'center',
         },

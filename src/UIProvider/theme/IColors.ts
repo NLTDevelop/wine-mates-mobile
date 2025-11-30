@@ -27,6 +27,7 @@ export type IColors = {
     icon: string;
 
     unselectedSlider: string;
+    selectedSlider: string;
 
     primary: string;
     error: string;

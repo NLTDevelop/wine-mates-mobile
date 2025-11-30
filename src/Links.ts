@@ -12,6 +12,7 @@ export interface ILinks {
     wineColorShades: string;
     wineSmells: string;
     wineTaste: string;
+    wineTasteCharacteristic: string;
 }
 
 class Links implements ILinks {
@@ -25,7 +26,8 @@ class Links implements ILinks {
         wineColors: 'wine-colors',
         wineColorShades: 'wine-color-shades',
         wineSmells: 'wine-aroma-groups',
-        wineTaste: 'wine-flavors'
+        wineTaste: 'wine-flavors',
+        wineTasteCharacteristic: 'wine-taste-characteristics',
     };
     public get auth() {
         return `${this._domain}${this._links.auth}`;
@@ -53,6 +55,9 @@ class Links implements ILinks {
     }
     public get wineTaste() {
         return `${this._domain}${this._links.wineTaste}`;
+    }
+    public get wineTasteCharacteristic() {
+        return `${this._domain}${this._links.wineTasteCharacteristic}`;
     }
 }
 

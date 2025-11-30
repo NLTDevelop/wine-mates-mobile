@@ -28,6 +28,7 @@ export const COLORS: { light: IColors } = {
         icon: '#000000', // done
 
         unselectedSlider: '#E2E2E2', //done
+        selectedSlider: '#E03130',//done
 
         primary: '#910D0D', // done
         error: '#C20E0E', // done

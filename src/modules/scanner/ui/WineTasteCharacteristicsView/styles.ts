@@ -7,16 +7,21 @@ export const getStyles = (_colors: IColors) => {
         container: {
             flex: 1,
             justifyContent: 'space-between',
-            paddingHorizontal: scaleHorizontal(16),
         },
         list: {
+            maxHeight: scaleVertical(500),
             marginBottom: scaleVertical(16),
         },
         contentContainer: {
             flexGrow: 1,
-            rowGap: scaleVertical(7),
+            rowGap: scaleVertical(10),
+            paddingBottom: scaleVertical(16),
+        },
+        selectedParameters: {
+            marginHorizontal: scaleHorizontal(16),
         },
         button: {
+            marginHorizontal: scaleHorizontal(16),
             marginBottom: scaleVertical(16),
         },
     });

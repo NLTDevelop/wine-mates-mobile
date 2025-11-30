@@ -12,6 +12,6 @@
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "assets/icons"],
   "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
 }

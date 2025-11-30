@@ -17,7 +17,7 @@ import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
-import { NextLongArrowIcon } from '@/assets/icons/NextLongArrowIcon';
+import { NextLongArrowIcon } from '../../../../../assets/icons/NextLongArrowIcon';
 import { wineModel } from '@/entities/wine/WineModel';
 
 
@@ -27,8 +27,6 @@ export const WineLookView = observer(() => {
 
     const { data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades,
         currentColor, isLoading, onSelectColor, handlePressNext } = useWineLook();
-
-        console.log(wineModel.base?.typeOfWine.isSparkling)
         
     return (
         <WithErrorHandler

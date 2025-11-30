@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, useDeferredValue, type SetStateAction } from 'react';
 import countries from 'world-countries';
 import { localization } from '@/UIProvider/localization/Localization';
-import { countryDisplayNames } from '@/UIProvider/localization/translations/countryDisplayNames';
+import { countryDisplayNames } from '@/libs/countryCodePicker/countryDisplayNames';
 import { ICountry } from '../types/ICountry';
 
 // --- Cache to prevent recalculations across modal instances ---

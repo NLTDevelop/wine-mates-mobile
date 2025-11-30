@@ -48,6 +48,11 @@ export const getStyle = (colors: IColors) => {
             fontSize: scaleFontSize(12),
             fontFamily: 'VisueltPro-Medium',
             color: colors.text,
+        },
+        subtitle_20_500: {
+            fontSize: scaleFontSize(20),
+            fontFamily: 'VisueltPro-Medium',
+            color: colors.text,
         }
     });
     return styles;

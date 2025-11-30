@@ -4,8 +4,8 @@ import { getStyles } from './styles';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import FastImage from '@d11/react-native-fast-image';
-import { StarIcon } from '@/assets/icons/StartIcon';
+import { FasterImageView } from '@rraut/react-native-faster-image';
+import { StarIcon } from '../../../../../../assets/icons/StartIcon';
 import { declOfWord } from '@/utils';
 import { Avatar } from '@/UIKit/Avatar';
 
@@ -20,7 +20,7 @@ export const ScannerListItem = ({ item, onPress }: IProps) => {
 
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>
-            <FastImage source={{ uri: item.image_url }} style={styles.image} />
+            <FasterImageView source={{ uri: item.image_url }} style={styles.image} />
             <View style={styles.mainContainer}>
                 <View style={styles.subContainer}>
                     <Typography

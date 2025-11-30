@@ -24,7 +24,7 @@ export const useWineTypes = () => {
             } else {
                 setTypeData(
                     response.data.map((type: IWineType) => {
-                        const label = type.nameEn || type.name;
+                        const label = type.name;
                         return {
                             label,
                             value: label,

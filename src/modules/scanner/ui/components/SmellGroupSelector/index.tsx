@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import { ArrowIcon } from '@/assets/icons/ArrowIcon';
-import { NextLongArrowIcon } from '@/assets/icons/NextLongArrowIcon';
+import { ArrowIcon } from '../../../../../../assets/icons/ArrowIcon';
+import { NextLongArrowIcon } from '../../../../../../assets/icons/NextLongArrowIcon';
 import { Typography } from '@/UIKit/Typography';
-import { ArrowDownIcon } from '@/assets/icons/ArrowDownIcon';
+import { ArrowDownIcon } from '../../../../../../assets/icons/ArrowDownIcon';
 import { IWineSmell } from '@/entities/wine/types/IWineSmell';
 
 interface IProps {
@@ -27,7 +27,7 @@ export const SmellGroupSelector = ({ data, selectedIndex, isOpened, onPress, han
                 <ArrowIcon width={20} height={20} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.mainContainer} onPress={onPress}>
-                <Typography text={data[selectedIndex].nameEn || data[selectedIndex].name} variant="h6" />
+                <Typography text={data[selectedIndex].name} variant="h6" />
                 <ArrowDownIcon rotate={isOpened ? 180 : 0} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleRightPress}>

@@ -35,6 +35,10 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             pointerEvents: 'none',
         },
+        title: {
+            maxWidth: scaleHorizontal(228),
+            flexShrink: 1,
+        },
         empty: {
             width: scaleVertical(40),
             height: scaleVertical(40),
