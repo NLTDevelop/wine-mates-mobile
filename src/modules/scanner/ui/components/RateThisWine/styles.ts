@@ -19,6 +19,9 @@ export const getStyles = (_colors: IColors) => {
             justifyContent: 'space-between',
             alignItems: 'center',
         },
+        star: {
+            marginRight: scaleHorizontal(24),
+        },
     });
     return styles;
 };

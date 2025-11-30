@@ -17,26 +17,21 @@ export const Notes = ({ isOpened, toggleNotes }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const isPremiumUser = useMemo(
-        () =>
-            featuresModel.features?.find(feature => feature.key === FeaturesKeysEnum.TASTING_NOTES)?.isEnabled || false,
-        [],
-    );
-    const details = useMemo(() => {
+    const details = (() => {
         if (!wineModel.tasteCharacteristics?.length) return '';
-
-        const availableCharacteristics = isPremiumUser
+    
+        const isPremiumUser =
+            featuresModel.features?.find(feature => feature.key === FeaturesKeysEnum.TASTING_NOTES)?.isEnabled || false;
+    
+        const available = isPremiumUser
             ? wineModel.tasteCharacteristics
-            : wineModel.tasteCharacteristics.filter(char => !char.isPremium);
-
-        return availableCharacteristics
-            .map(char => {
-                const selectedIndex = char.selectedLevel ?? 0;
-                return char.levels[selectedIndex]?.name;
-            })
-            .filter(Boolean)
+            : wineModel.tasteCharacteristics.filter(c => !c.isPremium);
+    
+        return available
+            .map(c => c.levels[c.selectedLevel ?? 0]?.name)
             .join(', ');
-    }, [isPremiumUser, wineModel.tasteCharacteristics]);
+    })();
+
     const smells = useMemo(() => wineModel.selectedSmells?.map(smell => smell.name).join(', '), []);
     const tastes = useMemo(() => wineModel.selectedTastes?.map(taste => taste.name).join(', '), []);
 

@@ -130,7 +130,7 @@ class WineService {
         }
     };
 
-    getTastesCharacteristics = async (params: { wineColorId: number }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
+    getTastesCharacteristics = async (params: { colorId: number }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',

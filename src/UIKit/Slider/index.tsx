@@ -18,9 +18,10 @@ interface IProps {
     selectedColor: string;
     withSections?: boolean;
     containerStyle?: ViewStyle;
+    disabled?: boolean;
 }
 
-export const Slider = memo(({ min, max, value, onChange, selectedColor, withSections = true, containerStyle }: IProps) => {
+export const Slider = memo(({ min, max, value, onChange, selectedColor, withSections = true, containerStyle, disabled =false }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors, MARKER, TRACK_HEIGHT, SLIDER_LENGTH), [colors]);
 
@@ -41,7 +42,7 @@ export const Slider = memo(({ min, max, value, onChange, selectedColor, withSect
     );
 
     return (
-        <View style={[styles.container, containerStyle]}>
+        <View style={[styles.container, containerStyle]} pointerEvents={disabled ? "none" : "auto"}>
             {/* If required full width */}
             {/* <View style={styles.trackBackground}>
                 <View

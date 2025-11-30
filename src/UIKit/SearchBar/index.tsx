@@ -25,7 +25,7 @@ export const SearchBar = (props: IProps) => {
                 {...props}
             />
             {!!value ? <TouchableOpacity style={styles.button} onPress={onClearText} >
-                <CrossIcon width={20} height={20}/>
+                <CrossIcon width={12} height={12} color={colors.icon}/>
             </TouchableOpacity> : null}
         </View>
     );

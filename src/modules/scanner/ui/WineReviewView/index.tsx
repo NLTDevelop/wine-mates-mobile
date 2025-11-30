@@ -19,7 +19,7 @@ export const WineReviewView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { review, onChangeReview, handleSliderChange, handleNextPress, sliderValue, isPremiumUser, isOpened,
-        toggleNotes } = useWineReview();
+        toggleNotes, starRate, onStarRateChange } = useWineReview();
 
     return (
         <ScreenContainer
@@ -31,8 +31,14 @@ export const WineReviewView = observer(() => {
         >
             <View style={styles.container}>
                 <View>
-                    <RateThisWine isPremiumUser={isPremiumUser} sliderValue={sliderValue} handleSliderChange={handleSliderChange}/>
-                    <Notes isOpened={isOpened} toggleNotes={toggleNotes}/>
+                    <RateThisWine
+                        isPremiumUser={isPremiumUser}
+                        sliderValue={sliderValue}
+                        handleSliderChange={handleSliderChange}
+                        starRate={starRate}
+                        onStarRateChange={onStarRateChange}
+                    />
+                    <Notes isOpened={isOpened} toggleNotes={toggleNotes} />
                     <Typography text={t('wine.review')} variant="subtitle_20_500" style={styles.title} />
                     <CustomInput
                         value={review}
@@ -40,6 +46,7 @@ export const WineReviewView = observer(() => {
                         autoCapitalize="none"
                         placeholder={t('wine.enterReview')}
                         multiline
+                        maxLength={500}
                         containerStyle={styles.inputContainer}
                         inputContainerStyle={styles.input}
                     />
@@ -51,6 +58,7 @@ export const WineReviewView = observer(() => {
                     onPress={handleNextPress}
                     containerStyle={styles.button}
                     RightAccessory={<NextLongArrowIcon />}
+                    disabled={!review.length}
                 />
             </View>
         </ScreenContainer>

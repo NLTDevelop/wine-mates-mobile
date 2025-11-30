@@ -17,28 +17,35 @@ import { WineSmellView } from '@/modules/scanner/ui/WineSmellView';
 import { WineTasteView } from '@/modules/scanner/ui/WineTasteView';
 import { WineTasteCharacteristicsView } from '@/modules/scanner/ui/WineTasteCharacteristicsView';
 import { WineReviewView } from '@/modules/scanner/ui/WineReviewView';
+import { WineReviewResultView } from '@/modules/scanner/ui/WineReviewResultView';
 
 const Stack = createNativeStackNavigator();
 
 export const MainStackNavigator = observer(() => {
-    return (<Stack.Navigator initialRouteName="SplashView" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SplashView" component={SplashView} />
-        <Stack.Screen name="WelcomeView" component={WelcomeView} />
-        <Stack.Screen name="SignInView" component={SignInView} />
-        <Stack.Screen name="ForgotPasswordView" component={ForgotPasswordView} />
-        <Stack.Screen name="OTPView" component={OTPView} />
-        <Stack.Screen name="CreateNewPasswordView" component={CreateNewPasswordView} />
-        <Stack.Screen name="MyLevelView" component={MyLevelView} />
-        <Stack.Screen name="RegistrationView" component={RegistrationView} />
-        <Stack.Screen name="PersonalDetailsView" component={PersonalDetailsView} />
-        <Stack.Screen name="TabNavigator" component={TabNavigator} />
-        <Stack.Screen name="CreatePasswordView" component={CreatePasswordView} />
-        <Stack.Screen name="ScanResultView" component={ScanResultView} />
-        <Stack.Screen name="WineLookView" component={WineLookView} options={{gestureEnabled: false}}/>
-        <Stack.Screen name="WineSmellView" component={WineSmellView}/>
-        <Stack.Screen name="WineTasteView" component={WineTasteView}/>
-        <Stack.Screen name="WineTasteCharacteristicsView" component={WineTasteCharacteristicsView} options={{gestureEnabled: false}}/>
-        <Stack.Screen name="WineReviewView" component={WineReviewView} options={{gestureEnabled: false}}/>
-    </Stack.Navigator>
+    return (
+        <Stack.Navigator initialRouteName="SplashView" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="SplashView" component={SplashView} />
+            <Stack.Screen name="WelcomeView" component={WelcomeView} />
+            <Stack.Screen name="SignInView" component={SignInView} />
+            <Stack.Screen name="ForgotPasswordView" component={ForgotPasswordView} />
+            <Stack.Screen name="OTPView" component={OTPView} />
+            <Stack.Screen name="CreateNewPasswordView" component={CreateNewPasswordView} />
+            <Stack.Screen name="MyLevelView" component={MyLevelView} />
+            <Stack.Screen name="RegistrationView" component={RegistrationView} />
+            <Stack.Screen name="PersonalDetailsView" component={PersonalDetailsView} />
+            <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            <Stack.Screen name="CreatePasswordView" component={CreatePasswordView} />
+            <Stack.Screen name="ScanResultView" component={ScanResultView} />
+            <Stack.Screen name="WineLookView" component={WineLookView} options={{ gestureEnabled: false }} />
+            <Stack.Screen name="WineSmellView" component={WineSmellView} />
+            <Stack.Screen name="WineTasteView" component={WineTasteView} />
+            <Stack.Screen
+                name="WineTasteCharacteristicsView"
+                component={WineTasteCharacteristicsView}
+                options={{ gestureEnabled: false }}
+            />
+            <Stack.Screen name="WineReviewView" component={WineReviewView} options={{ gestureEnabled: false }} />
+            <Stack.Screen name="WineReviewResultView" component={WineReviewResultView} />
+        </Stack.Navigator>
     );
 });

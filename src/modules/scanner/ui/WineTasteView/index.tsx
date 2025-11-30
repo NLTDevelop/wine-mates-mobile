@@ -79,6 +79,7 @@ export const WineTasteView = observer(() => {
                             onPress={handleNextPress}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}
+                            disabled={!selected.length}
                         />
                     </View>
                 )}

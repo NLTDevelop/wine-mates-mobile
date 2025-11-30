@@ -8,6 +8,7 @@ import { IWineSmell } from './types/IWineSmell';
 import { IWineTaste } from './types/IWineTaste';
 import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
 import { IWineSelectedSmell } from './types/IWineSelectedSmell';
+import { IWineReview } from './types/IWineReview';
 
 export interface IWineListModel {
     base: IWineBase | null;
@@ -20,6 +21,7 @@ export interface IWineListModel {
     tastes: IWineTaste[] | null;
     selectedTastes: IWineTaste[] | null;
     tasteCharacteristics: IWineTasteCharacteristic[] | null;
+    review: IWineReview | null;
     clear: () => void;
 }
 
@@ -34,6 +36,8 @@ class WineModel implements IWineListModel {
     private tastesRepository = new MobXRepository<IWineTaste[] | null>(null);
     private selectedTastesRepository = new MobXRepository<IWineTaste[] | null>(null);
     private tasteCharacteristicsRepository = new MobXRepository<IWineTasteCharacteristic[] | null>(null);
+    private reviewRepository = new MobXRepository<IWineReview | null>(null);
+
 
     public get base() {
         return this.baseRepository.data;
@@ -115,6 +119,14 @@ class WineModel implements IWineListModel {
         this.tasteCharacteristicsRepository.save(value);
     }
 
+    public get review() {
+        return this.reviewRepository.data;
+    }
+
+    public set review(value: IWineReview | null) {
+        this.reviewRepository.save(value);
+    }
+
     public clear() {
         this.base = null;
         this.look = null;
@@ -125,6 +137,7 @@ class WineModel implements IWineListModel {
         this.tastes = null;
         this.selectedTastes = null;
         this.tasteCharacteristics = null;
+        this.review = null;
     }
 }
 
