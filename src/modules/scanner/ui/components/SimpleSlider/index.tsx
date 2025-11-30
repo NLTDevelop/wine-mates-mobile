@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import { PatternStripes } from '../../../../../../assets/icons/PatternStripes';
+import { PatternStripes } from '@assets/icons/PatternStripes';
 import { SliderMark } from '../SliderMark';
 import { scaleVertical } from '@/utils';
 

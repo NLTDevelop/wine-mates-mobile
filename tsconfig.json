@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": "src",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["*"],
+      "@assets/*": ["../assets/*"]
     },
     "strict": true,
     "noImplicitAny": false,

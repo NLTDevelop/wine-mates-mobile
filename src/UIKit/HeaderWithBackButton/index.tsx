@@ -3,7 +3,7 @@ import { View, TouchableOpacity, ViewStyle } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { useBackButton } from './presenters/useBackButton';
-import { ArrowIcon } from '../../../assets/icons/ArrowIcon';
+import { ArrowIcon } from '@assets/icons/ArrowIcon';
 import { Typography } from '@/UIKit/Typography';
 
 interface IProps {

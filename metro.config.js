@@ -14,6 +14,7 @@ const config = {
     ...defaultConfig.resolver,
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      '@assets': path.resolve(__dirname, 'assets'),
     },
   },
 };

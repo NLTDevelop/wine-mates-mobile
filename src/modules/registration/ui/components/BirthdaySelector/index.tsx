@@ -3,7 +3,7 @@ import { getStyles } from './styles';
 import { Keyboard, TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { ArrowDownIcon } from '../../../../../../assets/icons/ArrowDownIcon';
+import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { format } from 'date-fns';
 
 interface IProps {

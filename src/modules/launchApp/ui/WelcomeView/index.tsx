@@ -7,7 +7,7 @@ import { Typography } from '@/UIKit/Typography';
 import { Gradient } from '@/UIKit/Gradient';
 import { Button } from '@/UIKit/Button';
 import { useWelcome } from '@/modules/launchApp/presenters/useWelcome';
-import { RedLineIcon } from '../../../../../assets/icons/RedLineIcon';
+import { RedLineIcon } from '@assets/icons/RedLineIcon';
 import { ConfirmationModal } from '@/UIKit/ConfirmationModal';
 import { useConfirmationModal } from '@/UIKit/ConfirmationModal/presenters/useConfirmationModal';
 
@@ -34,7 +34,7 @@ export const WelcomeView = () => {
                     </View>
                     <View style={styles.imageWrapper}>
                         <Image
-                            source={require('../../../../../assets/images/welcome.png')}
+                            source={require('@assets/images/welcome.png')}
                             style={styles.image}
                             resizeMode="contain"
                         />
