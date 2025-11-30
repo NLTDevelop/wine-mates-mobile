@@ -48,7 +48,7 @@ export const ScanResultsListView = () => {
                             isLoading={isLoading}
                             // image={
                             //     <Image
-                            //         source={require('../../../../../../assets/images/caa/EmptyListInspections.png')}
+                            //         source={require('@assets/images/caa/EmptyListInspections.png')}
                             //         style={styles.image}
                             //     />
                             // }

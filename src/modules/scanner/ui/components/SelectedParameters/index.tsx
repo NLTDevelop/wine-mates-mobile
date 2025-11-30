@@ -3,7 +3,7 @@ import { TouchableOpacity, View, ViewStyle } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { ArrowDownIcon } from '../../../../../../assets/icons/ArrowDownIcon';
+import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { useSelectedParameters } from '@/modules/scanner/presenters/useSelectedParameters';
 import { wineModel } from '@/entities/wine/WineModel';
 

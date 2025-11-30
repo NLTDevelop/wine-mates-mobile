@@ -5,7 +5,7 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Slider } from '@/UIKit/Slider';
 import { BlurView } from '@sbaiahmed1/react-native-blur';
-import { LockIcon } from '../../../../../../assets/icons/LockIcon';
+import { LockIcon } from '@assets/icons/LockIcon';
 import { useIsFocused } from '@react-navigation/native';
 import { isIOS } from '@/utils';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';

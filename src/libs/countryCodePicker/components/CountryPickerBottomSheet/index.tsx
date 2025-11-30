@@ -6,7 +6,7 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { useCountryPickerModal } from '@/libs/countryCodePicker/presenters/useCountryPickerModal';
-import { CrossIcon } from '../../../../../assets/icons/CrossIcon';
+import { CrossIcon } from '@assets/icons/CrossIcon';
 import { CountryListItem } from '../CountryListItem';
 import { SearchBar } from '@/UIKit/SearchBar';
 import { ICountry } from '../../types/ICountry';

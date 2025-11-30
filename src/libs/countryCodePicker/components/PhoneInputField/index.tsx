@@ -5,7 +5,7 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { CustomInput } from '@/UIKit/CustomInput';
-import { ArrowDownIcon } from '../../../../../assets/icons/ArrowDownIcon';
+import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { CountryPickerBottomSheet } from '../CountryPickerBottomSheet';
 import { usePhoneInputField } from '@/libs/countryCodePicker/presenters/usePhoneInputField';
 

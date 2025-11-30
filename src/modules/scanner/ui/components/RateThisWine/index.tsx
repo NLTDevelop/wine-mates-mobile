@@ -5,9 +5,9 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Slider } from '@/UIKit/Slider';
 import StarRating, { StarRatingDisplay } from 'react-native-star-rating-widget';
-import { FilledStarIcon } from '../../../../../../assets/icons/FilledStarIcon';
-import { EmptyStarIcon } from '../../../../../../assets/icons/EmptyStarIcon';
-import { HalfStarIcon } from '../../../../../../assets/icons/HalfStarIcon';
+import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
+import { EmptyStarIcon } from '@assets/icons/EmptyStarIcon';
+import { HalfStarIcon } from '@assets/icons/HalfStarIcon';
 
 interface IProps {
     isPremiumUser: boolean;
