@@ -1,4 +1,4 @@
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SplashView } from '@/modules/launchApp/ui/SplashView';
 import { WelcomeView } from '@/modules/launchApp/ui/WelcomeView';

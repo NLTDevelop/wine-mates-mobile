@@ -11,6 +11,11 @@ export const getStyles = (colors: IColors) => {
             paddingHorizontal: scaleHorizontal(16),
             overflow: 'hidden',
         },
+        row: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+        },
         description: {
             color: colors.text_light,
             marginBottom: scaleVertical(16),

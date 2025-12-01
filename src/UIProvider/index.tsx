@@ -1,4 +1,4 @@
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { createContext, useContext } from 'react';
 import { ILocalization } from './localization/ILocalization';
 import { localization } from './localization/Localization';

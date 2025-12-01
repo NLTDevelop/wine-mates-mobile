@@ -11,7 +11,7 @@ import { WineLoverIcon } from '@assets/icons/WineLoverIcon';
 import { WineExpertIcon } from '@assets/icons/WineExpertIcon';
 import { WinemakerIcon } from '@assets/icons/WinemakerIcon';
 import { useMyLevel } from '@/modules/registration/presenters/useMyLevel';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 
 export const MyLevelView = observer(() => {
     const { t, colors } = useUiContext();

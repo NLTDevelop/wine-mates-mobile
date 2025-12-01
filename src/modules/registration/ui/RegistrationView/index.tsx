@@ -12,7 +12,7 @@ import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputF
 import { useRegistration } from '../../presenters/useRegistration';
 import { CountrySelector } from '../../../../libs/countryCodePicker/components/CountrySelector';
 import { registerUserModel } from '@/entities/users/RegisterUserModel';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';

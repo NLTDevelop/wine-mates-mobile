@@ -31,6 +31,7 @@ export const COLORS: { light: IColors } = {
         selectedSlider: '#E03130',//done
 
         primary: '#910D0D', // done
+        primary_secondary: '#FDEFEE', // done
         error: '#C20E0E', // done
         warning: '#F59E0B',
         success: '#4CAF50',

@@ -20,7 +20,7 @@ export const ScannerListItem = ({ item, onPress }: IProps) => {
 
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>
-            <FasterImageView source={{ uri: item.image_url }} style={styles.image} />
+            <FasterImageView source={{ uri: item.image_url }} style={styles.image} radius={12}/>
             <View style={styles.mainContainer}>
                 <View style={styles.subContainer}>
                     <Typography

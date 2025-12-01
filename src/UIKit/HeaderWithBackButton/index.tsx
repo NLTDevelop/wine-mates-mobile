@@ -14,13 +14,14 @@ interface IProps {
     backDisabled?: boolean;
     rightComponent?: ReactNode;
     containerStyle?: ViewStyle;
+    isCentered?: boolean;
 }
 
 export const HeaderWithBackButton = ({ title, titleComponent, backDisabled, rightComponent, containerStyle,
-    titleContainerStyle, onPressBack
+    titleContainerStyle, onPressBack, isCentered = true,
 }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors, isCentered), [colors, isCentered]);
     const { onGoBack } = useBackButton(onPressBack);
 
     return (

@@ -141,6 +141,12 @@
         "color": "Color",
         "aroma": "Aroma",
         "taste": "Taste",
-        "details": "Details"
+        "details": "Details",
+        "tasted": "You have already tasted this wine",
+        "selectedDetails": "Selected details",
+        "selectedColor": "Selected color",
+        "selectedSmells": "Selected smells",
+        "selectedTastes": "Selected tastes",
+        "reviews": "Reviews"
     }
 }
