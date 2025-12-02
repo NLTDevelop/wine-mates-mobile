@@ -10,8 +10,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 export const useWineLook = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(true);
-    const [perlage, setPerlage] = useState(0);
-    const [mousse, setMousse] = useState(0);
+    const [perlage, setPerlage] = useState(1);
+    const [appearance, setAppearance] = useState(1);
+    const [mousse, setMousse] = useState(1);
     const [shade, setShade] = useState(1);
     const [selectedColor, setSelectedColor] = useState<IWineColorShade | null>(null);
     const [isError, setIsError] = useState(false);
@@ -26,11 +27,11 @@ export const useWineLook = () => {
 
             setIsLoading(true);
 
-            const payload = {
+            const params = {
                 colorId: String(wineModel.base?.colorOfWine.id),
             };
     
-            const response = await wineService.getColorsWithShades(payload);
+            const response = await wineService.getColorsWithShades(params);
     
             if (response.isError || !response.data) {
                 if (response.message) {
@@ -69,20 +70,25 @@ export const useWineLook = () => {
 
         if (wineModel.base?.typeOfWine.isSparkling) {
             wineModel.look = {
-                color: currentColor,
+                colorId: selectedColor?.colorId || 1,
+                shadeId: selectedColor?.id || 1,
+                tone: shade === 1 ? 'pale' : shade === 2 ? 'medium' : 'deep',
                 mousse,
                 perlage,
+                appearance,
             }
         } else {
             wineModel.look = {
-                color: currentColor,
+                colorId: selectedColor?.colorId || 1,
+                shadeId: selectedColor?.id || 1,
+                tone: shade === 1 ? 'pale' : shade === 2 ? 'medium' : 'deep',
             }
         }
         navigation.navigate('WineSmellView');
-    }, [navigation, currentColor, mousse, perlage]);
+    }, [navigation, currentColor, mousse, perlage, appearance, selectedColor, shade]);
     
     return { 
         data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades, currentColor,
-        isLoading, onSelectColor, handlePressNext
+        isLoading, onSelectColor, handlePressNext, appearance, setAppearance
     };
 };

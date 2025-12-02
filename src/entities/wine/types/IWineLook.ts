@@ -1,5 +1,8 @@
 export interface IWineLook {
-    color: string;
-    perlage?: number;
+    colorId: number;
+    shadeId: number;
+    tone: string;
     mousse?: number;
+    perlage?: number;
+    appearance?: number;
 }

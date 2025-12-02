@@ -25,11 +25,11 @@ export const useWineTasteCharacteristics = () => {
 
             setIsLoading(true);
 
-            const payload = {
+            const params = {
                 colorId: wineModel.base?.colorOfWine.id,
             };
 
-            const response = await wineService.getTastesCharacteristics(payload);
+            const response = await wineService.getTastesCharacteristics(params);
 
             if (response.isError || !response.data) {
                 if (response.message) {
@@ -88,7 +88,7 @@ export const useWineTasteCharacteristics = () => {
         if (data) {
             wineModel.tasteCharacteristics = data.map(item => ({
                 ...item,
-                selectedLevel: sliderValues[item.id] ?? 1,
+                selectedLevel: sliderValues[item.id] ?? 0,
             }));
         }
 

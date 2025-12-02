@@ -3,7 +3,7 @@ import { View, Image, ActivityIndicator } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '../../UIProvider';
 import { Typography } from '../Typography';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 
 interface IProps {
     text?: string;

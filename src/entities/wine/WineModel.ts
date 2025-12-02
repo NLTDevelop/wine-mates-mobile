@@ -9,12 +9,18 @@ import { IWineTaste } from './types/IWineTaste';
 import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
 import { IWineSelectedSmell } from './types/IWineSelectedSmell';
 import { IWineReview } from './types/IWineReview';
+import { IWineImage } from './types/IWineImage';
+import { IWineAroma } from './types/IWineAroma';
+import { IWine } from './types/IWine';
 
 export interface IWineListModel {
+    wine: IWine | null;
+    image: IWineImage | null;
     base: IWineBase | null;
     look: IWineLook | null;
     colorsShades: IWineColorShade[] | null;
     smells: IWineSmell[] | null;
+    searchedAroma: IWineAroma[] | null;
     selectedSmells: IWineSelectedSmell[] | null;
     wineTypes: IWineType[] | null;
     colors: IWineColor[] | null;
@@ -26,18 +32,36 @@ export interface IWineListModel {
 }
 
 class WineModel implements IWineListModel {
+    private wineRepository = new MobXRepository<IWine | null>(null);
+    private imageRepository = new MobXRepository<IWineImage | null>(null);
     private baseRepository = new MobXRepository<IWineBase | null>(null);
     private lookRepository = new MobXRepository<IWineLook | null>(null);
     private colorsShadesRepository = new MobXRepository<IWineColorShade[] | null>(null);
     private typesRepository = new MobXRepository<IWineType[] | null>(null);
     private colorsRepository = new MobXRepository<IWineColor[] | null>(null);
     private smellsRepository = new MobXRepository<IWineSmell[] | null>(null);
+    private searchedAromasRepository = new MobXRepository<IWineAroma[] | null>(null);
     private selectedSmellsRepository = new MobXRepository<IWineSelectedSmell[] | null>(null);
     private tastesRepository = new MobXRepository<IWineTaste[] | null>(null);
     private selectedTastesRepository = new MobXRepository<IWineTaste[] | null>(null);
     private tasteCharacteristicsRepository = new MobXRepository<IWineTasteCharacteristic[] | null>(null);
     private reviewRepository = new MobXRepository<IWineReview | null>(null);
 
+    public get wine() {
+        return this.wineRepository.data;
+    }
+
+    public set wine(value: IWine | null) {
+        this.wineRepository.save(value);
+    }
+
+    public get image() {
+        return this.imageRepository.data;
+    }
+
+    public set image(value: IWineImage | null) {
+        this.imageRepository.save(value);
+    }
 
     public get base() {
         return this.baseRepository.data;
@@ -87,6 +111,14 @@ class WineModel implements IWineListModel {
         this.smellsRepository.save(value);
     }
 
+    public get searchedAroma() {
+        return this.searchedAromasRepository.data;
+    }
+
+    public set searchedAroma(value: IWineAroma[] | null) {
+        this.searchedAromasRepository.save(value);
+    }
+
     public get selectedSmells() {
         return this.selectedSmellsRepository.data;
     }
@@ -128,11 +160,14 @@ class WineModel implements IWineListModel {
     }
 
     public clear() {
+        this.wine = null;
+        this.image = null;
         this.base = null;
         this.look = null;
         this.colors = null;
         this.colorsShades = null;
         this.smells = null;
+        this.searchedAroma = null;
         this.selectedSmells = null;
         this.tastes = null;
         this.selectedTastes = null;

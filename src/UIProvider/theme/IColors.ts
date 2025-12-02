@@ -30,6 +30,7 @@ export type IColors = {
     selectedSlider: string;
 
     primary: string;
+    primary_secondary: string;
     error: string;
     warning: string;
     success: string;

@@ -9,6 +9,7 @@ import { LockIcon } from '@assets/icons/LockIcon';
 import { useIsFocused } from '@react-navigation/native';
 import { isIOS } from '@/utils';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
+import { CrownIcon } from '@assets/icons/CrownIcon';
 
 interface IProps {
     item: IWineTasteCharacteristic;
@@ -31,7 +32,10 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser }
 
     return (
         <View style={styles.container}>
-            <Typography text={item.name} variant="h6" />
+            <View style={styles.row}>
+                <Typography text={item.name} variant="h6" />
+                {item.isPremium && <CrownIcon />}
+            </View>
             <Typography text={item.description} variant="subtitle_12_400" style={styles.description} />
             <Slider
                 min={1}

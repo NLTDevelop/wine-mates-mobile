@@ -3,7 +3,9 @@ import { useAppState } from '@react-native-community/hooks';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { Camera, TakePhotoOptions, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
+import { Camera, PhotoFile, TakePhotoOptions, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
+import { IWineImage } from '@/entities/wine/types/IWineImage';
+import { wineModel } from '@/entities/wine/WineModel';
 
 export const useScanner = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -13,6 +15,17 @@ export const useScanner = () => {
     const [torch, setTorch] = useState<'on' | 'off'>('off');
     const { hasPermission, requestPermission } = useCameraPermission();
     const device = useCameraDevice('back');
+
+    const prepareImage = ({ uri, name, type }: { uri: string; name?: string | null; type?: string | null }): IWineImage => {
+        const normalizedUri = uri.startsWith('file://') ? uri : `file://${uri}`;
+        const uriName = normalizedUri.split('/').pop();
+
+        return {
+            uri: normalizedUri,
+            name: name || uriName || `photo-${Date.now()}.jpg`,
+            type: type || 'image/jpeg',
+        };
+    };
 
     useEffect(() => {
         if (!hasPermission) {
@@ -32,7 +45,12 @@ export const useScanner = () => {
 
             const asset = response.assets?.[0];
             if (asset?.uri) {
-                navigation.navigate('ScanResultsListView', { image: asset });
+                wineModel.image = prepareImage({
+                    uri: asset.uri,
+                    name: asset.fileName,
+                    type: asset.type,
+                });
+                navigation.navigate('ScanResultsListView');
             }
         });
     };
@@ -47,7 +65,12 @@ export const useScanner = () => {
             const photo = await cameraRef.current?.takePhoto(options);
 
             if (photo?.path) {
-                navigation.navigate('ScanResultsListView', { image: photo });
+                wineModel.image = prepareImage({
+                    uri: photo.path,
+                    name: photo.path.split('/').pop(),
+                    type: (photo as PhotoFile & { mimeType?: string }).mimeType || 'image/jpeg',
+                });
+                navigation.navigate('ScanResultsListView');
             }
         } catch (error) {
             console.error('❌ Error taking photo:', JSON.stringify(error, null, 2));

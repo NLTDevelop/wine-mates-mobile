@@ -9,7 +9,7 @@ import { Button } from '@/UIKit/Button';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { usePersonalDetails } from '../../presenters/usePersonalDetails';
 import { registerUserModel } from '@/entities/users/RegisterUserModel';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { BirthdaySelector } from '../components/BirthdaySelector';
 import DatePicker from 'react-native-date-picker';

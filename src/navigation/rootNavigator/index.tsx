@@ -1,4 +1,4 @@
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { MainStackNavigator } from '@/navigation/baseStackNavigator';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';

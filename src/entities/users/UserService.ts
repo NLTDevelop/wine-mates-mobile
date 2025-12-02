@@ -1,7 +1,6 @@
 import { IRequester, IResponse, requester } from '@/libs/requester';
 import { ILinks, links } from '@/Links';
 import { UserSignInDto } from './dto/UserSignIn.dto';
-import { IUser } from './types/IUser';
 import { userModel } from './UserModel';
 import { ResetPasswordRequestDto } from './dto/ResetPasswordRequest.dto';
 import { ResetPasswordVerifyDto } from './dto/ResetPasswordVerify.dto';
@@ -10,11 +9,12 @@ import { IRegisterUser } from './types/IRegisterUser';
 import { ProvidersSignIn } from './dto/ProvidersSignIn.dto';
 import { localization } from '@/UIProvider/localization/Localization';
 import { EmailValidation } from './dto/EmailValidation.dto';
+import { IUserData } from './types/IUserData';
 
 class UserService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
 
-    signIn = async (body: UserSignInDto): Promise<IResponse<IUser>> => {
+    signIn = async (body: UserSignInDto): Promise<IResponse<IUserData>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -23,6 +23,7 @@ class UserService {
             });
             if (!response.isError) {
                 userModel.token = response.data?.accessToken;
+                userModel.user = response.data?.user;
             }
             return response;
         } catch (error) {
@@ -45,7 +46,7 @@ class UserService {
         }
     };
 
-    googleSignIn = async (body: ProvidersSignIn): Promise<IResponse<IUser>> => {
+    googleSignIn = async (body: ProvidersSignIn): Promise<IResponse<IUserData>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -54,6 +55,7 @@ class UserService {
             });
             if (!response.isError) {
                 userModel.token = response.data?.accessToken;
+                userModel.user = response.data?.user;
             }
             return response;
         } catch (error) {
@@ -62,7 +64,7 @@ class UserService {
         }
     };
 
-    appleSignIn = async (body: ProvidersSignIn): Promise<IResponse<IUser>> => {
+    appleSignIn = async (body: ProvidersSignIn): Promise<IResponse<IUserData>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -71,6 +73,7 @@ class UserService {
             });
             if (!response.isError) {
                 userModel.token = response.data?.accessToken;
+                userModel.user = response.data?.user;
             }
             return response;
         } catch (error) {
@@ -79,7 +82,7 @@ class UserService {
         }
     };
 
-    signUp = async (body: IRegisterUser): Promise<IResponse<IUser>> => {
+    signUp = async (body: IRegisterUser): Promise<IResponse<IUserData>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -89,6 +92,7 @@ class UserService {
 
             if (!response.isError) {
                 userModel.token = response.data?.accessToken;
+                userModel.user = response.data?.user;
             }
             return response;
         } catch (error) {
@@ -112,7 +116,7 @@ class UserService {
         }
     };
 
-    verifyResetCode = async (body: ResetPasswordVerifyDto): Promise<IResponse<IUser>> => {
+    verifyResetCode = async (body: ResetPasswordVerifyDto): Promise<IResponse<IUserData>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',

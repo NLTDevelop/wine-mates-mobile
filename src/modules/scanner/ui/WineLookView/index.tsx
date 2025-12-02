@@ -26,7 +26,7 @@ export const WineLookView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades,
-        currentColor, isLoading, onSelectColor, handlePressNext } = useWineLook();
+        currentColor, isLoading, onSelectColor, handlePressNext, appearance, setAppearance } = useWineLook();
         
     return (
         <WithErrorHandler
@@ -72,6 +72,10 @@ export const WineLookView = observer(() => {
 
                                     <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
                                     <SimpleSlider value={perlage} onChange={setPerlage} />
+
+
+                                    <Typography text={t('wine.selectAppearance')} variant="h4" style={styles.label} />
+                                    <SimpleSlider value={appearance} onChange={setAppearance} />
                                 </>
                             )}
 

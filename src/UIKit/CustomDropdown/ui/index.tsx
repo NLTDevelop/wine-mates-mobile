@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -18,10 +18,11 @@ interface IProps {
     withSearch?: boolean;
     disabled?: boolean;
     selectedValue?: string | null;
+    containerStyle?: ViewStyle; 
 }
 
 export const CustomDropdown = ({ placeholder, onPress, data, withSearch = false, onSelect, disabled = false,
-    selectedValue = null }: IProps) => {
+    selectedValue = null, containerStyle }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -30,9 +31,11 @@ export const CustomDropdown = ({ placeholder, onPress, data, withSearch = false,
 
     return (
         <Dropdown
-            style={[styles.dropdown, disabled ? styles.dropdownDisabled : null]}
+            style={[styles.dropdown, disabled ? styles.dropdownDisabled : null, containerStyle]}
             placeholderStyle={styles.placeholder}
             containerStyle={styles.dropdownContainer}
+            search={withSearch}
+            autoScroll={false}
             data={filteredData}
             labelField="label"
             valueField="value"
@@ -44,7 +47,7 @@ export const CustomDropdown = ({ placeholder, onPress, data, withSearch = false,
             disable={disabled}
             onChange={handleSelect}
             renderInputSearch={() =>
-                withSearch ? (
+                data.length > 10 ? (
                     <SearchBar
                         value={search}
                         onChangeText={setSearch}

@@ -8,9 +8,10 @@ import StarRating, { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { EmptyStarIcon } from '@assets/icons/EmptyStarIcon';
 import { HalfStarIcon } from '@assets/icons/HalfStarIcon';
+import { userModel } from '@/entities/users/UserModel';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 interface IProps {
-    isPremiumUser: boolean;
     sliderValue: number;
     handleSliderChange?: (value: number) => void;
     starRate: number;
@@ -36,14 +37,14 @@ const StarIcon = ({ type, size, color }: StarIconProps) => {
     return <EmptyStarIcon width={size} height={size} color={color} />;
   };
 
-export const RateThisWine = ({ isPremiumUser, sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false}: IProps) => {
+export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
         <View style={styles.container}>
             <Typography text={t('wine.rateThisWine')} variant="subtitle_20_500" style={styles.title} />
-            {isPremiumUser ? (
+            {userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER ? (
                 <>
                     <Slider
                         min={0}

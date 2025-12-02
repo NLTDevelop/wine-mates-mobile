@@ -6,13 +6,16 @@ export interface ILinks {
     auth: string;
     resetPassword: string;
     features: string;
-    wine: string;
+    wines: string;
     wineTypes: string;
     wineColors: string;
     wineColorShades: string;
     wineSmells: string;
+    wineAromas: string;
     wineTaste: string;
     wineTasteCharacteristic: string;
+    countries: string;
+    rates: string;
 }
 
 class Links implements ILinks {
@@ -21,13 +24,16 @@ class Links implements ILinks {
         auth: 'auth',
         resetPassword: 'auth/reset-password',
         features: 'features',
-        wine: 'wine',
+        wines: 'wines',
         wineTypes: 'wine-types',
         wineColors: 'wine-colors',
         wineColorShades: 'wine-color-shades',
         wineSmells: 'wine-aroma-groups',
+        wineAromas: 'wine-aromas',
         wineTaste: 'wine-flavors',
         wineTasteCharacteristic: 'wine-taste-characteristics',
+        countries: 'countries',
+        rates: 'rates'
     };
     public get auth() {
         return `${this._domain}${this._links.auth}`;
@@ -38,8 +44,8 @@ class Links implements ILinks {
     public get features() {
         return `${this._domain}${this._links.features}`;
     }
-    public get wine() {
-        return `${this._domain}${this._links.wine}`;
+    public get wines() {
+        return `${this._domain}${this._links.wines}`;
     }
     public get wineTypes() {
         return `${this._domain}${this._links.wineTypes}`;
@@ -53,11 +59,20 @@ class Links implements ILinks {
     public get wineSmells() {
         return `${this._domain}${this._links.wineSmells}`;
     }
+    public get wineAromas() {
+        return `${this._domain}${this._links.wineAromas}`;
+    }
     public get wineTaste() {
         return `${this._domain}${this._links.wineTaste}`;
     }
     public get wineTasteCharacteristic() {
         return `${this._domain}${this._links.wineTasteCharacteristic}`;
+    }
+    public get countries() {
+        return `${this._domain}${this._links.countries}`;
+    }
+    public get rates() {
+        return `${this._domain}${this._links.rates}`;
     }
 }
 

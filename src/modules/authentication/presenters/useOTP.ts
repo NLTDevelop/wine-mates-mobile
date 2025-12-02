@@ -45,7 +45,7 @@ export const useOTP = () => {
                     setIsError({ status: true, errorText: ''});
                 }
             } else {
-                navigation.replace('CreateNewPasswordView', { email, token: response.data?.accessToken });
+                navigation.replace('CreateNewPasswordView', { email, token: response.data?.accessToken, user: response.data?.user });
             }
         } finally {
             setIsLoading(false);

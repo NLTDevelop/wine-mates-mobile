@@ -24,28 +24,29 @@ import { useAddItem } from '../../presenters/useAddItem';
 import { AddButton } from '../components/AddButton';
 import { useSelectModal } from '../../presenters/useSelectModal';
 import { SelectModal } from '../components/SelectModal';
+import { IWineAroma } from '@/entities/wine/types/IWineAroma';
+import { useWineSmellSearch } from '../../presenters/useWineSmellSearch';
+// import { EmptyListView } from '@/UIKit/EmptyListView';
 
 export const WineSmellView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { isVisible, onShowModal, onHide, selectData, selectedSubgroup, groupId } = useSelectModal();
-    const { data, selected, isError, getSmells, isLoading, search, setSearch, isOpened, onItemPress, toggleList, onSelectedItemPress,
+    const { data, selected, isError, getSmells, isLoading, isOpened, onItemPress, toggleList, onSelectedItemPress, visibleSubgroups,
         selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell, handleNextPress } = useWineSmell(onHide);
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
+    const { searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({ data, onItemPress });
+    
+    const keyExtractor = useCallback((item: ISmellSubgroup | IWineAroma) => item.id.toString(), []);
+    const renderItem = useCallback(({ item }: { item: ISmellSubgroup }) => (
+        <SmellListItem item={item} onPress={() => onShowModal(data[selectedIndex].id, item)} />
+    ), [data, onShowModal, selectedIndex]);
 
-    const keyExtractor = useCallback((item: ISmellSubgroup, index: number) => `${item.id}-${index}`, []);
-    const renderItem = useCallback(
-        ({ item }: { item: ISmellSubgroup }) => (
-            <SmellListItem item={item} onPress={() => onShowModal(data[selectedIndex].id, item)} />
-        ),
-    [data, onShowModal, selectedIndex]);
-
-    const visibleSubgroups = useMemo(() => {
-        const currentGroup = data[selectedIndex];
-        if (!currentGroup) return [];
-        return currentGroup.subgroups.filter(subgroup => subgroup.aromas.length > 0);
-    }, [data, selectedIndex]);
+    const renderSearchItem = useCallback(({ item }: { item: IWineAroma }) => {
+        const isSelected = selected.some(smell => smell.id === item.id);
+        return <SmellListItem item={item} onPress={() => onSearchItemPress(item)} isSelected={isSelected} />;
+    }, [onSearchItemPress, selected]);
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getSmells} isLoading={isLoading}>
@@ -64,34 +65,54 @@ export const WineSmellView = observer(() => {
                             <Typography text={t('wine.smellDescription')} variant="body_400" style={styles.title} />
                             <SearchBar
                                 value={search}
-                                onChangeText={setSearch}
+                                onChangeText={onSearchTextChange}
                                 placeholder={t('common.search')}
                                 containerStyle={styles.searchContainer}
                             />
-                            <SmellGroupSelector
-                                data={data}
-                                isOpened={isOpened}
-                                selectedIndex={selectedIndex}
-                                onPress={toggleList}
-                                handleLeftPress={handleLeftPress}
-                                handleRightPress={handleRightPress}
-                            />
-                            {isOpened && visibleSubgroups.length > 0 && (
+                            {search ? (
                                 <FlatList
-                                    data={visibleSubgroups}   
+                                    data={searchedAromas}
                                     keyExtractor={keyExtractor}
-                                    renderItem={renderItem}
+                                    renderItem={renderSearchItem}
                                     style={styles.list}
                                     contentContainerStyle={styles.contentContainer}
                                     nestedScrollEnabled={true}
+                                    // ListEmptyComponent={
+                                    //     <EmptyListView
+                                    //         isLoading={isSearching}
+                                    //         isNothingFound={!searchedAromas.length}
+                                    //     />
+                                    // }
                                 />
+                            ) : (
+                                <>
+                                    <SmellGroupSelector
+                                        data={data}
+                                        isOpened={isOpened}
+                                        selectedIndex={selectedIndex}
+                                        onPress={toggleList}
+                                        handleLeftPress={handleLeftPress}
+                                        handleRightPress={handleRightPress}
+                                    />
+
+                                    {isOpened && visibleSubgroups.length > 0 && (
+                                        <FlatList
+                                            data={visibleSubgroups}
+                                            keyExtractor={keyExtractor}
+                                            renderItem={renderItem}
+                                            style={styles.list}
+                                            contentContainerStyle={styles.contentContainer}
+                                            nestedScrollEnabled
+                                        />
+                                    )}
+                                </>
                             )}
                             <CustomInput
                                 value={text}
                                 onChangeText={setText}
                                 maxLength={40}
                                 placeholder={t('wine.addCustomSmell')}
-                                RightAccessory={<AddButton onPress={handleAddPress} />}
+                                RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
                                 containerStyle={styles.input}
                             />
                             {selected.length > 0 && <SelectedItemsList data={selected} onPress={onSelectedItemPress} />}

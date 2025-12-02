@@ -1,4 +1,4 @@
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useUiContext } from '../../UIProvider';
 import { useIsUserAuthorized } from '@/hooks/useIsUserAuthorized';

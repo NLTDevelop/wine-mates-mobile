@@ -6,7 +6,7 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const useWineSmell = (onHide: () => void) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -16,9 +16,14 @@ export const useWineSmell = (onHide: () => void) => {
     const [isOpened, setIsOpened] = useState(false);
     const [selectedIndex, setSelectedIndex] =  useState(0);
     const [selected, setSelected] = useState<IWineSelectedSmell[]>([]);
-    const [search, setSearch] = useState('');
     const [isError, setIsError] = useState(false);
     const initialData = wineModel.smells;
+
+    const visibleSubgroups = useMemo(() => {
+        const currentGroup = data[selectedIndex];
+        if (!currentGroup) return [];
+        return currentGroup.subgroups.filter(subgroup => subgroup.aromas.length > 0);
+    }, [data, selectedIndex]);
 
     const getSmells = useCallback(async () => {
         try {
@@ -26,11 +31,11 @@ export const useWineSmell = (onHide: () => void) => {
 
             setIsLoading(true);
 
-            const payload = {
+            const params = {
                 colorId: wineModel.base?.colorOfWine.id,
             };
 
-            const response = await wineService.getSmells(payload);
+            const response = await wineService.getSmells(params);
 
             if (response.isError || !response.data) {
                 if (response.message) {
@@ -55,6 +60,7 @@ export const useWineSmell = (onHide: () => void) => {
         return () => {
             wineModel.smells = null;
             wineModel.selectedSmells = null;
+            wineModel.searchedAroma = null;
         };
     }, []);
 
@@ -164,7 +170,7 @@ export const useWineSmell = (onHide: () => void) => {
     }, [navigation, selected]);
 
     return { 
-        data, selected, isError, getSmells, isLoading, search, setSearch, isOpened, onItemPress, toggleList, selectedIndex,
-        handleLeftPress, handleRightPress, handleAddCustomSmell, onSelectedItemPress, handleNextPress
+        data, selected, isError, getSmells, isLoading, isOpened, onItemPress, toggleList, selectedIndex,
+        handleLeftPress, handleRightPress, handleAddCustomSmell, onSelectedItemPress, handleNextPress, visibleSubgroups,
     };
 };

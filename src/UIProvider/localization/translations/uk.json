@@ -110,6 +110,7 @@
         "letsSmell": "Давайте понюхаємо",
         "selectColor": "Оберіть колір",
         "selectShade": "Оберіть відтінок",
+        "selectAppearance": "Оберіть вигляд",
         "result": "Результат",
         "selectedParameters": "Обрані параметри",
         "selectMousse": "Оберіть піну",
@@ -141,6 +142,12 @@
         "color": "Колір",
         "aroma": "Аромат",
         "taste": "Смак",
-        "details": "Деталі"
+        "details": "Деталі",
+        "tasted": "Ви вже куштували це вино",
+        "selectedDetails": "Вибрані деталі",
+        "selectedColor": "Вибраний колір",
+        "selectedSmells": "Вибрані запахи",
+        "selectedTastes": "Вибрані смаки",
+        "reviews": "Відгуки"
     }
 }

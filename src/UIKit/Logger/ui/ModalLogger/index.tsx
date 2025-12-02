@@ -1,4 +1,4 @@
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { useCallback, useMemo } from 'react';
 import { FlatList, Modal, TouchableOpacity, View, Text } from 'react-native';
 import { useUiContext } from '@/UIProvider';

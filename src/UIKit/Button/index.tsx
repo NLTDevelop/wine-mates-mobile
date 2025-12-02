@@ -23,7 +23,7 @@ export const ButtonComponent = ({ text, type = 'main', disabled, RightAccessory,
         <TouchableOpacity {...props} activeOpacity={type === "main" ? 0.9: 0.5} disabled={inProgress || disabled} style={[styles.container, containerStyle]} onPressIn={Keyboard.dismiss}>
             {inProgress ? (
                 <View style={styles.absoluteSheet}>
-                    <ActivityIndicator color={colors.primary} size="small" />
+                    <ActivityIndicator color={type === 'main' ? colors.background : colors.primary} size="small" />
                 </View>
             ) : (
                 <>

@@ -4,6 +4,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { wineModel } from '@/entities/wine/WineModel';
 import { IWineBase, IWineBaseValue } from '@/entities/wine/types/IWineBase';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
+import { wineService } from '@/entities/wine/WineService';
+import { toastService } from '@/libs/toast/toastService';
+import { localization } from '@/UIProvider/localization/Localization';
 
 const createValue = (): IWineBaseValue => ({ id: null, value: '' });
 
@@ -39,12 +42,12 @@ const fromDropdown = (item?: IDropdownItem | null): IWineBaseValue => {
 export const useAddWine = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [form, setForm] = useState<IWineBase>(createInitialForm);
+    const [inProgress, setInProgress] = useState(false);
     const isDisabled = useMemo(() => {
         const baseRequired = [
             form.typeOfWine.value,
             form.colorOfWine.value,
             form.country.value,
-            form.region.value,
             form.winery.value,
             form.grapeVariety.value,
             form.vintageYear.value,
@@ -59,23 +62,23 @@ export const useAddWine = () => {
         return () => wineModel.clear();
     }, []);
 
-    const onChangeType= useCallback((item: IDropdownItem) => {
+    const onChangeType = useCallback((item: IDropdownItem) => {
         setForm(prev => ({ ...prev, typeOfWine: fromDropdown(item), colorOfWine: createValue() }));
     }, []);
 
-    const onChangeColor= useCallback((item: IDropdownItem) => {
+    const onChangeColor = useCallback((item: IDropdownItem) => {
         setForm(prev => ({ ...prev, colorOfWine: fromDropdown(item) }));
     }, []);
 
-    const onChangeCountry= useCallback((item: IDropdownItem) => {
-        setForm(prev => ({ ...prev, country: fromDropdown(item) }));
+    const onChangeCountry = useCallback((item: IDropdownItem) => {
+        setForm(prev => ({ ...prev, country: fromDropdown(item), region: createValue() }));
     }, []);
 
-    const onChangeRegion= useCallback((item: IDropdownItem) => {
+    const onChangeRegion = useCallback((item: IDropdownItem) => {
         setForm(prev => ({ ...prev, region: fromDropdown(item) }));
     }, []);
 
-    const onChangeWinery= useCallback((value: string) => {
+    const onChangeWinery = useCallback((value: string) => {
         setForm(prev => ({ ...prev, winery: { ...prev.winery, value } }));
     }, []);
 
@@ -92,20 +95,50 @@ export const useAddWine = () => {
     }, []);
 
     const handleNextPress = useCallback(async () => {
-        const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
+        try {
+            if (!form.typeOfWine.id || !form.colorOfWine.id || !wineModel.image) return;
 
-        wineModel.base = {
-            ...form,
-            typeOfWine: {
-                ...form.typeOfWine,
-                isSparkling: selectedType?.isSparkling
+            setInProgress(true);
+
+            const formData = new FormData();
+            formData.append('name', form.wineName.value);
+            formData.append('vintage', Number(form.vintageYear.value));
+            formData.append('countryId', 1);
+            formData.append('regionId', 1);
+            formData.append('winery', form.winery.value);
+            formData.append('grapeVariety', form.grapeVariety.value);
+            formData.append('image', wineModel.image as any);
+            formData.append('typeId', form.typeOfWine.id);
+            formData.append('colorId', form.colorOfWine.id);
+
+            const response = await wineService.createWine(formData);
+
+            if (response.isError || !response.data) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    response.message || localization.t('common.somethingWentWrong'),
+                );
+            } else {
+                const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
+
+                wineModel.base = {
+                    ...form,
+                    typeOfWine: {
+                        ...form.typeOfWine,
+                        isSparkling: selectedType?.isSparkling,
+                    },
+                };
+                navigation.navigate('WineLookView');
             }
-        };
-        navigation.navigate('WineLookView');
+        } catch (error) {
+            console.error('Add wine error: ', JSON.stringify(error, null, 2));
+        } finally {
+            setInProgress(false);
+        }
     }, [navigation, form]);
 
     return { 
         form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress,
-        isDisabled, onChangeType, onChangeColor, onChangeCountry, onChangeRegion,
+        isDisabled, onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress
     };
 };
