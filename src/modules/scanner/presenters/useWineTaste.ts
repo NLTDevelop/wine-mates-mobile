@@ -22,11 +22,11 @@ export const useWineTaste = () => {
 
             setIsLoading(true);
 
-            const payload = {
+            const params = {
                 colorId: wineModel.base?.colorOfWine.id,
             };
 
-            const response = await wineService.getTastes(payload);
+            const response = await wineService.getTastes(params);
 
             if (response.isError || !response.data) {
                 if (response.message) {

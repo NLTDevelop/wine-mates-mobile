@@ -25,11 +25,11 @@ export const useWineTasteCharacteristics = () => {
 
             setIsLoading(true);
 
-            const payload = {
+            const params = {
                 colorId: wineModel.base?.colorOfWine.id,
             };
 
-            const response = await wineService.getTastesCharacteristics(payload);
+            const response = await wineService.getTastesCharacteristics(params);
 
             if (response.isError || !response.data) {
                 if (response.message) {

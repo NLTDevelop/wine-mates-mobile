@@ -9,20 +9,22 @@ import { Button } from '@/UIKit/Button';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { useAddWine } from '../../presenters/useAddWine';
 import { CustomDropdown } from '../../../../UIKit/CustomDropdown/ui';
-import { useWineTypes } from '../../presenters/useWineTypes';
+import { useWineInitialData } from '../../presenters/useWineInitialData';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
 import { useWineColor } from '../../presenters/useWineColor';
 import { observer } from 'mobx-react-lite';
+import { useWineRegion } from '../../presenters/useWineRegion';
 
 export const AddWineView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress, isDisabled,
-        onChangeType, onChangeColor, onChangeCountry, onChangeRegion } = useAddWine();
-    const { typeData, getTypes, isLoading, isError } = useWineTypes();
+        onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress } = useAddWine();
+    const { countries, typeData, getTypes, isLoading, isError } = useWineInitialData();
     const { colorsData } = useWineColor(form.typeOfWine.id);
+    const { regions } = useWineRegion(form.country.id);
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getTypes} isLoading={isLoading}>
@@ -54,26 +56,19 @@ export const AddWineView = observer(() => {
                                     disabled={!colorsData.length}
                                 />
                                 <CustomDropdown
-                                    data={[
-                                        { id: 1, label: 'red', value: 'Red' },
-                                        { id: 2, label: 'blue', value: 'Blue' },
-                                        { id: 3, label: 'green', value: 'Green' },
-                                    ]}
+                                    data={countries}
                                     placeholder={t('wine.country')}
                                     onPress={onChangeCountry}
                                     selectedValue={form.country.value}
-                                    withSearch
+                                    withSearch={true}
                                 />
                                 <CustomDropdown
-                                    data={[
-                                        { id: 1, label: 'red', value: 'Red' },
-                                        { id: 2, label: 'blue', value: 'Blue' },
-                                        { id: 3, label: 'green', value: 'Green' },
-                                    ]}
+                                    data={regions}
                                     placeholder={t('wine.region')}
                                     onPress={onChangeRegion}
                                     selectedValue={form.region.value}
-                                    withSearch
+                                    disabled={!regions.length}
+                                    withSearch={true}
                                 />
                                 <CustomInput
                                     autoCapitalize="none"
@@ -111,6 +106,7 @@ export const AddWineView = observer(() => {
                             onPress={handleNextPress}
                             containerStyle={styles.button}
                             disabled={isDisabled}
+                            inProgress={inProgress}
                         />
                     </View>
                 )}
