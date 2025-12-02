@@ -70,18 +70,22 @@ export const useWineLook = () => {
 
         if (wineModel.base?.typeOfWine.isSparkling) {
             wineModel.look = {
-                color: currentColor,
+                colorId: selectedColor?.colorId || 1,
+                shadeId: selectedColor?.id || 1,
+                tone: shade === 1 ? 'pale' : shade === 2 ? 'medium' : 'deep',
                 mousse,
                 perlage,
                 appearance,
             }
         } else {
             wineModel.look = {
-                color: currentColor,
+                colorId: selectedColor?.colorId || 1,
+                shadeId: selectedColor?.id || 1,
+                tone: shade === 1 ? 'pale' : shade === 2 ? 'medium' : 'deep',
             }
         }
         navigation.navigate('WineSmellView');
-    }, [navigation, currentColor, mousse, perlage, appearance]);
+    }, [navigation, currentColor, mousse, perlage, appearance, selectedColor, shade]);
     
     return { 
         data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades, currentColor,

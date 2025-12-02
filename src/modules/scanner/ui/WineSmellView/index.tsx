@@ -112,7 +112,7 @@ export const WineSmellView = observer(() => {
                                 onChangeText={setText}
                                 maxLength={40}
                                 placeholder={t('wine.addCustomSmell')}
-                                RightAccessory={<AddButton onPress={handleAddPress} />}
+                                RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
                                 containerStyle={styles.input}
                             />
                             {selected.length > 0 && <SelectedItemsList data={selected} onPress={onSelectedItemPress} />}

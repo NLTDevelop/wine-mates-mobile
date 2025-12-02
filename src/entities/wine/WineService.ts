@@ -14,6 +14,7 @@ import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
 import { IWineAroma } from './types/IWineAroma';
 import { IWine } from './types/IWine';
 import { ICountry } from './types/ICountry';
+import { AddRateDto } from './dto/AddRate.dto';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -217,6 +218,21 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getTastes: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    addToRate = async (data: AddRateDto): Promise<IResponse<{}>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.rates}`,
+                data,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> addToRate: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

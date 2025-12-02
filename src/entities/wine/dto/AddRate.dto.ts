@@ -5,18 +5,22 @@ interface ITasteCharacteristic {
 
 export interface AddRateDto {
     wineId: number;
-    userRating: number;
-    expertRating: number;
+    userRating?: number;
+    expertRating?: number;
     review: string;
     color: {
         colorId: number;
         shadeId: number;
         tone: string;
-        mousse: number;
-        perlage: number;
-        appearance: number;
+        mousse?: number;
+        perlage?: number;
+        appearance?: number;
     };
     aromas: number[];
     flavors: number[];
     tasteCharacteristics: ITasteCharacteristic[];
+    suggestions?: {
+        aromas?: string[];
+        flavors?: string[];
+    };
 }

@@ -26,9 +26,9 @@ export const WineTasteView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, selected, isError, getTastes, isLoading, onItemPress, onSelectedItemPress, handleAddCustomSmell,
+    const { data, selected, isError, getTastes, isLoading, onItemPress, onSelectedItemPress, handleAddCustomTaste,
         handleNextPress } = useWineTaste();
-    const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
+    const { text, setText, handleAddPress } = useAddItem(handleAddCustomTaste);
 
     const keyExtractor = useCallback((item: IWineTaste, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(
@@ -68,7 +68,7 @@ export const WineTasteView = observer(() => {
                                 onChangeText={setText}
                                 maxLength={40}
                                 placeholder={t('wine.addCustomTaste')}
-                                RightAccessory={<AddButton onPress={handleAddPress} />}
+                                RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
                                 containerStyle={styles.input}
                             />
                             {selected.length > 0 && <SelectedItemsList data={selected} onPress={onSelectedItemPress} />}

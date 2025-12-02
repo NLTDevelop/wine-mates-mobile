@@ -88,7 +88,7 @@ export const useWineTasteCharacteristics = () => {
         if (data) {
             wineModel.tasteCharacteristics = data.map(item => ({
                 ...item,
-                selectedLevel: sliderValues[item.id] ?? 1,
+                selectedLevel: sliderValues[item.id] ?? 0,
             }));
         }
 

@@ -25,7 +25,6 @@ export const CustomDropdown = ({ placeholder, onPress, data, withSearch = false,
     selectedValue = null, containerStyle }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    console.log('withSearch: ', withSearch);
 
     const { value, isOpen, search, filteredData, setSearch, handleSelect, setIsOpen, handleOpen }
         = useCustomDropdown({onPress, data, onSelect, selectedValue });

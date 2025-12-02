@@ -6,14 +6,15 @@ import { PlusIcon } from '@assets/icons/PlusIcon';
 
 interface IProps {
     onPress: () => void;
+    disabled: boolean;
 }
 
-export const AddButton = ({onPress}: IProps) => {
+export const AddButton = ({ onPress, disabled }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
-        <TouchableOpacity style={styles.button} onPress={onPress}>
+        <TouchableOpacity style={styles.button} onPress={onPress} disabled={disabled}>
             <PlusIcon />
         </TouchableOpacity>
     );

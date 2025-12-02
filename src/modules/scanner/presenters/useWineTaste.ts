@@ -75,7 +75,7 @@ export const useWineTaste = () => {
         }
     }, []);
 
-    const handleAddCustomSmell = useCallback((text: string) => {
+    const handleAddCustomTaste = useCallback((text: string) => {
         setSelected(prevState => [
             ...prevState,
             { 
@@ -92,6 +92,6 @@ export const useWineTaste = () => {
     }, [navigation, selected]);
 
     return { 
-        data, selected, isError, getTastes, isLoading, onItemPress, handleAddCustomSmell, onSelectedItemPress, handleNextPress
+        data, selected, isError, getTastes, isLoading, onItemPress, handleAddCustomTaste, onSelectedItemPress, handleNextPress
     };
 };
