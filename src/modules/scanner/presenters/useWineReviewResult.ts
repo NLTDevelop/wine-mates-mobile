@@ -85,6 +85,7 @@ export const useWineReviewResult = () => {
                 tasteCharacteristics: available?.map(item => ({
                     characteristicId: item.id,
                     levelId: item.levels[(item.selectedLevel ?? 0)]?.id || 0,
+                    value: item.selectedLevel || 0,
                 })) || [],
             };
 
@@ -127,7 +128,10 @@ export const useWineReviewResult = () => {
                 );
             } else {
                 // navigation.navigate('ScanResultView');
-                toastService.showSuccess('Сохранилось!', 'В дальнейшем будет навигация');
+                toastService.showSuccess('Сохранилось!', 'В дальнейшем будет другая навигация');
+                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
+
+                wineModel.clear();
             }
         } catch (error) {
             console.error(JSON.stringify(error, null, 2));

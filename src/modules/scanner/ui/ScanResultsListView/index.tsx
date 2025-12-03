@@ -12,8 +12,9 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 import { ScannerListItem } from '../components/ScannerListItem';
+import { observer } from 'mobx-react-lite';
 
-export const ScanResultsListView = () => {
+export const ScanResultsListView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -61,4 +62,4 @@ export const ScanResultsListView = () => {
         </ScreenContainer>
         // </WithErrorHandler>
     );
-};
+});
