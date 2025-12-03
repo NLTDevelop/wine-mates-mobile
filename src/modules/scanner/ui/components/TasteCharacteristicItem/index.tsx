@@ -14,21 +14,24 @@ import { CrownIcon } from '@assets/icons/CrownIcon';
 interface IProps {
     item: IWineTasteCharacteristic;
     value: number;
-    onChange: (value: number) => void;
+    onChange?: (value: number) => void;
     isPremiumUser: boolean;
+    disabled?: boolean;
 }
 
-export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser }: IProps) => {
+export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, disabled = false }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isFocused = useIsFocused();
 
     const safeValue = useMemo(() => {
-        const max = Math.max(item.levels.length, 1);
+        const max = Math.max(item.levels.length - 1, 0);
         if (value > max) return max;
-        if (value < 1) return 1;
+        if (value < 0) return 0;
         return value;
     }, [item.levels.length, value]);
+
+    const maxIndex = Math.max(item.levels.length - 1, 0);
 
     return (
         <View style={styles.container}>
@@ -38,12 +41,12 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser }
             </View>
             <Typography text={item.description} variant="subtitle_12_400" style={styles.description} />
             <Slider
-                min={1}
-                max={Math.max(item.levels.length, 1)}
+                min={0}
+                max={maxIndex}
                 value={safeValue}
-                onChange={onChange}
+                onChange={onChange ?? (() => {})}
                 selectedColor={item.colorHex}
-                
+                disabled={disabled}
             />
             {item.isPremium && isFocused && !isPremiumUser && (
                 <>

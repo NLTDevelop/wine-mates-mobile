@@ -28,7 +28,7 @@ export const WineTasteCharacteristicsView = observer(() => {
         ({ item }: { item: IWineTasteCharacteristic }) => (
             <TasteCharacteristicItem
                 item={item}
-                value={sliderValues[item.id] ?? 1}
+                value={sliderValues[item.id] ?? 0}
                 onChange={value => handleSliderChange(item.id, value)}
                 isPremiumUser={isPremiumUser}
             />

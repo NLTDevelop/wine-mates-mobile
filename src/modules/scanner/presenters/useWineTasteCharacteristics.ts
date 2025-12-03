@@ -60,9 +60,10 @@ export const useWineTasteCharacteristics = () => {
             const next: Record<number, number> = {};
 
             data.forEach(item => {
-                const maxLevel = Math.max(item.levels?.length ?? 1, 1);
-                const prevValue = prev[item.id] ?? 1;
-                next[item.id] = Math.min(Math.max(prevValue, 1), maxLevel);
+                const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
+                const baseValue =
+                    typeof item.selectedIndex === 'number' ? item.selectedIndex : prev[item.id] ?? 0;
+                next[item.id] = Math.min(Math.max(baseValue, 0), maxIndex);
             });
 
             return next;
@@ -75,20 +76,24 @@ export const useWineTasteCharacteristics = () => {
         };
     }, []);
 
-    const handleSliderChange = useCallback((id: number, value: number) => {
-        setSliderValues(prev => {
-            const maxLevel = data?.find(characteristic => characteristic.id === id)?.levels.length ?? value;
-            const nextValue = Math.min(Math.max(value, 1), maxLevel || 1);
+    const handleSliderChange = useCallback(
+        (id: number, value: number) => {
+            setSliderValues(prev => {
+                const levelsLength = data?.find(characteristic => characteristic.id === id)?.levels.length ?? 0;
+                const maxIndex = Math.max(levelsLength - 1, 0);
+                const nextValue = Math.min(Math.max(value, 0), maxIndex);
 
-            return { ...prev, [id]: nextValue };
-        });
-    }, [data]);
+                return { ...prev, [id]: nextValue };
+            });
+        },
+        [data],
+    );
 
     const handleNextPress = useCallback(() => {
         if (data) {
             wineModel.tasteCharacteristics = data.map(item => ({
                 ...item,
-                selectedLevel: sliderValues[item.id] ?? 0,
+                selectedIndex: sliderValues[item.id] ?? 0,
             }));
         }
 

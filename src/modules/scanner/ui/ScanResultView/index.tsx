@@ -3,7 +3,7 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { ResultListHeader } from '../components/ResultListHeader';
 
@@ -11,17 +11,10 @@ export const ScanResultView = observer(() => {
     const { colors, t} = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const keyExtractor = useCallback((item: IWineTasteCharacteristic, index: number) => `${item.id}-${index}`, []);
+    const keyExtractor = useCallback((item: any, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(
-        ({ item }: { item: IWineTasteCharacteristic }) => (
-            <TasteCharacteristicItem
-                item={item}
-                value={sliderValues[item.id] ?? 1}
-                onChange={value => handleSliderChange(item.id, value)}
-                isPremiumUser={isPremiumUser}
-            />
-        ),
-        [handleSliderChange, sliderValues, isPremiumUser],
+        ({ item }: { item: any }) => (<View></View>),
+        [],
     );
 
     return (
@@ -37,6 +30,7 @@ export const ScanResultView = observer(() => {
             data={[]}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
+            contentContainerStyle={styles.containerStyle}
             ListHeaderComponent={<ResultListHeader/>}
         />
         </ScreenContainer>

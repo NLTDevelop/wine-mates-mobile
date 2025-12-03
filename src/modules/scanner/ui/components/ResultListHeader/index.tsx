@@ -6,6 +6,9 @@ import { Typography } from '@/UIKit/Typography';
 import { declOfWord } from '@/utils';
 import { ResultHeader } from '../ResultHeader';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
+import { TasteCharacteristicItem } from '../TasteCharacteristicItem';
+import { featuresModel } from '@/entities/features/FeaturesModel';
+import { FeaturesKeysEnum } from '@/entities/features/enums/FeaturesKeysEnum';
 
 interface ISelectedSmell {
     id: number;
@@ -90,9 +93,90 @@ const TASTES = [
     },
 ];
 
+const CHARACTERISTICS = [
+    {
+        id: 1,
+        name: 'Alcohol',
+        description: 'Some text',
+        levels: [
+            { id: 1, name: 'Test1' },
+            { id: 2, name: 'Test2' },
+            { id: 3, name: 'Test3' },
+            { id: 4, name: 'Test4' },
+            { id: 5, name: 'Test5' },
+        ],
+        colorHex: 'red',
+        isPremium: false,
+        selectedIndex: 2,
+    },
+    {
+        id: 2,
+        name: 'Alcohol',
+        description: 'Some text',
+        levels: [
+            { id: 1, name: 'Test' },
+            { id: 2, name: 'Test' },
+            { id: 3, name: 'Test' },
+            { id: 4, name: 'Test' },
+            { id: 5, name: 'Test' },
+        ],
+        colorHex: 'orange',
+        isPremium: false,
+        selectedIndex: 3,
+    },
+    {
+        id: 3,
+        name: 'Alcohol',
+        description: 'Some text',
+        levels: [
+            { id: 1, name: 'Test' },
+            { id: 2, name: 'Test' },
+            { id: 3, name: 'Test' },
+            { id: 4, name: 'Test' },
+            { id: 5, name: 'Test' },
+        ],
+        colorHex: 'purple',
+        isPremium: false,
+        selectedIndex: 3,
+    },
+    {
+        id: 4,
+        name: 'Alcohol',
+        description: 'Some text',
+        levels: [
+            { id: 1, name: 'Test' },
+            { id: 2, name: 'Test' },
+            { id: 3, name: 'Test' },
+            { id: 4, name: 'Test' },
+            { id: 5, name: 'Test' },
+        ],
+        colorHex: 'yellow',
+        isPremium: true,
+        selectedIndex: 3,
+    },
+    {
+        id: 5,
+        name: 'Alcohol',
+        description: 'Some text',
+        levels: [
+            { id: 1, name: 'Test' },
+            { id: 2, name: 'Test' },
+            { id: 3, name: 'Test' },
+            { id: 4, name: 'Test' },
+            { id: 5, name: 'Test' },
+        ],
+        colorHex: 'green',
+        isPremium: true,
+        selectedIndex: 3,
+    },
+];
+
 export const ResultListHeader = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const isPremiumUser = useMemo(() =>
+        featuresModel.features?.find(feature => feature.key === FeaturesKeysEnum.TASTING_NOTES)?.isEnabled || false,
+    []);
 
     return (
         <View>
@@ -138,6 +222,17 @@ export const ResultListHeader = () => {
                 ))}
             </View>
             <Typography text={t('wine.selectedDetails')} variant="h4" style={styles.title} />
+            <View style={styles.slidersListContainer}>
+                {CHARACTERISTICS.map((item: any) => (
+                    <TasteCharacteristicItem
+                        key={item.id}
+                        item={item}
+                        value={item.selectedIndex}
+                        isPremiumUser={isPremiumUser}
+                        disabled={true}
+                    />
+                ))}
+            </View>
             <Typography text={t('wine.reviews')} variant="h4" style={styles.title} />
         </View>
     );

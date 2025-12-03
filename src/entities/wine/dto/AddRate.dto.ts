@@ -1,7 +1,6 @@
 interface ITasteCharacteristic {
     characteristicId: number;
     levelId: number;
-    value: number;
 }
 
 export interface AddRateDto {

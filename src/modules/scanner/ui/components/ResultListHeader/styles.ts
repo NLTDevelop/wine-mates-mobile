@@ -48,6 +48,10 @@ export const getStyles = (colors: IColors) => {
         countText: {
             color: colors.text_light,
         },
+        slidersListContainer: {
+            gap: scaleVertical(10),
+            marginBottom: scaleVertical(16),
+        }
     });
     return styles;
 };

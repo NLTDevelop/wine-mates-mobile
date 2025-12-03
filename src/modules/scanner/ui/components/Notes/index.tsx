@@ -28,7 +28,7 @@ export const Notes = ({ isOpened, toggleNotes }: IProps) => {
             : wineModel.tasteCharacteristics.filter(c => !c.isPremium);
     
         return available
-            .map(c => c.levels[c.selectedLevel ?? 0]?.name)
+            .map(item => item.levels[item.selectedIndex ?? 0]?.name)
             .join(', ');
     })();
 
