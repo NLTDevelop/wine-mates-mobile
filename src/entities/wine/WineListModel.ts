@@ -27,7 +27,7 @@ class WineListModel implements IWineListModel {
         if (this.list) {
             this.list = {
                 ...this.list,
-                data: [...this.list.data, ...value.data],
+                rows: [...this.list.rows, ...value.rows],
             };
         }
     }

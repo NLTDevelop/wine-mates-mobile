@@ -11,7 +11,7 @@ import { RegistrationView } from '@/modules/registration/ui/RegistrationView';
 import { TabNavigator } from '../tabNavigator';
 import { PersonalDetailsView } from '@/modules/registration/ui/PersonalDetailsView';
 import { CreatePasswordView } from '@/modules/registration/ui/CreatePasswordView';
-import { ScanResultView } from '@/modules/scanner/ui/ScanResultView';
+import { WineDetailsView } from '@/modules/scanner/ui/WineDetailsView';
 import { WineLookView } from '@/modules/scanner/ui/WineLookView';
 import { WineSmellView } from '@/modules/scanner/ui/WineSmellView';
 import { WineTasteView } from '@/modules/scanner/ui/WineTasteView';
@@ -35,7 +35,7 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="PersonalDetailsView" component={PersonalDetailsView} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
             <Stack.Screen name="CreatePasswordView" component={CreatePasswordView} />
-            <Stack.Screen name="ScanResultView" component={ScanResultView} />
+            <Stack.Screen name="WineDetailsView" component={WineDetailsView} />
             <Stack.Screen name="WineLookView" component={WineLookView} options={{ gestureEnabled: false }} />
             <Stack.Screen name="WineSmellView" component={WineSmellView} />
             <Stack.Screen name="WineTasteView" component={WineTasteView} />

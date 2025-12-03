@@ -15,6 +15,10 @@ import { IWineAroma } from './types/IWineAroma';
 import { IWine } from './types/IWine';
 import { ICountry } from './types/ICountry';
 import { AddRateDto } from './dto/AddRate.dto';
+import { IReviewsListParams } from './params/IReviewsListParams';
+import { IWineReviewsListItem } from './types/IWineReviewsListItem';
+import { wineReviewsListModel } from './WineReviewsListModel';
+import { IWineDetails } from './types/IWineDetails';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -36,6 +40,19 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> list: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getById = async (id: number): Promise<IResponse<IWineDetails>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wines}/${id}`,
+            });
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getById: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
@@ -233,6 +250,29 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> addToRate: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getReviewsList = async (params: IReviewsListParams): Promise<IResponse<IList<IWineReviewsListItem>>>  => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.rates}`,
+                params,
+            });
+
+            if (!response.isError) {
+                if (params.offset === 0) {
+                    wineReviewsListModel.list = response.data;
+                } else {
+                    wineReviewsListModel.append(response.data);
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getReviewsList: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

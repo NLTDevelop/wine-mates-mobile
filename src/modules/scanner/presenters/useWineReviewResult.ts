@@ -64,13 +64,17 @@ export const useWineReviewResult = () => {
                 ? wineModel.tasteCharacteristics
                 : wineModel.tasteCharacteristics?.filter(item => !item.isPremium);
 
-            const aromas = wineModel.selectedSmells?.filter(item => item.aroma?.colorHex)
-            ?.map(item => item.aroma?.id || 0);
-            const suggestedAromas = wineModel.selectedSmells?.filter(item => !item.aroma?.colorHex)
-            ?.map(item => item.aroma?.name || '');
+            const aromas = wineModel.selectedSmells
+                ?.filter(item => item.aroma?.colorHex)
+                ?.map(item => item.aroma?.id || 0);
+            const suggestedAromas = wineModel.selectedSmells
+                ?.filter(item => !item.aroma?.colorHex)
+                ?.map(item => item.aroma?.name || '');
 
             const flavors = wineModel.selectedTastes?.filter(item => item.colorHex)?.map(item => item.id);
-            const suggestedFlavors = wineModel.selectedTastes?.filter(item => !item.colorHex)?.map(item => item.name || '');
+            const suggestedFlavors = wineModel.selectedTastes
+                ?.filter(item => !item.colorHex)
+                ?.map(item => item.name || '');
 
             const payload: AddRateDto = {
                 wineId: wineModel.wine?.id || 0,
@@ -82,10 +86,11 @@ export const useWineReviewResult = () => {
                 },
                 aromas: aromas || [],
                 flavors: flavors || [],
-                tasteCharacteristics: available?.map(item => ({
-                    characteristicId: item.id,
-                    levelId: item.levels[(item.selectedLevel ?? 0)]?.id || 0,
-                })) || [],
+                tasteCharacteristics:
+                    available?.map(item => ({
+                        characteristicId: item.id,
+                        levelId: item.levels[item.selectedIndex ?? 0]?.id || 0,
+                    })) || [],
             };
 
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
@@ -97,10 +102,10 @@ export const useWineReviewResult = () => {
             if (wineModel.base?.typeOfWine.isSparkling) {
                 payload.color = {
                     ...payload.color,
-                    mousse:  wineModel.look?.mousse || 0,
-                    perlage:  wineModel.look?.perlage || 0,
-                    appearance:  wineModel.look?.appearance || 0,
-                }
+                    mousse: wineModel.look?.mousse || 0,
+                    perlage: wineModel.look?.perlage || 0,
+                    appearance: wineModel.look?.appearance || 0,
+                };
             }
 
             const hasSuggestedAromas = (suggestedAromas?.length ?? 0) > 0;
@@ -126,8 +131,8 @@ export const useWineReviewResult = () => {
                     response.message || localization.t('common.somethingWentWrong'),
                 );
             } else {
-                // navigation.navigate('ScanResultView');
-                toastService.showSuccess('Сохранилось!', 'В дальнейшем будет навигация');
+                navigation.popTo('WineDetailsView', {wineId: wineModel.wine?.id});
+                wineModel.clear();
             }
         } catch (error) {
             console.error(JSON.stringify(error, null, 2));

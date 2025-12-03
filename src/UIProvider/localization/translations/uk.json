@@ -148,6 +148,7 @@
         "selectedColor": "Вибраний колір",
         "selectedSmells": "Вибрані запахи",
         "selectedTastes": "Вибрані смаки",
-        "reviews": "Відгуки"
+        "reviews": "Відгуки",
+        "tasteAgain": "Скуштуйте знову"
     }
 }

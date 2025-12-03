@@ -5,11 +5,11 @@ interface ILevel {
 export interface IWineTasteCharacteristic {
     id: number;
     name: string;
-    description: string;
+    description: string | null;
     levels: ILevel[];
     colorHex: string;
     isPremium: boolean;
-    selectedLevel?: number;
+    selectedIndex?: number;
 }
 
 

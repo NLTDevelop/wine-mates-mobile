@@ -29,7 +29,8 @@ export const Slider = memo(({ min, max, value, onChange, selectedColor, withSect
 
     const sectionsCount = useMemo(() => {
         const raw = max - 2;
-        return raw > 20 ? 8 : raw;
+        const normalized = raw > 20 ? 8 : raw;
+        return normalized < 0 ? 0 : normalized;
     }, [max]);
 
     const sections = useMemo(

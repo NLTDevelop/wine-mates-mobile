@@ -148,6 +148,7 @@
         "selectedColor": "Selected color",
         "selectedSmells": "Selected smells",
         "selectedTastes": "Selected tastes",
-        "reviews": "Reviews"
+        "reviews": "Reviews",
+        "tasteAgain": "Taste Again"
     }
 }
