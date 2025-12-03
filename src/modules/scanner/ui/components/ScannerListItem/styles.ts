@@ -20,7 +20,6 @@ export const getStyles = (colors: IColors) => {
         image: {
             width: scaleHorizontal(116),
             height: scaleVertical(170),
-            borderRadius: 12,
         },
         mainContainer: {
             maxWidth: scaleHorizontal(191),

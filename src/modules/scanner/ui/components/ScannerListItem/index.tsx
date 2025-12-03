@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
@@ -11,16 +11,17 @@ import { Avatar } from '@/UIKit/Avatar';
 
 interface IProps {
     item: IWineListItem;
-    onPress: () => void;
+    onPress: (item: IWineListItem) => void;
 }
 
 export const ScannerListItem = ({ item, onPress }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const handleItemPress = useCallback(() => onPress(item), [item, onPress])
 
     return (
-        <TouchableOpacity style={styles.container} onPress={onPress}>
-            <FasterImageView source={{ uri: item.image_url }} style={styles.image} radius={12}/>
+        <TouchableOpacity style={styles.container} onPress={handleItemPress}>
+            <FasterImageView source={{ uri: item.image.originalUrl, resizeMode: 'cover' }} style={styles.image} radius={12}/>
             <View style={styles.mainContainer}>
                 <View style={styles.subContainer}>
                     <Typography
@@ -31,11 +32,11 @@ export const ScannerListItem = ({ item, onPress }: IProps) => {
                     />
                     <View style={styles.rateContainer}>
                         <StarIcon />
-                        <Typography variant="subtitle_12_500" text={item.review_average} />
+                        <Typography variant="subtitle_12_500" text={item.review_average || '-'} />
                         <Typography
                             variant="subtitle_12_400"
                             text={`(${declOfWord(
-                                item.review_count,
+                                item.review_count || 0,
                                 t('scanner.reviewCount') as unknown as Array<string>,
                             )})`}
                             style={styles.text}
@@ -45,17 +46,17 @@ export const ScannerListItem = ({ item, onPress }: IProps) => {
                 <View style={styles.subContainer}>
                     <View style={styles.userRow}>
                         <Avatar
-                            avatarUrl={item.user.image_url}
-                            fullname={`${item.user.firstName} ${item.user.lastName}`}
+                            avatarUrl={item?.user?.image_url || null}
+                            fullname={`${item?.user?.firstName} ${item?.user?.lastName}`}
                             size={24}
                         />
                         <Typography
-                            text={`${item.user.firstName} ${item.user.lastName}`}
+                            text={`${item?.user?.firstName} ${item?.user?.lastName}`}
                             numberOfLines={1}
                             style={styles.title}
                         />
                     </View>
-                    <Typography variant="body_400" text={item.description} numberOfLines={3} style={styles.text} />
+                    <Typography variant="body_400" text={item.description ?? '-'} numberOfLines={3} style={styles.text} />
                 </View>
             </View>
         </TouchableOpacity>

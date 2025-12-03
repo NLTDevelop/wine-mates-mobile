@@ -11,6 +11,9 @@ export const getStyles = (colors: IColors) => {
             paddingHorizontal: scaleHorizontal(16),
             overflow: 'hidden',
         },
+        infoContainer: {
+            marginBottom: scaleVertical(16),
+        },
         row: {
             flexDirection: 'row',
             alignItems: 'center',
@@ -18,21 +21,6 @@ export const getStyles = (colors: IColors) => {
         },
         description: {
             color: colors.text_light,
-            marginBottom: scaleVertical(16),
-        },
-        lockLayer: {
-            position: 'absolute',
-            top: 0,
-            right: scaleHorizontal(16),
-            zIndex: 10,
-        },
-        blur: {
-            ...StyleSheet.absoluteFillObject,
-            zIndex: 5,
-        },
-        fakeBlur: {
-            ...StyleSheet.absoluteFillObject,
-            backgroundColor: `${colors.background}A6`,
         },
     });
     return styles;

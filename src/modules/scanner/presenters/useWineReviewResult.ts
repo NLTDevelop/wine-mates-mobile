@@ -131,10 +131,7 @@ export const useWineReviewResult = () => {
                     response.message || localization.t('common.somethingWentWrong'),
                 );
             } else {
-                // navigation.navigate('ScanResultView');
-                toastService.showSuccess('Сохранилось!', 'В дальнейшем будет другая навигация');
-                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
-
+                navigation.popTo('WineDetailsView', {wineId: wineModel.wine?.id});
                 wineModel.clear();
             }
         } catch (error) {

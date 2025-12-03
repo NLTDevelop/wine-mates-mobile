@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
-import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { FasterImageView } from '@rraut/react-native-faster-image';
@@ -10,54 +9,55 @@ import { declOfWord } from '@/utils';
 import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
 import { Button } from '@/UIKit/Button';
 import { FavoriteIcon } from '@assets/icons/FavoriteIcon';
+import { IWineDetails } from '@/entities/wine/types/IWineDetails';
+import { useResultHeader } from '@/modules/scanner/presenters/useResultHeader';
+import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 
 interface IProps {
-    item: IWineListItem;
+    item: IWineDetails;
+    onVintageChange: (item: IDropdownItem) => void;
 }
 
-export const ResultHeader = ({ item }: IProps) => {
+export const ResultHeader = ({ item, onVintageChange }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const { vintageData, onPress, onFavoritePress } = useResultHeader(item.vintages);
 
     return (
         <View style={styles.container}>
             <View>
-                <FasterImageView source={{ uri: item.image_url }} style={styles.image} radius={12} />
+                <FasterImageView source={{ uri: item.image.originalUrl, resizeMode: 'cover' }} style={styles.image} radius={12} />
             </View>
             <View style={styles.mainContainer}>
                 <Typography variant="subtitle_20_500" text={item.name} style={styles.title} />
-                <Typography variant="body_400" text={item.description} style={styles.description} />
+                <Typography variant="body_400" text={`${item.type.name}, ${item.country.name}, ${item.region.name}, ${item.producer}, ${item.grapeVariety}`} style={styles.description} />
                 <View style={styles.rateContainer}>
                     <StarIcon />
-                    <Typography variant="subtitle_12_500" text={item.review_average} />
+                    <Typography variant="subtitle_12_500" text={item.averageUserRating || 0} />
                     <Typography
                         variant="subtitle_12_400"
                         text={`(${declOfWord(
-                            item.review_count,
+                            item.totalReviews || 0,
                             t('scanner.reviewCount') as unknown as Array<string>,
                         )})`}
                         style={styles.text}
                     />
                 </View>
                 <CustomDropdown
-                    data={[
-                        { id: 1, label: '2023', value: '2023' },
-                        { id: 2, label: '2024', value: '2024' },
-                        { id: 3, label: '2025', value: '2025' },
-                    ]}
+                    data={vintageData}
                     placeholder={t('wine.vintage')}
-                    onPress={() => {}}
-                    selectedValue={'2023'}
+                    onPress={onVintageChange}
+                    selectedValue={item.vintage.toString()}
                     containerStyle={styles.dropdown}
                 />
                 <View style={styles.row}>
                     <Button
-                        text={t('wine.letsTaste')}
-                        onPress={() => {}}
+                        text={item.isTasted ? t('wine.tasteAgain') : t('wine.letsTaste')}
+                        onPress={onPress}
                         type="secondary"
                         containerStyle={styles.button}
                     />
-                    <TouchableOpacity style={styles.favoriteButton} onPress={() => {}}>
+                    <TouchableOpacity style={styles.favoriteButton} onPress={onFavoritePress}>
                         <FavoriteIcon />
                     </TouchableOpacity>
                 </View>

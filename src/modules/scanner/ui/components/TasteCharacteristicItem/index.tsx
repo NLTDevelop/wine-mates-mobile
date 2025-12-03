@@ -4,12 +4,10 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Slider } from '@/UIKit/Slider';
-import { BlurView } from '@sbaiahmed1/react-native-blur';
-import { LockIcon } from '@assets/icons/LockIcon';
 import { useIsFocused } from '@react-navigation/native';
-import { isIOS } from '@/utils';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { CrownIcon } from '@assets/icons/CrownIcon';
+import { BlurContainer } from '@/UIKit/BlurContainer';
 
 interface IProps {
     item: IWineTasteCharacteristic;
@@ -23,23 +21,31 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isFocused = useIsFocused();
+    const levels = item.levels ?? [
+        { id: 1, name: '' },
+        { id: 2, name: '' },
+    ];
 
     const safeValue = useMemo(() => {
-        const max = Math.max(item.levels.length - 1, 0);
+        const max = Math.max(levels.length - 1, 0);
         if (value > max) return max;
         if (value < 0) return 0;
         return value;
-    }, [item.levels.length, value]);
+    }, [levels.length, value]);
 
-    const maxIndex = Math.max(item.levels.length - 1, 0);
+    const maxIndex = Math.max(levels.length - 1, 0);
 
     return (
         <View style={styles.container}>
-            <View style={styles.row}>
-                <Typography text={item.name} variant="h6" />
-                {item.isPremium && <CrownIcon />}
+            <View style={styles.infoContainer}>
+                <View style={styles.row}>
+                    <Typography text={item.name} variant="h6" />
+                    {item.isPremium && <CrownIcon />}
+                </View>
+                {item.description && (
+                    <Typography text={item.description} variant="subtitle_12_400" style={styles.description} />
+                )}
             </View>
-            <Typography text={item.description} variant="subtitle_12_400" style={styles.description} />
             <Slider
                 min={0}
                 max={maxIndex}
@@ -48,18 +54,7 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
                 selectedColor={item.colorHex}
                 disabled={disabled}
             />
-            {item.isPremium && isFocused && !isPremiumUser && (
-                <>
-                    {isIOS ? (
-                        <BlurView style={styles.blur} blurType="light" blurAmount={5} />
-                    ) : (
-                        <View style={styles.fakeBlur} />
-                    )}
-                    <View style={styles.lockLayer}>
-                        <LockIcon />
-                    </View>
-                </>
-            )}
+            {item.isPremium && isFocused && !isPremiumUser && <BlurContainer />}
         </View>
     );
 };

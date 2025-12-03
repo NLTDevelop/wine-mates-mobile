@@ -15,7 +15,7 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(172),
         },
         mainContainer: {
-            maxWidth: scaleHorizontal(214),
+            width: scaleHorizontal(214),
             gap: scaleVertical(12),
         },
         title: {

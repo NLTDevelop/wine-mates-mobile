@@ -4,9 +4,10 @@ import { scaleVertical } from '@/utils';
 
 export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
-        containerStyle : {
+        containerStyle: {
             flexGrow: 1,
-            gap: scaleVertical(16),
+            gap: scaleVertical(12),
+            paddingBottom: scaleVertical(16),
         },
     });
     return styles;

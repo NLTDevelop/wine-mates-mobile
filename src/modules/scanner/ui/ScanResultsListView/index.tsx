@@ -22,9 +22,12 @@ export const ScanResultsListView = observer(() => {
     const { refreshControl } = useRefresh(onRefresh);
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
-    const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
-        return <ScannerListItem item={item} onPress={handleItemPress} />;
-    }, [handleItemPress]);
+    const renderItem = useCallback(
+        ({ item }: { item: IWineListItem }) => {
+            return <ScannerListItem item={item} onPress={handleItemPress} />;
+        },
+        [handleItemPress],
+    );
 
     return (
         // <WithErrorHandler error={null} onRetry={() => {}}>
@@ -33,8 +36,8 @@ export const ScanResultsListView = observer(() => {
             withGradient
             headerComponent={<HeaderWithBackButton title={t('scanner.results')} />}
         >
+            <Typography text={t('scanner.resultsTitle')} variant="body_400" style={styles.title} />
             <View style={styles.container}>
-                <Typography text={t('scanner.resultsTitle')} variant="body_400" style={styles.title} />
                 <FlatList
                     onEndReached={onEndReached}
                     refreshControl={refreshControl}
@@ -44,20 +47,9 @@ export const ScanResultsListView = observer(() => {
                     style={styles.list}
                     contentContainerStyle={styles.contentContainerStyle}
                     ListFooterComponent={isLoading && data?.length ? <ListFooterLoader /> : null}
-                    ListEmptyComponent={
-                        <EmptyListView
-                            isLoading={isLoading}
-                            // image={
-                            //     <Image
-                            //         source={require('@assets/images/caa/EmptyListInspections.png')}
-                            //         style={styles.image}
-                            //     />
-                            // }
-                            text={'Nothing found'}
-                        />
-                    }
+                    ListEmptyComponent={<EmptyListView isLoading={isLoading} text={'Nothing found'} />}
                 />
-                <Button text={t('scanner.addWine')} onPress={handleAddWinePress} containerStyle={styles.button}/>
+                <Button text={t('scanner.addWine')} onPress={handleAddWinePress} containerStyle={styles.button} />
             </View>
         </ScreenContainer>
         // </WithErrorHandler>
