@@ -25,9 +25,12 @@ export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
     const isPremiumUser = useMemo(() =>
         featuresModel.features?.find(feature => feature.key === FeaturesKeysEnum.TASTING_NOTES)?.isEnabled || false,
     []);
-    const tasteCharacteristics = useMemo(() => data.statistics.tasteCharacteristics.filter(item => item.levels), [data.statistics.tasteCharacteristics]);
 
-
+    const tasteCharacteristics = useMemo(
+        () => data?.statistics?.tasteCharacteristics?.filter(item => item?.levels && item?.selectedIndex != null) ?? [],
+        [data.statistics.tasteCharacteristics],
+    );
+    
     return (
         <View>
             <ResultHeader item={data} onVintageChange={onVintageChange} />

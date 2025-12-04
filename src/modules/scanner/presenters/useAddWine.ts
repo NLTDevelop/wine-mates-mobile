@@ -53,7 +53,7 @@ export const useAddWine = () => {
             form.vintageYear.value,
             form.wineName.value,
         ];
-        const hasEmptyBase = baseRequired.some(field => !field.trim());
+        const hasEmptyBase = baseRequired.some(field => !field?.trim());
 
         return hasEmptyBase;
     }, [form]);

@@ -63,6 +63,12 @@ export const getStyle = (colors: IColors) => {
             fontFamily: 'VisueltPro-Medium',
             color: colors.text,
             flexShrink: 1,
+        },
+        subtitle_20_700: {
+            fontSize: scaleFontSize(20),
+            fontFamily: 'VisueltPro-Bold',
+            color: colors.text,
+            flexShrink: 1,
         }
     });
     return styles;

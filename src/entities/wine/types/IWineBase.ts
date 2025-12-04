@@ -1,6 +1,6 @@
 export interface IWineBaseValue {
     id: number | null;
-    value: string;
+    value: string | null;
     isSparkling?: boolean;
 }
 

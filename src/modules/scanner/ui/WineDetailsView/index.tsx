@@ -20,8 +20,8 @@ export const WineDetailsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { details, isError, isLoading, getDetails, id, onVintageChange } = useWineDetails();
-    const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(id);
+    const { details, isError, getDetails, id, onVintageChange } = useWineDetails();
+    const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(id, getDetails);
     const { refreshControl } = useRefresh(onRefresh);
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
@@ -34,7 +34,7 @@ export const WineDetailsView = observer(() => {
                 withGradient
                 headerComponent={<HeaderWithBackButton title={t('wine.result')} isCentered={false} />}
             >
-                {!details || isLoading ? (
+                {!details ? (
                     <Loader />
                 ) : (
                     <FlatList

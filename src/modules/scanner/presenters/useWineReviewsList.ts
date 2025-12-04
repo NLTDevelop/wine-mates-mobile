@@ -5,11 +5,12 @@ import { wineService } from '@/entities/wine/WineService';
 // import { useNavigation } from '@react-navigation/native';
 // import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
+import { useFocusEffect } from '@react-navigation/native';
 
 const LIMIT = 10;
 const OFFSET = 0;
 
-export const useWineReviewsList = (id: number | null) => {
+export const useWineReviewsList = (id: number | null, getDetails: () => Promise<void>) => {
     // const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
     const data = wineReviewsListModel.list?.rows || [];
@@ -41,9 +42,9 @@ export const useWineReviewsList = (id: number | null) => {
 
     const onRefresh = useCallback(
         async (offset: number = OFFSET) => {
-            await getList(offset);
+            await Promise.all([getDetails(), getList(offset)]);
         },
-        [getList],
+        [getList, getDetails],
     );
 
     const onEndReached = useCallback(async () => {
@@ -53,11 +54,11 @@ export const useWineReviewsList = (id: number | null) => {
         }
     }, [isReviewsLoading, getList]);
 
-    useEffect(() => {
-        Promise.resolve().then(() => {
+    useFocusEffect(
+        useCallback(() => {
             onRefresh();
-        });
-    }, [onRefresh]);
+        }, [onRefresh]),
+    );
 
     useEffect(() => {
         return () => wineReviewsListModel.clear();
