@@ -1,6 +1,6 @@
 import { config } from './config';
 
-const isDev = true;
+const isDev = false;
 
 export interface ILinks {
     auth: string;
