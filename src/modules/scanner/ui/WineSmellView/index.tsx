@@ -26,7 +26,7 @@ import { useSelectModal } from '../../presenters/useSelectModal';
 import { SelectModal } from '../components/SelectModal';
 import { IWineAroma } from '@/entities/wine/types/IWineAroma';
 import { useWineSmellSearch } from '../../presenters/useWineSmellSearch';
-// import { EmptyListView } from '@/UIKit/EmptyListView';
+import { EmptyListView } from '@/UIKit/EmptyListView';
 
 export const WineSmellView = observer(() => {
     const { colors, t } = useUiContext();
@@ -36,7 +36,7 @@ export const WineSmellView = observer(() => {
     const { data, selected, isError, getSmells, isLoading, isOpened, onItemPress, toggleList, onSelectedItemPress, visibleSubgroups,
         selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell, handleNextPress } = useWineSmell(onHide);
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
-    const { searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({ data, onItemPress });
+    const { isSearching, searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({ data, onItemPress });
     
     const keyExtractor = useCallback((item: ISmellSubgroup | IWineAroma) => item.id.toString(), []);
     const renderItem = useCallback(({ item }: { item: ISmellSubgroup }) => (
@@ -77,12 +77,12 @@ export const WineSmellView = observer(() => {
                                     style={styles.list}
                                     contentContainerStyle={styles.contentContainer}
                                     nestedScrollEnabled={true}
-                                    // ListEmptyComponent={
-                                    //     <EmptyListView
-                                    //         isLoading={isSearching}
-                                    //         isNothingFound={!searchedAromas.length}
-                                    //     />
-                                    // }
+                                    ListEmptyComponent={
+                                        <EmptyListView
+                                            isLoading={isSearching}
+                                            isNothingFound={!searchedAromas?.length}
+                                        />
+                                    }
                                 />
                             ) : (
                                 <>

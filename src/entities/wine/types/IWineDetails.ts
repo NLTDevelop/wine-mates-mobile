@@ -35,6 +35,7 @@ export interface IWineDetails {
     type: {
         id: number;
         name: string;
+        isSparkling: boolean;
     };
     country: {
         id: number;
@@ -43,7 +44,7 @@ export interface IWineDetails {
     region: {
         id: number;
         name: string;
-    };
+    } | null;
     statistics: {
         topColor: {
             id: number;

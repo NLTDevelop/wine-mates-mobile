@@ -54,10 +54,7 @@ export const useWineLook = () => {
     }, [getColorsWithShades]);
 
     useEffect(() => {
-        return () => {
-            wineModel.colorsShades = null;
-            wineModel.look = null;
-        };
+        return () => wineModel.clear();;
     }, []);
 
     const onSelectColor = useCallback((color: IWineColorShade) => {

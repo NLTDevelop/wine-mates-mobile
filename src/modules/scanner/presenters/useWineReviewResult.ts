@@ -7,7 +7,7 @@ import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -78,7 +78,7 @@ export const useWineReviewResult = () => {
 
             const payload: AddRateDto = {
                 wineId: wineModel.wine?.id || 0,
-                review: wineModel.review?.review || '',
+                review: wineModel.review?.review.trim() || '',
                 color: {
                     colorId: wineModel.look?.colorId || 0,
                     shadeId: wineModel.look?.shadeId || 0,
@@ -131,7 +131,68 @@ export const useWineReviewResult = () => {
                     response.message || localization.t('common.somethingWentWrong'),
                 );
             } else {
-                navigation.popTo('WineDetailsView', {wineId: wineModel.wine?.id});
+                const state = navigation.getState();
+                const hasDetailsScreen = state.routes.some(route => route.name === 'WineDetailsView');
+                const wineDetailsParams = { wineId: wineModel.wine?.id };
+                const routesToDrop = new Set([
+                    'AddWineView',
+                    'WineLookView',
+                    'WineSmellView',
+                    'WineTasteView',
+                    'WineTasteCharacteristicsView',
+                    'WineReviewView',
+                    'WineReviewResultView',
+                ]);
+                const normalizeScannerStack = (route: any) => {
+                    if (route.name !== 'TabNavigator' || !route.state) return route;
+
+                    const tabState = route.state;
+                    const tabRoutes = tabState.routes?.map((tabRoute: any) => {
+                        if (tabRoute.name !== 'ScannerStack' || !tabRoute.state) return tabRoute;
+
+                        const scannerState = tabRoute.state;
+                        const scannerRoutes =
+                            scannerState.routes?.filter((stackRoute: any) => stackRoute.name !== 'AddWineView') || [];
+                        const ensuredRoutes = scannerRoutes.length ? scannerRoutes : [{ name: 'ScanResultsListView' }];
+
+                        return {
+                            ...tabRoute,
+                            state: {
+                                ...scannerState,
+                                routes: ensuredRoutes,
+                                index: Math.max(0, ensuredRoutes.length - 1),
+                            },
+                        };
+                    });
+
+                    return {
+                        ...route,
+                        state: {
+                            ...tabState,
+                            routes: tabRoutes || tabState.routes,
+                        },
+                    };
+                };
+
+                if (hasDetailsScreen) {
+                    navigation.popTo('WineDetailsView', wineDetailsParams);
+                } else {
+                    const filteredRoutes = state.routes.filter(route => !routesToDrop.has(route.name));
+                    const normalizedRoutes = filteredRoutes.map(normalizeScannerStack);
+                    const safeRoutes = normalizedRoutes.length
+                        ? normalizedRoutes
+                        : [normalizeScannerStack(state.routes[0])];
+                    const routes = [...safeRoutes, { name: 'WineDetailsView', params: wineDetailsParams }];
+
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            ...state,
+                            routes,
+                            index: routes.length - 1,
+                        }),
+                    );
+                }
+
                 wineModel.clear();
             }
         } catch (error) {

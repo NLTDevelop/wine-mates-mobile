@@ -21,7 +21,7 @@ export const ReviewListItem = ({ item }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const formattedDate = useMemo(() => formatRelativeDate(item.createdAt, locale), [item.createdAt, locale]);
+    const formattedDate = formatRelativeDate(item.createdAt, locale);
     const isPremiumUser = useMemo(() =>
         featuresModel.features?.find(feature => feature.key === FeaturesKeysEnum.TASTING_NOTES)?.isEnabled || false,
     [],);

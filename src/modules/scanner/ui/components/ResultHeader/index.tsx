@@ -21,16 +21,25 @@ interface IProps {
 export const ResultHeader = ({ item, onVintageChange }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { vintageData, onPress, onFavoritePress } = useResultHeader(item.vintages);
+    const { vintageData, onPress, onFavoritePress } = useResultHeader(item);
+    const description = useMemo(() => {
+        return [item.type?.name, item.country?.name, item.region?.name, item.producer, item.grapeVariety]
+            .filter(Boolean)
+            .join(', ');
+    }, [item.type?.name, item.country?.name, item.region?.name, item.producer, item.grapeVariety]);
 
     return (
         <View style={styles.container}>
             <View>
-                <FasterImageView source={{ uri: item.image.originalUrl, resizeMode: 'cover' }} style={styles.image} radius={12} />
+                <FasterImageView
+                    source={{ uri: item.image.originalUrl, resizeMode: 'cover' }}
+                    style={styles.image}
+                    radius={12}
+                />
             </View>
             <View style={styles.mainContainer}>
                 <Typography variant="subtitle_20_500" text={item.name} style={styles.title} />
-                <Typography variant="body_400" text={`${item.type.name}, ${item.country.name}, ${item.region.name}, ${item.producer}, ${item.grapeVariety}`} style={styles.description} />
+                <Typography variant="body_400" text={description} style={styles.description} />
                 <View style={styles.rateContainer}>
                     <StarIcon />
                     <Typography variant="subtitle_12_500" text={item.averageUserRating || 0} />

@@ -37,6 +37,7 @@ export const useWineTasteCharacteristics = () => {
                     setIsError(true);
                 }
             } else {
+                console.log(JSON.stringify(response.data, null, 2));
                 setIsError(false);
             }
         } catch (error) {

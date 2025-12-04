@@ -1,5 +1,5 @@
 import { ReactElement, useMemo } from 'react';
-import { View, Image, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '../../UIProvider';
 import { Typography } from '../Typography';
@@ -14,26 +14,39 @@ interface IProps {
     isNothingFound?: boolean;
 }
 
-export const EmptyListView = observer(({ text, description, image, BottomElement, isLoading, isNothingFound }: IProps) => {
-    const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+export const EmptyListView = observer(
+    ({ text, description, image, BottomElement, isLoading, isNothingFound }: IProps) => {
+        const { colors, t } = useUiContext();
+        const styles = useMemo(() => getStyles(colors), [colors]);
 
-    return (
-        isLoading
-            ? <View style={styles.container}>
+        return isLoading ? (
+            <View style={styles.container}>
                 <ActivityIndicator color={colors.primary} size="large" />
             </View>
-            : isNothingFound
-                ? <View style={styles.container}>
-                    <Image source={require('@assets/images/nothing_found.png')} style={styles.image} />
-                    <Typography variant='h5' style={styles.title} >{t('common.nothingFoundTitle')}</Typography>
-                    <Typography variant='body_500' style={styles.description} >{t('common.nothingFoundDescription')}</Typography>
-                </View>
-                : <View style={styles.container}>
-                    {image}
-                    {text && <Typography variant='h5' style={styles.title} >{text}</Typography>}
-                    {description && <Typography variant='body_500' style={styles.description} >{description}</Typography>}
-                    {BottomElement}
-                </View>
-    );
-});
+        ) : isNothingFound ? (
+            <View style={styles.container}>
+                <Typography text={t('common.nothingFoundTitle')} variant="subtitle_20_700" style={styles.title} />
+                <Typography
+                    text={t('common.nothingFoundDescription')}
+                    variant="subtitle_12_400"
+                    style={styles.description}
+                />
+            </View>
+        ) : (
+            <View style={styles.container}>
+                {image}
+                {text && (
+                    <Typography variant="h5" style={styles.title}>
+                        {text}
+                    </Typography>
+                )}
+                {description && (
+                    <Typography variant="body_500" style={styles.description}>
+                        {description}
+                    </Typography>
+                )}
+                {BottomElement}
+            </View>
+        );
+    },
+);

@@ -40,10 +40,11 @@ export const getStyles = (colors: IColors) => {
         row: {
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
         },
         button: {
-            height: scaleVertical(40)
+            height: scaleVertical(40),
+            minWidth: scaleHorizontal(162),
         },
         favoriteButton: {
             width: scaleVertical(40),
