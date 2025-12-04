@@ -1,9 +1,9 @@
-import { IVintage } from '@/entities/wine/types/IWineDetails';
+import { IVintage, IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { useCallback, useMemo } from 'react';
 
-export const useResultHeader = (vintages: IVintage[]) => {
+export const useResultHeader = (item: IWineDetails) => {
     const vintageData = useMemo(() =>
-        vintages.map((vintage: IVintage) => {
+        item.vintages.map((vintage: IVintage) => {
             const label = String(vintage.vintage);
             return {
                 label,
@@ -11,7 +11,7 @@ export const useResultHeader = (vintages: IVintage[]) => {
                 id: vintage.wineId,
             };
         }),
-    [vintages]);
+    [item]);
 
     const onPress = useCallback(() => {
 

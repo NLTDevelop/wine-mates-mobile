@@ -144,11 +144,11 @@
         "taste": "Taste",
         "details": "Details",
         "tasted": "You have already tasted this wine",
-        "selectedDetails": "Selected details",
-        "selectedColor": "Selected color",
-        "selectedSmells": "Selected smells",
-        "selectedTastes": "Selected tastes",
+        "mostSelected": "Most selected",
+        "mostSelectedColor": "Most selected",
         "reviews": "Reviews",
-        "tasteAgain": "Taste Again"
+        "tasteAgain": "Taste Again",
+        "aromas": "Aromas",
+        "tastes": "Tastes"
     }
 }

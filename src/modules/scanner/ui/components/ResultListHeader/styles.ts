@@ -18,9 +18,19 @@ export const getStyles = (colors: IColors) => {
         tastedText: {
             color: colors.primary,
         },
+        titleContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: scaleVertical(8),
+            marginHorizontal: scaleHorizontal(16),
+        },
         title: {
             marginBottom: scaleVertical(8),
             marginHorizontal: scaleHorizontal(16),
+        },
+        text: {
+            color: colors.text_light,
         },
         selectedColor: {
             alignItems: 'center',
@@ -31,15 +41,11 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(50),
         },
         mapListContainer: {
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            columnGap: scaleHorizontal(8),
-            rowGap: scaleVertical(8),
+            gap: scaleVertical(8),
             marginBottom: scaleVertical(16),
             marginHorizontal: scaleHorizontal(16),
         },
         mapListItem: {
-            width: scaleHorizontal(109),
             height: scaleVertical(50),
             justifyContent: 'center',
             alignItems: 'center',
@@ -51,7 +57,7 @@ export const getStyles = (colors: IColors) => {
         slidersListContainer: {
             gap: scaleVertical(10),
             marginBottom: scaleVertical(16),
-        }
+        },
     });
     return styles;
 };

@@ -21,7 +21,7 @@ interface IProps {
 export const ResultHeader = ({ item, onVintageChange }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { vintageData, onPress, onFavoritePress } = useResultHeader(item.vintages);
+    const { vintageData, onPress, onFavoritePress } = useResultHeader(item);
 
     return (
         <View style={styles.container}>
