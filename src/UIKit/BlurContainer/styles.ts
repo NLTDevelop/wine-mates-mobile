@@ -1,5 +1,5 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors) => {
@@ -11,10 +11,9 @@ export const getStyles = (colors: IColors) => {
             zIndex: 10,
         },
         centeredLockLayer: {
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: [{ translateX: -scaleVertical(12) }, { translateY: -scaleVertical(12) }],
+            ...StyleSheet.absoluteFillObject,
+            justifyContent: 'center',
+            alignItems: 'center',
             zIndex: 10,
         },
         blur: {

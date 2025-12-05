@@ -15,7 +15,7 @@ const createInitialForm = (): IWineBase => ({
     colorOfWine: createValue(),
     country: createValue(),
     region: createValue(),
-    winery: createValue(),
+    producer: createValue(),
     grapeVariety: createValue(),
     vintageYear: createValue(),
     wineName: createValue(),
@@ -48,7 +48,7 @@ export const useAddWine = () => {
             form.typeOfWine.value,
             form.colorOfWine.value,
             form.country.value,
-            form.winery.value,
+            form.producer.value,
             form.grapeVariety.value,
             form.vintageYear.value,
             form.wineName.value,
@@ -79,7 +79,7 @@ export const useAddWine = () => {
     }, []);
 
     const onChangeWinery = useCallback((value: string) => {
-        setForm(prev => ({ ...prev, winery: { ...prev.winery, value } }));
+        setForm(prev => ({ ...prev, producer: { ...prev.producer, value } }));
     }, []);
 
     const onChangeGrapeVariety = useCallback((value: string) => {
@@ -105,7 +105,7 @@ export const useAddWine = () => {
             formData.append('vintage', Number(form.vintageYear.value));
             formData.append('countryId', 1);
             formData.append('regionId', 1);
-            formData.append('winery', form.winery.value);
+            formData.append('producer', form.producer.value);
             formData.append('grapeVariety', form.grapeVariety.value);
             formData.append('image', wineModel.image as any);
             formData.append('typeId', form.typeOfWine.id);

@@ -18,7 +18,7 @@ export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { handleSavePress, isPremiumUser, toggleNotes, isOpened, isError, getNotes, isLoading, isSaving } = useWineReviewResult();
+    const { handleSavePress, toggleNotes, isOpened, isError, getNotes, isLoading, isSaving } = useWineReviewResult();
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getNotes} isLoading={isLoading}>
@@ -31,7 +31,6 @@ export const WineReviewResultView = observer(() => {
                 <View style={styles.container}>
                     <View>
                         <RateThisWine
-                            isPremiumUser={isPremiumUser}
                             sliderValue={wineModel.review?.rate || 0}
                             starRate={wineModel.review?.starRate || 0}
                             disabled={true}

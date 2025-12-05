@@ -16,4 +16,5 @@ export interface IUser {
     avatarUrl: string;
     wineExperienceLevel: WineExperienceLevelEnum;
     isConfirmed: true;
+    hasPremium: boolean;
 }

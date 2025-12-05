@@ -7,12 +7,11 @@ import { declOfWord } from '@/utils';
 import { ResultHeader } from '../ResultHeader';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
 import { TasteCharacteristicItem } from '../TasteCharacteristicItem';
-import { featuresModel } from '@/entities/features/FeaturesModel';
-import { FeaturesKeysEnum } from '@/entities/features/enums/FeaturesKeysEnum';
 import { IStatistic, IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
+import { userModel } from '@/entities/users/UserModel';
 
 interface IProps {
    data: IWineDetails;
@@ -22,9 +21,7 @@ interface IProps {
 export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const isPremiumUser = useMemo(() =>
-        featuresModel.features?.find(feature => feature.key === FeaturesKeysEnum.TASTING_NOTES)?.isEnabled || false,
-    []);
+    const isPremiumUser = userModel.user?.hasPremium || false;
 
     const tasteCharacteristics = useMemo(
         () => data?.statistics?.tasteCharacteristics?.filter(item => item?.levels && item?.selectedIndex != null) ?? [],

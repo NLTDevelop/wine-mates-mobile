@@ -1,12 +1,11 @@
-import { FeaturesKeysEnum } from '@/entities/features/enums/FeaturesKeysEnum';
-import { featuresModel } from '@/entities/features/FeaturesModel';
+import { userModel } from '@/entities/users/UserModel';
 import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -15,9 +14,7 @@ export const useWineTasteCharacteristics = () => {
     const [isError, setIsError] = useState(false);
     const [sliderValues, setSliderValues] = useState<Record<number, number>>({});
     const data = wineModel.tasteCharacteristics;
-    const isPremiumUser = useMemo(
-        () => featuresModel.features?.find(feature => feature.key === FeaturesKeysEnum.TASTING_NOTES)?.isEnabled || false,
-    []);
+    const isPremiumUser = userModel.user?.hasPremium || false;
 
     const getTasteCharacteristics = useCallback(async () => {
         try {
@@ -37,7 +34,6 @@ export const useWineTasteCharacteristics = () => {
                     setIsError(true);
                 }
             } else {
-                console.log(JSON.stringify(response.data, null, 2));
                 setIsError(false);
             }
         } catch (error) {

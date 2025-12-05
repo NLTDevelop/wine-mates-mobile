@@ -12,6 +12,12 @@ import { FavoriteIcon } from '@assets/icons/FavoriteIcon';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { useResultHeader } from '@/modules/scanner/presenters/useResultHeader';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
+import { SilverMedalIcon } from '@assets/icons/SilverMedalIcon';
+import { userModel } from '@/entities/users/UserModel';
+import { BlurContainer } from '@/UIKit/BlurContainer';
+import { BronzeMedalIcon } from '@assets/icons/BronzeMedalIcon';
+import { GoldMedalIcon } from '@assets/icons/GoldMedalIcon';
+import { PlatinumMedalIcon } from '@assets/icons/PlatinumMedalIcon';
 
 interface IProps {
     item: IWineDetails;
@@ -23,10 +29,57 @@ export const ResultHeader = ({ item, onVintageChange }: IProps) => {
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { vintageData, onPress, onFavoritePress } = useResultHeader(item);
     const description = useMemo(() => {
-        return [item.type?.name, item.country?.name, item.region?.name, item.producer, item.grapeVariety]
+        return [
+            item.type?.name,
+            item.color?.name,
+            item.country?.name,
+            item.region?.name,
+            item.producer,
+            item.grapeVariety,
+        ]
             .filter(Boolean)
             .join(', ');
-    }, [item.type?.name, item.country?.name, item.region?.name, item.producer, item.grapeVariety]);
+    }, [item.type?.name, item.color?.name, item.country?.name, item.region?.name, item.producer, item.grapeVariety]);
+
+    const medalData = useMemo(() => {
+        const rating = item.averageExpertRating;
+
+        if (!rating || rating < 86) {
+            return null;
+        }
+
+        const roundedRating = Math.round(rating);
+
+        if (rating >= 97) {
+            return {
+                Icon: PlatinumMedalIcon,
+                label: t('medal.platinum'),
+                rating: roundedRating,
+            };
+        }
+
+        if (rating >= 95) {
+            return {
+                Icon: GoldMedalIcon,
+                label: t('medal.gold'),
+                rating: roundedRating,
+            };
+        }
+
+        if (rating >= 90) {
+            return {
+                Icon: SilverMedalIcon,
+                label: t('medal.silver'),
+                rating: roundedRating,
+            };
+        }
+
+        return {
+            Icon: BronzeMedalIcon,
+            label: t('medal.bronze'),
+            rating: roundedRating,
+        };
+    }, [item.averageExpertRating, t]);
 
     return (
         <View style={styles.container}>
@@ -36,6 +89,15 @@ export const ResultHeader = ({ item, onVintageChange }: IProps) => {
                     style={styles.image}
                     radius={12}
                 />
+
+                {medalData && (
+                    <View style={styles.medal}>
+                        <medalData.Icon text={medalData.rating.toString()} />
+                        <Typography variant="subtitle_12_400" text={medalData.label} />
+
+                        {!userModel.user?.hasPremium && <BlurContainer isLockIconCentered={true} />}
+                    </View>
+                )}
             </View>
             <View style={styles.mainContainer}>
                 <Typography variant="subtitle_20_500" text={item.name} style={styles.title} />

@@ -62,6 +62,10 @@ export const getStyles = (colors: IColors, topInset: number, bottomInset: number
         openCameraButton: {
             marginBottom: scaleVertical(16),
         },
+        emptyContainer: {
+            width: scaleVertical(48),
+            height: scaleVertical(48),
+        }
     });
     return styles;
 };

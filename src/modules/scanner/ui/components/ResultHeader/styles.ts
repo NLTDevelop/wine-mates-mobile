@@ -14,6 +14,10 @@ export const getStyles = (colors: IColors) => {
             width: scaleHorizontal(117),
             height: scaleVertical(172),
         },
+        medal: {
+            marginTop: scaleVertical(8),
+            alignItems: 'center',
+        },
         mainContainer: {
             width: scaleHorizontal(214),
             gap: scaleVertical(12),

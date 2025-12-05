@@ -38,7 +38,7 @@ export const useResultHeader = (item: IWineDetails) => {
                 id: item.region?.id ?? null,
                 value: item.region?.name ?? null,
             },
-            winery: {
+            producer: {
                 id: null,
                 value: item.producer,
             },
@@ -61,7 +61,7 @@ export const useResultHeader = (item: IWineDetails) => {
             },
         };
         navigation.navigate('WineLookView');
-    }, []); 
+    }, [navigation, item]); 
     
     const onFavoritePress = useCallback(() => {
 

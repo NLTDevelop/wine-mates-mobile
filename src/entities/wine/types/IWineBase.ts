@@ -9,7 +9,7 @@ export interface IWineBase {
     colorOfWine: IWineBaseValue;
     country: IWineBaseValue;
     region: IWineBaseValue;
-    winery: IWineBaseValue;
+    producer: IWineBaseValue;
     grapeVariety: IWineBaseValue;
     vintageYear: IWineBaseValue;
     wineName: IWineBaseValue;
