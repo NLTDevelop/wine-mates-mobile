@@ -1,6 +1,7 @@
 export interface IWineReviewsListItem {
     id: number;
-    userRating: number;
+    userRating: number | null;
+    expertRating: number | null;
     review: string | null;
     createdAt: string;
     user: {

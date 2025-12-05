@@ -1,5 +1,5 @@
 import { Dimensions, PixelRatio, Platform } from 'react-native';
-import { formatDistanceToNowStrict, Locale, parse } from 'date-fns';
+import { differenceInSeconds, formatDistanceToNowStrict, Locale, parse } from 'date-fns';
 import { enUS, uk } from 'date-fns/locale';
 
 export const isIOS = Platform.OS === 'ios';
@@ -47,30 +47,44 @@ export const declOfWord = (num: number, word: Array<string>): string => {
     return '';
 };
 
+const parseDate = (raw: string | number | Date) => {
+    let parsed: Date;
+
+    if (typeof raw === 'string') {
+        const isoDate = new Date(raw);
+        parsed = !Number.isNaN(isoDate.getTime()) ? isoDate : parse(raw, 'dd.MM.yyyy', new Date());
+    } else {
+        parsed = new Date(raw);
+    }
+
+    if (Number.isNaN(parsed.getTime())) return null;
+
+    return parsed;
+};
+
 export const formatRelativeDate = (raw: string | number | Date, localeCode: string = 'en') => {
     const localeMap: Record<string, Locale> = { en: enUS, uk };
     const selectedLocale = localeMap[localeCode] || enUS;
 
     if (!raw) return '';
 
-    let parsed: Date;
+    const parsed = parseDate(raw);
 
-    if (typeof raw === 'string') {
-        const isoDate = new Date(raw);
-        if (!Number.isNaN(isoDate.getTime())) {
-            parsed = isoDate;
-        } else {
-            parsed = parse(raw, 'dd.MM.yyyy', new Date());
-        }
-    } else {
-        parsed = new Date(raw);
-    }
-
-    if (Number.isNaN(parsed.getTime())) return String(raw);
+    if (!parsed) return String(raw);
 
     return formatDistanceToNowStrict(parsed, {
         addSuffix: false,
         locale: selectedLocale,
         roundingMethod: 'floor',
     });
+};
+
+export const isLessThanMinuteFromNow = (raw: string | number | Date) => {
+    if (!raw) return false;
+
+    const parsed = parseDate(raw);
+
+    if (!parsed) return false;
+
+    return Math.abs(differenceInSeconds(new Date(), parsed)) < 60;
 };

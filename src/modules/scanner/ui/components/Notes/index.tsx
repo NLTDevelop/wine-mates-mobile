@@ -5,8 +5,7 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { wineModel } from '@/entities/wine/WineModel';
-import { featuresModel } from '@/entities/features/FeaturesModel';
-import { FeaturesKeysEnum } from '@/entities/features/enums/FeaturesKeysEnum';
+import { userModel } from '@/entities/users/UserModel';
 
 interface IProps {
     isOpened: boolean;
@@ -20,8 +19,7 @@ export const Notes = ({ isOpened, toggleNotes }: IProps) => {
     const details = (() => {
         if (!wineModel.tasteCharacteristics?.length) return '';
     
-        const isPremiumUser =
-            featuresModel.features?.find(feature => feature.key === FeaturesKeysEnum.TASTING_NOTES)?.isEnabled || false;
+       const isPremiumUser = userModel.user?.hasPremium || false;
     
         const available = isPremiumUser
             ? wineModel.tasteCharacteristics
@@ -48,7 +46,7 @@ export const Notes = ({ isOpened, toggleNotes }: IProps) => {
                     <View style={styles.row}>
                         <Typography text={t('wine.color')} variant="h6" style={styles.characteristicTitle} />
                         <Typography
-                            text={wineModel.base?.colorOfWine.value}
+                            text={wineModel.base?.colorOfWine?.value || '-'}
                             variant="h6"
                             style={styles.characteristic}
                         />

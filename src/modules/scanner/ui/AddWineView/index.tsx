@@ -72,21 +72,21 @@ export const AddWineView = observer(() => {
                                 />
                                 <CustomInput
                                     autoCapitalize="none"
-                                    value={form.winery.value}
+                                    value={form.producer.value || ''}
                                     onChangeText={onChangeWinery}
                                     placeholder={t('wine.wineryName')}
                                     containerStyle={styles.input}
                                 />
                                 <CustomInput
                                     autoCapitalize="none"
-                                    value={form.grapeVariety.value}
+                                    value={form.grapeVariety.value || ''}
                                     onChangeText={onChangeGrapeVariety}
                                     placeholder={t('wine.grapeVariety')}
                                     containerStyle={styles.input}
                                 />
                                 <CustomInput
                                     autoCapitalize="none"
-                                    value={form.vintageYear.value}
+                                    value={form.vintageYear.value || ''}
                                     onChangeText={onChangeVintageYear}
                                     placeholder={t('wine.vintage')}
                                     containerStyle={styles.input}
@@ -95,7 +95,7 @@ export const AddWineView = observer(() => {
                                 />
                                 <CustomInput
                                     autoCapitalize="none"
-                                    value={form.wineName.value}
+                                    value={form.wineName.value || ''}
                                     onChangeText={onChangeWineName}
                                     placeholder={t('wine.wineName')}
                                     containerStyle={styles.input}

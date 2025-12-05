@@ -21,10 +21,7 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             gap: scaleHorizontal(8),
         },
-        experienceContainer: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: scaleHorizontal(2),
+        expertRateContainer: {
             backgroundColor: colors.background_light,
             borderRadius: 12,
             paddingVertical: scaleVertical(2),

@@ -54,10 +54,14 @@ export const ScannerView = () => {
                         <TouchableOpacity onPress={handleTakePhotoPress} style={styles.mainShotButton}>
                             <View style={styles.mainShotInner} />
                         </TouchableOpacity>
-
-                        <TouchableOpacity onPress={handleCreatePress} style={styles.bottomButtons}>
-                            <AddFileIcon color={colors.icon} width={24} height={24} />
-                        </TouchableOpacity>
+                        {/* TODO: After discussion with the customer */}
+                        {true ? (
+                            <View style={styles.emptyContainer} />
+                        ) : (
+                            <TouchableOpacity onPress={handleCreatePress} style={styles.bottomButtons}>
+                                <AddFileIcon color={colors.icon} width={24} height={24} />
+                            </TouchableOpacity>
+                        )}
                     </View>
                 </>
             )}
