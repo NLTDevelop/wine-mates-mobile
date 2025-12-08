@@ -28,7 +28,7 @@ export const getStyles = (colors: IColors) => {
             zIndex: 2,
             alignItems: 'center',
             flexDirection: 'row',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-between',
         },
         button: {
             height: 50,

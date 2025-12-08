@@ -21,11 +21,16 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
 
     const getSearchedAromas = useCallback(async (query: string) => {
         try {
-            if (!query) return;
+            if (!query || !wineModel.base?.colorOfWine.id) return;
 
             setIsSearching(true);
 
-            const response = await wineService.getAromas({ search: query });
+            const params = {
+                search: query,
+                colorId: wineModel.base?.colorOfWine.id,
+            }
+
+            const response = await wineService.getAromas(params);
 
             if (response.isError || !response.data) {
                 toastService.showError(

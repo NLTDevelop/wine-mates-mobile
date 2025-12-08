@@ -5,22 +5,24 @@ import { useUiContext } from '@/UIProvider';
 import { LoggerItem } from '@/UIKit/Logger/ui/LoggerItem';
 import { ILog, loggerModel } from '@/UIKit/Logger/entity/loggerModel';
 import { getStyles } from './styles';
+import { useLoggerModal } from '../../presenters/useLoggerModal';
 
 export const ModalLogger = observer(() => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
+    const { onEnvironmentChange, onClose, isDevEnvironment } = useLoggerModal();
+
     const renderItem = useCallback(({ item }: any) => <LoggerItem item={item} />, []);
     const keyExtractor = useCallback((item: ILog) => item.id, []);
-
-    const onClose = useCallback(() => {
-        loggerModel.isVisibleLogs = false;
-    }, []);
 
     return (
         <Modal visible={loggerModel.isVisibleLogs} statusBarTranslucent>
             <View style={styles.container}>
                 <View style={styles.header}>
+                    <TouchableOpacity style={styles.button} onPress={onEnvironmentChange}>
+                        <Text style={styles.buttonText}>{isDevEnvironment ? 'Dev' : 'Local'}</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity style={styles.button} onPress={onClose}>
                         <Text style={styles.buttonText}>Close</Text>
                     </TouchableOpacity>

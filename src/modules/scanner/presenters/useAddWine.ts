@@ -88,8 +88,9 @@ export const useAddWine = () => {
     }, []);
 
     const onChangeVintageYear = useCallback((value: string) => {
+        const numericValue = value.replace(/\D/g, '').slice(0, 4);
         setIsVintageError({status: false, errorText: ''});
-        setForm(prev => ({ ...prev, vintageYear: { ...prev.vintageYear, value } }));
+        setForm(prev => ({ ...prev, vintageYear: { ...prev.vintageYear, value: numericValue } }));
     }, []);
 
     const onChangeWineName = useCallback((value: string) => {
