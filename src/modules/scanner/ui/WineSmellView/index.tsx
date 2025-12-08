@@ -36,7 +36,12 @@ export const WineSmellView = observer(() => {
     const { data, selected, isError, getSmells, isLoading, isOpened, onItemPress, toggleList, onSelectedItemPress, visibleSubgroups,
         selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell, handleNextPress } = useWineSmell(onHide);
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
-    const { isSearching, searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({ data, onItemPress });
+    const { isSearching, searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({
+        data,
+        selected,
+        onItemPress,
+        onSelectedItemPress,
+    });
     
     const keyExtractor = useCallback((item: ISmellSubgroup | IWineAroma) => item.id.toString(), []);
     const renderItem = useCallback(({ item }: { item: ISmellSubgroup }) => (

@@ -39,6 +39,10 @@ export const useScanner = () => {
         }
     }, [appState, isFocused]);
 
+    useEffect(() => {
+        return () => setTorch('off');
+    }, []);
+
     const handleGalleryPress = () => {
         launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, quality: 1 }, response => {
             if (response.didCancel || response.errorCode) return;

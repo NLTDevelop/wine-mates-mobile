@@ -21,7 +21,7 @@ export const HeaderWithBackButton = ({ title, titleComponent, backDisabled, righ
     titleContainerStyle, onPressBack, isCentered = true,
 }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, isCentered), [colors, isCentered]);
+    const styles = useMemo(() => getStyles(colors, isCentered, !!rightComponent), [colors, isCentered, rightComponent]);
     const { onGoBack } = useBackButton(onPressBack);
 
     return (

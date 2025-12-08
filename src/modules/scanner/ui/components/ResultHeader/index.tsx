@@ -85,7 +85,7 @@ export const ResultHeader = ({ item, onVintageChange }: IProps) => {
         <View style={styles.container}>
             <View>
                 <FasterImageView
-                    source={{ uri: item.image.originalUrl, resizeMode: 'cover' }}
+                    source={{ uri: item.image?.originalUrl, resizeMode: 'cover' }}
                     style={styles.image}
                     radius={12}
                 />
