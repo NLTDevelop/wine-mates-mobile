@@ -59,7 +59,7 @@ export const useWineLook = () => {
 
     const onSelectColor = useCallback((color: IWineColorShade) => {
         setSelectedColor(color);
-        setShade(1);
+        setShade(2);
     }, []);
 
     const handlePressNext = useCallback(() => {
