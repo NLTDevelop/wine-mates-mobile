@@ -1,5 +1,6 @@
 import { IWineAroma } from '@/entities/wine/types/IWineAroma';
 import { IAroma, IWineSmell } from '@/entities/wine/types/IWineSmell';
+import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
 import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -9,20 +10,27 @@ import { useCallback, useState } from 'react';
 
 interface IProps {
     data: IWineSmell[],
+    selected: IWineSelectedSmell[],
     onItemPress: (item: IAroma, subgroupId?: number | null, groupId?: number | null) => void,
+    onSelectedItemPress: (item: IWineSelectedSmell) => void,
 }
 
-export const useWineSmellSearch = ({ data, onItemPress }: IProps) => {
+export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItemPress }: IProps) => {
     const [search, setSearch] = useState('');
     const [isSearching, setIsSearching] = useState(false);
 
     const getSearchedAromas = useCallback(async (query: string) => {
         try {
-            if (!query) return;
+            if (!query || !wineModel.base?.colorOfWine.id) return;
 
             setIsSearching(true);
 
-            const response = await wineService.getAromas({ search: query });
+            const params = {
+                search: query,
+                colorId: wineModel.base?.colorOfWine.id,
+            }
+
+            const response = await wineService.getAromas(params);
 
             if (response.isError || !response.data) {
                 toastService.showError(
@@ -40,6 +48,13 @@ export const useWineSmellSearch = ({ data, onItemPress }: IProps) => {
     const { debouncedWrapper: debouncedOnSearch } = useDebounce(getSearchedAromas, 500);
 
     const onSearchItemPress = useCallback((item: IWineAroma) => {
+        const selectedSmell = selected.find(current => current.id === item.id);
+
+        if (selectedSmell) {
+            onSelectedItemPress(selectedSmell);
+            return;
+        }
+
         const group = data.find(currentGroup => currentGroup.subgroups.some(subgroup => subgroup.id === item.subgroupId));
         const subgroup = group?.subgroups.find(currentSubgroup => currentSubgroup.id === item.subgroupId);
         const aromaToAdd: IAroma =
@@ -51,7 +66,7 @@ export const useWineSmellSearch = ({ data, onItemPress }: IProps) => {
             };
 
         onItemPress(aromaToAdd, subgroup?.id ?? item.subgroupId, group?.id ?? null);
-    }, [data, onItemPress]);
+    }, [data, onItemPress, onSelectedItemPress, selected]);
 
     const onSearchTextChange = useCallback((value: string) => {
         setSearch(value);

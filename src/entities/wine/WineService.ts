@@ -19,6 +19,7 @@ import { IReviewsListParams } from './params/IReviewsListParams';
 import { IWineReviewsListItem } from './types/IWineReviewsListItem';
 import { wineReviewsListModel } from './WineReviewsListModel';
 import { IWineDetails } from './types/IWineDetails';
+import { IWineSmellSearchParams } from './params/IWIneSmellSearchParams';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -182,7 +183,7 @@ class WineService {
         }
     };
 
-    getAromas = async (params: { search: string }): Promise<IResponse<IWineAroma[]>> => {
+    getAromas = async (params: IWineSmellSearchParams): Promise<IResponse<IWineAroma[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',

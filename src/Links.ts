@@ -1,6 +1,18 @@
+import { storage } from './libs/storage';
 import { config } from './config';
 
-const isDev = false;
+const ENVIRONMENT_STORAGE_KEY = 'STORAGE_IS_DEV_ENVIRONMENT';
+
+const getInitialIsDev = () => {
+    const storedValue = storage.get(ENVIRONMENT_STORAGE_KEY);
+
+    if (typeof storedValue === 'boolean') {
+        return storedValue;
+    }
+
+    storage.set(ENVIRONMENT_STORAGE_KEY, true);
+    return true;
+};
 
 export interface ILinks {
     auth: string;
@@ -19,7 +31,8 @@ export interface ILinks {
 }
 
 class Links implements ILinks {
-    private _domain = isDev ? `${config.devDomain}` : `${config.domain}`;
+    private isDev = getInitialIsDev();
+    private _domain = this.buildDomain();
     private _links = {
         auth: 'auth',
         resetPassword: 'auth/reset-password',
@@ -35,6 +48,25 @@ class Links implements ILinks {
         countries: 'countries',
         rates: 'rates'
     };
+
+    private buildDomain() {
+        return this.isDev ? `${config.devDomain}` : `${config.localDomain}`;
+    }
+
+    private persistEnvironment = () => {
+        storage.set(ENVIRONMENT_STORAGE_KEY, this.isDev);
+    };
+
+    public toggleEnvironment() {
+        this.isDev = !this.isDev;
+        this.persistEnvironment();
+        this._domain = this.buildDomain();
+    }
+
+    public get isDevEnvironment() {
+        return this.isDev;
+    }
+
     public get auth() {
         return `${this._domain}${this._links.auth}`;
     }

@@ -13,7 +13,7 @@ export const useWineLook = () => {
     const [perlage, setPerlage] = useState(1);
     const [appearance, setAppearance] = useState(1);
     const [mousse, setMousse] = useState(1);
-    const [shade, setShade] = useState(1);
+    const [shade, setShade] = useState(2);
     const [selectedColor, setSelectedColor] = useState<IWineColorShade | null>(null);
     const [isError, setIsError] = useState(false);
     const currentColor = useMemo(() =>

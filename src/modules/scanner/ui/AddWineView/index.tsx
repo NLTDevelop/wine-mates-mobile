@@ -16,12 +16,13 @@ import { Loader } from '@/UIKit/Loader';
 import { useWineColor } from '../../presenters/useWineColor';
 import { observer } from 'mobx-react-lite';
 import { useWineRegion } from '../../presenters/useWineRegion';
+import { Warning } from '@/modules/authentication/ui/components/Warning';
 
 export const AddWineView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress, isDisabled,
-        onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress } = useAddWine();
+        onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress, isVintageError } = useAddWine();
     const { countries, typeData, getTypes, isLoading, isError } = useWineInitialData();
     const { colorsData } = useWineColor(form.typeOfWine.id);
     const { regions } = useWineRegion(form.country.id);
@@ -75,6 +76,7 @@ export const AddWineView = observer(() => {
                                     value={form.producer.value || ''}
                                     onChangeText={onChangeWinery}
                                     placeholder={t('wine.wineryName')}
+                                    maxLength={255}
                                     containerStyle={styles.input}
                                 />
                                 <CustomInput
@@ -82,22 +84,28 @@ export const AddWineView = observer(() => {
                                     value={form.grapeVariety.value || ''}
                                     onChangeText={onChangeGrapeVariety}
                                     placeholder={t('wine.grapeVariety')}
+                                    maxLength={255}
                                     containerStyle={styles.input}
                                 />
-                                <CustomInput
-                                    autoCapitalize="none"
-                                    value={form.vintageYear.value || ''}
-                                    onChangeText={onChangeVintageYear}
-                                    placeholder={t('wine.vintage')}
-                                    containerStyle={styles.input}
-                                    maxLength={4}
-                                    keyboardType='numeric'
-                                />
+                                <View>
+                                    <CustomInput
+                                        autoCapitalize="none"
+                                        value={form.vintageYear.value || ''}
+                                        onChangeText={onChangeVintageYear}
+                                        placeholder={t('wine.vintage')}
+                                        containerStyle={styles.input}
+                                        maxLength={4}
+                                        keyboardType="number-pad"
+                                        error={isVintageError.status}
+                                    />
+                                    {isVintageError.status && <Warning warningText={isVintageError.errorText} />}
+                                </View>
                                 <CustomInput
                                     autoCapitalize="none"
                                     value={form.wineName.value || ''}
                                     onChangeText={onChangeWineName}
                                     placeholder={t('wine.wineName')}
+                                    maxLength={255}
                                     containerStyle={styles.input}
                                 />
                             </View>

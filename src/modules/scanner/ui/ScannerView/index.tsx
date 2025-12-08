@@ -20,6 +20,7 @@ export const ScannerView = () => {
 
     const { appState, torch, setTorch, handleGalleryPress, handleTakePhotoPress, handleCrossPress, handleCreatePress, cameraRef,
         device, hasPermission } = useScanner();
+    const torchMode = isFocused && appState === 'active' ? torch : 'off';
 
     return (
         <View style={styles.container}>
@@ -29,7 +30,7 @@ export const ScannerView = () => {
                         ref={cameraRef}
                         isActive={isFocused && appState === 'active'}
                         device={device}
-                        torch={torch}
+                        torch={torchMode}
                         photo
                         style={StyleSheet.absoluteFill}
                     />

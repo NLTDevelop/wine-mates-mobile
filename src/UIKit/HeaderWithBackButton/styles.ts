@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import { scaleHorizontal, scaleVertical } from "@/utils";
 import { IColors } from "@/UIProvider/theme/IColors";
 
-export const getStyles = (colors: IColors, isCentered: boolean) => {
+export const getStyles = (colors: IColors, isCentered: boolean, withRightComponent: boolean) => {
     const styles = StyleSheet.create({
         container: {
             flexDirection: 'row',
@@ -36,7 +36,7 @@ export const getStyles = (colors: IColors, isCentered: boolean) => {
             pointerEvents: 'none',
         },
         title: {
-            maxWidth: scaleHorizontal(228),
+            maxWidth: withRightComponent ? scaleHorizontal(228) : scaleHorizontal(246),
             flexShrink: 1,
         },
         empty: {

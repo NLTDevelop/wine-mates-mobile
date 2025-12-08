@@ -49,6 +49,7 @@ export const getStyles = (colors: IColors) => {
         characteristic: {
             maxWidth: scaleHorizontal(196),
             flexShrink: 1,
+            textAlign: 'right',
         }
     });
     return styles;

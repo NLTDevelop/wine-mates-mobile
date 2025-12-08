@@ -1,4 +1,4 @@
 export interface IConfig {
-    domain: string;
+    localDomain: string;
     devDomain: string;
 }

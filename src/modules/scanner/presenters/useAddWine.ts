@@ -43,6 +43,7 @@ export const useAddWine = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [form, setForm] = useState<IWineBase>(createInitialForm);
     const [inProgress, setInProgress] = useState(false);
+    const [isVintageError, setIsVintageError] = useState({status: false, errorText: ''});
     const isDisabled = useMemo(() => {
         const baseRequired = [
             form.typeOfWine.value,
@@ -87,7 +88,9 @@ export const useAddWine = () => {
     }, []);
 
     const onChangeVintageYear = useCallback((value: string) => {
-        setForm(prev => ({ ...prev, vintageYear: { ...prev.vintageYear, value } }));
+        const numericValue = value.replace(/\D/g, '').slice(0, 4);
+        setIsVintageError({status: false, errorText: ''});
+        setForm(prev => ({ ...prev, vintageYear: { ...prev.vintageYear, value: numericValue } }));
     }, []);
 
     const onChangeWineName = useCallback((value: string) => {
@@ -114,10 +117,14 @@ export const useAddWine = () => {
             const response = await wineService.createWine(formData);
 
             if (response.isError || !response.data) {
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    response.message || localization.t('common.somethingWentWrong'),
-                );
+                if (response?.errors?.errors?.vintage) {
+                    setIsVintageError({status: true, errorText: response.errors.errors.vintage[0]});
+                } else {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        response.message || localization.t('common.somethingWentWrong'),
+                    );
+                }
             } else {
                 const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
 
@@ -139,6 +146,6 @@ export const useAddWine = () => {
 
     return { 
         form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress,
-        isDisabled, onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress
+        isDisabled, onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress, isVintageError
     };
 };

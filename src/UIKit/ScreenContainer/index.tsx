@@ -5,7 +5,7 @@ import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { Gradient } from '../Gradient';
 import { KeyboardAwareScrollView, KeyboardAvoidingView } from 'react-native-keyboard-controller';
-import { isIOS, scaleVertical } from '@/utils';
+import { scaleVertical } from '@/utils';
 
 interface IProps {
     edges?: Edge[];
@@ -25,7 +25,7 @@ export const ScreenContainer = ({ headerComponent, edges, children, scrollEnable
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const safeAreaInsets = useSafeAreaInsets();
-    const bottomOffset = useMemo(() => (isIOS ? scaleVertical(24) : 0), []);
+    const bottomOffset = useMemo(() => (scaleVertical(24)), []);
 
     const edgesStyle = useMemo(() => {
         const result: any = {};
