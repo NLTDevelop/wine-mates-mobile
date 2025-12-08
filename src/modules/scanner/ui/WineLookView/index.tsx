@@ -60,7 +60,7 @@ export const WineLookView = observer(() => {
                             </View>
 
                             <Typography text={t('wine.selectShade')} variant="h4" style={styles.label} />
-                            <ShadeSelector value={shade} onChange={setShade} colorShades={selectedColor} />
+                            <ShadeSelector key={selectedColor.id} value={shade} onChange={setShade} colorShades={selectedColor} />
 
                             <Typography text={t('wine.result')} variant="h4" style={styles.label} />
                             <View style={[styles.resultColor, { backgroundColor: currentColor }]} />
