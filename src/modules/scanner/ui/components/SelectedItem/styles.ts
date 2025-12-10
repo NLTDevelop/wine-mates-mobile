@@ -1,8 +1,10 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '@/utils';
+import { getContrastColor, scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors, backgroundColor: string) => {
+export const getStyles = (_colors: IColors, backgroundColor: string) => {
+    const textColor = getContrastColor(backgroundColor);
+
     const styles = StyleSheet.create({
         container: {
             borderRadius: 12,
@@ -10,6 +12,9 @@ export const getStyles = (colors: IColors, backgroundColor: string) => {
             justifyContent: 'center',
             minHeight: scaleVertical(40),
             backgroundColor,
+        },
+        text: {
+            color: textColor,
         },
     });
     return styles;

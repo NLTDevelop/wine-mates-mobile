@@ -2,7 +2,7 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (colors: IColors, textColor: string) => {
     const styles = StyleSheet.create({
         container: {
             borderRadius: 12,
@@ -16,6 +16,7 @@ export const getStyles = (colors: IColors) => {
             borderColor: colors.border_strong,
         },
         text: {
+            color: textColor,
             textAlign: 'center',
         },
     });

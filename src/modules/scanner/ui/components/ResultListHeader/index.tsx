@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { declOfWord } from '@/utils';
+import { declOfWord, getContrastColor } from '@/utils';
 import { ResultHeader } from '../ResultHeader';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
 import { TasteCharacteristicItem } from '../TasteCharacteristicItem';
@@ -14,8 +14,8 @@ import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 import { userModel } from '@/entities/users/UserModel';
 
 interface IProps {
-   data: IWineDetails;
-   onVintageChange: (item: IDropdownItem) => void;
+    data: IWineDetails;
+    onVintageChange: (item: IDropdownItem) => void;
 }
 
 export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
@@ -27,7 +27,10 @@ export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
         () => data?.statistics?.tasteCharacteristics?.filter(item => item?.levels && item?.selectedIndex != null) ?? [],
         [data.statistics.tasteCharacteristics],
     );
-    
+    const selectedColorTextColor = useMemo(
+        () => getContrastColor(data.statistics.topColor?.colorHex || colors.success),
+    [data, colors]);
+
     return (
         <View>
             <ResultHeader item={data} onVintageChange={onVintageChange} />
@@ -51,7 +54,11 @@ export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
                             { backgroundColor: data.statistics.topColor?.colorHex || colors.success },
                         ]}
                     >
-                        <Typography text={data.statistics.topColor?.name || '-'} variant="h5" />
+                        <Typography
+                            text={data.statistics.topColor?.name || '-'}
+                            variant="h5"
+                            style={{ color: selectedColorTextColor }}
+                        />
                     </View>
                 </>
             )}
@@ -63,22 +70,25 @@ export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
                         <Typography text={t('wine.mostSelected')} variant="body_400" style={styles.text} />
                     </View>
                     <View style={styles.mapListContainer}>
-                        {data.statistics.topAromas.map((item: IStatistic) => (
-                            <View
-                                key={item.id}
-                                style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.success }]}
-                            >
-                                <Typography text={item.name} />
-                                <Typography
-                                    text={`(${declOfWord(
-                                        Number(item.userCount),
-                                        t('scanner.reviewCount') as unknown as Array<string>,
-                                    )})`}
-                                    variant="subtitle_12_500"
-                                    style={styles.countText}
-                                />
-                            </View>
-                        ))}
+                        {data.statistics.topAromas.map((item: IStatistic) => {
+                            const textColor = getContrastColor(item.colorHex || colors.success);
+                            return (
+                                <View
+                                    key={item.id}
+                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.success }]}
+                                >
+                                    <Typography text={item.name} style={{ color: textColor }} />
+                                    <Typography
+                                        text={`(${declOfWord(
+                                            Number(item.userCount),
+                                            t('scanner.reviewCount') as unknown as Array<string>,
+                                        )})`}
+                                        variant="subtitle_12_500"
+                                        style={styles.countText}
+                                    />
+                                </View>
+                            );
+                        })}
                     </View>
                 </>
             )}
@@ -90,22 +100,26 @@ export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
                         <Typography text={t('wine.mostSelected')} variant="body_400" style={styles.text} />
                     </View>
                     <View style={styles.mapListContainer}>
-                        {data.statistics.topFlavors.map((item: IStatistic) => (
-                            <View
-                                key={item.id}
-                                style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.success }]}
-                            >
-                                <Typography text={item.name} />
-                                <Typography
-                                    text={`(${declOfWord(
-                                        Number(item.userCount),
-                                        t('scanner.reviewCount') as unknown as Array<string>,
-                                    )})`}
-                                    variant="subtitle_12_500"
-                                    style={styles.countText}
-                                />
-                            </View>
-                        ))}
+                        {data.statistics.topFlavors.map((item: IStatistic) => {
+                            const textColor = getContrastColor(item.colorHex || colors.success);
+
+                            return (
+                                <View
+                                    key={item.id}
+                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.success }]}
+                                >
+                                    <Typography text={item.name} style={{ color: textColor }} />
+                                    <Typography
+                                        text={`(${declOfWord(
+                                            Number(item.userCount),
+                                            t('scanner.reviewCount') as unknown as Array<string>,
+                                        )})`}
+                                        variant="subtitle_12_500"
+                                        style={styles.countText}
+                                    />
+                                </View>
+                            );
+                        })}
                     </View>
                 </>
             )}

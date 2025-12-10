@@ -17,7 +17,7 @@ export const SelectedItems = ({ item, onPress }: IProps) => {
 
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>
-            <Typography text={item.name} variant="body_400" />
+            <Typography text={item.name} variant="body_400" style={styles.text}/>
         </TouchableOpacity>
     );
 };

@@ -1,6 +1,7 @@
 import { Dimensions, PixelRatio, Platform } from 'react-native';
 import { differenceInSeconds, formatDistanceToNowStrict, Locale, parse } from 'date-fns';
 import { enUS, uk } from 'date-fns/locale';
+import { colorTheme } from '@/UIProvider/theme/ColorTheme';
 
 export const isIOS = Platform.OS === 'ios';
 
@@ -88,3 +89,16 @@ export const isLessThanMinuteFromNow = (raw: string | number | Date) => {
 
     return Math.abs(differenceInSeconds(new Date(), parsed)) < 60;
 };
+
+export const getContrastColor = (hexColor: string) => {
+    hexColor = hexColor.replace('#', '');
+
+    const r = parseInt(hexColor.substring(0, 2), 16);
+    const g = parseInt(hexColor.substring(2, 4), 16);
+    const b = parseInt(hexColor.substring(4, 6), 16);
+
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+    return brightness > 128 ? colorTheme.colors.text : colorTheme.colors.text_inverted;
+};
+

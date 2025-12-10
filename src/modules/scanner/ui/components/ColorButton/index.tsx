@@ -4,6 +4,7 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
+import { getContrastColor } from '@/utils';
 
 interface IProps {
     color: IWineColorShade;
@@ -13,7 +14,8 @@ interface IProps {
 
 export const ColorButton = ({ color, isActive, onPress }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const textColor = getContrastColor(color.colorHex);
+    const styles = useMemo(() => getStyles(colors, textColor), [colors, textColor]);
 
     return (
         <TouchableOpacity

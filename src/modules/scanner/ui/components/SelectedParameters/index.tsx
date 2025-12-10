@@ -55,7 +55,7 @@ export const SelectedParameters = ({ containerStyle }: IProps) => {
                     <View style={styles.itemContainer}>
                         <Typography
                             variant="h6"
-                            text={wineModel.base?.winery?.value || t('wine.wineryName')}
+                            text={wineModel.base?.producer?.value || t('wine.wineryName')}
                             style={styles.label}
                         />
                     </View>
