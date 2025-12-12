@@ -13,6 +13,9 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'space-between',
         },
+        paramContainer: {
+            gap: scaleVertical(2),
+        },
         itemContainer: {
             minHeight: scaleVertical(48),
             paddingVertical: scaleVertical(14),
@@ -22,7 +25,7 @@ export const getStyles = (colors: IColors) => {
             borderRadius: 12,
         },
         label: {
-            color: colors.text,
+            color: colors.text_light,
             flexShrink: 1,
         },
     });

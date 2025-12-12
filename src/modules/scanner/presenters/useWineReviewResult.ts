@@ -71,6 +71,7 @@ export const useWineReviewResult = () => {
                 ?.filter(item => !item.colorHex)
                 ?.map(item => item.name || '');
 
+            //TODO: Add an image if the wine does not have an image
             const payload: AddRateDto = {
                 wineId: wineModel.wine?.id || 0,
                 review: wineModel.review?.review.trim() || '',

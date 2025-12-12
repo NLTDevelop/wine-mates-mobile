@@ -28,7 +28,7 @@ export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
         [data.statistics.tasteCharacteristics],
     );
     const selectedColorTextColor = useMemo(
-        () => getContrastColor(data.statistics.topColor?.colorHex || colors.success),
+        () => getContrastColor(data.statistics.topColor?.colorHex || colors.background_grey),
     [data, colors]);
 
     return (
@@ -51,7 +51,7 @@ export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
                     <View
                         style={[
                             styles.selectedColor,
-                            { backgroundColor: data.statistics.topColor?.colorHex || colors.success },
+                            { backgroundColor: data.statistics.topColor?.colorHex || colors.background_grey },
                         ]}
                     >
                         <Typography
@@ -71,11 +71,11 @@ export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
                     </View>
                     <View style={styles.mapListContainer}>
                         {data.statistics.topAromas.map((item: IStatistic) => {
-                            const textColor = getContrastColor(item.colorHex || colors.success);
+                            const textColor = getContrastColor(item.colorHex || colors.background_grey);
                             return (
                                 <View
                                     key={item.id}
-                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.success }]}
+                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.background_grey }]}
                                 >
                                     <Typography text={item.name} style={{ color: textColor }} />
                                     <Typography
@@ -101,12 +101,12 @@ export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
                     </View>
                     <View style={styles.mapListContainer}>
                         {data.statistics.topFlavors.map((item: IStatistic) => {
-                            const textColor = getContrastColor(item.colorHex || colors.success);
+                            const textColor = getContrastColor(item.colorHex || colors.background_grey);
 
                             return (
                                 <View
                                     key={item.id}
-                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.success }]}
+                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.background_grey }]}
                                 >
                                     <Typography text={item.name} style={{ color: textColor }} />
                                     <Typography
