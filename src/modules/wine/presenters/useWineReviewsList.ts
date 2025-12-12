@@ -2,8 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { wineService } from '@/entities/wine/WineService';
-// import { useNavigation } from '@react-navigation/native';
-// import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -11,7 +9,6 @@ const LIMIT = 10;
 const OFFSET = 0;
 
 export const useWineReviewsList = (id: number | null, getDetails: () => Promise<void>) => {
-    // const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
     const data = wineReviewsListModel.list?.rows || [];
 

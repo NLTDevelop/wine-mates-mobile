@@ -1,33 +1,26 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { wineModel } from '@/entities/wine/WineModel';
 import { userModel } from '@/entities/users/UserModel';
+import { DropdownButton } from '@/UIKit/DropdownButton';
 
-interface IProps {
-    isOpened: boolean;
-    toggleNotes: () => void;
-}
-
-export const Notes = ({ isOpened, toggleNotes }: IProps) => {
+export const Notes = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const details = (() => {
         if (!wineModel.tasteCharacteristics?.length) return '';
-    
-       const isPremiumUser = userModel.user?.hasPremium || false;
-    
+
+        const isPremiumUser = userModel.user?.hasPremium || false;
+
         const available = isPremiumUser
             ? wineModel.tasteCharacteristics
             : wineModel.tasteCharacteristics.filter(c => !c.isPremium);
-    
-        return available
-            .map(item => item.levels[item.selectedIndex ?? 0]?.name)
-            .join(', ');
+
+        return available.map(item => item.levels[item.selectedIndex ?? 0]?.name).join(', ');
     })();
 
     const smells = useMemo(() => wineModel.selectedSmells?.map(smell => smell.name).join(', '), []);
@@ -36,12 +29,7 @@ export const Notes = ({ isOpened, toggleNotes }: IProps) => {
     return (
         <View style={styles.container}>
             <Typography text={t('wine.tastingResult')} variant="subtitle_20_500" style={styles.title} />
-            <TouchableOpacity style={styles.button} onPress={toggleNotes}>
-                <Typography variant="h6" text={t('wine.notes')} />
-                <ArrowDownIcon rotate={isOpened ? 180 : 0} />
-            </TouchableOpacity>
-
-            {isOpened && (
+            <DropdownButton title={t('wine.notes')}>
                 <View style={styles.mainContainer}>
                     <View style={styles.row}>
                         <Typography text={t('wine.color')} variant="h6" style={styles.characteristicTitle} />
@@ -64,7 +52,7 @@ export const Notes = ({ isOpened, toggleNotes }: IProps) => {
                         <Typography text={details} variant="h6" style={styles.characteristic} />
                     </View>
                 </View>
-            )}
+            </DropdownButton>
         </View>
     );
 };

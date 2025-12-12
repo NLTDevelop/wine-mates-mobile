@@ -153,6 +153,10 @@
         "tastes": "Tastes",
         "rating": "Rating"
     },
+    "savedWine": {
+        "savedWine": "Saved wine",
+        "createList": "Create List"
+    },
     "medal": {
         "silver": "Silver medal",
         "gold": "Gold medal",

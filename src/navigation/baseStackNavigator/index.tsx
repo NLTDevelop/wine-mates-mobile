@@ -11,13 +11,14 @@ import { RegistrationView } from '@/modules/registration/ui/RegistrationView';
 import { TabNavigator } from '../tabNavigator';
 import { PersonalDetailsView } from '@/modules/registration/ui/PersonalDetailsView';
 import { CreatePasswordView } from '@/modules/registration/ui/CreatePasswordView';
-import { WineDetailsView } from '@/modules/scanner/ui/WineDetailsView';
 import { WineLookView } from '@/modules/scanner/ui/WineLookView';
 import { WineSmellView } from '@/modules/scanner/ui/WineSmellView';
 import { WineTasteView } from '@/modules/scanner/ui/WineTasteView';
 import { WineTasteCharacteristicsView } from '@/modules/scanner/ui/WineTasteCharacteristicsView';
 import { WineReviewView } from '@/modules/scanner/ui/WineReviewView';
 import { WineReviewResultView } from '@/modules/scanner/ui/WineReviewResultView';
+import { SavedWinesView } from '@/modules/wine/ui/SavedWinesView';
+import { WineDetailsView } from '@/modules/wine/ui/WineDetailsView';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +47,7 @@ export const MainStackNavigator = observer(() => {
             />
             <Stack.Screen name="WineReviewView" component={WineReviewView} options={{ gestureEnabled: false }} />
             <Stack.Screen name="WineReviewResultView" component={WineReviewResultView} />
+            <Stack.Screen name="SavedWinesView" component={SavedWinesView} />
         </Stack.Navigator>
     );
 });
