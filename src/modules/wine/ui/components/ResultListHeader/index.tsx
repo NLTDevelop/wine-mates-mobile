@@ -6,7 +6,7 @@ import { Typography } from '@/UIKit/Typography';
 import { declOfWord, getContrastColor } from '@/utils';
 import { ResultHeader } from '../ResultHeader';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
-import { TasteCharacteristicItem } from '../TasteCharacteristicItem';
+import { TasteCharacteristicItem } from '../../../../scanner/ui/components/TasteCharacteristicItem';
 import { IStatistic, IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';

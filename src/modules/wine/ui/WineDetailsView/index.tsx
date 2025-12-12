@@ -7,14 +7,14 @@ import { FlatList } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { ResultListHeader } from '../components/ResultListHeader';
 import { ReviewListItem } from '../components/ReviewListItem';
-import { useWineReviewsList } from '../../presenters/useWineReviewsList';
 import { useRefresh } from '@/hooks/useRefresh';
 import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 import { IWineReviewsListItem } from '@/entities/wine/types/IWineReviewsListItem';
-import { useWineDetails } from '../../presenters/useWineDetails';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { Loader } from '@/UIKit/Loader';
+import { useWineDetails } from '@/modules/wine/presenters/useWineDetails';
+import { useWineReviewsList } from '@/modules/wine/presenters/useWineReviewsList';
 
 export const WineDetailsView = observer(() => {
     const { colors, t } = useUiContext();

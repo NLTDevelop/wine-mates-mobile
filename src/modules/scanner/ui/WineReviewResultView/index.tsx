@@ -9,10 +9,10 @@ import { observer } from 'mobx-react-lite';
 import { SelectedParameters } from '../components/SelectedParameters';
 import { RateThisWine } from '../components/RateThisWine';
 import { Notes } from '../components/Notes';
-import { useWineReviewResult } from '../../presenters/useWineReviewResult';
 import { wineModel } from '@/entities/wine/WineModel';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
+import { useWineReviewResult } from '../../presenters/useWineReviewResult';
 
 export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
