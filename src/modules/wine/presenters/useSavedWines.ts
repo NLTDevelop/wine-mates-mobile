@@ -1,7 +1,7 @@
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
-import { wineService } from '@/entities/wine/WineService';
-import { toastService } from '@/libs/toast/toastService';
-import { localization } from '@/UIProvider/localization/Localization';
+// import { wineService } from '@/entities/wine/WineService';
+// import { toastService } from '@/libs/toast/toastService';
+// import { localization } from '@/UIProvider/localization/Localization';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useSavedWines = () => {
@@ -12,18 +12,18 @@ export const useSavedWines = () => {
     const getSavedWines = useCallback(async () => {
         try {
             setIsLoading(true);
-            const response = await wineService.getSavedWines();
+            // const response = await wineService.getSavedWines();
 
-            if (response.isError || !response.data) {
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    response.message || localization.t('common.somethingWentWrong'),
-                );
-                setIsError(true);
-            } else {
-                setWines(response.data);
-                setIsError(false);
-            }
+            // if (response.isError || !response.data) {
+            //     toastService.showError(
+            //         localization.t('common.errorHappened'),
+            //         response.message || localization.t('common.somethingWentWrong'),
+            //     );
+            //     setIsError(true);
+            // } else {
+            //     setWines(response.data);
+            //     setIsError(false);
+            // }
         } catch (error) {
             console.error('getSavedWines error: ', JSON.stringify(error, null, 2));
         } finally {
@@ -32,7 +32,7 @@ export const useSavedWines = () => {
     }, []);
 
     useEffect(() => {
-        // getSavedWines();
+        getSavedWines();
     }, [getSavedWines]);
 
     return { isLoading, wines, isError, getSavedWines };

@@ -1,5 +1,6 @@
 {
     "common": {
+        "create": "Create",
         "logo": "WineMates",
         "errorHappened": "Error happened",
         "somethingWentWrong": "Something went wrong.",
@@ -155,7 +156,8 @@
     },
     "savedWine": {
         "savedWine": "Saved wine",
-        "createList": "Create List"
+        "createList": "Create List",
+        "listName": "List name"
     },
     "medal": {
         "silver": "Silver medal",

@@ -6,7 +6,6 @@ import { useCallback, useMemo } from 'react';
 
 export const useResultHeader = (item: IWineDetails) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
     const vintageData = useMemo(
         () =>
             item.vintages.map((vintage: IVintage) => {
