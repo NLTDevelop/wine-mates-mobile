@@ -1,18 +1,24 @@
-import { RefObject, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+    BottomSheetModal,
+    BottomSheetView,
+    BottomSheetBackdrop,
+    BottomSheetBackdropProps,
+} from '@gorhom/bottom-sheet';
 import { useUiContext } from '@/UIProvider';
-import { getStyles } from './styles';
 import { Typography } from '@/UIKit/Typography';
-import { CustomInput } from '@/UIKit/CustomInput';
 import { Button } from '@/UIKit/Button';
 import { CrossIcon } from '@assets/icons/CrossIcon';
+import { getStyles } from './styles';
+import { scaleVertical } from '@/utils';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BottomSheetInput } from '@/UIKit/BottomSheetInput';
 
 interface IProps {
-    modalRef: RefObject<BottomSheetModal | null>;
+    modalRef: React.RefObject<BottomSheetModal | null>;
     value: string;
-    onChangeValue: (value: string) => void;
+    onChangeValue: (v: string) => void;
     onCreate: () => void;
     onClose: () => void;
 }
@@ -24,40 +30,41 @@ export const CreateListBottomSheet = ({ modalRef, value, onChangeValue, onCreate
 
     const renderBackdrop = useCallback(
         (props: BottomSheetBackdropProps) => (
-            <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} onPress={onClose} />
+            <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
         ),
-        [onClose],
+        [],
     );
 
     return (
         <BottomSheetModal
             ref={modalRef}
+            snapPoints={[scaleVertical(235)]}
             index={0}
-            enableDynamicSizing
-            backdropComponent={renderBackdrop}
-            handleComponent={null}
-            backgroundStyle={styles.bottomSheetContainer}
             enablePanDownToClose
-            onDismiss={onClose}
             keyboardBehavior="interactive"
             keyboardBlurBehavior="restore"
-            android_keyboardInputMode="adjustResize"
+            handleComponent={() => null}
+            backdropComponent={renderBackdrop}
+            backgroundStyle={styles.bottomSheetContainer}
+            onDismiss={onClose}
         >
-            <BottomSheetView style={styles.sheetContent}>
-                <View style={styles.sheetHeader}>
+            <BottomSheetView style={styles.container}>
+                <View style={styles.header}>
                     <TouchableOpacity onPress={onClose} hitSlop={20}>
                         <CrossIcon />
                     </TouchableOpacity>
-                    <Typography variant="h4" text={t('savedWine.createList')} style={styles.sheetTitle} />
-                    <View style={styles.empty} />
+
+                    <Typography variant="h4" text={t('savedWine.createList')} />
+
+                    <View style={styles.headerSpacer} />
                 </View>
-                <CustomInput
-                    placeholder={t('savedWine.listName')}
+                <BottomSheetInput
                     value={value}
                     onChangeText={onChangeValue}
+                    placeholder={t('savedWine.listName')}
                     containerStyle={styles.inputContainer}
                 />
-                <Button text={t('common.create')} onPress={onCreate} />
+                <Button text={t('common.create')} onPress={onCreate} containerStyle={styles.button} />
             </BottomSheetView>
         </BottomSheetModal>
     );

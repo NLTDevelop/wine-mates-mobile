@@ -1,5 +1,6 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useCallback, useRef, useState } from 'react';
+import { Keyboard } from 'react-native';
 
 export const useCreateListBottomSheet = () => {
     const [listName, setListName] = useState('');
@@ -17,6 +18,7 @@ export const useCreateListBottomSheet = () => {
 
     const onCreate = useCallback(() => {
         // TODO: connect with create list API
+        Keyboard.dismiss();
         onClose();
     }, [onClose]);
 
