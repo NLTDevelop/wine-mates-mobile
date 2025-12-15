@@ -22,12 +22,13 @@ import { PlatinumMedalIcon } from '@assets/icons/PlatinumMedalIcon';
 interface IProps {
     item: IWineDetails;
     onVintageChange: (item: IDropdownItem) => void;
+    onFavoritePress: () => void;
 }
 
-export const ResultHeader = ({ item, onVintageChange }: IProps) => {
+export const ResultHeader = ({ item, onVintageChange, onFavoritePress }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { vintageData, onPress, onFavoritePress } = useResultHeader(item);
+    const { vintageData, onPress } = useResultHeader(item);
     const description = useMemo(() => {
         return [
             item.type?.name,
