@@ -10,7 +10,7 @@ export const getStyles = (colors: IColors, isChecked: boolean, disabled?: boolea
             borderRadius: isRound ? scaleVertical(24) : 6,
             backgroundColor:
                 isChecked && disabled ? colors.border_light : isChecked ? colors.primary : colors.background,
-            borderWidth: 1,
+            borderWidth: 2,
             borderColor: colors.primary,
             justifyContent: 'center',
             alignItems: 'center',
