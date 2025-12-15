@@ -20,7 +20,7 @@ export const ColorButton = ({ color, isActive, onPress }: IProps) => {
             style={[styles.container, isActive && styles.activeContainer]}
             onPress={onPress}
         >
-            <Typography variant="body_400" text={color.name} numberOfLines={1} style={styles.text} />
+            <Typography variant="body_400" text={color.name} numberOfLines={2} style={styles.text} />
         </TouchableOpacity>
     );
 };
