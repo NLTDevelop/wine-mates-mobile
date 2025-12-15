@@ -22,7 +22,7 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(170),
         },
         mainContainer: {
-            maxWidth: scaleHorizontal(191),
+            maxWidth: scaleHorizontal(160),
             justifyContent: 'space-between',
         },
         subContainer: {

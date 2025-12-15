@@ -6,17 +6,18 @@ import { useCallback, useMemo } from 'react';
 
 export const useResultHeader = (item: IWineDetails) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    
-    const vintageData = useMemo(() =>
-        item.vintages.map((vintage: IVintage) => {
-            const label = String(vintage.vintage);
-            return {
-                label,
-                value: label,
-                id: vintage.wineId,
-            };
-        }),
-    [item]);
+    const vintageData = useMemo(
+        () =>
+            item.vintages.map((vintage: IVintage) => {
+                const label = String(vintage.vintage);
+                return {
+                    label,
+                    value: label,
+                    id: vintage.wineId,
+                };
+            }),
+        [item],
+    );
 
     const onPress = useCallback(() => {
         wineModel.wine = {
@@ -24,7 +25,7 @@ export const useResultHeader = (item: IWineDetails) => {
             name: item.name,
             vintage: item.vintage,
         };
-        
+
         wineModel.base = {
             colorOfWine: {
                 id: item.color.id,
@@ -61,11 +62,11 @@ export const useResultHeader = (item: IWineDetails) => {
             },
         };
         navigation.navigate('WineLookView');
-    }, [navigation, item]); 
-    
-    const onFavoritePress = useCallback(() => {
+    }, [navigation, item]);
 
-    }, []); 
+    const onFavoritePress = useCallback(() => {
+        navigation.navigate('SavedWinesView');
+    }, [navigation]);
 
     return { vintageData, onPress, onFavoritePress };
 };

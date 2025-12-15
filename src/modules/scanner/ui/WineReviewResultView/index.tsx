@@ -9,16 +9,16 @@ import { observer } from 'mobx-react-lite';
 import { SelectedParameters } from '../components/SelectedParameters';
 import { RateThisWine } from '../components/RateThisWine';
 import { Notes } from '../components/Notes';
-import { useWineReviewResult } from '../../presenters/useWineReviewResult';
 import { wineModel } from '@/entities/wine/WineModel';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
+import { useWineReviewResult } from '../../presenters/useWineReviewResult';
 
 export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { handleSavePress, toggleNotes, isOpened, isError, getNotes, isLoading, isSaving } = useWineReviewResult();
+    const { handleSavePress, isError, getNotes, isLoading, isSaving } = useWineReviewResult();
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getNotes} isLoading={isLoading}>
@@ -35,7 +35,7 @@ export const WineReviewResultView = observer(() => {
                             starRate={wineModel.review?.starRate || 0}
                             disabled={true}
                         />
-                        <Notes isOpened={isOpened} toggleNotes={toggleNotes} />
+                        <Notes />
                         <SelectedParameters containerStyle={styles.selectedParameters} />
                     </View>
                     <Button

@@ -13,11 +13,11 @@ interface IProps {
 
 export const SelectedItems = ({ item, onPress }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, item.colorHex || colors.success), [colors, item]);
+    const styles = useMemo(() => getStyles(colors, item.colorHex || colors.background_grey), [colors, item]);
 
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>
-            <Typography text={item.name} variant="body_400" />
+            <Typography text={item.name} variant="body_400" style={styles.text}/>
         </TouchableOpacity>
     );
 };

@@ -13,11 +13,11 @@ interface IProps {
 
 export const ColorButton = ({ color, isActive, onPress }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors, color.colorHex), [colors, color]);
 
     return (
         <TouchableOpacity
-            style={[styles.container, { backgroundColor: color.colorHex }, isActive && styles.activeContainer]}
+            style={[styles.container, isActive && styles.activeContainer]}
             onPress={onPress}
         >
             <Typography variant="body_400" text={color.name} numberOfLines={1} style={styles.text} />

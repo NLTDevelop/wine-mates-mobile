@@ -18,8 +18,7 @@ export const WineReviewView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { review, onChangeReview, handleSliderChange, handleNextPress, sliderValue, isOpened, toggleNotes,
-        starRate, onStarRateChange } = useWineReview();
+    const { review, onChangeReview, handleSliderChange, handleNextPress, sliderValue, starRate, onStarRateChange } = useWineReview();
 
     return (
         <ScreenContainer
@@ -37,7 +36,7 @@ export const WineReviewView = observer(() => {
                         starRate={starRate}
                         onStarRateChange={onStarRateChange}
                     />
-                    <Notes isOpened={isOpened} toggleNotes={toggleNotes} />
+                    <Notes/>
                     <Typography text={t('wine.review')} variant="subtitle_20_500" style={styles.title} />
                     <CustomInput
                         value={review}

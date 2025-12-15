@@ -16,7 +16,7 @@ interface IProps {
 
 export const SmellListItem = ({ item, onPress, isSelected = false }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, item.colorHex ?? colors.primary), [colors, item]);
+    const styles = useMemo(() => getStyles(colors, item.colorHex ?? colors.background_grey), [colors, item]);
 
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>

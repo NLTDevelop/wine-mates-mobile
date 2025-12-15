@@ -14,14 +14,22 @@ interface IProps {
     onPress: (item: IWineListItem) => void;
 }
 
-export const ScannerListItem = ({ item, onPress }: IProps) => {
+export const WineListItem = ({ item, onPress }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const handleItemPress = useCallback(() => onPress(item), [item, onPress])
 
     return (
         <TouchableOpacity style={styles.container} onPress={handleItemPress}>
-            {item.image?.originalUrl && <FasterImageView source={{ uri: item.image?.originalUrl, resizeMode: 'cover' }} style={styles.image} radius={12}/>}
+            <View pointerEvents="none">
+                {item.image?.originalUrl && (
+                    <FasterImageView
+                        source={{ uri: item.image?.originalUrl, resizeMode: 'cover' }}
+                        style={styles.image}
+                        radius={12}
+                    />
+                )}
+            </View>
             <View style={styles.mainContainer}>
                 <View style={styles.subContainer}>
                     <Typography
@@ -56,7 +64,12 @@ export const ScannerListItem = ({ item, onPress }: IProps) => {
                             style={styles.title}
                         />
                     </View>
-                    <Typography variant="body_400" text={item.description ?? '-'} numberOfLines={3} style={styles.text} />
+                    <Typography
+                        variant="body_400"
+                        text={item.description ?? '-'}
+                        numberOfLines={3}
+                        style={styles.text}
+                    />
                 </View>
             </View>
         </TouchableOpacity>

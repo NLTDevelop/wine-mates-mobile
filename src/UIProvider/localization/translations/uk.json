@@ -1,5 +1,6 @@
 {
     "common": {
+        "create": "Створити",
         "logo": "WineMates",
         "errorHappened": "Сталася помилка",
         "somethingWentWrong": "Щось пішло не так.",
@@ -156,6 +157,11 @@
         "aromas": "Аромати",
         "tastes": "Смаки",
         "rating": "Рейтинг"
+    },
+    "savedWine": {
+        "savedWine": "Збережене вино",
+        "createList": "Створити список",
+        "listName": "Ім'я списку"
     },
     "medal": {
         "silver": "Срібна медаль",

@@ -7,11 +7,10 @@ export const getStyles = (colors: IColors, isCentered: boolean, withRightCompone
         container: {
             flexDirection: 'row',
             width: '100%',
-            height: scaleVertical(56),
             paddingHorizontal: scaleHorizontal(16),
             justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            marginBottom: scaleVertical(16),
+            alignItems: 'center',
+            marginVertical: scaleVertical(16),
         },
         button: {
             width: scaleVertical(40),
@@ -29,6 +28,7 @@ export const getStyles = (colors: IColors, isCentered: boolean, withRightCompone
         titleContainer: {
             position: 'absolute',
             left: isCentered ? 0 : scaleHorizontal(72),
+            top: 0,
             right: 0,
             bottom: 0,
             justifyContent: 'center',

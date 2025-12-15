@@ -11,15 +11,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 export const useWineReviewResult = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const [isOpened, setIsOpened] = useState(false);
     const [isError, setIsError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const isPremiumUser = userModel.user?.hasPremium || false;
-
-    const toggleNotes = useCallback(() => {
-        setIsOpened(prevState => !prevState);
-    }, []);
 
     const getNotes = useCallback(async () => {
         try {
@@ -71,6 +66,7 @@ export const useWineReviewResult = () => {
                 ?.filter(item => !item.colorHex)
                 ?.map(item => item.name || '');
 
+            //TODO: Add an image if the wine does not have an image
             const payload: AddRateDto = {
                 wineId: wineModel.wine?.id || 0,
                 review: wineModel.review?.review.trim() || '',
@@ -197,7 +193,5 @@ export const useWineReviewResult = () => {
         }
     }, [navigation, isPremiumUser]);
 
-    return { 
-        handleSavePress, toggleNotes, isOpened, isError, getNotes, isLoading, isSaving
-    };
+    return { handleSavePress, isError, getNotes, isLoading, isSaving };
 };

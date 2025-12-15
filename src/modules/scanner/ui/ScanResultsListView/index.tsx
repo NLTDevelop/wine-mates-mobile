@@ -11,8 +11,8 @@ import { useScannerResultsList } from '../../presenters/useScannerResultsList';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 import { EmptyListView } from '@/UIKit/EmptyListView';
-import { ScannerListItem } from '../components/ScannerListItem';
 import { observer } from 'mobx-react-lite';
+import { WineListItem } from '@/UIKit/WineListItem';
 
 export const ScanResultsListView = observer(() => {
     const { colors, t } = useUiContext();
@@ -24,7 +24,7 @@ export const ScanResultsListView = observer(() => {
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(
         ({ item }: { item: IWineListItem }) => {
-            return <ScannerListItem item={item} onPress={handleItemPress} />;
+            return <WineListItem item={item} onPress={handleItemPress} />;
         },
         [handleItemPress],
     );

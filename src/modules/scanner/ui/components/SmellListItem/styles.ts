@@ -1,8 +1,10 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '@/utils';
+import { getContrastColor, scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors, backgroundColor: string) => {
+    const textColor = getContrastColor(backgroundColor);
+
     const styles = StyleSheet.create({
         container: {
             flexDirection: 'row',
@@ -15,7 +17,7 @@ export const getStyles = (colors: IColors, backgroundColor: string) => {
             gap: scaleHorizontal(8),
         },
         text: {
-            color: colors.text_inverted,
+            color: textColor,
             maxWidth: scaleHorizontal(268),
             flexShrink: 1,
         },

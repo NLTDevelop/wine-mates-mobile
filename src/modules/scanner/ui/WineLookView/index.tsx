@@ -20,7 +20,6 @@ import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { wineModel } from '@/entities/wine/WineModel';
 
-
 export const WineLookView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -60,7 +59,12 @@ export const WineLookView = observer(() => {
                             </View>
 
                             <Typography text={t('wine.selectShade')} variant="h4" style={styles.label} />
-                            <ShadeSelector key={selectedColor.id} value={shade} onChange={setShade} colorShades={selectedColor} />
+                            <ShadeSelector
+                                key={selectedColor.id}
+                                value={shade}
+                                onChange={setShade}
+                                colorShades={selectedColor}
+                            />
 
                             <Typography text={t('wine.result')} variant="h4" style={styles.label} />
                             <View style={[styles.resultColor, { backgroundColor: currentColor }]} />
@@ -72,7 +76,6 @@ export const WineLookView = observer(() => {
 
                                     <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
                                     <SimpleSlider value={perlage} onChange={setPerlage} />
-
 
                                     <Typography text={t('wine.selectAppearance')} variant="h4" style={styles.label} />
                                     <SimpleSlider value={appearance} onChange={setAppearance} />

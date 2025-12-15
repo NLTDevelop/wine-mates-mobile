@@ -99,7 +99,7 @@ export const useAddWine = () => {
 
     const handleNextPress = useCallback(async () => {
         try {
-            if (!form.typeOfWine.id || !form.colorOfWine.id || !wineModel.image) return;
+            if (!form.typeOfWine.id || !form.colorOfWine.id) return;
 
             setInProgress(true);
 
@@ -110,9 +110,12 @@ export const useAddWine = () => {
             formData.append('regionId', 1);
             formData.append('producer', form.producer.value);
             formData.append('grapeVariety', form.grapeVariety.value);
-            formData.append('image', wineModel.image as any);
             formData.append('typeId', form.typeOfWine.id);
             formData.append('colorId', form.colorOfWine.id);
+
+            if (wineModel.image) {
+                formData.append('image', wineModel.image as any);
+            }
 
             const response = await wineService.createWine(formData);
 

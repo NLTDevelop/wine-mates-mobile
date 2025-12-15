@@ -6,7 +6,6 @@ import { useCallback, useEffect, useState } from 'react';
 export const useWineReview = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [review, setReview] = useState('');
-    const [isOpened, setIsOpened] = useState(false);
     const [sliderValue, setSliderValue] = useState(0);
     const [starRate, setStarRate] = useState(0);
 
@@ -28,10 +27,6 @@ export const useWineReview = () => {
         setStarRate(value);
     }, []);
 
-    const toggleNotes = useCallback(() => {
-        setIsOpened(prevState => !prevState);
-    }, []);
-
     const handleNextPress = useCallback(() => {
         wineModel.review = {
             starRate,
@@ -41,8 +36,5 @@ export const useWineReview = () => {
         navigation.navigate('WineReviewResultView');
     }, [navigation, review, sliderValue, starRate]);
 
-    return { 
-        review, onChangeReview, handleSliderChange, handleNextPress, sliderValue, toggleNotes, isOpened, starRate,
-        onStarRateChange
-    };
+    return { review, onChangeReview, handleSliderChange, handleNextPress, sliderValue, starRate, onStarRateChange };
 };

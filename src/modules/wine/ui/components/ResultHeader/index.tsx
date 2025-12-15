@@ -10,7 +10,7 @@ import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
 import { Button } from '@/UIKit/Button';
 import { FavoriteIcon } from '@assets/icons/FavoriteIcon';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
-import { useResultHeader } from '@/modules/scanner/presenters/useResultHeader';
+import { useResultHeader } from '@/modules/wine/presenters/useResultHeader';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { SilverMedalIcon } from '@assets/icons/SilverMedalIcon';
 import { userModel } from '@/entities/users/UserModel';
