@@ -1,11 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import {
-    BottomSheetModal,
-    BottomSheetView,
-    BottomSheetBackdrop,
-    BottomSheetBackdropProps,
-} from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetView, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
