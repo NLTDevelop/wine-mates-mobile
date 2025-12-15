@@ -64,9 +64,5 @@ export const useResultHeader = (item: IWineDetails) => {
         navigation.navigate('WineLookView');
     }, [navigation, item]);
 
-    const onFavoritePress = useCallback(() => {
-        navigation.navigate('SavedWinesView');
-    }, [navigation]);
-
-    return { vintageData, onPress, onFavoritePress };
+    return { vintageData, onPress };
 };

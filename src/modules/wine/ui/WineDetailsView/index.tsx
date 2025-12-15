@@ -15,6 +15,8 @@ import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { Loader } from '@/UIKit/Loader';
 import { useWineDetails } from '@/modules/wine/presenters/useWineDetails';
 import { useWineReviewsList } from '@/modules/wine/presenters/useWineReviewsList';
+import { AddToFavoriteBottomSheet } from '../components/AddToFavoriteBottomSheet';
+import { useAddToFavoriteBottomSheet } from '../../presenters/useAddToFavoriteBottomSheet';
 
 export const WineDetailsView = observer(() => {
     const { colors, t } = useUiContext();
@@ -23,6 +25,7 @@ export const WineDetailsView = observer(() => {
     const { details, isError, getDetails, id, onVintageChange } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(id, getDetails);
     const { refreshControl } = useRefresh(onRefresh);
+    const  { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen } = useAddToFavoriteBottomSheet();
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
     const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);
@@ -44,10 +47,22 @@ export const WineDetailsView = observer(() => {
                         refreshControl={refreshControl}
                         onEndReached={onEndReached}
                         contentContainerStyle={styles.containerStyle}
-                        ListHeaderComponent={<ResultListHeader data={details} onVintageChange={onVintageChange}/>}
+                        ListHeaderComponent={
+                            <ResultListHeader
+                                data={details}
+                                onVintageChange={onVintageChange}
+                                onFavoritePress={onOpen}
+                            />
+                        }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
                     />
                 )}
+                <AddToFavoriteBottomSheet
+                    modalRef={addToFavoriteModalRef}
+                    data={favoriteData}
+                    onItemPress={onItemPress}
+                    onClose={onClose}
+                />
             </ScreenContainer>
         </WithErrorHandler>
     );

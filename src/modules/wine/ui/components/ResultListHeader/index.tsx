@@ -16,9 +16,10 @@ import { userModel } from '@/entities/users/UserModel';
 interface IProps {
     data: IWineDetails;
     onVintageChange: (item: IDropdownItem) => void;
+    onFavoritePress: () => void;
 }
 
-export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
+export const ResultListHeader = ({ data, onVintageChange, onFavoritePress }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isPremiumUser = userModel.user?.hasPremium || false;
@@ -33,7 +34,7 @@ export const ResultListHeader = ({ data, onVintageChange }: IProps) => {
 
     return (
         <View>
-            <ResultHeader item={data} onVintageChange={onVintageChange} />
+            <ResultHeader item={data} onVintageChange={onVintageChange} onFavoritePress={onFavoritePress}/>
 
             {data.isTasted && (
                 <View style={styles.tasted}>
