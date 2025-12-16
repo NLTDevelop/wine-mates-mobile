@@ -172,5 +172,17 @@
         "savedWines": "Saved wine",
         "chemicalAnalysis": "Chemical analysis",
         "settings": "Settings"
+    },
+    "settings": {
+        "notifications": "Notifications",
+        "language": "Language",
+        "blockedUser": "Blocked users",
+        "subscription": "Subscription",
+        "FAQ": "FAQ",
+        "rateTheApp": "Rate the app",
+        "inviteFriends": "Invite Friends",
+        "changePassword": "Change password",
+        "logOut": "Log out",
+        "deleteAccount": "Delete account"
     }
 }

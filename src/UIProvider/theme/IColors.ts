@@ -25,6 +25,7 @@ export type IColors = {
     text_middle: string;
 
     icon: string;
+    icon_primary: string;
 
     unselectedSlider: string;
     selectedSlider: string;

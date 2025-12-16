@@ -176,5 +176,17 @@
         "savedWines": "Збережене вино",
         "chemicalAnalysis": "Хімічний аналіз",
         "settings": "Налаштування"
+    },
+    "settings": {
+        "notifications": "Сповіщення",
+        "language": "Мова",
+        "blockedUser": "Заблоковані користувачі",
+        "subscription": "Підписка",
+        "FAQ": "FAQ",
+        "rateTheApp": "Оцініть додаток",
+        "inviteFriends": "Запросити друзів",
+        "changePassword": "Змінити пароль",
+        "logOut": "Вийти",
+        "deleteAccount": "Видалити обліковий запис"
     }
 }

@@ -28,18 +28,16 @@ export const ProfileView = () => {
                         variant="h4"
                         style={styles.name}
                     />
-                    <Typography  text={t(`wineLevel.${userModel.user?.wineExperienceLevel}`)} variant="body_500" style={styles.expertLevel} />
+                    <Typography
+                        text={t(`wineLevel.${userModel.user?.wineExperienceLevel}`)}
+                        variant="body_500"
+                        style={styles.expertLevel}
+                    />
                 </View>
 
-                {BUTTONS.map((item) => <ProfileListButton key={item.id} text={item.text} icon={item.icon} onPress={item.onPress}/>)
-
-                }
-                {/* <Button
-                    text={'LogOut'}
-                    onPress={handleLogout}
-                    type="secondary"
-                    containerStyle={{ marginBottom: scaleVertical(16) }}
-                /> */}
+                {BUTTONS.map(item => (
+                    <ProfileListButton key={item.id} text={item.text} icon={item.icon} onPress={item.onPress} />
+                ))}
             </View>
         </ScreenContainer>
     );
