@@ -164,5 +164,13 @@
         "gold": "Gold medal",
         "bronze": "Bronze medal",
         "platinum": "Platinum medal"
+    },
+    "profile": {
+        "winesAndStyles": "Wines & styles",
+        "events": "Events",
+        "followers": "Followers",
+        "savedWines": "Saved wine",
+        "chemicalAnalysis": "Chemical analysis",
+        "settings": "Settings"
     }
 }

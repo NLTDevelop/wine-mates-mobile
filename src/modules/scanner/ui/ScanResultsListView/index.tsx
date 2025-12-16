@@ -22,17 +22,14 @@ export const ScanResultsListView = observer(() => {
     const { refreshControl } = useRefresh(onRefresh);
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
-    const renderItem = useCallback(
-        ({ item }: { item: IWineListItem }) => {
-            return <WineListItem item={item} onPress={handleItemPress} />;
-        },
-        [handleItemPress],
-    );
+    const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
+        return <WineListItem item={item} onPress={handleItemPress} />;
+    }, [handleItemPress]);
 
     return (
         // <WithErrorHandler error={null} onRetry={() => {}}>
         <ScreenContainer
-            edges={['top']}
+            edges={['top', 'bottom']}
             withGradient
             headerComponent={<HeaderWithBackButton title={t('scanner.results')} />}
         >

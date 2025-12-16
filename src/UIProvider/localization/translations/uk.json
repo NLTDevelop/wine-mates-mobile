@@ -168,5 +168,13 @@
         "gold": "Золота медаль",
         "bronze": "Бронзова медаль",
         "platinum": "Платінова медаль"
+    },
+    "profile": {
+        "winesAndStyles": "Вина & стилі",
+        "events": "Події",
+        "followers": "Підписники",
+        "savedWines": "Збережене вино",
+        "chemicalAnalysis": "Хімічний аналіз",
+        "settings": "Налаштування"
     }
 }
