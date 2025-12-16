@@ -8,7 +8,7 @@ interface IProps extends TouchableOpacityProps {
     containerStyle?: ViewStyle | ViewStyle[];
     textStyle?: TextStyle;
     text: string;
-    type?: 'main' | 'secondary' | 'auth';
+    type?: 'main' | 'secondary' | 'auth' | 'light';
     RightAccessory?: React.ReactNode;
     LeftAccessory?: React.ReactNode;
     inProgress?: boolean;

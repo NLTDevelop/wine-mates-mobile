@@ -2,7 +2,7 @@ import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth', disabled?: boolean) => {
+export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth' | 'light', disabled?: boolean) => {
     const MAIN_CONTAINER: ViewStyle = {
         height: scaleVertical(48),
         flexDirection: 'row',
@@ -26,6 +26,12 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth', 
             ...MAIN_CONTAINER,
             backgroundColor: colors.background,
         },
+        light: {
+            ...MAIN_CONTAINER,
+            flex: 1,
+            backgroundColor: colors.background,
+            borderColor: colors.border_light,
+        },
         auth: {
             ...MAIN_CONTAINER,
             justifyContent: 'space-between',
@@ -37,6 +43,10 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth', 
     const TEXT: Record<typeof type, TextStyle> = {
         main: MAIN_TEXT,
         secondary: {
+            ...MAIN_TEXT,
+            color: colors.text,
+        },
+        light: {
             ...MAIN_TEXT,
             color: colors.text,
         },

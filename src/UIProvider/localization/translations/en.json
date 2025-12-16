@@ -13,7 +13,9 @@
         "now": "Now",
         "nothingFoundTitle": "Nothing Found",
         "next": "Next",
-        "nothingFoundDescription": "We couldn't find any results for your query. Please check your spelling or try different keywords."
+        "nothingFoundDescription": "We couldn't find any results for your query. Please check your spelling or try different keywords.",
+        "confirm": "Confirm",
+        "cancel": "Cancel"
     },
     "errors": {
         "somethingWentWrong": "Sorry, something went wrong",
@@ -184,5 +186,13 @@
         "changePassword": "Change password",
         "logOut": "Log out",
         "deleteAccount": "Delete account"
+    },
+    "logout": {
+        "logout": "Log out?",
+        "description": "Are you sure want to sign out?"
+    },
+    "locale": {
+        "en": "English",
+        "uk": "Ukrainian"
     }
 }

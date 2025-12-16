@@ -1,10 +1,9 @@
-import { userModel } from '@/entities/users/UserModel';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback } from 'react';
 
-export const useSettings = () => {
+export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const onNotificationPress = useCallback(() => {
@@ -12,8 +11,8 @@ export const useSettings = () => {
     }, [navigation]);
 
     const onLanguagePress = useCallback(() => {
-        navigation.navigate('');
-    }, [navigation]);
+        onOpen();
+    }, [onOpen]);
 
     const onBlockUserPress = useCallback(() => {
         navigation.navigate('');
@@ -43,10 +42,6 @@ export const useSettings = () => {
         navigation.navigate('');
     }, [navigation]);
 
-    const handleLogout = useCallback(() => {
-        userModel.token = null;
-    }, []);
-
     const APP_BUTTONS = [
         {
             id: 1,
@@ -57,7 +52,7 @@ export const useSettings = () => {
             id: 2,
             text: localization.t('settings.language'),
             onPress: onLanguagePress,
-            description: localization.locale,
+            description: localization.t(`locale.${localization.locale}`) ,
         },
         {
             id: 3,
@@ -98,7 +93,7 @@ export const useSettings = () => {
         {
             id: 2,
             text: localization.t('settings.logOut'),
-            onPress: handleLogout,
+            onPress: onShowLogoutModal,
             hideIcon: true,
         },
         {

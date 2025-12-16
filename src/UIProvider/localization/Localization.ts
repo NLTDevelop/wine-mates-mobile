@@ -10,7 +10,7 @@ import { ILocalization } from './ILocalization';
 class Localization implements ILocalization {
     private i18n: I18n;
 
-    constructor(private localizationStore: IRepository<string>, private storage: IStorage) {
+    constructor(private localizationStore: IRepository<string>, private _storage: IStorage) {
         this.i18n = new I18n();
         this.i18n.enableFallback = true;
         this.i18n.translations = { uk, en };
@@ -21,29 +21,26 @@ class Localization implements ILocalization {
     private load = () => {
         try {
             const supportedLocales = Object.keys(this.i18n.translations);
-    
-            let savedLanguage = this.storage.get('LANGUAGE');
-    
+
+            const savedLanguage = this._storage.get('LANGUAGE');
             const locales = RNLocalize.getLocales();
             const deviceLang = locales?.[0]?.languageCode;
-    
+
             let finalLanguage: string | null = null;
-    
-            if (deviceLang && supportedLocales.includes(deviceLang)) {
+
+            if (savedLanguage && supportedLocales.includes(savedLanguage)) {
+                finalLanguage = savedLanguage;
+            } else if (deviceLang && supportedLocales.includes(deviceLang)) {
                 finalLanguage = deviceLang;
             } else {
-                finalLanguage = savedLanguage ?? null;
-            }
-    
-            if (!finalLanguage) {
                 finalLanguage = 'en';
             }
-    
+
             if (finalLanguage !== savedLanguage) {
                 this.persistLanguage(finalLanguage);
             }
     
-            const translations = this.storage.get('TRANSLATIONS');
+            const translations = this._storage.get('TRANSLATIONS');
             if (translations) {
                 this.i18n.translations = translations;
             }
@@ -59,15 +56,15 @@ class Localization implements ILocalization {
 
     private persistLanguage = (data: string | null) => {
         if (data) {
-            this.storage.set('LANGUAGE', data);
+            this._storage.set('LANGUAGE', data);
         } else {
-            this.storage.remove('LANGUAGE');
+            this._storage.remove('LANGUAGE');
         }
     };
 
     private persistTranslations = (data: object) => {
         if (data) {
-            this.storage.set('TRANSLATIONS', data);
+            this._storage.set('TRANSLATIONS', data);
         }
     };
 
