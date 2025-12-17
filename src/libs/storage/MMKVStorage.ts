@@ -1,15 +1,17 @@
-import { MMKV } from 'react-native-mmkv';
+import { createMMKV, type MMKV } from 'react-native-mmkv';
 import { IStorage } from '.';
 
-class MMKVStorage implements IStorage {
-    private storage!: MMKV;
+export class MMKVStorage implements IStorage {
+    private storage: MMKV;
 
     constructor() {
-        this.storage = new MMKV();
+        this.storage = createMMKV();
     }
 
     cleanAll = (services: string[]) => {
-        services.forEach(service => this.storage.delete(service));
+        services.forEach(service => {
+            this.storage.remove(service);
+        });
     };
 
     cleanOnFirstLaunch = (servicesArray: string[]) => {
@@ -29,17 +31,17 @@ class MMKVStorage implements IStorage {
             this.storage.set(service, JSON.stringify(payload));
             return true;
         } catch (error) {
-            console.warn('MMKVStorage -> set: ', error);
+            console.error('MMKVStorage -> set:', error);
             return false;
         }
     };
 
     remove = (service: string) => {
         try {
-            this.storage.delete(service);
+            this.storage.remove(service);
             return true;
         } catch (error) {
-            console.warn('MMKVStorage -> remove: ', error);
+            console.error('MMKVStorage -> remove:', error);
             return false;
         }
     };
