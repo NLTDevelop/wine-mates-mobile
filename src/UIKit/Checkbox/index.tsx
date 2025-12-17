@@ -13,10 +13,7 @@ interface IProps {
 
 export const Checkbox = memo(({ isChecked, onPress, isRound, disabled = false }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(
-        () => getStyles(colors, isChecked, disabled, isRound),
-        [colors, isChecked, disabled, isRound],
-    );
+    const styles = useMemo(() => getStyles(colors, isChecked, disabled, isRound), [colors, isChecked, disabled, isRound]);
 
     return (
         <TouchableOpacity onPress={onPress} style={styles.container} disabled={disabled}>
