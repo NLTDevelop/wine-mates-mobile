@@ -54,6 +54,11 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
                 selectedColor={item.colorHex}
                 disabled={disabled}
             />
+            <View style={styles.row}>
+                <Typography text={levels[0].name} variant='body_400' style={styles.text}/>
+                {/* <Typography text={levels[(levels.length - 1)/2].name} variant='body_400' style={styles.text}/> */}
+                <Typography text={levels[levels.length - 1].name} variant='body_400' style={styles.text}/>
+            </View>
             {item.isPremium && isFocused && !isPremiumUser && <BlurContainer />}
         </View>
     );

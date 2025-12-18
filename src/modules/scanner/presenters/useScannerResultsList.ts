@@ -6,6 +6,7 @@ import { wineListModel } from '@/entities/wine/WineListModel';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
+import { wineModel } from '@/entities/wine/WineModel';
 
 const LIMIT = 10;
 const OFFSET = 0;
@@ -17,11 +18,19 @@ export const useScannerResultsList = () => {
 
     const getList = useCallback(async (offset: number) => {
         setIsLoading(true);
+
         const params = {
             limit: LIMIT,
-            offset,
-        };
-        const response = await wineService.list(params);
+            offset
+        }
+
+        const formData = new FormData();
+        
+        if (wineModel.image) {
+            formData.append('image', wineModel.image as any);
+        }
+
+        const response = await wineService.list(params, formData);
 
         if (response.isError) {
             toastService.showError(

@@ -22,6 +22,10 @@ export const getStyles = (colors: IColors) => {
         description: {
             color: colors.text_light,
         },
+        text: {
+            maxWidth: scaleHorizontal(100),
+            color: colors.text_light,
+        },
     });
     return styles;
 };

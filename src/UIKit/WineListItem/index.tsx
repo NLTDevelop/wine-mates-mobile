@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { getStyles } from './styles';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
@@ -8,6 +8,7 @@ import { FasterImageView } from '@rraut/react-native-faster-image';
 import { StarIcon } from '@assets/icons/StartIcon';
 import { declOfWord } from '@/utils';
 import { Avatar } from '@/UIKit/Avatar';
+import { useSelectablePressGuard } from '@/hooks/useSelectablePressGuard';
 
 interface IProps {
     item: IWineListItem;
@@ -17,10 +18,15 @@ interface IProps {
 export const WineListItem = ({ item, onPress }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const handleItemPress = useCallback(() => onPress(item), [item, onPress])
+    const guard = useSelectablePressGuard();
+    const handleItemPress = useCallback(() => guard.bindPressable.onPress(() => onPress(item)), [item, onPress, guard]);
 
     return (
-        <TouchableOpacity style={styles.container} onPress={handleItemPress}>
+        <Pressable
+            style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+            onPress={handleItemPress}
+            onPressOut={guard.bindPressable.onPressOut}
+        >
             <View pointerEvents="none">
                 {item.image?.originalUrl && (
                     <FasterImageView
@@ -37,6 +43,7 @@ export const WineListItem = ({ item, onPress }: IProps) => {
                         text={`${item.name} ${item.vintage}`}
                         numberOfLines={2}
                         style={styles.title}
+                        {...guard.bindText}
                     />
                     <View style={styles.rateContainer}>
                         <StarIcon />
@@ -62,6 +69,7 @@ export const WineListItem = ({ item, onPress }: IProps) => {
                             text={`${item?.user?.firstName} ${item?.user?.lastName}`}
                             numberOfLines={1}
                             style={styles.title}
+                            {...guard.bindText}
                         />
                     </View>
                     <Typography
@@ -72,6 +80,6 @@ export const WineListItem = ({ item, onPress }: IProps) => {
                     />
                 </View>
             </View>
-        </TouchableOpacity>
+        </Pressable>
     );
 };

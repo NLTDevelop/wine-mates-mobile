@@ -45,6 +45,9 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             gap: scaleHorizontal(8),
         },
+        pressed: {
+            opacity: 0.6,
+        },
     });
     return styles;
 };

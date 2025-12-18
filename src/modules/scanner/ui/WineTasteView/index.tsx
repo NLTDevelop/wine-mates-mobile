@@ -31,11 +31,9 @@ export const WineTasteView = observer(() => {
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomTaste);
 
     const keyExtractor = useCallback((item: IWineTaste, index: number) => `${item.id}-${index}`, []);
-    const renderItem = useCallback(
-        ({ item }: { item: IWineTaste }) => (
-            <SmellListItem item={item} onPress={() => onItemPress(item)} />
-        ),
-    [onItemPress]);
+    const renderItem = useCallback(({ item }: { item: IWineTaste }) => (
+        <SmellListItem item={item} onPress={() => onItemPress(item)} />
+    ), [onItemPress]);
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getTastes} isLoading={isLoading}>

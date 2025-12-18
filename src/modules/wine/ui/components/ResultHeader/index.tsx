@@ -101,8 +101,8 @@ export const ResultHeader = ({ item, onVintageChange, onFavoritePress }: IProps)
                 )}
             </View>
             <View style={styles.mainContainer}>
-                <Typography variant="subtitle_20_500" text={item.name} style={styles.title} />
-                <Typography variant="body_400" text={description} style={styles.description} />
+                <Typography variant="subtitle_20_500" text={item.name} style={styles.title} selectable />
+                <Typography variant="body_400" text={description} style={styles.description} selectable />
                 <View style={styles.rateContainer}>
                     <StarIcon />
                     <Typography variant="subtitle_12_500" text={item.averageUserRating || 0} />
