@@ -24,12 +24,16 @@ import { IWineSmellSearchParams } from './params/IWIneSmellSearchParams';
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
 
-    list = async (params: IWineListParams): Promise<IResponse<IList<IWineListItem>>> => {
+    list = async (params: IWineListParams, data: FormData): Promise<IResponse<IList<IWineListItem>>> => {
         try {
             const response = await this._requester.request({
-                method: 'GET',
-                url: `${this._links.wines}`,
+                method: 'POST',
+                url: `${this._links.scannedWines}`,
                 params,
+                data,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
             if (!response.isError) {
                 if (params.offset === 0) {

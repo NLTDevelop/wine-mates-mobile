@@ -44,7 +44,7 @@ export const ScanResultsListView = observer(() => {
                     style={styles.list}
                     contentContainerStyle={styles.contentContainerStyle}
                     ListFooterComponent={isLoading && data?.length ? <ListFooterLoader /> : null}
-                    ListEmptyComponent={<EmptyListView isLoading={isLoading} text={'Nothing found'} />}
+                    ListEmptyComponent={<EmptyListView isLoading={isLoading} text={t('common.nothingFoundTitle')} />}
                 />
                 <Button text={t('scanner.addWine')} onPress={handleAddWinePress} containerStyle={styles.button} />
             </View>
