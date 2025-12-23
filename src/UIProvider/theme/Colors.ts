@@ -8,6 +8,7 @@ export const COLORS: { light: IColors } = {
         background_light: '#E4E4E4',
         background_middle: '#F0F0F0',
         background_grey: '#D0D3D9',
+        background_disabled: "#C7C7C7",
 
         border: '#E4E4E4',
         border_strong: '#000000',

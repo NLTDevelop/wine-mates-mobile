@@ -15,8 +15,8 @@ export const getStyles = (colors: IColors, bottomInset: number, topInset: number
         container: {
             maxHeight: maxHeight,
             paddingHorizontal: scaleHorizontal(16),
-            paddingBottom: bottomInset,
-            gap: scaleVertical(24),
+            gap: scaleVertical(16),
+            paddingBottom: bottomInset + scaleVertical(16),
         },
         header: {
             marginTop: scaleVertical(15),

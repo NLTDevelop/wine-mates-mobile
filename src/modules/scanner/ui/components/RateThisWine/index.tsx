@@ -61,22 +61,26 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                 </>
             ) : (
                 disabled ? (
-                    <StarRatingDisplay
-                        rating={starRate}
-                        StarIconComponent={StarIcon}
-                        starSize={36}
-                        starStyle={styles.star}
-                        emptyColor={colors.icon}
-                    />
+                    <View style={styles.starsContainer}>
+                        <StarRatingDisplay
+                            rating={starRate}
+                            StarIconComponent={StarIcon}
+                            starSize={36}
+                            starStyle={styles.star}
+                            emptyColor={colors.icon}
+                        />
+                    </View>
                 ) : (
-                    <StarRating
-                        rating={starRate}
-                        onChange={onStarRateChange ?? (() => {})}
-                        StarIconComponent={StarIcon}
-                        starSize={36}
-                        starStyle={styles.star}
-                        emptyColor={colors.icon}
-                    />
+                    <View style={styles.starsContainer}>
+                        <StarRating
+                            rating={starRate}
+                            onChange={onStarRateChange ?? (() => {})}
+                            StarIconComponent={StarIcon}
+                            starSize={36}
+                            starStyle={styles.star}
+                            emptyColor={colors.icon}
+                        />
+                    </View>
                 )
             )}
         </View>

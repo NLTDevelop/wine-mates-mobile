@@ -7,7 +7,6 @@ export const getStyles = (colors: IColors) => {
         container: {
             flex: 1,
             justifyContent: 'space-between',
-            paddingHorizontal: scaleHorizontal(16),
         },
         containerStyle: {
             flexGrow: 1,
@@ -15,12 +14,9 @@ export const getStyles = (colors: IColors) => {
             paddingBottom: scaleVertical(16),
         },
         button: {
-            borderColor: colors.border_light,
-            alignSelf: 'center',
             gap: scaleHorizontal(12),
-            paddingHorizontal: scaleHorizontal(12),
-            paddingVertical: scaleVertical(8),
             marginBottom: scaleVertical(16),
+            marginHorizontal: scaleHorizontal(16),
         },
         plusIconContainer: {
             width: scaleVertical(32),

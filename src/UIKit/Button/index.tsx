@@ -8,7 +8,7 @@ interface IProps extends TouchableOpacityProps {
     containerStyle?: ViewStyle | ViewStyle[];
     textStyle?: TextStyle;
     text: string;
-    type?: 'main' | 'secondary' | 'auth' | 'light';
+    type?: 'main' | 'secondary' | 'auth' | 'light' | 'disabled';
     RightAccessory?: React.ReactNode;
     LeftAccessory?: React.ReactNode;
     inProgress?: boolean;
@@ -16,14 +16,15 @@ interface IProps extends TouchableOpacityProps {
 
 export const ButtonComponent = ({ text, type = 'main', disabled, RightAccessory, LeftAccessory, containerStyle,
     textStyle, inProgress, ...props }: IProps) => {
+    const resolvedType = disabled ? 'disabled' : type;
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, type, disabled), [colors, disabled, type]);
+    const styles = useMemo(() => getStyles(colors, resolvedType), [colors, resolvedType]);
 
     return (
-        <TouchableOpacity {...props} activeOpacity={type === "main" ? 0.9: 0.5} disabled={inProgress || disabled} style={[styles.container, containerStyle]} onPressIn={Keyboard.dismiss}>
+        <TouchableOpacity {...props} activeOpacity={resolvedType === "main" ? 0.9: 0.5} disabled={inProgress || disabled} style={[styles.container, containerStyle]} onPressIn={Keyboard.dismiss}>
             {inProgress ? (
                 <View style={styles.absoluteSheet}>
-                    <ActivityIndicator color={type === 'main' ? colors.background : colors.primary} size="small" />
+                    <ActivityIndicator color={resolvedType === 'main' ? colors.background : colors.primary} size="small" />
                 </View>
             ) : (
                 <>

@@ -13,6 +13,7 @@ import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 import { observer } from 'mobx-react-lite';
 import { WineListItem } from '@/UIKit/WineListItem';
+import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 
 export const ScanResultsListView = observer(() => {
     const { colors, t } = useUiContext();
@@ -44,7 +45,13 @@ export const ScanResultsListView = observer(() => {
                     style={styles.list}
                     contentContainerStyle={styles.contentContainerStyle}
                     ListFooterComponent={isLoading && data?.length ? <ListFooterLoader /> : null}
-                    ListEmptyComponent={<EmptyListView isLoading={isLoading} text={t('common.nothingFoundTitle')} />}
+                    ListEmptyComponent={
+                        <EmptyListView
+                            isLoading={isLoading}
+                            image={<EmptyWineListIcon />}
+                            text={t('common.nothingFoundTitle')}
+                        />
+                    }
                 />
                 <Button text={t('scanner.addWine')} onPress={handleAddWinePress} containerStyle={styles.button} />
             </View>

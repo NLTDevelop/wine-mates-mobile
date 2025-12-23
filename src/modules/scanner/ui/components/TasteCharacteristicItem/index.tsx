@@ -8,6 +8,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { CrownIcon } from '@assets/icons/CrownIcon';
 import { BlurContainer } from '@/UIKit/BlurContainer';
+import { BottomValues } from '../BottomValues';
 
 interface IProps {
     item: IWineTasteCharacteristic;
@@ -34,6 +35,7 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
     }, [levels.length, value]);
 
     const maxIndex = Math.max(levels.length - 1, 0);
+    const middleIndex = Math.floor((levels.length - 1) / 2);
 
     return (
         <View style={styles.container}>
@@ -54,11 +56,12 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
                 selectedColor={item.colorHex}
                 disabled={disabled}
             />
-            <View style={styles.row}>
-                <Typography text={levels[0].name} variant='body_400' style={styles.text}/>
-                {/* <Typography text={levels[(levels.length - 1)/2].name} variant='body_400' style={styles.text}/> */}
-                <Typography text={levels[levels.length - 1].name} variant='body_400' style={styles.text}/>
-            </View>
+            <BottomValues
+                leftValue={levels[0].name}
+                rightValue={levels[levels.length - 1].name}
+                middleValue={levels[middleIndex]?.name}
+                isTriple={item.isTriple}
+            />
             {item.isPremium && isFocused && !isPremiumUser && <BlurContainer />}
         </View>
     );

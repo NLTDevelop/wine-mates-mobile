@@ -9,18 +9,21 @@ import { getStyles } from './styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IFavoriteItem } from '@/modules/wine/presenters/useAddToFavoriteBottomSheet';
 import { Checkbox } from '@/UIKit/Checkbox';
+import { Button } from '@/UIKit/Button';
 
 interface IProps {
     modalRef: React.RefObject<BottomSheetModal | null>;
     onItemPress: (item: IFavoriteItem) => void;
     onClose: () => void;
     data: IFavoriteItem[];
+    onSave: () => void;
 }
 
-export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data }: IProps) => {
+export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data, onSave }: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom, top), [colors, bottom, top]);
+    const buttonDisabled = useMemo(() => data.filter(item => item.isSelected).length === 0, [data]);
 
     const keyExtractor = useCallback((item: IFavoriteItem) => `${item.id}`, []);
 
@@ -51,11 +54,11 @@ export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data 
         >
             <BottomSheetView style={styles.container}>
                 <View style={styles.header}>
+                    <View style={styles.headerSpacer} />
+                    <Typography variant="h4" text={t('common.save')} />
                     <TouchableOpacity onPress={onClose} hitSlop={20}>
                         <CrossIcon />
                     </TouchableOpacity>
-                    <Typography variant="h4" text={t('common.save')} />
-                    <View style={styles.headerSpacer} />
                 </View>
                 <FlatList
                     data={data}
@@ -65,6 +68,7 @@ export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data 
                     contentContainerStyle={styles.contentContainer}
                     showsVerticalScrollIndicator={false}
                 />
+                <Button type='main' onPress={onSave} text={t('common.choose')} disabled={buttonDisabled}/>
             </BottomSheetView>
         </BottomSheetModal>
     );

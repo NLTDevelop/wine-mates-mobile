@@ -7,7 +7,8 @@ export type IColors = {
     background_light: string;
     background_middle: string;
     background_grey: string;
-
+    background_disabled: string;
+    
     border: string;
     border_light: string;
     border_strong: string;

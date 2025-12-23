@@ -33,6 +33,9 @@ export const getStyles = (colors: IColors) => {
         button: {
             marginBottom: scaleVertical(16),
         },
+        bottomValues: {
+            marginBottom: scaleVertical(24),
+        },
     });
     return styles;
 };

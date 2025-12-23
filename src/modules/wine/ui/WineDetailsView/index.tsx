@@ -25,7 +25,7 @@ export const WineDetailsView = observer(() => {
     const { details, isError, getDetails, id, onVintageChange } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(id, getDetails);
     const { refreshControl } = useRefresh(onRefresh);
-    const  { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen } = useAddToFavoriteBottomSheet();
+    const  { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave } = useAddToFavoriteBottomSheet();
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
     const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);
@@ -62,6 +62,7 @@ export const WineDetailsView = observer(() => {
                     data={favoriteData}
                     onItemPress={onItemPress}
                     onClose={onClose}
+                    onSave={onSave}
                 />
             </ScreenContainer>
         </WithErrorHandler>

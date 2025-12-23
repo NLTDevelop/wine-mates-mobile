@@ -6,7 +6,6 @@ import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { getStyles } from './styles';
-import { scaleVertical } from '@/utils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomSheetInput } from '@/UIKit/BottomSheetInput';
 
@@ -33,8 +32,6 @@ export const CreateListBottomSheet = ({ modalRef, value, onChangeValue, onCreate
     return (
         <BottomSheetModal
             ref={modalRef}
-            snapPoints={[scaleVertical(235)]}
-            index={0}
             enablePanDownToClose
             keyboardBehavior="interactive"
             keyboardBlurBehavior="restore"
@@ -45,13 +42,11 @@ export const CreateListBottomSheet = ({ modalRef, value, onChangeValue, onCreate
         >
             <BottomSheetView style={styles.container}>
                 <View style={styles.header}>
+                    <View style={styles.headerSpacer} />
+                    <Typography variant="h4" text={t('savedWine.createList')} />
                     <TouchableOpacity onPress={onClose} hitSlop={20}>
                         <CrossIcon />
                     </TouchableOpacity>
-
-                    <Typography variant="h4" text={t('savedWine.createList')} />
-
-                    <View style={styles.headerSpacer} />
                 </View>
                 <BottomSheetInput
                     value={value}
@@ -59,7 +54,7 @@ export const CreateListBottomSheet = ({ modalRef, value, onChangeValue, onCreate
                     placeholder={t('savedWine.listName')}
                     containerStyle={styles.inputContainer}
                 />
-                <Button text={t('common.create')} onPress={onCreate} containerStyle={styles.button} />
+                <Button text={t('common.create')} onPress={onCreate} containerStyle={styles.button} disabled={!value}/>
             </BottomSheetView>
         </BottomSheetModal>
     );

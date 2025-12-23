@@ -12,18 +12,19 @@ export const getStyles = (colors: IColors) => {
             overflow: 'hidden',
         },
         infoContainer: {
-            marginBottom: scaleVertical(16),
+            marginBottom: scaleVertical(6),
         },
         row: {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
         },
-        description: {
-            color: colors.text_light,
+        valueContainer: {
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            marginTop: scaleVertical(6),
         },
-        text: {
-            maxWidth: scaleHorizontal(100),
+        description: {
             color: colors.text_light,
         },
     });

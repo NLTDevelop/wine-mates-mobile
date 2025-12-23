@@ -53,11 +53,11 @@ export const SelectLanguageBottomSheet = ({ modalRef, onItemPress, onClose }: IP
         >
             <BottomSheetView style={styles.container}>
                 <View style={styles.header}>
+                    <View style={styles.headerSpacer} />
+                    <Typography variant="h4" text={t('settings.language')} />
                     <TouchableOpacity onPress={onClose} hitSlop={20}>
                         <CrossIcon />
                     </TouchableOpacity>
-                    <Typography variant="h4" text={t('settings.language')} />
-                    <View style={styles.headerSpacer} />
                 </View>
                 <FlatList
                     data={locales}

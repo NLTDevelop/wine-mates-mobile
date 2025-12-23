@@ -11,17 +11,17 @@ export const getStyles = (colors: IColors) => {
             zIndex: 10,
         },
         centeredLockLayer: {
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
             justifyContent: 'center',
             alignItems: 'center',
             zIndex: 10,
         },
         blur: {
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
             zIndex: 5,
         },
         fakeBlur: {
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
             backgroundColor: `${colors.background}A6`,
         },
     });

@@ -28,8 +28,8 @@ export const Slider = memo(({ min, max, value, onChange, selectedColor, withSect
     const customMarker = useCallback(() => <Marker size={MARKER} trackHeight={TRACK_HEIGHT} />, []);
 
     const sectionsCount = useMemo(() => {
-        const raw = max - 2;
-        const normalized = raw > 20 ? 8 : raw;
+        const raw = max - 1;
+        const normalized = raw > 20 ? 9 : raw;
         return normalized < 0 ? 0 : normalized;
     }, [max]);
 
