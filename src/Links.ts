@@ -29,6 +29,8 @@ export interface ILinks {
     wineTasteCharacteristic: string;
     countries: string;
     rates: string;
+    generateSnacks: string;
+    generateNote: string;
 }
 
 class Links implements ILinks {
@@ -48,7 +50,9 @@ class Links implements ILinks {
         wineTaste: 'wine-flavors',
         wineTasteCharacteristic: 'wine-taste-characteristics',
         countries: 'countries',
-        rates: 'rates'
+        rates: 'rates',
+        generateSnacks: 'rates/generate-snacks',
+        generateNote: 'rates/generate-note'
     };
 
     private buildDomain() {
@@ -110,6 +114,12 @@ class Links implements ILinks {
     }
     public get rates() {
         return `${this._domain}${this._links.rates}`;
+    }
+    public get generateSnacks() {
+        return `${this._domain}${this._links.generateSnacks}`;
+    }
+    public get generateNote() {
+        return `${this._domain}${this._links.generateNote}`;
     }
 }
 

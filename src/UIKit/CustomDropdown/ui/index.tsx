@@ -34,6 +34,7 @@ export const CustomDropdown = ({ placeholder, onPress, data, withSearch = false,
             style={[styles.dropdown, disabled ? styles.dropdownDisabled : null, containerStyle]}
             placeholderStyle={styles.placeholder}
             containerStyle={styles.dropdownContainer}
+            selectedTextStyle={styles.selectedText}
             search={withSearch}
             autoScroll={false}
             data={filteredData}

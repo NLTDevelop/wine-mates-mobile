@@ -19,6 +19,7 @@ import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { wineModel } from '@/entities/wine/WineModel';
+import { BottomValues } from '../components/BottomValues';
 
 export const WineLookView = observer(() => {
     const { colors, t } = useUiContext();
@@ -68,17 +69,38 @@ export const WineLookView = observer(() => {
 
                             <Typography text={t('wine.result')} variant="h4" style={styles.label} />
                             <View style={[styles.resultColor, { backgroundColor: currentColor }]} />
-
+                          
                             {wineModel.base?.typeOfWine.isSparkling && (
                                 <>
                                     <Typography text={t('wine.selectMousse')} variant="h4" style={styles.label} />
                                     <SimpleSlider value={mousse} onChange={setMousse} />
+                                    <BottomValues
+                                        leftValue={t('muse.missing')}
+                                        rightValue={t('muse.moderate')}
+                                        middleValue={t('muse.creamy')}
+                                        isTriple={true}
+                                        containerStyle={styles.bottomValues}
+                                    />
 
                                     <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
                                     <SimpleSlider value={perlage} onChange={setPerlage} />
+                                    <BottomValues
+                                        leftValue={t('perlage.coarse')}
+                                        rightValue={t('perlage.small')}
+                                        middleValue={t('perlage.thin')}
+                                        isTriple={true}
+                                        containerStyle={styles.bottomValues}
+                                    />
 
                                     <Typography text={t('wine.selectAppearance')} variant="h4" style={styles.label} />
                                     <SimpleSlider value={appearance} onChange={setAppearance} />
+                                    <BottomValues
+                                        leftValue={t('wineView.cloudy')}
+                                        rightValue={t('wineView.translucent')}
+                                        middleValue={t('wineView.sparklingClean')}
+                                        isTriple={true}
+                                        containerStyle={styles.bottomValues}
+                                    />
                                 </>
                             )}
 

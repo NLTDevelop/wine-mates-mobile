@@ -38,10 +38,14 @@ export const useAddToFavoriteBottomSheet = () => {
         );
     }, []);
 
+    const onSave = useCallback(() => {
+        onClose()
+    }, [onClose]);
+
     const sortedFavorites = useMemo(
         () => [...favoriteData].sort((a, b) => a.id - b.id),
         [favoriteData],
     );
 
-    return { favoriteData: sortedFavorites, addToFavoriteModalRef, onItemPress, onClose, onOpen };
+    return { favoriteData: sortedFavorites, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave };
 };

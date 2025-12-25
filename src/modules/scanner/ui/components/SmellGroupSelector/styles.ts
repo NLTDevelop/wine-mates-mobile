@@ -1,10 +1,8 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { getContrastColor, scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors, backgroundColor: string) => {
-    const textColor = getContrastColor(backgroundColor);
-
+export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flexDirection: 'row',
@@ -19,13 +17,11 @@ export const getStyles = (colors: IColors, backgroundColor: string) => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor,
         },
         button: {
             width: scaleVertical(48),
             height: scaleVertical(48),
             borderRadius: 12,
-            backgroundColor: colors.background,
             justifyContent: 'center',
             alignItems: 'center',
             shadowColor: colors.shadow,
@@ -33,9 +29,6 @@ export const getStyles = (colors: IColors, backgroundColor: string) => {
             shadowOpacity: 0.1,
             shadowRadius: 3,
             elevation: 3,
-        },
-        text: {
-            color: textColor,
         },
     });
     return styles;

@@ -29,6 +29,7 @@
         "date-fns": "^4.1.0",
         "i18n-js": "^4.5.1",
         "libphonenumber-js": "^1.12.31",
+        "lottie-react-native": "^7.3.4",
         "mobx": "^6.15.0",
         "mobx-react": "^9.2.1",
         "patch-package": "^8.0.1",

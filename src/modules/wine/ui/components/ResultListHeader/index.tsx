@@ -85,7 +85,7 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress }: IPr
                                             t('scanner.reviewCount') as unknown as Array<string>,
                                         )})`}
                                         variant="subtitle_12_500"
-                                        style={styles.countText}
+                                        style={[styles.countText, { color: `${textColor}B3` }]}
                                     />
                                 </View>
                             );
@@ -116,7 +116,7 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress }: IPr
                                             t('scanner.reviewCount') as unknown as Array<string>,
                                         )})`}
                                         variant="subtitle_12_500"
-                                        style={styles.countText}
+                                        style={[styles.countText, { color: `${textColor}B3` }]}
                                     />
                                 </View>
                             );

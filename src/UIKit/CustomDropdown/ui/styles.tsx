@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors) =>
-    StyleSheet.create({
+export const getStyles = (colors: IColors) => {
+    const styles = StyleSheet.create({
         dropdown: {
             borderWidth: 1,
             borderRadius: 12,
@@ -22,6 +22,11 @@ export const getStyles = (colors: IColors) =>
             overflow: 'hidden',
         },
         placeholder: {
+            fontSize: scaleFontSize(16),
+            fontFamily: 'VisueltPro-Regular',
+            color: colors.text,
+        },
+        selectedText: {
             fontSize: scaleFontSize(16),
             fontFamily: 'VisueltPro-Regular',
             color: colors.text,
@@ -45,3 +50,5 @@ export const getStyles = (colors: IColors) =>
             marginBottom: scaleVertical(12),
         },
     });
+    return styles;
+};

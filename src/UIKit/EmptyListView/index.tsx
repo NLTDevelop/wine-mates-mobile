@@ -4,6 +4,7 @@ import { getStyles } from './styles';
 import { useUiContext } from '../../UIProvider';
 import { Typography } from '../Typography';
 import { observer } from 'mobx-react-lite';
+import { NotFoundIcon } from '@assets/icons/NotFoundIcon';
 
 interface IProps {
     text?: string;
@@ -25,6 +26,7 @@ export const EmptyListView = observer(
             </View>
         ) : isNothingFound ? (
             <View style={styles.container}>
+                <NotFoundIcon />
                 <Typography text={t('common.nothingFoundTitle')} variant="subtitle_20_700" style={styles.title} />
                 <Typography
                     text={t('common.nothingFoundDescription')}

@@ -2,7 +2,7 @@ import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth' | 'light', disabled?: boolean) => {
+export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth' | 'light' | 'disabled') => {
     const MAIN_CONTAINER: ViewStyle = {
         height: scaleVertical(48),
         flexDirection: 'row',
@@ -13,7 +13,6 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth' |
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: colors.primary,
-        opacity: disabled ? 0.4 : 1,
         borderRadius: 12,
     };
     const MAIN_TEXT: TextStyle = {
@@ -38,6 +37,11 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth' |
             backgroundColor: colors.background,
             borderColor: colors.border_light,
         },
+        disabled: {
+            ...MAIN_CONTAINER,
+            borderWidth: 0,
+            backgroundColor: colors.background_disabled,
+        }
     };
 
     const TEXT: Record<typeof type, TextStyle> = {
@@ -54,12 +58,16 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth' |
             ...MAIN_TEXT,
             color: colors.text,
         },
+        disabled: {
+            ...MAIN_TEXT,
+            color: colors.text_inverted,
+        }
     };
     const styles = StyleSheet.create({
         container: CONTAINERS[type],
         text: TEXT[type],
         absoluteSheet: {
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
             justifyContent: 'center',
             alignItems: 'center',
         },

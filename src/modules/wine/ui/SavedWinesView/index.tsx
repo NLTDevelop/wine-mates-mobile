@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FlatList, View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -14,7 +14,6 @@ import { useRefresh } from '@/hooks/useRefresh';
 import { Loader } from '@/UIKit/Loader';
 import { SavedWineListItem } from '../components/SavedWineListItem';
 import { ISavedWinesListItem } from '@/entities/wine/types/ISavedWinesListItem';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { CreateListBottomSheet } from '../components/CreateListBottomSheet';
 import { useCreateListBottomSheet } from '../../presenters/useCreateListBottomSheet';
 

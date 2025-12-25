@@ -9,6 +9,7 @@ export interface IWineTasteCharacteristic {
     levels: ILevel[];
     colorHex: string;
     isPremium: boolean;
+    isTriple: boolean;
     selectedIndex?: number;
 }
 

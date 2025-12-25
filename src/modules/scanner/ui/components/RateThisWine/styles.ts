@@ -19,6 +19,10 @@ export const getStyles = (_colors: IColors) => {
             justifyContent: 'space-between',
             alignItems: 'center',
         },
+        starsContainer: {
+            alignItems: 'center',
+            marginLeft: scaleHorizontal(24),
+        },
         star: {
             marginRight: scaleHorizontal(24),
         },

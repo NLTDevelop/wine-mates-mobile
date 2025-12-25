@@ -10,9 +10,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 export const useWineLook = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(true);
-    const [perlage, setPerlage] = useState(1);
-    const [appearance, setAppearance] = useState(1);
-    const [mousse, setMousse] = useState(1);
+    const [perlage, setPerlage] = useState(0);
+    const [appearance, setAppearance] = useState(0);
+    const [mousse, setMousse] = useState(0);
     const [shade, setShade] = useState(2);
     const [selectedColor, setSelectedColor] = useState<IWineColorShade | null>(null);
     const [isError, setIsError] = useState(false);

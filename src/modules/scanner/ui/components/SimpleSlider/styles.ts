@@ -7,7 +7,7 @@ export const getStyles = (colors: IColors, MARKER: number, TRACK_HEIGHT: number)
         container: {
             justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: scaleVertical(24),
+            marginBottom: scaleVertical(6),
         },
         wrap: {
             width: scaleHorizontal(311),

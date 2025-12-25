@@ -5,36 +5,80 @@ import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
+import { GenerateNoteDto } from '@/entities/wine/dto/GenerateNote.dto';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useWineReviewResult = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const [isError, setIsError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [note, setNote] = useState<string | null>(null);
     const isPremiumUser = userModel.user?.hasPremium || false;
 
-    const getNotes = useCallback(async () => {
+    const getNote = useCallback(async () => {
         try {
             setIsLoading(true);
 
-            // const payload = {
-            //     colorId: wineModel.base?.colorOfWine.id,
-            // };
+            if (!wineModel.look) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('common.somethingWentWrong'),
+                );
+                return;
+            }
 
-            // const response = await wineService.getSmells(payload);
+            const payload: GenerateNoteDto = {
+                wineId: wineModel.wine?.id || 0,
+                review: wineModel.review?.review.trim() || '',
+                color: wineModel.look,
+                aromas: (wineModel.selectedSmells || [])
+                    .filter(item => item.colorHex)
+                    .map(item => item.id),
+                flavors: (wineModel.selectedTastes || [])
+                    .filter(item => item.colorHex)
+                    .map(item => item.id),
+                tasteCharacteristics: (wineModel.tasteCharacteristics || [])
+                    .map(item => {
+                        const level = item.levels[item.selectedIndex ?? 0];
 
-            // if (response.isError || !response.data) {
-            //     if (response.message) {
-            //         toastService.showError(localization.t('common.errorHappened'), response.message);
-            //         setIsError(true);
-            //     }
-            // } else {
-            //     setIsError(false);
-            // }
-            setIsError(false);
+                        if (!level) {
+                            return null;
+                        }
+
+                        return {
+                            characteristicId: item.id,
+                            levelId: level.id,
+                        };
+                    })
+                    .filter((item): item is GenerateNoteDto['tasteCharacteristics'][number] => Boolean(item)),
+            };
+
+            if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
+                payload.userRating = wineModel.review?.starRate;
+            } else {
+                payload.expertRating = wineModel.review?.rate;
+            }
+
+            if (wineModel.base?.typeOfWine.isSparkling) {
+                payload.color = {
+                    ...payload.color,
+                    mousse: wineModel.look.mousse,
+                    perlage: wineModel.look.perlage,
+                    appearance: wineModel.look.appearance,
+                };
+            }
+
+            const response = await wineService.generateNote(payload);
+
+            if (response.isError || !response.data) {
+                if (response.message) {
+                    toastService.showError(localization.t('common.errorHappened'), response.message);
+                }
+            } else {
+                setNote(response.data.note);
+            }
         } catch (error) {
             console.error(JSON.stringify(error, null, 2));
         } finally {
@@ -43,8 +87,8 @@ export const useWineReviewResult = () => {
     }, []);
 
     useEffect(() => {
-        getNotes();
-    }, [getNotes]);
+        getNote();
+    }, [getNote]);
 
     const handleSavePress = useCallback(async () => {
         try {
@@ -193,5 +237,5 @@ export const useWineReviewResult = () => {
         }
     }, [navigation, isPremiumUser]);
 
-    return { handleSavePress, isError, getNotes, isLoading, isSaving };
+    return { handleSavePress, getNote, note, isLoading, isSaving };
 };
