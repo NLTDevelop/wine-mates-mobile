@@ -7,7 +7,7 @@ export const getStyles = (_colors: IColors) => {
         container: {
             flex: 1,
             marginHorizontal: scaleHorizontal(16),
-            justifyContent: 'space-between',
+            justifyContent: 'center',
         },
     });
     return styles;

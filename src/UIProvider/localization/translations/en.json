@@ -16,7 +16,8 @@
         "nothingFoundDescription": "We couldn't find any results for your query. Please check your spelling or try different keywords.",
         "confirm": "Confirm",
         "cancel": "Cancel",
-        "choose": "Choose"
+        "choose": "Choose",
+        "generate": "Generate"
     },
     "errors": {
         "somethingWentWrong": "Sorry, something went wrong",
@@ -170,7 +171,11 @@
         "tasteAgain": "Taste Again",
         "aromas": "Aromas",
         "tastes": "Tastes",
-        "rating": "Rating"
+        "rating": "Rating",
+        "foodPairing": "Food pairing",
+        "emptyFoodPairing": "Generate dishes that pair perfectly with the selected wine.",
+        "notesLeft": ["note left", "notes left", "notes left"],
+        "tastingNotes": "Tasting notes"
     },
     "savedWine": {
         "savedWine": "Saved wine",

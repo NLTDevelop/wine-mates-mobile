@@ -20,6 +20,7 @@ import { IWineReviewsListItem } from './types/IWineReviewsListItem';
 import { wineReviewsListModel } from './WineReviewsListModel';
 import { IWineDetails } from './types/IWineDetails';
 import { IWineSmellSearchParams } from './params/IWIneSmellSearchParams';
+import { GenerateNoteDto } from './dto/GenerateNote.dto';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -278,6 +279,21 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getReviewsList: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    generateNote = async (data: GenerateNoteDto): Promise<IResponse<{note: string}>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.generateNote}`,
+                data,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> generateNote: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

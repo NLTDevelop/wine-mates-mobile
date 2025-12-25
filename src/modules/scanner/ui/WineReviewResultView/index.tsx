@@ -10,42 +10,45 @@ import { SelectedParameters } from '../components/SelectedParameters';
 import { RateThisWine } from '../components/RateThisWine';
 import { Notes } from '../components/Notes';
 import { wineModel } from '@/entities/wine/WineModel';
-import { WithErrorHandler } from '@/UIKit/ErrorHandler';
-import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { useWineReviewResult } from '../../presenters/useWineReviewResult';
+import { FoodPairing } from '../components/FoodPairing';
+import { TastingNote } from '../components/TastingNote';
+import { useRefresh } from '@/hooks/useRefresh';
 
 export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { handleSavePress, isError, getNotes, isLoading, isSaving } = useWineReviewResult();
+    const { handleSavePress, note, isLoading, isSaving, getNote } = useWineReviewResult();
+    const { refreshControl } = useRefresh(getNote);
 
     return (
-        <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getNotes} isLoading={isLoading}>
-            <ScreenContainer
-                edges={['top', 'bottom']}
-                withGradient
-                headerComponent={<HeaderWithBackButton title={t('wine.review')} />}
-                scrollEnabled
-            >
-                <View style={styles.container}>
-                    <View>
-                        <RateThisWine
-                            sliderValue={wineModel.review?.rate || 0}
-                            starRate={wineModel.review?.starRate || 0}
-                            disabled={true}
-                        />
-                        <Notes />
-                        <SelectedParameters containerStyle={styles.selectedParameters} />
-                    </View>
-                    <Button
-                        text={t('common.save')}
-                        onPress={handleSavePress}
-                        containerStyle={styles.button}
-                        inProgress={isSaving}
+        <ScreenContainer
+            edges={['top', 'bottom']}
+            withGradient
+            headerComponent={<HeaderWithBackButton title={t('wine.review')} />}
+            scrollEnabled
+            refreshControl={refreshControl}
+        >
+            <View style={styles.container}>
+                <View>
+                    <RateThisWine
+                        sliderValue={wineModel.review?.rate || 0}
+                        starRate={wineModel.review?.starRate || 0}
+                        disabled={true}
                     />
+                    <Notes />
+                    <FoodPairing />
+                    <TastingNote note={note} isLoading={isLoading} />
+                    <SelectedParameters containerStyle={styles.selectedParameters} />
                 </View>
-            </ScreenContainer>
-        </WithErrorHandler>
+                <Button
+                    text={t('common.save')}
+                    onPress={handleSavePress}
+                    containerStyle={styles.button}
+                    inProgress={isSaving}
+                />
+            </View>
+        </ScreenContainer>
     );
 });
