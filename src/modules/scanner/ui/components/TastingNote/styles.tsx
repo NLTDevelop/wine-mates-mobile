@@ -9,9 +9,7 @@ export const getStyles = (colors: IColors) => {
             marginBottom: scaleVertical(24),
         },
         header: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            gap: scaleVertical(4),
             marginBottom: scaleVertical(16),
         },
         row: {
@@ -21,14 +19,30 @@ export const getStyles = (colors: IColors) => {
         },
         noteContainer: {
             borderRadius: 12,
-            borderWidth: 1,
-            borderColor: colors.border,
             paddingVertical: scaleVertical(14),
             paddingHorizontal: scaleHorizontal(16),
+            minHeight: scaleVertical(212),
+            backgroundColor: colors.background,
+            shadowColor: colors.shadow,
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 3,
+            elevation: 3,
         },
         text: {
             color: colors.primary,
-        }
+        },
+        loaderContainer: {
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: colors.border,
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: scaleVertical(212),
+        },
+        loaderText: {
+            color: colors.text_light,
+        },
     });
     return styles;
 };

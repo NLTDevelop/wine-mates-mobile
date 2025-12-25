@@ -7,8 +7,8 @@ import { PatternStripes } from '@assets/icons/PatternStripes';
 import { SliderMark } from '../SliderMark';
 import { scaleVertical } from '@/utils';
 
-const MIN = 1;
-const MAX = 5;
+const MIN = 0;
+const MAX = 4;
 const MARKER = scaleVertical(32);
 const MARKER_INNER = scaleVertical(22);
 const TRACK_HEIGHT = scaleVertical(16);

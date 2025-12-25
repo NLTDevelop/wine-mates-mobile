@@ -4,9 +4,9 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { CopyIcon } from '@assets/icons/CopyIcon';
-import { Loader } from '@/UIKit/Loader';
 import { useTastingNote } from '@/modules/scanner/presenters/useTastingNote';
 import { declOfWord } from '@/utils';
+import { NoteLoader } from '../NoteLoader';
 
 interface IProps {
     note: string | null;
@@ -32,7 +32,7 @@ export const TastingNote = ({ note, isLoading }: IProps) => {
                 <Typography variant="body_500" text={notesLeftText} style={styles.text}/>
             </View>
             {isLoading ? (
-                <Loader />
+                <NoteLoader />
             ) : note ? (
                 <View style={styles.noteContainer}>
                     <Typography variant="h6" text={note} />

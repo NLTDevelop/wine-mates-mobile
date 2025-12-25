@@ -13,6 +13,7 @@ export const FoodPairing = () => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { snacks, isGenerating, onGeneratePress } = useFoodPairing();
+    const hasSnacks = !!snacks && snacks.length > 0;
 
     return (
         <View style={styles.container}>
@@ -29,20 +30,29 @@ export const FoodPairing = () => {
                     disabled={!userModel.user?.hasPremium}
                 />
             </View>
-            {snacks ? (
-                <View style={styles.snacksContainer}>
-                    {snacks.map(snack => (
-                        <View key={snack.label} style={styles.item}>
-                            <Typography variant="h6" text={snack.label} />
-                            {snack.items.map(item => (
-                                <Typography key={item} variant="h6" text={`• ${item}`} style={styles.itemText} />
-                            ))}
+            <View style={styles.cardShadow}>
+                <View style={styles.card}>
+                    {hasSnacks ? (
+                        snacks.map(snack => (
+                            <View key={snack.label} style={styles.item}>
+                                <Typography variant="h6" text={snack.label} />
+                                {snack.items.map(item => (
+                                    <Typography
+                                        key={item}
+                                        variant="body_500"
+                                        text={`• ${item}`}
+                                        style={styles.itemText}
+                                    />
+                                ))}
+                            </View>
+                        ))
+                    ) : (
+                        <View style={styles.emptyContainer}>
+                            <Typography variant="body_500" text={t('wine.emptyFoodPairing')} style={styles.emptyText} />
                         </View>
-                    ))}
+                    )}
                 </View>
-            ) : (
-                <Typography variant="body_500" text={t('wine.emptyFoodPairing')} style={styles.emptyText} />
-            )}
+            </View>
         </View>
     );
 };

@@ -173,9 +173,10 @@
         "tastes": "Tastes",
         "rating": "Rating",
         "foodPairing": "Food pairing",
-        "emptyFoodPairing": "Generate dishes that pair perfectly with the selected wine.",
+        "emptyFoodPairing": "No food pairings yet. Click Generate to get food pairing recommendations for this wine.",
         "notesLeft": ["note left", "notes left", "notes left"],
-        "tastingNotes": "Tasting notes"
+        "tastingNotes": "Tasting notes",
+        "generationInProgress": "Generation in progress, please wait"
     },
     "savedWine": {
         "savedWine": "Saved wine",
