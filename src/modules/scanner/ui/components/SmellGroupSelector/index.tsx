@@ -7,6 +7,7 @@ import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { Typography } from '@/UIKit/Typography';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { IWineSmell } from '@/entities/wine/types/IWineSmell';
+import { getContrastColor } from '@/utils';
 
 interface IProps {
     data: IWineSmell[];
@@ -19,19 +20,29 @@ interface IProps {
 
 export const SmellGroupSelector = ({ data, selectedIndex, isOpened, onPress, handleLeftPress, handleRightPress }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, data[selectedIndex].colorHex), [colors, data, selectedIndex]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
+    const totalGroups = data.length;
+    const hasGroups = totalGroups > 0;
+    const prevIndex = hasGroups ? (selectedIndex === 0 ? totalGroups - 1 : selectedIndex - 1) : 0;
+    const nextIndex = hasGroups ? (selectedIndex === totalGroups - 1 ? 0 : selectedIndex + 1) : 0;
+    const currentColor = hasGroups ? data[selectedIndex].colorHex : colors.background;
+    const prevColor = hasGroups ? data[prevIndex].colorHex : colors.background;
+    const nextColor = hasGroups ? data[nextIndex].colorHex : colors.background;
+    const currentTextColor = getContrastColor(currentColor);
+    const prevTextColor = getContrastColor(prevColor);
+    const nextTextColor = getContrastColor(nextColor);
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button} onPress={handleLeftPress}>
-                <ArrowIcon width={20} height={20} />
+            <TouchableOpacity style={[styles.button, { backgroundColor: prevColor }]} onPress={handleLeftPress}>
+                <ArrowIcon width={20} height={20} color={prevTextColor} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.mainContainer} onPress={onPress}>
-                <Typography text={data[selectedIndex].name} variant="h6" style={styles.text}/>
-                <ArrowDownIcon rotate={isOpened ? 180 : 0} />
+            <TouchableOpacity style={[styles.mainContainer, { backgroundColor: currentColor }]} onPress={onPress}>
+                <Typography text={data[selectedIndex].name} variant="h6" style={{ color: currentTextColor }}/>
+                <ArrowDownIcon rotate={isOpened ? 180 : 0} color={currentTextColor} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleRightPress}>
-                <NextLongArrowIcon width={20} height={20} color={colors.icon} />
+            <TouchableOpacity style={[styles.button, { backgroundColor: nextColor }]} onPress={handleRightPress}>
+                <NextLongArrowIcon width={20} height={20} color={nextTextColor} />
             </TouchableOpacity>
         </View>
     );

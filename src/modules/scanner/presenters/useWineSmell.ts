@@ -141,6 +141,13 @@ export const useWineSmell = (onHide: () => void) => {
         setIsOpened(prevState => !prevState);
     }, []);
 
+    const handleGroupPress = useCallback((groupId: number) => {
+        const nextIndex = data.findIndex(group => group.id === groupId);
+        if (nextIndex === -1) return;
+        setSelectedIndex(nextIndex);
+        setIsOpened(true);
+    }, [data]);
+
     const handleLeftPress = useCallback(() => {
         if (data?.length) {
             setSelectedIndex(prevState => prevState === 0 ? data.length - 1 : prevState - 1);
@@ -172,5 +179,6 @@ export const useWineSmell = (onHide: () => void) => {
     return { 
         data, selected, isError, getSmells, isLoading, isOpened, onItemPress, toggleList, selectedIndex,
         handleLeftPress, handleRightPress, handleAddCustomSmell, onSelectedItemPress, handleNextPress, visibleSubgroups,
+        handleGroupPress,
     };
 };

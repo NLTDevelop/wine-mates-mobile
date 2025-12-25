@@ -17,7 +17,7 @@ import { useWineSmell } from '../../presenters/useWineSmell';
 import { SearchBar } from '@/UIKit/SearchBar';
 import { SelectedItemsList } from '../components/SelectedItemsList';
 import { SmellGroupSelector } from '../components/SmellGroupSelector';
-import { ISmellSubgroup } from '@/entities/wine/types/IWineSmell';
+import { ISmellSubgroup, IWineSmell } from '@/entities/wine/types/IWineSmell';
 import { SmellListItem } from '../components/SmellListItem';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { useAddItem } from '../../presenters/useAddItem';
@@ -34,19 +34,22 @@ export const WineSmellView = observer(() => {
 
     const { isVisible, onShowModal, onHide, selectData, selectedSubgroup, groupId } = useSelectModal();
     const { data, selected, isError, getSmells, isLoading, isOpened, onItemPress, toggleList, onSelectedItemPress, visibleSubgroups,
-        selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell, handleNextPress } = useWineSmell(onHide);
+        selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell, handleNextPress, handleGroupPress } = useWineSmell(onHide);
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
     const { isSearching, searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({
-        data,
-        selected,
-        onItemPress,
-        onSelectedItemPress,
-    });
+        data, selected, onItemPress, onSelectedItemPress });
     
-    const keyExtractor = useCallback((item: ISmellSubgroup | IWineAroma) => item.id.toString(), []);
+    const visibleGroups = useMemo(
+        () => data.filter(group => group.subgroups.some(subgroup => subgroup.aromas.length > 0)),
+        [data],
+    );
+    const keyExtractor = useCallback((item: ISmellSubgroup | IWineAroma | IWineSmell) => item.id.toString(), []);
     const renderItem = useCallback(({ item }: { item: ISmellSubgroup }) => (
         <SmellListItem item={item} onPress={() => onShowModal(data[selectedIndex].id, item)} />
     ), [data, onShowModal, selectedIndex]);
+    const renderGroupItem = useCallback(({ item }: { item: IWineSmell }) => (
+        <SmellListItem item={item} onPress={() => handleGroupPress(item.id)} />
+    ), [handleGroupPress]);
 
     const renderSearchItem = useCallback(({ item }: { item: IWineAroma }) => {
         const isSelected = selected.some(smell => smell.id === item.id);
@@ -91,20 +94,32 @@ export const WineSmellView = observer(() => {
                                 />
                             ) : (
                                 <>
-                                    <SmellGroupSelector
-                                        data={data}
-                                        isOpened={isOpened}
-                                        selectedIndex={selectedIndex}
-                                        onPress={toggleList}
-                                        handleLeftPress={handleLeftPress}
-                                        handleRightPress={handleRightPress}
-                                    />
-
-                                    {isOpened && visibleSubgroups.length > 0 && (
+                                    {isOpened ? (
+                                        <>
+                                            <SmellGroupSelector
+                                                data={data}
+                                                isOpened={isOpened}
+                                                selectedIndex={selectedIndex}
+                                                onPress={toggleList}
+                                                handleLeftPress={handleLeftPress}
+                                                handleRightPress={handleRightPress}
+                                            />
+                                            {visibleSubgroups.length > 0 && (
+                                                <FlatList
+                                                    data={visibleSubgroups}
+                                                    keyExtractor={keyExtractor}
+                                                    renderItem={renderItem}
+                                                    style={styles.list}
+                                                    contentContainerStyle={styles.contentContainer}
+                                                    nestedScrollEnabled
+                                                />
+                                            )}
+                                        </>
+                                    ) : (
                                         <FlatList
-                                            data={visibleSubgroups}
+                                            data={visibleGroups}
                                             keyExtractor={keyExtractor}
-                                            renderItem={renderItem}
+                                            renderItem={renderGroupItem}
                                             style={styles.list}
                                             contentContainerStyle={styles.contentContainer}
                                             nestedScrollEnabled

@@ -3,13 +3,13 @@ import { TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { IAroma, ISmellSubgroup } from '@/entities/wine/types/IWineSmell';
+import { IAroma, ISmellSubgroup, IWineSmell } from '@/entities/wine/types/IWineSmell';
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { IWineAroma } from '@/entities/wine/types/IWineAroma';
 import { TickIcon } from '@assets/icons/TickIcon';
 
 interface IProps {
-    item: ISmellSubgroup | IAroma | IWineTaste | IWineAroma;
+    item: ISmellSubgroup | IAroma | IWineTaste | IWineAroma | IWineSmell;
     onPress: () => void;
     isSelected?: boolean;
 }
