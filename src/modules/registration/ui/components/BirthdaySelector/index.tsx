@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
-import { Keyboard, TouchableOpacity, View } from 'react-native';
+import { Keyboard, TouchableOpacity } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
@@ -28,11 +28,9 @@ export const BirthdaySelector = ({ date, handlePress, isOpened, isError }: IProp
     }, [date, t]);
 
     return (
-        <View>
-            <TouchableOpacity style={isError ? styles.containerError : styles.container} onPress={handlePress} onPressIn={Keyboard.dismiss}>
-                <Typography variant="h6" text={formattedDate || t('registration.birthday')} />
-                <ArrowDownIcon rotate={isOpened ? 180 : 0} />
-            </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={isError ? styles.containerError : styles.container} onPress={handlePress} onPressIn={Keyboard.dismiss}>
+            <Typography variant="h6" text={formattedDate || t('registration.birthday')} />
+            <ArrowDownIcon rotate={isOpened ? 180 : 0} />
+        </TouchableOpacity>
     );
 };

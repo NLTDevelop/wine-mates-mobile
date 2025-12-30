@@ -94,7 +94,12 @@
         "birthdayTitle": "To sign up, you need to be at least 18 years.",
         "birthdayDescription": "Your birthday won’t be shared with other people who use WineMates",
         "createPassword": "Create password",
-        "confirmPassword": "Confirm password"
+        "confirmPassword": "Confirm password",
+        "instagramLink": "Instagram link",
+        "gender": "Gender",
+        "genderMale": "Male",
+        "genderFemale": "Female",
+        "placeOfWork": "Place of work"
     },
     "wineLevel": {
         "lover": "Wine lover",

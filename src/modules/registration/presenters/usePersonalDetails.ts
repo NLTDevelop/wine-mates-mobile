@@ -15,18 +15,23 @@ export const usePersonalDetails = () => {
         birthday: registerUserModel.user?.birthday || '',
         occupation: registerUserModel.user?.occupation || '',
         wineryName: registerUserModel.user?.wineryName || '',
+        instagramLink: registerUserModel.user?.instagramLink || '',
+        placeOfWork:  registerUserModel.user?.placeOfWork || '',
+        gender: registerUserModel.user?.gender || '',
     });
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const isDisabled = useMemo(() => {
-        const baseRequired = [form.firstName, form.lastName, form.birthday];
+        const baseRequired = [form.firstName, form.lastName, form.birthday, form.gender];
         const hasEmptyBase = baseRequired.some(field => !field.trim());
         const level = registerUserModel.user?.wineExperienceLevel;
         const requiresOccupation =
             level === WineExperienceLevelEnum.EXPERT && !form.occupation.trim();
         const requiresWineryName =
             level === WineExperienceLevelEnum.CREATOR && !form.wineryName.trim();
+        const expertRequires = 
+            level !== WineExperienceLevelEnum.LOVER && !form.placeOfWork.trim() && !form.instagramLink.trim();
 
-        return hasEmptyBase || requiresOccupation || requiresWineryName || isError.status;
+        return hasEmptyBase || requiresOccupation || requiresWineryName || expertRequires || isError.status;
     }, [form, isError]);
 
     const onChangeFirstName = useCallback((value: string) => {
@@ -54,6 +59,21 @@ export const usePersonalDetails = () => {
         setIsError({ status: false, errorText: '' });
     }, []);
 
+    const onChangeInstagramLink =  useCallback((value: string) => {
+        setForm(prev => ({ ...prev, instagramLink: value || '' }));
+        setIsError({ status: false, errorText: '' });
+    }, []);
+
+    const onChangeGender =  useCallback((value: string) => {
+        setForm(prev => ({ ...prev, gender: value || '' }));
+        setIsError({ status: false, errorText: '' });
+    }, []);
+
+    const onChangePlaceOfWork =  useCallback((value: string) => {
+        setForm(prev => ({ ...prev, placeOfWork: value || '' }));
+        setIsError({ status: false, errorText: '' });
+    }, []);
+
     const handleNextPress = useCallback(async () => {
         if (!registerUserModel.user) return;
 
@@ -74,12 +94,15 @@ export const usePersonalDetails = () => {
             firstName: form.firstName,
             lastName: form.lastName,
             birthday: form.birthday,
+            gender: form.gender,
         }
 
         if (registerUserModel.user.wineExperienceLevel === WineExperienceLevelEnum.EXPERT) {
             registerUserModel.user = {
                 ...registerUserModel.user,
                 occupation: form.occupation,
+                placeOfWork: form.placeOfWork,
+                instagramLink: form.instagramLink,
             }
         }
 
@@ -87,6 +110,8 @@ export const usePersonalDetails = () => {
             registerUserModel.user = {
                 ...registerUserModel.user,
                 wineryName: form.wineryName,
+                placeOfWork: form.placeOfWork,
+                instagramLink: form.instagramLink,
             }
         }
 
@@ -95,6 +120,6 @@ export const usePersonalDetails = () => {
 
     return { 
         form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
-        isError, isDisabled
+        isError, isDisabled, onChangeInstagramLink, onChangeGender, onChangePlaceOfWork
     };
 };
