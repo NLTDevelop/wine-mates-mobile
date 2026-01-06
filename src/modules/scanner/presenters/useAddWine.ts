@@ -122,11 +122,11 @@ export const useAddWine = () => {
             if (response.isError || !response.data) {
                 if (response.status === 409) {
                     const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
-                    //TODO Add correct wine data (wineModel.wine.id)
                     wineModel.wine = {
                         ...wineModel.wine,
-                        id: null,
-                        vintage: Number(form.vintageYear),
+                        id: Number(response.message || 0),
+                        vintage: Number(form.vintageYear.value),
+                        name: form.wineName.value || '',
                     };
                     wineModel.base = {
                         ...form,

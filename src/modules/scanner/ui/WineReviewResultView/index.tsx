@@ -42,15 +42,27 @@ export const WineReviewResultView = observer(() => {
                         />
                         <Notes />
                         <View style={styles.limitContainer}>
-                            <Typography variant="h6">
-                                {t('aiAttempts.label1')}{' '}
-                                <Typography
-                                    text={`${limits?.aiUsage.left ?? '-'}/${limits?.aiUsage.total ?? '-'}`}
-                                    variant="h5"
-                                    style={styles.countText}
-                                />{' '}
-                                {t('aiAttempts.label2')}
-                            </Typography>
+                            {limits?.aiUsage.left === 0 ? (
+                                <>
+                                    <Typography text={t('aiAttempts.label3')} />
+                                    <Typography text={t('aiAttempts.label4')} />
+                                    <Button
+                                        text={t('aiAttempts.subscribe')}
+                                        onPress={() => {}}
+                                        containerStyle={styles.subscribeButton}
+                                    />
+                                </>
+                            ) : (
+                                <Typography variant="h6">
+                                    {t('aiAttempts.label1')}{' '}
+                                    <Typography
+                                        text={`${limits?.aiUsage.left ?? '-'}/${limits?.aiUsage.total ?? '-'}`}
+                                        variant="h5"
+                                        style={styles.countText}
+                                    />{' '}
+                                    {t('aiAttempts.label2')}
+                                </Typography>
+                            )}
                         </View>
                         <FoodPairing limits={limits} setLimits={setLimits} />
                         <TastingNote note={note} isLoading={isLoading} limits={limits} onGeneratePress={getNote} />

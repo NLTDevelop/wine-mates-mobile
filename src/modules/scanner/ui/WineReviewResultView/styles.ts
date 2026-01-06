@@ -22,6 +22,10 @@ export const getStyles = (colors: IColors) => {
         selectedParameters: {
             marginHorizontal: scaleHorizontal(16),
         },
+        subscribeButton: {
+            marginTop: scaleVertical(8),
+            height: scaleVertical(36),
+        },
         button: {
             marginHorizontal: scaleHorizontal(16),
             marginBottom: scaleVertical(16),

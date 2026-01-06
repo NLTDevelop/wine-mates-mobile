@@ -187,7 +187,10 @@
     },
     "aiAttempts": {
         "label1": "You have ",
-        "label2": " attempts for Food Pairing and Tasting Notes."
+        "label2": " attempts for Food Pairing and Tasting Notes.",
+        "label3": "No attempts left for Food Pairing and Tasting Notes.",
+        "label4": "Subscribe to continue generating food pairings and tasting notes.",
+        "subscribe": "Subscribe"
     },
     "savedWine": {
         "savedWine": "Saved wine",
