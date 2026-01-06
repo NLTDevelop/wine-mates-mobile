@@ -11,4 +11,7 @@ export interface IRegisterUser {
     birthday: string;
     occupation?: string;
     wineryName?: string;
+    instagramLink? : string;
+    gender?: string;
+    placeOfWork?: string;
 }

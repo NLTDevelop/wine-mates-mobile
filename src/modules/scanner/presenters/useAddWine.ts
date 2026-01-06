@@ -120,7 +120,23 @@ export const useAddWine = () => {
             const response = await wineService.createWine(formData);
 
             if (response.isError || !response.data) {
-                if (response?.errors?.errors?.vintage) {
+                if (response.status === 409) {
+                    const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
+                    wineModel.wine = {
+                        ...wineModel.wine,
+                        id: Number(response.message || 0),
+                        vintage: Number(form.vintageYear.value),
+                        name: form.wineName.value || '',
+                    };
+                    wineModel.base = {
+                        ...form,
+                        typeOfWine: {
+                            ...form.typeOfWine,
+                            isSparkling: selectedType?.isSparkling,
+                        },
+                    };
+                    navigation.navigate('WineLookView');
+                } else if (response?.errors?.errors?.vintage) {
                     setIsVintageError({status: true, errorText: response.errors.errors.vintage[0]});
                 } else {
                     toastService.showError(

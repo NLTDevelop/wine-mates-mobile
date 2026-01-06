@@ -17,22 +17,34 @@ import { useBirthdaySelector } from '../../presenters/useBirthdaySelector';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
 import { getStyles } from './styles';
+import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
+import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 
 export const PersonalDetailsView = observer(() => {
     const { t, colors, locale, theme } = useUiContext();
     const { bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
+    const genderOptions = useMemo<IDropdownItem[]>(() => ([
+        { label: t('registration.genderMale'), value: 'male' },
+        { label: t('registration.genderFemale'), value: 'female' },
+    ]), [t]);
 
     const { form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
-        isError, isDisabled } = usePersonalDetails();
-    const { handlePress, isOpened, pickerDate, setPickerDate } =  useBirthdaySelector(onChangeBirthday);
+        isError, isDisabled, onChangeInstagramLink, onChangeGender, onChangePlaceOfWork } = usePersonalDetails();
+    const { handlePress, isOpened, pickerDate, setPickerDate, scrollRef } =  useBirthdaySelector(onChangeBirthday);
     const bottomInset = useMemo(
         () => ({ paddingBottom: isOpened ? 0 : bottom }),
         [bottom, isOpened],
     );
 
     return (
-        <ScreenContainer edges={['top']} headerComponent={<HeaderWithBackButton />} scrollEnabled isKeyboardAvoiding>
+        <ScreenContainer
+            edges={['top']}
+            headerComponent={<HeaderWithBackButton />}
+            scrollEnabled
+            isKeyboardAvoiding
+            scrollRef={scrollRef}
+        >
             <View style={[styles.container, bottomInset]}>
                 <View style={styles.mainContainer}>
                     <Typography text={t('registration.personalDetails')} variant="h3" style={styles.title} />
@@ -74,6 +86,13 @@ export const PersonalDetailsView = observer(() => {
                             />
                             {isError.status && <Warning warningText={isError.errorText} />}
                         </View>
+                        <CustomDropdown
+                            data={genderOptions}
+                            placeholder={t('registration.gender')}
+                            onPress={(item) => onChangeGender(item.value)}
+                            selectedValue={form.gender}
+                            containerStyle={styles.input}
+                        />
                         {registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT && (
                             <CustomInput
                                 autoCapitalize="none"
@@ -90,6 +109,26 @@ export const PersonalDetailsView = observer(() => {
                                 value={form.wineryName}
                                 onChangeText={onChangeWineryName}
                                 placeholder={t('registration.wineryName')}
+                                containerStyle={styles.input}
+                                onFocus={() => isOpened && handlePress()}
+                            />
+                        )}
+                        {registerUserModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
+                            <CustomInput
+                                autoCapitalize="none"
+                                value={form.instagramLink}
+                                onChangeText={onChangeInstagramLink}
+                                placeholder={t('registration.instagramLink')}
+                                containerStyle={styles.input}
+                                onFocus={() => isOpened && handlePress()}
+                            />
+                        )}
+                        {registerUserModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
+                            <CustomInput
+                                autoCapitalize="none"
+                                value={form.placeOfWork}
+                                onChangeText={onChangePlaceOfWork}
+                                placeholder={t('registration.placeOfWork')}
                                 containerStyle={styles.input}
                                 onFocus={() => isOpened && handlePress()}
                             />

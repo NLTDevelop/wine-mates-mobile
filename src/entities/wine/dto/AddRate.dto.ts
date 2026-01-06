@@ -1,3 +1,5 @@
+import type { IWineImage } from '../types/IWineImage';
+
 interface ITasteCharacteristic {
     characteristicId: number;
     levelId: number;
@@ -23,4 +25,5 @@ export interface AddRateDto {
         aromas?: string[];
         flavors?: string[];
     };
+    image?: IWineImage;
 }

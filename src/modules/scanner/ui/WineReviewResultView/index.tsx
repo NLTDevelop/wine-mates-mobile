@@ -13,14 +13,15 @@ import { wineModel } from '@/entities/wine/WineModel';
 import { useWineReviewResult } from '../../presenters/useWineReviewResult';
 import { FoodPairing } from '../components/FoodPairing';
 import { TastingNote } from '../components/TastingNote';
-import { useRefresh } from '@/hooks/useRefresh';
+import { Loader } from '@/UIKit/Loader';
+import { Typography } from '@/UIKit/Typography';
 
 export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { handleSavePress, note, isLoading, isSaving, getNote } = useWineReviewResult();
-    const { refreshControl } = useRefresh(getNote);
+    const { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits } =
+        useWineReviewResult();
 
     return (
         <ScreenContainer
@@ -28,27 +29,53 @@ export const WineReviewResultView = observer(() => {
             withGradient
             headerComponent={<HeaderWithBackButton title={t('wine.review')} />}
             scrollEnabled
-            refreshControl={refreshControl}
         >
-            <View style={styles.container}>
-                <View>
-                    <RateThisWine
-                        sliderValue={wineModel.review?.rate || 0}
-                        starRate={wineModel.review?.starRate || 0}
-                        disabled={true}
+            {isLoadingLimits ? (
+                <Loader />
+            ) : (
+                <View style={styles.container}>
+                    <View>
+                        <RateThisWine
+                            sliderValue={wineModel.review?.rate || 0}
+                            starRate={wineModel.review?.starRate || 0}
+                            disabled={true}
+                        />
+                        <Notes />
+                        <View style={styles.limitContainer}>
+                            {limits?.aiUsage.left === 0 ? (
+                                <>
+                                    <Typography text={t('aiAttempts.label3')} />
+                                    <Typography text={t('aiAttempts.label4')} />
+                                    <Button
+                                        text={t('aiAttempts.subscribe')}
+                                        onPress={() => {}}
+                                        containerStyle={styles.subscribeButton}
+                                    />
+                                </>
+                            ) : (
+                                <Typography variant="h6">
+                                    {t('aiAttempts.label1')}{' '}
+                                    <Typography
+                                        text={`${limits?.aiUsage.left ?? '-'}/${limits?.aiUsage.total ?? '-'}`}
+                                        variant="h5"
+                                        style={styles.countText}
+                                    />{' '}
+                                    {t('aiAttempts.label2')}
+                                </Typography>
+                            )}
+                        </View>
+                        <FoodPairing limits={limits} setLimits={setLimits} />
+                        <TastingNote note={note} isLoading={isLoading} limits={limits} onGeneratePress={getNote} />
+                        <SelectedParameters containerStyle={styles.selectedParameters} />
+                    </View>
+                    <Button
+                        text={t('common.save')}
+                        onPress={handleSavePress}
+                        containerStyle={styles.button}
+                        inProgress={isSaving}
                     />
-                    <Notes />
-                    <FoodPairing />
-                    <TastingNote note={note} isLoading={isLoading} />
-                    <SelectedParameters containerStyle={styles.selectedParameters} />
                 </View>
-                <Button
-                    text={t('common.save')}
-                    onPress={handleSavePress}
-                    containerStyle={styles.button}
-                    inProgress={isSaving}
-                />
-            </View>
+            )}
         </ScreenContainer>
     );
 });

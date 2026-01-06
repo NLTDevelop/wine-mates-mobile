@@ -10,7 +10,8 @@ import { IUser } from '@/entities/users/types/IUser';
 
 export const useCreateNewPassword = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { email, token, user } = useRoute().params as { email: string, token: string, user: IUser};
+    const { email, token, user, isFromSettings }
+        = useRoute().params as { email: string, token: string, user: IUser, isFromSettings: boolean };
     const [form, setForm] = useState({ password: '', confirmPassword: '' });
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const [isLoading, setIsLoading] = useState(false);
@@ -82,6 +83,7 @@ export const useCreateNewPassword = () => {
     }, [handleSavePress]);
 
     return { 
-        form, onChangePassword, onChangeConfirmPassword, isLoading, handleSavePress, isError, handleRetry, isDisabled
+        form, onChangePassword, onChangeConfirmPassword, isLoading, handleSavePress, isError, handleRetry, isDisabled,
+        isFromSettings
     };
 };

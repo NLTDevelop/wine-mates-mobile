@@ -26,8 +26,8 @@ export const useWineReviewsList = (id: number | null, getDetails: () => Promise<
     
             if (response.isError) {
                 toastService.showError(
-                    localization.t('errorHappened'),
-                    response.message || localization.t('somethingWentWrong'),
+                    localization.t('common.errorHappened'),
+                    response.message || localization.t('common.somethingWentWrong'),
                 );
             }
         } catch(error) {

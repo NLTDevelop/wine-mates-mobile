@@ -89,7 +89,7 @@ export const useWineSmell = (onHide: () => void) => {
             groupId,
             aroma: item,
         };
-        setSelected(prevState => [...prevState, addedSmell]);
+        setSelected(prevState => [addedSmell, ...prevState]);
         if (subgroupId && groupId) {
             setData(prevState =>
                 prevState.map(group => {
@@ -162,12 +162,12 @@ export const useWineSmell = (onHide: () => void) => {
 
     const handleAddCustomSmell = useCallback((text: string) => {
         setSelected(prevState => [
-            ...prevState,
             { 
                 id: Date.now() + Math.floor(Math.random() * 10000),
                 colorHex: null,
                 name: text,
             },
+            ...prevState,
         ]);
     }, []);
 

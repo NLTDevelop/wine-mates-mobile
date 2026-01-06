@@ -5,10 +5,14 @@ import { wineModel } from '@/entities/wine/WineModel';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useCallback, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
+import { IRateContext } from '@/entities/wine/types/IRateContext';
 
-export const useFoodPairing = () => {
+type SetLimits = Dispatch<SetStateAction<IRateContext | null>>;
+
+export const useFoodPairing = (limits: IRateContext | null, setLimits: SetLimits) => {
     const [isGenerating, setIsGenerating] = useState(false);
-    const [snacks, setSnacks] = useState<ISnack[] | null>(null);
+    const [snacks, setSnacks] = useState<ISnack[] | null>(limits?.snacks ?? null);
 
     const onGeneratePress = useCallback(async () => {
         try {
@@ -51,6 +55,18 @@ export const useFoodPairing = () => {
                     response.message || localization.t('common.somethingWentWrong'),
                 );
             } else {
+                setLimits(prevState => {
+                    if (!prevState) {
+                        return prevState;
+                    }
+                    return {
+                        ...prevState,
+                        aiUsage: {
+                            ...prevState.aiUsage,
+                            left: Math.max(0, prevState.aiUsage.left - 1),
+                        },
+                    };
+                });
                 setSnacks(response.data.snacks);
             }
         } catch (error) {
@@ -58,7 +74,7 @@ export const useFoodPairing = () => {
         } finally {
             setIsGenerating(false);
         }
-    }, []);
+    }, [setLimits]);
 
     return { snacks, isGenerating, onGeneratePress };
 };

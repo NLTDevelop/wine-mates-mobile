@@ -18,7 +18,7 @@ export const OTPView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { email, props, getCellOnLayoutHandler, ref, value, handleOTPValueChange, isError, isLoading, handleResetPress,
-        CELL_COUNT, timer, isResendDisabled, handleResendCode, handleRetry, isResetDisabled } = useOTP();
+        CELL_COUNT, timer, isResendDisabled, handleResendCode, handleRetry, isResetDisabled, isFromSettings } = useOTP();
     const formattedTimerValue = timer.toString().padStart(2, '0');
 
     return (
@@ -59,15 +59,16 @@ export const OTPView = () => {
                             />
                         </View>
                     </View>
-                    <View style={styles.footer}>
+                    <View>
                         <Button
                             text={t('authentication.resetPassword')}
                             onPress={handleResetPress}
                             type="secondary"
                             inProgress={isLoading}
                             disabled={isResetDisabled}
+                            containerStyle={styles.button}
                         />
-                        <SignUpFooter />
+                        {!isFromSettings && <SignUpFooter />}
                     </View>
                 </View>
             </ScreenContainer>

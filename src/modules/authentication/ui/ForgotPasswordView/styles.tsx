@@ -23,8 +23,8 @@ export const getStyles = (colors: IColors) => {
         input: {
             marginBottom: 0,
         },
-        footer: {
-            gap: scaleVertical(24),
+        button: {
+            marginBottom: scaleVertical(24),
         },
     });
     return styles;

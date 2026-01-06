@@ -27,6 +27,7 @@ export const COLORS: { light: IColors } = {
         text_middle: '#575757',
 
         icon: '#000000',
+        icon_inverted: '#FFFFFF',
         icon_primary: '#910D0D',
 
         unselectedSlider: '#E2E2E2',

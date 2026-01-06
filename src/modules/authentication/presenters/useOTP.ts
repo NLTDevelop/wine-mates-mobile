@@ -12,7 +12,7 @@ const CELL_COUNT = 4;
 export const useOTP = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { remaining, isActive, start: startTimer } = useOTPTimer();
-    const { email } = useRoute().params as { email: string };
+    const { email, isFromSettings } = useRoute().params as { email: string, isFromSettings: boolean };
     const [value, setValue] = useState('');
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
@@ -45,12 +45,12 @@ export const useOTP = () => {
                     setIsError({ status: true, errorText: ''});
                 }
             } else {
-                navigation.replace('CreateNewPasswordView', { email, token: response.data?.accessToken, user: response.data?.user });
+                navigation.replace('CreateNewPasswordView', { email, token: response.data?.accessToken, user: response.data?.user, isFromSettings });
             }
         } finally {
             setIsLoading(false);
         }
-    }, [navigation, value, email]);
+    }, [navigation, value, email, isFromSettings]);
 
     const handleResendCode = useCallback(async () => {
         try {
@@ -78,6 +78,6 @@ export const useOTP = () => {
 
     return { 
         email, props, getCellOnLayoutHandler, ref, value, handleOTPValueChange, isError, isLoading, handleResetPress, 
-        CELL_COUNT, timer: remaining, isResendDisabled, handleResendCode, handleRetry, isResetDisabled
+        CELL_COUNT, timer: remaining, isResendDisabled, handleResendCode, handleRetry, isResetDisabled, isFromSettings
     };
 };

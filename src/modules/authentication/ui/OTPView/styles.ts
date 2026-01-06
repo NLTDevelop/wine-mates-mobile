@@ -45,8 +45,8 @@ export const getStyles = (colors: IColors) => {
             borderBottomColor: colors.text,
             borderBottomWidth: 1,
         },
-        footer: {
-            gap: scaleVertical(24),
+        button: {
+            marginBottom: scaleVertical(24),
         },
     });
     return styles;

@@ -9,13 +9,13 @@ export const getStyles = (colors: IColors) => {
             marginBottom: scaleVertical(24),
         },
         header: {
-            gap: scaleVertical(4),
-            marginBottom: scaleVertical(16),
-        },
-        row: {
             flexDirection: 'row',
             alignItems: 'center',
-            gap: scaleHorizontal(12),
+            justifyContent: 'space-between',
+            marginBottom: scaleVertical(16),
+        },
+        headerTitleContainer: {
+            gap: scaleVertical(4),
         },
         noteContainer: {
             borderRadius: 12,
@@ -42,6 +42,14 @@ export const getStyles = (colors: IColors) => {
         },
         loaderText: {
             color: colors.text_light,
+        },
+        button: {
+            height: scaleVertical(36),
+            minWidth: scaleHorizontal(109),
+        },
+        copyButton: {
+            marginTop: scaleVertical(8),
+            alignSelf: 'flex-end',
         },
     });
     return styles;

@@ -63,7 +63,7 @@ export const useWineTaste = () => {
     }, []);
 
     const onItemPress = useCallback((item: IWineTaste) => {
-        setSelected(prevState => [...prevState, item]);
+        setSelected(prevState => [item, ...prevState]);
         setData(prevState => prevState.filter(taste => taste.id !== item.id));
     }, []);
 
@@ -77,12 +77,12 @@ export const useWineTaste = () => {
 
     const handleAddCustomTaste = useCallback((text: string) => {
         setSelected(prevState => [
-            ...prevState,
             { 
                 id: Date.now() + Math.floor(Math.random() * 10000),
                 colorHex: null,
                 name: text,
             },
+            ...prevState,
         ]);
     }, []);
 
