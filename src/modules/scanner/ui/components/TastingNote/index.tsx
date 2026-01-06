@@ -29,11 +29,10 @@ export const TastingNote = ({ note, isLoading, limits, onGeneratePress }: IProps
                     <Typography variant="subtitle_20_500" text={t('wine.tastingNotes')} />
                 </View>
                 <Button
-                    text={!limits || limits?.aiUsage.left === 0 ? t('wine.getAttempts') : t('common.generate')}
-                    onPress={!limits || limits?.aiUsage.left === 0 ? () => {} : onGeneratePress}
-                    type={!limits || limits?.aiUsage.left === 0 ? 'secondary': 'main'}
+                    text={t('common.generate')}
+                    onPress={ onGeneratePress}
                     containerStyle={styles.button}
-                    disabled={isLoading}
+                    disabled={isLoading || !limits || limits?.aiUsage.left === 0}
                 />
             </View>
             {isLoading ? (
