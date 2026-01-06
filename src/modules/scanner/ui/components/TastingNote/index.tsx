@@ -5,37 +5,52 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { CopyIcon } from '@assets/icons/CopyIcon';
 import { useTastingNote } from '@/modules/scanner/presenters/useTastingNote';
-import { declOfWord } from '@/utils';
 import { NoteLoader } from '../NoteLoader';
+import { Button } from '@/UIKit/Button';
+import { IRateContext } from '@/entities/wine/types/IRateContext';
 
 interface IProps {
     note: string | null;
     isLoading: boolean;
+    limits: IRateContext | null;
+    onGeneratePress: () => void;
 }
 
-export const TastingNote = ({ note, isLoading }: IProps) => {
+export const TastingNote = ({ note, isLoading, limits, onGeneratePress }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { onCopyPress } = useTastingNote(note);
-    const notesLeftText = declOfWord(10, t('wine.notesLeft') as unknown as Array<string>);
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.row}>
+                <View style={styles.headerTitleContainer}>
                     <Typography variant="subtitle_20_500" text={t('wine.tastingNotes')} />
-                    <TouchableOpacity onPress={onCopyPress} hitSlop={15}>
-                        <CopyIcon />
-                    </TouchableOpacity>
                 </View>
-                <Typography variant="body_500" text={notesLeftText} style={styles.text}/>
+                <Button
+                    text={!limits || limits?.aiUsage.left === 0 ? t('wine.getAttempts') : t('common.generate')}
+                    onPress={!limits || limits?.aiUsage.left === 0 ? () => {} : onGeneratePress}
+                    type={!limits || limits?.aiUsage.left === 0 ? 'secondary': 'main'}
+                    containerStyle={styles.button}
+                    disabled={isLoading}
+                />
             </View>
             {isLoading ? (
                 <NoteLoader />
             ) : note ? (
                 <View style={styles.noteContainer}>
                     <Typography variant="h6" text={note} />
+                    <TouchableOpacity style={styles.copyButton} onPress={onCopyPress} hitSlop={15}>
+                        <CopyIcon />
+                    </TouchableOpacity>
+                </View>
+            ) : limits?.note ? (
+                <View style={styles.noteContainer}>
+                    <Typography variant="h6" text={limits.note} />
+                    <TouchableOpacity style={styles.copyButton} onPress={onCopyPress} hitSlop={15}>
+                        <CopyIcon />
+                    </TouchableOpacity>
                 </View>
             ) : null}
         </View>

@@ -24,24 +24,27 @@ export const PersonalDetailsView = observer(() => {
     const { t, colors, locale, theme } = useUiContext();
     const { bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
-    const genderOptions = useMemo<IDropdownItem[]>(
-        () => ([
-            { label: t('registration.genderMale'), value: 'male' },
-            { label: t('registration.genderFemale'), value: 'female' },
-        ]),
-        [t],
-    );
+    const genderOptions = useMemo<IDropdownItem[]>(() => ([
+        { label: t('registration.genderMale'), value: 'male' },
+        { label: t('registration.genderFemale'), value: 'female' },
+    ]), [t]);
 
     const { form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
         isError, isDisabled, onChangeInstagramLink, onChangeGender, onChangePlaceOfWork } = usePersonalDetails();
-    const { handlePress, isOpened, pickerDate, setPickerDate } =  useBirthdaySelector(onChangeBirthday);
+    const { handlePress, isOpened, pickerDate, setPickerDate, scrollRef } =  useBirthdaySelector(onChangeBirthday);
     const bottomInset = useMemo(
         () => ({ paddingBottom: isOpened ? 0 : bottom }),
         [bottom, isOpened],
     );
 
     return (
-        <ScreenContainer edges={['top']} headerComponent={<HeaderWithBackButton />} scrollEnabled isKeyboardAvoiding>
+        <ScreenContainer
+            edges={['top']}
+            headerComponent={<HeaderWithBackButton />}
+            scrollEnabled
+            isKeyboardAvoiding
+            scrollRef={scrollRef}
+        >
             <View style={[styles.container, bottomInset]}>
                 <View style={styles.mainContainer}>
                     <Typography text={t('registration.personalDetails')} variant="h3" style={styles.title} />

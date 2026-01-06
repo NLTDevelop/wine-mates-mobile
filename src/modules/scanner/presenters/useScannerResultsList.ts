@@ -34,11 +34,11 @@ export const useScannerResultsList = () => {
 
         if (response.isError) {
             toastService.showError(
-                localization.t('errorHappened'),
-                response.message || localization.t('somethingWentWrong'),
+                localization.t('common.errorHappened'),
+                response.message || localization.t('common.somethingWentWrong'),
             );
         }
-
+     
         setIsLoading(false);
     }, []);
 

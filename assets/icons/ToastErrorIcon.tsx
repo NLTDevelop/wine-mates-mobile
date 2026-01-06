@@ -7,13 +7,11 @@ interface IProps {
     color?: string;
 }
 
-export const ToastErrorIcon = ({ width = 24, height = 24, color }: IProps) => (
-    <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 24 24" fill="none">
+export const ToastErrorIcon = ({ width = 32, height = 32, color }: IProps) => (
+    <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 32 32" fill="none">
         <Path
-            fill={color || '#FCFCFC'}
-            fillRule="evenodd"
-            d="m13.73 4 8 14A2 2 0 0 1 20 21H4a2 2 0 0 1-1.75-3l8-14a2 2 0 0 1 3.48 0ZM13 9a1 1 0 1 0-2 0v4a1 1 0 1 0 2 0V9Zm-1 7a1 1 0 0 0 0 2h.01a1 1 0 1 0 0-2H12Z"
-            clipRule="evenodd"
+            fill={color || '#fff'}
+            d="M16 3a13 13 0 1 0 13 13A13.013 13.013 0 0 0 16 3Zm-1 7a1 1 0 0 1 2 0v7a1 1 0 0 1-2 0v-7Zm1 13a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z"
         />
     </Svg>
 );

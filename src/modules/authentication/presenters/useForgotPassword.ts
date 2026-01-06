@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useValidator } from '@/hooks/useValidator';
@@ -9,6 +9,7 @@ import { toastService } from '@/libs/toast/toastService';
 
 export const useForgotPassword = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const { isFromSettings } = useRoute().params as { isFromSettings: boolean };
     const { validateEmail } = useValidator();
     const [email, setEmail] = useState('');
     const [isError, setIsError] = useState({ status: false, errorText: '' });
@@ -49,17 +50,17 @@ export const useForgotPassword = () => {
                 }
             } else {
                 startTimer();
-                navigation.navigate('OTPView', { email });
+                navigation.navigate('OTPView', { email, isFromSettings });
             }
         } finally {
             setIsLoading(false);
         }
-    }, [email, isActive, navigation, startTimer, validateEmail]);
+    }, [email, isActive, navigation, startTimer, validateEmail, isFromSettings]);
 
     const handleRetry = useCallback(() => {
         setIsError({ status: false, errorText: '' });
         handleSendPress();
     }, [handleSendPress]);
 
-    return { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled, handleRetry };
+    return { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled, handleRetry, isFromSettings };
 };

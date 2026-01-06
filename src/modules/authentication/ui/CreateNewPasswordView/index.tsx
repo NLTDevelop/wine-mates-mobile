@@ -17,7 +17,7 @@ export const CreateNewPasswordView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { form, onChangePassword, onChangeConfirmPassword, isLoading, handleSavePress, isError, handleRetry,
-        isDisabled } = useCreateNewPassword();
+        isDisabled, isFromSettings } = useCreateNewPassword();
 
     return (
         <WithErrorHandler
@@ -52,15 +52,16 @@ export const CreateNewPasswordView = () => {
                         />
                         {isError.status && <Warning warningText={isError.errorText} />}
                     </View>
-                    <View style={styles.footer}>
+                    <View>
                         <Button
                             text={t('common.save')}
                             onPress={handleSavePress}
                             type="secondary"
                             inProgress={isLoading}
                             disabled={isDisabled}
+                            containerStyle={styles.button}
                         />
-                        <SignUpFooter />
+                        {!isFromSettings && <SignUpFooter />}
                     </View>
                 </View>
             </ScreenContainer>

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import { View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -7,12 +7,18 @@ import { Button } from '@/UIKit/Button';
 import { CrownIcon } from '@assets/icons/CrownIcon';
 import { useFoodPairing } from '@/modules/scanner/presenters/useFoodPairing';
 import { userModel } from '@/entities/users/UserModel';
+import { IRateContext } from '@/entities/wine/types/IRateContext';
 
-export const FoodPairing = () => {
+interface IProps {
+    limits: IRateContext | null;
+    setLimits: Dispatch<SetStateAction<IRateContext | null>>;
+}
+
+export const FoodPairing = ({ limits, setLimits }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { snacks, isGenerating, onGeneratePress } = useFoodPairing();
+    const { snacks, isGenerating, onGeneratePress } = useFoodPairing(limits, setLimits);
     const hasSnacks = !!snacks && snacks.length > 0;
 
     return (

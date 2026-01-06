@@ -16,7 +16,8 @@ import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 export const ForgotPasswordView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled, handleRetry } = useForgotPassword();
+    const { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled, handleRetry, isFromSettings }
+        = useForgotPassword();
 
     return (
         <WithErrorHandler
@@ -43,15 +44,16 @@ export const ForgotPasswordView = () => {
                         />
                         {isError.status && <Warning warningText={isError.errorText} />}
                     </View>
-                    <View style={styles.footer}>
+                    <View>
                         <Button
                             text={t('authentication.sendCode')}
                             onPress={handleSendPress}
                             type="secondary"
                             inProgress={isLoading}
                             disabled={isSendDisabled}
+                            containerStyle={styles.button}
                         />
-                        <SignUpFooter />
+                        {!isFromSettings && <SignUpFooter />}
                     </View>
                 </View>
             </ScreenContainer>

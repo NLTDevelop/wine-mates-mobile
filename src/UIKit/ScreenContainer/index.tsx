@@ -4,7 +4,7 @@ import { Edge, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { Gradient } from '../Gradient';
-import { KeyboardAwareScrollView, KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import { KeyboardAwareScrollView, KeyboardAvoidingView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { scaleVertical } from '@/utils';
 
 interface IProps {
@@ -17,10 +17,11 @@ interface IProps {
     withGradient?: boolean;
     isKeyboardAvoiding?: boolean;
     refreshControl?: React.ReactElement<RefreshControlProps>;
+    scrollRef?: React.RefObject<KeyboardAwareScrollViewRef | null>;
 }
 
 export const ScreenContainer = ({ headerComponent, edges, children, scrollEnabled = false, containerStyle, contentContainerStyle,
-    withGradient = false, isKeyboardAvoiding = false, refreshControl,
+    withGradient = false, isKeyboardAvoiding = false, refreshControl, scrollRef,
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -64,6 +65,7 @@ export const ScreenContainer = ({ headerComponent, edges, children, scrollEnable
                             bottomOffset={bottomOffset}
                             refreshControl={refreshControl}
                             bounces={!!refreshControl}
+                            ref={scrollRef}
                         >
                             <Pressable style={styles.container} onPress={Keyboard.dismiss}>
                                 {children}
@@ -88,6 +90,7 @@ export const ScreenContainer = ({ headerComponent, edges, children, scrollEnable
                             style={styles.scroll}
                             refreshControl={refreshControl}
                             bounces={!!refreshControl}
+                            ref={scrollRef}
                         >
                             {children}
                         </ScrollView>

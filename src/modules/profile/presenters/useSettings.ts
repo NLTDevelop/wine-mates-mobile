@@ -35,7 +35,7 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
     }, [navigation]);
 
     const onChangePasswordPress = useCallback(() => {
-        navigation.navigate('ForgotPasswordView');
+        navigation.navigate('ForgotPasswordView', { isFromSettings: true });
     }, [navigation]);
 
     const onDeleteAccountPress = useCallback(() => {

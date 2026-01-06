@@ -9,13 +9,36 @@ import { GenerateNoteDto } from '@/entities/wine/dto/GenerateNote.dto';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
+import { IRateContext } from '@/entities/wine/types/IRateContext';
 
 export const useWineReviewResult = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const [isLoadingLimits, setIsLoadingLimits] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [note, setNote] = useState<string | null>(null);
+    const [limits, setLimits] = useState<IRateContext | null>(null);
     const isPremiumUser = userModel.user?.hasPremium || false;
+
+    const getLimits = useCallback(async () => {
+        try {
+            setIsLoadingLimits(true);
+
+            const response = await wineService.getLimits();
+
+            if (response.isError || !response.data) {
+                if (response.message) {
+                    toastService.showError(localization.t('common.errorHappened'), response.message);
+                }
+            } else {
+                setLimits(response.data);
+            }
+        } catch (error) {
+            console.error(JSON.stringify(error, null, 2));
+        } finally {
+            setIsLoadingLimits(false);
+        }
+    }, []);
 
     const getNote = useCallback(async () => {
         try {
@@ -77,6 +100,18 @@ export const useWineReviewResult = () => {
                     toastService.showError(localization.t('common.errorHappened'), response.message);
                 }
             } else {
+                setLimits(prevState => {
+                    if (!prevState) {
+                        return prevState;
+                    }
+                    return {
+                        ...prevState,
+                        aiUsage: {
+                            ...prevState.aiUsage,
+                            left: Math.max(0, prevState.aiUsage.left - 1),
+                        },
+                    };
+                });
                 setNote(response.data.note);
             }
         } catch (error) {
@@ -86,9 +121,23 @@ export const useWineReviewResult = () => {
         }
     }, []);
 
+    const load = useCallback(async (isActiveRef: { current: boolean }) => {
+        await getLimits();
+        if (!isActiveRef.current) {
+            return;
+        }
+        await getNote();
+    }, [getLimits, getNote]);
+
     useEffect(() => {
-        getNote();
-    }, [getNote]);
+        const isActiveRef = { current: true };
+
+        load(isActiveRef);
+
+        return () => {
+            isActiveRef.current = false;
+        };
+    }, [load]);
 
     const handleSavePress = useCallback(async () => {
         try {
@@ -110,7 +159,6 @@ export const useWineReviewResult = () => {
                 ?.filter(item => !item.colorHex)
                 ?.map(item => item.name || '');
 
-            //TODO: Add an image if the wine does not have an image
             const payload: AddRateDto = {
                 wineId: wineModel.wine?.id || 0,
                 review: wineModel.review?.review.trim() || '',
@@ -127,6 +175,10 @@ export const useWineReviewResult = () => {
                         levelId: item.levels[item.selectedIndex ?? 0]?.id || 0,
                     })) || [],
             };
+
+            if (wineModel.image) {
+                payload.image = wineModel.image;
+            }
 
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
                 payload.userRating = wineModel.review?.starRate;
@@ -237,5 +289,5 @@ export const useWineReviewResult = () => {
         }
     }, [navigation, isPremiumUser]);
 
-    return { handleSavePress, getNote, note, isLoading, isSaving };
+    return { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits };
 };
