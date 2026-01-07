@@ -31,7 +31,7 @@ export const useRegistration = () => {
 
     const onChangeEmail = useCallback((text: string) => {
         setIsError({ status: false, errorText: '' });
-        setEmail(text);
+        setEmail(text.trim());
     }, []);
 
     const clearPhone = useCallback(() => {
