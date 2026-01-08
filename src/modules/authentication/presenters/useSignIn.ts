@@ -46,7 +46,7 @@ export const useSignIn = () => {
     }, [navigation, form]);
 
     const forgotPasswordPress = useCallback(() => {
-        navigation.navigate('ForgotPasswordView');
+        navigation.navigate('ForgotPasswordView', { isFromSettings: false });
     }, [navigation]);
 
     const retrySignIn = useCallback(() => {
