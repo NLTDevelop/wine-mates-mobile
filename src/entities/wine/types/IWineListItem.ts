@@ -1,12 +1,27 @@
 import { IMedia } from '@/entities/media/types/IMedia';
 
 export interface IWineListItem {
-    createdAt: string;
-    grapeVariety: string;
     id: number;
-    image: IMedia;
     name: string;
-    producer: string | null;
-    userId: number;
     vintage: number;
+    producer: string;
+    grapeVariety: string;
+    userId: number;
+    createdAt: string;
+    image: IMedia;
+    averageUserRating: number;
+    totalReviews: number;
+    lastReview: {
+        review: string,
+        createdAt: string,
+        user: {
+            firstName: string,
+            lastName: string,
+            avatar: {
+                smallUrl: string,
+                mediumUrl: string,
+                originalUrl: string,
+            }
+        }
+    } | null;
 }

@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { wineModel } from '@/entities/wine/WineModel';
@@ -7,19 +7,34 @@ import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
+import { IAIData } from '@/entities/wine/types/IAIData';
 
 const createValue = (): IWineBaseValue => ({ id: null, value: '' });
 
-const createInitialForm = (): IWineBase => ({
-    typeOfWine: createValue(),
-    colorOfWine: createValue(),
-    country: createValue(),
-    region: createValue(),
-    producer: createValue(),
-    grapeVariety: createValue(),
-    vintageYear: createValue(),
-    wineName: createValue(),
-});
+const createInitialForm = (aiData?: IAIData | null): IWineBase => {
+    const baseForm: IWineBase = {
+        typeOfWine: createValue(),
+        colorOfWine: createValue(),
+        country: createValue(),
+        region: createValue(),
+        producer: createValue(),
+        grapeVariety: createValue(),
+        vintageYear: createValue(),
+        wineName: createValue(),
+    };
+
+    if (!aiData) {
+        return baseForm;
+    }
+
+    return {
+        ...baseForm,
+        producer: { ...baseForm.producer, value: aiData.producer ?? '' },
+        grapeVariety: { ...baseForm.grapeVariety, value: aiData.grapeVariety ?? '' },
+        vintageYear: { ...baseForm.vintageYear, value: aiData.vintage ? String(aiData.vintage) : '' },
+        wineName: { ...baseForm.wineName, value: aiData.name ?? '' },
+    };
+};
 
 const fromDropdown = (item?: IDropdownItem | null): IWineBaseValue => {
     if (!item) {
@@ -41,7 +56,9 @@ const fromDropdown = (item?: IDropdownItem | null): IWineBaseValue => {
 
 export const useAddWine = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const [form, setForm] = useState<IWineBase>(createInitialForm);
+    const route = useRoute();
+    const aiData = (route.params as { aiData?: IAIData | null } | undefined)?.aiData ?? null;
+    const [form, setForm] = useState<IWineBase>(() => createInitialForm(aiData));
     const [inProgress, setInProgress] = useState(false);
     const [isVintageError, setIsVintageError] = useState({status: false, errorText: ''});
     const isDisabled = useMemo(() => {
@@ -106,8 +123,8 @@ export const useAddWine = () => {
             const formData = new FormData();
             formData.append('name', form.wineName.value);
             formData.append('vintage', Number(form.vintageYear.value));
-            formData.append('countryId', 1);
-            formData.append('regionId', 1);
+            formData.append('countryId', form.country.id);
+            formData.append('regionId', form.region.id);
             formData.append('producer', form.producer.value);
             formData.append('grapeVariety', form.grapeVariety.value);
             formData.append('typeId', form.typeOfWine.id);

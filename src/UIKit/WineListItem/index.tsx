@@ -47,38 +47,40 @@ export const WineListItem = ({ item, onPress }: IProps) => {
                     />
                     <View style={styles.rateContainer}>
                         <StarIcon />
-                        <Typography variant="subtitle_12_500" text={item.review_average || '-'} />
+                        <Typography variant="subtitle_12_500" text={item.averageUserRating || '-'} />
                         <Typography
                             variant="subtitle_12_400"
                             text={`(${declOfWord(
-                                item.review_count || 0,
+                                item.totalReviews || 0,
                                 t('scanner.reviewCount') as unknown as Array<string>,
                             )})`}
                             style={styles.text}
                         />
                     </View>
                 </View>
-                <View style={styles.subContainer}>
-                    <View style={styles.userRow}>
-                        <Avatar
-                            avatarUrl={item?.user?.image_url || null}
-                            fullname={`${item?.user?.firstName} ${item?.user?.lastName}`}
-                            size={24}
-                        />
+                {item.lastReview && (
+                    <View style={styles.subContainer}>
+                        <View style={styles.userRow}>
+                            <Avatar
+                                avatarUrl={item?.lastReview?.user.avatar.originalUrl || null}
+                                fullname={`${item?.lastReview?.user.firstName} ${item?.lastReview?.user.lastName}`}
+                                size={24}
+                            />
+                            <Typography
+                                text={`${item?.lastReview?.user.firstName} ${item?.lastReview?.user.lastName}`}
+                                numberOfLines={1}
+                                style={styles.title}
+                                {...guard.bindText}
+                            />
+                        </View>
                         <Typography
-                            text={`${item?.user?.firstName} ${item?.user?.lastName}`}
-                            numberOfLines={1}
-                            style={styles.title}
-                            {...guard.bindText}
+                            variant="body_400"
+                            text={item.lastReview?.review ?? '-'}
+                            numberOfLines={3}
+                            style={styles.text}
                         />
                     </View>
-                    <Typography
-                        variant="body_400"
-                        text={item.description ?? '-'}
-                        numberOfLines={3}
-                        style={styles.text}
-                    />
-                </View>
+                )}
             </View>
         </Pressable>
     );
