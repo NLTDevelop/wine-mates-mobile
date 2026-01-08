@@ -7,54 +7,42 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { wineModel } from '@/entities/wine/WineModel';
-
-const LIMIT = 10;
-const OFFSET = 0;
+import { IAIData } from '@/entities/wine/types/IAIData';
 
 export const useScannerResultsList = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(false);
-    const data = wineListModel.list?.rows;
+    const [aiData, setAiData] = useState<IAIData | null>(null);
+    const [data, setData] = useState<IWineListItem[] | null>(null);
 
-    const getList = useCallback(async (offset: number) => {
+    const getList = useCallback(async () => {
         setIsLoading(true);
-
-        const params = {
-            limit: LIMIT,
-            offset
-        }
-
+     
         const formData = new FormData();
         
         if (wineModel.image) {
             formData.append('image', wineModel.image as any);
         }
 
-        const response = await wineService.list(params, formData);
+        const response = await wineService.list(formData);
 
-        if (response.isError) {
+        if (response.isError || !response.data) {
             toastService.showError(
                 localization.t('common.errorHappened'),
                 response.message || localization.t('common.somethingWentWrong'),
             );
+        } else if (response.data && 'aiData' in response.data) {
+            setAiData(response.data.aiData);
+        } else {
+            setData(response.data.raws);
         }
      
         setIsLoading(false);
     }, []);
 
-    const onRefresh = useCallback(
-        async (offset: number = OFFSET) => {
-            await getList(offset);
-        },
-        [getList],
-    );
-
-    const onEndReached = useCallback(async () => {
-        const list = wineListModel.list;
-        if (!isLoading && list && list.count > list.rows.length) {
-            await getList(list.rows.length);
-        }
-    }, [isLoading, getList]);
+    const onRefresh = useCallback(async () => {
+        await getList();
+    }, [getList]);
 
     useEffect(() => {
         Promise.resolve().then(() => {
@@ -71,8 +59,8 @@ export const useScannerResultsList = () => {
     },[navigation]);
 
     const handleAddWinePress = useCallback(() => {
-        navigation.navigate('AddWineView');
-    },[navigation]);
+        navigation.navigate('AddWineView', { aiData });
+    },[navigation, aiData]);
 
-    return { data, isLoading, onRefresh, onEndReached, handleItemPress, handleAddWinePress };
+    return { data, isLoading, onRefresh, handleItemPress, handleAddWinePress };
 };
