@@ -20,10 +20,6 @@ export const getStyles = (colors: IColors) => {
             ...StyleSheet.absoluteFill,
             zIndex: 5,
         },
-        fakeBlur: {
-            ...StyleSheet.absoluteFill,
-            backgroundColor: `${colors.background}A6`,
-        },
     });
     return styles;
 };

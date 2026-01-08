@@ -16,11 +16,12 @@ export const BlurContainer = ({ isLockIconCentered = false }: IProps) => {
 
     return (
         <>
-            {isIOS ? (
-                <BlurView style={styles.blur} blurType="light" blurAmount={7} />
-            ) : (
-                <View style={styles.fakeBlur} />
-            )}
+            <BlurView
+                style={styles.blur}
+                blurType={'light'}
+                blurAmount={isIOS ? 7 : 10}
+                reducedTransparencyFallbackColor={colors.background}
+            />
             <View style={isLockIconCentered ? styles.centeredLockLayer : styles.lockLayer}>
                 <LockIcon />
             </View>

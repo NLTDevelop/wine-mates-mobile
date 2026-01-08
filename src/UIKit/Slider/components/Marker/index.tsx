@@ -12,5 +12,9 @@ export const Marker = ({ size, trackHeight }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors, size, trackHeight), [colors, size, trackHeight]);
 
-    return <View style={styles.marker} />;
+    return (
+        <View style={styles.touchArea}>
+            <View style={styles.marker} />
+        </View>
+    );
 };

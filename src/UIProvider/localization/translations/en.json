@@ -17,7 +17,8 @@
         "confirm": "Confirm",
         "cancel": "Cancel",
         "choose": "Choose",
-        "generate": "Generate"
+        "generate": "Generate",
+        "copiedToClipboard": "Text copied to clipboard"
     },
     "errors": {
         "somethingWentWrong": "Sorry, something went wrong",

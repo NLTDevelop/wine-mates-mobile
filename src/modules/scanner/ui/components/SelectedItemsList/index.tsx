@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 import { TouchableOpacity, View, FlatList} from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -14,15 +14,33 @@ interface IProps {
     onPress: (item: IWineSelectedSmell | IWineTaste) => void;
 }
 
-export const SelectedItemsList = ({ data, onPress }: IProps) => {
+export interface SelectedItemsListRef {
+    scrollToStart: () => void;
+    setNewItemId: (id: number) => void;
+}
+
+export const SelectedItemsList = forwardRef<SelectedItemsListRef, IProps>(({ data, onPress }, ref) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { listRef, onScroll, scrollLeft, scrollRight } = useSelectedItemsList();
+    const [newItemId, setNewItemId] = useState<number | null>(null);
+
+    useImperativeHandle(ref, () => ({
+        scrollToStart: () => {
+            listRef.current?.scrollToOffset({ offset: 0, animated: true });
+        },
+        setNewItemId: (id: number) => {
+            setNewItemId(id);
+            setTimeout(() => setNewItemId(null), 600);
+        },
+    }), []);
 
     const keyExtractor = useCallback((item: IWineSelectedSmell | IWineTaste, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(
-        ({ item }: { item: IWineSelectedSmell | IWineTaste }) => <SelectedItems item={item} onPress={() => onPress(item)} />,
-        [onPress],
+        ({ item }: { item: IWineSelectedSmell | IWineTaste }) => (
+            <SelectedItems item={item} onPress={() => onPress(item)} isNew={item.id === newItemId} />
+        ),
+        [onPress, newItemId],
     );
 
     return (
@@ -49,4 +67,6 @@ export const SelectedItemsList = ({ data, onPress }: IProps) => {
             </TouchableOpacity>
         </View>
     );
-};
+});
+
+SelectedItemsList.displayName = 'SelectedItemsList';

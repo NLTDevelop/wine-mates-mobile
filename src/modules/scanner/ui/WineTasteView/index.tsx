@@ -19,6 +19,7 @@ import { CustomInput } from '@/UIKit/CustomInput';
 import { useAddItem } from '../../presenters/useAddItem';
 import { AddButton } from '../components/AddButton';
 import { useWineTaste } from '../../presenters/useWineTaste';
+import { useAnimatedItemAdd } from '../../presenters/useAnimatedItemAdd';
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { wineModel } from '@/entities/wine/WineModel';
 
@@ -26,8 +27,12 @@ export const WineTasteView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, selected, isError, getTastes, isLoading, onItemPress, onSelectedItemPress, handleAddCustomTaste,
+    const { data, selected, isError, getTastes, isLoading, onItemPress: originalOnItemPress, onSelectedItemPress, handleAddCustomTaste: originalHandleAddCustomTaste,
         handleNextPress } = useWineTaste();
+    
+    const [onItemPress, selectedListRef] = useAnimatedItemAdd(originalOnItemPress);
+    const [handleAddCustomTaste] = useAnimatedItemAdd(originalHandleAddCustomTaste);
+    
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomTaste);
 
     const keyExtractor = useCallback((item: IWineTaste, index: number) => `${item.id}-${index}`, []);
@@ -69,7 +74,7 @@ export const WineTasteView = observer(() => {
                                 RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
                                 containerStyle={styles.input}
                             />
-                            {selected.length > 0 && <SelectedItemsList data={selected} onPress={onSelectedItemPress} />}
+                            {selected.length > 0 && <SelectedItemsList ref={selectedListRef} data={selected} onPress={onSelectedItemPress} />}
                             <SelectedParameters />
                         </View>
                         <Button
