@@ -2,7 +2,7 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
         lockLayer: {
             position: 'absolute',

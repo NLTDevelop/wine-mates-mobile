@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
+import { forwardRef, useImperativeHandle, useMemo } from 'react';
 import { TouchableOpacity, View, FlatList} from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -8,40 +8,27 @@ import { SelectedItems } from '../SelectedItem';
 import { useSelectedItemsList } from '@/modules/scanner/presenters/useSelectedItemsList';
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
+import { SelectedItemsListRef } from './types';
 
 interface IProps {
     data: IWineSelectedSmell[] | IWineTaste[];
     onPress: (item: IWineSelectedSmell | IWineTaste) => void;
 }
 
-export interface SelectedItemsListRef {
-    scrollToStart: () => void;
-    setNewItemId: (id: number) => void;
-}
-
 export const SelectedItemsList = forwardRef<SelectedItemsListRef, IProps>(({ data, onPress }, ref) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { listRef, onScroll, scrollLeft, scrollRight } = useSelectedItemsList();
-    const [newItemId, setNewItemId] = useState<number | null>(null);
+    const { listRef, onScroll, scrollLeft, scrollRight, scrollToStart, handleSetNewItemId, keyExtractor, renderItem } = useSelectedItemsList(onPress);
 
     useImperativeHandle(ref, () => ({
-        scrollToStart: () => {
-            listRef.current?.scrollToOffset({ offset: 0, animated: true });
-        },
-        setNewItemId: (id: number) => {
-            setNewItemId(id);
-            setTimeout(() => setNewItemId(null), 600);
-        },
-    }), []);
+        scrollToStart,
+        setNewItemId: handleSetNewItemId,
+    }), [scrollToStart, handleSetNewItemId]);
 
-    const keyExtractor = useCallback((item: IWineSelectedSmell | IWineTaste, index: number) => `${item.id}-${index}`, []);
-    const renderItem = useCallback(
-        ({ item }: { item: IWineSelectedSmell | IWineTaste }) => (
-            <SelectedItems item={item} onPress={() => onPress(item)} isNew={item.id === newItemId} />
-        ),
-        [onPress, newItemId],
-    );
+    const renderListItem = ({ item }: { item: IWineSelectedSmell | IWineTaste }) => {
+        const itemProps = renderItem(item);
+        return <SelectedItems {...itemProps} />;
+    };
 
     return (
         <View style={styles.container}>
@@ -55,7 +42,7 @@ export const SelectedItemsList = forwardRef<SelectedItemsListRef, IProps>(({ dat
                 showsHorizontalScrollIndicator={false}
                 data={data}
                 keyExtractor={keyExtractor}
-                renderItem={renderItem}
+                renderItem={renderListItem}
                 style={styles.list}
                 contentContainerStyle={styles.contentContainer}
                 onScroll={onScroll}

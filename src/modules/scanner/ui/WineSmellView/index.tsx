@@ -41,7 +41,7 @@ export const WineSmellView = observer(() => {
     const [handleAddCustomSmell] = useAnimatedItemAdd(originalHandleAddCustomSmell);
     
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
-    const { isSearching, searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({
+    const { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({
         data, selected, onItemPress, onSelectedItemPress });
     
     const visibleGroups = useMemo(
@@ -92,8 +92,8 @@ export const WineSmellView = observer(() => {
                                     nestedScrollEnabled={true}
                                     ListEmptyComponent={
                                         <EmptyListView
-                                            isLoading={isSearching}
-                                            isNothingFound={!searchedAromas?.length}
+                                            isLoading={isSearching || isDebouncing}
+                                            isNothingFound={!searchedAromas?.length && !isSearching && !isDebouncing}
                                         />
                                     }
                                 />
