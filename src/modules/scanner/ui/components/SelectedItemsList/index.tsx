@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { forwardRef, useImperativeHandle, useMemo } from 'react';
 import { TouchableOpacity, View, FlatList} from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -8,22 +8,27 @@ import { SelectedItems } from '../SelectedItem';
 import { useSelectedItemsList } from '@/modules/scanner/presenters/useSelectedItemsList';
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
+import { SelectedItemsListRef } from './types';
 
 interface IProps {
     data: IWineSelectedSmell[] | IWineTaste[];
     onPress: (item: IWineSelectedSmell | IWineTaste) => void;
 }
 
-export const SelectedItemsList = ({ data, onPress }: IProps) => {
+export const SelectedItemsList = forwardRef<SelectedItemsListRef, IProps>(({ data, onPress }, ref) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { listRef, onScroll, scrollLeft, scrollRight } = useSelectedItemsList();
+    const { listRef, onScroll, scrollLeft, scrollRight, scrollToStart, handleSetNewItemId, keyExtractor, renderItem } = useSelectedItemsList(onPress);
 
-    const keyExtractor = useCallback((item: IWineSelectedSmell | IWineTaste, index: number) => `${item.id}-${index}`, []);
-    const renderItem = useCallback(
-        ({ item }: { item: IWineSelectedSmell | IWineTaste }) => <SelectedItems item={item} onPress={() => onPress(item)} />,
-        [onPress],
-    );
+    useImperativeHandle(ref, () => ({
+        scrollToStart,
+        setNewItemId: handleSetNewItemId,
+    }), [scrollToStart, handleSetNewItemId]);
+
+    const renderListItem = ({ item }: { item: IWineSelectedSmell | IWineTaste }) => {
+        const itemProps = renderItem(item);
+        return <SelectedItems {...itemProps} />;
+    };
 
     return (
         <View style={styles.container}>
@@ -37,7 +42,7 @@ export const SelectedItemsList = ({ data, onPress }: IProps) => {
                 showsHorizontalScrollIndicator={false}
                 data={data}
                 keyExtractor={keyExtractor}
-                renderItem={renderItem}
+                renderItem={renderListItem}
                 style={styles.list}
                 contentContainerStyle={styles.contentContainer}
                 onScroll={onScroll}
@@ -49,4 +54,6 @@ export const SelectedItemsList = ({ data, onPress }: IProps) => {
             </TouchableOpacity>
         </View>
     );
-};
+});
+
+SelectedItemsList.displayName = 'SelectedItemsList';

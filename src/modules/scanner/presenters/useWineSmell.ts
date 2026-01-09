@@ -108,6 +108,7 @@ export const useWineSmell = (onHide: () => void) => {
             );
         }
         onHide();
+        return item.id;
     }, [onHide]);
 
     const onSelectedItemPress = useCallback((item: IWineSelectedSmell) => {
@@ -161,14 +162,16 @@ export const useWineSmell = (onHide: () => void) => {
     }, [data]);
 
     const handleAddCustomSmell = useCallback((text: string) => {
+        const newId = Date.now() + Math.floor(Math.random() * 10000);
         setSelected(prevState => [
             { 
-                id: Date.now() + Math.floor(Math.random() * 10000),
+                id: newId,
                 colorHex: null,
                 name: text,
             },
             ...prevState,
         ]);
+        return newId;
     }, []);
 
     const handleNextPress = useCallback(() => {

@@ -65,6 +65,7 @@ export const useWineTaste = () => {
     const onItemPress = useCallback((item: IWineTaste) => {
         setSelected(prevState => [item, ...prevState]);
         setData(prevState => prevState.filter(taste => taste.id !== item.id));
+        return item.id;
     }, []);
 
     const onSelectedItemPress = useCallback((item: IWineTaste) => {
@@ -76,14 +77,16 @@ export const useWineTaste = () => {
     }, []);
 
     const handleAddCustomTaste = useCallback((text: string) => {
+        const newId = Date.now() + Math.floor(Math.random() * 10000);
         setSelected(prevState => [
             { 
-                id: Date.now() + Math.floor(Math.random() * 10000),
+                id: newId,
                 colorHex: null,
                 name: text,
             },
             ...prevState,
         ]);
+        return newId;
     }, []);
 
     const handleNextPress = useCallback(() => {

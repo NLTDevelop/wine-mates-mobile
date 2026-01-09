@@ -26,6 +26,7 @@ import { useSelectModal } from '../../presenters/useSelectModal';
 import { SelectModal } from '../components/SelectModal';
 import { IWineAroma } from '@/entities/wine/types/IWineAroma';
 import { useWineSmellSearch } from '../../presenters/useWineSmellSearch';
+import { useAnimatedItemAdd } from '../../presenters/useAnimatedItemAdd';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 
 export const WineSmellView = observer(() => {
@@ -33,10 +34,14 @@ export const WineSmellView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { isVisible, onShowModal, onHide, selectData, selectedSubgroup, groupId } = useSelectModal();
-    const { data, selected, isError, getSmells, isLoading, isOpened, onItemPress, toggleList, onSelectedItemPress, visibleSubgroups,
-        selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell, handleNextPress, handleGroupPress } = useWineSmell(onHide);
+    const { data, selected, isError, getSmells, isLoading, isOpened, onItemPress: originalOnItemPress, toggleList, onSelectedItemPress, visibleSubgroups,
+        selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell: originalHandleAddCustomSmell, handleNextPress, handleGroupPress } = useWineSmell(onHide);
+    
+    const [onItemPress, selectedListRef] = useAnimatedItemAdd(originalOnItemPress);
+    const [handleAddCustomSmell] = useAnimatedItemAdd(originalHandleAddCustomSmell);
+    
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
-    const { isSearching, searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({
+    const { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({
         data, selected, onItemPress, onSelectedItemPress });
     
     const visibleGroups = useMemo(
@@ -87,8 +92,8 @@ export const WineSmellView = observer(() => {
                                     nestedScrollEnabled={true}
                                     ListEmptyComponent={
                                         <EmptyListView
-                                            isLoading={isSearching}
-                                            isNothingFound={!searchedAromas?.length}
+                                            isLoading={isSearching || isDebouncing}
+                                            isNothingFound={!searchedAromas?.length && !isSearching && !isDebouncing}
                                         />
                                     }
                                 />
@@ -135,7 +140,7 @@ export const WineSmellView = observer(() => {
                                 RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
                                 containerStyle={styles.input}
                             />
-                            {selected.length > 0 && <SelectedItemsList data={selected} onPress={onSelectedItemPress} />}
+                            {selected.length > 0 && <SelectedItemsList ref={selectedListRef} data={selected} onPress={onSelectedItemPress} />}
                             <SelectedParameters />
                         </View>
                         <Button

@@ -18,11 +18,16 @@ interface IProps {
 export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItemPress }: IProps) => {
     const [search, setSearch] = useState('');
     const [isSearching, setIsSearching] = useState(false);
+    const [isDebouncing, setIsDebouncing] = useState(false);
 
     const getSearchedAromas = useCallback(async (query: string) => {
         try {
-            if (!query || !wineModel.base?.colorOfWine.id) return;
+            if (!query || !wineModel.base?.colorOfWine.id) {
+                wineModel.searchedAroma = null;
+                return;
+            }
 
+            setIsDebouncing(false);
             setIsSearching(true);
 
             const params = {
@@ -70,10 +75,17 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
 
     const onSearchTextChange = useCallback((value: string) => {
         setSearch(value);
+        if (value) {
+            setIsDebouncing(true);
+            wineModel.searchedAroma = null;
+        } else {
+            setIsDebouncing(false);
+            wineModel.searchedAroma = null;
+        }
         debouncedOnSearch(value);
     }, [debouncedOnSearch]);
 
     const searchedAromas = wineModel.searchedAroma;
         
-    return { isSearching, searchedAromas, search, onSearchTextChange, onSearchItemPress };
+    return { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress };
 };
