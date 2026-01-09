@@ -2,8 +2,6 @@ import { IRequester, IResponse, requester } from '@/libs/requester';
 import { ILinks, links } from '@/Links';
 import { IList } from '../IList';
 import { IWineListItem } from './types/IWineListItem';
-import { wineListModel } from './WineListModel';
-import { IWineListParams } from './types/IWineListParams';
 import { IWineColorShade } from './types/IWineColorShade';
 import { wineModel } from './WineModel';
 import { IWineType } from './types/IWineType';
@@ -22,28 +20,22 @@ import { IWineDetails } from './types/IWineDetails';
 import { IWineSmellSearchParams } from './params/IWIneSmellSearchParams';
 import { GenerateNoteDto } from './dto/GenerateNote.dto';
 import { IRateContext } from './types/IRateContext';
+import { IAIData } from './types/IAIData';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
 
-    list = async (params: IWineListParams, data: FormData): Promise<IResponse<IList<IWineListItem>>> => {
+    list = async ( data: FormData): Promise<IResponse<{raws: IWineListItem[]} | { aiData: IAIData }>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
                 url: `${this._links.scannedWines}`,
-                params,
                 data,
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            if (!response.isError) {
-                if (params.offset === 0) {
-                    wineListModel.list = response.data;
-                } else {
-                    wineListModel.append(response.data);
-                }
-            }
+         
             return response;
         } catch (error) {
             console.warn('WineService -> list: ', error);
@@ -196,7 +188,7 @@ class WineService {
                 url: `${this._links.wineAromas}`,
                 params,
             });
-
+            
             if (!response.isError) {
                 wineModel.searchedAroma = response.data;
             }

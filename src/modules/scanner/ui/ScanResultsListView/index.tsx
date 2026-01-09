@@ -19,7 +19,7 @@ export const ScanResultsListView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, isLoading, onRefresh, onEndReached, handleItemPress, handleAddWinePress } = useScannerResultsList();
+    const { data, isLoading, onRefresh, handleItemPress, handleAddWinePress } = useScannerResultsList();
     const { refreshControl } = useRefresh(onRefresh);
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
@@ -37,7 +37,6 @@ export const ScanResultsListView = observer(() => {
             <Typography text={t('scanner.resultsTitle')} variant="body_400" style={styles.title} />
             <View style={styles.container}>
                 <FlatList
-                    onEndReached={onEndReached}
                     refreshControl={refreshControl}
                     data={data || []}
                     keyExtractor={keyExtractor}
