@@ -62,7 +62,7 @@ export const WineListItem = ({ item, onPress }: IProps) => {
                     <View style={styles.subContainer}>
                         <View style={styles.userRow}>
                             <Avatar
-                                avatarUrl={item?.lastReview?.user.avatar.originalUrl || null}
+                                avatarUrl={item?.lastReview?.user.avatar?.originalUrl || null}
                                 fullname={`${item?.lastReview?.user.firstName} ${item?.lastReview?.user.lastName}`}
                                 size={24}
                             />

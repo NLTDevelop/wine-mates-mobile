@@ -11,12 +11,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 
-// const MOCK = {
-//      aiUsage: { total: 100, left: 10 },
-//         snacks: null,
-//         note: null,
-// }
-
 export const useWineReviewResult = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoadingLimits, setIsLoadingLimits] = useState(true);
@@ -28,9 +22,13 @@ export const useWineReviewResult = () => {
 
     const getLimits = useCallback(async () => {
         try {
+            if (!wineModel.wine?.id) return;
+
             setIsLoadingLimits(true);
-            // setLimits(MOCK)
-            const response = await wineService.getLimits();
+
+            const params = { wineId: wineModel.wine?.id };
+            
+            const response = await wineService.getLimits(params);
 
             if (response.isError || !response.data) {
                 if (response.message) {
