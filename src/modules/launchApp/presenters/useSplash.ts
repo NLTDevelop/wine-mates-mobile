@@ -1,3 +1,4 @@
+import { userModel } from '@/entities/users/UserModel';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
@@ -7,12 +8,11 @@ export const useSplash = () => {
 
     useEffect(() => {
         setTimeout(() => {
-            // if (userModel.token) {
-            //     navigation.reset({ index: 0, routes: [{ name: 'TabNavigator', params: { screen: 'Home' } }] });
-            // } else {
-            //     navigation.reset({ index: 0, routes: [{ name: 'WelcomeView' }] });
-            // }
-            navigation.reset({ index: 0, routes: [{ name: 'WelcomeView' }] });
+            if (userModel.token) {
+                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
+            } else {
+                navigation.reset({ index: 0, routes: [{ name: 'WelcomeView' }] });
+            }
         }, 2000);
     }, [navigation]);
 };

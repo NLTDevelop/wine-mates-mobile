@@ -10,7 +10,7 @@ import { ILocalization } from './ILocalization';
 class Localization implements ILocalization {
     private i18n: I18n;
 
-    constructor(private localizationStore: IRepository<string>, private storage: IStorage) {
+    constructor(private localizationStore: IRepository<string>, private _storage: IStorage) {
         this.i18n = new I18n();
         this.i18n.enableFallback = true;
         this.i18n.translations = { uk, en };
@@ -20,31 +20,33 @@ class Localization implements ILocalization {
 
     private load = () => {
         try {
-            let language = this.storage.get('LANGUAGE');
+            const supportedLocales = Object.keys(this.i18n.translations);
 
-            if (!language) {
-                const locales = RNLocalize.getLocales();
-                if (locales && locales.length > 0) {
-                    const deviceLang = locales[0].languageCode;
-                    if (Object.keys(this.i18n.translations).includes(deviceLang)) {
-                        language = deviceLang;
-                    } else {
-                        language = 'en';
-                    }
-                } else {
-                    language = 'en';
-                }
-                this.localizationStore.save(language);
-                this.persistLanguage(language);
+            const savedLanguage = this._storage.get('LANGUAGE');
+            const locales = RNLocalize.getLocales();
+            const deviceLang = locales?.[0]?.languageCode;
+
+            let finalLanguage: string | null = null;
+
+            if (savedLanguage && supportedLocales.includes(savedLanguage)) {
+                finalLanguage = savedLanguage;
+            } else if (deviceLang && supportedLocales.includes(deviceLang)) {
+                finalLanguage = deviceLang;
+            } else {
+                finalLanguage = 'en';
             }
 
-            const translations = this.storage.get('TRANSLATIONS');
+            if (finalLanguage !== savedLanguage) {
+                this.persistLanguage(finalLanguage);
+            }
+    
+            const translations = this._storage.get('TRANSLATIONS');
             if (translations) {
                 this.i18n.translations = translations;
             }
-
-            this.i18n.locale = language;
-            this.localizationStore.save(language);
+            
+            this.i18n.locale = finalLanguage;
+            this.localizationStore.save(finalLanguage);
         } catch (error) {
             console.warn('Localization -> load: ', error);
             this.localizationStore.save('en');
@@ -54,15 +56,15 @@ class Localization implements ILocalization {
 
     private persistLanguage = (data: string | null) => {
         if (data) {
-            this.storage.set('LANGUAGE', data);
+            this._storage.set('LANGUAGE', data);
         } else {
-            this.storage.remove('LANGUAGE');
+            this._storage.remove('LANGUAGE');
         }
     };
 
     private persistTranslations = (data: object) => {
         if (data) {
-            this.storage.set('TRANSLATIONS', data);
+            this._storage.set('TRANSLATIONS', data);
         }
     };
 

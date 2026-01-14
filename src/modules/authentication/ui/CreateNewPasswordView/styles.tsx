@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleLineHeight, scaleVertical } from '@/utils';
+import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -18,13 +18,13 @@ export const getStyles = (colors: IColors) => {
             textAlign: 'center',
             marginBottom: scaleVertical(16),
             marginHorizontal: scaleHorizontal(65),
-            lineHeight: scaleLineHeight(22),
+            lineHeight: scaleFontSize(14) * 1.4,
         },
         input: {
             marginBottom: 0,
         },
-        footer: {
-            gap: scaleVertical(24),
+        button: {
+            marginBottom: scaleVertical(24),
         },
     });
     return styles;

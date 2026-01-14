@@ -1,0 +1,41 @@
+import { StyleSheet } from 'react-native';
+import { IColors } from '@/UIProvider/theme/IColors';
+import { scaleHorizontal, scaleVertical } from '@/utils';
+
+export const getStyles = (colors: IColors) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            justifyContent: 'space-between',
+            paddingHorizontal: scaleHorizontal(16),
+        },
+        title: {
+            textAlign: 'center',
+            color: colors.text_light,
+            marginBottom: scaleVertical(24),
+        },
+        label: {
+            marginBottom: scaleVertical(12),
+        },
+        colorsContainer: {
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            columnGap: scaleHorizontal(7),
+            rowGap: scaleVertical(12),
+            marginBottom: scaleVertical(24),
+        },
+        resultColor: {
+            borderRadius: 12,
+            width: scaleHorizontal(109),
+            height: scaleVertical(50),
+            marginBottom: scaleVertical(24),
+        },
+        button: {
+            marginBottom: scaleVertical(16),
+        },
+        bottomValues: {
+            marginBottom: scaleVertical(24),
+        },
+    });
+    return styles;
+};

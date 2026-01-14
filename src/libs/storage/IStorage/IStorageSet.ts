@@ -1,3 +1,3 @@
 export interface IStorageSet {
-    set: (service: string, payload: object | string | number) => boolean;
+    set: (service: string, payload: object | string | number | boolean) => boolean;
 }

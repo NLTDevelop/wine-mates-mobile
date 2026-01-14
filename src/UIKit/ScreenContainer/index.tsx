@@ -1,28 +1,32 @@
 import { useMemo } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, ViewStyle, View } from 'react-native';
+import { ViewStyle, View, Keyboard, Pressable, ScrollView, RefreshControlProps } from 'react-native';
 import { Edge, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Gradient } from '../Gradient';
+import { KeyboardAwareScrollView, KeyboardAvoidingView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import { scaleVertical } from '@/utils';
 
 interface IProps {
     edges?: Edge[];
     children?: React.ReactNode;
     scrollEnabled?: boolean;
-    keyboardShouldPersistTaps?: boolean;
     containerStyle?: ViewStyle;
     contentContainerStyle?: ViewStyle;
     headerComponent?: React.ReactNode;
+    withGradient?: boolean;
     isKeyboardAvoiding?: boolean;
-    isBottomPadding?: boolean;
+    refreshControl?: React.ReactElement<RefreshControlProps>;
+    scrollRef?: React.RefObject<KeyboardAwareScrollViewRef | null>;
 }
 
-export const ScreenContainer = ({ isBottomPadding, isKeyboardAvoiding, headerComponent, edges, children, scrollEnabled = false, keyboardShouldPersistTaps = true, containerStyle, contentContainerStyle }: IProps) => {
+export const ScreenContainer = ({ headerComponent, edges, children, scrollEnabled = false, containerStyle, contentContainerStyle,
+    withGradient = false, isKeyboardAvoiding = false, refreshControl, scrollRef,
+}: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, isBottomPadding, scrollEnabled), [colors, isBottomPadding, scrollEnabled]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
     const safeAreaInsets = useSafeAreaInsets();
-
-    const avoidingBehavior: 'padding' | undefined = Platform.select({ ios: 'padding', android: undefined }) || undefined;
+    const bottomOffset = useMemo(() => (scaleVertical(24)), []);
 
     const edgesStyle = useMemo(() => {
         const result: any = {};
@@ -45,23 +49,56 @@ export const ScreenContainer = ({ isBottomPadding, isKeyboardAvoiding, headerCom
     }, [safeAreaInsets, edges]);
 
     return (
-        <View style={[styles.container, edgesStyle]} >
+        <View style={[styles.mainContainer, edgesStyle]}>
+            {withGradient && <Gradient />}
             {!!headerComponent && headerComponent}
-            <KeyboardAvoidingView enabled={isKeyboardAvoiding} style={[styles.keyboardAvoidingContainer, containerStyle]} behavior={avoidingBehavior} onStartShouldSetResponder={keyboardShouldPersistTaps ? Keyboard.dismiss : undefined as any}>
-                {scrollEnabled
-                    ? <ScrollView
-                        scrollEnabled={scrollEnabled}
-                        bounces={false}
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
-                        style={styles.scroll}
-                        keyboardDismissMode="interactive"
-                        keyboardShouldPersistTaps={'handled'}
-                    >
-                        {children}
-                    </ScrollView>
-                    : children}
-            </KeyboardAvoidingView>
+
+            {isKeyboardAvoiding ? (
+                <>
+                    {scrollEnabled ? (
+                        <KeyboardAwareScrollView
+                            showsVerticalScrollIndicator={false}
+                            keyboardShouldPersistTaps="handled"
+                            nestedScrollEnabled
+                            contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
+                            style={styles.scroll}
+                            bottomOffset={bottomOffset}
+                            refreshControl={refreshControl}
+                            bounces={!!refreshControl}
+                            ref={scrollRef}
+                        >
+                            <Pressable style={styles.container} onPress={Keyboard.dismiss}>
+                                {children}
+                            </Pressable>
+                        </KeyboardAwareScrollView>
+                    ) : (
+                        <KeyboardAvoidingView style={[styles.container, containerStyle]}>
+                            <Pressable style={styles.container} onPress={Keyboard.dismiss}>
+                                {children}
+                            </Pressable>
+                        </KeyboardAvoidingView>
+                    )}
+                </>
+            ) : (
+                <>
+                    {scrollEnabled ? (
+                        <ScrollView
+                            showsVerticalScrollIndicator={false}
+                            keyboardShouldPersistTaps="handled"
+                            nestedScrollEnabled
+                            contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
+                            style={styles.scroll}
+                            refreshControl={refreshControl}
+                            bounces={!!refreshControl}
+                            ref={scrollRef}
+                        >
+                            {children}
+                        </ScrollView>
+                    ) : (
+                        <View style={[styles.container, containerStyle]}>{children}</View>
+                    )}
+                </>
+            )}
         </View>
     );
 };

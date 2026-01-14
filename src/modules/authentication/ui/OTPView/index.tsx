@@ -11,56 +11,67 @@ import { OTP } from '@/modules/authentication/ui/components/OTP';
 import { useOTP } from '@/modules/authentication/presenters/useOTP';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
 import { TextButton } from '@/modules/authentication/ui/components/TextButton';
+import { WithErrorHandler } from '@/UIKit/ErrorHandler';
+import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 
 export const OTPView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { email, props, getCellOnLayoutHandler, ref, value, handleOTPValueChange, isError, isLoading, handleResetPress,
-        CELL_COUNT, timer, isResendDisabled, handleResendCode } = useOTP();
+        CELL_COUNT, timer, isResendDisabled, handleResendCode, handleRetry, isResetDisabled, isFromSettings } = useOTP();
+    const formattedTimerValue = timer.toString().padStart(2, '0');
 
     return (
-        <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
-            <View style={styles.container}>
-                <View>
-                    <Typography text={t('authentication.resetYourPassword')} variant="h3" style={styles.title} />
-                    <View style={styles.textContainer}>
-                        <Typography variant="body_400" style={styles.descriptionText}>
-                            {`${t('authentication.otpDescription')} `}
-                            <Typography text={email} variant="body_400" />
-                        </Typography>
+        <WithErrorHandler error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null} onRetry={handleRetry}>
+            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding scrollEnabled>
+                <View style={styles.container}>
+                    <View>
+                        <Typography text={t('authentication.enterConfirmationCode')} variant="h3" style={styles.title} />
+                        <View style={styles.textContainer}>
+                            <Typography variant="body_400" style={styles.descriptionText}>
+                                {`${t('authentication.otpDescription')} `}
+                                <Typography text={email} variant="body_400" />
+                            </Typography>
+                        </View>
+                        <View style={styles.otpContainer}>
+                            <OTP
+                                value={value}
+                                setValue={handleOTPValueChange as React.Dispatch<React.SetStateAction<string>>}
+                                ref={ref}
+                                props={props}
+                                getCellOnLayoutHandler={getCellOnLayoutHandler}
+                                cellCount={CELL_COUNT}
+                                isError={isError.status}
+                            />
+                        </View>
+                        {isError.status && <Warning warningText={isError.errorText} />}
+                        <View style={styles.resendContainer}>
+                            <Typography text={t('authentication.receiveCode')} variant="body_400" style={styles.text} />
+                            <TextButton
+                                text={
+                                    isResendDisabled
+                                        ? `${t('authentication.resend')} (0:${formattedTimerValue})`
+                                        : t('authentication.resend')
+                                }
+                                onPress={handleResendCode}
+                                textStyles={isResendDisabled ? styles.textButtonDisabled : styles.textButtonText}
+                                disabled={isResendDisabled}
+                            />
+                        </View>
                     </View>
-                    <View style={styles.otpContainer}>
-                        <OTP
-                            value={value}
-                            setValue={handleOTPValueChange as React.Dispatch<React.SetStateAction<string>>}
-                            ref={ref}
-                            props={props}
-                            getCellOnLayoutHandler={getCellOnLayoutHandler}
-                            cellCount={CELL_COUNT}
-                            isError={isError.status}
+                    <View>
+                        <Button
+                            text={t('authentication.resetPassword')}
+                            onPress={handleResetPress}
+                            type="secondary"
+                            inProgress={isLoading}
+                            disabled={isResetDisabled}
+                            containerStyle={styles.button}
                         />
-                    </View>
-                    {isError.status && <Warning warningText={isError.errorText} />}
-                    <View style={styles.resendContainer}>
-                        <Typography text={t('authentication.receiveCode')} variant="body_400" style={styles.text} />
-                        <TextButton
-                            text={isResendDisabled ? `${t('authentication.resend')} (0:${timer})` : t('authentication.resend')}
-                            onPress={handleResendCode}
-                            textStyles={isResendDisabled ? styles.textButtonDisabled : styles.textButtonText}
-                            disabled={isResendDisabled}
-                        />
+                        {!isFromSettings && <SignUpFooter />}
                     </View>
                 </View>
-                <View style={styles.footer}>
-                    <Button
-                        text={t('authentication.resetPassword')}
-                        onPress={handleResetPress}
-                        type="secondary"
-                        inProgress={isLoading}
-                    />
-                    <SignUpFooter />
-                </View>
-            </View>
-        </ScreenContainer>
+            </ScreenContainer>
+        </WithErrorHandler>
     );
 };

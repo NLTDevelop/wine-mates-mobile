@@ -2,11 +2,11 @@ import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth') => {
+export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth' | 'light' | 'disabled') => {
     const MAIN_CONTAINER: ViewStyle = {
         height: scaleVertical(48),
         flexDirection: 'row',
-        gap: scaleHorizontal(8),
+        gap: scaleHorizontal(4),
         borderWidth: 1,
         borderColor: colors.primary,
         paddingHorizontal: scaleHorizontal(8),
@@ -25,12 +25,23 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth') 
             ...MAIN_CONTAINER,
             backgroundColor: colors.background,
         },
+        light: {
+            ...MAIN_CONTAINER,
+            flex: 1,
+            backgroundColor: colors.background,
+            borderColor: colors.border_light,
+        },
         auth: {
             ...MAIN_CONTAINER,
             justifyContent: 'space-between',
             backgroundColor: colors.background,
             borderColor: colors.border_light,
         },
+        disabled: {
+            ...MAIN_CONTAINER,
+            borderWidth: 0,
+            backgroundColor: colors.background_disabled,
+        }
     };
 
     const TEXT: Record<typeof type, TextStyle> = {
@@ -39,16 +50,24 @@ export const getStyles = (colors: IColors, type: 'main' | 'secondary' | 'auth') 
             ...MAIN_TEXT,
             color: colors.text,
         },
+        light: {
+            ...MAIN_TEXT,
+            color: colors.text,
+        },
         auth: {
             ...MAIN_TEXT,
             color: colors.text,
         },
+        disabled: {
+            ...MAIN_TEXT,
+            color: colors.text_inverted,
+        }
     };
     const styles = StyleSheet.create({
         container: CONTAINERS[type],
         text: TEXT[type],
         absoluteSheet: {
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
             justifyContent: 'center',
             alignItems: 'center',
         },

@@ -1,11 +1,36 @@
 {
     "common": {
+        "create": "Створити",
         "logo": "WineMates",
         "errorHappened": "Сталася помилка",
         "somethingWentWrong": "Щось пішло не так.",
         "save": "Зберегти",
         "continue": "Продовжити",
-        "search": "Пошук..."
+        "search": "Пошук...",
+        "tryAgain": "Спробуйте ще раз",
+        "retry": "Повторити спробу",
+        "agreeAndContinue": "Погоджуюся та продовжую",
+        "now": "Щойно",
+        "nothingFoundTitle": "Нічого не знайдено",
+        "next": "Далі",
+        "nothingFoundDescription": "Ми не змогли знайти результатів за вашим запитом. Перевірте правильність написання або спробуйте інші ключові слова.",
+        "confirm": "Підтвердити",
+        "cancel": "Скасувати",
+        "generate": "Згенерувати",
+        "copiedToClipboard": "Текст скопійований до буферу обміну"
+    },
+    "errors": {
+        "somethingWentWrong": "Вибачте, щось пішло не так",
+        "tryAgain": "Будь ласка, спробуйте ще раз",
+        "noConnection": "Немає з'єднання",
+        "reconnect": "Схоже, ви офлайн. Підключіться знову, щоб продовжити."
+    },
+    "tabNavigator": {
+        "homeTabLabel": "Головна",
+        "eventMap": "Карта подій",
+        "scanner": "Сканер",
+        "feed": "Новини",
+        "youTabLabel": "Ви"
     },
     "authentication": {
         "welcome": "Ласкаво просимо до",
@@ -19,7 +44,7 @@
         "email": "E-mail",
         "password": "Пароль",
         "forgotPassword": "Забули пароль?",
-        "or": "або",
+        "or": "Aбо",
         "continueWithGoogle": "Продовжити з Google",
         "continueWithApple": "Продовжити з Apple",
         "haveAnAccount": "Немаєте облікового запису? ",
@@ -28,7 +53,7 @@
         "sendCode": "Надіслати код",
         "resetYourPassword": "Скиньте ваш пароль",
         "resetPasswordDescription": "Введіть електронну адресу, пов'язану з вашим обліковим записом, і ми надішлемо вам код для скидання пароля.",
-        "otpDescription": "TЩоб скинути пароль, введіть код, який ми надіслали на адресу",
+        "otpDescription": "Щоб скинути пароль, введіть код, який ми надіслали на адресу",
         "resetPassword": "Скинути пароль",
         "receiveCode": "Не отримали код?",
         "resend": "Надіслати повторно",
@@ -41,7 +66,9 @@
         "confirmNewPassword": "Підтвердьте новий пароль",
         "newPasswordIsRequired": "Потрібен новий пароль",
         "confirmNewPasswordIsRequired": "Потрібно підтвердити новий пароль",
-        "confirmPasswordError": "Паролі не збігаються"
+        "confirmPasswordError": "Паролі не збігаються",
+        "enterConfirmationCode": "Введіть код підтвердження",
+        "passwordLengthError": "Ваш пароль має містити щонайменше 8 символів."
     },
     "registration": {
         "haveAnAccount": "Вже маєте обліковий запис?",
@@ -53,6 +80,159 @@
         "getStarted": "Давайте почнемо",
         "email": "Електронна пошта",
         "mobileNumber": "Номер телефону",
-        "countryCode": "Код країни"
+        "countryCode": "Код країни",
+        "country": "Країна",
+        "personalDetails": "Особисті дані",
+        "firstName": "Ім'я",
+        "firstNameExample": "наприклад, Даніель, а не «Ден»",
+        "lastName": "Прізвище",
+        "occupation": "Професія",
+        "wineryName": "Назва виноробні",
+        "birthday": "Дата народження (дд/мм/рррр)",
+        "birthdayWithoutFormat": "Дата народження",
+        "birthdayError": "Вам має бути щонайменше 18 років.",
+        "birthdayTitle": "Щоб зареєструватися, вам потрібно бути щонайменше 18 років.",
+        "birthdayDescription": "Вашу дату народження не буде передано іншим користувачам WineMates",
+        "createPassword": "Створити пароль",
+        "confirmPassword": "Підтвердьте пароль",
+        "instagramLink": "Посилання на Instagram",
+        "gender": "Стать",
+        "genderMale": "Чоловіча",
+        "genderFemale": "Жіноча",
+        "placeOfWork": "Місце роботи"
+    },
+    "wineLevel": {
+        "lover": "Любитель вина",
+        "expert": "Винний експерт",
+        "creator": "Винороб"
+    },
+    "muse": {
+        "missing": "Відсутній",
+        "moderate": "Помірний",
+        "creamy": "Кремовий"
+    },
+    "perlage": {
+        "coarse": "Крупний",
+        "small": "Дрібний",
+        "thin": "Тонкий"
+    },
+    "wineView": {
+        "cloudy": "Мутний",
+        "translucent": "Напівпрозорий",
+        "sparklingClean": "Блискуче чистий"
+    },
+    "scanner": {
+        "results": "Результати",
+        "resultsTitle": "Виберіть варіант, який найкраще відповідає вашому результату. Або додайте вино вручну",
+        "addWine": "Додайте вино вручну",
+        "reviewCount": ["відгук", "відгуки", "відгуків"],
+        "whatsInYourGlass": "Що у вашій склянці?",
+        "enterData": "(Введіть дані вручну або проскануйте етикетку)",
+        "tasteWine": "Скуштуйте вино"
+    },
+    "wine": {
+        "look": "Зовнішній вигляд",
+        "lookDescription": "Оберіть основний колір вина, а потім уточніть його, вибравши точний відтінок",
+        "letsSmell": "Давайте понюхаємо",
+        "selectColor": "Оберіть колір",
+        "selectShade": "Оберіть відтінок",
+        "selectAppearance": "Оберіть вигляд",
+        "result": "Результат",
+        "selectedParameters": "Обрані параметри",
+        "selectMousse": "Оберіть піну",
+        "selectPerlage": "Оберіть перляж",
+        "typeOfWine": "Тип вина",
+        "colorOfWine": "Колір вина",
+        "country": "Країна",
+        "region": "Регіон, Апеласьйон",
+        "wineryName": "Назва виноробні",
+        "grapeVariety": "Сорт винограду",
+        "vintage": "Винтаж",
+        "wineName": "Назва вина",
+        "pale": "Блідий",
+        "deep": "Глибокий",
+        "medium": "Середній",
+        "smell": "Аромат",
+        "smellDescription": "Виберіть основний аромат вашого вина, а потім уточніть його, обравши точний відтінок",
+        "addCustomSmell": "Додайте свій аромат",
+        "letsTaste": "Давайте скуштуємо",
+        "tasteDescription": "Виберіть основний смак вашого вина",
+        "addCustomTaste": "Додайте власний смак",
+        "tasteCharacteristics": "Смакові якості",
+        "letsRate": "Давайте оцінимо це",
+        "review": "Огляд",
+        "rateThisWine": "Оцініть це вино",
+        "tastingResult": "Результат дегустації",
+        "enterReview": "Поділіться своїм відгуком",
+        "notes": "Улюблені нотатки",
+        "color": "Колір",
+        "aroma": "Аромат",
+        "taste": "Смак",
+        "details": "Деталі",
+        "tasted": "Ви вже куштували це вино",
+        "selectedDetails": "Вибрані деталі",
+        "selectedColor": "Вибраний колір",
+        "selectedSmells": "Вибрані запахи",
+        "selectedTastes": "Вибрані смаки",
+        "mostSelected": "Найбільш обрані",
+        "mostSelectedColor": "Найбільш обраний",
+        "reviews": "Відгуки",
+        "tasteAgain": "Скуштуйте знову",
+        "aromas": "Аромати",
+        "tastes": "Смаки",
+        "rating": "Рейтинг",
+        "foodPairing": "Поєднання страв",
+        "emptyFoodPairing": "Поки що немає рекомендацій щодо поєднання страв. Натисніть «Згенерувати», щоб отримати рекомендації щодо поєднання цього вина.",
+        "attemptsLeft": "залишилось спроб",
+        "exhaustedAllAttempts": "Ви вичерпали всі спроби.",
+        "tastingNotes": "Дегустаційні нотатки",
+        "generationInProgress": "Триває генерація, будь ласка, зачекайте",
+        "getAttempts": "Отримати спроби"
+    },
+    "aiAttempts": {
+        "label1": "У вас є ",
+        "label2": " спроби на поєднання страв та дегустаційні нотатки.",
+        "label3": "Не залишилося жодної спроби для поєднання страв та дегустаційних нотаток.",
+        "label4": "Підпишіться, щоб продовжувати створювати поєднання страв та дегустаційні нотатки.",
+        "subscribe": "Підписатися"
+    },
+    "savedWine": {
+        "savedWine": "Збережене вино",
+        "createList": "Створити список",
+        "listName": "Ім'я списку"
+    },
+    "medal": {
+        "silver": "Срібна медаль",
+        "gold": "Золота медаль",
+        "bronze": "Бронзова медаль",
+        "platinum": "Платінова медаль"
+    },
+    "profile": {
+        "winesAndStyles": "Вина & стилі",
+        "events": "Події",
+        "followers": "Підписники",
+        "savedWines": "Збережене вино",
+        "chemicalAnalysis": "Хімічний аналіз",
+        "settings": "Налаштування"
+    },
+    "settings": {
+        "notifications": "Сповіщення",
+        "language": "Мова",
+        "blockedUser": "Заблоковані користувачі",
+        "subscription": "Підписка",
+        "FAQ": "FAQ",
+        "rateTheApp": "Оцініть додаток",
+        "inviteFriends": "Запросити друзів",
+        "changePassword": "Змінити пароль",
+        "logOut": "Вийти",
+        "deleteAccount": "Видалити обліковий запис"
+    },
+    "logout": {
+        "logout": "Вийти?",
+        "description": "Ви впевнені, що хочете вийти?"
+    },
+    "locale": {
+        "en": "Англійська",
+        "uk": "Українська"
     }
 }

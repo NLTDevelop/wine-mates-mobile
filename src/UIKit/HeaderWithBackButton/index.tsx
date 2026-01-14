@@ -3,9 +3,8 @@ import { View, TouchableOpacity, ViewStyle } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { useBackButton } from './presenters/useBackButton';
-import { ArrowIcon } from '@/assets/icons/ArrowIcon';
+import { ArrowIcon } from '@assets/icons/ArrowIcon';
 import { Typography } from '@/UIKit/Typography';
-import { scaleVertical } from '@/utils';
 
 interface IProps {
     title?: string;
@@ -15,14 +14,14 @@ interface IProps {
     backDisabled?: boolean;
     rightComponent?: ReactNode;
     containerStyle?: ViewStyle;
+    isCentered?: boolean;
 }
 
 export const HeaderWithBackButton = ({ title, titleComponent, backDisabled, rightComponent, containerStyle,
-    titleContainerStyle, onPressBack,
+    titleContainerStyle, onPressBack, isCentered = true,
 }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
-
+    const styles = useMemo(() => getStyles(colors, isCentered, !!rightComponent), [colors, isCentered, rightComponent]);
     const { onGoBack } = useBackButton(onPressBack);
 
     return (
@@ -31,7 +30,7 @@ export const HeaderWithBackButton = ({ title, titleComponent, backDisabled, righ
                 <View style={styles.empty} />
             ) : (
                 <TouchableOpacity style={styles.button} onPress={onGoBack}>
-                    <ArrowIcon width={scaleVertical(20)} height={scaleVertical(20)} />
+                    <ArrowIcon width={20} height={20} />
                 </TouchableOpacity>
             )}
 
@@ -39,7 +38,7 @@ export const HeaderWithBackButton = ({ title, titleComponent, backDisabled, righ
                 {titleComponent ? (
                     titleComponent
                 ) : (
-                    <Typography text={title} variant="h3" numberOfLines={1} />
+                    <Typography text={title} variant="h3" numberOfLines={1} style={styles.title}/>
                 )}
             </View>
 

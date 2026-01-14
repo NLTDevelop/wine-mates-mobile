@@ -3,7 +3,7 @@ import { getStyles } from './styles';
 import { TouchableOpacity } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { NextArrowIcon } from '@/assets/icons/NextArrowIcon';
+import { NextArrowIcon } from '@assets/icons/NextArrowIcon';
 
 interface IProps {
     text: string;
@@ -18,7 +18,7 @@ export const LevelButton = ({ text, typeIcon, onPress }: IProps) => {
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>
             {typeIcon}
-            <Typography variant="body_500" text={text} />
+            <Typography variant="h5" text={text} />
             <NextArrowIcon />
         </TouchableOpacity>
     );

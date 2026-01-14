@@ -1,25 +1,21 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { IRequester } from './IRequester/IRequester';
 import { IResponse } from './IRequester/IResponse';
-// import { userModel } from '@/modules-one-platform/base/entities/users/UserModel';
-// import { isIOS } from '@/utils';
 import { loggerModel } from '@/UIKit/Logger/entity/loggerModel';
+import { localization } from '@/UIProvider/localization/Localization';
+import { userModel } from '@/entities/users/UserModel';
 
 
 class AxiosRequester implements IRequester {
     private getHeaders = (headers?: object) => {
         const result: any = {
             'Accept': 'application/json',
-            // 'Cache-Control': 'no-cache',
             'Content-Type': 'application/json',
-            // 'x-platform': isIOS ? 'IOS' : 'ANDROID',
+            'Accept-Language': localization.locale,
         };
-        // if (userModel.company) {
-        //     result['X-Partner'] = userModel.company;
-        // }
-        // if (userModel.token) {
-        //     result['Authorization'] = `Bearer ${userModel.token}`;
-        // }
+        if (userModel.token) {
+            result['Authorization'] = `Bearer ${userModel.token}`;
+        }
         if (headers) {
             Object.assign(result, headers);
         }
@@ -38,8 +34,8 @@ class AxiosRequester implements IRequester {
                 status: response.status,
             });
         } catch (error: any) {
-            // this.onHandleError(error);
             console.warn('AxiosRequester -> request: ', JSON.stringify(config, null, 2), error);
+            console.warn('AxiosRequester -> request error: ', error?.response?.data?.message || '-----------');
             loggerModel.add('error', `AxiosRequester -> request -> ${config.url}: `, JSON.stringify(error, null, 3));
             return {
                 isError: true,

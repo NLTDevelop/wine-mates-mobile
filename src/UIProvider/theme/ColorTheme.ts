@@ -10,7 +10,7 @@ class ColorTheme implements IColorTheme {
     constructor(
         private themeStore: IRepository<TTheme>,
         private allThemeColorsStore: IRepository<{ [key: string]: IColors }>,
-        private storage: IStorage,
+        private _storage: IStorage,
         private fontsStore: IRepository<IFonts>,
     ) {
         this.load();
@@ -30,7 +30,7 @@ class ColorTheme implements IColorTheme {
 
     private load = () => {
         try {
-            const data = this.storage.get('COLOR_THEME');
+            const data = this._storage.get('COLOR_THEME');
             if (data) {
                 this.setTheme(data);
             }
@@ -42,20 +42,13 @@ class ColorTheme implements IColorTheme {
     setTheme = (data: TTheme) => {
         if (this.allThemeColorsStore.data?.[data]) {
             this.themeStore.save(data);
-            this.storage.set('COLOR_THEME', data);
+            this._storage.set('COLOR_THEME', data);
         }
     };
 }
 
 const themeStore = new MobXRepository<TTheme>('light');
-const allThemeColorsStore = new MobXRepository<{ [key: string]: IColors }>(
-    COLORS,
-);
+const allThemeColorsStore = new MobXRepository<{ [key: string]: IColors }>(COLORS);
 const fontsStore = new MobXRepository<IFonts>(FONTS);
 
-export const colorTheme = new ColorTheme(
-    themeStore,
-    allThemeColorsStore,
-    storage,
-    fontsStore,
-);
+export const colorTheme = new ColorTheme(themeStore, allThemeColorsStore, storage, fontsStore);

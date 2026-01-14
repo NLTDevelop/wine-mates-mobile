@@ -1,7 +1,7 @@
 import { View, TextInput, TextInputProps, ViewStyle, TouchableOpacity } from 'react-native';
 import { useUiContext } from '../../UIProvider';
 import { getStyles } from './styles';
-import { CrossIcon } from '@/assets/icons/CrossIcon';
+import { CrossIcon } from '@assets/icons/CrossIcon';
 import { useSearchBar } from './presenters/useSearchBar';
 
 interface IProps extends TextInputProps {
@@ -25,7 +25,7 @@ export const SearchBar = (props: IProps) => {
                 {...props}
             />
             {!!value ? <TouchableOpacity style={styles.button} onPress={onClearText} >
-                <CrossIcon width={20} height={20}/>
+                <CrossIcon width={12} height={12} color={colors.icon}/>
             </TouchableOpacity> : null}
         </View>
     );

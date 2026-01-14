@@ -10,7 +10,6 @@ export const getStyles = (colors: IColors) => {
             paddingHorizontal: scaleHorizontal(16),
             borderRadius: 8,
             backgroundColor: colors.success,
-            alignItems: 'center',
             flexDirection: 'row',
             gap: scaleHorizontal(12),
         },
@@ -20,6 +19,7 @@ export const getStyles = (colors: IColors) => {
         },
         text: {
             flexShrink: 1,
+            color: colors.text_inverted,
         },
     });
     return styles;

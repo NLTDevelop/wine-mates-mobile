@@ -1,23 +1,34 @@
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useValidator } from '@/hooks/useValidator';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useOTPTimer } from '@/modules/authentication/presenters/useOTPTimer';
+import { userService } from '@/entities/users/UserService';
+import { toastService } from '@/libs/toast/toastService';
 
 export const useForgotPassword = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const { isFromSettings } = useRoute().params as { isFromSettings: boolean };
     const { validateEmail } = useValidator();
     const [email, setEmail] = useState('');
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const [isLoading, setIsLoading] = useState(false);
+    const { isActive, start: startTimer } = useOTPTimer();
+    const isSendDisabled = useMemo(() => {
+        const noEmail = email.trim().length === 0;
+        return noEmail || isError.status || isActive;
+    }, [email, isError.status, isActive]);
 
     const onChangeEmail = (text: string) => {
         setIsError({ status: false, errorText: '' });
         setEmail(text);
     };
 
-    const handleSendPress = () => {
+    const handleSendPress = useCallback(async () => {
         try {
+            if (isActive) return;
+
             if (email.length === 0) {
                 return setIsError({ status: true, errorText: localization.t('authentication.emailIsRequired') });
             }
@@ -27,12 +38,29 @@ export const useForgotPassword = () => {
             }
 
             setIsLoading(true);
-            //TODO
-            navigation.navigate('OTPView', { email });
+
+            const response = await userService.resetPasswordRequest({ email });
+
+            if (response.isError) {
+                if (response.message) {
+                    toastService.showError(localization.t('common.errorHappened'), response.message);
+                    setIsError({ status: true, errorText: response.message });
+                } else {
+                    setIsError({ status: true, errorText: ''});
+                }
+            } else {
+                startTimer();
+                navigation.navigate('OTPView', { email, isFromSettings });
+            }
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [email, isActive, navigation, startTimer, validateEmail, isFromSettings]);
 
-    return { email, onChangeEmail, isLoading, handleSendPress, isError };
+    const handleRetry = useCallback(() => {
+        setIsError({ status: false, errorText: '' });
+        handleSendPress();
+    }, [handleSendPress]);
+
+    return { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled, handleRetry, isFromSettings };
 };

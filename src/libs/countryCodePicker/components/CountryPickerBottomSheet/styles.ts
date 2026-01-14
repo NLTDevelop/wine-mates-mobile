@@ -6,19 +6,17 @@ export const getStyles = (colors: IColors, insetBottom: number) => {
     const styles = StyleSheet.create({
         container: {
             backgroundColor: colors.background,
-        },
-        headerContainer: {
-            backgroundColor: colors.background,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-          },
+        },
         header: {
-            padding: scaleVertical(16),
+            paddingVertical: scaleVertical(16),
+            justifyContent: 'center',
         },
         closeContainer: {
             position: 'absolute',
+            left: scaleHorizontal(16),
             top: scaleVertical(16),
-            left: scaleVertical(16),
             zIndex: 2,
         },
         title: {
@@ -26,14 +24,15 @@ export const getStyles = (colors: IColors, insetBottom: number) => {
         },
         searchContainer: {
             marginHorizontal: scaleHorizontal(16),
-            marginBottom: scaleVertical(24),
+            marginTop: scaleVertical(12),
+            marginBottom: scaleVertical(16),
         },
         listContentContainer: {
-            flexGrow: 1,
+            paddingHorizontal: scaleHorizontal(16),
+            paddingBottom: insetBottom + scaleVertical(24),
             rowGap: scaleVertical(24),
-            paddingBottom: insetBottom + scaleVertical(16),
         },
     });
-
+    
     return styles;
 };

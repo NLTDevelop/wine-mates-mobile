@@ -1,10 +1,11 @@
-import { memo, useState, useMemo, forwardRef, useImperativeHandle, useRef } from 'react';
+import { memo, useMemo, forwardRef } from 'react';
 import { TextInput, View, TouchableOpacity, ViewStyle, TextInputProps } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
-import { EyeIcon } from '@/assets/icons/EyeIcon';
-import { EyeOffIcon } from '@/assets/icons/EyeOffIcon';
+import { EyeIcon } from '@assets/icons/EyeIcon';
+import { EyeOffIcon } from '@assets/icons/EyeOffIcon';
+import { useCustomInput } from './presenters/useCustomInput';
 
 interface IProps extends TextInputProps {
     RightAccessory?: React.ReactNode;
@@ -18,23 +19,9 @@ interface IProps extends TextInputProps {
 export const CustomInput = memo(forwardRef<TextInput, IProps>(
     ({ label, error, RightAccessory, LeftAccessory, containerStyle, secureTextEntry, inputContainerStyle, ...props }, ref) => {
         const { colors } = useUiContext();
-        const [isFocused, setFocused] = useState(false);
-        const [isPasswordVisible, setPasswordVisible] = useState(secureTextEntry);
-        const inputRef = useRef<TextInput>(null);
-
-        useImperativeHandle(ref, () => inputRef.current!, []);
-
+        const { isFocused, isPasswordVisible, setPasswordVisible, handleFocus, handleBlur, inputRef }
+            = useCustomInput({ secureTextEntry, ...props }, ref);
         const styles = useMemo(() => getStyles(colors, isFocused), [colors, isFocused]);
-
-        const handleFocus: TextInputProps['onFocus'] = e => {
-            setFocused(true);
-            props.onFocus?.(e);
-          };
-          
-          const handleBlur: TextInputProps['onBlur'] = e => {
-            setFocused(false);
-            props.onBlur?.(e);
-          };
 
         return (
             <View style={[styles.container, containerStyle]}>

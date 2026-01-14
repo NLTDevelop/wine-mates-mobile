@@ -10,43 +10,53 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { SignUpFooter } from '@/modules/authentication/ui/components/SignUpFooter';
 import { useForgotPassword } from '@/modules/authentication/presenters/useForgotPassword';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
+import { WithErrorHandler } from '@/UIKit/ErrorHandler';
+import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 
 export const ForgotPasswordView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { email, onChangeEmail, isLoading, handleSendPress, isError } = useForgotPassword();
+    const { email, onChangeEmail, isLoading, handleSendPress, isError, isSendDisabled, handleRetry, isFromSettings }
+        = useForgotPassword();
 
     return (
-        <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />}>
-            <View style={styles.container}>
-                <View>
-                    <Typography text={t('authentication.resetYourPassword')} variant="h3" style={styles.title} />
-                    <Typography
-                        text={t('authentication.resetPasswordDescription')}
-                        variant="body_400"
-                        style={styles.text}
-                    />
-                    <CustomInput
-                        keyboardType="email-address"
-                        value={email}
-                        onChangeText={onChangeEmail}
-                        autoCapitalize="none"
-                        placeholder={t('authentication.email')}
-                        error={isError.status}
-                        containerStyle={styles.input}
-                    />
-                    {isError.status && <Warning warningText={isError.errorText} />}
+        <WithErrorHandler
+            error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null}
+            onRetry={handleRetry}
+        >
+            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding scrollEnabled>
+                <View style={styles.container}>
+                    <View>
+                        <Typography text={t('authentication.resetYourPassword')} variant="h3" style={styles.title} />
+                        <Typography
+                            text={t('authentication.resetPasswordDescription')}
+                            variant="body_400"
+                            style={styles.text}
+                        />
+                        <CustomInput
+                            keyboardType="email-address"
+                            value={email}
+                            onChangeText={onChangeEmail}
+                            autoCapitalize="none"
+                            placeholder={t('authentication.email')}
+                            error={isError.status}
+                            containerStyle={styles.input}
+                        />
+                        {isError.status && <Warning warningText={isError.errorText} />}
+                    </View>
+                    <View>
+                        <Button
+                            text={t('authentication.sendCode')}
+                            onPress={handleSendPress}
+                            type="secondary"
+                            inProgress={isLoading}
+                            disabled={isSendDisabled}
+                            containerStyle={styles.button}
+                        />
+                        {!isFromSettings && <SignUpFooter />}
+                    </View>
                 </View>
-                <View style={styles.footer}>
-                    <Button
-                        text={t('authentication.sendCode')}
-                        onPress={handleSendPress}
-                        type="secondary"
-                        inProgress={isLoading}
-                    />
-                    <SignUpFooter />
-                </View>
-            </View>
-        </ScreenContainer>
+            </ScreenContainer>
+        </WithErrorHandler>
     );
 };

@@ -11,6 +11,7 @@ export const getStyles = (colors: IColors) => {
         },
         mainContainer: {
             flex: 1,
+            marginBottom: scaleVertical(16),
         },
         title: {
             textAlign: 'center',
@@ -24,13 +25,16 @@ export const getStyles = (colors: IColors) => {
         formContainer: {
             gap: scaleVertical(16),
         },
+        input: {
+            marginBottom: 0,
+        },
         footer: {
             gap: scaleVertical(24),
         },
         contentContainer: {
             flex: 1,
             alignItems: 'center',
-          },
+        },
     });
     return styles;
 };
