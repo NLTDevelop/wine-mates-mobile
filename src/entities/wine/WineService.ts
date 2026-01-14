@@ -291,11 +291,12 @@ class WineService {
         }
     };
 
-    getLimits = async (): Promise<IResponse<IRateContext>> => {
+    getLimits = async (params: { wineId: number }): Promise<IResponse<IRateContext>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.getContext}`,
+                params,
             });
 
             return response;

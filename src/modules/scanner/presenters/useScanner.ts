@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppState } from '@react-native-community/hooks';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Camera, PhotoFile, TakePhotoOptions, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
@@ -32,6 +32,12 @@ export const useScanner = () => {
             requestPermission();
         }
     }, [hasPermission, requestPermission]);
+
+    useFocusEffect(
+        useCallback(() => {
+            wineModel.clear();
+        }, []),
+    );
 
     useEffect(() => {
         if (appState !== 'active' || !isFocused) {

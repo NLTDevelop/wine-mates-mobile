@@ -141,7 +141,7 @@ export const useAddWine = () => {
                     const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
                     wineModel.wine = {
                         ...wineModel.wine,
-                        id: Number(response.message || 0),
+                        id: Number(response.errors.wineId || 0),
                         vintage: Number(form.vintageYear.value),
                         name: form.wineName.value || '',
                     };
@@ -152,6 +152,7 @@ export const useAddWine = () => {
                             isSparkling: selectedType?.isSparkling,
                         },
                     };
+
                     navigation.navigate('WineLookView');
                 } else if (response?.errors?.errors?.vintage) {
                     setIsVintageError({status: true, errorText: response.errors.errors.vintage[0]});
