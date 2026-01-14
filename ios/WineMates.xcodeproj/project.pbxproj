@@ -1,0 +1,564 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		16A881E8A8B644449BA64690 /* VisueltPro-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD225F31352247B49B2FA3F7 /* VisueltPro-BlackItalic.ttf */; };
+		2FD57E776618479C9228CB1F /* VisueltPro-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A2372175FA5C413B9753BED6 /* VisueltPro-Italic.ttf */; };
+		3D3E7039FF744C4BACAA06B9 /* VisueltPro-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7A1147B7942A4DBDAAD31661 /* VisueltPro-Light.ttf */; };
+		3F3AF36279154386A34EFB65 /* VisueltPro-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6197CF87C82D4E90B06D8E65 /* VisueltPro-ExtraLight.ttf */; };
+		51CA19DC14F44D9B95B058A4 /* VisueltPro-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D6D727F04D854B8390883C86 /* VisueltPro-Black.ttf */; };
+		61A5CDDB309C4854AE815CEB /* VisueltPro-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86236411E39C40929257621F /* VisueltPro-ThinItalic.ttf */; };
+		62CB31E18A709FA278588A51 /* libPods-WineMates.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C2649C0065EA4F137D89BCC /* libPods-WineMates.a */; };
+		728EAD5BADCA48CCBA302E64 /* VisueltPro-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 82DB19FBC0AD43EF9E94E0FE /* VisueltPro-LightItalic.ttf */; };
+		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		96A7D9C1F1D19245D865B360 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		99E6C10D3BA54605B709620A /* VisueltPro-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 95ACB3963E39453A86E9D568 /* VisueltPro-ExtraLightItalic.ttf */; };
+		9C2077CC56E340F9B7AACA26 /* VisueltPro-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F8E99BC1B4DF4BAF8EBF6E3A /* VisueltPro-Medium.ttf */; };
+		A54AF3E21446441F9AC548C2 /* VisueltPro-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 42F6D5E2B8664ECB8690A51C /* VisueltPro-Thin.ttf */; };
+		DC9C336967614BE7BD9FE4A7 /* VisueltPro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 58FC6498F2AE461ABDE0AB1A /* VisueltPro-Bold.ttf */; };
+		E6A38B5D1C4A4916BE0DE08B /* VisueltPro-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5560397D78B4047B62F7305 /* VisueltPro-MediumItalic.ttf */; };
+		EF3302F3EE8F4F24B225197D /* VisueltPro-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0236C22540DF4BFE8D159338 /* VisueltPro-Regular.ttf */; };
+		F62F2616589144DE8797C076 /* VisueltPro-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AC9F05450B014E8FBDC52A92 /* VisueltPro-BoldItalic.ttf */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0236C22540DF4BFE8D159338 /* VisueltPro-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Regular.ttf"; path = "../assets/fonts/VisueltPro-Regular.ttf"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* WineMates.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WineMates.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = WineMates/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = WineMates/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2EF6B73202CB024434D7C93B /* Pods-WineMates.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WineMates.debug.xcconfig"; path = "Target Support Files/Pods-WineMates/Pods-WineMates.debug.xcconfig"; sourceTree = "<group>"; };
+		42F6D5E2B8664ECB8690A51C /* VisueltPro-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Thin.ttf"; path = "../assets/fonts/VisueltPro-Thin.ttf"; sourceTree = "<group>"; };
+		58FC6498F2AE461ABDE0AB1A /* VisueltPro-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Bold.ttf"; path = "../assets/fonts/VisueltPro-Bold.ttf"; sourceTree = "<group>"; };
+		6197CF87C82D4E90B06D8E65 /* VisueltPro-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-ExtraLight.ttf"; path = "../assets/fonts/VisueltPro-ExtraLight.ttf"; sourceTree = "<group>"; };
+		63B8B5942EA69114003821D6 /* WineMates.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WineMates.entitlements; path = WineMates/WineMates.entitlements; sourceTree = "<group>"; };
+		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = WineMates/AppDelegate.swift; sourceTree = "<group>"; };
+		7A1147B7942A4DBDAAD31661 /* VisueltPro-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Light.ttf"; path = "../assets/fonts/VisueltPro-Light.ttf"; sourceTree = "<group>"; };
+		7C2649C0065EA4F137D89BCC /* libPods-WineMates.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WineMates.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FA5E01F4CCE1E3AA0C31DAF /* Pods-WineMates.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WineMates.release.xcconfig"; path = "Target Support Files/Pods-WineMates/Pods-WineMates.release.xcconfig"; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = WineMates/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		82DB19FBC0AD43EF9E94E0FE /* VisueltPro-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-LightItalic.ttf"; path = "../assets/fonts/VisueltPro-LightItalic.ttf"; sourceTree = "<group>"; };
+		86236411E39C40929257621F /* VisueltPro-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-ThinItalic.ttf"; path = "../assets/fonts/VisueltPro-ThinItalic.ttf"; sourceTree = "<group>"; };
+		95ACB3963E39453A86E9D568 /* VisueltPro-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-ExtraLightItalic.ttf"; path = "../assets/fonts/VisueltPro-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
+		A2372175FA5C413B9753BED6 /* VisueltPro-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Italic.ttf"; path = "../assets/fonts/VisueltPro-Italic.ttf"; sourceTree = "<group>"; };
+		AA0000000000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = WineMates/Info.plist; sourceTree = "<group>"; };
+		AC9F05450B014E8FBDC52A92 /* VisueltPro-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-BoldItalic.ttf"; path = "../assets/fonts/VisueltPro-BoldItalic.ttf"; sourceTree = "<group>"; };
+		AD225F31352247B49B2FA3F7 /* VisueltPro-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-BlackItalic.ttf"; path = "../assets/fonts/VisueltPro-BlackItalic.ttf"; sourceTree = "<group>"; };
+		C5560397D78B4047B62F7305 /* VisueltPro-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-MediumItalic.ttf"; path = "../assets/fonts/VisueltPro-MediumItalic.ttf"; sourceTree = "<group>"; };
+		D6D727F04D854B8390883C86 /* VisueltPro-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Black.ttf"; path = "../assets/fonts/VisueltPro-Black.ttf"; sourceTree = "<group>"; };
+		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F8E99BC1B4DF4BAF8EBF6E3A /* VisueltPro-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Medium.ttf"; path = "../assets/fonts/VisueltPro-Medium.ttf"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				62CB31E18A709FA278588A51 /* libPods-WineMates.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		13B07FAE1A68108700A75B9A /* WineMates */ = {
+			isa = PBXGroup;
+			children = (
+				63B8B5942EA69114003821D6 /* WineMates.entitlements */,
+				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				761780EC2CA45674006654EE /* AppDelegate.swift */,
+				AA0000000000000000000001 /* Info.plist */,
+				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+			);
+			name = WineMates;
+			sourceTree = "<group>";
+		};
+		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
+				7C2649C0065EA4F137D89BCC /* libPods-WineMates.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		83CBB9F61A601CBA00E9B192 = {
+			isa = PBXGroup;
+			children = (
+				13B07FAE1A68108700A75B9A /* WineMates */,
+				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				83CBBA001A601CBA00E9B192 /* Products */,
+				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				D3CE80F92A6445259A8C7063 /* Resources */,
+			);
+			indentWidth = 2;
+			sourceTree = "<group>";
+			tabWidth = 2;
+			usesTabs = 0;
+		};
+		83CBBA001A601CBA00E9B192 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				13B07F961A680F5B00A75B9A /* WineMates.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2EF6B73202CB024434D7C93B /* Pods-WineMates.debug.xcconfig */,
+				7FA5E01F4CCE1E3AA0C31DAF /* Pods-WineMates.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		D3CE80F92A6445259A8C7063 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D6D727F04D854B8390883C86 /* VisueltPro-Black.ttf */,
+				AD225F31352247B49B2FA3F7 /* VisueltPro-BlackItalic.ttf */,
+				58FC6498F2AE461ABDE0AB1A /* VisueltPro-Bold.ttf */,
+				AC9F05450B014E8FBDC52A92 /* VisueltPro-BoldItalic.ttf */,
+				6197CF87C82D4E90B06D8E65 /* VisueltPro-ExtraLight.ttf */,
+				95ACB3963E39453A86E9D568 /* VisueltPro-ExtraLightItalic.ttf */,
+				A2372175FA5C413B9753BED6 /* VisueltPro-Italic.ttf */,
+				7A1147B7942A4DBDAAD31661 /* VisueltPro-Light.ttf */,
+				82DB19FBC0AD43EF9E94E0FE /* VisueltPro-LightItalic.ttf */,
+				F8E99BC1B4DF4BAF8EBF6E3A /* VisueltPro-Medium.ttf */,
+				C5560397D78B4047B62F7305 /* VisueltPro-MediumItalic.ttf */,
+				0236C22540DF4BFE8D159338 /* VisueltPro-Regular.ttf */,
+				42F6D5E2B8664ECB8690A51C /* VisueltPro-Thin.ttf */,
+				86236411E39C40929257621F /* VisueltPro-ThinItalic.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		13B07F861A680F5B00A75B9A /* WineMates */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "WineMates" */;
+			buildPhases = (
+				8E1303432FA26BF581A545E7 /* [CP] Check Pods Manifest.lock */,
+				13B07F871A680F5B00A75B9A /* Sources */,
+				13B07F8C1A680F5B00A75B9A /* Frameworks */,
+				13B07F8E1A680F5B00A75B9A /* Resources */,
+				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				D3F75DF509F00558DCF4B2A0 /* [CP] Embed Pods Frameworks */,
+				237FCE59CB94A83FF3D8E471 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WineMates;
+			productName = WineMates;
+			productReference = 13B07F961A680F5B00A75B9A /* WineMates.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		83CBB9F71A601CBA00E9B192 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1210;
+				TargetAttributes = {
+					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 1120;
+					};
+				};
+			};
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "WineMates" */;
+			compatibilityVersion = "Xcode 12.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 83CBB9F61A601CBA00E9B192;
+			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				13B07F861A680F5B00A75B9A /* WineMates */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		13B07F8E1A680F5B00A75B9A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				96A7D9C1F1D19245D865B360 /* PrivacyInfo.xcprivacy in Resources */,
+				51CA19DC14F44D9B95B058A4 /* VisueltPro-Black.ttf in Resources */,
+				16A881E8A8B644449BA64690 /* VisueltPro-BlackItalic.ttf in Resources */,
+				DC9C336967614BE7BD9FE4A7 /* VisueltPro-Bold.ttf in Resources */,
+				F62F2616589144DE8797C076 /* VisueltPro-BoldItalic.ttf in Resources */,
+				3F3AF36279154386A34EFB65 /* VisueltPro-ExtraLight.ttf in Resources */,
+				99E6C10D3BA54605B709620A /* VisueltPro-ExtraLightItalic.ttf in Resources */,
+				2FD57E776618479C9228CB1F /* VisueltPro-Italic.ttf in Resources */,
+				3D3E7039FF744C4BACAA06B9 /* VisueltPro-Light.ttf in Resources */,
+				728EAD5BADCA48CCBA302E64 /* VisueltPro-LightItalic.ttf in Resources */,
+				9C2077CC56E340F9B7AACA26 /* VisueltPro-Medium.ttf in Resources */,
+				E6A38B5D1C4A4916BE0DE08B /* VisueltPro-MediumItalic.ttf in Resources */,
+				EF3302F3EE8F4F24B225197D /* VisueltPro-Regular.ttf in Resources */,
+				A54AF3E21446441F9AC548C2 /* VisueltPro-Thin.ttf in Resources */,
+				61A5CDDB309C4854AE815CEB /* VisueltPro-ThinItalic.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/.xcode.env",
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+		};
+		237FCE59CB94A83FF3D8E471 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8E1303432FA26BF581A545E7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-WineMates-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D3F75DF509F00558DCF4B2A0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		13B07F871A680F5B00A75B9A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		13B07F941A680F5B00A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2EF6B73202CB024434D7C93B /* Pods-WineMates.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = WineMates/WineMates.entitlements;
+				CURRENT_PROJECT_VERSION = 31;
+				DEVELOPMENT_TEAM = 4233RP9762;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = WineMates/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WineMates;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.3;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nltdev.winemates.dev;
+				PRODUCT_NAME = WineMates;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		13B07F951A680F5B00A75B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7FA5E01F4CCE1E3AA0C31DAF /* Pods-WineMates.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = WineMates/WineMates.entitlements;
+				CURRENT_PROJECT_VERSION = 31;
+				DEVELOPMENT_TEAM = 4233RP9762;
+				INFOPLIST_FILE = WineMates/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WineMates;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.3;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.nltdev.winemates.dev;
+				PRODUCT_NAME = WineMates;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		83CBBA201A601CBA00E9B192 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/lib/swift\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DFOLLY_NO_CONFIG",
+					"-DFOLLY_MOBILE=1",
+					"-DFOLLY_USE_LIBCPP=1",
+					"-DFOLLY_CFG_NO_COROUTINES=1",
+					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				USE_HERMES = true;
+			};
+			name = Debug;
+		};
+		83CBBA211A601CBA00E9B192 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/lib/swift\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DFOLLY_NO_CONFIG",
+					"-DFOLLY_MOBILE=1",
+					"-DFOLLY_USE_LIBCPP=1",
+					"-DFOLLY_CFG_NO_COROUTINES=1",
+					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				USE_HERMES = true;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "WineMates" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13B07F941A680F5B00A75B9A /* Debug */,
+				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "WineMates" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83CBBA201A601CBA00E9B192 /* Debug */,
+				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
+}
