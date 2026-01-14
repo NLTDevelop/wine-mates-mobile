@@ -33,12 +33,13 @@ export const useScannerResultsList = () => {
             );
         } else if (response.data && 'aiData' in response.data) {
             setAiData(response.data.aiData);
+            navigation.navigate('AddWineView', { aiData: response.data.aiData });
         } else {
             setData(response.data.raws);
         }
      
         setIsLoading(false);
-    }, []);
+    }, [navigation]);
 
     const onRefresh = useCallback(async () => {
         await getList();
