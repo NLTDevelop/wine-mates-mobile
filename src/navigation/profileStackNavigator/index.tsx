@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ProfileView } from '@/modules/profile/ui/ProfileView';
-import { SettingsView } from '@/modules/profile/ui/SettingsView';
+import { SettingsView } from '@/modules/settings/ui/SettingsView';
 
 const Stack = createNativeStackNavigator();
 

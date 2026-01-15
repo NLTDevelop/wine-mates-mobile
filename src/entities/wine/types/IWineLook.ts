@@ -5,4 +5,5 @@ export interface IWineLook {
     mousse?: number;
     perlage?: number;
     appearance?: number;
+    name?: string;
 }

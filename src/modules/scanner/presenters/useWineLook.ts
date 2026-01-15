@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 export const useWineLook = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(() => !wineModel.colorsShades?.length);
     const [perlage, setPerlage] = useState(0);
     const [appearance, setAppearance] = useState(0);
     const [mousse, setMousse] = useState(0);
@@ -21,9 +21,23 @@ export const useWineLook = () => {
     [shade, selectedColor]);
     const data = wineModel.colorsShades;
 
+    const mapToneToShade = useCallback((tone?: string | null) => {
+        if (tone === 'pale') return 1;
+        if (tone === 'medium') return 2;
+        if (tone === 'deep') return 3;
+        return 2;
+    }, []);
+
     const getColorsWithShades = useCallback(async () => {
         try {
             if (!wineModel.base?.colorOfWine?.id) return;
+
+            const cachedShades = wineModel.colorsShades;
+            if (cachedShades?.length && cachedShades[0]?.colorId === wineModel.base.colorOfWine.id) {
+                setIsError(false);
+                setIsLoading(false);
+                return;
+            }
 
             setIsLoading(true);
 
@@ -54,8 +68,27 @@ export const useWineLook = () => {
     }, [getColorsWithShades]);
 
     useEffect(() => {
-        return () => wineModel.clear();;
-    }, []);
+        const look = wineModel.look;
+        if (!look) return;
+
+        setShade(mapToneToShade(look.tone));
+        setMousse(look.mousse ?? 0);
+        setPerlage(look.perlage ?? 0);
+        setAppearance(look.appearance ?? 0);
+    }, [mapToneToShade]);
+
+    useEffect(() => {
+        if (!data?.length) return;
+
+        const look = wineModel.look;
+        const shadeFromLook = look ? data.find(item => item.id === look.shadeId) : null;
+        if (shadeFromLook) {
+            setSelectedColor(shadeFromLook);
+            return;
+        }
+
+        setSelectedColor(prev => prev ?? data[0]);
+    }, [data]);
 
     const onSelectColor = useCallback((color: IWineColorShade) => {
         setSelectedColor(color);
@@ -64,6 +97,7 @@ export const useWineLook = () => {
 
     const handlePressNext = useCallback(() => {
         if (!currentColor) return;
+        console.log(selectedColor)
 
         if (wineModel.base?.typeOfWine.isSparkling) {
             wineModel.look = {
@@ -73,12 +107,14 @@ export const useWineLook = () => {
                 mousse,
                 perlage,
                 appearance,
+                name: selectedColor?.name || '-',
             }
         } else {
             wineModel.look = {
                 colorId: selectedColor?.colorId || 1,
                 shadeId: selectedColor?.id || 1,
                 tone: shade === 1 ? 'pale' : shade === 2 ? 'medium' : 'deep',
+                name: selectedColor?.name || '-',
             }
         }
         navigation.navigate('WineSmellView');

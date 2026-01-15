@@ -139,8 +139,8 @@ export const useAddWine = () => {
             if (response.isError || !response.data) {
                 if (response.status === 409) {
                     const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
+                    wineModel.clear();
                     wineModel.wine = {
-                        ...wineModel.wine,
                         id: Number(response.errors.wineId || 0),
                         vintage: Number(form.vintageYear.value),
                         name: form.wineName.value || '',
@@ -164,7 +164,7 @@ export const useAddWine = () => {
                 }
             } else {
                 const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
-
+                wineModel.clear();
                 wineModel.base = {
                     ...form,
                     typeOfWine: {
