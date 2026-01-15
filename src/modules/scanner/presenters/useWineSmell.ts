@@ -11,11 +11,23 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 export const useWineSmell = (onHide: () => void) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const [data, setData] = useState<IWineSmell[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const initialSelected = wineModel.selectedSmells ?? [];
+    const [data, setData] = useState<IWineSmell[]>(() => {
+        if (!wineModel.smells?.length) return [];
+        return wineModel.smells.map(group => ({
+            ...group,
+            subgroups: group.subgroups.map(subgroup => ({
+                ...subgroup,
+                aromas: subgroup.aromas.filter(
+                    aroma => !initialSelected.some(selectedItem => selectedItem.id === aroma.id),
+                ),
+            })),
+        }));
+    });
+    const [isLoading, setIsLoading] = useState(() => !wineModel.smells?.length);
     const [isOpened, setIsOpened] = useState(false);
     const [selectedIndex, setSelectedIndex] =  useState(0);
-    const [selected, setSelected] = useState<IWineSelectedSmell[]>([]);
+    const [selected, setSelected] = useState<IWineSelectedSmell[]>(initialSelected);
     const [isError, setIsError] = useState(false);
     const initialData = wineModel.smells;
 
@@ -28,6 +40,12 @@ export const useWineSmell = (onHide: () => void) => {
     const getSmells = useCallback(async () => {
         try {
             if (!wineModel.base?.colorOfWine?.id) return;
+
+            if (wineModel.smells?.length) {
+                setIsError(false);
+                setIsLoading(false);
+                return;
+            }
 
             setIsLoading(true);
 
@@ -57,28 +75,26 @@ export const useWineSmell = (onHide: () => void) => {
     }, [getSmells]);
 
     useEffect(() => {
-        return () => {
-            wineModel.smells = null;
-            wineModel.selectedSmells = null;
-            wineModel.searchedAroma = null;
-        };
-    }, []);
+        if (!initialData?.length) {
+            setData([]);
+            return;
+        }
+        setData(
+            initialData.map(group => ({
+                ...group,
+                subgroups: group.subgroups.map(subgroup => ({
+                    ...subgroup,
+                    aromas: subgroup.aromas.filter(
+                        aroma => !selected.some(selectedItem => selectedItem.id === aroma.id),
+                    ),
+                })),
+            })),
+        );
+    }, [initialData, selected]);
 
     useEffect(() => {
-        if (initialData?.length) {
-            setData(
-                initialData.map(group => ({
-                    ...group,
-                    subgroups: group.subgroups.map(subgroup => ({
-                        ...subgroup,
-                        aromas: [...subgroup.aromas],
-                    })),
-                })),
-            );
-        } else {
-            setData([]);
-        }
-    }, [initialData]);
+        wineModel.selectedSmells = selected.map(item => item);
+    }, [selected]);
 
     const onItemPress = useCallback((item: IAroma, subgroupId?: number | null, groupId?: number | null) => {
         const addedSmell: IWineSelectedSmell = {
@@ -175,7 +191,6 @@ export const useWineSmell = (onHide: () => void) => {
     }, []);
 
     const handleNextPress = useCallback(() => {
-        wineModel.selectedSmells = selected.map(item => item);
         navigation.navigate('WineTasteView');
     }, [navigation, selected]);
 

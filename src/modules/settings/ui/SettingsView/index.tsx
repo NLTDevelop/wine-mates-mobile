@@ -21,7 +21,7 @@ export const SettingsView = () => {
 
     return (
         <ScreenContainer
-            edges={['top', 'bottom']}
+            edges={['top']}
             withGradient
             scrollEnabled
             headerComponent={<HeaderWithBackButton title={t('profile.settings')} isCentered={false} />}

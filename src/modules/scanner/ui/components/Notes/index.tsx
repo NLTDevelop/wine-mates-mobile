@@ -34,7 +34,7 @@ export const Notes = () => {
                     <View style={styles.row}>
                         <Typography text={t('wine.color')} variant="h6" style={styles.characteristicTitle} />
                         <Typography
-                            text={wineModel.base?.colorOfWine?.value || '-'}
+                            text={`${wineModel.look?.tone ? t(`wine.${wineModel.look?.tone}`) : '-'} ${wineModel.look?.name || '-'}`}
                             variant="h6"
                             style={styles.characteristic}
                         />
