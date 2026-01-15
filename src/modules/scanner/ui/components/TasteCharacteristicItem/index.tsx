@@ -3,12 +3,11 @@ import { View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { Slider } from '@/UIKit/Slider';
+import { SmoothSlider } from '@/UIKit/SmoothSlider';
 import { useIsFocused } from '@react-navigation/native';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { CrownIcon } from '@assets/icons/CrownIcon';
 import { BlurContainer } from '@/UIKit/BlurContainer';
-import { BottomValues } from '../BottomValues';
 
 interface IProps {
     item: IWineTasteCharacteristic;
@@ -48,19 +47,19 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
                     <Typography text={item.description} variant="subtitle_12_400" style={styles.description} />
                 )}
             </View>
-            <Slider
+            <SmoothSlider
                 min={0}
                 max={maxIndex}
                 value={safeValue}
-                onChange={onChange ?? (() => {})}
-                selectedColor={item.colorHex}
+                onChange={onChange}
+                selectedStyle={{ backgroundColor: item.colorHex }}
                 disabled={disabled}
-            />
-            <BottomValues
-                leftValue={levels[0].name}
-                rightValue={levels[levels.length - 1].name}
-                middleValue={levels[middleIndex]?.name}
-                isTriple={item.isTriple}
+                labels={levels.map(l => l.name)}
+                decorator={{
+                    item: <View style={{ width: 2, height: '100%', backgroundColor: '#FFF' }} />,
+                    count: 5
+                }}
+                snapped
             />
             {item.isPremium && isFocused && !isPremiumUser && <BlurContainer />}
         </View>

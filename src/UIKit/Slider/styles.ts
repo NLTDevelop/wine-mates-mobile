@@ -7,9 +7,22 @@ export const getStyles = (colors: IColors, MARKER: number, TRACK_HEIGHT: number,
             justifyContent: 'center',
             alignItems: 'center',
         },
+        sliderWrapper: {
+            width: SLIDER_LENGTH,
+            height: MARKER,
+            position: 'relative',
+            justifyContent: 'center',
+        },
         slider: {
             width: SLIDER_LENGTH,
-            height: TRACK_HEIGHT,
+            height: MARKER,
+        },
+        markerContainer: {
+            position: 'absolute',
+            top: 0,
+            height: MARKER,
+            justifyContent: 'center',
+            pointerEvents: 'none',
         },
         track: {
           height: TRACK_HEIGHT,
@@ -39,7 +52,8 @@ export const getStyles = (colors: IColors, MARKER: number, TRACK_HEIGHT: number,
         },
         sectionContainer: {
             position: 'absolute',
-            top: 0,
+            top: (MARKER - TRACK_HEIGHT) / 2,
+            left: 0,
             width: SLIDER_LENGTH,
             height: TRACK_HEIGHT,
             justifyContent: 'center',
@@ -49,7 +63,28 @@ export const getStyles = (colors: IColors, MARKER: number, TRACK_HEIGHT: number,
             width: 1,
             height: TRACK_HEIGHT,
             backgroundColor: colors.background,
-            zIndex: 1,
+            zIndex: 2,
+        },
+        labelsContainer: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: SLIDER_LENGTH,
+            marginTop: 8,
+        },
+        labelLeft: {
+            alignItems: 'flex-start',
+        },
+        labelCenter: {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            alignItems: 'center',
+        },
+        labelRight: {
+            alignItems: 'flex-end',
+        },
+        labelText: {
+            color: colors.text,
         },
     });
 
