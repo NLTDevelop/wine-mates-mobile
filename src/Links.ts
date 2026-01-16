@@ -32,6 +32,7 @@ export interface ILinks {
     generateSnacks: string;
     generateNote: string;
     getContext: string;
+    myWine: string;
 }
 
 class Links implements ILinks {
@@ -54,7 +55,8 @@ class Links implements ILinks {
         rates: 'rates',
         generateSnacks: 'rates/generate-snacks',
         generateNote: 'rates/generate-note',
-        getContext: 'rates/context'
+        getContext: 'rates/context',
+        myWine: 'myWine',
     };
 
     private buildDomain() {
@@ -125,6 +127,9 @@ class Links implements ILinks {
     }
     public get getContext() {
         return `${this._domain}${this._links.getContext}`;
+    }
+    public get myWine() {
+        return `${this._domain}${this._links.myWine}`;
     }
 }
 

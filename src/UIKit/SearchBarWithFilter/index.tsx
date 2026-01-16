@@ -2,18 +2,20 @@ import { View, TextInput, TextInputProps, ViewStyle, TouchableOpacity } from 're
 import { useUiContext } from '../../UIProvider';
 import { getStyles } from './styles';
 import { CrossIcon } from '@assets/icons/CrossIcon';
-import { useSearchBar } from './presenters/useSearchBar';
+import { useSearchBarWithFilter } from './presenters/useSearchBarWithFilter';
 import { SearchIcon } from '@assets/icons/SearchIcon';
+import { FilterIcon } from '@assets/icons/FilterIcon';
 
 interface IProps extends TextInputProps {
     containerStyle?: ViewStyle;
+    onFilterPress: () => void;
 }
 
-export const SearchBar = (props: IProps) => {
-    const { onChangeText, containerStyle, value } = props;
+export const SearchBarWithFilter = (props: IProps) => {
+    const { onChangeText, containerStyle, value, onFilterPress } = props;
     const { colors } = useUiContext();
     const styles = getStyles(colors);
-    const { isFocused, handleFocus, handleBlur, onClearText } = useSearchBar(onChangeText);
+    const { isFocused, handleFocus, handleBlur, onClearText } = useSearchBarWithFilter(onChangeText);
 
     return (
         <View style={[styles.container, containerStyle, isFocused && { borderColor: colors.border_strong }]}>
@@ -29,6 +31,9 @@ export const SearchBar = (props: IProps) => {
             {!!value ? <TouchableOpacity style={styles.button} onPress={onClearText} >
                 <CrossIcon width={12} height={12} color={colors.icon}/>
             </TouchableOpacity> : null}
+            <TouchableOpacity onPress={onFilterPress}>
+                <FilterIcon/>
+            </TouchableOpacity>
         </View>
     );
 };
