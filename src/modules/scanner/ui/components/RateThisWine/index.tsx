@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { getStyles } from './styles';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
@@ -7,9 +7,9 @@ import { Slider } from '@/UIKit/Slider';
 import StarRating, { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { EmptyStarIcon } from '@assets/icons/EmptyStarIcon';
-import { HalfStarIcon } from '@assets/icons/HalfStarIcon';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { scaleVertical } from '@/utils';
 
 interface IProps {
     sliderValue: number;
@@ -20,26 +20,60 @@ interface IProps {
 }
 
 interface StarIconProps {
-    type: "full" | "half" | "empty" | "quarter" | "three-quarter";
+    type: 'full' | 'half' | 'empty' | 'quarter' | 'three-quarter' | 'fraction';
     size: number;
     color: string;
+    fill?: number;
 }
 
-const StarIcon = ({ type, size, color }: StarIconProps) => {
-    if (type === "full") {
-      return <FilledStarIcon width={size} height={size} color={color} />;
-    }
-  
-    if (type === "half") {
-      return <HalfStarIcon width={size} height={size} color={color} outlineColor={color} />;
-    }
-  
-    return <EmptyStarIcon width={size} height={size} color={color} />;
-  };
-
-export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false}: IProps) => {
+export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const StarIconComponent = useCallback(
+        ({ type, size, color, fill }: StarIconProps) => {
+            const baseSize = scaleVertical(size);
+            const fillValue = Math.min(
+                1,
+                Math.max(
+                    0,
+                    (() => {
+                        if (type === 'full') return 1;
+                        if (type === 'three-quarter') return 0.75;
+                        if (type === 'half') return 0.5;
+                        if (type === 'quarter') return 0.25;
+                        if (type === 'fraction') return fill ?? 0;
+                        return 0;
+                    })(),
+                ),
+            );
+
+            if (fillValue <= 0) {
+                return <EmptyStarIcon width={size} height={size} color={colors.icon} />;
+            }
+
+            if (fillValue >= 1) {
+                return <FilledStarIcon width={size} height={size} color={color} />;
+            }
+
+            return (
+                <View style={[styles.starIconContainer, { width: baseSize, height: baseSize }]}>
+                    <EmptyStarIcon width={size} height={size} color={colors.icon} />
+                    <View
+                        style={[
+                            styles.starFillOverlay,
+                            {
+                                width: baseSize * fillValue,
+                                height: baseSize,
+                            },
+                        ]}
+                    >
+                        <FilledStarIcon width={size} height={size} color={color} />
+                    </View>
+                </View>
+            );
+        },
+        [colors.icon, styles.starFillOverlay, styles.starIconContainer],
+    );
 
     return (
         <View style={styles.container}>
@@ -59,29 +93,29 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                         <Typography text={sliderValue.toString()} />
                     </View>
                 </>
+            ) : disabled ? (
+                <View style={styles.starsContainer}>
+                    <StarRatingDisplay
+                        rating={starRate}
+                        step={0.1}
+                        StarIconComponent={StarIconComponent}
+                        starSize={36}
+                        starStyle={styles.star}
+                        emptyColor={colors.icon}
+                    />
+                </View>
             ) : (
-                disabled ? (
-                    <View style={styles.starsContainer}>
-                        <StarRatingDisplay
-                            rating={starRate}
-                            StarIconComponent={StarIcon}
-                            starSize={36}
-                            starStyle={styles.star}
-                            emptyColor={colors.icon}
-                        />
-                    </View>
-                ) : (
-                    <View style={styles.starsContainer}>
-                        <StarRating
-                            rating={starRate}
-                            onChange={onStarRateChange ?? (() => {})}
-                            StarIconComponent={StarIcon}
-                            starSize={36}
-                            starStyle={styles.star}
-                            emptyColor={colors.icon}
-                        />
-                    </View>
-                )
+                <View style={styles.starsContainer}>
+                    <StarRating
+                        rating={starRate}
+                        onChange={onStarRateChange ?? (() => {})}
+                        step={0.1}
+                        StarIconComponent={StarIconComponent}
+                        starSize={36}
+                        starStyle={styles.star}
+                        emptyColor={colors.icon}
+                    />
+                </View>
             )}
         </View>
     );

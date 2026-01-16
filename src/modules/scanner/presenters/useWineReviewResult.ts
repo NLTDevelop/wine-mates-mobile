@@ -20,8 +20,6 @@ export const useWineReviewResult = () => {
     const [limits, setLimits] = useState<IRateContext | null>(null);
     const isPremiumUser = userModel.user?.hasPremium || false;
 
-    console.log('User: ', userModel.user);
-
     const getLimits = useCallback(async () => {
         try {
             if (!wineModel.wine?.id) return;
