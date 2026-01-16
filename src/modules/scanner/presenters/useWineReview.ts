@@ -18,7 +18,7 @@ export const useWineReview = () => {
     }, []);
 
     const onStarRateChange = useCallback((value: number) => {
-        setStarRate(value);
+        setStarRate(Number(value.toFixed(1)));
     }, []);
 
     const handleNextPress = useCallback(() => {

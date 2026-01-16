@@ -29,6 +29,18 @@ const createInitialForm = (aiData?: IAIData | null): IWineBase => {
 
     return {
         ...baseForm,
+        typeOfWine: aiData.typeId
+            ? { ...baseForm.typeOfWine, id: aiData.typeId.id, value: aiData.typeId.name }
+            : baseForm.typeOfWine,
+        colorOfWine: aiData.colorId
+            ? { ...baseForm.colorOfWine, id: aiData.colorId.id, value: aiData.colorId.name }
+            : baseForm.colorOfWine,
+        country: aiData.countryId
+            ? { ...baseForm.country, id: aiData.countryId.id, value: aiData.countryId.name }
+            : baseForm.country,
+        region: aiData.regionId
+            ? { ...baseForm.region, id: aiData.regionId.id, value: aiData.regionId.name }
+            : baseForm.region,
         producer: { ...baseForm.producer, value: aiData.producer ?? '' },
         grapeVariety: { ...baseForm.grapeVariety, value: aiData.grapeVariety ?? '' },
         vintageYear: { ...baseForm.vintageYear, value: aiData.vintage ? String(aiData.vintage) : '' },

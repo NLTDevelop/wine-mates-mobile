@@ -26,6 +26,13 @@ export const getStyles = (_colors: IColors) => {
         star: {
             marginRight: scaleHorizontal(24),
         },
+        starIconContainer: {
+            justifyContent: 'center',
+        },
+        starFillOverlay: {
+            position: 'absolute',
+            overflow: 'hidden',
+        },
     });
     return styles;
 };
