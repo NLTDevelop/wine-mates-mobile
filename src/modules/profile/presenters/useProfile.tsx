@@ -14,7 +14,7 @@ export const useProfile = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const onWineAndStylePress = useCallback(() => {
-        navigation.navigate('');
+        navigation.navigate('WineAndStylesView');
     }, [navigation]);
 
     const onEventsPress = useCallback(() => {

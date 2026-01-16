@@ -10,15 +10,27 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 export const useWineTaste = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const [isLoading, setIsLoading] = useState(true);
-    const [data, setData] = useState<IWineTaste[]>([]);
-    const [selected, setSelected] = useState<IWineTaste[]>([]);
+    const initialSelected = wineModel.selectedTastes ?? [];
+    const [isLoading, setIsLoading] = useState(() => !wineModel.tastes?.length);
+    const [data, setData] = useState<IWineTaste[]>(() => {
+        if (!wineModel.tastes?.length) return [];
+        return wineModel.tastes.filter(taste => !initialSelected.some(selectedItem => selectedItem.id === taste.id));
+    });
+    const [selected, setSelected] = useState<IWineTaste[]>(initialSelected);
     const [isError, setIsError] = useState(false);
     const initialDataRef = useRef<IWineTaste[]>([]);
+    const selectedRef = useRef<IWineTaste[]>(initialSelected);
+    const initialData = wineModel.tastes;
 
     const getTastes = useCallback(async () => {
         try {
             if (!wineModel.base?.colorOfWine?.id) return;
+
+            if (wineModel.tastes?.length) {
+                setIsError(false);
+                setIsLoading(false);
+                return;
+            }
 
             setIsLoading(true);
 
@@ -34,7 +46,10 @@ export const useWineTaste = () => {
                     setIsError(true);
                 }
             } else {
-                setData(response.data);
+                const nextData = response.data.filter(
+                    taste => !selectedRef.current.some(selectedItem => selectedItem.id === taste.id),
+                );
+                setData(nextData);
                 initialDataRef.current = response.data;
                 setIsError(false);
             }
@@ -50,17 +65,18 @@ export const useWineTaste = () => {
     }, [getTastes]);
 
     useEffect(() => {
-        return () => {
-            wineModel.tastes = null;
-            wineModel.selectedTastes = null;
-        };
-    }, []);
+        const initial = initialData ?? [];
+        initialDataRef.current = initial;
+        setData(initial.filter(taste => !selected.some(selectedItem => selectedItem.id === taste.id)));
+    }, [initialData, selected]);
 
     useEffect(() => {
-        const initial = wineModel.tastes ?? [];
-        initialDataRef.current = initial;
-        setData(initial);
-    }, []);
+        wineModel.selectedTastes = selected;
+    }, [selected]);
+
+    useEffect(() => {
+        selectedRef.current = selected;
+    }, [selected]);
 
     const onItemPress = useCallback((item: IWineTaste) => {
         setSelected(prevState => [item, ...prevState]);
@@ -90,7 +106,6 @@ export const useWineTaste = () => {
     }, []);
 
     const handleNextPress = useCallback(() => {
-        wineModel.selectedTastes = selected;
         navigation.navigate('WineTasteCharacteristicsView');
     }, [navigation, selected]);
 

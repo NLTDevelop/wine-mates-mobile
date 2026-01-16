@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
     const [isError, setIsError] = useState(false);
     const [sliderValues, setSliderValues] = useState<Record<number, number>>({});
     const data = wineModel.tasteCharacteristics;
@@ -19,6 +19,12 @@ export const useWineTasteCharacteristics = () => {
     const getTasteCharacteristics = useCallback(async () => {
         try {
             if (!wineModel.base?.colorOfWine?.id) return;
+
+            if (wineModel.tasteCharacteristics?.length) {
+                setIsError(false);
+                setIsLoading(false);
+                return;
+            }
 
             setIsLoading(true);
 
@@ -67,20 +73,22 @@ export const useWineTasteCharacteristics = () => {
         });
     }, [data]);
 
-    useEffect(() => {
-        return () => {
-            wineModel.tasteCharacteristics = null;
-        };
-    }, []);
-
     const handleSliderChange = useCallback(
         (id: number, value: number) => {
             setSliderValues(prev => {
                 const levelsLength = data?.find(characteristic => characteristic.id === id)?.levels.length ?? 0;
                 const maxIndex = Math.max(levelsLength - 1, 0);
                 const nextValue = Math.min(Math.max(value, 0), maxIndex);
+                const next = { ...prev, [id]: nextValue };
 
-                return { ...prev, [id]: nextValue };
+                if (data?.length) {
+                    wineModel.tasteCharacteristics = data.map(item => ({
+                        ...item,
+                        selectedIndex: next[item.id] ?? item.selectedIndex ?? 0,
+                    }));
+                }
+
+                return next;
             });
         },
         [data],

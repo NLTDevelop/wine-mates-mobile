@@ -234,5 +234,10 @@
     "locale": {
         "en": "Англійська",
         "uk": "Українська"
+    },
+    "wineAndStyles": {
+        "wineAndStyles": "Вино та стилі",
+        "myWine": "Моє вино",
+        "myTasteProfile": "Мій профіль смаків"
     }
 }

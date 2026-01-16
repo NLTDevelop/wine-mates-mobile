@@ -28,9 +28,6 @@ export const getStyles = (colors: IColors) => {
         subContainer: {
             gap: scaleVertical(4),
         },
-        title: {
-            flexShrink: 1,
-        },
         rateContainer: {
             flexDirection: 'row',
             alignItems: 'center',

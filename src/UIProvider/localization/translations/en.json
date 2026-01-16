@@ -231,5 +231,10 @@
     "locale": {
         "en": "English",
         "uk": "Ukrainian"
+    },
+    "wineAndStyles": {
+        "wineAndStyles": "Wine & styles",
+        "myWine": "My wine",
+        "myTasteProfile": "My taste profile"
     }
 }

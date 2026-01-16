@@ -20,6 +20,8 @@ export const useResultHeader = (item: IWineDetails) => {
     );
 
     const onPress = useCallback(() => {
+        wineModel.clear();
+        
         wineModel.wine = {
             id: item.id,
             name: item.name,
