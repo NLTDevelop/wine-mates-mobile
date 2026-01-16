@@ -38,145 +38,160 @@ interface IProps {
     value?: number;
     onChange?: (value: number) => void;
     initialValue?: number;
-    
+
     markerSize?: number;
     markerColor?: string;
     markerStyle?: ViewStyle;
-    
+
     decorator?: {
         item: ReactNode;
         count: number;
     };
 }
 
-export const SmoothSlider = memo(({
-    min = 0,
-    max,
-    values,
-    onValuesChange,
-    step = 1,
-    snapped = true,
-    sliderLength,
-    customMarker,
-    trackStyle,
-    selectedStyle,
-    unselectedStyle,
-    containerStyle,
-    data,
-    labels,
-    onLabelPress,
-    renderLabel,
-    withSections = false,
-    sections,
-    disabled = false,
-    value,
-    onChange,
-    initialValue,
-    markerSize,
-    markerColor,
-    markerStyle,
-    decorator,
-}: IProps) => {
-    const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, sliderLength), [colors, sliderLength]);
+export const SmoothSlider = memo(
+    ({
+        min = 0,
+        max,
+        values,
+        onValuesChange,
+        step = 1,
+        snapped = true,
+        sliderLength,
+        customMarker,
+        trackStyle,
+        selectedStyle,
+        unselectedStyle,
+        containerStyle,
+        data,
+        labels,
+        onLabelPress,
+        renderLabel,
+        withSections = false,
+        sections,
+        disabled = false,
+        value,
+        onChange,
+        initialValue,
+        markerSize,
+        markerColor,
+        markerStyle,
+        decorator,
+    }: IProps) => {
+        const { colors } = useUiContext();
+        const styles = useMemo(() => getStyles(colors, sliderLength), [colors, sliderLength]);
 
-    const actualMax = max ?? (data ? data.length - 1 : 100);
-    const actualValue = value ?? values?.[0] ?? initialValue ?? min;
+        const actualMax = max ?? (data ? data.length - 1 : 100);
+        const actualValue = value ?? values?.[0] ?? initialValue ?? min;
 
-    const handleValueChange = (newValue: number) => {
-        onChange?.(newValue);
-        onValuesChange?.([newValue]);
-    };
+        const handleValueChange = (newValue: number) => {
+            onChange?.(newValue);
+            onValuesChange?.([newValue]);
+        };
 
-    const { panGesture, thumbStyle, activeTrackStyle, handleLabelPress: handleLabelPressInternal, handleLayout } = useSmoothSlider({
-        min,
-        max: actualMax,
-        initialValue: actualValue,
-        onChange: handleValueChange,
-        step,
-        snapped,
-    });
-
-    const handleLabelClick = (index: number) => {
-        handleLabelPressInternal(index);
-        onLabelPress?.(index);
-    };
-
-    const displayLabels = labels ?? data?.map(d => d.title);
-
-    const decoratorItems = useMemo(() => {
-        if (!decorator || decorator.count <= 0) return [];
-        
-        return Array.from({ length: decorator.count }).map((_, index) => {
-            const position = ((index + 1) / (decorator.count + 1)) * 100;
-            return {
-                key: index,
-                leftPercent: position,
-                item: decorator.item,
-            };
+        const {
+            panGesture,
+            thumbStyle,
+            activeTrackStyle,
+            handleLabelPress: handleLabelPressInternal,
+            handleLayout,
+        } = useSmoothSlider({
+            min,
+            max: actualMax,
+            initialValue: actualValue,
+            onChange: handleValueChange,
+            step,
+            snapped,
         });
-    }, [decorator]);
 
-    return (
-        <View style={[styles.container, containerStyle]} pointerEvents={disabled ? 'none' : 'auto'}>
-            <View style={styles.sliderWrapper}>
-                <View
-                    style={styles.trackContainer}
-                    onLayout={(event) => handleLayout(event.nativeEvent.layout.width)}
-                >
-                    <View style={[styles.track, trackStyle, unselectedStyle]} />
-                    <Animated.View style={[styles.activeTrack, activeTrackStyle, selectedStyle]} />
+        const handleLabelClick = (index: number) => {
+            handleLabelPressInternal(index);
+            onLabelPress?.(index);
+        };
 
-                    {decorator && decoratorItems.length > 0 && (
-                        <View style={styles.decoratorContainer}>
-                            {decoratorItems.map((decoratorItem) => (
-                                <View key={decoratorItem.key} style={[styles.decoratorItem, { left: `${decoratorItem.leftPercent}%` }]}>
-                                    {decoratorItem.item}
-                                </View>
-                            ))}
-                        </View>
-                    )}
+        const displayLabels = labels ?? data?.map(d => d.title);
 
-                    {withSections && sections && (
-                        <View style={styles.sectionContainer}>
-                            {sections.map(section => (
-                                <View key={section.key} style={[styles.section, { left: section.left }]} />
-                            ))}
-                        </View>
-                    )}
+        const decoratorItems = useMemo(() => {
+            if (!decorator || decorator.count <= 0) return [];
 
-                    <GestureDetector gesture={panGesture}>
-                        <Animated.View style={[styles.thumbWrapper, thumbStyle]}>
-                            {customMarker ? customMarker() : <Marker size={markerSize} color={markerColor} style={markerStyle} />}
-                        </Animated.View>
-                    </GestureDetector>
+            return Array.from({ length: decorator.count }).map((_, index) => {
+                const position = ((index + 1) / (decorator.count + 1)) * 100;
+                return {
+                    key: index,
+                    leftPercent: position,
+                    item: decorator.item,
+                };
+            });
+        }, [decorator]);
+
+        return (
+            <View style={[styles.container, containerStyle]} pointerEvents={disabled ? 'none' : 'auto'}>
+                <View style={styles.sliderWrapper}>
+                    <View
+                        style={styles.trackContainer}
+                        onLayout={event => handleLayout(event.nativeEvent.layout.width)}
+                    >
+                        <View style={[styles.track, trackStyle, unselectedStyle]} />
+                        <Animated.View style={[styles.activeTrack, activeTrackStyle, selectedStyle]} />
+
+                        {decorator && decoratorItems.length > 0 && (
+                            <View style={styles.decoratorContainer}>
+                                {decoratorItems.map(decoratorItem => (
+                                    <View
+                                        key={decoratorItem.key}
+                                        style={[styles.decoratorItem, { left: `${decoratorItem.leftPercent}%` }]}
+                                    >
+                                        {decoratorItem.item}
+                                    </View>
+                                ))}
+                            </View>
+                        )}
+
+                        {withSections && sections && (
+                            <View style={styles.sectionContainer}>
+                                {sections.map(section => (
+                                    <View key={section.key} style={[styles.section, { left: section.left }]} />
+                                ))}
+                            </View>
+                        )}
+
+                        <GestureDetector gesture={panGesture}>
+                            <Animated.View style={[styles.thumbWrapper, thumbStyle]}>
+                                {customMarker ? (
+                                    customMarker()
+                                ) : (
+                                    <Marker size={markerSize} color={markerColor} style={markerStyle} />
+                                )}
+                            </Animated.View>
+                        </GestureDetector>
+                    </View>
                 </View>
+
+                {displayLabels && displayLabels.length > 0 && (
+                    <View style={styles.labelsContainer}>
+                        {displayLabels.map((label, index) => (
+                            <Pressable
+                                key={`${label}-${index}`}
+                                style={styles.labelWrapper}
+                                onPress={() => handleLabelClick(index)}
+                            >
+                                {renderLabel ? (
+                                    renderLabel(label, index)
+                                ) : (
+                                    <Typography
+                                        text={label}
+                                        variant="body_400"
+                                        style={styles.labelText}
+                                        numberOfLines={1}
+                                    />
+                                )}
+                            </Pressable>
+                        ))}
+                    </View>
+                )}
             </View>
-
-            {displayLabels && displayLabels.length > 0 && (
-                <View style={styles.labelsContainer}>
-                    {displayLabels.map((label, index) => (
-                        <Pressable
-                            key={`${label}-${index}`}
-                            style={styles.labelWrapper}
-                            onPress={() => handleLabelClick(index)}
-                        >
-                            {renderLabel ? (
-                                renderLabel(label, index)
-                            ) : (
-                                <Typography
-                                    text={label}
-                                    variant="body_400"
-                                    style={styles.labelText}
-                                    numberOfLines={1}
-                                />
-                            )}
-                        </Pressable>
-                    ))}
-                </View>
-            )}
-        </View>
-    );
-});
+        );
+    },
+);
 
 SmoothSlider.displayName = 'SmoothSlider';
