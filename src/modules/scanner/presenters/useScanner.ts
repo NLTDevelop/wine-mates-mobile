@@ -35,7 +35,7 @@ export const useScanner = () => {
 
     useFocusEffect(
         useCallback(() => {
-            wineModel.clear();
+            wineModel.image = null;
         }, []),
     );
 

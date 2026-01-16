@@ -42,7 +42,6 @@ export const WineListItem = ({ item, onPress }: IProps) => {
                         variant="h6"
                         text={`${item.name} ${item.vintage}`}
                         numberOfLines={2}
-                        style={styles.title}
                         {...guard.bindText}
                     />
                     <View style={styles.rateContainer}>
@@ -68,8 +67,6 @@ export const WineListItem = ({ item, onPress }: IProps) => {
                             />
                             <Typography
                                 text={`${item?.lastReview?.user.firstName} ${item?.lastReview?.user.lastName}`}
-                                numberOfLines={1}
-                                style={styles.title}
                                 {...guard.bindText}
                             />
                         </View>
