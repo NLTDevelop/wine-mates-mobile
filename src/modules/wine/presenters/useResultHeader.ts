@@ -6,18 +6,16 @@ import { useCallback, useMemo } from 'react';
 
 export const useResultHeader = (item: IWineDetails) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const vintageData = useMemo(
-        () =>
-            item.vintages.map((vintage: IVintage) => {
-                const label = String(vintage.vintage);
-                return {
-                    label,
-                    value: label,
-                    id: vintage.wineId,
-                };
-            }),
-        [item],
-    );
+    const vintageData = useMemo(() =>
+        item.vintages.map((vintage: IVintage) => {
+            const label = String(vintage.vintage);
+            return {
+                label,
+                value: label,
+                id: vintage.wineId,
+            };
+        }),
+    [item],);
 
     const onPress = useCallback(() => {
         wineModel.clear();
