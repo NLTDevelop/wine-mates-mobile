@@ -18,6 +18,7 @@ const MOCK_DATA: IMyTasteProfileListItem[] = [
     { id: 6, title: 'Rose wine' },
 ];
 
+//TODO
 export const MyTasteProfile = observer(() => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);

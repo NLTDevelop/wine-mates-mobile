@@ -9,6 +9,7 @@ interface IProps {
 }
 
 export const MyTasteProfileItem = ({ title }: IProps) => {
+    //TODO
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 

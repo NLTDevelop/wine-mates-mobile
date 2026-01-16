@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
+//TODO
 export const useTasteProfile = () => {
     const [isLoading, setIsLoading] = useState(false);
 
-    //TODO
     const getData = useCallback(async () => {
         try {
             setIsLoading(true);
