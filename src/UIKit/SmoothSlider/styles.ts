@@ -104,6 +104,9 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
             width: LABEL_WIDTH,
             alignItems: 'center',
         },
+        middleLabelWrapper: {
+            width: scaleHorizontal(100),
+        },
         labelText: {
             color: colors.text,
             textAlign: 'center',

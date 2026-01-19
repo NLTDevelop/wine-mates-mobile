@@ -27,9 +27,8 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
     ];
 
     const maxIndex = useMemo(() => {
-        const baseMax = Math.max(levels.length - 1, 0);
-        return item.isTriple ? baseMax * 2 : baseMax;
-    }, [item.isTriple, levels.length]);
+        return Math.max(levels.length - 1, 0);
+    }, [levels.length]);
 
     const safeValue = useMemo(() => {
         if (value > maxIndex) return maxIndex;
@@ -38,30 +37,18 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
     }, [maxIndex, value]);
 
     const decoratorCount = useMemo(() => {
-        return item.isTriple ? Math.max(levels.length - 1, 0) : 0;
-    }, [item.isTriple, levels.length]);
+        return 1;
+    }, []);
 
     const sliderLabels = useMemo(() => {
-        if (!item.isTriple) {
-            return levels.map(level => level.name);
-        }
-
-        const extended: string[] = [];
-        levels.forEach((level, index) => {
-            extended.push(level.name);
-            if (index < levels.length - 1) {
-                extended.push('');
-            }
-        });
-
-        return extended;
-    }, [item.isTriple, levels]);
+        return levels.map(level => level.name);
+    }, [levels]);
 
     const decorator = useMemo(() => {
         if (decoratorCount === 0) return undefined;
         return {
             item: <View style={styles.decoratorItem} />,
-            count: decoratorCount + 1,
+            count: decoratorCount,
         };
     }, [decoratorCount, styles.decoratorItem]);
 

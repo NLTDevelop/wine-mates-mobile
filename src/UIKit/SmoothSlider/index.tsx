@@ -174,24 +174,33 @@ export const SmoothSlider = memo(
 
                 {displayLabels && displayLabels.length > 0 && (
                     <View style={styles.labelsContainer}>
-                        {displayLabels.map((label, index) => (
-                            <Pressable
-                                key={`${label}-${index}`}
-                                style={styles.labelWrapper}
-                                onPress={() => handleLabelClick(index)}
-                            >
-                                {renderLabel ? (
-                                    renderLabel(label, index)
-                                ) : (
-                                    <Typography
-                                        text={label}
-                                        variant="body_400"
-                                        style={styles.labelText}
-                                        numberOfLines={1}
-                                    />
-                                )}
-                            </Pressable>
-                        ))}
+                        {displayLabels.map((label, index) => {
+                            const isFirst = index === 0;
+                            const isLast = index === displayLabels.length - 1;
+                            const isMiddle = !isFirst && !isLast;
+                            
+                            return (
+                                <Pressable
+                                    key={`${label}-${index}`}
+                                    style={[
+                                        styles.labelWrapper,
+                                        isMiddle && styles.middleLabelWrapper,
+                                    ]}
+                                    onPress={() => handleLabelClick(index)}
+                                >
+                                    {renderLabel ? (
+                                        renderLabel(label, index)
+                                    ) : (
+                                        <Typography
+                                            text={label}
+                                            variant="body_400"
+                                            style={styles.labelText}
+                                            numberOfLines={isMiddle ? 2 : 1}
+                                        />
+                                    )}
+                                </Pressable>
+                            );
+                        })}
                     </View>
                 )}
             </View>
