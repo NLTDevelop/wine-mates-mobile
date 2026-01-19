@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (_colors: IColors) => {
+export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             marginHorizontal: scaleHorizontal(16),
@@ -12,7 +12,8 @@ export const getStyles = (_colors: IColors) => {
             marginBottom: scaleVertical(16),
         },
         sliderContainer: {
-            marginBottom: scaleVertical(12),
+            width: '92%',
+            marginHorizontal: scaleVertical(12),
         },
         row: {
             flexDirection: 'row',
@@ -33,6 +34,11 @@ export const getStyles = (_colors: IColors) => {
             position: 'absolute',
             overflow: 'hidden',
         },
+        decoratorItem: {
+            width: scaleHorizontal(2),
+            backgroundColor: colors.background,
+            height: '100%'
+        }
     });
     return styles;
 };

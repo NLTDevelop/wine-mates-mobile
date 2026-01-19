@@ -91,7 +91,7 @@ export const ShadeSelector = memo(({ value = MIN, onChange, colorShades }: IProp
 
     const fillWidth = animatedValue.interpolate({
         inputRange: [MIN, MAX],
-        outputRange: [0, SLIDER_LENGTH + MARKER],
+        outputRange: [MARKER, SLIDER_LENGTH + MARKER],
     });
 
     return (

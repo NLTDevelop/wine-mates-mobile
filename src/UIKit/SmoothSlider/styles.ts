@@ -8,18 +8,18 @@ const TRACK_HEIGHT = scaleVertical(8);
 const THUMB_SIZE = scaleHorizontal(24);
 const HALF_THUMB = THUMB_SIZE / 2;
 
-export const getStyles = (colors: IColors, sliderLength?: number) => {
+export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch: boolean = false) => {
     const actualSliderLength = sliderLength ?? scaleHorizontal(343) - THUMB_SIZE;
-    const hasSliderLength = sliderLength !== undefined;
+    const hasSliderLength = sliderLength !== undefined && !shouldStretch;
 
     const styles = StyleSheet.create({
         container: {
             width: '100%',
             justifyContent: 'center',
-            alignItems: 'center',
+            alignItems: shouldStretch ? 'stretch' : 'center',
         },
         sliderWrapper: {
-            paddingHorizontal: hasSliderLength ? 0 : HALF_LABEL,
+            paddingHorizontal: hasSliderLength || shouldStretch ? 0 : HALF_LABEL,
             paddingVertical: hasSliderLength ? 0 : scaleVertical(12),
             width: hasSliderLength ? actualSliderLength : '100%',
         },

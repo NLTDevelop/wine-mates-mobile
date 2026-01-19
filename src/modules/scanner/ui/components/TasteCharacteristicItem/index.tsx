@@ -26,15 +26,44 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
         { id: 2, name: '' },
     ];
 
+    const maxIndex = useMemo(() => {
+        const baseMax = Math.max(levels.length - 1, 0);
+        return item.isTriple ? baseMax * 2 : baseMax;
+    }, [item.isTriple, levels.length]);
+
     const safeValue = useMemo(() => {
-        const max = Math.max(levels.length - 1, 0);
-        if (value > max) return max;
+        if (value > maxIndex) return maxIndex;
         if (value < 0) return 0;
         return value;
-    }, [levels.length, value]);
+    }, [maxIndex, value]);
 
-    const maxIndex = Math.max(levels.length - 1, 0);
-    const middleIndex = Math.floor((levels.length - 1) / 2);
+    const decoratorCount = useMemo(() => {
+        return item.isTriple ? Math.max(levels.length - 1, 0) : 0;
+    }, [item.isTriple, levels.length]);
+
+    const sliderLabels = useMemo(() => {
+        if (!item.isTriple) {
+            return levels.map(level => level.name);
+        }
+
+        const extended: string[] = [];
+        levels.forEach((level, index) => {
+            extended.push(level.name);
+            if (index < levels.length - 1) {
+                extended.push('');
+            }
+        });
+
+        return extended;
+    }, [item.isTriple, levels]);
+
+    const decorator = useMemo(() => {
+        if (decoratorCount === 0) return undefined;
+        return {
+            item: <View style={styles.decoratorItem} />,
+            count: decoratorCount + 1,
+        };
+    }, [decoratorCount, styles.decoratorItem]);
 
     return (
         <View style={styles.container}>
@@ -54,11 +83,8 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
                 onChange={onChange}
                 selectedStyle={{ backgroundColor: item.colorHex }}
                 disabled={disabled}
-                labels={levels.map(l => l.name)}
-                decorator={{
-                    item: <View style={{ width: 2, height: '100%', backgroundColor: '#FFF' }} />,
-                    count: 5
-                }}
+                labels={sliderLabels}
+                decorator={decorator}
                 snapped
             />
             {item.isPremium && isFocused && !isPremiumUser && <BlurContainer />}

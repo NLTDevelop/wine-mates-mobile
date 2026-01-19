@@ -27,6 +27,11 @@ export const getStyles = (colors: IColors) => {
         description: {
             color: colors.text_light,
         },
+        decoratorItem: {
+            width: 2,
+            height: '100%',
+            backgroundColor: colors.background,
+        },
     });
     return styles;
 };

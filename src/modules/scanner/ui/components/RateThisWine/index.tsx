@@ -3,7 +3,7 @@ import { getStyles } from './styles';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { Slider } from '@/UIKit/Slider';
+import { SmoothSlider } from '@/UIKit/SmoothSlider';
 import StarRating, { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { EmptyStarIcon } from '@assets/icons/EmptyStarIcon';
@@ -75,19 +75,28 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
         [colors.icon, styles.starFillOverlay, styles.starIconContainer],
     );
 
+    const decorators = useMemo(() => {
+        return {
+            item: <View style={styles.decoratorItem} />,
+            count: 9
+        };
+    }, [styles.decoratorItem]);
+
     return (
         <View style={styles.container}>
             <Typography text={t('wine.rateThisWine')} variant="subtitle_20_500" style={styles.title} />
             {userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER ? (
                 <>
-                    <Slider
+                    <SmoothSlider
                         min={0}
                         max={100}
                         value={sliderValue}
-                        onChange={handleSliderChange ?? (() => {})}
-                        selectedColor={colors.selectedSlider}
+                        onChange={handleSliderChange}
+                        selectedStyle={{ backgroundColor: colors.selectedSlider }}
                         containerStyle={styles.sliderContainer}
                         disabled={disabled}
+                        decorator={decorators}
+                        snapped={false}
                     />
                     <View style={styles.row}>
                         <Typography text={sliderValue.toString()} />

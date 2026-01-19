@@ -79,7 +79,6 @@ export const SmoothSlider = memo(
         decorator,
     }: IProps) => {
         const { colors } = useUiContext();
-        const styles = useMemo(() => getStyles(colors, sliderLength), [colors, sliderLength]);
 
         const actualMax = max ?? (data ? data.length - 1 : 100);
         const actualValue = value ?? values?.[0] ?? initialValue ?? min;
@@ -110,6 +109,12 @@ export const SmoothSlider = memo(
         };
 
         const displayLabels = labels ?? data?.map(d => d.title);
+        const hasLabels = Boolean(displayLabels && displayLabels.length > 0);
+        const shouldStretch = !snapped && !hasLabels && !sliderLength;
+        const styles = useMemo(
+            () => getStyles(colors, sliderLength, shouldStretch),
+            [colors, sliderLength, shouldStretch],
+        );
 
         const decoratorItems = useMemo(() => {
             if (!decorator || decorator.count <= 0) return [];

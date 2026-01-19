@@ -63,7 +63,8 @@ export const useWineTasteCharacteristics = () => {
             const next: Record<number, number> = {};
 
             data.forEach(item => {
-                const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
+                const baseMax = Math.max((item.levels?.length ?? 0) - 1, 0);
+                const maxIndex = item.isTriple ? baseMax * 2 : baseMax;
                 const baseValue =
                     typeof item.selectedIndex === 'number' ? item.selectedIndex : prev[item.id] ?? 0;
                 next[item.id] = Math.min(Math.max(baseValue, 0), maxIndex);
@@ -76,8 +77,10 @@ export const useWineTasteCharacteristics = () => {
     const handleSliderChange = useCallback(
         (id: number, value: number) => {
             setSliderValues(prev => {
-                const levelsLength = data?.find(characteristic => characteristic.id === id)?.levels.length ?? 0;
-                const maxIndex = Math.max(levelsLength - 1, 0);
+                const characteristic = data?.find(c => c.id === id);
+                const levelsLength = characteristic?.levels.length ?? 0;
+                const baseMax = Math.max(levelsLength - 1, 0);
+                const maxIndex = characteristic?.isTriple ? baseMax * 2 : baseMax;
                 const nextValue = Math.min(Math.max(value, 0), maxIndex);
                 const next = { ...prev, [id]: nextValue };
 
