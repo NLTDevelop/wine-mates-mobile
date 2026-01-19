@@ -16,6 +16,8 @@ export const useWineLook = () => {
     const [shade, setShade] = useState(2);
     const [selectedColor, setSelectedColor] = useState<IWineColorShade | null>(null);
     const [isError, setIsError] = useState(false);
+    const [shadeSelectorKey, setShadeSelectorKey] = useState(0);
+    const [shouldResetShadeKey, setShouldResetShadeKey] = useState(false);
     const currentColor = useMemo(() =>
         shade === 1 ? selectedColor?.tonePale : shade === 2 ? selectedColor?.toneMedium : selectedColor?.toneDeep,
     [shade, selectedColor]);
@@ -68,6 +70,12 @@ export const useWineLook = () => {
     }, [getColorsWithShades]);
 
     useEffect(() => {
+        if (selectedColor?.id != null) {
+            setShouldResetShadeKey(true);
+        }
+    }, [selectedColor?.id]);
+
+    useEffect(() => {
         const look = wineModel.look;
         if (!look) return;
 
@@ -94,6 +102,12 @@ export const useWineLook = () => {
         setSelectedColor(color);
         setShade(2);
     }, []);
+
+    const handleShadeAnimationEnd = useCallback(() => {
+        if (!shouldResetShadeKey) return;
+        setShadeSelectorKey(prev => prev + 1);
+        setShouldResetShadeKey(false);
+    }, [shouldResetShadeKey]);
 
     const handlePressNext = useCallback(() => {
         if (!currentColor) return;
@@ -122,6 +136,6 @@ export const useWineLook = () => {
     
     return { 
         data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades, currentColor,
-        isLoading, onSelectColor, handlePressNext, appearance, setAppearance
+        isLoading, onSelectColor, handlePressNext, appearance, setAppearance, shadeSelectorKey, handleShadeAnimationEnd
     };
 };

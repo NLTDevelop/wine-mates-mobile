@@ -36,6 +36,17 @@ export const getStyles = (colors: IColors) => {
         bottomValues: {
             marginBottom: scaleVertical(24),
         },
+        smoothSlider: {
+            marginBottom: 0,
+        },
+        track: {
+            height: scaleVertical(16),
+            borderRadius: scaleVertical(8),
+        },
+        selected: {
+            height: scaleVertical(16),
+            borderRadius: scaleVertical(8),
+        }
     });
     return styles;
 };
