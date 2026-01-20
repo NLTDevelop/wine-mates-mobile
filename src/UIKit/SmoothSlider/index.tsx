@@ -1,22 +1,13 @@
-import { memo, useMemo, ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 import { View, Pressable, ViewStyle } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
-import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { useSmoothSlider } from './useSmoothSlider';
-import { getStyles } from './styles';
+import { useSmoothSlider } from './presenters/useSmoothSlider.ts';
 import { Marker } from './components/Marker';
+import { SliderDataPoint, SmoothSliderLabelItem } from './types';
 
-export interface SliderDataPoint {
-    title: string;
-    value: string;
-}
-
-interface SmoothSliderLabelItem {
-    label: string;
-    index?: number;
-}
+export type { SliderDataPoint } from './types';
 
 interface IProps {
     min?: number;
@@ -57,12 +48,12 @@ interface IProps {
 
 export const SmoothSlider = memo(
     ({
-        min = 0,
+        min,
         max,
         values,
         onValuesChange,
-        step = 1,
-        snapped = true,
+        step,
+        snapped,
         sliderLength,
         customMarker,
         trackStyle,
@@ -70,7 +61,7 @@ export const SmoothSlider = memo(
         unselectedStyle,
         containerStyle,
         data,
-        labels: labelsProp,
+        labels,
         onLabelPress,
         renderLabel,
         withSections = false,
@@ -84,82 +75,31 @@ export const SmoothSlider = memo(
         markerStyle,
         decorator,
     }: IProps) => {
-        const { colors } = useUiContext();
-
-        const actualMax = max ?? (data ? data.length - 1 : 100);
-        const actualValue = value ?? values?.[0] ?? initialValue ?? min;
-
-        const handleValueChange = (newValue: number) => {
-            onChange?.(newValue);
-            onValuesChange?.([newValue]);
-        };
-
         const {
             panGesture,
             thumbStyle,
             activeTrackStyle,
-            handleLabelPress: handleLabelPressInternal,
             handleLayout,
+            styles,
+            normalizedLabels,
+            decoratorItems,
+            handleLabelClick,
         } = useSmoothSlider({
             min,
-            max: actualMax,
-            initialValue: actualValue,
-            onChange: handleValueChange,
+            max,
+            values,
+            onValuesChange,
             step,
             snapped,
+            sliderLength,
+            data,
+            labels,
+            onLabelPress,
+            value,
+            onChange,
+            initialValue,
+            decorator,
         });
-
-        const handleLabelClick = (targetIndex: number) => {
-            handleLabelPressInternal(targetIndex);
-            onLabelPress?.(targetIndex);
-        };
-
-        const normalizedLabels = useMemo(() => {
-            if (labelsProp && labelsProp.length > 0) {
-                return labelsProp.map((labelItem, defaultIndex) => {
-                    if (typeof labelItem === 'string') {
-                        return {
-                            label: labelItem,
-                            index: defaultIndex,
-                        };
-                    }
-
-                    return {
-                        label: labelItem.label,
-                        index: labelItem.index ?? defaultIndex,
-                    };
-                });
-            }
-
-            if (data && data.length > 0) {
-                return data.map((dataPoint, defaultIndex) => ({
-                    label: dataPoint.title,
-                    index: defaultIndex,
-                }));
-            }
-
-            return undefined;
-        }, [labelsProp, data]);
-
-        const hasLabels = Boolean(normalizedLabels && normalizedLabels.length > 0);
-        const shouldStretch = !snapped && !hasLabels && !sliderLength;
-        const styles = useMemo(
-            () => getStyles(colors, sliderLength, shouldStretch),
-            [colors, sliderLength, shouldStretch],
-        );
-
-        const decoratorItems = useMemo(() => {
-            if (!decorator || decorator.count <= 0) return [];
-
-            return Array.from({ length: decorator.count }).map((_, index) => {
-                const position = ((index + 1) / (decorator.count + 1)) * 100;
-                return {
-                    key: index,
-                    leftPercent: position,
-                    item: decorator.item,
-                };
-            });
-        }, [decorator]);
 
         return (
             <View style={[styles.container, containerStyle]} pointerEvents={disabled ? 'none' : 'auto'}>

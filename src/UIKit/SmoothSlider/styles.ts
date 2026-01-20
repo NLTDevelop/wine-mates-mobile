@@ -5,7 +5,7 @@ import { scaleVertical, scaleHorizontal } from '@/utils';
 const LABEL_WIDTH = scaleHorizontal(100);
 const HALF_LABEL = LABEL_WIDTH / 4;
 const TRACK_HEIGHT = scaleVertical(8);
-const THUMB_SIZE = scaleHorizontal(24);
+const THUMB_SIZE = scaleHorizontal(48);
 const HALF_THUMB = THUMB_SIZE / 2;
 
 export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch: boolean = false) => {

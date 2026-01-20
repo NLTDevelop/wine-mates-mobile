@@ -37,8 +37,8 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
     }, [maxIndex, value]);
 
     const decoratorCount = useMemo(() => {
-        return 1;
-    }, []);
+        return levels.length - 2;
+    }, [levels]);
 
     const sliderLabels = useMemo(() => {
         return levels.map(level => level.name);

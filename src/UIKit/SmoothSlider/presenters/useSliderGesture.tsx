@@ -2,7 +2,7 @@ import { useSharedValue, useAnimatedStyle, withSpring, useAnimatedReaction } fro
 import { Gesture } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
 
-interface UseSmoothSliderProps {
+interface UseSliderGestureProps {
     min: number;
     max: number;
     initialValue?: number;
@@ -14,7 +14,7 @@ interface UseSmoothSliderProps {
 type AnimatedStyleReturn = ReturnType<typeof useAnimatedStyle>;
 type PanGestureType = ReturnType<typeof Gesture.Pan>;
 
-export interface UseSmoothSliderReturn {
+export interface UseSliderGestureReturn {
     panGesture: PanGestureType;
     thumbStyle: AnimatedStyleReturn;
     activeTrackStyle: AnimatedStyleReturn;
@@ -22,14 +22,14 @@ export interface UseSmoothSliderReturn {
     handleLayout: (width: number) => void;
 }
 
-export const useSmoothSlider = ({
+export const useSliderGesture = ({
     min,
     max,
     initialValue = 0,
     onChange,
     step = 1,
     snapped = true,
-}: UseSmoothSliderProps): UseSmoothSliderReturn => {
+}: UseSliderGestureProps): UseSliderGestureReturn => {
     const minValue = min;
     const maxValue = max;
     const initialIndex = Math.max(minValue, Math.min(initialValue, maxValue));
