@@ -76,7 +76,8 @@ export const useWineTasteCharacteristics = () => {
     const handleSliderChange = useCallback(
         (id: number, value: number) => {
             setSliderValues(prev => {
-                const levelsLength = data?.find(characteristic => characteristic.id === id)?.levels.length ?? 0;
+                const characteristic = data?.find(c => c.id === id);
+                const levelsLength = characteristic?.levels.length ?? 0;
                 const maxIndex = Math.max(levelsLength - 1, 0);
                 const nextValue = Math.min(Math.max(value, 0), maxIndex);
                 const next = { ...prev, [id]: nextValue };

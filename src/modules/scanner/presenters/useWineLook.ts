@@ -5,9 +5,15 @@ import { toastService } from "@/libs/toast/toastService";
 import { localization } from "@/UIProvider/localization/Localization";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { StyleSheet, View } from "react-native";
 
-export const useWineLook = () => {
+interface IUseWineLookArgs {
+    t: (key: string, params?: Record<string, any> | undefined) => string;
+    styles: ReturnType<typeof StyleSheet.create>;
+}
+
+export const useWineLook = ({t, styles}: IUseWineLookArgs) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(() => !wineModel.colorsShades?.length);
     const [perlage, setPerlage] = useState(0);
@@ -16,6 +22,8 @@ export const useWineLook = () => {
     const [shade, setShade] = useState(2);
     const [selectedColor, setSelectedColor] = useState<IWineColorShade | null>(null);
     const [isError, setIsError] = useState(false);
+    const [shadeSelectorKey, setShadeSelectorKey] = useState(0);
+    const [shouldResetShadeKey, setShouldResetShadeKey] = useState(false);
     const currentColor = useMemo(() =>
         shade === 1 ? selectedColor?.tonePale : shade === 2 ? selectedColor?.toneMedium : selectedColor?.toneDeep,
     [shade, selectedColor]);
@@ -44,9 +52,9 @@ export const useWineLook = () => {
             const params = {
                 colorId: String(wineModel.base?.colorOfWine.id),
             };
-    
+
             const response = await wineService.getColorsWithShades(params);
-    
+
             if (response.isError || !response.data) {
                 if (response.message) {
                     toastService.showError(localization.t('common.errorHappened'), response.message);
@@ -66,6 +74,12 @@ export const useWineLook = () => {
     useEffect(() => {
         getColorsWithShades();
     }, [getColorsWithShades]);
+
+    useEffect(() => {
+        if (selectedColor?.id != null) {
+            setShouldResetShadeKey(true);
+        }
+    }, [selectedColor?.id]);
 
     useEffect(() => {
         const look = wineModel.look;
@@ -90,10 +104,38 @@ export const useWineLook = () => {
         setSelectedColor(prev => prev ?? data[0]);
     }, [data]);
 
+    const getSparklingSliderData = useMemo(() => {
+        const mousseLabels = [t('muse.missing'), t('muse.creamy'), t('muse.moderate')];
+        const perlageLabels = [t('perlage.coarse'), t('perlage.thin'), t('perlage.small')];
+        const appearanceLabels = [t('wineView.cloudy'), t('wineView.sparklingClean'), t('wineView.translucent')];
+
+        const generateSliderData = (labels: string[]) => labels.map((label, index) => ({ label, index: index * 2 }));
+
+        return {
+            mousseData: generateSliderData(mousseLabels),
+            perlageData: generateSliderData(perlageLabels),
+            appearanceData: generateSliderData(appearanceLabels),
+        };
+    }, [t])
+
+    const sliderDecorator = useCallback((item: ReactNode) => {
+        return {
+            item,
+            count: 20,
+            decoratorContainerStyle: styles.decoratorContainerStyle,
+    };
+    }, [styles]);
+
     const onSelectColor = useCallback((color: IWineColorShade) => {
         setSelectedColor(color);
         setShade(2);
     }, []);
+
+    const handleShadeAnimationEnd = useCallback(() => {
+        if (!shouldResetShadeKey) return;
+        setShadeSelectorKey(prev => prev + 1);
+        setShouldResetShadeKey(false);
+    }, [shouldResetShadeKey]);
 
     const handlePressNext = useCallback(() => {
         if (!currentColor) return;
@@ -119,9 +161,9 @@ export const useWineLook = () => {
         }
         navigation.navigate('WineSmellView');
     }, [navigation, currentColor, mousse, perlage, appearance, selectedColor, shade]);
-    
-    return { 
+
+    return {
         data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades, currentColor,
-        isLoading, onSelectColor, handlePressNext, appearance, setAppearance
+        isLoading, onSelectColor, handlePressNext, appearance, setAppearance, shadeSelectorKey, handleShadeAnimationEnd, sliderDecorator, getSparklingSliderData
     };
 };

@@ -68,7 +68,8 @@ export const useWineReviewResult = () => {
                     .map(item => item.id),
                 tasteCharacteristics: (wineModel.tasteCharacteristics || [])
                     .map(item => {
-                        const level = item.levels[item.selectedIndex ?? 0];
+                        const selectedIndex = item.selectedIndex ?? 0;
+                        const level = item.levels[selectedIndex];
 
                         if (!level) {
                             return null;
@@ -174,10 +175,13 @@ export const useWineReviewResult = () => {
                 aromas: aromas || [],
                 flavors: flavors || [],
                 tasteCharacteristics:
-                    available?.map(item => ({
-                        characteristicId: item.id,
-                        levelId: item.levels[item.selectedIndex ?? 0]?.id || 0,
-                    })) || [],
+                    available?.map(item => {
+                        const selectedIndex = item.selectedIndex ?? 0;
+                        return {
+                            characteristicId: item.id,
+                            levelId: item.levels[selectedIndex]?.id || 0,
+                        };
+                    }) || [],
             };
 
             if (wineModel.image) {

@@ -102,3 +102,31 @@ export const getContrastColor = (hexColor: string) => {
     return brightness > 128 ? colorTheme.colors.text : colorTheme.colors.text_inverted;
 };
 
+export const colorOpacity = (
+    hex: string,
+    opacityPercent: number
+): string => {
+
+    let cleanHex = hex.replace('#', '');
+
+    if (cleanHex.length === 3) {
+        cleanHex = cleanHex
+            .split('')
+            .map(c => c + c)
+            .join('');
+    }
+
+    if (!/^[0-9A-Fa-f]{6}$/.test(cleanHex)) {
+        throw new Error(`Invalid hex color: ${hex}`);
+    }
+
+    const r = parseInt(cleanHex.substring(0, 2), 16);
+    const g = parseInt(cleanHex.substring(2, 4), 16);
+    const b = parseInt(cleanHex.substring(4, 6), 16);
+
+    const alpha = Math.min(100, Math.max(0, opacityPercent)) / 100;
+
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+

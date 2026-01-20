@@ -3,7 +3,7 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 import { Marker } from './components/Marker';
 
 const MARKER = scaleVertical(20);
-const TRACK_HEIGHT = scaleVertical(8);
+const TRACK_HEIGHT = scaleVertical(4);
 const SLIDER_LENGTH = scaleHorizontal(343) - MARKER;
 
 interface UseSliderProps {
