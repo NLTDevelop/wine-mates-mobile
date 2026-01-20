@@ -28,7 +28,7 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
         },
         decoratorItem: {
-            width: 2,
+            width: scaleHorizontal(2),
             height: '100%',
             backgroundColor: colors.background,
         },

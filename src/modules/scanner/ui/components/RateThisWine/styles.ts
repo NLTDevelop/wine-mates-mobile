@@ -38,6 +38,9 @@ export const getStyles = (colors: IColors) => {
             width: scaleHorizontal(2),
             backgroundColor: colors.background,
             height: '100%'
+        },
+        activeTrack: {
+            backgroundColor: colors.selectedSlider
         }
     });
     return styles;
