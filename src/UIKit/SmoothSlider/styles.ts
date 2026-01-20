@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleVertical, scaleHorizontal } from '@/utils';
 
-const LABEL_WIDTH = scaleHorizontal(60);
-const HALF_LABEL = LABEL_WIDTH / 2;
+const LABEL_WIDTH = scaleHorizontal(100);
+const HALF_LABEL = LABEL_WIDTH / 4;
 const TRACK_HEIGHT = scaleVertical(8);
 const THUMB_SIZE = scaleHorizontal(24);
 const HALF_THUMB = THUMB_SIZE / 2;
@@ -20,7 +20,6 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
         },
         sliderWrapper: {
             paddingHorizontal: hasSliderLength || shouldStretch ? 0 : HALF_LABEL,
-            paddingVertical: hasSliderLength ? 0 : scaleVertical(12),
             width: hasSliderLength ? actualSliderLength : '100%',
         },
         trackContainer: {
@@ -56,10 +55,10 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
             height: THUMB_SIZE,
             borderRadius: THUMB_SIZE / 2,
             backgroundColor: colors.primary,
-            shadowColor: '#000',
+            shadowColor: colors.text,
             shadowOffset: {
                 width: 0,
-                height: 2,
+                height: scaleVertical(2),
             },
             shadowOpacity: 0.25,
             shadowRadius: 3.84,
@@ -74,7 +73,7 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
         },
         section: {
             position: 'absolute',
-            width: 1,
+            width: scaleHorizontal(1),
             height: TRACK_HEIGHT,
             backgroundColor: colors.background,
             zIndex: 1,
@@ -107,9 +106,21 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
         middleLabelWrapper: {
             width: scaleHorizontal(100),
         },
+        leftLabelWrapper: {
+            alignItems: 'flex-start',
+        },
+        rightLabelWrapper: {
+            alignItems: 'flex-end',
+        },
         labelText: {
             color: colors.text,
             textAlign: 'center',
+        },
+        leftLabelText: {
+            textAlign: 'left',
+        },
+        rightLabelText: {
+            textAlign: 'right',
         },
     });
     return styles;

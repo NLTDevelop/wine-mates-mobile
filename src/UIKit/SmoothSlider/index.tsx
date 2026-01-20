@@ -13,6 +13,11 @@ export interface SliderDataPoint {
     value: string;
 }
 
+interface SmoothSliderLabelItem {
+    label: string;
+    index?: number;
+}
+
 interface IProps {
     min?: number;
     max?: number;
@@ -28,7 +33,7 @@ interface IProps {
     containerStyle?: ViewStyle;
 
     data?: SliderDataPoint[];
-    labels?: string[];
+    labels?: Array<string | SmoothSliderLabelItem>;
     onLabelPress?: (index: number) => void;
     renderLabel?: (label: string, index: number) => ReactNode;
     withSections?: boolean;
@@ -46,6 +51,7 @@ interface IProps {
     decorator?: {
         item: ReactNode;
         count: number;
+        decoratorContainerStyle?: ViewStyle;
     };
 }
 
@@ -64,7 +70,7 @@ export const SmoothSlider = memo(
         unselectedStyle,
         containerStyle,
         data,
-        labels,
+        labels: labelsProp,
         onLabelPress,
         renderLabel,
         withSections = false,
@@ -103,13 +109,39 @@ export const SmoothSlider = memo(
             snapped,
         });
 
-        const handleLabelClick = (index: number) => {
-            handleLabelPressInternal(index);
-            onLabelPress?.(index);
+        const handleLabelClick = (targetIndex: number) => {
+            handleLabelPressInternal(targetIndex);
+            onLabelPress?.(targetIndex);
         };
 
-        const displayLabels = labels ?? data?.map(d => d.title);
-        const hasLabels = Boolean(displayLabels && displayLabels.length > 0);
+        const normalizedLabels = useMemo(() => {
+            if (labelsProp && labelsProp.length > 0) {
+                return labelsProp.map((labelItem, defaultIndex) => {
+                    if (typeof labelItem === 'string') {
+                        return {
+                            label: labelItem,
+                            index: defaultIndex,
+                        };
+                    }
+
+                    return {
+                        label: labelItem.label,
+                        index: labelItem.index ?? defaultIndex,
+                    };
+                });
+            }
+
+            if (data && data.length > 0) {
+                return data.map((dataPoint, defaultIndex) => ({
+                    label: dataPoint.title,
+                    index: defaultIndex,
+                }));
+            }
+
+            return undefined;
+        }, [labelsProp, data]);
+
+        const hasLabels = Boolean(normalizedLabels && normalizedLabels.length > 0);
         const shouldStretch = !snapped && !hasLabels && !sliderLength;
         const styles = useMemo(
             () => getStyles(colors, sliderLength, shouldStretch),
@@ -140,7 +172,7 @@ export const SmoothSlider = memo(
                         <Animated.View style={[styles.activeTrack, activeTrackStyle, selectedStyle]} />
 
                         {decorator && decoratorItems.length > 0 && (
-                            <View style={styles.decoratorContainer}>
+                            <View style={[styles.decoratorContainer, decorator.decoratorContainerStyle]}>
                                 {decoratorItems.map(decoratorItem => (
                                     <View
                                         key={decoratorItem.key}
@@ -172,30 +204,36 @@ export const SmoothSlider = memo(
                     </View>
                 </View>
 
-                {displayLabels && displayLabels.length > 0 && (
+                {normalizedLabels && normalizedLabels.length > 0 && (
                     <View style={styles.labelsContainer}>
-                        {displayLabels.map((label, index) => {
+                        {normalizedLabels.map(({ label, index: targetIndex }, index) => {
                             const isFirst = index === 0;
-                            const isLast = index === displayLabels.length - 1;
+                            const isLast = index === normalizedLabels.length - 1;
                             const isMiddle = !isFirst && !isLast;
-                            
+
                             return (
                                 <Pressable
                                     key={`${label}-${index}`}
                                     style={[
                                         styles.labelWrapper,
                                         isMiddle && styles.middleLabelWrapper,
+                                        isFirst && styles.leftLabelWrapper,
+                                        isLast && styles.rightLabelWrapper,
                                     ]}
-                                    onPress={() => handleLabelClick(index)}
+                                    onPress={() => handleLabelClick(targetIndex)}
                                 >
                                     {renderLabel ? (
                                         renderLabel(label, index)
                                     ) : (
                                         <Typography
                                             text={label}
-                                            variant="body_400"
-                                            style={styles.labelText}
-                                            numberOfLines={isMiddle ? 2 : 1}
+                                            variant="h5"
+                                            style={[
+                                                styles.labelText,
+                                                isFirst && styles.leftLabelText,
+                                                isLast && styles.rightLabelText,
+                                            ]}
+                                            numberOfLines={isMiddle ? 2 : undefined}
                                         />
                                     )}
                                 </Pressable>

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '@/utils';
+import { colorOpacity, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -46,7 +46,22 @@ export const getStyles = (colors: IColors) => {
         selected: {
             height: scaleVertical(16),
             borderRadius: scaleVertical(8),
-        }
+        },
+        sliderContainer: {
+            gap: scaleVertical(20),
+            marginBottom: scaleVertical(24),
+        },
+        decoratorContainerStyle: {
+            width: '110%',
+            zIndex: 1,
+        },
+        decoratorItem: {
+            width: scaleHorizontal(1.2),
+            height: '280%',
+            transform: [{ rotate: '32deg' }],
+            backgroundColor: colorOpacity(colors.background, 15),
+            marginLeft: scaleHorizontal(-20),
+        },
     });
     return styles;
 };

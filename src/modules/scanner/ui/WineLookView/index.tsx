@@ -24,10 +24,33 @@ export const WineLookView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades,
-        currentColor, isLoading, onSelectColor, handlePressNext, appearance, setAppearance, shadeSelectorKey, handleShadeAnimationEnd } = useWineLook();
+    const {
+        data,
+        selectedColor,
+        perlage,
+        setPerlage,
+        mousse,
+        setMousse,
+        shade,
+        setShade,
+        isError,
+        getColorsWithShades,
+        currentColor,
+        isLoading,
+        onSelectColor,
+        handlePressNext,
+        appearance,
+        setAppearance,
+        shadeSelectorKey,
+        handleShadeAnimationEnd,
+        getSparklingSliderData,
+        sliderDecorator
+    } = useWineLook({ t, styles });
 
-    console.log(wineModel.base?.typeOfWine.isSparkling);
+    const decorator = useMemo(() => {
+        return sliderDecorator(<View style={styles.decoratorItem} />)
+    }, [])
+
 
     return (
         <WithErrorHandler
@@ -72,50 +95,57 @@ export const WineLookView = observer(() => {
                                 onAnimationEnd={handleShadeAnimationEnd}
                             />
 
-                            {true && (
-                                <>
-                                    <Typography text={t('wine.selectMousse')} variant="h4" style={styles.label} />
-                                    <SmoothSlider
-                                        value={mousse}
-                                        onChange={setMousse}
-                                        min={0}
-                                        max={4}
-                                        step={1}
-                                        snapped
-                                        labels={[t('muse.missing'), t('muse.creamy'), t('muse.moderate')]}
-                                        containerStyle={styles.smoothSlider}
-                                        trackStyle={styles.track}
-                                        selectedStyle={styles.selected}
-                                    />
-
-                                    <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
-                                    <SmoothSlider
-                                        value={perlage}
-                                        onChange={setPerlage}
-                                        min={0}
-                                        max={4}
-                                        step={1}
-                                        snapped
-                                        labels={[t('perlage.coarse'), t('perlage.thin'), t('perlage.small')]}
-                                        containerStyle={styles.smoothSlider}
-                                        trackStyle={styles.track}
-                                        selectedStyle={styles.selected}
-                                    />
-
-                                    <Typography text={t('wine.selectAppearance')} variant="h4" style={styles.label} />
-                                    <SmoothSlider
-                                        value={appearance}
-                                        onChange={setAppearance}
-                                        min={0}
-                                        max={4}
-                                        step={1}
-                                        snapped
-                                        labels={[t('wineView.cloudy'), t('wineView.sparklingClean'), t('wineView.translucent')]}
-                                        containerStyle={styles.smoothSlider}
-                                        trackStyle={styles.track}
-                                        selectedStyle={styles.selected}
-                                    />
-                                </>
+                            {wineModel.base?.typeOfWine.isSparkling && (
+                                <View style={styles.sliderContainer}>
+                                    <View>
+                                        <Typography text={t('wine.selectMousse')} variant="h4" style={styles.label} />
+                                        <SmoothSlider
+                                            value={mousse}
+                                            onChange={setMousse}
+                                            min={0}
+                                            max={4}
+                                            step={1}
+                                            snapped
+                                            labels={getSparklingSliderData.mousseData}
+                                            containerStyle={styles.smoothSlider}
+                                            trackStyle={styles.track}
+                                            selectedStyle={styles.selected}
+                                            decorator={decorator}
+                                        />
+                                    </View>
+                                    <View>
+                                        <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
+                                        <SmoothSlider
+                                            value={perlage}
+                                            onChange={setPerlage}
+                                            min={0}
+                                            max={4}
+                                            step={1}
+                                            snapped
+                                            labels={getSparklingSliderData.perlageData}
+                                            containerStyle={styles.smoothSlider}
+                                            trackStyle={styles.track}
+                                            selectedStyle={styles.selected}
+                                            decorator={decorator}
+                                        />
+                                    </View>
+                                    <View>
+                                        <Typography text={t('wine.selectAppearance')} variant="h4" style={styles.label} />
+                                        <SmoothSlider
+                                            value={appearance}
+                                            onChange={setAppearance}
+                                            min={0}
+                                            max={4}
+                                            step={1}
+                                            snapped
+                                            labels={getSparklingSliderData.appearanceData}
+                                            containerStyle={styles.smoothSlider}
+                                            trackStyle={styles.track}
+                                            selectedStyle={styles.selected}
+                                            decorator={decorator}
+                                        />
+                                    </View>
+                                </View>
                             )}
 
                             <SelectedParameters />

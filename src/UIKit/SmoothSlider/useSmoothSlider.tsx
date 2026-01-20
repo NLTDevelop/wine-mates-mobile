@@ -1,4 +1,4 @@
-import { useSharedValue, useAnimatedStyle, withSpring, useAnimatedReaction} from 'react-native-reanimated';
+import { useSharedValue, useAnimatedStyle, withSpring, useAnimatedReaction } from 'react-native-reanimated';
 import { Gesture } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
 
@@ -11,7 +11,25 @@ interface UseSmoothSliderProps {
     snapped?: boolean;
 }
 
-export const useSmoothSlider = ({ min, max, initialValue = 0, onChange, step = 1, snapped = true }: UseSmoothSliderProps) => {
+type AnimatedStyleReturn = ReturnType<typeof useAnimatedStyle>;
+type PanGestureType = ReturnType<typeof Gesture.Pan>;
+
+export interface UseSmoothSliderReturn {
+    panGesture: PanGestureType;
+    thumbStyle: AnimatedStyleReturn;
+    activeTrackStyle: AnimatedStyleReturn;
+    handleLabelPress: (index: number) => void;
+    handleLayout: (width: number) => void;
+}
+
+export const useSmoothSlider = ({
+    min,
+    max,
+    initialValue = 0,
+    onChange,
+    step = 1,
+    snapped = true,
+}: UseSmoothSliderProps): UseSmoothSliderReturn => {
     const minValue = min;
     const maxValue = max;
     const initialIndex = Math.max(minValue, Math.min(initialValue, maxValue));
