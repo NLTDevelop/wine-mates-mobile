@@ -31,11 +31,12 @@ export const useScannerResultsList = () => {
                 localization.t('common.errorHappened'),
                 response.message || localization.t('common.somethingWentWrong'),
             );
-        } else if (response.data && 'aiData' in response.data) {
-            setAiData(response.data.aiData);
-            navigation.navigate('AddWineView', { aiData: response.data.aiData });
         } else {
+            setAiData(response.data.aiData);
             setData(response.data.raws);
+            if (response.data.raws.length === 0) {
+                navigation.navigate('AddWineView', { aiData: response.data.aiData });
+            }
         }
      
         setIsLoading(false);

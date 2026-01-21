@@ -20,6 +20,11 @@ export const getStyles = (_colors: IColors) => {
             ...StyleSheet.absoluteFill,
             zIndex: 5,
         },
+        androidOverlay: {
+            ...StyleSheet.absoluteFill,
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            zIndex: 5,
+        },
     });
     return styles;
 };

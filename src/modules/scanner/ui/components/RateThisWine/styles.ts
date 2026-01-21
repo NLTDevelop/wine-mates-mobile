@@ -41,6 +41,10 @@ export const getStyles = (colors: IColors) => {
         },
         activeTrack: {
             backgroundColor: colors.selectedSlider
+        },
+        medalContainer: {
+            alignItems: 'center',
+            justifyContent: 'center',
         }
     });
     return styles;

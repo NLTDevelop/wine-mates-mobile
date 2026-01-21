@@ -10,6 +10,7 @@ import { EmptyStarIcon } from '@assets/icons/EmptyStarIcon';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { scaleVertical } from '@/utils';
+import { RateMedal } from '../RateMedal';
 
 interface IProps {
     sliderValue: number;
@@ -84,24 +85,26 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
 
     return (
         <View style={styles.container}>
-            <Typography text={t('wine.rateThisWine')} variant="subtitle_20_500" style={styles.title} />
+            <Typography text={disabled ? t('wine.ratedWine') : t('wine.rateThisWine')} variant="subtitle_20_500" style={styles.title} />
             {userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER ? (
-                <>
-                    <SmoothSlider
-                        min={0}
-                        max={100}
-                        value={sliderValue}
-                        onChange={handleSliderChange}
-                        selectedStyle={styles.activeTrack}
-                        containerStyle={styles.sliderContainer}
-                        disabled={disabled}
-                        decorator={decorators}
-                        snapped={false}
-                    />
-                    <View style={styles.row}>
-                        <Typography text={sliderValue.toString()} />
-                    </View>
-                </>
+                disabled ?
+                    <RateMedal sliderValue={sliderValue} /> :
+                    <>
+                        <SmoothSlider
+                            min={0}
+                            max={100}
+                            value={sliderValue}
+                            onChange={handleSliderChange}
+                            selectedStyle={{ backgroundColor: colors.selectedSlider }}
+                            containerStyle={styles.sliderContainer}
+                            disabled={disabled}
+                            decorator={decorators}
+                            snapped={false}
+                        />
+                        <View style={styles.row}>
+                            <Typography text={sliderValue.toString()} />
+                        </View>
+                    </>
             ) : disabled ? (
                 <View style={styles.starsContainer}>
                     <StarRatingDisplay
