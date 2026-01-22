@@ -185,7 +185,16 @@
         "exhaustedAllAttempts": "You have exhausted all attempts.",
         "tastingNotes": "Tasting notes",
         "generationInProgress": "Generation in progress, please wait",
-        "getAttempts": "Get Attempts"
+        "getAttempts": "Get Attempts",
+        "ratingScale": {
+            "exceptional": "Exceptional wine",
+            "veryHighQuality": "Very high-quality wine",
+            "good": "Good wine",
+            "average": "Average wine",
+            "mediocre": "Mediocre wine",
+            "poor": "Poor wine",
+            "defective": "Defective wine"
+        }
     },
     "aiAttempts": {
         "label1": "You have ",

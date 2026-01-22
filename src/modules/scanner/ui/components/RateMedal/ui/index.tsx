@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { View } from 'react-native';
-import { getStyles } from './styles';
+import { getStyles } from './styles.ts';
 import { useUiContext } from '@/UIProvider';
-import { useRateMedal } from './presenters/useRateMedal';
-import { NiceWineIcon } from '@assets/icons/NiceWineIcon';
-import { BronzeMedalIcon } from '@assets/icons/BronzeMedalIcon';
-import { GoldMedalIcon } from '@assets/icons/GoldMedalIcon';
-import { PlatinumMedalIcon } from '@assets/icons/PlatinumMedalIcon';
-import { SilverMedalIcon } from '@assets/icons/SilverMedalIcon';
+import { useRateMedal } from '../presenters/useRateMedal.ts';
+import { NiceWineIcon } from '@assets/icons/NiceWineIcon.tsx';
+import { BronzeMedalIcon } from '@assets/icons/BronzeMedalIcon.tsx';
+import { GoldMedalIcon } from '@assets/icons/GoldMedalIcon.tsx';
+import { PlatinumMedalIcon } from '@assets/icons/PlatinumMedalIcon.tsx';
+import { SilverMedalIcon } from '@assets/icons/SilverMedalIcon.tsx';
 import { scaleVertical } from '@/utils';
 
 interface IProps {
