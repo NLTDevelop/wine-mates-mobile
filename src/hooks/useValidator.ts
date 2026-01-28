@@ -16,7 +16,7 @@ export const useValidator = () => {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const emptyCheck = validateEmptyString(email);
             if (!emptyCheck.isValid) return emptyCheck;
-            if (!emailRegex.test(email)) {
+            if (!emailRegex.test(email.toLowerCase())) {
                 return { isValid: false, error: 'invalidEmail' };
             }
             return { isValid: true, error: '' };

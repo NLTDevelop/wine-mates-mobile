@@ -17,9 +17,9 @@ export const useScannerResultsList = () => {
 
     const getList = useCallback(async () => {
         setIsLoading(true);
-     
+
         const formData = new FormData();
-        
+
         if (wineModel.image) {
             formData.append('image', wineModel.image as any);
         }
@@ -38,7 +38,7 @@ export const useScannerResultsList = () => {
                 navigation.navigate('AddWineView', { aiData: response.data.aiData });
             }
         }
-     
+
         setIsLoading(false);
     }, [navigation]);
 
