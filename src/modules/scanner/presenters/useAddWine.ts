@@ -43,7 +43,7 @@ const createInitialForm = (aiData?: IAIData | null): IWineBase => {
             : baseForm.region,
         producer: { ...baseForm.producer, value: aiData.producer ?? '' },
         grapeVariety: { ...baseForm.grapeVariety, value: aiData.grapeVariety ?? '' },
-        vintageYear: { ...baseForm.vintageYear, value: aiData.vintage ? String(aiData.vintage) : '' },
+        vintageYear: { ...baseForm.vintageYear, value: aiData.vintage != null ? String(aiData.vintage) : '' },
         wineName: { ...baseForm.wineName, value: aiData.name ?? '' },
     };
 };
@@ -133,7 +133,9 @@ export const useAddWine = () => {
 
             const formData = new FormData();
             formData.append('name', form.wineName.value);
-            formData.append('vintage', Number(form.vintageYear.value));
+            if (form.vintageYear.value) {
+                formData.append('vintage', Number(form.vintageYear.value));
+            }
             formData.append('countryId', form.country.id);
             formData.append('regionId', form.region.id);
             formData.append('producer', form.producer.value);

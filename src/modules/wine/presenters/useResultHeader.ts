@@ -19,7 +19,7 @@ export const useResultHeader = (item: IWineDetails) => {
 
     const onPress = useCallback(() => {
         wineModel.clear();
-        
+
         wineModel.wine = {
             id: item.id,
             name: item.name,
@@ -49,7 +49,7 @@ export const useResultHeader = (item: IWineDetails) => {
             },
             vintageYear: {
                 id: null,
-                value: item.vintage.toString(),
+                value: item.vintage ? item.vintage.toString() : '',
             },
             wineName: {
                 id: null,

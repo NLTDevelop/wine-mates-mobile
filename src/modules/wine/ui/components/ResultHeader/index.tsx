@@ -119,7 +119,7 @@ export const ResultHeader = ({ item, onVintageChange, onFavoritePress }: IProps)
                     data={vintageData}
                     placeholder={t('wine.vintage')}
                     onPress={onVintageChange}
-                    selectedValue={item.vintage.toString()}
+                    selectedValue={item.vintage ? item.vintage.toString() : ''}
                     containerStyle={styles.dropdown}
                 />
                 <View style={styles.row}>

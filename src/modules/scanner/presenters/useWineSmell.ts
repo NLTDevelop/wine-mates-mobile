@@ -39,7 +39,7 @@ export const useWineSmell = (onHide: () => void) => {
 
     const getSmells = useCallback(async () => {
         try {
-            if (!wineModel.base?.colorOfWine?.id) return;
+            if (!wineModel.base?.colorOfWine?.id || !wineModel.base?.typeOfWine?.id) return;
 
             if (wineModel.smells?.length) {
                 setIsError(false);
@@ -51,16 +51,18 @@ export const useWineSmell = (onHide: () => void) => {
 
             const params = {
                 colorId: wineModel.base?.colorOfWine.id,
+                typeId: wineModel.base?.typeOfWine.id,
             };
 
             const response = await wineService.getSmells(params);
 
-            if (response.isError || !response.data) {
+            if (response.isError || response.data === null || response.data === undefined) {
                 if (response.message) {
                     toastService.showError(localization.t('common.errorHappened'), response.message);
                     setIsError(true);
                 }
             } else {
+                setData(response.data);
                 setIsError(false);
             }
         } catch (error) {

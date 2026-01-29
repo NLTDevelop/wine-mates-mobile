@@ -5,12 +5,14 @@ export interface IStatistic {
     id: number;
     colorHex: string | null;
     name: string;
-    userCount: string;
+    userCount: number;
 }
 
 export interface IVintage {
     wineId: number;
     vintage: number;
+    averageUserRating: number;
+    totalReviews: number;
 }
 
 export interface IWineDetails {
@@ -22,8 +24,9 @@ export interface IWineDetails {
     producer: string | null;
     grapeVariety: string;
     userId: number;
+    searchVector: string;
     createdAt: string;
-    image: IMedia;
+    image: IMedia | null;
     averageUserRating: number;
     averageExpertRating: number;
     totalReviews: number;

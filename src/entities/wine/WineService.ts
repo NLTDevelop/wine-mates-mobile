@@ -162,7 +162,7 @@ class WineService {
         }
     };
 
-    getSmells = async (params: { colorId: number }): Promise<IResponse<IWineSmell[]>> => {
+    getSmells = async (params: { colorId: number; typeId: number }): Promise<IResponse<IWineSmell[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',

@@ -70,8 +70,15 @@ export const WineSmellView = observer(() => {
                 scrollEnabled
                 isKeyboardAvoiding
             >
-                {!data || data.length === 0 || isLoading ? (
+                {isLoading ? (
                     <Loader />
+                ) : !data || data.length === 0 ? (
+                    <View style={styles.container}>
+                        <View>
+                            <Typography text={t('wine.smellDescription')} variant="body_400" style={styles.title} />
+                            <EmptyListView isNothingFound={true} />
+                        </View>
+                    </View>
                 ) : (
                     <View style={styles.container}>
                         <View>
