@@ -143,12 +143,11 @@ class WineService {
         }
     };
 
-    getColors = async (params: { wineTypeId: number }): Promise<IResponse<IWineColor[]>> => {
+    getColors = async (): Promise<IResponse<IWineColor[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.wineColors}`,
-                params,
             });
 
             if (!response.isError) {
@@ -200,11 +199,11 @@ class WineService {
         }
     };
 
-    getTastes = async (params: { colorId: number }): Promise<IResponse<IWineTaste[]>> => {
+    getTasteGroups = async (params: { colorId: number; typeId: number }): Promise<IResponse<IWineTaste[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
-                url: `${this._links.wineTaste}`,
+                url: `${this._links.wineTasteGroups}`,
                 params,
             });
 
@@ -214,12 +213,12 @@ class WineService {
 
             return response;
         } catch (error) {
-            console.warn('WineService -> getTastes: ', error);
+            console.warn('WineService -> getTasteGroups: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
 
-    getTastesCharacteristics = async (params: { colorId: number }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
+    getTastesCharacteristics = async (params: { colorId: number; typeId: number }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -233,7 +232,7 @@ class WineService {
 
             return response;
         } catch (error) {
-            console.warn('WineService -> getTastes: ', error);
+            console.warn('WineService -> getTastesCharacteristics: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
