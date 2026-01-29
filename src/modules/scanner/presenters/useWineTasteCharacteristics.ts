@@ -18,7 +18,7 @@ export const useWineTasteCharacteristics = () => {
 
     const getTasteCharacteristics = useCallback(async () => {
         try {
-            if (!wineModel.base?.colorOfWine?.id) return;
+            if (!wineModel.base?.colorOfWine?.id || !wineModel.base?.typeOfWine?.id) return;
 
             if (wineModel.tasteCharacteristics?.length) {
                 setIsError(false);
@@ -30,7 +30,7 @@ export const useWineTasteCharacteristics = () => {
 
             const params = {
                 colorId: wineModel.base?.colorOfWine.id,
-                typeId: wineModel.base.typeOfWine.id
+                typeId: wineModel.base?.typeOfWine.id,
             };
 
             const response = await wineService.getTastesCharacteristics(params);

@@ -31,7 +31,7 @@ export const useWineTaste = (onHide?: () => void) => {
 
     const getTastes = useCallback(async () => {
         try {
-            if (!wineModel.base?.colorOfWine?.id) return;
+            if (!wineModel.base?.colorOfWine?.id || !wineModel.base?.typeOfWine?.id) return;
 
             if (wineModel.tastes?.length) {
                 setIsError(false);
@@ -43,10 +43,10 @@ export const useWineTaste = (onHide?: () => void) => {
 
             const params = {
                 colorId: wineModel.base?.colorOfWine.id,
-                typeId: wineModel.base.typeOfWine.id,
+                typeId: wineModel.base?.typeOfWine.id,
             };
 
-            const response = await wineService.getTastes(params);
+            const response = await wineService.getTasteGroups(params);
 
             if (response.isError || !response.data) {
                 if (response.message) {

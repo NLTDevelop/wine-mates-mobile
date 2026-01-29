@@ -26,6 +26,7 @@ export interface ILinks {
     wineSmells: string;
     wineAromas: string;
     wineTaste: string;
+    wineTasteGroups: string;
     wineTasteCharacteristic: string;
     countries: string;
     rates: string;
@@ -49,7 +50,8 @@ class Links implements ILinks {
         wineColorShades: 'wine-color-shades',
         wineSmells: 'wine-aroma-groups',
         wineAromas: 'wine-aromas',
-        wineTaste: 'wine-flavor-groups',
+        wineTaste: 'wine-flavors',
+        wineTasteGroups: 'wine-flavor-groups',
         wineTasteCharacteristic: 'wine-taste-characteristics',
         countries: 'countries',
         rates: 'rates',
@@ -109,6 +111,9 @@ class Links implements ILinks {
     }
     public get wineTaste() {
         return `${this._domain}${this._links.wineTaste}`;
+    }
+    public get wineTasteGroups() {
+        return `${this._domain}${this._links.wineTasteGroups}`;
     }
     public get wineTasteCharacteristic() {
         return `${this._domain}${this._links.wineTasteCharacteristic}`;

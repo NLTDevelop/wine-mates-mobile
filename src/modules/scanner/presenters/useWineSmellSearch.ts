@@ -22,7 +22,7 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
 
     const getSearchedAromas = useCallback(async (query: string) => {
         try {
-            if (!query || !wineModel.base?.colorOfWine.id) {
+            if (!query || !wineModel.base?.colorOfWine.id || !wineModel.base?.typeOfWine?.id) {
                 wineModel.searchedAroma = null;
                 return;
             }
@@ -33,6 +33,7 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
             const params = {
                 search: query,
                 colorId: wineModel.base?.colorOfWine.id,
+                typeId: wineModel.base?.typeOfWine.id,
             }
 
             const response = await wineService.getAromas(params);
