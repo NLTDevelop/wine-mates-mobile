@@ -12,12 +12,9 @@ import { FavoriteIcon } from '@assets/icons/FavoriteIcon';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { useResultHeader } from '@/modules/wine/presenters/useResultHeader';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
-import { SilverMedalIcon } from '@assets/icons/SilverMedalIcon';
 import { userModel } from '@/entities/users/UserModel';
 import { BlurContainer } from '@/UIKit/BlurContainer';
-import { BronzeMedalIcon } from '@assets/icons/BronzeMedalIcon';
-import { GoldMedalIcon } from '@assets/icons/GoldMedalIcon';
-import { PlatinumMedalIcon } from '@assets/icons/PlatinumMedalIcon';
+import { RateMedal } from '@/modules/scanner/ui/components/RateMedal/ui';
 
 interface IProps {
     item: IWineDetails;
@@ -45,55 +42,49 @@ export const ResultHeader = ({ item, onVintageChange, onFavoritePress }: IProps)
     const medalData = useMemo(() => {
         const rating = item.averageExpertRating;
 
-        if (!rating || rating < 86) {
-            return null;
-        }
-
-        const roundedRating = Math.round(rating);
-
         if (rating >= 97) {
             return {
-                Icon: PlatinumMedalIcon,
                 label: t('medal.platinum'),
-                rating: roundedRating,
             };
         }
 
         if (rating >= 95) {
             return {
-                Icon: GoldMedalIcon,
                 label: t('medal.gold'),
-                rating: roundedRating,
             };
         }
 
         if (rating >= 90) {
             return {
-                Icon: SilverMedalIcon,
                 label: t('medal.silver'),
-                rating: roundedRating,
+            };
+        }
+
+        if (!rating || rating < 86) {
+            return {
+                label: t('medal.nice'),
             };
         }
 
         return {
-            Icon: BronzeMedalIcon,
             label: t('medal.bronze'),
-            rating: roundedRating,
         };
     }, [item.averageExpertRating, t]);
 
     return (
         <View style={styles.container}>
             <View>
-                <FasterImageView
-                    source={{ uri: item.image?.originalUrl, resizeMode: 'cover' }}
-                    style={styles.image}
-                    radius={12}
-                />
+                {item.image?.originalUrl && (
+                    <FasterImageView
+                        source={{ uri: item.image?.originalUrl, resizeMode: 'cover' }}
+                        style={styles.image}
+                        radius={12}
+                    />
+                )}
 
                 {medalData && (
                     <View style={styles.medal}>
-                        <medalData.Icon text={medalData.rating.toString()} />
+                        <RateMedal sliderValue={item.averageExpertRating} />
                         <Typography variant="subtitle_12_400" text={medalData.label} />
 
                         {!userModel.user?.hasPremium && <BlurContainer isLockIconCentered={true} />}

@@ -212,7 +212,8 @@
         "silver": "Silver medal",
         "gold": "Gold medal",
         "bronze": "Bronze medal",
-        "platinum": "Platinum medal"
+        "platinum": "Platinum medal",
+        "nice": "Nice medal"
     },
     "profile": {
         "winesAndStyles": "Wines & styles",
