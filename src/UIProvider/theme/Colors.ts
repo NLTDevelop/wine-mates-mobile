@@ -9,7 +9,7 @@ export const COLORS: { light: IColors } = {
         background_middle: '#F0F0F0',
         background_grey: '#D0D3D9',
         background_disabled: "#C7C7C7",
-        
+
         border: '#E4E4E4',
         border_strong: '#000000',
         border_light: '#E4E4E4',
@@ -39,5 +39,7 @@ export const COLORS: { light: IColors } = {
         warning: '#F59E0B',
         success: '#4CAF50',
         info: '#2563EB',
+
+        stars: '#ECC024',
     },
 };

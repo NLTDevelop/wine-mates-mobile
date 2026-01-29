@@ -8,7 +8,7 @@ export type IColors = {
     background_middle: string;
     background_grey: string;
     background_disabled: string;
-    
+
     border: string;
     border_light: string;
     border_strong: string;
@@ -38,6 +38,8 @@ export type IColors = {
     warning: string;
     success: string;
     info: string;
+
+    stars: string;
 };
 
 export type FontStyle = {

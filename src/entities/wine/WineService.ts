@@ -25,7 +25,7 @@ import { IAIData } from './types/IAIData';
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
 
-    list = async ( data: FormData): Promise<IResponse<{raws: IWineListItem[]} | { aiData: IAIData }>> => {
+    list = async ( data: FormData): Promise<IResponse<{raws: IWineListItem[], aiData: IAIData }>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',

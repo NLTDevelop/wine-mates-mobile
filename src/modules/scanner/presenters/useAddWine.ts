@@ -80,7 +80,6 @@ export const useAddWine = () => {
             form.country.value,
             form.producer.value,
             form.grapeVariety.value,
-            form.vintageYear.value,
             form.wineName.value,
         ];
         const hasEmptyBase = baseRequired.some(field => !field?.trim());
@@ -193,7 +192,7 @@ export const useAddWine = () => {
         }
     }, [navigation, form]);
 
-    return { 
+    return {
         form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress,
         isDisabled, onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress, isVintageError
     };

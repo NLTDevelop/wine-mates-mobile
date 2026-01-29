@@ -162,6 +162,7 @@
         "letsRate": "Давайте оцінимо це",
         "review": "Огляд",
         "rateThisWine": "Оцініть це вино",
+        "ratedWine": "Ви оцінили це вино",
         "tastingResult": "Результат дегустації",
         "enterReview": "Поділіться своїм відгуком",
         "notes": "Улюблені нотатки",
@@ -187,7 +188,16 @@
         "exhaustedAllAttempts": "Ви вичерпали всі спроби.",
         "tastingNotes": "Дегустаційні нотатки",
         "generationInProgress": "Триває генерація, будь ласка, зачекайте",
-        "getAttempts": "Отримати спроби"
+        "getAttempts": "Отримати спроби",
+        "ratingScale": {
+            "exceptional": "Виняткове вино",
+            "veryHighQuality": "Дуже високоякісне вино",
+            "good": "Хороше вино",
+            "average": "Середнє вино",
+            "mediocre": "Посереднє вино",
+            "poor": "Погане вино",
+            "defective": "Дефектне вино"
+        }
     },
     "aiAttempts": {
         "label1": "У вас є ",
