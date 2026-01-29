@@ -12,6 +12,7 @@ import { IWineReview } from './types/IWineReview';
 import { IWineImage } from './types/IWineImage';
 import { IWineAroma } from './types/IWineAroma';
 import { IWine } from './types/IWine';
+import { IWineTasteGroup } from './types/IWineTatseGroup';
 
 export interface IWineListModel {
     wine: IWine | null;
@@ -24,7 +25,7 @@ export interface IWineListModel {
     selectedSmells: IWineSelectedSmell[] | null;
     wineTypes: IWineType[] | null;
     colors: IWineColor[] | null;
-    tastes: IWineTaste[] | null;
+    tastes: IWineTasteGroup[] | null;
     selectedTastes: IWineTaste[] | null;
     tasteCharacteristics: IWineTasteCharacteristic[] | null;
     review: IWineReview | null;
@@ -42,7 +43,7 @@ class WineModel implements IWineListModel {
     private smellsRepository = new MobXRepository<IWineSmell[] | null>(null);
     private searchedAromasRepository = new MobXRepository<IWineAroma[] | null>(null);
     private selectedSmellsRepository = new MobXRepository<IWineSelectedSmell[] | null>(null);
-    private tastesRepository = new MobXRepository<IWineTaste[] | null>(null);
+    private tastesRepository = new MobXRepository<IWineTasteGroup[] | null>(null);
     private selectedTastesRepository = new MobXRepository<IWineTaste[] | null>(null);
     private tasteCharacteristicsRepository = new MobXRepository<IWineTasteCharacteristic[] | null>(null);
     private reviewRepository = new MobXRepository<IWineReview | null>(null);
@@ -131,7 +132,7 @@ class WineModel implements IWineListModel {
         return this.tastesRepository.data;
     }
 
-    public set tastes(value: IWineTaste[] | null) {
+    public set tastes(value: IWineTasteGroup[] | null) {
         this.tastesRepository.save(value);
     }
 

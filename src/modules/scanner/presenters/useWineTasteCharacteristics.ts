@@ -30,6 +30,7 @@ export const useWineTasteCharacteristics = () => {
 
             const params = {
                 colorId: wineModel.base?.colorOfWine.id,
+                typeId: wineModel.base.typeOfWine.id
             };
 
             const response = await wineService.getTastesCharacteristics(params);

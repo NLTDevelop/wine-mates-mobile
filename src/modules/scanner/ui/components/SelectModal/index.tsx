@@ -5,13 +5,16 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { FlatList } from 'react-native-gesture-handler';
 import { IAroma } from '@/entities/wine/types/IWineSmell';
+import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { SmellListItem } from '../SmellListItem';
+
+type SelectableItem = IAroma | IWineTaste;
 
 interface IProps {
     isVisible: boolean;
     onHide: () => void;
-    onItemPress: (item: IAroma, subgroupId?: number | null, groupId?: number | null) => void;
-    data: IAroma[];
+    onItemPress: (item: SelectableItem, subgroupId?: number | null, groupId?: number | null) => void;
+    data: SelectableItem[];
     subgroupId?: number | null;
     groupId?: number | null;
 }
@@ -20,9 +23,9 @@ export const SelectModal = ({ isVisible, onHide, onItemPress, data, subgroupId, 
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const keyExtractor = useCallback((item: IAroma, index: number) => `${item.id}-${index}`, []);
+    const keyExtractor = useCallback((item: SelectableItem, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(
-        ({ item }: { item: IAroma }) => <SmellListItem item={item} onPress={() => onItemPress(item, subgroupId, groupId)} />,
+        ({ item }: { item: SelectableItem }) => <SmellListItem item={item} onPress={() => onItemPress(item, subgroupId, groupId)} />,
     [groupId, onItemPress, subgroupId]);
 
     return (

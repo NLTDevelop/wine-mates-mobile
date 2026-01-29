@@ -7,7 +7,6 @@ import { wineModel } from './WineModel';
 import { IWineType } from './types/IWineType';
 import { IWineColor } from './types/IWineColors';
 import { IWineSmell } from './types/IWineSmell';
-import { IWineTaste } from './types/IWineTaste';
 import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
 import { IWineAroma } from './types/IWineAroma';
 import { IWine } from './types/IWine';
@@ -21,6 +20,7 @@ import { IWineSmellSearchParams } from './params/IWIneSmellSearchParams';
 import { GenerateNoteDto } from './dto/GenerateNote.dto';
 import { IRateContext } from './types/IRateContext';
 import { IAIData } from './types/IAIData';
+import { IWineTasteGroup } from './types/IWineTatseGroup';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -200,7 +200,7 @@ class WineService {
         }
     };
 
-    getTastes = async (params: { colorId: number }): Promise<IResponse<IWineTaste[]>> => {
+    getTastes = async (params: { colorId: number }): Promise<IResponse<IWineTasteGroup[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',

@@ -49,7 +49,7 @@ class Links implements ILinks {
         wineColorShades: 'wine-color-shades',
         wineSmells: 'wine-aroma-groups',
         wineAromas: 'wine-aromas',
-        wineTaste: 'wine-flavors',
+        wineTaste: 'wine-flavor-groups',
         wineTasteCharacteristic: 'wine-taste-characteristics',
         countries: 'countries',
         rates: 'rates',
