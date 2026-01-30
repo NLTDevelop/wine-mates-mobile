@@ -38,7 +38,7 @@ export const RateMedal = ({ sliderValue, size }: IProps) => {
             case 'platinum':
                 return <PlatinumMedalIcon {...medalProps} />;
             default:
-                return <NiceWineIcon />;
+                return <NiceWineIcon {...medalProps} />;
         }
     };
 
