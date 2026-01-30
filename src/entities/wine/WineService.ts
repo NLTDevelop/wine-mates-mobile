@@ -7,7 +7,6 @@ import { wineModel } from './WineModel';
 import { IWineType } from './types/IWineType';
 import { IWineColor } from './types/IWineColors';
 import { IWineSmell } from './types/IWineSmell';
-import { IWineTaste } from './types/IWineTaste';
 import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
 import { IWineAroma } from './types/IWineAroma';
 import { IWine } from './types/IWine';
@@ -21,6 +20,7 @@ import { IWineSmellSearchParams } from './params/IWIneSmellSearchParams';
 import { GenerateNoteDto } from './dto/GenerateNote.dto';
 import { IRateContext } from './types/IRateContext';
 import { IAIData } from './types/IAIData';
+import { IWineTasteGroup } from './types/IWineTatseGroup';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -143,12 +143,11 @@ class WineService {
         }
     };
 
-    getColors = async (params: { wineTypeId: number }): Promise<IResponse<IWineColor[]>> => {
+    getColors = async (): Promise<IResponse<IWineColor[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.wineColors}`,
-                params,
             });
 
             if (!response.isError) {
@@ -162,7 +161,7 @@ class WineService {
         }
     };
 
-    getSmells = async (params: { colorId: number }): Promise<IResponse<IWineSmell[]>> => {
+    getSmells = async (params: { colorId: number; typeId: number }): Promise<IResponse<IWineSmell[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -200,11 +199,11 @@ class WineService {
         }
     };
 
-    getTastes = async (params: { colorId: number }): Promise<IResponse<IWineTaste[]>> => {
+    getTasteGroups = async (params: { colorId: number; typeId: number }): Promise<IResponse<IWineTasteGroup[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
-                url: `${this._links.wineTaste}`,
+                url: `${this._links.wineTasteGroups}`,
                 params,
             });
 
@@ -214,12 +213,12 @@ class WineService {
 
             return response;
         } catch (error) {
-            console.warn('WineService -> getTastes: ', error);
+            console.warn('WineService -> getTasteGroups: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
 
-    getTastesCharacteristics = async (params: { colorId: number }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
+    getTastesCharacteristics = async (params: { colorId: number; typeId: number }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -233,7 +232,7 @@ class WineService {
 
             return response;
         } catch (error) {
-            console.warn('WineService -> getTastes: ', error);
+            console.warn('WineService -> getTastesCharacteristics: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

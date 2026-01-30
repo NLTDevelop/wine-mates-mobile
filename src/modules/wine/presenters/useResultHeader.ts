@@ -1,29 +1,47 @@
-import { IVintage, IWineDetails } from '@/entities/wine/types/IWineDetails';
+import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { wineModel } from '@/entities/wine/WineModel';
+import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useMemo } from 'react';
 
 export const useResultHeader = (item: IWineDetails) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const vintageData = useMemo(() =>
-        item.vintages.map((vintage: IVintage) => {
-            const label = String(vintage.vintage);
-            return {
-                label,
-                value: label,
-                id: vintage.wineId,
-            };
-        }),
-    [item],);
+
+    const vintageData = useMemo(
+        () => {
+            const data = item.vintages.map(vintage => {
+                return {
+                    label: String(vintage.vintage),
+                    value: String(vintage.vintage),
+                    id: vintage.wineId,
+                    averageUserRating: vintage.averageUserRating,
+                    totalReviews: vintage.totalReviews,
+                };
+            });
+
+            if (item.currentVintage && !data.some(vintage => vintage.id === item.currentVintage?.wineId)) {
+                data.unshift({
+                    label: String(item.currentVintage.vintage),
+                    value: String(item.currentVintage.vintage),
+                    id: item.currentVintage.wineId,
+                    averageUserRating: item.currentVintage.averageUserRating,
+                    totalReviews: item.currentVintage.totalReviews,
+                });
+            }
+
+            return data;
+        },
+        [item.vintages, item.currentVintage],
+    );
 
     const onPress = useCallback(() => {
         wineModel.clear();
-        
+
         wineModel.wine = {
             id: item.id,
             name: item.name,
-            vintage: item.vintage,
+            vintage: item.currentVintage?.vintage ?? 0,
         };
 
         wineModel.base = {
@@ -49,7 +67,7 @@ export const useResultHeader = (item: IWineDetails) => {
             },
             vintageYear: {
                 id: null,
-                value: item.vintage.toString(),
+                value: item.currentVintage?.vintage != null ? item.currentVintage.vintage.toString() : '',
             },
             wineName: {
                 id: null,
@@ -64,5 +82,9 @@ export const useResultHeader = (item: IWineDetails) => {
         navigation.navigate('WineLookView');
     }, [navigation, item]);
 
-    return { vintageData, onPress };
+    const selectedVintageValue = item.currentVintage?.vintage != null ? item.currentVintage.vintage.toString() : null;
+    const vintagePlaceholder =
+        item.currentVintage?.vintage != null ? localization.t('wine.vintage') : localization.t('wine.nonVintage');
+
+    return { onPress, vintageData, selectedVintageValue, vintagePlaceholder };
 };

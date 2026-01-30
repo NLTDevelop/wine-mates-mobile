@@ -6,10 +6,11 @@ import { Typography } from '@/UIKit/Typography';
 import { IAroma, ISmellSubgroup, IWineSmell } from '@/entities/wine/types/IWineSmell';
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { IWineAroma } from '@/entities/wine/types/IWineAroma';
+import { IWineTasteGroup } from '@/entities/wine/types/IWineTatseGroup';
 import { TickIcon } from '@assets/icons/TickIcon';
 
 interface IProps {
-    item: ISmellSubgroup | IAroma | IWineTaste | IWineAroma | IWineSmell;
+    item: ISmellSubgroup | IAroma | IWineTaste | IWineAroma | IWineSmell | IWineTasteGroup;
     onPress: () => void;
     isSelected?: boolean;
 }

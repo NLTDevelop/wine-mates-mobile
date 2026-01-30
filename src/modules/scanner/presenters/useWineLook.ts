@@ -6,7 +6,7 @@ import { localization } from "@/UIProvider/localization/Localization";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 interface IUseWineLookArgs {
     t: (key: string, params?: Record<string, any> | undefined) => string;

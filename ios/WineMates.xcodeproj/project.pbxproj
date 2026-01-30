@@ -14,7 +14,6 @@
 		3F3AF36279154386A34EFB65 /* VisueltPro-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6197CF87C82D4E90B06D8E65 /* VisueltPro-ExtraLight.ttf */; };
 		51CA19DC14F44D9B95B058A4 /* VisueltPro-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D6D727F04D854B8390883C86 /* VisueltPro-Black.ttf */; };
 		61A5CDDB309C4854AE815CEB /* VisueltPro-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86236411E39C40929257621F /* VisueltPro-ThinItalic.ttf */; };
-		62CB31E18A709FA278588A51 /* libPods-WineMates.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C2649C0065EA4F137D89BCC /* libPods-WineMates.a */; };
 		728EAD5BADCA48CCBA302E64 /* VisueltPro-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 82DB19FBC0AD43EF9E94E0FE /* VisueltPro-LightItalic.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -23,6 +22,7 @@
 		9C2077CC56E340F9B7AACA26 /* VisueltPro-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F8E99BC1B4DF4BAF8EBF6E3A /* VisueltPro-Medium.ttf */; };
 		A54AF3E21446441F9AC548C2 /* VisueltPro-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 42F6D5E2B8664ECB8690A51C /* VisueltPro-Thin.ttf */; };
 		DC9C336967614BE7BD9FE4A7 /* VisueltPro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 58FC6498F2AE461ABDE0AB1A /* VisueltPro-Bold.ttf */; };
+		E54B50C8820776FECD18B591 /* libPods-WineMates.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A9735F627FA7070F458C4A /* libPods-WineMates.a */; };
 		E6A38B5D1C4A4916BE0DE08B /* VisueltPro-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C5560397D78B4047B62F7305 /* VisueltPro-MediumItalic.ttf */; };
 		EF3302F3EE8F4F24B225197D /* VisueltPro-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0236C22540DF4BFE8D159338 /* VisueltPro-Regular.ttf */; };
 		F62F2616589144DE8797C076 /* VisueltPro-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AC9F05450B014E8FBDC52A92 /* VisueltPro-BoldItalic.ttf */; };
@@ -30,18 +30,18 @@
 
 /* Begin PBXFileReference section */
 		0236C22540DF4BFE8D159338 /* VisueltPro-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Regular.ttf"; path = "../assets/fonts/VisueltPro-Regular.ttf"; sourceTree = "<group>"; };
+		0A4A9DF9A1C1D9D77CAF4076 /* Pods-WineMates.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WineMates.release.xcconfig"; path = "Target Support Files/Pods-WineMates/Pods-WineMates.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* WineMates.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WineMates.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = WineMates/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = WineMates/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		2EF6B73202CB024434D7C93B /* Pods-WineMates.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WineMates.debug.xcconfig"; path = "Target Support Files/Pods-WineMates/Pods-WineMates.debug.xcconfig"; sourceTree = "<group>"; };
+		37A9735F627FA7070F458C4A /* libPods-WineMates.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WineMates.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		392C747D1305CE42505CFA18 /* Pods-WineMates.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WineMates.debug.xcconfig"; path = "Target Support Files/Pods-WineMates/Pods-WineMates.debug.xcconfig"; sourceTree = "<group>"; };
 		42F6D5E2B8664ECB8690A51C /* VisueltPro-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Thin.ttf"; path = "../assets/fonts/VisueltPro-Thin.ttf"; sourceTree = "<group>"; };
 		58FC6498F2AE461ABDE0AB1A /* VisueltPro-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Bold.ttf"; path = "../assets/fonts/VisueltPro-Bold.ttf"; sourceTree = "<group>"; };
 		6197CF87C82D4E90B06D8E65 /* VisueltPro-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-ExtraLight.ttf"; path = "../assets/fonts/VisueltPro-ExtraLight.ttf"; sourceTree = "<group>"; };
 		63B8B5942EA69114003821D6 /* WineMates.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WineMates.entitlements; path = WineMates/WineMates.entitlements; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = WineMates/AppDelegate.swift; sourceTree = "<group>"; };
 		7A1147B7942A4DBDAAD31661 /* VisueltPro-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-Light.ttf"; path = "../assets/fonts/VisueltPro-Light.ttf"; sourceTree = "<group>"; };
-		7C2649C0065EA4F137D89BCC /* libPods-WineMates.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WineMates.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7FA5E01F4CCE1E3AA0C31DAF /* Pods-WineMates.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WineMates.release.xcconfig"; path = "Target Support Files/Pods-WineMates/Pods-WineMates.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = WineMates/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		82DB19FBC0AD43EF9E94E0FE /* VisueltPro-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-LightItalic.ttf"; path = "../assets/fonts/VisueltPro-LightItalic.ttf"; sourceTree = "<group>"; };
 		86236411E39C40929257621F /* VisueltPro-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "VisueltPro-ThinItalic.ttf"; path = "../assets/fonts/VisueltPro-ThinItalic.ttf"; sourceTree = "<group>"; };
@@ -61,7 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				62CB31E18A709FA278588A51 /* libPods-WineMates.a in Frameworks */,
+				E54B50C8820776FECD18B591 /* libPods-WineMates.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,7 +85,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				7C2649C0065EA4F137D89BCC /* libPods-WineMates.a */,
+				37A9735F627FA7070F458C4A /* libPods-WineMates.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -123,8 +123,8 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2EF6B73202CB024434D7C93B /* Pods-WineMates.debug.xcconfig */,
-				7FA5E01F4CCE1E3AA0C31DAF /* Pods-WineMates.release.xcconfig */,
+				392C747D1305CE42505CFA18 /* Pods-WineMates.debug.xcconfig */,
+				0A4A9DF9A1C1D9D77CAF4076 /* Pods-WineMates.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -157,13 +157,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "WineMates" */;
 			buildPhases = (
-				8E1303432FA26BF581A545E7 /* [CP] Check Pods Manifest.lock */,
+				EF90B8A6A6803AA90A1CD6DB /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				D3F75DF509F00558DCF4B2A0 /* [CP] Embed Pods Frameworks */,
-				237FCE59CB94A83FF3D8E471 /* [CP] Copy Pods Resources */,
+				CE11CAADC4DCC98700DE0231 /* [CP] Embed Pods Frameworks */,
+				095DDC8167A373B400306671 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -249,7 +249,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		237FCE59CB94A83FF3D8E471 /* [CP] Copy Pods Resources */ = {
+		095DDC8167A373B400306671 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -257,20 +257,33 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8E1303432FA26BF581A545E7 /* [CP] Check Pods Manifest.lock */ = {
+		CE11CAADC4DCC98700DE0231 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EF90B8A6A6803AA90A1CD6DB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -292,27 +305,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D3F75DF509F00558DCF4B2A0 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WineMates/Pods-WineMates-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -329,13 +321,13 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2EF6B73202CB024434D7C93B /* Pods-WineMates.debug.xcconfig */;
+			baseConfigurationReference = 392C747D1305CE42505CFA18 /* Pods-WineMates.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WineMates/WineMates.entitlements;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 33;
 				DEVELOPMENT_TEAM = 4233RP9762;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = WineMates/Info.plist;
@@ -345,7 +337,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.4;
+				MARKETING_VERSION = 1.0.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -362,13 +354,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7FA5E01F4CCE1E3AA0C31DAF /* Pods-WineMates.release.xcconfig */;
+			baseConfigurationReference = 0A4A9DF9A1C1D9D77CAF4076 /* Pods-WineMates.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = WineMates/WineMates.entitlements;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 33;
 				DEVELOPMENT_TEAM = 4233RP9762;
 				INFOPLIST_FILE = WineMates/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = WineMates;
@@ -377,7 +369,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.4;
+				MARKETING_VERSION = 1.0.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
