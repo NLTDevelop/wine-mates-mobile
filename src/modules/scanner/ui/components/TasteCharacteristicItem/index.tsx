@@ -21,10 +21,26 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isFocused = useIsFocused();
-    const levels = item.levels ?? [
-        { id: 1, name: '' },
-        { id: 2, name: '' },
-    ];
+    const levels = useMemo(() => {
+        const originalLevels = item.levels ?? [
+            { id: 1, name: '' },
+            { id: 2, name: '' },
+        ];
+
+        if (originalLevels.length <= 3) {
+            return originalLevels;
+        }
+
+        const firstIndex = 0;
+        const middleIndex = Math.floor((originalLevels.length - 1) / 2);
+        const lastIndex = originalLevels.length - 1;
+
+        return [
+            originalLevels[firstIndex],
+            originalLevels[middleIndex],
+            originalLevels[lastIndex],
+        ];
+    }, [item.levels]);
 
     const maxIndex = useMemo(() => {
         return Math.max(levels.length - 1, 0);

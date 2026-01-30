@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { View, Animated, Pressable } from 'react-native';
-import Slider from '@react-native-community/slider';
 import { ShadeSliderMark } from '../ShadeSliderMark';
 import { Typography } from '@/UIKit/Typography';
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
@@ -19,17 +18,13 @@ export const ShadeSelector = memo((props: IProps) => {
         markerSize,
         markerInnerSize,
         trackHeight,
-        sliderValue,
-        onValueChange,
-        onSlidingStart,
-        onSlidingComplete,
+        panResponder,
         onLabelPress,
         markerPosition,
         fillWidth,
         labels,
         currentColor,
-        min,
-        max,
+        onTrackLayout,
     } = useShadeSelector(props);
 
     return (
@@ -38,19 +33,7 @@ export const ShadeSelector = memo((props: IProps) => {
                 <Animated.View style={[styles.fillTrack, { width: fillWidth, backgroundColor: currentColor }]} />
                 <View style={styles.unselectedTrack} />
             </View>
-            <View style={styles.sliderWrapper}>
-                <Slider
-                    style={styles.slider}
-                    minimumValue={min}
-                    maximumValue={max}
-                    value={sliderValue}
-                    onValueChange={onValueChange}
-                    onSlidingStart={onSlidingStart}
-                    onSlidingComplete={onSlidingComplete}
-                    minimumTrackTintColor="transparent"
-                    maximumTrackTintColor="transparent"
-                    thumbTintColor="transparent"
-                />
+            <View style={styles.sliderWrapper} onLayout={onTrackLayout} {...panResponder.panHandlers}>
                 <Animated.View style={[styles.markerContainer, { left: markerPosition }]}>
                     <ShadeSliderMark
                         size={markerSize}

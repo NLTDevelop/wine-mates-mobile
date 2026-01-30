@@ -20,10 +20,15 @@ export const getStyles = (_colors: IColors) => {
             ...StyleSheet.absoluteFill,
             zIndex: 5,
         },
-        androidOverlay: {
+        androidBaseLayer: {
             ...StyleSheet.absoluteFill,
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            zIndex: 5,
+            backgroundColor: 'rgba(250,250,250,0.95)',
+        },
+        androidNoiseLayer: {
+            ...StyleSheet.absoluteFill,
+        },
+        androidNoiseImage: {
+            opacity: 0.15,
         },
     });
     return styles;

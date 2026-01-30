@@ -28,8 +28,7 @@ export const Notes = () => {
 
     return (
         <View style={styles.container}>
-            <Typography text={t('wine.tastingResult')} variant="subtitle_20_500" style={styles.title} />
-            <DropdownButton title={t('wine.notes')}>
+            <DropdownButton title={t('wine.tastingResult')}>
                 <View style={styles.mainContainer}>
                     <View style={styles.row}>
                         <Typography text={t('wine.color')} variant="h6" style={styles.characteristicTitle} />
