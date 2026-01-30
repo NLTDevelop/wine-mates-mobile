@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, type ReactElement } from 'react';
 import { TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { getStyles } from './styles';
@@ -19,16 +19,22 @@ interface IProps {
     disabled?: boolean;
     selectedValue?: string | null;
     containerStyle?: ViewStyle;
+    renderItem?: (item: IDropdownItem, selected?: boolean) => ReactElement | null;
+    renderSelectedValue?: (item: IDropdownItem) => ReactElement | null;
 }
 
 export const CustomDropdown = ({ placeholder, onPress, data, withSearch = false, onSelect, disabled = false,
-    selectedValue = null, containerStyle }: IProps) => {
+    selectedValue = null, containerStyle, renderItem, renderSelectedValue }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const dropdownRef = useRef<any>(null);
 
     const { value, isOpen, search, filteredData, setSearch, handleSelect, setIsOpen, handleOpen }
         = useCustomDropdown({onPress, data, onSelect, selectedValue });
+    const selectedItem = useMemo(
+        () => data.find(item => item.value === value) || null,
+        [data, value],
+    );
 
     return (
         <TouchableWithoutFeedback
@@ -44,7 +50,10 @@ export const CustomDropdown = ({ placeholder, onPress, data, withSearch = false,
                     style={[styles.dropdown, disabled ? styles.dropdownDisabled : null, containerStyle]}
                     placeholderStyle={styles.placeholder}
                     containerStyle={styles.dropdownContainer}
-                    selectedTextStyle={styles.selectedText}
+                    selectedTextStyle={[
+                        styles.selectedText,
+                        renderSelectedValue && selectedItem ? styles.selectedTextHidden : null,
+                    ]}
                     search={withSearch}
                     autoScroll={false}
                     data={filteredData}
@@ -68,13 +77,22 @@ export const CustomDropdown = ({ placeholder, onPress, data, withSearch = false,
                         ) : null
                     }
                     renderRightIcon={() => <ArrowDownIcon rotate={isOpen ? 180 : 0} />}
-                    renderItem={(item, selected) => (
-                        <View style={styles.itemContainer}>
-                            <Typography text={item.label} variant="body_400" style={styles.itemText} />
-                            {selected ? <TickIcon /> : null}
-                        </View>
-                    )}
+                    renderItem={
+                        renderItem
+                            ? (item, selected) => renderItem(item as IDropdownItem, selected)
+                            : (item, selected) => (
+                                <View style={styles.itemContainer}>
+                                    <Typography text={item.label} variant="body_400" style={styles.itemText} />
+                                    {selected ? <TickIcon /> : null}
+                                </View>
+                            )
+                    }
                 />
+                {renderSelectedValue && selectedItem ? (
+                    <View style={styles.selectedOverlay} pointerEvents="none">
+                        {renderSelectedValue(selectedItem)}
+                    </View>
+                ) : null}
             </View>
         </TouchableWithoutFeedback>
     );

@@ -15,6 +15,7 @@ import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { userModel } from '@/entities/users/UserModel';
 import { BlurContainer } from '@/UIKit/BlurContainer';
 import { RateMedal } from '@/modules/scanner/ui/components/RateMedal/ui';
+import { TickIcon } from '@assets/icons/TickIcon';
 
 interface IProps {
     item: IWineDetails;
@@ -22,10 +23,39 @@ interface IProps {
     onFavoritePress: () => void;
 }
 
+type VintageDropdownItem = IDropdownItem & {
+    averageUserRating?: number;
+    totalReviews?: number;
+};
+
 export const ResultHeader = ({ item, onVintageChange, onFavoritePress }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { vintageData, onPress } = useResultHeader(item);
+    const { onPress, vintageData, selectedVintageValue, vintagePlaceholder } = useResultHeader(item);
+
+    const renderVintageValue = (dropdownItem: VintageDropdownItem) => {
+        const rating = dropdownItem.averageUserRating ?? 0;
+        const reviewsText = declOfWord(
+            dropdownItem.totalReviews ?? 0,
+            t('scanner.reviewCount') as unknown as Array<string>,
+        );
+
+        return (
+            <View style={styles.rateContainer}>
+                <Typography variant="subtitle_12_500" text={dropdownItem.label} />
+                <StarIcon />
+                <Typography variant="subtitle_12_500" text={rating} />
+                <Typography variant="subtitle_12_400" text={`(${reviewsText})`} style={styles.text} />
+            </View>
+        );
+    };
+    
+    const renderVintageItem = (dropdownItem: VintageDropdownItem, selected?: boolean) => (
+        <View style={styles.dropdownItem}>
+            {renderVintageValue(dropdownItem)}
+            {selected ? <TickIcon /> : null}
+        </View>
+    );
     const description = useMemo(() => {
         return [
             item.type?.name,
@@ -84,35 +114,42 @@ export const ResultHeader = ({ item, onVintageChange, onFavoritePress }: IProps)
 
                 {medalData && (
                     <View style={styles.medal}>
-                        <RateMedal sliderValue={item.averageExpertRating} />
+                        <RateMedal sliderValue={item.averageExpertRating} size={24} />
                         <Typography variant="subtitle_12_400" text={medalData.label} />
 
                         {!userModel.user?.hasPremium && <BlurContainer isLockIconCentered={true} />}
                     </View>
                 )}
             </View>
-            <View style={styles.mainContainer}>
-                <Typography variant="subtitle_20_500" text={item.name} style={styles.title} selectable />
-                <Typography variant="body_400" text={description} style={styles.description} selectable />
-                <View style={styles.rateContainer}>
-                    <StarIcon />
-                    <Typography variant="subtitle_12_500" text={item.averageUserRating || 0} />
-                    <Typography
-                        variant="subtitle_12_400"
-                        text={`(${declOfWord(
-                            item.totalReviews || 0,
-                            t('scanner.reviewCount') as unknown as Array<string>,
-                        )})`}
-                        style={styles.text}
+            <View style={styles.detailsContainer}>
+                <View style={styles.mainContainer}>
+                    <Typography variant="subtitle_20_500" text={item.name} style={styles.title} selectable />
+                    <Typography variant="body_400" text={description} style={styles.description} selectable />
+                    <View style={styles.rateContainer}>
+                        <StarIcon />
+                        <Typography variant="subtitle_12_500" text={item.averageUserRating || 0} />
+                        <Typography variant="subtitle_12_400" text={t('wine.overallScore')} />
+
+                        <Typography
+                            variant="subtitle_12_400"
+                            text={`(${declOfWord(
+                                item.countUserRating || 0,
+                                t('scanner.reviewCount') as unknown as Array<string>,
+                            )})`}
+                            style={styles.text}
+                        />
+                    </View>
+                    <CustomDropdown
+                        data={vintageData}
+                        placeholder={vintagePlaceholder}
+                        onPress={onVintageChange}
+                        selectedValue={selectedVintageValue}
+                        containerStyle={styles.dropdown}
+                        disabled={vintageData.length === 0}
+                        renderItem={renderVintageItem}
+                        renderSelectedValue={renderVintageValue}
                     />
                 </View>
-                <CustomDropdown
-                    data={vintageData}
-                    placeholder={t('wine.vintage')}
-                    onPress={onVintageChange}
-                    selectedValue={item.vintage ? item.vintage.toString() : ''}
-                    containerStyle={styles.dropdown}
-                />
                 <View style={styles.row}>
                     <Button
                         text={item.isTasted ? t('wine.tasteAgain') : t('wine.letsTaste')}

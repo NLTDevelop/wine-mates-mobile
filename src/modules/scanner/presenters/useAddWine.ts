@@ -81,6 +81,7 @@ export const useAddWine = () => {
             form.producer.value,
             form.grapeVariety.value,
             form.wineName.value,
+            form.vintageYear.value,
         ];
         const hasEmptyBase = baseRequired.some(field => !field?.trim());
 
@@ -184,6 +185,11 @@ export const useAddWine = () => {
                         ...form.typeOfWine,
                         isSparkling: selectedType?.isSparkling,
                     },
+                };
+                wineModel.wine = {
+                    id: response.data.id,
+                    name: response.data.name,
+                    vintage: response.data.vintage,
                 };
                 navigation.navigate('WineLookView');
             }

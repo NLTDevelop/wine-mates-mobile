@@ -30,6 +30,7 @@ export const useWineSmell = (onHide: () => void) => {
     const [selected, setSelected] = useState<IWineSelectedSmell[]>(initialSelected);
     const [isError, setIsError] = useState(false);
     const initialData = wineModel.smells;
+    console.log('Wine: ', wineModel)
 
     const visibleSubgroups = useMemo(() => {
         const currentGroup = data[selectedIndex];

@@ -95,10 +95,7 @@ export const WineLookView = observer(() => {
                                 onAnimationEnd={handleShadeAnimationEnd}
                             />
 
-                            {/*
-                            TODO: Repair later, when sparkling wine is added
-                            {wineModel.base?.typeOfWine.isSparkling && (*/}
-                            {true && (
+                            {wineModel.base?.typeOfWine.isSparkling && (
                                 <View style={styles.sliderContainer}>
                                     <View>
                                         <Typography text={t('wine.selectMousse')} variant="h4" style={styles.label} />

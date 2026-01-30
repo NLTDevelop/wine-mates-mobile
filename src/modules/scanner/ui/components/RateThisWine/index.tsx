@@ -37,16 +37,19 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
         <View style={styles.container}>
             <View style={styles.headerRow}>
                 <Typography text={title} variant="subtitle_20_500" style={styles.title} />
-                <View style={styles.tooltipContainer}>
-                    <Tooltip content={tooltipContent} disabled={disabled}>
-                        <InfoIcon color={tooltipIconColor} isOutline {...tooltipIconSize} />
-                    </Tooltip>
-                </View>
+                {!disabled && userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER && (
+                    <View style={styles.tooltipContainer}>
+                        <Tooltip content={tooltipContent} disabled={disabled}>
+                            <InfoIcon color={tooltipIconColor} isOutline {...tooltipIconSize} />
+                        </Tooltip>
+                    </View>
+                )}
             </View>
 
             {userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER ? (
-                disabled ?
-                    <RateMedal sliderValue={sliderValue} /> :
+                disabled ? (
+                    <RateMedal sliderValue={sliderValue}/>
+                ) : (
                     <>
                         <SmoothSlider
                             min={0}
@@ -63,6 +66,7 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                             <Typography text={sliderValue.toString()} />
                         </View>
                     </>
+                )
             ) : disabled ? (
                 <View style={styles.starsContainer}>
                     <StarRatingDisplay

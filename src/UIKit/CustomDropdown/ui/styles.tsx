@@ -31,6 +31,18 @@ export const getStyles = (colors: IColors) => {
             fontFamily: 'VisueltPro-Regular',
             color: colors.text,
         },
+        selectedTextHidden: {
+            color: 'transparent',
+            opacity: 0,
+        },
+        selectedOverlay: {
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: scaleHorizontal(16),
+            right: scaleHorizontal(16),
+            justifyContent: 'center',
+        },
         dropdownDisabled: {
             opacity: 0.5,
         },

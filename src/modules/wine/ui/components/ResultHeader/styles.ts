@@ -18,6 +18,10 @@ export const getStyles = (colors: IColors) => {
             marginTop: scaleVertical(8),
             alignItems: 'center',
         },
+        detailsContainer: {
+            width: scaleHorizontal(214),
+            justifyContent: 'space-between',
+        },
         mainContainer: {
             width: scaleHorizontal(214),
             gap: scaleVertical(12),
@@ -33,12 +37,18 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             gap: scaleHorizontal(4),
         },
+        dropdownItem: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingVertical: scaleVertical(12),
+            paddingHorizontal: scaleHorizontal(14),
+        },
         text: {
             color: colors.text_light,
         },
         dropdown: {
-            maxWidth: scaleHorizontal(149),
-            backgroundColor: 'transparent',
+            width: '100%',
             minHeight: scaleVertical(36),
         },
         row: {

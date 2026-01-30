@@ -149,6 +149,7 @@
         "wineryName": "Winery",
         "grapeVariety": "Grape variety",
         "vintage": "Vintage year",
+        "nonVintage": "Non vintage",
         "wineName": "Wine name",
         "pale": "Pale",
         "deep": "Deep",
@@ -194,7 +195,8 @@
             "mediocre": "Mediocre wine",
             "poor": "Poor wine",
             "defective": "Defective wine"
-        }
+        },
+        "overallScore": "Overall Score"
     },
     "aiAttempts": {
         "label1": "You have ",

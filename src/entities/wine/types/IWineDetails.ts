@@ -19,6 +19,7 @@ export interface IWineDetails {
     id: number;
     name: string;
     vintage: number;
+    currentVintage: IVintage | null;
     isTasted: boolean;
     vintages: IVintage[];
     producer: string | null;
@@ -29,6 +30,8 @@ export interface IWineDetails {
     image: IMedia | null;
     averageUserRating: number;
     averageExpertRating: number;
+    countExpertRating: number;
+    countUserRating: number;
     totalReviews: number;
     color: {
         id: number;
