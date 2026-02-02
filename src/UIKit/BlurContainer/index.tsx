@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, ImageBackground } from 'react-native';
+import { View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { BlurView } from '@sbaiahmed1/react-native-blur';
@@ -24,15 +24,7 @@ export const BlurContainer = ({ isLockIconCentered = false }: IProps) => {
                     reducedTransparencyFallbackColor={colors.background}
                 />
             ) : (
-                <>
-                    <View pointerEvents="none" style={styles.androidBaseLayer} />
-                    <ImageBackground
-                        source={require('./noise-new.png')}
-                        resizeMode="repeat"
-                        imageStyle={styles.androidNoiseImage}
-                        style={styles.androidNoiseLayer}
-                    />
-                </>
+                <View pointerEvents="none" style={styles.androidBaseLayer} />
             )}
             <View style={isLockIconCentered ? styles.centeredLockLayer : styles.lockLayer}>
                 <LockIcon />

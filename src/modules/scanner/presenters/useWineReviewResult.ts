@@ -10,6 +10,7 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
+import { storage } from '@/libs/storage/MMKVStorage';
 
 export const useWineReviewResult = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -288,6 +289,7 @@ export const useWineReviewResult = () => {
                     );
                 }
 
+                storage.remove('wine_taste_characteristics_slider_values');
                 wineModel.clear();
             }
         } catch (error) {

@@ -23,16 +23,21 @@ export const useShadeSelector = ({ value = MIN, onChange, colorShades, onAnimati
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors, MARKER, TRACK_HEIGHT, SLIDER_LENGTH), [colors]);
 
-    const animatedValue = useMemo(() => new Animated.Value(value), []);
-    
-    const currentColor = animatedValue.interpolate({
-        inputRange: [MIN, 2, MAX],
-        outputRange: [colorShades.tonePale, colorShades.toneMedium, colorShades.toneDeep],
-    });
+    const animatedValue = useRef(new Animated.Value(value)).current;
     const sliderValueRef = useRef(value);
     const isDraggingRef = useRef(false);
     const trackWidthRef = useRef(SLIDER_LENGTH);
-    const dragAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
+
+    const currentColor = useMemo(() => {
+        const currentValue = sliderValueRef.current;
+        if (currentValue < 1.5) {
+            return colorShades.tonePale;
+        } else if (currentValue < 2.5) {
+            return colorShades.toneMedium;
+        } else {
+            return colorShades.toneDeep;
+        }
+    }, [colorShades, value]);
 
     useEffect(() => {
         if (!isDraggingRef.current) {
@@ -48,7 +53,6 @@ export const useShadeSelector = ({ value = MIN, onChange, colorShades, onAnimati
             });
         }
     }, [value, animatedValue, onAnimationEnd]);
-
 
     const snapToNearest = useCallback((currentValue: number) => {
         let snappedValue: number;
@@ -80,22 +84,21 @@ export const useShadeSelector = ({ value = MIN, onChange, colorShades, onAnimati
     }, [animatedValue, value, onChange, onAnimationEnd]);
 
     const trackLayoutRef = useRef({ x: 0, y: 0, width: SLIDER_LENGTH });
+    const lastUpdateTimeRef = useRef(0);
 
     const updateSliderValue = useCallback((newValue: number) => {
         sliderValueRef.current = newValue;
-        
-        if (dragAnimationRef.current) {
-            dragAnimationRef.current.stop();
-        }
-        
-        dragAnimationRef.current = Animated.timing(animatedValue, {
-            toValue: newValue,
-            duration: 50,
-            useNativeDriver: false,
-        });
-        
-        dragAnimationRef.current.start();
+        animatedValue.setValue(newValue);
     }, [animatedValue]);
+
+    const calculateValueFromTouch = useCallback((touchX: number) => {
+        const trackX = trackLayoutRef.current.x;
+        const trackWidth = trackLayoutRef.current.width;
+        
+        const relativeX = touchX - trackX;
+        const clampedX = Math.max(0, Math.min(trackWidth, relativeX));
+        return MIN + (clampedX / trackWidth) * (MAX - MIN);
+    }, []);
 
     const panResponder = useMemo(
         () =>
@@ -104,52 +107,50 @@ export const useShadeSelector = ({ value = MIN, onChange, colorShades, onAnimati
                 onMoveShouldSetPanResponder: () => true,
                 onPanResponderGrant: (evt) => {
                     isDraggingRef.current = true;
-                    const touchX = evt.nativeEvent.pageX;
-                    const trackX = trackLayoutRef.current.x;
-                    const trackWidth = trackLayoutRef.current.width;
-                    
-                    const relativeX = touchX - trackX;
-                    const clampedX = Math.max(0, Math.min(trackWidth, relativeX));
-                    const newValue = MIN + (clampedX / trackWidth) * (MAX - MIN);
-                    
+                    const newValue = calculateValueFromTouch(evt.nativeEvent.pageX);
                     updateSliderValue(newValue);
+                    lastUpdateTimeRef.current = Date.now();
                 },
                 onPanResponderMove: (evt) => {
-                    const touchX = evt.nativeEvent.pageX;
-                    const trackX = trackLayoutRef.current.x;
-                    const trackWidth = trackLayoutRef.current.width;
+                    const now = Date.now();
+                    if (now - lastUpdateTimeRef.current < 16) {
+                        return;
+                    }
+                    lastUpdateTimeRef.current = now;
                     
-                    const relativeX = touchX - trackX;
-                    const clampedX = Math.max(0, Math.min(trackWidth, relativeX));
-                    const newValue = MIN + (clampedX / trackWidth) * (MAX - MIN);
-                    
+                    const newValue = calculateValueFromTouch(evt.nativeEvent.pageX);
                     updateSliderValue(newValue);
                 },
                 onPanResponderRelease: () => {
-                    if (dragAnimationRef.current) {
-                        dragAnimationRef.current.stop();
-                    }
                     isDraggingRef.current = false;
                     const currentValue = sliderValueRef.current;
                     snapToNearest(currentValue);
                 },
                 onPanResponderTerminate: () => {
-                    if (dragAnimationRef.current) {
-                        dragAnimationRef.current.stop();
-                    }
                     isDraggingRef.current = false;
                     const currentValue = sliderValueRef.current;
                     snapToNearest(currentValue);
                 },
             }),
-        [updateSliderValue, snapToNearest],
+        [updateSliderValue, snapToNearest, calculateValueFromTouch],
     );
+
 
     const onLabelPress = (labelValue: number) => {
         if (labelValue !== value) {
             onChange?.(labelValue);
         }
     };
+
+    const onTrackLayout = useCallback((event: any) => {
+        const { width } = event.nativeEvent.layout;
+        trackWidthRef.current = width;
+        trackLayoutRef.current.width = width;
+        
+        event.target.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
+            trackLayoutRef.current = { x: pageX, y: pageY, width };
+        });
+    }, []);
 
     const markerPosition = animatedValue.interpolate({
         inputRange: [MIN, MAX],
@@ -166,16 +167,6 @@ export const useShadeSelector = ({ value = MIN, onChange, colorShades, onAnimati
         middle: t('wine.medium'),
         right: t('wine.deep'),
     };
-
-    const onTrackLayout = useCallback((event: any) => {
-        const { width } = event.nativeEvent.layout;
-        trackWidthRef.current = width;
-        trackLayoutRef.current.width = width;
-        
-        event.target.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
-            trackLayoutRef.current = { x: pageX, y: pageY, width };
-        });
-    }, []);
 
     return {
         styles,

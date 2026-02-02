@@ -3,16 +3,23 @@ import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
+import { storage } from '@/libs/storage/MMKVStorage';
+
+const TASTE_CHARACTERISTICS_CACHE_KEY = 'wine_taste_characteristics_slider_values';
 
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const isFocused = useIsFocused();
 
     const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
     const [isError, setIsError] = useState(false);
-    const [sliderValues, setSliderValues] = useState<Record<number, number>>({});
+    const [sliderValues, setSliderValues] = useState<Record<number, number>>(() => {
+        const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY);
+        return cached || {};
+    });
     const data = wineModel.tasteCharacteristics;
     const isPremiumUser = userModel.user?.hasPremium || false;
 
@@ -74,6 +81,23 @@ export const useWineTasteCharacteristics = () => {
         });
     }, [data]);
 
+    useEffect(() => {
+        if (!isFocused || !data || data.length === 0) {
+            return;
+        }
+
+        const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY) || {};
+        const next: Record<number, number> = {};
+
+        data.forEach(item => {
+            const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
+            const cachedValue = cached[item.id] ?? 0;
+            next[item.id] = Math.min(Math.max(cachedValue, 0), maxIndex);
+        });
+
+        setSliderValues(next);
+    }, [isFocused, data]);
+
     const handleSliderChange = useCallback(
         (id: number, value: number) => {
             setSliderValues(prev => {
@@ -82,6 +106,8 @@ export const useWineTasteCharacteristics = () => {
                 const maxIndex = Math.max(levelsLength - 1, 0);
                 const nextValue = Math.min(Math.max(value, 0), maxIndex);
                 const next = { ...prev, [id]: nextValue };
+
+                storage.set(TASTE_CHARACTERISTICS_CACHE_KEY, next);
 
                 if (data?.length) {
                     wineModel.tasteCharacteristics = data.map(item => ({
