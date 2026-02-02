@@ -27,14 +27,14 @@ export const FeedView = () => {
         <ScreenContainer edges={['top']}>
             <View style={styles.container}>
                 <Typography text={'Feed Screen'} variant="h3" />
-                <ShadeSelector
-                    value={shade}
-                    onChange={(v) => {
-                        console.log('Shade changed:', v);
-                        setShade(v);
-                    }}
-                    colorShades={mockColorShade}
-                />
+                {/*<ShadeSelector*/}
+                {/*    value={shade}*/}
+                {/*    onChange={(v) => {*/}
+                {/*        console.log('Shade changed:', v);*/}
+                {/*        setShade(v);*/}
+                {/*    }}*/}
+                {/*    colorShades={mockColorShade}*/}
+                {/*/>*/}
             </View>
         </ScreenContainer>
     );
