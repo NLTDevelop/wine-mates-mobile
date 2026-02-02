@@ -22,8 +22,8 @@ export const RateMedal = ({ sliderValue, size }: IProps) => {
     const medalProps = {
         height: size ? size : 55,
         width: size ? size : 55,
-        text: sliderValue.toString(),
-    }
+        text: sliderValue ? sliderValue.toString() : '0',
+    };
 
     const renderMedal = () => {
         switch (medalType) {

@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleVertical, scaleHorizontal } from '@/utils';
 
-const LABEL_WIDTH = scaleHorizontal(100);
+const LABEL_WIDTH = scaleHorizontal(80);
 const HALF_LABEL = LABEL_WIDTH / 4;
 const TRACK_HEIGHT = scaleVertical(8);
 const THUMB_SIZE = scaleHorizontal(48);
@@ -98,6 +98,7 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
             justifyContent: 'space-between',
             marginTop: scaleVertical(8),
             width: sliderLength ? actualSliderLength + THUMB_SIZE : '100%',
+            paddingHorizontal: HALF_THUMB,
         },
         labelWrapper: {
             width: LABEL_WIDTH,
@@ -107,20 +108,24 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
             width: scaleHorizontal(100),
         },
         leftLabelWrapper: {
-            alignItems: 'flex-start',
+            alignItems: 'center',
+            marginLeft: -LABEL_WIDTH / 2,
         },
         rightLabelWrapper: {
-            alignItems: 'flex-end',
+            alignItems: 'center',
+            marginRight: -LABEL_WIDTH / 2,
         },
         labelText: {
             color: colors.text,
             textAlign: 'center',
         },
         leftLabelText: {
-            textAlign: 'left',
+            textAlign: 'center',
+            marginLeft: scaleHorizontal(8),
         },
         rightLabelText: {
-            textAlign: 'right',
+            textAlign: 'center',
+            marginRight: scaleHorizontal(8),
         },
     });
     return styles;

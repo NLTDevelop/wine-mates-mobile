@@ -145,7 +145,7 @@
         "typeOfWine": "Type of wine",
         "colorOfWine": "Color of wine",
         "country": "Country",
-        "region": "Region, Appellation",
+        "region": "Region",
         "wineryName": "Winery",
         "grapeVariety": "Grape variety",
         "vintage": "Vintage year",

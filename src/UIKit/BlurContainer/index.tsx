@@ -20,11 +20,11 @@ export const BlurContainer = ({ isLockIconCentered = false }: IProps) => {
                 <BlurView
                     style={styles.blur}
                     blurType={'light'}
-                    blurAmount={7}
+                    blurAmount={12}
                     reducedTransparencyFallbackColor={colors.background}
                 />
             ) : (
-                <View style={styles.androidOverlay} />
+                <View pointerEvents="none" style={styles.androidBaseLayer} />
             )}
             <View style={isLockIconCentered ? styles.centeredLockLayer : styles.lockLayer}>
                 <LockIcon />
