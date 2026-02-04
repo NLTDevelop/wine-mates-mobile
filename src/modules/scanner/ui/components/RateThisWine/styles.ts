@@ -9,7 +9,6 @@ export const getStyles = (colors: IColors) => {
             marginBottom: scaleVertical(16),
         },
         title: {
-            marginBottom: scaleVertical(16),
         },
         sliderContainer: {
             width: '92%',
@@ -27,6 +26,18 @@ export const getStyles = (colors: IColors) => {
         },
         tooltipContainer: {
           marginBottom: scaleVertical(16)
+        },
+        ratingDescriptionContainer: {
+            marginBottom: scaleVertical(6),
+        },
+        ratingDescriptionRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(4),
+        },
+        ratingDescription: {
+            color: colors.text,
+            opacity: 0.7,
         },
         starsContainer: {
             alignItems: 'center',

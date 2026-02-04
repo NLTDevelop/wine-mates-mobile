@@ -14,7 +14,7 @@ interface StarIconProps {
     fill?: number;
 }
 
-export const useRateThisWine = (disabled: boolean) => {
+export const useRateThisWine = (disabled: boolean, starRate: number) => {
     const { colors, t } = useUiContext();
     const { styles, tooltipIconSize, tooltipIconColor } = useMemo(() => getStyles(colors), [colors]);
 
@@ -105,6 +105,20 @@ export const useRateThisWine = (disabled: boolean) => {
 
     const title = disabled ? t('wine.ratedWine') : t('wine.rateThisWine');
 
+    const getRatingDescription = useCallback((rating: number): string => {
+        if (rating >= 5.0) return t('wine.ratingScale.exceptional');
+        if (rating >= 4.5) return t('wine.ratingScale.veryHighQuality');
+        if (rating >= 4.0) return t('wine.ratingScale.good');
+        if (rating >= 3.5) return t('wine.ratingScale.average');
+        if (rating >= 3.0) return t('wine.ratingScale.mediocre');
+        if (rating >= 2.5) return t('wine.ratingScale.poor');
+        return t('wine.ratingScale.defective');
+    }, [t]);
+
+    const currentRatingDescription = useMemo(() => {
+        return getRatingDescription(starRate);
+    }, [starRate, getRatingDescription]);
+
     return {
         tooltipIconSize,
         tooltipIconColor,
@@ -112,5 +126,6 @@ export const useRateThisWine = (disabled: boolean) => {
         tooltipContent,
         decorators,
         title,
+        currentRatingDescription,
     };
 };

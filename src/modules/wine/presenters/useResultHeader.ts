@@ -38,6 +38,8 @@ export const useResultHeader = (item: IWineDetails) => {
     const onPress = useCallback(() => {
         wineModel.clear();
 
+        console.log("Check item", item);
+
         wineModel.wine = {
             id: item.id,
             name: item.name,
@@ -46,12 +48,12 @@ export const useResultHeader = (item: IWineDetails) => {
 
         wineModel.base = {
             colorOfWine: {
-                id: item.color.id,
-                value: item.color.name,
+                id: item.color?.id ?? null,
+                value: item.color?.name ?? '',
             },
             country: {
-                id: item.country.id,
-                value: item.country.name,
+                id: item.country?.id ?? null,
+                value: item.country?.name ?? '',
             },
             region: {
                 id: item.region?.id ?? null,
@@ -74,9 +76,9 @@ export const useResultHeader = (item: IWineDetails) => {
                 value: item.name,
             },
             typeOfWine: {
-                id: item.type.id,
-                value: item.type.name,
-                isSparkling: item.type.isSparkling,
+                id: item.type?.id ?? null,
+                value: item.type?.name ?? '',
+                isSparkling: item.type?.isSparkling ?? false,
             },
         };
         navigation.navigate('WineLookView');

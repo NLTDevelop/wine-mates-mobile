@@ -173,7 +173,8 @@ export const SmoothSlider = memo(
                                                 isFirst && styles.leftLabelText,
                                                 isLast && styles.rightLabelText,
                                             ]}
-                                            numberOfLines={isMiddle ? 2 : undefined}
+                                            numberOfLines={2}
+                                            ellipsizeMode="tail"
                                         />
                                     )}
                                 </Pressable>

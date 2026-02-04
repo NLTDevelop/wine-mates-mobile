@@ -3,16 +3,14 @@ import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { storage } from '@/libs/storage/MMKVStorage';
-
-const TASTE_CHARACTERISTICS_CACHE_KEY = 'wine_taste_characteristics_slider_values';
+import { TASTE_CHARACTERISTICS_CACHE_KEY } from '@/libs/storage/cacheUtils';
 
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const isFocused = useIsFocused();
 
     const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
     const [isError, setIsError] = useState(false);
@@ -21,6 +19,7 @@ export const useWineTasteCharacteristics = () => {
         return cached || {};
     });
     const data = wineModel.tasteCharacteristics;
+
     const isPremiumUser = userModel.user?.hasPremium || false;
 
     const getTasteCharacteristics = useCallback(async () => {
@@ -67,36 +66,23 @@ export const useWineTasteCharacteristics = () => {
             return;
         }
 
-        setSliderValues(prev => {
-            const next: Record<number, number> = {};
-
-            data.forEach(item => {
-                const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
-                const baseValue =
-                    typeof item.selectedIndex === 'number' ? item.selectedIndex : prev[item.id] ?? 0;
-                next[item.id] = Math.min(Math.max(baseValue, 0), maxIndex);
-            });
-
-            return next;
-        });
-    }, [data]);
-
-    useEffect(() => {
-        if (!isFocused || !data || data.length === 0) {
-            return;
-        }
-
         const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY) || {};
         const next: Record<number, number> = {};
 
         data.forEach(item => {
             const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
-            const cachedValue = cached[item.id] ?? 0;
-            next[item.id] = Math.min(Math.max(cachedValue, 0), maxIndex);
+            const cachedValue = cached[item.id];
+            const baseValue =
+                cachedValue !== undefined
+                    ? cachedValue
+                    : typeof item.selectedIndex === 'number'
+                    ? item.selectedIndex
+                    : 0;
+            next[item.id] = Math.min(Math.max(baseValue, 0), maxIndex);
         });
 
         setSliderValues(next);
-    }, [isFocused, data]);
+    }, [data]);
 
     const handleSliderChange = useCallback(
         (id: number, value: number) => {
