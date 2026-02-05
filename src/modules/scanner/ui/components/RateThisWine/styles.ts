@@ -9,6 +9,7 @@ export const getStyles = (colors: IColors) => {
             marginBottom: scaleVertical(16),
         },
         title: {
+            marginRight: scaleHorizontal(12),
         },
         sliderContainer: {
             width: '92%',

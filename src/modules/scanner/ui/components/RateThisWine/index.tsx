@@ -34,6 +34,7 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
         <View style={styles.container}>
             <View style={styles.headerRow}>
                 <Typography text={title} variant="subtitle_20_500" style={styles.title} />
+                {!disabled && <RateMedal sliderValue={sliderValue} size={32} />}
             </View>
             {!disabled && userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER && currentRatingDescription && (
                 <View style={styles.ratingDescriptionContainer}>

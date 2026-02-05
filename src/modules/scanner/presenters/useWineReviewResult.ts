@@ -159,7 +159,7 @@ export const useWineReviewResult = () => {
                 ?.map(item => item.aroma?.id || 0);
             const suggestedAromas = wineModel.selectedSmells
                 ?.filter(item => !item.aroma?.colorHex)
-                ?.map(item => item.aroma?.name || '');
+                ?.map(item => item.name || '');
 
             const flavors = wineModel.selectedTastes?.filter(item => item.colorHex)?.map(item => item.id);
             const suggestedFlavors = wineModel.selectedTastes
