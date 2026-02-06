@@ -15,4 +15,5 @@ export interface PartitionedSliderProps {
         count: number;
         decoratorContainerStyle?: ViewStyle;
     };
+    partTrackColors?: string[];
 }

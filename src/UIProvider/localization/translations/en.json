@@ -196,7 +196,8 @@
             "poor": "Poor wine",
             "defective": "Defective wine"
         },
-        "overallScore": "Overall Score"
+        "overallScore": "Overall Score",
+        "customVintage": "Custom vintage"
     },
     "aiAttempts": {
         "label1": "You have ",

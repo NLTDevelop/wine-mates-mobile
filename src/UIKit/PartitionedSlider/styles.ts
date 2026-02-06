@@ -35,6 +35,13 @@ export const getStyles = (colors: IColors) => {
             position: 'absolute',
             left: 0,
         },
+        partSegment: {
+            height: TRACK_HEIGHT,
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            marginVertical: 'auto',
+        },
         thumbWrapper: {
             position: 'absolute',
             left: -HALF_THUMB,

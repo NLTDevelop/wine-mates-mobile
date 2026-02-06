@@ -18,8 +18,11 @@ export const getStyles = (colors: IColors) => {
             borderRadius: 12,
             borderWidth: 1,
             borderColor: colors.border_light,
-            maxHeight: scaleVertical(300),
+            maxHeight: scaleVertical(250),
             overflow: 'hidden',
+        },
+        footerContainer: {
+            marginTop: scaleVertical(4),
         },
         placeholder: {
             fontSize: scaleFontSize(16),

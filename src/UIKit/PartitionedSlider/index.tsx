@@ -17,6 +17,7 @@ export const PartitionedSlider = memo(
         containerStyle,
         disabled = false,
         decorator,
+        partTrackColors,
     }: PartitionedSliderProps) => {
         const { colors } = useUiContext();
         const styles = useMemo(() => getStyles(colors), [colors]);
@@ -33,6 +34,19 @@ export const PartitionedSlider = memo(
             onChange,
             decoratorCount: decorator?.count ?? 0,
         });
+
+        const currentTrackColor = useMemo(() => {
+            if (!partTrackColors) return undefined;
+
+            for (let i = 0; i < parts.length; i++) {
+                const [partMin, partMax] = parts[i];
+                if (value >= partMin && value <= partMax) {
+                    const color = partTrackColors[i];
+                    return color === 'default' ? undefined : color;
+                }
+            }
+            return undefined;
+        }, [value, parts, partTrackColors]);
 
         const decoratorItems = useMemo(() => {
             if (!decorator || decorator.count <= 0) return [];
@@ -56,7 +70,13 @@ export const PartitionedSlider = memo(
                             onLayout={event => handleLayout(event.nativeEvent.layout.width)}
                         >
                             <View style={styles.track} />
-                            <Animated.View style={[styles.activeTrack, activeTrackStyle, selectedStyle]} />
+                            <Animated.View 
+                                style={[
+                                    styles.activeTrack, 
+                                    activeTrackStyle, 
+                                    currentTrackColor ? { backgroundColor: currentTrackColor } : selectedStyle
+                                ]} 
+                            />
 
                             {decorator && decoratorItems.length > 0 && (
                                 <View style={[styles.decoratorContainer, decorator.decoratorContainerStyle]}>

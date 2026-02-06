@@ -226,6 +226,8 @@ class WineService {
                 params,
             });
 
+            console.log('WineService -> getTastesCharacteristics: ', response.data);
+
             if (!response.isError) {
                 wineModel.tasteCharacteristics = response.data;
             }

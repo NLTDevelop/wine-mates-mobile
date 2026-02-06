@@ -34,7 +34,7 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
         <View style={styles.container}>
             <View style={styles.headerRow}>
                 <Typography text={title} variant="subtitle_20_500" style={styles.title} />
-                {!disabled && <RateMedal sliderValue={sliderValue} size={32} />}
+                {!disabled && userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && <RateMedal sliderValue={sliderValue} size={32} />}
             </View>
             {!disabled && userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER && currentRatingDescription && (
                 <View style={styles.ratingDescriptionContainer}>
@@ -51,13 +51,14 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                 ) : (
                     <>
                         <PartitionedSlider
-                            parts={[[0, 70], [71, 100]]}
+                            parts={[[70, 75], [76, 80], [81, 85], [86, 90], [91, 96], [97, 100]]}
                             value={sliderValue}
                             onChange={handleSliderChange}
                             selectedStyle={{ backgroundColor: colors.selectedSlider }}
                             containerStyle={styles.sliderContainer}
-                            disabled={disabled}
+                            disabled={false}
                             decorator={decorators}
+                            partTrackColors={['default', 'default', '#B87333', '#DADDE1', '#E6C35C', '#E8E9EB']}
                         />
                         <View style={styles.row}>
                             <Typography text={sliderValue.toString()} />

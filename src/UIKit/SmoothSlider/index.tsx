@@ -167,13 +167,12 @@ export const SmoothSlider = memo(
                                     ) : (
                                         <Typography
                                             text={label}
-                                            variant="h5"
+                                            variant="body_500"
                                             style={[
                                                 styles.labelText,
                                                 isFirst && styles.leftLabelText,
                                                 isLast && styles.rightLabelText,
                                             ]}
-                                            numberOfLines={2}
                                             ellipsizeMode="tail"
                                         />
                                     )}

@@ -36,8 +36,13 @@ export const useWineDetails = () => {
     const onVintageChange = useCallback((item: IDropdownItem) => {
         if (item.id) {
             setId(Number(item.id));
+        } else if (details) {
+            setDetails({
+                ...details,
+                vintage: Number(item.value),
+            });
         }
-    }, []);
+    }, [details]);
 
     return { details, isError, getDetails, id, onVintageChange };
 };
