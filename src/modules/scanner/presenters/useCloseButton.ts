@@ -1,6 +1,7 @@
 import { wineModel } from '@/entities/wine/WineModel';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
 
 export const useCloseButton = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -28,6 +29,7 @@ export const useCloseButton = () => {
                 ],
             }),
         );
+        clearTasteCharacteristicsCache();
         wineModel.clear();
     };
 

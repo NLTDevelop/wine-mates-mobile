@@ -24,7 +24,7 @@ export const useScanner = () => {
             uri: normalizedUri,
             name: name || uriName || `photo-${Date.now()}.jpg`,
             type: type || 'image/jpeg',
-        };
+        } as IWineImage;
     };
 
     useEffect(() => {

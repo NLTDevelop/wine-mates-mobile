@@ -5,16 +5,16 @@ interface IProps {
     onPress: (item: IDropdownItem) => void;
     data: IDropdownItem[];
     onSelect?: () => Promise<boolean>;
-    selectedValue?: string | null;
+    selectedValue?: string | number | null;
 }
 
 export const useCustomDropdown = ({ onPress, data, onSelect, selectedValue = null }: IProps) => {
-    const [value, setValue] = useState<string | null>(selectedValue);
+    const [value, setValue] = useState<string | number | null>(selectedValue);
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
 
     useEffect(() => {
-        Promise.resolve().then(() => setValue(selectedValue || null));
+        Promise.resolve().then(() => setValue(selectedValue ?? null));
     }, [selectedValue]);
 
     const filteredData = useMemo(() => {

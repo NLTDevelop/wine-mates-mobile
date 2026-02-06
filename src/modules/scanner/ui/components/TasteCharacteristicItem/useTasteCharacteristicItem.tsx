@@ -16,11 +16,27 @@ export const useTasteCharacteristicItem = ({ item, value, isPremiumUser }: UseTa
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isFocused = useIsFocused();
 
-    const levels = useMemo(() => {
-        const originalLevels = item.levels ?? [
+    const originalLevels = useMemo(() => {
+        return item.levels ?? [
             { id: 1, name: '' },
             { id: 2, name: '' },
         ];
+    }, [item.levels]);
+
+    const maxIndex = useMemo(() => {
+        return Math.max(originalLevels.length - 1, 0);
+    }, [originalLevels.length]);
+
+    const safeValue = useMemo(() => {
+        if (value > maxIndex) return maxIndex;
+        if (value < 0) return 0;
+        return value;
+    }, [maxIndex, value]);
+
+    const displayLabels = useMemo(() => {
+        if (originalLevels.length === 2) {
+            return originalLevels;
+        }
 
         if (originalLevels.length <= 3) {
             return originalLevels;
@@ -35,25 +51,15 @@ export const useTasteCharacteristicItem = ({ item, value, isPremiumUser }: UseTa
             originalLevels[middleIndex],
             originalLevels[lastIndex],
         ];
-    }, [item.levels]);
-
-    const maxIndex = useMemo(() => {
-        return Math.max(levels.length - 1, 0);
-    }, [levels.length]);
-
-    const safeValue = useMemo(() => {
-        if (value > maxIndex) return maxIndex;
-        if (value < 0) return 0;
-        return value;
-    }, [maxIndex, value]);
+    }, [originalLevels]);
 
     const decoratorCount = useMemo(() => {
-        return levels.length - 2;
-    }, [levels]);
+        return originalLevels.length - 2;
+    }, [originalLevels.length]);
 
     const sliderLabels = useMemo(() => {
-        return levels.map(level => level.name);
-    }, [levels]);
+        return displayLabels.map(level => level.name);
+    }, [displayLabels]);
 
     const decorator = useMemo(() => {
         if (decoratorCount === 0) return undefined;

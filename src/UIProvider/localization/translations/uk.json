@@ -199,7 +199,8 @@
             "poor": "Погане вино",
             "defective": "Дефектне вино"
         },
-        "overallScore": "Загальний бал"
+        "overallScore": "Загальний бал",
+        "customVintage": "Власний винтаж"
     },
     "aiAttempts": {
         "label1": "У вас є ",

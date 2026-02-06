@@ -4,16 +4,16 @@ type MedalType = 'nice' | 'bronze' | 'silver' | 'gold' | 'platinum';
 
 export const useRateMedal = (sliderValue: number) => {
     const medalType: MedalType = useMemo(() => {
-        if (sliderValue < 86) {
-            return 'nice';
-        } else if (sliderValue >= 86 && sliderValue <= 89.99) {
-            return 'bronze';
-        } else if (sliderValue >= 90 && sliderValue <= 94.99) {
-            return 'silver';
-        } else if (sliderValue >= 95 && sliderValue <= 96.99) {
-            return 'gold';
-        } else {
+        if (sliderValue >= 97) {
             return 'platinum';
+        } else if (sliderValue >= 94) {
+            return 'gold';
+        } else if (sliderValue >= 90) {
+            return 'silver';
+        } else if (sliderValue >= 86) {
+            return 'bronze';
+        } else {
+            return 'nice';
         }
     }, [sliderValue]);
 

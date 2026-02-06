@@ -11,6 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 import { storage } from '@/libs/storage/MMKVStorage';
+import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
 
 export const useWineReviewResult = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -158,7 +159,7 @@ export const useWineReviewResult = () => {
                 ?.map(item => item.aroma?.id || 0);
             const suggestedAromas = wineModel.selectedSmells
                 ?.filter(item => !item.aroma?.colorHex)
-                ?.map(item => item.aroma?.name || '');
+                ?.map(item => item.name || '');
 
             const flavors = wineModel.selectedTastes?.filter(item => item.colorHex)?.map(item => item.id);
             const suggestedFlavors = wineModel.selectedTastes
@@ -289,7 +290,7 @@ export const useWineReviewResult = () => {
                     );
                 }
 
-                storage.remove('wine_taste_characteristics_slider_values');
+                clearTasteCharacteristicsCache();
                 wineModel.clear();
             }
         } catch (error) {
