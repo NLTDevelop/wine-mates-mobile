@@ -17,9 +17,10 @@ interface IProps {
     data: IWineDetails;
     onVintageChange: (item: IDropdownItem) => void;
     onFavoritePress: () => void;
+    hasCurrentVintageData: boolean;
 }
 
-export const ResultListHeader = ({ data, onVintageChange, onFavoritePress }: IProps) => {
+export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCurrentVintageData }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isPremiumUser = userModel.user?.hasPremium || false;
@@ -34,7 +35,7 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress }: IPr
 
     return (
         <View>
-            <ResultHeader item={data} onVintageChange={onVintageChange} onFavoritePress={onFavoritePress}/>
+            <ResultHeader item={data} onVintageChange={onVintageChange} onFavoritePress={onFavoritePress} hasCurrentVintageData={hasCurrentVintageData}/>
 
             {data.isTasted && (
                 <View style={styles.tasted}>

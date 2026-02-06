@@ -28,13 +28,14 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
         decorators,
         title,
         currentRatingDescription,
-    } = useRateThisWine(disabled, starRate);
+        debouncedSliderValue,
+    } = useRateThisWine(disabled, starRate, sliderValue);
 
     return (
         <View style={styles.container}>
             <View style={styles.headerRow}>
                 <Typography text={title} variant="subtitle_20_500" style={styles.title} />
-                {!disabled && userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && <RateMedal sliderValue={sliderValue} size={32} />}
+                {!disabled && userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && <RateMedal sliderValue={debouncedSliderValue} size={32} />}
             </View>
             {!disabled && userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER && currentRatingDescription && (
                 <View style={styles.ratingDescriptionContainer}>
@@ -47,7 +48,7 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
 
             {userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER ? (
                 disabled ? (
-                    <RateMedal sliderValue={sliderValue}/>
+                    <RateMedal sliderValue={debouncedSliderValue}/>
                 ) : (
                     <>
                         <PartitionedSlider
@@ -58,7 +59,6 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                             containerStyle={styles.sliderContainer}
                             disabled={false}
                             decorator={decorators}
-                            partTrackColors={['default', 'default', '#B87333', '#DADDE1', '#E6C35C', '#E8E9EB']}
                         />
                         <View style={styles.row}>
                             <Typography text={sliderValue.toString()} />

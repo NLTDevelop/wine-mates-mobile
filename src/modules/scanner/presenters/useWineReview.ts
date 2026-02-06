@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 export const useWineReview = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [review, setReview] = useState(() => wineModel.review?.review ?? '');
-    const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? 0);
+    const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? 70);
     const [starRate, setStarRate] = useState(() => wineModel.review?.starRate ?? 0);
 
     const handleSliderChange = useCallback((value: number) => {
@@ -18,7 +18,8 @@ export const useWineReview = () => {
     }, []);
 
     const onStarRateChange = useCallback((value: number) => {
-        setStarRate(Number(value.toFixed(1)));
+        const newValue = Number(value.toFixed(1));
+        setStarRate(prev => prev === newValue ? prev : newValue);
     }, []);
 
     const handleNextPress = useCallback(() => {

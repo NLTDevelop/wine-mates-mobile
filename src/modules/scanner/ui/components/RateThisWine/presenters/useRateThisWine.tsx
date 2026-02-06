@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from '../styles';
@@ -14,9 +14,18 @@ interface StarIconProps {
     fill?: number;
 }
 
-export const useRateThisWine = (disabled: boolean, starRate: number) => {
+export const useRateThisWine = (disabled: boolean, starRate: number, sliderValue: number) => {
     const { colors, t } = useUiContext();
     const { styles, tooltipIconSize, tooltipIconColor } = useMemo(() => getStyles(colors), [colors]);
+    const [debouncedSliderValue, setDebouncedSliderValue] = useState(sliderValue);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSliderValue(sliderValue);
+        }, 150);
+
+        return () => clearTimeout(timer);
+    }, [sliderValue]);
 
     const StarIconComponent = useCallback(
         ({ type, size, color, fill }: StarIconProps) => {
@@ -127,5 +136,6 @@ export const useRateThisWine = (disabled: boolean, starRate: number) => {
         decorators,
         title,
         currentRatingDescription,
+        debouncedSliderValue,
     };
 };

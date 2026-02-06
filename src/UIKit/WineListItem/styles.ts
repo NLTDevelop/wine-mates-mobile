@@ -16,6 +16,23 @@ export const getStyles = (colors: IColors) => {
             shadowRadius: 3,
             shadowOffset: { width: 0, height: 2 },
             elevation: 3,
+            position: 'relative',
+        },
+        similarityContainer: {
+            position: 'absolute',
+            top: scaleVertical(8),
+            left: scaleHorizontal(8),
+            padding: scaleHorizontal(4),
+            width: scaleHorizontal(40),
+            height: scaleHorizontal(40),
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: colors.primary,
+            borderRadius: scaleHorizontal(40),
+            zIndex: 20,
+        },
+        similarityText: {
+            color: colors.background,
         },
         image: {
             width: scaleHorizontal(116),

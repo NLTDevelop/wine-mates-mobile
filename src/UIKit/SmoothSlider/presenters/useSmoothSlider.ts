@@ -49,6 +49,7 @@ export const useSmoothSlider = ({
         activeTrackStyle,
         handleLabelPress: handleLabelPressInternal,
         handleLayout,
+        handleTrackPress,
     } = useSliderGesture({
         min,
         max: actualMax,
@@ -117,6 +118,7 @@ export const useSmoothSlider = ({
         activeTrackStyle,
         handleLabelPress: handleLabelPressInternal,
         handleLayout,
+        handleTrackPress,
         styles,
         actualMax,
         normalizedLabels,

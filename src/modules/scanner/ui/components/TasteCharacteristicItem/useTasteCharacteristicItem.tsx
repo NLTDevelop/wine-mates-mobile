@@ -33,33 +33,28 @@ export const useTasteCharacteristicItem = ({ item, value, isPremiumUser }: UseTa
         return value;
     }, [maxIndex, value]);
 
-    const displayLabels = useMemo(() => {
-        if (originalLevels.length === 2) {
-            return originalLevels;
-        }
-
-        if (originalLevels.length <= 3) {
-            return originalLevels;
-        }
-
+    const displayLabelIndices = useMemo(() => {
         const firstIndex = 0;
-        const middleIndex = Math.floor((originalLevels.length - 1) / 2);
         const lastIndex = originalLevels.length - 1;
 
-        return [
-            originalLevels[firstIndex],
-            originalLevels[middleIndex],
-            originalLevels[lastIndex],
-        ];
-    }, [originalLevels]);
+        if (item.isTriple) {
+            const middleIndex = Math.floor((originalLevels.length - 1) / 2);
+            return [firstIndex, middleIndex, lastIndex];
+        }
+
+        return [firstIndex, lastIndex];
+    }, [originalLevels, item.isTriple]);
 
     const decoratorCount = useMemo(() => {
         return originalLevels.length - 2;
     }, [originalLevels.length]);
 
     const sliderLabels = useMemo(() => {
-        return displayLabels.map(level => level.name);
-    }, [displayLabels]);
+        return displayLabelIndices.map(index => ({
+            label: originalLevels[index].name,
+            index: index,
+        }));
+    }, [displayLabelIndices, originalLevels]);
 
     const decorator = useMemo(() => {
         if (decoratorCount === 0) return undefined;

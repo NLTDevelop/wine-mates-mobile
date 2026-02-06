@@ -21,12 +21,13 @@ interface IProps {
     item: IWineDetails;
     onVintageChange: (item: IDropdownItem) => void;
     onFavoritePress: () => void;
+    hasCurrentVintageData: boolean;
 }
 
-export const ResultHeader = ({ item, onVintageChange, onFavoritePress }: IProps) => {
+export const ResultHeader = ({ item, onVintageChange, onFavoritePress, hasCurrentVintageData }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { onPress } = useResultHeader(item);
+    const { onPress, isCreating } = useResultHeader(item);
     const { description, medalData } = useResultHeaderLogic({ item, styles });
 
     return (
@@ -72,8 +73,12 @@ export const ResultHeader = ({ item, onVintageChange, onFavoritePress }: IProps)
                 <View style={styles.medalContainer}>
                     {medalData && (
                         <View style={styles.medal}>
-                            <RateMedal sliderValue={item.averageExpertRating} size={24} />
-                            <Typography variant="subtitle_12_400" text={medalData.label} />
+                            {item.averageExpertRating > 0 && (
+                                <>
+                                    <RateMedal sliderValue={item.averageExpertRating} size={24} />
+                                    <Typography variant="subtitle_12_400" text={medalData.label} />
+                                </>
+                            )}
 
                             {!userModel.user?.hasPremium && <BlurContainer isLockIconCentered={true} />}
                         </View>
@@ -81,10 +86,12 @@ export const ResultHeader = ({ item, onVintageChange, onFavoritePress }: IProps)
                 </View>
                 <View style={styles.buttonTasteContainer}>
                     <Button
-                        text={item.isTasted ? t('wine.tasteAgain') : t('wine.letsTaste')}
+                        text={hasCurrentVintageData && item.isTasted ? t('wine.tasteAgain') : t('wine.letsTaste')}
                         onPress={onPress}
                         type="secondary"
                         containerStyle={styles.button}
+                        isLoading={isCreating}
+                        disabled={isCreating}
                     />
                     <TouchableOpacity style={styles.favoriteButton} onPress={onFavoritePress}>
                         <FavoriteIcon />

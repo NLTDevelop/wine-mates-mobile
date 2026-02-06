@@ -32,7 +32,7 @@ export const useResultHeaderLogic = ({ item, styles }: UseResultHeaderLogicParam
             };
         }
 
-        if (rating >= 95) {
+        if (rating >= 94) {
             return {
                 label: t('medal.gold'),
             };
@@ -44,14 +44,14 @@ export const useResultHeaderLogic = ({ item, styles }: UseResultHeaderLogicParam
             };
         }
 
-        if (!rating || rating < 86) {
+        if (rating >= 86) {
             return {
-                label: t('medal.nice'),
+                label: t('medal.bronze'),
             };
         }
 
         return {
-            label: t('medal.bronze'),
+            label: t('medal.nice'),
         };
     }, [item.averageExpertRating, t]);
 

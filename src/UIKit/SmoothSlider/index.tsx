@@ -80,6 +80,7 @@ export const SmoothSlider = memo(
             thumbStyle,
             activeTrackStyle,
             handleLayout,
+            handleTrackPress,
             styles,
             normalizedLabels,
             decoratorItems,
@@ -104,9 +105,10 @@ export const SmoothSlider = memo(
         return (
             <View style={[styles.container, containerStyle]} pointerEvents={disabled ? 'none' : 'auto'}>
                 <View style={styles.sliderWrapper}>
-                    <View
+                    <Pressable
                         style={styles.trackContainer}
                         onLayout={event => handleLayout(event.nativeEvent.layout.width)}
+                        onPress={event => handleTrackPress(event.nativeEvent.locationX)}
                     >
                         <View style={[styles.track, trackStyle, unselectedStyle]} />
                         <Animated.View style={[styles.activeTrack, activeTrackStyle, selectedStyle]} />
@@ -141,7 +143,7 @@ export const SmoothSlider = memo(
                                 )}
                             </Animated.View>
                         </GestureDetector>
-                    </View>
+                    </Pressable>
                 </View>
 
                 {normalizedLabels && normalizedLabels.length > 0 && (

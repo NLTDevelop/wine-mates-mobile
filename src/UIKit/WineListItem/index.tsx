@@ -1,6 +1,4 @@
-import { useCallback, useMemo } from 'react';
 import { Pressable, View } from 'react-native';
-import { getStyles } from './styles';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -8,7 +6,7 @@ import { FasterImageView } from '@rraut/react-native-faster-image';
 import { StarIcon } from '@assets/icons/StartIcon';
 import { declOfWord } from '@/utils';
 import { Avatar } from '@/UIKit/Avatar';
-import { useSelectablePressGuard } from '@/hooks/useSelectablePressGuard';
+import { useWineListItem } from './useWineListItem';
 
 interface IProps {
     item: IWineListItem;
@@ -16,10 +14,8 @@ interface IProps {
 }
 
 export const WineListItem = ({ item, onPress }: IProps) => {
-    const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
-    const guard = useSelectablePressGuard();
-    const handleItemPress = useCallback(() => guard.bindPressable.onPress(() => onPress(item)), [item, onPress, guard]);
+    const { t } = useUiContext();
+    const { styles, guard, handleItemPress, similarityText } = useWineListItem({ item, onPress });
 
     return (
         <Pressable
@@ -27,6 +23,9 @@ export const WineListItem = ({ item, onPress }: IProps) => {
             onPress={handleItemPress}
             onPressOut={guard.bindPressable.onPressOut}
         >
+            <View style={styles.similarityContainer}>
+                <Typography numberOfLines={1} variant="subtitle_12_400" style={styles.similarityText} text={similarityText} />
+            </View>
             <View pointerEvents="none">
                 {item.image?.originalUrl && (
                     <FasterImageView

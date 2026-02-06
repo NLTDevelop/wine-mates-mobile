@@ -5,7 +5,7 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { storage } from '@/libs/storage/MMKVStorage';
 import { TASTE_CHARACTERISTICS_CACHE_KEY } from '@/libs/storage/cacheUtils';
 
@@ -18,26 +18,8 @@ export const useWineTasteCharacteristics = () => {
         const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY);
         return cached || {};
     });
-    const data = wineModel.tasteCharacteristics?.map(item => {
-        if (!item.levels || item.levels.length <= 3) {
-            return item;
-        }
-
-        const levelsCount = item.levels.length;
-        const middleIndex = Math.floor((levelsCount - 1) / 2);
-        const filteredLevels = [
-            item.levels[0],
-            item.levels[middleIndex],
-            item.levels[levelsCount - 1]
-        ];
-
-        return {
-            ...item,
-            levels: filteredLevels
-        };
-    });
-
-    console.log('data: ', data);
+    
+    const data = wineModel.tasteCharacteristics;
 
     const isPremiumUser = userModel.user?.hasPremium || false;
 
@@ -81,7 +63,7 @@ export const useWineTasteCharacteristics = () => {
 
     useEffect(() => {
         if (!data || data.length === 0) {
-            setSliderValues({});
+            setSliderValues(prev => Object.keys(prev).length === 0 ? prev : {});
             return;
         }
 
@@ -100,7 +82,11 @@ export const useWineTasteCharacteristics = () => {
             next[item.id] = Math.min(Math.max(baseValue, 0), maxIndex);
         });
 
-        setSliderValues(next);
+        setSliderValues(prev => {
+            const hasChanges = Object.keys(next).some(key => prev[Number(key)] !== next[Number(key)]) || 
+                               Object.keys(prev).length !== Object.keys(next).length;
+            return hasChanges ? next : prev;
+        });
     }, [data]);
 
     const handleSliderChange = useCallback(
