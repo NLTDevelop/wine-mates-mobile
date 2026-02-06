@@ -30,13 +30,5 @@ export const useWineReview = () => {
         navigation.navigate('WineReviewResultView');
     }, [navigation, review, sliderValue, starRate]);
 
-    useEffect(() => {
-        wineModel.review = {
-            starRate,
-            rate: sliderValue,
-            review,
-        };
-    }, [review, sliderValue, starRate]);
-
     return { review, onChangeReview, handleSliderChange, handleNextPress, sliderValue, starRate, onStarRateChange };
 };

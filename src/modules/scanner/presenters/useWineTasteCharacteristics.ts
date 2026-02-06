@@ -18,7 +18,26 @@ export const useWineTasteCharacteristics = () => {
         const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY);
         return cached || {};
     });
-    const data = wineModel.tasteCharacteristics;
+    const data = wineModel.tasteCharacteristics?.map(item => {
+        if (!item.levels || item.levels.length <= 3) {
+            return item;
+        }
+
+        const levelsCount = item.levels.length;
+        const middleIndex = Math.floor((levelsCount - 1) / 2);
+        const filteredLevels = [
+            item.levels[0],
+            item.levels[middleIndex],
+            item.levels[levelsCount - 1]
+        ];
+
+        return {
+            ...item,
+            levels: filteredLevels
+        };
+    });
+
+    console.log('data: ', data);
 
     const isPremiumUser = userModel.user?.hasPremium || false;
 
