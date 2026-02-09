@@ -15,13 +15,13 @@ export const getStyles = (colors: IColors) => {
             marginBottom: scaleVertical(16),
         },
         list: {
-            maxHeight: scaleVertical(322),
+            maxHeight: scaleVertical(300),
             marginBottom: scaleVertical(16),
+            paddingRight: scaleHorizontal(12),
         },
         contentContainer: {
             flexGrow: 1,
             rowGap: scaleVertical(7),
-            paddingRight: isIOS ? scaleHorizontal(16) : 0,
         },
         searchContainer: {
             marginBottom: scaleVertical(12),

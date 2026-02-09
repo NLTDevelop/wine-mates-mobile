@@ -19,7 +19,8 @@ export const getStyles = (colors: IColors) => {
             backgroundColor: colors.background,
         },
         list: {
-            maxHeight: scaleVertical(322),
+            maxHeight: scaleVertical(300),
+            paddingRight: scaleHorizontal(16),
         },
         contentContainer: {
             flexGrow: 1,

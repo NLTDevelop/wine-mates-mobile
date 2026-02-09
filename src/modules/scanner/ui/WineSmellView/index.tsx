@@ -96,7 +96,8 @@ export const WineSmellView = observer(() => {
                                     renderItem={renderSearchItem}
                                     style={styles.list}
                                     contentContainerStyle={styles.contentContainer}
-                                    nestedScrollEnabled={true}
+                                    nestedScrollEnabled
+                                    showsVerticalScrollIndicator
                                     ListEmptyComponent={
                                         <EmptyListView
                                             isLoading={isSearching || isDebouncing}
