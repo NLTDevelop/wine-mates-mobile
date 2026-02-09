@@ -52,7 +52,7 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                 ) : (
                     <>
                         <PartitionedSlider
-                            parts={[[70, 75], [76, 80], [81, 85], [86, 90], [91, 96], [97, 100]]}
+                            parts={[[70, 76], [76, 81], [81, 86], [86, 91], [91, 97], [97, 100]]}
                             value={sliderValue}
                             onChange={handleSliderChange}
                             selectedStyle={{ backgroundColor: colors.selectedSlider }}
