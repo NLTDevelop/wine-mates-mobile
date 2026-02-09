@@ -49,6 +49,7 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
                 years.push({
                     label: year.toString(),
                     value: year,
+                    id: vintage.wineId,
                     averageUserRating: vintage.averageUserRating,
                     totalReviews: vintage.totalReviews,
                 });
@@ -60,14 +61,29 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
             }
         }
         
+        if (currentVintage && (currentVintage.vintage < startYear || currentVintage.vintage > currentYear)) {
+            if (!years.find(y => y.value === currentVintage.vintage)) {
+                years.push({
+                    label: currentVintage.vintage.toString(),
+                    value: currentVintage.vintage,
+                    id: currentVintage.wineId,
+                    averageUserRating: currentVintage.averageUserRating,
+                    totalReviews: currentVintage.totalReviews,
+                });
+            }
+        }
+        
         vintages.forEach(v => {
             if (v.vintage < startYear || v.vintage > currentYear) {
-                years.push({
-                    label: v.vintage.toString(),
-                    value: v.vintage,
-                    averageUserRating: v.averageUserRating,
-                    totalReviews: v.totalReviews,
-                });
+                if (!years.find(y => y.value === v.vintage)) {
+                    years.push({
+                        label: v.vintage.toString(),
+                        value: v.vintage,
+                        id: v.wineId,
+                        averageUserRating: v.averageUserRating,
+                        totalReviews: v.totalReviews,
+                    });
+                }
             }
         });
         

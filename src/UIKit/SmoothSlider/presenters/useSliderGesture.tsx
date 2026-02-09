@@ -20,6 +20,7 @@ export interface UseSliderGestureReturn {
     activeTrackStyle: AnimatedStyleReturn;
     handleLabelPress: (index: number) => void;
     handleLayout: (width: number) => void;
+    handleTrackPress: (locationX: number) => void;
 }
 
 export const useSliderGesture = ({
@@ -116,11 +117,36 @@ export const useSliderGesture = ({
         sliderWidth.value = width;
     };
 
+    const handleTrackPress = (locationX: number) => {
+        const range = maxValue - minValue;
+        const stepSize = range > 0 ? sliderWidth.value / range : 1;
+        const clickedValue = minValue + (locationX / stepSize);
+        const targetValue = Math.max(minValue, Math.min(maxValue, clickedValue));
+        
+        let finalValue = targetValue;
+        if (snapped && step) {
+            const steppedValue = Math.round((targetValue - minValue) / step) * step + minValue;
+            finalValue = Math.max(minValue, Math.min(maxValue, steppedValue));
+        }
+        
+        position.value = withSpring(finalValue, {
+            damping: 10,
+            stiffness: 100,
+            mass: 0.5,
+        }, (finished) => {
+            'worklet';
+            if (finished && onChange) {
+                scheduleOnRN(onChange, Math.round(finalValue));
+            }
+        });
+    };
+
     return {
         panGesture,
         thumbStyle,
         activeTrackStyle,
         handleLabelPress,
         handleLayout,
+        handleTrackPress,
     };
 };

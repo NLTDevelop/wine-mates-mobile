@@ -10,6 +10,7 @@ export interface IWineListItem {
     createdAt: string;
     image: IMedia;
     averageUserRating: number;
+    similarity: number;
     totalReviews: number;
     lastReview: {
         review: string;

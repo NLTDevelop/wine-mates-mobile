@@ -155,10 +155,10 @@ export const useWineReviewResult = () => {
                 : wineModel.tasteCharacteristics?.filter(item => !item.isPremium);
 
             const aromas = wineModel.selectedSmells
-                ?.filter(item => item.aroma?.colorHex)
-                ?.map(item => item.aroma?.id || 0);
+                ?.filter(item => item.colorHex)
+                ?.map(item => item.id);
             const suggestedAromas = wineModel.selectedSmells
-                ?.filter(item => !item.aroma?.colorHex)
+                ?.filter(item => !item.colorHex)
                 ?.map(item => item.name || '');
 
             const flavors = wineModel.selectedTastes?.filter(item => item.colorHex)?.map(item => item.id);
@@ -272,7 +272,24 @@ export const useWineReviewResult = () => {
                 };
 
                 if (hasDetailsScreen) {
-                    navigation.popTo('WineDetailsView', wineDetailsParams);
+                    const detailsRoute = state.routes.find(route => route.name === 'WineDetailsView');
+                    if (detailsRoute) {
+                        const updatedRoutes = state.routes.map(route => 
+                            route.name === 'WineDetailsView' 
+                                ? { ...route, params: wineDetailsParams }
+                                : route
+                        );
+                        const detailsIndex = updatedRoutes.findIndex(r => r.name === 'WineDetailsView');
+                        const filteredRoutes = updatedRoutes.slice(0, detailsIndex + 1);
+                        
+                        navigation.dispatch(
+                            CommonActions.reset({
+                                ...state,
+                                routes: filteredRoutes,
+                                index: filteredRoutes.length - 1,
+                            }),
+                        );
+                    }
                 } else {
                     const filteredRoutes = state.routes.filter(route => !routesToDrop.has(route.name));
                     const normalizedRoutes = filteredRoutes.map(normalizeScannerStack);
