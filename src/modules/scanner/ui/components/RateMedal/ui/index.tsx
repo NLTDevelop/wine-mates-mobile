@@ -8,6 +8,7 @@ import { BronzeMedalIcon } from '@assets/icons/BronzeMedalIcon.tsx';
 import { GoldMedalIcon } from '@assets/icons/GoldMedalIcon.tsx';
 import { PlatinumMedalIcon } from '@assets/icons/PlatinumMedalIcon.tsx';
 import { SilverMedalIcon } from '@assets/icons/SilverMedalIcon.tsx';
+import { scaleHorizontal } from '@/utils';
 
 interface IProps {
     sliderValue: number;
@@ -19,9 +20,11 @@ export const RateMedal = ({ sliderValue, size }: IProps) => {
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { medalType } = useRateMedal(sliderValue);
 
+    const medalSize = size || 55;
+
     const medalProps = {
-        height: size ? size : 55,
-        width: size ? size : 55,
+        height: scaleHorizontal(medalSize),
+        width: scaleHorizontal(medalSize),
         text: sliderValue ? sliderValue.toString() : '0',
     };
 

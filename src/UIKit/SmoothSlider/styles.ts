@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleVertical, scaleHorizontal } from '@/utils';
 
-const LABEL_WIDTH = scaleHorizontal(80);
+const LABEL_WIDTH = scaleHorizontal(90);
 const HALF_LABEL = LABEL_WIDTH / 4;
 const TRACK_HEIGHT = scaleVertical(8);
 const THUMB_SIZE = scaleHorizontal(48);
