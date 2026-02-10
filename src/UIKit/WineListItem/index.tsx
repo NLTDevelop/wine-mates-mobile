@@ -16,7 +16,7 @@ interface IProps {
 }
 
 export const WineListItem = ({ item, onPress, hideSimilarity = false, showDate = false }: IProps) => {
-    const { t, colors } = useUiContext();
+    const { t } = useUiContext();
     const { styles, guard, handleItemPress, similarityText, displayRating, lastReviewData, formattedDate } = useWineListItem({ item, onPress, hideSimilarity, showDate });
 
     return (
