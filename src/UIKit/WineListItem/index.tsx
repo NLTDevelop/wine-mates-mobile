@@ -82,17 +82,17 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, showDate =
                                 numberOfLines={3}
                                 style={styles.text}
                             />
-                            {/*{showDate && formattedDate && (*/}
-                            {/*    <Typography*/}
-                            {/*        variant="body_400"*/}
-                            {/*        text={formattedDate}*/}
-                            {/*        style={styles.dateText}*/}
-                            {/*    />*/}
-                            {/*)}*/}
                         </View>
                     )}
                 </View>
             </View>
+            {showDate && formattedDate && (
+                <Typography
+                    variant="body_400"
+                    text={formattedDate}
+                    style={styles.dateText}
+                />
+            )}
         </Pressable>
     );
 };

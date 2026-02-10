@@ -71,10 +71,10 @@ export const getStyles = (colors: IColors) => {
             opacity: 0.6,
         },
         dateText: {
-            color: colors.text_light,
+            color: colors.text,
             opacity: 0.5,
             textAlign: 'center',
-            marginTop: scaleVertical(8),
+            marginTop: scaleVertical(12),
         },
     });
     return styles;
