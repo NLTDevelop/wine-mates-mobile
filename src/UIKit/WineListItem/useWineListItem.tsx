@@ -8,10 +8,11 @@ interface IProps {
     item: IWineListItem;
     onPress: (item: IWineListItem) => void;
     hideSimilarity?: boolean;
+    showDate?: boolean;
 }
 
-export const useWineListItem = ({ item, onPress, hideSimilarity = false }: IProps) => {
-    const { colors } = useUiContext();
+export const useWineListItem = ({ item, onPress, hideSimilarity = false, showDate = false }: IProps) => {
+    const { colors, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const guard = useSelectablePressGuard();
     
@@ -36,6 +37,25 @@ export const useWineListItem = ({ item, onPress, hideSimilarity = false }: IProp
         return item.lastRate || item.lastReview || null;
     }, [item.lastRate, item.lastReview]);
 
+    const formattedDate = useMemo(() => {
+        if (!lastReviewData?.createdAt) return null;
+        
+        const date = new Date(lastReviewData.createdAt);
+        const isEnglish = locale === 'en';
+        
+        const options: Intl.DateTimeFormatOptions = {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: isEnglish,
+        };
+        
+        const formatted = new Intl.DateTimeFormat(isEnglish ? 'en-US' : 'uk-UA', options).format(date);
+        return formatted;
+    }, [lastReviewData?.createdAt, locale]);
+
     return {
         styles,
         guard,
@@ -44,5 +64,7 @@ export const useWineListItem = ({ item, onPress, hideSimilarity = false }: IProp
         displayRating,
         lastReviewData,
         hideSimilarity,
+        showDate,
+        formattedDate,
     };
 };

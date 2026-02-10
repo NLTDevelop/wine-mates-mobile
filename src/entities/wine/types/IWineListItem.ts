@@ -19,13 +19,10 @@ export interface IWineListItem {
         review: string;
         createdAt: string;
         user: {
+            id?: number;
             firstName: string;
             lastName: string;
-            avatar: {
-                smallUrl: string;
-                mediumUrl: string;
-                originalUrl: string;
-            } | null;
+            image: IMedia | null;
         };
     } | null;
     lastRate?: {

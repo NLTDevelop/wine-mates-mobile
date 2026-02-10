@@ -9,14 +9,18 @@ export const getStyles = (colors: IColors) => {
             paddingHorizontal: scaleHorizontal(12),
             backgroundColor: colors.background,
             borderRadius: 12,
-            flexDirection: 'row',
-            gap: scaleHorizontal(12),
             shadowColor: colors.shadow,
             shadowOpacity: 0.12,
             shadowRadius: 3,
             shadowOffset: { width: 0, height: 2 },
             elevation: 3,
             position: 'relative',
+
+        },
+        content: {
+          flexDirection: 'row',
+            position: 'relative',
+            gap: scaleHorizontal(12),
         },
         similarityContainer: {
             position: 'absolute',
@@ -65,6 +69,12 @@ export const getStyles = (colors: IColors) => {
         },
         pressed: {
             opacity: 0.6,
+        },
+        dateText: {
+            color: colors.text_light,
+            opacity: 0.5,
+            textAlign: 'center',
+            marginTop: scaleVertical(8),
         },
     });
     return styles;

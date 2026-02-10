@@ -21,7 +21,7 @@ export const MyWine = observer(() => {
     
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
-        return <WineListItem item={item} onPress={onItemPress} hideSimilarity />;
+        return <WineListItem item={item} onPress={onItemPress} hideSimilarity showDate />;
     }, [onItemPress]);
 
     return (
