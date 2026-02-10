@@ -67,7 +67,10 @@ export const useFoodPairing = (limits: IRateContext | null, setLimits: SetLimits
                         },
                     };
                 });
-                setSnacks(response.data.snacks);
+                const snacksData = Array.isArray(response.data.snacks)
+                    ? response.data.snacks
+                    : [response.data.snacks];
+                setSnacks(snacksData);
             }
         } catch (error) {
             console.error('onGeneratePress error: ', JSON.stringify(error, null, 2));
