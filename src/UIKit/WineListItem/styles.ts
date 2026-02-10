@@ -38,6 +38,10 @@ export const getStyles = (colors: IColors) => {
             width: scaleHorizontal(116),
             height: scaleVertical(170),
         },
+        imagePlaceholder: {
+            backgroundColor: colors.text_light,
+            borderRadius: 12,
+        },
         mainContainer: {
             maxWidth: scaleHorizontal(160),
             justifyContent: 'space-between',

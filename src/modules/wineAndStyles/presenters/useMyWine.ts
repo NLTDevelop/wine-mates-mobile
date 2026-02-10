@@ -1,6 +1,7 @@
 import { myWineListModel } from '@/entities/wine/MyWineListModel';
 import { myWineService } from '@/entities/wine/MyWineService';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
+import { WineListScope } from '@/entities/wine/types/IWineListScope';
 import { useDebounce } from '@/hooks/useDebounce';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -25,9 +26,9 @@ export const useMyWine = () => {
                 limit: LIMIT,
                 offset,
                 search: myWineListModel.search,
+                scope: WineListScope.MY,
             };
 
-            //TODO: Change link
             const response = await myWineService.list(params);
     
             if (response.isError || !response.data) {
@@ -50,7 +51,9 @@ export const useMyWine = () => {
     }, [getList]);
 
     useEffect(() => {
-        onRefresh();
+        if (!myWineListModel.list) {
+            onRefresh();
+        }
     }, [onRefresh]);
 
     const onEndReached = useCallback(async () => {
@@ -66,10 +69,6 @@ export const useMyWine = () => {
         myWineListModel.search = text;
         debouncedFetch(text);
     }, [debouncedFetch]);
-
-    useEffect(() => {
-        return () => myWineListModel.clear();
-    }, []);
 
     const onItemPress = useCallback((item: IWineListItem) => {
         navigation.navigate('WineDetailsView', {wineId: item.id});

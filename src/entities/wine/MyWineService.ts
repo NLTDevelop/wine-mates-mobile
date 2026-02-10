@@ -12,7 +12,7 @@ class MyWineService {
         try {
             const response = await this._requester.request({
                 method: 'GET',
-                url: `${this._links.myWine}`,
+                url: `${this._links.wines}`,
                 params,
             });
 

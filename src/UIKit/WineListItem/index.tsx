@@ -11,11 +11,12 @@ import { useWineListItem } from './useWineListItem';
 interface IProps {
     item: IWineListItem;
     onPress: (item: IWineListItem) => void;
+    hideSimilarity?: boolean;
 }
 
-export const WineListItem = ({ item, onPress }: IProps) => {
-    const { t } = useUiContext();
-    const { styles, guard, handleItemPress, similarityText } = useWineListItem({ item, onPress });
+export const WineListItem = ({ item, onPress, hideSimilarity = false }: IProps) => {
+    const { t, colors } = useUiContext();
+    const { styles, guard, handleItemPress, similarityText, displayRating, lastReviewData } = useWineListItem({ item, onPress, hideSimilarity });
 
     return (
         <Pressable
@@ -23,16 +24,20 @@ export const WineListItem = ({ item, onPress }: IProps) => {
             onPress={handleItemPress}
             onPressOut={guard.bindPressable.onPressOut}
         >
-            <View style={styles.similarityContainer}>
-                <Typography numberOfLines={1} variant="subtitle_12_400" style={styles.similarityText} text={similarityText} />
-            </View>
+            {!hideSimilarity && (
+                <View style={styles.similarityContainer}>
+                    <Typography numberOfLines={1} variant="subtitle_12_400" style={styles.similarityText} text={similarityText} />
+                </View>
+            )}
             <View pointerEvents="none">
-                {item.image?.originalUrl && (
+                {item.image?.originalUrl ? (
                     <FasterImageView
                         source={{ uri: item.image?.originalUrl, resizeMode: 'cover' }}
                         style={styles.image}
                         radius={12}
                     />
+                ) : (
+                    <View style={[styles.image, styles.imagePlaceholder]} />
                 )}
             </View>
             <View style={styles.mainContainer}>
@@ -45,33 +50,33 @@ export const WineListItem = ({ item, onPress }: IProps) => {
                     />
                     <View style={styles.rateContainer}>
                         <StarIcon />
-                        <Typography variant="subtitle_12_500" text={item.averageUserRating || '-'} />
+                        <Typography variant="subtitle_12_500" text={displayRating} />
                         <Typography
                             variant="subtitle_12_400"
                             text={`(${declOfWord(
-                                item.totalReviews || 0,
+                                item.countUserRating || item.countExpertRating || 0,
                                 t('scanner.reviewCount') as unknown as Array<string>,
                             )})`}
                             style={styles.text}
                         />
                     </View>
                 </View>
-                {item.lastReview && (
+                {lastReviewData && (
                     <View style={styles.subContainer}>
                         <View style={styles.userRow}>
                             <Avatar
-                                avatarUrl={item?.lastReview?.user.avatar?.originalUrl || null}
-                                fullname={`${item?.lastReview?.user.firstName} ${item?.lastReview?.user.lastName}`}
+                                avatarUrl={lastReviewData.user.avatar?.originalUrl || lastReviewData.user.image?.originalUrl || null}
+                                fullname={`${lastReviewData.user.firstName} ${lastReviewData.user.lastName}`}
                                 size={24}
                             />
                             <Typography
-                                text={`${item?.lastReview?.user.firstName} ${item?.lastReview?.user.lastName}`}
+                                text={`${lastReviewData.user.firstName} ${lastReviewData.user.lastName}`}
                                 {...guard.bindText}
                             />
                         </View>
                         <Typography
                             variant="body_400"
-                            text={item.lastReview?.review ?? '-'}
+                            text={lastReviewData.review ?? '-'}
                             numberOfLines={3}
                             style={styles.text}
                         />
