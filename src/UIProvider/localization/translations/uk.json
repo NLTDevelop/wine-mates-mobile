@@ -17,7 +17,9 @@
         "confirm": "Підтвердити",
         "cancel": "Скасувати",
         "generate": "Згенерувати",
-        "copiedToClipboard": "Текст скопійований до буферу обміну"
+        "copiedToClipboard": "Текст скопійований до буферу обміну",
+        "filters": "Фільтри",
+        "clear": "Очистити"
     },
     "errors": {
         "somethingWentWrong": "Вибачте, щось пішло не так",

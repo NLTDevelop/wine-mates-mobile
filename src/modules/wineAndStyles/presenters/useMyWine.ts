@@ -2,7 +2,6 @@ import { myWineListModel } from '@/entities/wine/MyWineListModel';
 import { myWineService } from '@/entities/wine/MyWineService';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { WineListScope } from '@/entities/wine/types/IWineListScope';
-import { useDebounce } from '@/hooks/useDebounce';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
@@ -15,18 +14,21 @@ const OFFSET = 0;
 export const useMyWine = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(false);
-    const search = myWineListModel.search;
     const data = myWineListModel.list?.rows;
 
     const getList = useCallback(async (offset: number) => {
         try {
             setIsLoading(true);
             
+            const filters = myWineListModel.filters;
             const params = {
                 limit: LIMIT,
                 offset,
                 search: myWineListModel.search,
                 scope: WineListScope.MY,
+                sort: filters.sort.length > 0 ? filters.sort[0] : undefined,
+                typeId: filters.types.length > 0 ? filters.types[0] : undefined,
+                colorId: filters.colors.length > 0 ? filters.colors[0] : undefined,
             };
 
             const response = await myWineService.list(params);
@@ -63,20 +65,9 @@ export const useMyWine = () => {
         }
     }, [isLoading, getList]);
 
-    const { debouncedWrapper: debouncedFetch } = useDebounce(() => getList(OFFSET), 400);
-
-    const onSearchChange = useCallback((text: string) => {
-        myWineListModel.search = text;
-        debouncedFetch(text);
-    }, [debouncedFetch]);
-
     const onItemPress = useCallback((item: IWineListItem) => {
         navigation.navigate('WineDetailsView', {wineId: item.id});
     },[navigation]);
 
-    const onFilterPress = useCallback(() => {
-        //TODO
-    },[]);
-
-    return { data, onRefresh, onEndReached, search, onSearchChange, onItemPress, onFilterPress, isLoading };
+    return { data, onRefresh, onEndReached, onItemPress, isLoading, getList };
 };

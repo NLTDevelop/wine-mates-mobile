@@ -5,4 +5,7 @@ export interface IMyWineListParams {
     offset: number;
     search: string;
     scope: WineListScope;
+    sort?: string | number;
+    typeId?: string | number;
+    colorId?: string | number;
 }

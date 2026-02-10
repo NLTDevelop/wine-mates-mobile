@@ -18,7 +18,9 @@
         "cancel": "Cancel",
         "choose": "Choose",
         "generate": "Generate",
-        "copiedToClipboard": "Text copied to clipboard"
+        "copiedToClipboard": "Text copied to clipboard",
+        "filters": "Filters",
+        "clear": "Clear"
     },
     "errors": {
         "somethingWentWrong": "Sorry, something went wrong",

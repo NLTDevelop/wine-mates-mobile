@@ -7,16 +7,18 @@ export const getStyles = (_colors: IColors) => {
         container: {
             flex: 1,
             gap: scaleVertical(16),
-            marginHorizontal: scaleHorizontal(16),
+        },
+        header: {
+            paddingHorizontal: scaleVertical(16),
         },
         list: {
             marginBottom: scaleVertical(16),
         },
         containerStyle: {
             paddingBottom: scaleVertical(16),
-            paddingHorizontal: scaleHorizontal(16),
             gap: scaleVertical(16),
             flexGrow: 1,
+            paddingHorizontal: scaleHorizontal(16),
         },
     });
     return styles;
