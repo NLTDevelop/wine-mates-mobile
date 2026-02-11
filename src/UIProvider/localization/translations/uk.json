@@ -254,6 +254,9 @@
     "wineAndStyles": {
         "wineAndStyles": "Вино та стилі",
         "myWine": "Моє вино",
-        "myTasteProfile": "Мій профіль смаків"
+        "myTasteProfile": "Мій профіль смаків",
+        "colorShades": "Відтінки кольору",
+        "aroma": "Аромат",
+        "tastes": "Смаки"
     }
 }

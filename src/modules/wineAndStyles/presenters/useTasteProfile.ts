@@ -1,26 +1,28 @@
 import { useCallback, useEffect, useState } from 'react';
+import { wineService } from '@/entities/wine/WineService';
+import { ITasteProfile } from '@/entities/wine/types/ITasteProfile';
+import { toastService } from '@/libs/toast/toastService';
+import { localization } from '@/UIProvider/localization/Localization';
 
-//TODO
 export const useTasteProfile = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [tasteProfiles, setTasteProfiles] = useState<ITasteProfile[]>([]);
 
     const getData = useCallback(async () => {
         try {
             setIsLoading(true);
-            // const response = await wineService.getSavedWines();
+            const response = await wineService.getTasteProfile();
 
-            // if (response.isError || !response.data) {
-            //     toastService.showError(
-            //         localization.t('common.errorHappened'),
-            //         response.message || localization.t('common.somethingWentWrong'),
-            //     );
-            //     setIsError(true);
-            // } else {
-            //     setWines(response.data);
-            //     setIsError(false);
-            // }
+            if (response.isError || !response.data) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    response.message || localization.t('common.somethingWentWrong'),
+                );
+            } else {
+                setTasteProfiles(response.data);
+            }
         } catch (error) {
-            console.error('getSavedWines error: ', JSON.stringify(error, null, 2));
+            console.error('getTasteProfile error: ', JSON.stringify(error, null, 2));
         } finally {
             setIsLoading(false);
         }
@@ -30,5 +32,5 @@ export const useTasteProfile = () => {
         getData();
     }, [getData]);
 
-    return { isLoading, getData };
+    return { isLoading, getData, tasteProfiles };
 };

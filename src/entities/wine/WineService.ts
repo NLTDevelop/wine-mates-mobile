@@ -21,6 +21,7 @@ import { GenerateNoteDto } from './dto/GenerateNote.dto';
 import { IRateContext } from './types/IRateContext';
 import { IAIData } from './types/IAIData';
 import { IWineTasteGroup } from './types/IWineTatseGroup';
+import { ITasteProfile } from './types/ITasteProfile';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -303,6 +304,20 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getLimits: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getTasteProfile = async (): Promise<IResponse<ITasteProfile[]>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.tasteProfile}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getTasteProfile: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
