@@ -4,6 +4,7 @@ import { IWineListItem } from './types/IWineListItem';
 import { myWineListModel } from './MyWineListModel';
 import { IList } from '../IList';
 import { IMyWineListParams } from './params/IMyWineListParams';
+import { IWineFilters } from './types/IWineFilters';
 
 class MyWineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -12,7 +13,7 @@ class MyWineService {
         try {
             const response = await this._requester.request({
                 method: 'GET',
-                url: `${this._links.myWine}`,
+                url: `${this._links.wines}`,
                 params,
             });
 
@@ -27,6 +28,20 @@ class MyWineService {
             return response;
         } catch (error) {
             console.warn('MyWineService -> list: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getFilters = async (): Promise<IResponse<IWineFilters>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineFilters}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('MyWineService -> getFilters: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

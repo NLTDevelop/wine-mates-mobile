@@ -19,6 +19,7 @@ export interface ILinks {
     resetPassword: string;
     features: string;
     wines: string;
+    wineFilters: string;
     scannedWines: string;
     wineTypes: string;
     wineColors: string;
@@ -44,6 +45,7 @@ class Links implements ILinks {
         resetPassword: 'auth/reset-password',
         features: 'features',
         wines: 'wines',
+        wineFilters: 'wines/filters',
         scannedWines: 'wines/scanner',
         wineTypes: 'wine-types',
         wineColors: 'wine-colors',
@@ -90,6 +92,9 @@ class Links implements ILinks {
     }
     public get wines() {
         return `${this._domain}${this._links.wines}`;
+    }
+    public get wineFilters() {
+        return `${this._domain}${this._links.wineFilters}`;
     }
     public get scannedWines() {
         return `${this._domain}${this._links.scannedWines}`;
