@@ -8,7 +8,7 @@ const TRACK_HEIGHT = scaleVertical(8);
 const THUMB_SIZE = scaleHorizontal(48);
 const HALF_THUMB = THUMB_SIZE / 2;
 
-export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch: boolean = false) => {
+export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch: boolean = false, edgeAlignedLabels: boolean = false) => {
     const actualSliderLength = sliderLength ?? scaleHorizontal(343) - THUMB_SIZE;
     const hasSliderLength = sliderLength !== undefined && !shouldStretch;
 
@@ -19,7 +19,7 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
             alignItems: shouldStretch ? 'stretch' : 'center',
         },
         sliderWrapper: {
-            paddingHorizontal: hasSliderLength || shouldStretch ? 0 : HALF_LABEL,
+            paddingHorizontal: hasSliderLength || shouldStretch || edgeAlignedLabels ? 0 : HALF_LABEL,
             width: hasSliderLength ? actualSliderLength : '100%',
         },
         trackContainer: {
@@ -98,34 +98,38 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
             justifyContent: 'space-between',
             marginTop: scaleVertical(8),
             width: sliderLength ? actualSliderLength + THUMB_SIZE : '100%',
-            paddingHorizontal: HALF_THUMB,
+            paddingHorizontal: edgeAlignedLabels ? 0 : HALF_THUMB,
         },
         labelWrapper: {
-            width: LABEL_WIDTH,
+            width: edgeAlignedLabels ? undefined : LABEL_WIDTH,
+            maxWidth: edgeAlignedLabels ? LABEL_WIDTH : undefined,
             alignItems: 'center',
+            flex: edgeAlignedLabels ? 1 : undefined,
         },
         middleLabelWrapper: {
-            width: scaleHorizontal(100),
+            width: edgeAlignedLabels ? undefined : scaleHorizontal(100),
+            maxWidth: edgeAlignedLabels ? LABEL_WIDTH : undefined,
+            flex: edgeAlignedLabels ? 0 : undefined,
         },
         leftLabelWrapper: {
-            alignItems: 'center',
-            marginLeft: -LABEL_WIDTH / 2,
+            alignItems: edgeAlignedLabels ? 'flex-start' : 'center',
+            marginLeft: edgeAlignedLabels ? 0 : -LABEL_WIDTH / 2,
         },
         rightLabelWrapper: {
-            alignItems: 'center',
-            marginRight: -LABEL_WIDTH / 2,
+            alignItems: edgeAlignedLabels ? 'flex-end' : 'center',
+            marginRight: edgeAlignedLabels ? 0 : -LABEL_WIDTH / 2,
         },
         labelText: {
             color: colors.text,
             textAlign: 'center',
         },
         leftLabelText: {
-            textAlign: 'center',
-            marginLeft: scaleHorizontal(8),
+            textAlign: edgeAlignedLabels ? 'left' : 'center',
+            marginLeft: edgeAlignedLabels ? 0 : scaleHorizontal(8),
         },
         rightLabelText: {
-            textAlign: 'center',
-            marginRight: scaleHorizontal(8),
+            textAlign: edgeAlignedLabels ? 'right' : 'center',
+            marginRight: edgeAlignedLabels ? 0 : scaleHorizontal(8),
         },
     });
     return styles;

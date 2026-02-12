@@ -1,4 +1,4 @@
-import { myWineListModel } from '@/entities/wine/MyWineListModel';
+import { wineListsModel } from '@/entities/wine/WineListsModel';
 import { myWineService } from '@/entities/wine/MyWineService';
 import { useDebounce } from '@/hooks/useDebounce';
 import { toastService } from '@/libs/toast/toastService';
@@ -11,7 +11,7 @@ interface IUseMyWineSearchBarProps {
 }
 
 export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
-    const search = myWineListModel.search;
+    const search = wineListsModel.search;
     const { 
         filtersModalRef, 
         onOpen, 
@@ -23,7 +23,7 @@ export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
         onColorsChange,
         onTypesChange,
     } = useMyWineFiltersBottomSheet();
-    const filters = myWineListModel.filtersData;
+    const filters = wineListsModel.filtersData;
 
     const { debouncedWrapper: debouncedSearch } = useDebounce(() => onSearch(0), 400);
 
@@ -38,7 +38,7 @@ export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
                 );
             } else {
                 console.log('FILTERS DATA:', JSON.stringify(response.data, null, 2));
-                myWineListModel.filtersData = response.data;
+                wineListsModel.filtersData = response.data;
             }
         } catch (error) {
             console.error(JSON.stringify(error, null, 4));
@@ -50,7 +50,7 @@ export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
     }, [fetchFilters]);
 
     const onSearchChange = useCallback((text: string) => {
-        myWineListModel.search = text;
+        wineListsModel.search = text;
         debouncedSearch();
     }, [debouncedSearch]);
 

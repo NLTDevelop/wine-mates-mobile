@@ -32,6 +32,7 @@ export const useSmoothSlider = ({
     onChange,
     initialValue,
     decorator,
+    edgeAlignedLabels = false,
 }: UseSmoothSliderProps): UseSmoothSliderReturn => {
     const { colors } = useUiContext();
 
@@ -95,8 +96,8 @@ export const useSmoothSlider = ({
     const shouldStretch = !snapped && !hasLabels && !sliderLength;
 
     const styles = useMemo(
-        () => getStyles(colors, sliderLength, shouldStretch),
-        [colors, sliderLength, shouldStretch],
+        () => getStyles(colors, sliderLength, shouldStretch, edgeAlignedLabels),
+        [colors, sliderLength, shouldStretch, edgeAlignedLabels],
     );
 
     const decoratorItems = useMemo(() => {

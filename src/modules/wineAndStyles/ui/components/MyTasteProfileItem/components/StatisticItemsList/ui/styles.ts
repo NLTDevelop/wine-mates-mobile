@@ -4,8 +4,14 @@ import { scaleVertical } from '@/utils';
 
 export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
-        contentContainer: {
-            gap: scaleVertical(8),
+        nestedCollapseWrapper: {
+            marginTop: scaleVertical(8),
+        },
+        nestedContent: {
+            gap: scaleVertical(4),
+        },
+        listItem: {
+            paddingVertical: scaleVertical(2),
         },
     });
     return styles;

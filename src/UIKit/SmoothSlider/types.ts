@@ -39,4 +39,5 @@ export interface UseSmoothSliderProps {
         item: ReactNode;
         count: number;
     };
+    edgeAlignedLabels?: boolean;
 }

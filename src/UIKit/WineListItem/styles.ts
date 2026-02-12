@@ -43,7 +43,6 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(170),
         },
         imagePlaceholder: {
-            backgroundColor: colors.text_light,
             borderRadius: 12,
         },
         mainContainer: {

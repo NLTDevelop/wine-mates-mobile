@@ -44,6 +44,8 @@ interface IProps {
         count: number;
         decoratorContainerStyle?: ViewStyle;
     };
+
+    edgeAlignedLabels?: boolean;
 }
 
 export const SmoothSlider = memo(
@@ -74,6 +76,7 @@ export const SmoothSlider = memo(
         markerColor,
         markerStyle,
         decorator,
+        edgeAlignedLabels = false,
     }: IProps) => {
         const {
             panGesture,
@@ -100,6 +103,7 @@ export const SmoothSlider = memo(
             onChange,
             initialValue,
             decorator,
+            edgeAlignedLabels,
         });
 
         return (
@@ -175,7 +179,7 @@ export const SmoothSlider = memo(
                                                 isFirst && styles.leftLabelText,
                                                 isLast && styles.rightLabelText,
                                             ]}
-                                            ellipsizeMode="tail"
+                                            ellipsizeMode='tail'
                                         />
                                     )}
                                 </Pressable>

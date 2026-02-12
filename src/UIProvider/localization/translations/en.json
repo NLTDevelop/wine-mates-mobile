@@ -251,6 +251,9 @@
     "wineAndStyles": {
         "wineAndStyles": "Wine & styles",
         "myWine": "My wine",
-        "myTasteProfile": "My taste profile"
+        "myTasteProfile": "My taste profile",
+        "colorShades": "Color Shades",
+        "aroma": "Aroma",
+        "tastes": "Tastes"
     }
 }
