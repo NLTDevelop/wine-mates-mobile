@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical, colorOpacity } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -13,28 +13,41 @@ export const getStyles = (colors: IColors) => {
         arrowButton: {
             width: scaleHorizontal(40),
             height: scaleHorizontal(40),
+            borderRadius: scaleHorizontal(20),
             justifyContent: 'center',
             alignItems: 'center',
+            borderWidth: 1,
+            borderColor: colors.border,
         },
         cardContainer: {
-            flex: 1,
+            width: scaleHorizontal(165),
+            height: scaleVertical(283),
             alignItems: 'center',
+            justifyContent: 'space-between',
             marginHorizontal: scaleHorizontal(8),
+            borderRadius: scaleHorizontal(12),
+            overflow: 'hidden',
+            borderWidth: 1,
+            borderColor: colors.border,
+            paddingVertical: scaleVertical(12),
         },
         imageContainer: {
-            width: scaleHorizontal(120),
-            height: scaleVertical(200),
-            position: 'relative',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            width: '100%',
+            paddingHorizontal: scaleHorizontal(12),
             marginBottom: scaleVertical(12),
+        },
+        imageWrapper: {
+            width: scaleHorizontal(84),
+            height: scaleVertical(123),
         },
         wineImage: {
             width: '100%',
             height: '100%',
         },
         iconsContainer: {
-            position: 'absolute',
-            top: scaleVertical(8),
-            right: scaleHorizontal(8),
             gap: scaleVertical(8),
         },
         iconButton: {
@@ -55,26 +68,28 @@ export const getStyles = (colors: IColors) => {
         },
         infoContainer: {
             width: '100%',
-            alignItems: 'center',
+            alignItems: 'flex-start',
+            paddingHorizontal: scaleHorizontal(12),
         },
         locationBadge: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(4),
             paddingHorizontal: scaleHorizontal(8),
-            paddingVertical: scaleVertical(4),
-            borderRadius: scaleHorizontal(12),
+            borderRadius: scaleHorizontal(6),
             borderWidth: 1,
-            borderColor: colors.border,
+            borderColor: colors.primary,
+            backgroundColor: colorOpacity(colors.primary, 10),
             marginBottom: scaleVertical(8),
         },
         locationText: {
-            color: colors.text,
+            color: colors.primary,
         },
         wineName: {
-            textAlign: 'center',
             marginBottom: scaleVertical(4),
         },
         wineType: {
-            textAlign: 'center',
-            color: colors.textSecondary,
+            color: colors.text,
             marginBottom: scaleVertical(8),
         },
         ratingContainer: {
@@ -84,6 +99,9 @@ export const getStyles = (colors: IColors) => {
         },
         ratingText: {
             color: colors.text,
+        },
+        ratingCountText: {
+            color: colors.text_light,
         },
     });
     return styles;

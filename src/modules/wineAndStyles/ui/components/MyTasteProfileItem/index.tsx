@@ -4,10 +4,10 @@ import { useMemo } from 'react';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { ITasteProfileStatistics, ITasteProfileColor } from '@/entities/wine/types/ITasteProfile';
-import { StatisticItemsList } from './components/StatisticItemsList';
-import { TastesList } from './components/TastesList';
+import { StatisticItemsList } from './components/StatisticItemsList/ui';
+import { TastesList } from './components/TastesList/ui';
 import { TasteProfileSectionType } from './types/TasteProfileSectionType';
-import { WineRecommendationCarousel } from './components/WineRecommendationCarousel';
+import { WineRecommendationCarousel } from './components/WineRecommendationCarousel/ui';
 
 interface IProps {
     title: string;

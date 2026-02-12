@@ -2,6 +2,7 @@ import { MobXRepository } from '@/repository/MobXRepository';
 import { IList } from '../IList';
 import { IWineListItem } from './types/IWineListItem';
 import { IWineFilters } from './types/IWineFilters';
+import { IRecommendationWineItem } from './types/IRecommendationWineList';
 
 export interface ISelectedFilters {
     sort: (string | number)[];
@@ -9,8 +10,9 @@ export interface ISelectedFilters {
     types: (string | number)[];
 }
 
-export interface IMyWineListModel {
+export interface IWineListsModel {
     list: IList<IWineListItem> | null;
+    recommendations: IList<IRecommendationWineItem> | null;
     search: string;
     filters: ISelectedFilters;
     filtersData: IWineFilters | null;
@@ -19,8 +21,9 @@ export interface IMyWineListModel {
     clearFilters: () => void;
 }
 
-class MyWineListModel implements IMyWineListModel {
+class WineListsModel implements IWineListsModel {
     private listRepository = new MobXRepository<IList<IWineListItem> | null>(null);
+    private recommendationsRepository = new MobXRepository<IList<IRecommendationWineItem> | null>(null);
     private searchRepository = new MobXRepository<string>('');
     private filtersRepository = new MobXRepository<ISelectedFilters>({
         sort: [],
@@ -35,6 +38,14 @@ class MyWineListModel implements IMyWineListModel {
 
     public set list(value: IList<IWineListItem> | null) {
         this.listRepository.save(value);
+    }
+
+    public get recommendations() {
+        return this.recommendationsRepository.data;
+    }
+
+    public set recommendations(value: IList<IRecommendationWineItem> | null) {
+        this.recommendationsRepository.save(value);
     }
 
     public get search() {
@@ -113,4 +124,4 @@ class MyWineListModel implements IMyWineListModel {
     }
 }
 
-export const myWineListModel = new MyWineListModel();
+export const wineListsModel = new WineListsModel();

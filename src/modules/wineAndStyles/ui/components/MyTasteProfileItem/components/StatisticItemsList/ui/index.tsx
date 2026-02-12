@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
 import { View } from 'react-native';
 import { Collapse } from '@/UIKit/Collapse';
 import { ColorPaletteItem } from '@/UIKit/ColorPaletteItem';
-import { useStatisticItemsList } from './useStatisticItemsList';
+import { useUiContext } from '@/UIProvider';
+import { useStatisticItemsList } from '../presenters/useStatisticItemsList';
 import { ITasteProfileStatisticItem } from '@/entities/wine/types/ITasteProfile';
-import { TasteProfileSectionType } from '../../types/TasteProfileSectionType';
+import { TasteProfileSectionType } from '../../../types/TasteProfileSectionType';
+import { getStyles } from './styles';
 
 interface IProps {
     sectionType: TasteProfileSectionType;
@@ -11,7 +14,9 @@ interface IProps {
 }
 
 export const StatisticItemsList = ({ sectionType, items }: IProps) => {
-    const { styles, title } = useStatisticItemsList({ sectionType });
+    const { colors } = useUiContext();
+    const styles = useMemo(() => getStyles(colors), [colors]);
+    const { title } = useStatisticItemsList({ sectionType });
 
     return (
         <View style={styles.nestedCollapseWrapper}>

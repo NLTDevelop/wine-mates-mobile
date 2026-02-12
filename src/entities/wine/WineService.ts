@@ -22,6 +22,9 @@ import { IRateContext } from './types/IRateContext';
 import { IAIData } from './types/IAIData';
 import { IWineTasteGroup } from './types/IWineTatseGroup';
 import { ITasteProfile } from './types/ITasteProfile';
+import { IRecommendationWineList } from './types/IRecommendationWineList';
+import { recommendationWinesMock } from './mocks/recommendationWinesMock';
+import { wineListsModel } from './WineListsModel';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -318,6 +321,22 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getTasteProfile: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getRecommendations = async (): Promise<IResponse<IRecommendationWineList>> => {
+        try {
+
+            wineListsModel.recommendations = recommendationWinesMock;
+            
+            return {
+                isError: false,
+                data: recommendationWinesMock,
+                message: 'Success',
+            } as IResponse<IRecommendationWineList>;
+        } catch (error) {
+            console.warn('WineService -> getRecommendations: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

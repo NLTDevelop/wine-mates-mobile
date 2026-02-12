@@ -1,11 +1,11 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useCallback, useRef } from 'react';
-import { myWineListModel } from '@/entities/wine/MyWineListModel';
+import { wineListsModel } from '@/entities/wine/WineListsModel';
 import { computed } from 'mobx';
 
 export const useMyWineFiltersBottomSheet = () => {
     const filtersModalRef = useRef<BottomSheetModal | null>(null);
-    const selectedFilters = myWineListModel.filters;
+    const selectedFilters = wineListsModel.filters;
 
     const hasFilters = computed(() => {
         return selectedFilters.sort.length > 0 || 
@@ -22,19 +22,19 @@ export const useMyWineFiltersBottomSheet = () => {
     }, []);
 
     const onClear = useCallback(() => {
-        myWineListModel.clearFilters();
+        wineListsModel.clearFilters();
     }, []);
 
     const onSortChange = useCallback((selected: (string | number)[]) => {
-        myWineListModel.setSort(selected);
+        wineListsModel.setSort(selected);
     }, []);
 
     const onColorsChange = useCallback((selected: (string | number)[]) => {
-        myWineListModel.setColors(selected);
+        wineListsModel.setColors(selected);
     }, []);
 
     const onTypesChange = useCallback((selected: (string | number)[]) => {
-        myWineListModel.setTypes(selected);
+        wineListsModel.setTypes(selected);
     }, []);
 
     return { 

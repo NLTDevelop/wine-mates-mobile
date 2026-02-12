@@ -2,6 +2,7 @@ import { Pressable, View } from 'react-native';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
+import { EmptyWine } from '@/UIKit/EmptyWine';
 import { FasterImageView } from '@rraut/react-native-faster-image';
 import { StarIcon } from '@assets/icons/StartIcon';
 import { declOfWord } from '@/utils';
@@ -39,7 +40,9 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, showDate =
                             radius={12}
                         />
                     ) : (
-                        <View style={[styles.image, styles.imagePlaceholder]} />
+                        <View style={styles.image}>
+                            <EmptyWine containerStyle={styles.imagePlaceholder} />
+                        </View>
                     )}
                 </View>
                 <View style={styles.mainContainer}>

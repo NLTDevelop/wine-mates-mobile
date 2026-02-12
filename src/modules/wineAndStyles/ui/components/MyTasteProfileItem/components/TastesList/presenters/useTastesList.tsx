@@ -1,13 +1,11 @@
 import { useCallback, useMemo } from 'react';
 import { useUiContext } from '@/UIProvider';
-import { getStyles } from './styles';
 import { userModel } from '@/entities/users/UserModel';
-import { TasteProfileSectionType } from '../../types/TasteProfileSectionType';
+import { TasteProfileSectionType } from '../../../types/TasteProfileSectionType';
 import { ITasteProfileCharacteristic } from '@/entities/wine/types/ITasteProfile';
 
 export const useTastesList = () => {
-    const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const { t } = useUiContext();
     const isPremiumUser = userModel.user?.hasPremium || false;
 
     const title = useMemo(() => {
@@ -28,7 +26,6 @@ export const useTastesList = () => {
     }, []);
 
     return {
-        styles,
         isPremiumUser,
         title,
         mapCharacteristicToItem,

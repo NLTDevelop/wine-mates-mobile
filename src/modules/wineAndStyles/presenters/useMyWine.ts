@@ -1,4 +1,4 @@
-import { myWineListModel } from '@/entities/wine/MyWineListModel';
+import { wineListsModel } from '@/entities/wine/WineListsModel';
 import { myWineService } from '@/entities/wine/MyWineService';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { WineListScope } from '@/entities/wine/types/IWineListScope';
@@ -14,17 +14,17 @@ const OFFSET = 0;
 export const useMyWine = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(false);
-    const data = myWineListModel.list?.rows;
+    const data = wineListsModel.list?.rows;
 
     const getList = useCallback(async (offset: number) => {
         try {
             setIsLoading(true);
             
-            const filters = myWineListModel.filters;
+            const filters = wineListsModel.filters;
             const params = {
                 limit: LIMIT,
                 offset,
-                search: myWineListModel.search,
+                search: wineListsModel.search,
                 scope: WineListScope.MY,
                 sort: filters.sort.length > 0 ? filters.sort[0] : undefined,
                 typeId: filters.types.length > 0 ? filters.types[0] : undefined,
@@ -53,13 +53,13 @@ export const useMyWine = () => {
     }, [getList]);
 
     useEffect(() => {
-        if (!myWineListModel.list) {
+        if (!wineListsModel.list) {
             onRefresh();
         }
     }, [onRefresh]);
 
     const onEndReached = useCallback(async () => {
-        const list = myWineListModel.list;
+        const list = wineListsModel.list;
         if (!isLoading && list && list.count > list.rows.length) {
             await getList(list.rows.length);
         }

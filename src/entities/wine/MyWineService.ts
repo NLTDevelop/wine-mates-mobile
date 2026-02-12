@@ -1,7 +1,7 @@
 import { IRequester, IResponse, requester } from '@/libs/requester';
 import { ILinks, links } from '@/Links';
 import { IWineListItem } from './types/IWineListItem';
-import { myWineListModel } from './MyWineListModel';
+import { wineListsModel } from './WineListsModel';
 import { IList } from '../IList';
 import { IMyWineListParams } from './params/IMyWineListParams';
 import { IWineFilters } from './types/IWineFilters';
@@ -19,9 +19,9 @@ class MyWineService {
 
             if (!response.isError) {
                 if (params.offset === 0) {
-                    myWineListModel.list = response.data;
+                    wineListsModel.list = response.data;
                 } else {
-                    myWineListModel.append(response.data);
+                    wineListsModel.append(response.data);
                 }
             }
          
