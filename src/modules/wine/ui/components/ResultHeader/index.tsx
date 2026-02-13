@@ -44,7 +44,7 @@ export const ResultHeader = ({ item, onVintageChange, onFavoritePress, hasCurren
                 </View>
                 <View style={styles.detailsContainer}>
                     <View style={styles.mainContainer}>
-                        <Typography variant="subtitle_20_500" text={item.name} style={styles.title} selectable />
+                        <Typography variant="subtitle_20_500" text={item.name || '–'} style={styles.title} selectable />
                         <Typography variant="body_400" text={description} style={styles.description} selectable />
                         <View style={styles.rateContainer}>
                             <StarIcon />

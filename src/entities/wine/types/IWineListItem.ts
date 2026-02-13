@@ -2,8 +2,8 @@ import { IMedia } from '@/entities/media/types/IMedia';
 
 export interface IWineListItem {
     id: number;
-    name: string;
-    vintage: number;
+    name: string | null;
+    vintage: number | null;
     producer?: string;
     grapeVariety?: string;
     userId?: number;

@@ -29,17 +29,17 @@ const createInitialForm = (aiData?: IAIData | null): IWineBase => {
 
     return {
         ...baseForm,
-        typeOfWine: aiData.typeId
-            ? { ...baseForm.typeOfWine, id: aiData.typeId.id, value: aiData.typeId.name }
+        typeOfWine: aiData.wineType
+            ? { ...baseForm.typeOfWine, id: aiData.wineType.id, value: aiData.wineType.name }
             : baseForm.typeOfWine,
-        colorOfWine: aiData.colorId
-            ? { ...baseForm.colorOfWine, id: aiData.colorId.id, value: aiData.colorId.name }
+        colorOfWine: aiData.wineColor
+            ? { ...baseForm.colorOfWine, id: aiData.wineColor.id, value: aiData.wineColor.name }
             : baseForm.colorOfWine,
-        country: aiData.countryId
-            ? { ...baseForm.country, id: aiData.countryId.id, value: aiData.countryId.name }
+        country: aiData.country
+            ? { ...baseForm.country, id: aiData.country.id, value: aiData.country.name }
             : baseForm.country,
-        region: aiData.regionId
-            ? { ...baseForm.region, id: aiData.regionId.id, value: aiData.regionId.name }
+        region: aiData.region
+            ? { ...baseForm.region, id: aiData.region.id, value: aiData.region.name }
             : baseForm.region,
         producer: { ...baseForm.producer, value: aiData.producer ?? '' },
         grapeVariety: { ...baseForm.grapeVariety, value: aiData.grapeVariety ?? '' },
@@ -80,8 +80,6 @@ export const useAddWine = () => {
             form.country.value,
             form.producer.value,
             form.grapeVariety.value,
-            form.wineName.value,
-            form.vintageYear.value,
         ];
         const hasEmptyBase = baseRequired.some(field => !field?.trim());
 
@@ -133,12 +131,16 @@ export const useAddWine = () => {
             setInProgress(true);
 
             const formData = new FormData();
-            formData.append('name', form.wineName.value);
-            if (form.vintageYear.value) {
+            if (form.wineName.value?.trim()) {
+                formData.append('name', form.wineName.value);
+            }
+            if (form.vintageYear.value?.trim()) {
                 formData.append('vintage', Number(form.vintageYear.value));
             }
             formData.append('countryId', form.country.id);
-            formData.append('regionId', form.region.id);
+            if (form.region.id) {
+                formData.append('regionId', form.region.id);
+            }
             formData.append('producer', form.producer.value);
             formData.append('grapeVariety', form.grapeVariety.value);
             formData.append('typeId', form.typeOfWine.id);
