@@ -17,7 +17,7 @@ type VintageDropdownItem = IDropdownItem & {
 interface IProps {
     vintages: IVintage[];
     currentVintage: IVintage | null;
-    selectedVintage: number;
+    selectedVintage: number | null;
     onVintageChange: (year: number) => void;
 }
 
@@ -40,7 +40,12 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
             vintageMap.set(currentVintage.vintage, currentVintage);
         }
 
-        const years: VintageDropdownItem[] = [];
+        const years: VintageDropdownItem[] = [
+            {
+                label: t('wine.withoutVintage'),
+                value: null,
+            }
+        ];
         
         for (let year = currentYear; year >= startYear; year--) {
             const vintage = vintageMap.get(year);
@@ -102,6 +107,10 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
     }, [vintages, currentVintage, customVintages]);
 
     const selectedVintageValue = useMemo(() => {
+        if (selectedVintage === null) {
+            return undefined;
+        }
+        
         const found = vintageData.find(item => item.value === selectedVintage);
         
         if (found && currentVintage && found.value === currentVintage.vintage) {

@@ -122,6 +122,7 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
         labelText: {
             color: colors.text,
             textAlign: 'center',
+            marginTop: scaleVertical(-10),
         },
         leftLabelText: {
             textAlign: edgeAlignedLabels ? 'left' : 'center',

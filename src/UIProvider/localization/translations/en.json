@@ -152,6 +152,7 @@
         "grapeVariety": "Grape variety",
         "vintage": "Vintage year",
         "nonVintage": "Non vintage",
+        "withoutVintage": "No vintage",
         "wineName": "Wine name",
         "pale": "Pale",
         "deep": "Deep",
@@ -218,7 +219,9 @@
         "gold": "Gold medal",
         "bronze": "Bronze medal",
         "platinum": "Platinum medal",
-        "nice": "Nice medal"
+        "nice": "Nice medal",
+        "simple": "Simple wine",
+        "weak": "Weak wine"
     },
     "profile": {
         "winesAndStyles": "Wines & styles",
@@ -254,6 +257,9 @@
         "myTasteProfile": "My taste profile",
         "colorShades": "Color Shades",
         "aroma": "Aroma",
-        "tastes": "Tastes"
+        "tastes": "Tastes",
+        "sortBy": "Sort by",
+        "typeOfWine": "Type of wine",
+        "colorOfWine": "Color of wine"
     }
 }

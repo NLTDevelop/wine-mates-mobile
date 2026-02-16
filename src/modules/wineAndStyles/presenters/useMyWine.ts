@@ -4,7 +4,7 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { WineListScope } from '@/entities/wine/types/IWineListScope';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -52,11 +52,16 @@ export const useMyWine = () => {
         await getList(offset);
     }, [getList]);
 
-    useEffect(() => {
-        if (!wineListsModel.list) {
+    useFocusEffect(
+        useCallback(() => {
             onRefresh();
-        }
-    }, [onRefresh]);
+
+            return () => {
+                wineListsModel.search = '';
+                wineListsModel.clearFilters();
+            };
+        }, [onRefresh])
+    );
 
     const onEndReached = useCallback(async () => {
         const list = wineListsModel.list;

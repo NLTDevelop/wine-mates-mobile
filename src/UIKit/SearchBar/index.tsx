@@ -1,4 +1,5 @@
 import { View, TextInput, TextInputProps, ViewStyle, TouchableOpacity } from 'react-native';
+import { forwardRef } from 'react';
 import { useUiContext } from '../../UIProvider';
 import { getStyles } from './styles';
 import { CrossIcon } from '@assets/icons/CrossIcon';
@@ -9,7 +10,7 @@ interface IProps extends TextInputProps {
     containerStyle?: ViewStyle;
 }
 
-export const SearchBar = (props: IProps) => {
+export const SearchBar = forwardRef<TextInput, IProps>((props, ref) => {
     const { onChangeText, containerStyle, value } = props;
     const { colors } = useUiContext();
     const styles = getStyles(colors);
@@ -19,6 +20,7 @@ export const SearchBar = (props: IProps) => {
         <View style={[styles.container, containerStyle, isFocused && { borderColor: colors.border_strong }]}>
             <SearchIcon />
             <TextInput
+                ref={ref}
                 onChangeText={onChangeText}
                 placeholderTextColor={colors.text_light}
                 style={styles.input}
@@ -31,4 +33,4 @@ export const SearchBar = (props: IProps) => {
             </TouchableOpacity> : null}
         </View>
     );
-};
+});

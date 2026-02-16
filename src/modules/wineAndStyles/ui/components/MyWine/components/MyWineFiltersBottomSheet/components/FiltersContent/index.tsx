@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { FilterSection } from '../FilterSection';
 import { IWineFilters } from '@/entities/wine/types/IWineFilters';
+import { useUiContext } from '@/UIProvider';
 
 interface IProps {
     filters: IWineFilters | null;
@@ -11,11 +12,13 @@ interface IProps {
 }
 
 export const FiltersContent = observer(({ filters, selectedFilters, onSortChange, onColorsChange, onTypesChange }: IProps) => {
+    const { t } = useUiContext();
+
     return (
         <>
             {filters?.sort && (
                 <FilterSection
-                    title="Sort by"
+                    title={t('wineAndStyles.sortBy')}
                     options={filters.sort}
                     multipleSelect={false}
                     onChange={onSortChange}
@@ -24,7 +27,7 @@ export const FiltersContent = observer(({ filters, selectedFilters, onSortChange
             )}
             {filters?.types && (
                 <FilterSection
-                    title="Type of wine"
+                    title={t('wineAndStyles.typeOfWine')}
                     options={filters.types}
                     multipleSelect={false}
                     onChange={onTypesChange}
@@ -33,7 +36,7 @@ export const FiltersContent = observer(({ filters, selectedFilters, onSortChange
             )}
             {filters?.colors && (
                 <FilterSection
-                    title="Color of wine"
+                    title={t('wineAndStyles.colorOfWine')}
                     options={filters.colors}
                     multipleSelect={false}
                     onChange={onColorsChange}

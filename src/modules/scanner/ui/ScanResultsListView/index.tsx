@@ -42,6 +42,7 @@ export const ScanResultsListView = observer(() => {
                     keyExtractor={keyExtractor}
                     renderItem={renderItem}
                     style={styles.list}
+                    keyboardShouldPersistTaps="handled"
                     contentContainerStyle={styles.contentContainerStyle}
                     ListFooterComponent={isLoading && data?.length ? <ListFooterLoader /> : null}
                     ListEmptyComponent={

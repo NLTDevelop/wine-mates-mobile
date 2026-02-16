@@ -151,6 +151,7 @@
         "grapeVariety": "Сорт винограду",
         "vintage": "Винтаж",
         "nonVintage": "Не вінтажне",
+        "withoutVintage": "Без вінтажу",
         "wineName": "Назва вина",
         "pale": "Блідий",
         "deep": "Глибокий",
@@ -221,7 +222,9 @@
         "gold": "Золота медаль",
         "bronze": "Бронзова медаль",
         "platinum": "Платінова медаль",
-        "nice": "Гарна медаль"
+        "nice": "Гарне вино",
+        "simple": "Просте вино",
+        "weak": "Слабке вино"
     },
     "profile": {
         "winesAndStyles": "Вина & стилі",
@@ -257,6 +260,9 @@
         "myTasteProfile": "Мій профіль смаків",
         "colorShades": "Відтінки кольору",
         "aroma": "Аромат",
-        "tastes": "Смаки"
+        "tastes": "Смаки",
+        "sortBy": "Сортувати за",
+        "typeOfWine": "Тип вина",
+        "colorOfWine": "Колір вина"
     }
 }

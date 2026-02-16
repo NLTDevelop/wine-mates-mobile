@@ -59,6 +59,8 @@ export const SelectModal = <T extends SelectableItem>({
                     renderItem={renderItem}
                     style={styles.list}
                     contentContainerStyle={styles.contentContainer}
+                    keyboardShouldPersistTaps="handled"
+                    keyboardDismissMode="interactive"
                 />
             </View>
         </Modal>

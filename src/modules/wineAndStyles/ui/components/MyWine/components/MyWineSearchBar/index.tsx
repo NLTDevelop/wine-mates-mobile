@@ -3,6 +3,8 @@ import { useUiContext } from '@/UIProvider';
 import { useMyWineSearchBar } from './useMyWineSearchBar';
 import { MyWineFiltersBottomSheet } from '../MyWineFiltersBottomSheet';
 import { observer } from 'mobx-react-lite';
+import { FilterTags } from './components/FilterTags';
+import { View } from 'react-native';
 
 interface IProps {
     onSearch: (offset: number) => Promise<void>;
@@ -24,16 +26,21 @@ const MyWineSearchBarComponent = ({ onSearch }: IProps) => {
         onColorsChange,
         onTypesChange,
         onApplyFilters,
+        filterTags,
+        onRemoveTag,
     } = useMyWineSearchBar({ onSearch });
 
     return (
         <>
-            <SearchBarWithFilter
-                value={search}
-                onChangeText={onSearchChange}
-                placeholder={t('common.search')}
-                onFilterPress={onFilterPress}
-            />
+            <View>
+                <SearchBarWithFilter
+                    value={search}
+                    onChangeText={onSearchChange}
+                    placeholder={t('common.search')}
+                    onFilterPress={onFilterPress}
+                />
+                <FilterTags tags={filterTags} onRemoveTag={onRemoveTag} />
+            </View>
             <MyWineFiltersBottomSheet 
                 modalRef={filtersModalRef} 
                 onClose={onCloseFilters} 

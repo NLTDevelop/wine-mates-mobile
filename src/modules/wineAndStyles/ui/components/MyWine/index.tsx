@@ -18,7 +18,7 @@ export const MyWine = observer(() => {
 
     const { data, onRefresh, onEndReached, onItemPress, isLoading, getList } = useMyWine();
     const { refreshControl } = useRefresh(onRefresh);
-    
+
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
         return <WineListItem item={item} onPress={onItemPress} hideSimilarity showDate />;
@@ -37,6 +37,7 @@ export const MyWine = observer(() => {
                 onEndReached={onEndReached}
                 style={styles.list}
                 contentContainerStyle={styles.containerStyle}
+                keyboardShouldPersistTaps="handled"
                 ListFooterComponent={isLoading && data?.length ? <ListFooterLoader /> : null}
                 ListEmptyComponent={
                     <EmptyListView

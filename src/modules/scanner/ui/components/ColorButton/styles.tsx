@@ -2,7 +2,7 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { getContrastColor, scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors, backgroundColor: string) => {
+export const getStyles = (colors: IColors, backgroundColor: string, isRedColor: boolean) => {
     const textColor = getContrastColor(backgroundColor);
 
     const styles = StyleSheet.create({
@@ -16,7 +16,8 @@ export const getStyles = (colors: IColors, backgroundColor: string) => {
         },
         activeContainer: {
             borderWidth: 1,
-            borderColor: colors.border_strong,
+            borderColor: isRedColor ? '#FFFFFF' : colors.border_strong,
+            padding: scaleVertical(2),
         },
         text: {
             color: textColor,

@@ -17,7 +17,7 @@ export const getStyles = (colors: IColors) => {
         list: {
             maxHeight: scaleVertical(300),
             marginBottom: scaleVertical(16),
-            paddingRight: scaleHorizontal(12),
+            paddingRight: scaleHorizontal(16),
         },
         contentContainer: {
             flexGrow: 1,

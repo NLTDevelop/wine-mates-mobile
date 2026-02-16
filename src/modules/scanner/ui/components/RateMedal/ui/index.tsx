@@ -8,6 +8,8 @@ import { BronzeMedalIcon } from '@assets/icons/BronzeMedalIcon.tsx';
 import { GoldMedalIcon } from '@assets/icons/GoldMedalIcon.tsx';
 import { PlatinumMedalIcon } from '@assets/icons/PlatinumMedalIcon.tsx';
 import { SilverMedalIcon } from '@assets/icons/SilverMedalIcon.tsx';
+import { SimpleMedalIcon } from '@assets/icons/SimpleMedalIcon.tsx';
+import { WeakMedalIcon } from '@assets/icons/WeakMedalIcon.tsx';
 import { scaleHorizontal } from '@/utils';
 
 interface IProps {
@@ -40,8 +42,12 @@ export const RateMedal = ({ sliderValue, size }: IProps) => {
                 return <GoldMedalIcon {...medalProps} />;
             case 'platinum':
                 return <PlatinumMedalIcon {...medalProps} />;
+            case 'simple':
+                return <SimpleMedalIcon {...medalProps} />;
+            case 'weak':
+                return <WeakMedalIcon {...medalProps} />;
             default:
-                return <NiceWineIcon {...medalProps} />;
+                return <WeakMedalIcon {...medalProps} />;
         }
     };
 
