@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-type MedalType = 'nice' | 'bronze' | 'silver' | 'gold' | 'platinum';
+type MedalType = 'nice' | 'bronze' | 'silver' | 'gold' | 'platinum' | 'simple' | 'weak';
 
 export const useRateMedal = (sliderValue: number) => {
     const medalType: MedalType = useMemo(() => {
@@ -12,8 +12,14 @@ export const useRateMedal = (sliderValue: number) => {
             return 'silver';
         } else if (sliderValue >= 86) {
             return 'bronze';
-        } else {
+        } else if (sliderValue >= 80) {
             return 'nice';
+        } else if (sliderValue >= 75) {
+            return 'simple';
+        } else if (sliderValue >= 70) {
+            return 'weak';
+        } else {
+            return 'weak';
         }
     }, [sliderValue]);
 

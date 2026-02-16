@@ -5,6 +5,8 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useCallback, useEffect } from 'react';
 import { useMyWineFiltersBottomSheet } from '../MyWineFiltersBottomSheet/useMyWineFiltersBottomSheet';
+import { IFilterTagItem } from './components/FilterTags';
+import { computed } from 'mobx';
 
 interface IUseMyWineSearchBarProps {
     onSearch: (offset: number) => Promise<void>;
@@ -22,6 +24,7 @@ export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
         onSortChange,
         onColorsChange,
         onTypesChange,
+        onApply: applyFilters,
     } = useMyWineFiltersBottomSheet();
     const filters = wineListsModel.filtersData;
 
@@ -59,9 +62,60 @@ export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
     },[onOpen]);
 
     const onApplyFilters = useCallback(() => {
+        applyFilters();
         onClose();
         onSearch(0);
-    }, [onClose, onSearch]);
+    }, [applyFilters, onClose, onSearch]);
+
+    const filterTags = computed((): IFilterTagItem[] => {
+        const tags: IFilterTagItem[] = [];
+        const filtersData = wineListsModel.filtersData;
+        const appliedFilters = wineListsModel.filters;
+
+        if (!filtersData) {
+            return tags;
+        }
+
+        appliedFilters.sort.forEach((value) => {
+            const option = filtersData.sort.find((opt) => opt.value === value);
+            if (option) {
+                tags.push({ label: option.label, value, type: 'sort' });
+            }
+        });
+
+        appliedFilters.colors.forEach((value) => {
+            const option = filtersData.colors.find((opt) => opt.value === value);
+            if (option) {
+                tags.push({ label: option.label, value, type: 'color' });
+            }
+        });
+
+        appliedFilters.types.forEach((value) => {
+            const option = filtersData.types.find((opt) => opt.value === value);
+            if (option) {
+                tags.push({ label: option.label, value, type: 'type' });
+            }
+        });
+
+        return tags;
+    }).get();
+
+    const onRemoveTag = useCallback((tag: IFilterTagItem) => {
+        const currentFilters = wineListsModel.filters;
+
+        if (tag.type === 'sort') {
+            const newSort = currentFilters.sort.filter((v) => v !== tag.value);
+            wineListsModel.setSort(newSort);
+        } else if (tag.type === 'color') {
+            const newColors = currentFilters.colors.filter((v) => v !== tag.value);
+            wineListsModel.setColors(newColors);
+        } else if (tag.type === 'type') {
+            const newTypes = currentFilters.types.filter((v) => v !== tag.value);
+            wineListsModel.setTypes(newTypes);
+        }
+
+        onSearch(0);
+    }, [onSearch]);
 
     return { 
         search, 
@@ -77,5 +131,7 @@ export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
         onColorsChange,
         onTypesChange,
         onApplyFilters,
+        filterTags,
+        onRemoveTag,
     };
 };

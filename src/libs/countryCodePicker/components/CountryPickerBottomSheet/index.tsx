@@ -64,6 +64,7 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
                 renderItem={renderItem}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.listContentContainer}
+                keyboardShouldPersistTaps="handled"
                 initialNumToRender={30}
                 windowSize={30}
                 maxToRenderPerBatch={60}

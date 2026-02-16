@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { getStyles } from './styles';
-import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
+import { useColorButton } from './useColorButton';
+import { useUiContext } from '@/UIProvider';
+import { getStyles } from './styles';
 
 interface IProps {
     color: IWineColorShade;
@@ -13,7 +14,8 @@ interface IProps {
 
 export const ColorButton = ({ color, isActive, onPress }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, color.colorHex), [colors, color]);
+    const { isRedColor } = useColorButton({ color });
+    const styles = useMemo(() => getStyles(colors, color.colorHex, isRedColor), [colors, color.colorHex, isRedColor]);
 
     return (
         <TouchableOpacity

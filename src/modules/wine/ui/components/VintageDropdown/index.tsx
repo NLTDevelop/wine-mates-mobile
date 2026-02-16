@@ -8,7 +8,7 @@ import { CustomVintageFooter } from '../CustomVintageFooter';
 interface IProps {
     vintages: IVintage[];
     currentVintage: IVintage | null;
-    selectedVintage: number;
+    selectedVintage: number | null;
     onVintageChange: (item: IDropdownItem) => void;
 }
 
@@ -47,7 +47,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onV
             data={vintageData}
             placeholder=""
             onPress={onVintageChange}
-            selectedValue={selectedVintage}
+            selectedValue={selectedVintage ?? null}
             containerStyle={styles.dropdown}
             disabled={vintageData.length === 0}
             renderItem={renderVintageItem}

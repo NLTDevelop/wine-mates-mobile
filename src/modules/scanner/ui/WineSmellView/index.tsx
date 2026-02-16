@@ -36,14 +36,14 @@ export const WineSmellView = observer(() => {
     const { isVisible, onShowModal, onHide, selectData, selectedSubgroup, groupId } = useSelectModal();
     const { data, selected, isError, getSmells, isLoading, isOpened, onItemPress: originalOnItemPress, toggleList, onSelectedItemPress, visibleSubgroups,
         selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell: originalHandleAddCustomSmell, handleNextPress, handleGroupPress } = useWineSmell(onHide);
-    
+
     const [onItemPress, selectedListRef] = useAnimatedItemAdd(originalOnItemPress);
     const [handleAddCustomSmell] = useAnimatedItemAdd(originalHandleAddCustomSmell);
-    
+
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
-    const { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress } = useWineSmellSearch({
+    const { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress, searchInputRef, dismissKeyboard } = useWineSmellSearch({
         data, selected, onItemPress, onSelectedItemPress });
-    
+
     const visibleGroups = useMemo(
         () => data.filter(group => group.subgroups.some(subgroup => subgroup.aromas.length > 0)),
         [data],
@@ -84,6 +84,7 @@ export const WineSmellView = observer(() => {
                         <View>
                             <Typography text={t('wine.smellDescription')} variant="body_400" style={styles.title} />
                             <SearchBar
+                                ref={searchInputRef}
                                 value={search}
                                 onChangeText={onSearchTextChange}
                                 placeholder={t('common.search')}
@@ -98,6 +99,8 @@ export const WineSmellView = observer(() => {
                                     contentContainerStyle={styles.contentContainer}
                                     nestedScrollEnabled
                                     showsVerticalScrollIndicator
+                                    keyboardShouldPersistTaps="handled"
+                                    keyboardDismissMode="interactive"
                                     ListEmptyComponent={
                                         <EmptyListView
                                             isLoading={isSearching || isDebouncing}
@@ -125,6 +128,8 @@ export const WineSmellView = observer(() => {
                                                     style={styles.list}
                                                     contentContainerStyle={styles.contentContainer}
                                                     nestedScrollEnabled
+                                                    keyboardShouldPersistTaps="handled"
+                                                    keyboardDismissMode="interactive"
                                                 />
                                             )}
                                         </>
@@ -136,6 +141,8 @@ export const WineSmellView = observer(() => {
                                             style={styles.list}
                                             contentContainerStyle={styles.contentContainer}
                                             nestedScrollEnabled
+                                            keyboardShouldPersistTaps="handled"
+                                            keyboardDismissMode="interactive"
                                         />
                                     )}
                                 </>
@@ -163,7 +170,10 @@ export const WineSmellView = observer(() => {
                 <SelectModal
                     isVisible={isVisible}
                     onHide={onHide}
-                    onItemPress={onItemPress}
+                    onItemPress={(item, subgroupId, groupId) => {
+                        dismissKeyboard();
+                        return onItemPress(item, subgroupId, groupId);
+                    }}
                     data={selectData}
                     subgroupId={selectedSubgroup?.id ?? null}
                     groupId={groupId}

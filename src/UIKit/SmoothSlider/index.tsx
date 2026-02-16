@@ -173,7 +173,7 @@ export const SmoothSlider = memo(
                                     ) : (
                                         <Typography
                                             text={label}
-                                            variant="body_500"
+                                            variant="subtitle_12_400"
                                             style={[
                                                 styles.labelText,
                                                 isFirst && styles.leftLabelText,

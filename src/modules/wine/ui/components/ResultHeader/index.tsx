@@ -16,6 +16,7 @@ import { BlurContainer } from '@/UIKit/BlurContainer';
 import { RateMedal } from '@/modules/scanner/ui/components/RateMedal/ui';
 import { useResultHeaderLogic } from './useResultHeaderLogic';
 import { VintageDropdown } from '../VintageDropdown';
+import { EmptyWine } from '@/UIKit/EmptyWine';
 
 interface IProps {
     item: IWineDetails;
@@ -34,17 +35,19 @@ export const ResultHeader = ({ item, onVintageChange, onFavoritePress, hasCurren
         <>
             <View style={styles.container}>
                 <View>
-                    {item.image?.originalUrl && (
+                    {item.image?.originalUrl ? (
                         <FasterImageView
                             source={{ uri: item.image?.originalUrl, resizeMode: 'cover' }}
                             style={styles.image}
                             radius={12}
                         />
+                    ) : (
+                        <EmptyWine containerStyle={styles.image} />
                     )}
                 </View>
                 <View style={styles.detailsContainer}>
                     <View style={styles.mainContainer}>
-                        <Typography variant="subtitle_20_500" text={item.name || '–'} style={styles.title} selectable />
+                        <Typography variant="subtitle_20_500" text={item.producer || item.name || '–'} style={styles.title} selectable />
                         <Typography variant="body_400" text={description} style={styles.description} selectable />
                         <View style={styles.rateContainer}>
                             <StarIcon />
