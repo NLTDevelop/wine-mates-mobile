@@ -17,8 +17,8 @@ export interface IVintage {
 
 export interface IWineDetails {
     id: number;
-    name: string;
-    vintage: number;
+    name: string | null;
+    vintage: number | null;
     currentVintage: IVintage | null;
     isTasted: boolean;
     vintages: IVintage[];

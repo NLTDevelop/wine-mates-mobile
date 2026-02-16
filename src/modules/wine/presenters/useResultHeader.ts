@@ -46,12 +46,16 @@ export const useResultHeader = (item: IWineDetails) => {
                 setIsCreating(true);
 
                 const formData = new FormData();
-                formData.append('name', item.name);
+                if (item.name) {
+                    formData.append('name', item.name);
+                }
                 if (item.vintage) {
                     formData.append('vintage', item.vintage);
                 }
                 formData.append('countryId', item.country?.id ?? 0);
-                formData.append('regionId', item.region?.id ?? 0);
+                if (item.region?.id) {
+                    formData.append('regionId', item.region.id);
+                }
                 formData.append('producer', item.producer ?? '');
                 formData.append('grapeVariety', item.grapeVariety ?? '');
                 formData.append('typeId', item.type?.id ?? 0);

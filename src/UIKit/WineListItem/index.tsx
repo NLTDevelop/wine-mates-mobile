@@ -49,7 +49,7 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, showDate =
                     <View style={styles.subContainer}>
                         <Typography
                             variant="h6"
-                            text={`${item.name} ${item.vintage}`}
+                            text={`${item.name || '–'} ${item.vintage || '–'}`}
                             numberOfLines={2}
                             {...guard.bindText}
                         />

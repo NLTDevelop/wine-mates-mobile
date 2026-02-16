@@ -59,7 +59,7 @@ export const SelectedParameters = ({ containerStyle }: IProps) => {
                         <View style={styles.itemContainer}>
                             <Typography
                                 variant="h6"
-                                text={wineModel.base?.region?.value || t('wine.region')}
+                                text={wineModel.base?.region?.value || '–'}
                                 style={styles.label}
                             />
                         </View>
@@ -89,7 +89,7 @@ export const SelectedParameters = ({ containerStyle }: IProps) => {
                         <View style={styles.itemContainer}>
                             <Typography
                                 variant="h6"
-                                text={wineModel.base?.vintageYear?.value || t('wine.vintage')}
+                                text={wineModel.base?.vintageYear?.value || '–'}
                                 style={styles.label}
                             />
                         </View>
@@ -99,7 +99,7 @@ export const SelectedParameters = ({ containerStyle }: IProps) => {
                         <View style={styles.itemContainer}>
                             <Typography
                                 variant="h6"
-                                text={wineModel.base?.wineName?.value || t('wine.wineName')}
+                                text={wineModel.base?.wineName?.value || '–'}
                                 style={styles.label}
                             />
                         </View>
