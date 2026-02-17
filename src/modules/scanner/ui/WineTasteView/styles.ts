@@ -30,6 +30,10 @@ export const getStyles = (colors: IColors) => {
         button: {
             marginBottom: scaleVertical(16),
         },
+        indicator: {
+            width: scaleHorizontal(6),
+            backgroundColor: colors.primary,
+        },
     });
     return styles;
 };

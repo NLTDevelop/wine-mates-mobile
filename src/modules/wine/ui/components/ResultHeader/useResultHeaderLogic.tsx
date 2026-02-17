@@ -50,8 +50,20 @@ export const useResultHeaderLogic = ({ item, styles }: UseResultHeaderLogicParam
             };
         }
 
+        if (rating >= 80) {
+            return {
+                label: t('medal.nice'),
+            };
+        }
+
+        if (rating >= 75) {
+            return {
+                label: t('medal.simple'),
+            };
+        }
+
         return {
-            label: t('medal.nice'),
+            label: t('medal.weak'),
         };
     }, [item.averageExpertRating, t]);
 
