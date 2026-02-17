@@ -16,6 +16,17 @@ export const SelectedParameters = ({ containerStyle }: IProps) => {
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { isOpened, onPress } = useSelectedParameters();
 
+    const parameters = useMemo(() => [
+        { key: 'typeOfWine', label: t('wine.typeOfWine'), value: wineModel.base?.typeOfWine?.value || t('wine.typeOfWine') },
+        { key: 'colorOfWine', label: t('wine.colorOfWine'), value: wineModel.base?.colorOfWine?.value || t('wine.colorOfWine') },
+        { key: 'country', label: t('wine.country'), value: wineModel.base?.country?.value || t('wine.country') },
+        { key: 'region', label: t('wine.region'), value: wineModel.base?.region?.value || '–' },
+        { key: 'wineryName', label: t('wine.wineryName'), value: wineModel.base?.producer?.value || t('wine.wineryName') },
+        { key: 'grapeVariety', label: t('wine.grapeVariety'), value: wineModel.base?.grapeVariety?.value || t('wine.grapeVariety') },
+        { key: 'vintage', label: t('wine.vintage'), value: wineModel.base?.vintageYear?.value || '–' },
+        { key: 'wineName', label: t('wine.wineName'), value: wineModel.base?.wineName?.value || '–', isBold: true },
+    ], [t]);
+
     return (
         <View style={[styles.container, containerStyle]}>
             <TouchableOpacity style={styles.header} onPress={onPress}>
@@ -24,84 +35,28 @@ export const SelectedParameters = ({ containerStyle }: IProps) => {
             </TouchableOpacity>
             {isOpened && (
                 <>
-                    <View style={styles.paramContainer}>
-                        <Typography variant="body_400" text={t('wine.typeOfWine')} style={styles.label} />
-                        <View style={styles.itemContainer}>
-                            <Typography
-                                variant="h6"
-                                text={wineModel.base?.typeOfWine?.value || t('wine.typeOfWine')}
-                                style={styles.label}
-                            />
+                    <View style={styles.columnsContainer}>
+                        <View style={styles.leftColumn}>
+                            {parameters.map((param) => (
+                                <Typography
+                                    key={param.key}
+                                    variant="body_400"
+                                    text={`${param.label}:`}
+                                    style={styles.label}
+                                    numberOfLines={1}
+                                />
+                            ))}
                         </View>
-                    </View>
-                    <View style={styles.paramContainer}>
-                        <Typography variant="body_400" text={t('wine.colorOfWine')} style={styles.label} />
-                        <View style={styles.itemContainer}>
-                            <Typography
-                                variant="h6"
-                                text={wineModel.base?.colorOfWine?.value || t('wine.colorOfWine')}
-                                style={styles.label}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.paramContainer}>
-                        <Typography variant="body_400" text={t('wine.country')} style={styles.label} />
-                        <View style={styles.itemContainer}>
-                            <Typography
-                                variant="h6"
-                                text={wineModel.base?.country?.value || t('wine.country')}
-                                style={styles.label}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.paramContainer}>
-                        <Typography variant="body_400" text={t('wine.region')} style={styles.label} />
-                        <View style={styles.itemContainer}>
-                            <Typography
-                                variant="h6"
-                                text={wineModel.base?.region?.value || '–'}
-                                style={styles.label}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.paramContainer}>
-                        <Typography variant="body_400" text={t('wine.wineryName')} style={styles.label} />
-                        <View style={styles.itemContainer}>
-                            <Typography
-                                variant="h6"
-                                text={wineModel.base?.producer?.value || t('wine.wineryName')}
-                                style={styles.label}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.paramContainer}>
-                        <Typography variant="body_400" text={t('wine.grapeVariety')} style={styles.label} />
-                        <View style={styles.itemContainer}>
-                            <Typography
-                                variant="h6"
-                                text={wineModel.base?.grapeVariety?.value || t('wine.grapeVariety')}
-                                style={styles.label}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.paramContainer}>
-                        <Typography variant="body_400" text={t('wine.vintage')} style={styles.label} />
-                        <View style={styles.itemContainer}>
-                            <Typography
-                                variant="h6"
-                                text={wineModel.base?.vintageYear?.value || '–'}
-                                style={styles.label}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.paramContainer}>
-                        <Typography variant="body_400" text={t('wine.wineName')} style={styles.label} />
-                        <View style={styles.itemContainer}>
-                            <Typography
-                                variant="h6"
-                                text={wineModel.base?.wineName?.value || '–'}
-                                style={styles.label}
-                            />
+                        <View style={styles.rightColumn}>
+                            {parameters.map((param) => (
+                                <Typography
+                                    key={param.key}
+                                    variant={'body_500'}
+                                    text={param.value}
+                                    style={styles.value}
+                                    numberOfLines={1}
+                                />
+                            ))}
                         </View>
                     </View>
                 </>

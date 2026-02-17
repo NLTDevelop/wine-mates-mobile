@@ -14,19 +14,30 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'space-between',
         },
         paramContainer: {
-            gap: scaleVertical(2),
-        },
-        itemContainer: {
-            minHeight: scaleVertical(48),
-            paddingVertical: scaleVertical(14),
-            paddingHorizontal: scaleHorizontal(16),
-            borderWidth: 1,
-            borderColor: colors.border,
-            borderRadius: 12,
+            flexDirection: 'row',
+            alignItems: 'center',
         },
         label: {
             color: colors.text_light,
-            flexShrink: 1,
+            flexShrink: 0,
+            marginRight: scaleHorizontal(8),
+        },
+        value: {
+            color: colors.text,
+            textAlign: 'left',
+            flex: 1,
+        },
+        columnsContainer: {
+            flexDirection: 'row',
+        },
+        leftColumn: {
+            flexShrink: 0,
+            marginRight: scaleHorizontal(8),
+            gap: scaleVertical(8),
+        },
+        rightColumn: {
+            flex: 1,
+            gap: scaleVertical(8),
         },
     });
     return styles;

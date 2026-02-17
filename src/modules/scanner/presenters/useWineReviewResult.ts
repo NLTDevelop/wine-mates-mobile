@@ -86,7 +86,9 @@ export const useWineReviewResult = () => {
             };
 
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
-                payload.userRating = wineModel.review?.starRate;
+                if (wineModel.review?.starRate && wineModel.review.starRate > 0) {
+                    payload.userRating = wineModel.review.starRate;
+                }
             } else {
                 payload.expertRating = wineModel.review?.rate;
             }
@@ -191,7 +193,9 @@ export const useWineReviewResult = () => {
             }
 
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
-                payload.userRating = wineModel.review?.starRate;
+                if (wineModel.review?.starRate && wineModel.review.starRate > 0) {
+                    payload.userRating = wineModel.review.starRate;
+                }
             } else {
                 payload.expertRating = wineModel.review?.rate;
             }

@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { getStyles } from './styles';
 import { FlatList, View } from 'react-native';
+import {FlatListIndicator} from '@fanchenbao/react-native-scroll-indicator';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
@@ -91,22 +92,25 @@ export const WineSmellView = observer(() => {
                                 containerStyle={styles.searchContainer}
                             />
                             {search ? (
-                                <FlatList
-                                    data={searchedAromas}
-                                    keyExtractor={keyExtractor}
-                                    renderItem={renderSearchItem}
-                                    style={styles.list}
-                                    contentContainerStyle={styles.contentContainer}
-                                    nestedScrollEnabled
-                                    showsVerticalScrollIndicator
-                                    keyboardShouldPersistTaps="handled"
-                                    keyboardDismissMode="interactive"
-                                    ListEmptyComponent={
-                                        <EmptyListView
-                                            isLoading={isSearching || isDebouncing}
-                                            isNothingFound={!searchedAromas?.length && !isSearching && !isDebouncing}
-                                        />
-                                    }
+                                <FlatListIndicator
+                                    flatListProps={{
+                                        data: searchedAromas,
+                                        keyExtractor,
+                                        renderItem: renderSearchItem,
+                                        style: styles.list,
+                                        contentContainerStyle: styles.contentContainer,
+                                        nestedScrollEnabled: true,
+                                        showsVerticalScrollIndicator: true,
+                                        keyboardShouldPersistTaps: 'handled',
+                                        keyboardDismissMode: 'interactive',
+                                        ListEmptyComponent: (
+                                            <EmptyListView
+                                                isLoading={isSearching || isDebouncing}
+                                                isNothingFound={!searchedAromas?.length && !isSearching && !isDebouncing}
+                                            />
+                                        )
+                                    }}
+                                    indStyle={styles.indicator}
                                 />
                             ) : (
                                 <>
@@ -121,28 +125,34 @@ export const WineSmellView = observer(() => {
                                                 handleRightPress={handleRightPress}
                                             />
                                             {visibleSubgroups.length > 0 && (
-                                                <FlatList
-                                                    data={visibleSubgroups}
-                                                    keyExtractor={keyExtractor}
-                                                    renderItem={renderItem}
-                                                    style={styles.list}
-                                                    contentContainerStyle={styles.contentContainer}
-                                                    nestedScrollEnabled
-                                                    keyboardShouldPersistTaps="handled"
-                                                    keyboardDismissMode="interactive"
+                                                <FlatListIndicator
+                                                    flatListProps={{
+                                                        data: visibleSubgroups,
+                                                        keyExtractor,
+                                                        renderItem,
+                                                        style: styles.list,
+                                                        contentContainerStyle: styles.contentContainer,
+                                                        nestedScrollEnabled: true,
+                                                        keyboardShouldPersistTaps: 'handled',
+                                                        keyboardDismissMode: 'interactive'
+                                                    }}
+                                                    indStyle={styles.indicator}
                                                 />
                                             )}
                                         </>
                                     ) : (
-                                        <FlatList
-                                            data={visibleGroups}
-                                            keyExtractor={keyExtractor}
-                                            renderItem={renderGroupItem}
-                                            style={styles.list}
-                                            contentContainerStyle={styles.contentContainer}
-                                            nestedScrollEnabled
-                                            keyboardShouldPersistTaps="handled"
-                                            keyboardDismissMode="interactive"
+                                        <FlatListIndicator
+                                            flatListProps={{
+                                                data: visibleGroups,
+                                                keyExtractor,
+                                                renderItem: renderGroupItem,
+                                                style: styles.list,
+                                                contentContainerStyle: styles.contentContainer,
+                                                nestedScrollEnabled: true,
+                                                keyboardShouldPersistTaps: 'handled',
+                                                keyboardDismissMode: 'interactive'
+                                            }}
+                                            indStyle={styles.indicator}
                                         />
                                     )}
                                 </>

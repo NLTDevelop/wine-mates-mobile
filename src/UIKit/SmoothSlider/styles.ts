@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleVertical, scaleHorizontal } from '@/utils';
+import { scaleVertical, scaleHorizontal, scaleFontSize } from '@/utils';
 
 const LABEL_WIDTH = scaleHorizontal(90);
 const HALF_LABEL = LABEL_WIDTH / 4;
@@ -122,7 +122,8 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
         labelText: {
             color: colors.text,
             textAlign: 'center',
-            marginTop: scaleVertical(-10),
+            marginTop: scaleVertical(-14),
+            fontSize: scaleFontSize(10),
         },
         leftLabelText: {
             textAlign: edgeAlignedLabels ? 'left' : 'center',

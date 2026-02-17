@@ -6,14 +6,13 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
-import { ColorButton } from '../components/ColorButton';
+import { ColorSelector } from './components/ColorSelector';
 import { useWineLook } from '../../presenters/useWineLook';
 import { ShadeSelector } from '../components/ShadeSelector';
 import { CloseButton } from '../components/CloseButton';
 import { SelectedParameters } from '../components/SelectedParameters';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
-import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
@@ -72,16 +71,11 @@ export const WineLookView = observer(() => {
                             <Typography text={t('wine.lookDescription')} variant="body_400" style={styles.title} />
 
                             <Typography text={t('wine.selectColor')} variant="h4" style={styles.label} />
-                            <View style={styles.colorsContainer}>
-                                {data.map((item: IWineColorShade, index: number) => (
-                                    <ColorButton
-                                        key={index}
-                                        color={item}
-                                        isActive={item.id === selectedColor?.id}
-                                        onPress={() => onSelectColor(item)}
-                                    />
-                                ))}
-                            </View>
+                            <ColorSelector
+                                data={data}
+                                selectedColor={selectedColor}
+                                onSelectColor={onSelectColor}
+                            />
 
                             <Typography text={t('wine.result')} variant="h4" style={styles.label} />
                             <View style={[styles.resultColor, { backgroundColor: currentColor }]} />

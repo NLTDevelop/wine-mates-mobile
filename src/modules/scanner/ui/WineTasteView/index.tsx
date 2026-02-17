@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { getStyles } from './styles';
 import { FlatList, View } from 'react-native';
+import {FlatListIndicator} from '@fanchenbao/react-native-scroll-indicator';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
@@ -32,10 +33,10 @@ export const WineTasteView = observer(() => {
     const { isVisible, onShowModal, onHide, selectData, groupId } = useTasteSelectModal();
     const { data, selected, isError, getTastes, isLoading, onItemPress: originalOnItemPress, onSelectedItemPress, handleAddCustomTaste: originalHandleAddCustomTaste,
         handleNextPress } = useWineTaste(onHide);
-    
+
     const [onItemPress, selectedListRef] = useAnimatedItemAdd(originalOnItemPress);
     const [handleAddCustomTaste] = useAnimatedItemAdd(originalHandleAddCustomTaste);
-    
+
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomTaste);
 
     const visibleGroups = useMemo(() => data.filter(group => group.flavors.length > 0), [data]);
@@ -59,15 +60,18 @@ export const WineTasteView = observer(() => {
                     <View style={styles.container}>
                         <View>
                             <Typography text={t('wine.tasteDescription')} variant="body_400" style={styles.title} />
-                            
+
                             {visibleGroups.length > 0 && (
-                                <FlatList
-                                    data={visibleGroups}
-                                    keyExtractor={keyExtractor}
-                                    renderItem={renderItem}
-                                    style={styles.list}
-                                    contentContainerStyle={styles.contentContainer}
-                                    nestedScrollEnabled={true}
+                                <FlatListIndicator
+                                    flatListProps={{
+                                        data: visibleGroups,
+                                        keyExtractor,
+                                        renderItem,
+                                        style: styles.list,
+                                        contentContainerStyle: styles.contentContainer,
+                                        nestedScrollEnabled: true,
+                                    }}
+                                    indStyle={styles.indicator}
                                 />
                             )}
                             <CustomInput

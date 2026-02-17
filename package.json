@@ -11,6 +11,7 @@
         "postinstall": "patch-package"
     },
     "dependencies": {
+        "@fanchenbao/react-native-scroll-indicator": "^0.4.0",
         "@gorhom/bottom-sheet": "^5.2.8",
         "@invertase/react-native-apple-authentication": "^2.5.0",
         "@ptomasroos/react-native-multi-slider": "^2.2.2",
