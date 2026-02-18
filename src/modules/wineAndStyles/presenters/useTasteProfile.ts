@@ -1,12 +1,31 @@
 import { useCallback, useEffect, useState } from 'react';
 import { wineService } from '@/entities/wine/WineService';
-import { ITasteProfile } from '@/entities/wine/types/ITasteProfile';
+import { wineAndStylesModel } from '@/entities/wine/WineAndStylesModel';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 
 export const useTasteProfile = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [tasteProfiles, setTasteProfiles] = useState<ITasteProfile[]>([]);
+
+    const tasteProfiles = wineAndStylesModel.tasteProfiles;
+
+    const fetchRecommendations = useCallback(async () => {
+        const profiles = wineAndStylesModel.tasteProfiles;
+
+        await Promise.all(
+            profiles.map(async (profile) => {
+                const key = wineAndStylesModel.getRecommendationKey(profile.type.id, profile.color.id);
+                const response = await wineService.getRecommendations({
+                    typeId: profile.type.id,
+                    colorId: profile.color.id,
+                });
+
+                if (!response.isError && response.data) {
+                    wineAndStylesModel.setRecommendations(key, response.data.rows, 1, response.data.totalPages);
+                }
+            })
+        );
+    }, []);
 
     const getData = useCallback(async () => {
         try {
@@ -19,14 +38,15 @@ export const useTasteProfile = () => {
                     response.message || localization.t('common.somethingWentWrong'),
                 );
             } else {
-                setTasteProfiles(response.data);
+                wineAndStylesModel.setTasteProfiles(response.data);
+                await fetchRecommendations();
             }
         } catch (error) {
             console.error('getTasteProfile error: ', JSON.stringify(error, null, 2));
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [fetchRecommendations]);
 
     useEffect(() => {
         getData();

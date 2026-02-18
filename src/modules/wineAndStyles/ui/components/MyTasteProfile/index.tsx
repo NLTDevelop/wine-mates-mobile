@@ -19,10 +19,11 @@ export const MyTasteProfile = observer(() => {
 
     const renderItem = useCallback(
         ({ item }: { item: ITasteProfile }) => (
-            <MyTasteProfileItem 
+            <MyTasteProfileItem
                 title={`${item.type.name} ${item.color.name}`}
                 statistics={item.statistics}
                 color={item.color}
+                type={item.type}
             />
         ),
         []

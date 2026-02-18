@@ -9,6 +9,7 @@ import { StarIcon } from '@assets/icons/StartIcon.tsx';
 import { LocationPinIcon } from '@assets/icons/LocationPinIcon.tsx';
 import { IRecommendationWineItem } from '@/entities/wine/types/IRecommendationWineList';
 import { getStyles } from './styles';
+import { useWineCarouselCard } from '@/modules/wineAndStyles/ui/components/MyTasteProfileItem/components/WineRecommendationCarousel/presenters/useWineCarouselCard.ts';
 
 interface IProps {
     wine: IRecommendationWineItem;
@@ -20,10 +21,15 @@ interface IProps {
 export const WineCarouselCard = ({ wine, onPrevious, onNext, direction }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const { handleNextPress, handlePreviousPress, shouldShowShadow, shouldShowBorder } = useWineCarouselCard({
+        wineId: wine.id,
+        onNext,
+        onPrevious,
+    });
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.arrowButton} onPress={onPrevious}>
+            <TouchableOpacity style={styles.arrowButton} onPress={handlePreviousPress}>
                 <ArrowRightIcon rotate={180} />
             </TouchableOpacity>
 
@@ -41,9 +47,23 @@ export const WineCarouselCard = ({ wine, onPrevious, onNext, direction }: IProps
                             <EmptyWine />
                         )}
                     </View>
+
                     <View style={styles.iconsContainer}>
-                        <TouchableOpacity style={styles.iconButton}></TouchableOpacity>
-                        <TouchableOpacity style={styles.iconButton}>
+                        <TouchableOpacity
+                            style={[
+                                styles.iconButton,
+                                shouldShowShadow && styles.iconButtonShadow,
+                                shouldShowBorder && styles.iconButtonBorder,
+                            ]}
+                        />
+
+                        <TouchableOpacity
+                            style={[
+                                styles.iconButton,
+                                shouldShowShadow && styles.iconButtonShadow,
+                                shouldShowBorder && styles.iconButtonBorder,
+                            ]}
+                        >
                             <StarIcon />
                         </TouchableOpacity>
                     </View>
@@ -52,23 +72,23 @@ export const WineCarouselCard = ({ wine, onPrevious, onNext, direction }: IProps
                 <View style={styles.infoContainer}>
                     <View style={styles.locationBadge}>
                         <LocationPinIcon />
-                        <Typography 
-                            text={wine.region?.name || wine.country?.name || wine.producer} 
-                            variant="subtitle_12_400" 
-                            style={styles.locationText} 
+                        <Typography
+                            text={wine.region?.name || wine.country?.name || wine.producer}
+                            variant="subtitle_12_400"
+                            style={styles.locationText}
                         />
                     </View>
 
-                    <Typography 
-                        numberOfLines={2} 
-                        text={`${wine.name}${wine.vintage ? ` ${wine.vintage}` : ''}`} 
-                        variant="h6" 
-                        style={styles.wineName} 
+                    <Typography
+                        numberOfLines={2}
+                        text={`${wine.name}${wine.vintage ? ` ${wine.vintage}` : ''}`}
+                        variant="h6"
+                        style={styles.wineName}
                     />
-                    <Typography 
-                        text={wine.grapeVariety || wine.type.name} 
-                        variant="subtitle_12_400" 
-                        style={styles.wineType} 
+                    <Typography
+                        text={wine.grapeVariety || wine.type.name}
+                        variant="subtitle_12_400"
+                        style={styles.wineType}
                     />
 
                     <View style={styles.ratingContainer}>
@@ -87,7 +107,7 @@ export const WineCarouselCard = ({ wine, onPrevious, onNext, direction }: IProps
                 </View>
             </Animated.View>
 
-            <TouchableOpacity style={styles.arrowButton} onPress={onNext}>
+            <TouchableOpacity style={styles.arrowButton} onPress={handleNextPress}>
                 <ArrowRightIcon />
             </TouchableOpacity>
         </View>

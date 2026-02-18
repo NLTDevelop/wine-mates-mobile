@@ -3,7 +3,7 @@ import { Collapse } from '@/UIKit/Collapse';
 import { useMemo } from 'react';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { ITasteProfileStatistics, ITasteProfileColor } from '@/entities/wine/types/ITasteProfile';
+import { ITasteProfileStatistics, ITasteProfileColor, ITasteProfileType } from '@/entities/wine/types/ITasteProfile';
 import { StatisticItemsList } from './components/StatisticItemsList/ui';
 import { TastesList } from './components/TastesList/ui';
 import { TasteProfileSectionType } from './types/TasteProfileSectionType';
@@ -13,9 +13,10 @@ interface IProps {
     title: string;
     statistics: ITasteProfileStatistics;
     color: ITasteProfileColor;
+    type: ITasteProfileType;
 }
 
-export const MyTasteProfileItem = ({ title, statistics, color }: IProps) => {
+export const MyTasteProfileItem = ({ title, statistics, color, type }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -43,7 +44,7 @@ export const MyTasteProfileItem = ({ title, statistics, color }: IProps) => {
                     />
                 )}
 
-                <WineRecommendationCarousel />
+                <WineRecommendationCarousel typeId={type.id} colorId={color.id} />
             </View>
         </Collapse>
     );

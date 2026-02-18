@@ -6,12 +6,17 @@ import { useWineRecommendationCarousel } from '../presenters/useWineRecommendati
 import { WineCarouselCard } from '../components/WineCarouselCard/ui';
 import { getStyles } from './styles';
 
-export const WineRecommendationCarousel = observer(() => {
+interface IProps {
+    typeId: number;
+    colorId: number;
+}
+
+export const WineRecommendationCarousel = observer(({ typeId, colorId }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { wines, currentIndex, handlePrevious, handleNext, direction, isLoading } = useWineRecommendationCarousel();
+    const { wines, currentIndex, handlePrevious, handleNext, direction } = useWineRecommendationCarousel({ typeId, colorId });
 
-    if (isLoading || wines.length === 0) {
+    if (wines.length === 0) {
         return null;
     }
 
