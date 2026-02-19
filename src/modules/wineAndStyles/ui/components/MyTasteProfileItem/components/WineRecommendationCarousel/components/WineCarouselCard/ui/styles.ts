@@ -57,6 +57,8 @@ export const getStyles = (colors: IColors) => {
             backgroundColor: colors.background,
             justifyContent: 'center',
             alignItems: 'center',
+        },
+        iconButtonShadow: {
             shadowColor: colors.text,
             shadowOffset: {
                 width: 0,
@@ -65,6 +67,10 @@ export const getStyles = (colors: IColors) => {
             shadowOpacity: 0.1,
             shadowRadius: 4,
             elevation: 3,
+        },
+        iconButtonBorder: {
+            borderWidth: 1,
+            borderColor: colors.border,
         },
         infoContainer: {
             width: '100%',
