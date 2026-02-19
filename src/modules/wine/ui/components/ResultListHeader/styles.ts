@@ -54,6 +54,11 @@ export const getStyles = (colors: IColors) => {
         countText: {
             color: colors.text_light,
         },
+        colorCountContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(4),
+        },
         slidersListContainer: {
             gap: scaleVertical(10),
             marginBottom: scaleVertical(16),
