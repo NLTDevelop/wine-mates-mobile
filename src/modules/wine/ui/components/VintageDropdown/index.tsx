@@ -15,6 +15,8 @@ interface IProps {
 export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onVintageChange }: IProps) => {
     const dropdownRef = useRef<any>(null);
 
+    console.log(selectedVintage);
+
     const handleCustomVintageAdd = (year: number) => {
         onVintageChange({
             label: year.toString(),
@@ -34,9 +36,9 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onV
         existingYears,
         handleAddVintage,
         styles,
-    } = useVintageDropdown({ 
-        vintages, 
-        currentVintage, 
+    } = useVintageDropdown({
+        vintages,
+        currentVintage,
         selectedVintage,
         onVintageChange: handleCustomVintageAdd,
     });
@@ -47,7 +49,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onV
             data={vintageData}
             placeholder=""
             onPress={onVintageChange}
-            selectedValue={selectedVintage ?? null}
+            selectedValue={selectedVintage}
             containerStyle={styles.dropdown}
             disabled={vintageData.length === 0}
             renderItem={renderVintageItem}

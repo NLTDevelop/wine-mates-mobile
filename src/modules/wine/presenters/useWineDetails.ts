@@ -62,9 +62,11 @@ export const useWineDetails = () => {
                 console.error('Error loading vintage:', error);
             }
         } else if (details) {
+            const newVintageValue = item.value === null ? null : Number(item.value);
+
             setDetails({
                 ...details,
-                vintage: Number(item.value),
+                vintage: newVintageValue,
                 currentVintage: null,
                 isTasted: false,
             });

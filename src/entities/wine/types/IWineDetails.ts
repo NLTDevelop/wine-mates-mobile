@@ -10,7 +10,7 @@ export interface IStatistic {
 
 export interface IVintage {
     wineId: number;
-    vintage: number;
+    vintage: number | null;
     averageUserRating: number;
     totalReviews: number;
 }

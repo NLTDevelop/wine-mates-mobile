@@ -119,3 +119,5 @@ export const CustomDropdown = forwardRef<any, IProps>(({ placeholder, onPress, d
         </TouchableWithoutFeedback>
     );
 });
+
+CustomDropdown.displayName = 'CustomDropdown';

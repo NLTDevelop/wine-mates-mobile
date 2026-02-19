@@ -29,13 +29,13 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
     const vintageData = useMemo(() => {
         const currentYear = new Date().getFullYear();
         const startYear = 2010;
-        
-        const vintageMap = new Map<number, IVintage>();
-        
+
+        const vintageMap = new Map<number | null, IVintage>();
+
         vintages.forEach(v => {
             vintageMap.set(v.vintage, v);
         });
-        
+
         if (currentVintage) {
             vintageMap.set(currentVintage.vintage, currentVintage);
         }
@@ -44,12 +44,17 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
             {
                 label: t('wine.withoutVintage'),
                 value: null,
+                ...(vintageMap.has(null) && vintageMap.get(null) ? {
+                    id: vintageMap.get(null)!.wineId,
+                    averageUserRating: vintageMap.get(null)!.averageUserRating,
+                    totalReviews: vintageMap.get(null)!.totalReviews,
+                } : {}),
             }
         ];
-        
+
         for (let year = currentYear; year >= startYear; year--) {
             const vintage = vintageMap.get(year);
-            
+
             if (vintage) {
                 years.push({
                     label: year.toString(),
@@ -65,8 +70,8 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
                 });
             }
         }
-        
-        if (currentVintage && (currentVintage.vintage < startYear || currentVintage.vintage > currentYear)) {
+
+        if (currentVintage && currentVintage.vintage !== null && (currentVintage.vintage < startYear || currentVintage.vintage > currentYear)) {
             if (!years.find(y => y.value === currentVintage.vintage)) {
                 years.push({
                     label: currentVintage.vintage.toString(),
@@ -77,9 +82,9 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
                 });
             }
         }
-        
+
         vintages.forEach(v => {
-            if (v.vintage < startYear || v.vintage > currentYear) {
+            if (v.vintage !== null && (v.vintage < startYear || v.vintage > currentYear)) {
                 if (!years.find(y => y.value === v.vintage)) {
                     years.push({
                         label: v.vintage.toString(),
@@ -91,7 +96,7 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
                 }
             }
         });
-        
+
         customVintages.forEach(year => {
             if (!years.find(y => y.value === year)) {
                 years.push({
@@ -100,27 +105,31 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
                 });
             }
         });
-        
-        years.sort((a, b) => (a.value as number) - (b.value as number));
+
+        years.sort((a, b) => {
+            if (a.value === null) return -1;
+            if (b.value === null) return 1;
+            return (b.value as number) - (a.value as number);
+        });
 
         return years;
-    }, [vintages, currentVintage, customVintages]);
+    }, [vintages, customVintages]);
 
     const selectedVintageValue = useMemo(() => {
-        if (selectedVintage === null) {
+        const found = vintageData.find(item => item.value === selectedVintage);
+
+        if (!found) {
             return undefined;
         }
-        
-        const found = vintageData.find(item => item.value === selectedVintage);
-        
-        if (found && currentVintage && found.value === currentVintage.vintage) {
+
+        if (currentVintage && found.value === currentVintage.vintage) {
             return {
                 ...found,
                 averageUserRating: currentVintage.averageUserRating,
                 totalReviews: currentVintage.totalReviews,
             };
         }
-        
+
         return found;
     }, [vintageData, selectedVintage, currentVintage]);
 

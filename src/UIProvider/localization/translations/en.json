@@ -20,7 +20,8 @@
         "generate": "Generate",
         "copiedToClipboard": "Text copied to clipboard",
         "filters": "Filters",
-        "clear": "Clear"
+        "clear": "Clear",
+        "showResults": "Show results"
     },
     "errors": {
         "somethingWentWrong": "Sorry, something went wrong",

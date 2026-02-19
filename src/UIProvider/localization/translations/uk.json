@@ -19,7 +19,8 @@
         "generate": "Згенерувати",
         "copiedToClipboard": "Текст скопійований до буферу обміну",
         "filters": "Фільтри",
-        "clear": "Очистити"
+        "clear": "Очистити",
+        "showResults": "Показати результати"
     },
     "errors": {
         "somethingWentWrong": "Вибачте, щось пішло не так",

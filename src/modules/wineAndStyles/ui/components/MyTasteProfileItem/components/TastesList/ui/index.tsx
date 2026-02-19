@@ -29,6 +29,7 @@ export const TastesList = ({ flavors, characteristics }: IProps) => {
                                     <ColorPaletteItem
                                         text={`${flavor.name} (${flavor.count})`}
                                         colorHex={flavor.colorHex}
+                                        isFullWidthText
                                     />
                                 </View>
                             ))}

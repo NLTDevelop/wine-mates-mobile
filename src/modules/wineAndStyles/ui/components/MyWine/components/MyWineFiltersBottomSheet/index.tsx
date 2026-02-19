@@ -59,9 +59,9 @@ export const MyWineFiltersBottomSheet = observer(({ modalRef, onClose, hasFilter
                     </TouchableOpacity>
                     <Typography variant="h4" text={t('common.filters')} />
                     <TouchableOpacity onPress={onClear} hitSlop={20} disabled={!hasFilters}>
-                        <Typography 
-                            variant="h6" 
-                            text={t('common.clear')} 
+                        <Typography
+                            variant="h6"
+                            text={t('common.clear')}
                             style={hasFilters ? styles.clearButton : styles.clearButtonDisabled}
                         />
                     </TouchableOpacity>
@@ -74,7 +74,7 @@ export const MyWineFiltersBottomSheet = observer(({ modalRef, onClose, hasFilter
                     onTypesChange={onTypesChange}
                 />
                 <View style={styles.buttonContainer}>
-                    <Button type='main' onPress={onApply} text="Show results" />
+                    <Button type='main' onPress={onApply} text={t('common.showResults')} />
                 </View>
             </BottomSheetScrollView>
         </BottomSheetModal>
