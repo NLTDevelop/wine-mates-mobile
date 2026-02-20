@@ -3,15 +3,17 @@ import { View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { declOfWord, getContrastColor } from '@/utils';
+import { declOfWord } from '@/utils';
 import { ResultHeader } from '../ResultHeader';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
-import { TasteCharacteristicItem } from '../../../../scanner/ui/components/TasteCharacteristicItem';
-import { IColorStatistic, IStatistic, IWineDetails } from '@/entities/wine/types/IWineDetails';
+import { TasteCharacteristicItem } from '@/modules/scanner/ui/components/TasteCharacteristicItem';
+import { IStatistic, IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 import { userModel } from '@/entities/users/UserModel';
+import { useColorShades } from '@/modules/wine/presenters/useColorShades';
+import { StatisticCard } from '../StatisticCard';
 
 interface IProps {
     data: IWineDetails;
@@ -29,9 +31,8 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCu
         () => data?.statistics?.tasteCharacteristics?.filter(item => item?.levels && item?.selectedIndex != null) ?? [],
         [data.statistics.tasteCharacteristics],
     );
-    const selectedColorTextColor = useMemo(
-        () => getContrastColor(data.statistics.topColors?.colorHex || colors.background_grey),
-    [data, colors]);
+
+    const { colorShadeItems } = useColorShades(data.statistics.topColors);
 
     console.log('tasteCharacteristics', data.statistics);
 
@@ -46,51 +47,21 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCu
                 </View>
             )}
 
-            {data.statistics.topColors && (
+            {colorShadeItems.length > 0 && (
                 <>
                     <View style={styles.titleContainer}>
                         <Typography text={t('wine.colors')} variant="h4" />
                         <Typography text={t('wine.mostSelectedColor')} variant="body_400" style={styles.text} />
                     </View>
                     <View style={styles.mapListContainer}>
-                        {
-                            data.statistics.topColors.map((item: IColorStatistic) => {
-                                const textColor = getContrastColor(item.colorHex || colors.background_grey);
-                                return <View
-                                    key={item.id}
-                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.background_grey }]}
-                                >
-                                    <Typography text={item.name} style={{ color: textColor }} />
-                                    {/* TODO: ask about this */}
-                                    <View style={styles.colorCountContainer}>
-                                        <Typography
-                                            text={`(${declOfWord(
-                                                Number(item.paleCount),
-                                                t('scanner.reviewCount') as unknown as Array<string>,
-                                            )})`}
-                                            variant="subtitle_12_500"
-                                            style={[styles.countText, { color: `${textColor}B3` }]}
-                                        />
-                                        <Typography
-                                            text={`(${declOfWord(
-                                                Number(item.mediumCount),
-                                                t('scanner.reviewCount') as unknown as Array<string>,
-                                            )})`}
-                                            variant="subtitle_12_500"
-                                            style={[styles.countText, { color: `${textColor}B3` }]}
-                                        />
-                                        <Typography
-                                            text={`(${declOfWord(
-                                                Number(item.deepCount),
-                                                t('scanner.reviewCount') as unknown as Array<string>,
-                                            )})`}
-                                            variant="subtitle_12_500"
-                                            style={[styles.countText, { color: `${textColor}B3` }]}
-                                        />
-                                    </View>
-                                </View>
-                            })
-                        }
+                        {colorShadeItems.map((item) => (
+                            <StatisticCard
+                                key={item.id}
+                                backgroundColor={item.colorHex}
+                                label={item.label}
+                                count={item.count}
+                            />
+                        ))}
                     </View>
                 </>
             )}
@@ -102,25 +73,17 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCu
                         <Typography text={t('wine.mostSelected')} variant="body_400" style={styles.text} />
                     </View>
                     <View style={styles.mapListContainer}>
-                        {data.statistics.topAromas.map((item: IStatistic) => {
-                            const textColor = getContrastColor(item.colorHex || colors.background_grey);
-                            return (
-                                <View
-                                    key={item.id}
-                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.background_grey }]}
-                                >
-                                    <Typography text={item.name} style={{ color: textColor }} />
-                                    <Typography
-                                        text={`(${declOfWord(
-                                            Number(item.userCount),
-                                            t('scanner.reviewCount') as unknown as Array<string>,
-                                        )})`}
-                                        variant="subtitle_12_500"
-                                        style={[styles.countText, { color: `${textColor}B3` }]}
-                                    />
-                                </View>
-                            );
-                        })}
+                        {data.statistics.topAromas.map((item: IStatistic) => (
+                            <StatisticCard
+                                key={item.id}
+                                backgroundColor={item.colorHex || colors.background_grey}
+                                label={item.name}
+                                count={`(${declOfWord(
+                                    Number(item.userCount),
+                                    t('scanner.reviewCount') as unknown as Array<string>,
+                                )})`}
+                            />
+                        ))}
                     </View>
                 </>
             )}
@@ -132,26 +95,17 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCu
                         <Typography text={t('wine.mostSelected')} variant="body_400" style={styles.text} />
                     </View>
                     <View style={styles.mapListContainer}>
-                        {data.statistics.topFlavors.map((item: IStatistic) => {
-                            const textColor = getContrastColor(item.colorHex || colors.background_grey);
-
-                            return (
-                                <View
-                                    key={item.id}
-                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.background_grey }]}
-                                >
-                                    <Typography text={item.name} style={{ color: textColor }} />
-                                    <Typography
-                                        text={`(${declOfWord(
-                                            Number(item.userCount),
-                                            t('scanner.reviewCount') as unknown as Array<string>,
-                                        )})`}
-                                        variant="subtitle_12_500"
-                                        style={[styles.countText, { color: `${textColor}B3` }]}
-                                    />
-                                </View>
-                            );
-                        })}
+                        {data.statistics.topFlavors.map((item: IStatistic) => (
+                            <StatisticCard
+                                key={item.id}
+                                backgroundColor={item.colorHex || colors.background_grey}
+                                label={item.name}
+                                count={`(${declOfWord(
+                                    Number(item.userCount),
+                                    t('scanner.reviewCount') as unknown as Array<string>,
+                                )})`}
+                            />
+                        ))}
                     </View>
                 </>
             )}

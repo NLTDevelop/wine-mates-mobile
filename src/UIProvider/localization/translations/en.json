@@ -262,6 +262,7 @@
         "tastes": "Tastes",
         "sortBy": "Sort by",
         "typeOfWine": "Type of wine",
-        "colorOfWine": "Color of wine"
+        "colorOfWine": "Color of wine",
+        "winePeaks": "Wine Peaks"
     }
 }

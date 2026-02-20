@@ -8,6 +8,7 @@ import { StatisticItemsList } from './components/StatisticItemsList/ui';
 import { TastesList } from './components/TastesList/ui';
 import { TasteProfileSectionType } from './types/TasteProfileSectionType';
 import { WineRecommendationCarousel } from './components/WineRecommendationCarousel/ui';
+import { WinePeaksGrid } from './components/WinePeaksGrid';
 
 interface IProps {
     title: string;
@@ -24,24 +25,28 @@ export const MyTasteProfileItem = ({ title, statistics, color, type }: IProps) =
         <Collapse title={title}>
             <View style={styles.contentContainer}>
                 {statistics.colors.length > 0 && (
-                    <StatisticItemsList 
-                        sectionType={TasteProfileSectionType.COLOR_SHADES} 
-                        items={statistics.colors} 
+                    <StatisticItemsList
+                        sectionType={TasteProfileSectionType.COLOR_SHADES}
+                        items={statistics.colors}
                     />
                 )}
 
                 {statistics.aromas.length > 0 && (
-                    <StatisticItemsList 
-                        sectionType={TasteProfileSectionType.AROMA} 
-                        items={statistics.aromas} 
+                    <StatisticItemsList
+                        sectionType={TasteProfileSectionType.AROMA}
+                        items={statistics.aromas}
                     />
                 )}
 
                 {(statistics.flavors.length > 0 || statistics.tasteCharacteristics.length > 0) && (
-                    <TastesList 
-                        flavors={statistics.flavors} 
-                        characteristics={statistics.tasteCharacteristics} 
+                    <TastesList
+                        flavors={statistics.flavors}
+                        characteristics={statistics.tasteCharacteristics}
                     />
+                )}
+
+                {statistics.topWinePeaks.length > 0 && (
+                    <WinePeaksGrid peaks={statistics.topWinePeaks} />
                 )}
 
                 <WineRecommendationCarousel typeId={type.id} colorId={color.id} />

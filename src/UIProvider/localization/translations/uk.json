@@ -265,6 +265,7 @@
         "tastes": "Смаки",
         "sortBy": "Сортувати за",
         "typeOfWine": "Тип вина",
-        "colorOfWine": "Колір вина"
+        "colorOfWine": "Колір вина",
+        "winePeaks": "Піки вин"
     }
 }

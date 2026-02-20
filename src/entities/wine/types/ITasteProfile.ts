@@ -21,11 +21,17 @@ export interface ITasteProfileCharacteristic {
     levels: ITasteProfileCharacteristicLevel[];
 }
 
+export interface ITasteProfileTopWinePeak {
+    year: number;
+    userCount: number;
+}
+
 export interface ITasteProfileStatistics {
     colors: ITasteProfileStatisticItem[];
     aromas: ITasteProfileStatisticItem[];
     flavors: ITasteProfileStatisticItem[];
     tasteCharacteristics: ITasteProfileCharacteristic[];
+    topWinePeaks: ITasteProfileTopWinePeak[];
 }
 
 export interface ITasteProfileType {

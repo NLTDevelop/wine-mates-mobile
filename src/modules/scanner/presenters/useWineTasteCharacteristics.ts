@@ -5,7 +5,7 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { storage } from '@/libs/storage/MMKVStorage';
 import { TASTE_CHARACTERISTICS_CACHE_KEY } from '@/libs/storage/cacheUtils';
 
