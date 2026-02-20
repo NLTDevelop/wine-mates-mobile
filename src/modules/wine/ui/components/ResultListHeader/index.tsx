@@ -61,6 +61,7 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCu
                                     style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.background_grey }]}
                                 >
                                     <Typography text={item.name} style={{ color: textColor }} />
+                                    {/* TODO: ask about this */}
                                     <View style={styles.colorCountContainer}>
                                         <Typography
                                             text={`(${declOfWord(
