@@ -5,7 +5,7 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { storage } from '@/libs/storage/MMKVStorage';
 import { TASTE_CHARACTERISTICS_CACHE_KEY } from '@/libs/storage/cacheUtils';
 
@@ -18,7 +18,7 @@ export const useWineTasteCharacteristics = () => {
         const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY);
         return cached || {};
     });
-    
+
     const data = wineModel.tasteCharacteristics;
 
     const isPremiumUser = userModel.user?.hasPremium || false;
@@ -83,7 +83,7 @@ export const useWineTasteCharacteristics = () => {
         });
 
         setSliderValues(prev => {
-            const hasChanges = Object.keys(next).some(key => prev[Number(key)] !== next[Number(key)]) || 
+            const hasChanges = Object.keys(next).some(key => prev[Number(key)] !== next[Number(key)]) ||
                                Object.keys(prev).length !== Object.keys(next).length;
             return hasChanges ? next : prev;
         });

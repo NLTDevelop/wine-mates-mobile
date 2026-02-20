@@ -3,7 +3,7 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { getContrastColor } from '@/utils';
 
-export const getStyles = (colors: IColors, backgroundColor: string) => {
+export const getStyles = (colors: IColors, backgroundColor: string, fullWidth: boolean = false) => {
     const textColor = getContrastColor(backgroundColor);
 
     const styles = StyleSheet.create({
@@ -19,8 +19,17 @@ export const getStyles = (colors: IColors, backgroundColor: string) => {
         },
         text: {
             color: textColor,
-            maxWidth: scaleHorizontal(268),
-            flexShrink: 1,
+            ...(fullWidth
+                ? {
+                    flex: 1,
+                    flexShrink: 1,
+                    minWidth: 0,
+                    textAlign: 'center',
+                }
+                : {
+                    maxWidth: scaleHorizontal(268),
+                    flexShrink: 1,
+                }),
         },
         selectedIndicator: {
             width: scaleVertical(24),

@@ -10,9 +10,15 @@ export interface IStatistic {
 
 export interface IVintage {
     wineId: number;
-    vintage: number;
+    vintage: number | null;
     averageUserRating: number;
     totalReviews: number;
+}
+
+export interface IColorStatistic extends Omit<IStatistic, 'userCount'> {
+    paleCount: number,
+    mediumCount: number,
+    deepCount: number
 }
 
 export interface IWineDetails {
@@ -52,11 +58,7 @@ export interface IWineDetails {
         name: string;
     } | null;
     statistics: {
-        topColor: {
-            id: number;
-            colorHex: string;
-            name: string;
-        };
+        topColors: IColorStatistic[];
         topAromas: IStatistic[];
         topFlavors: IStatistic[];
         tasteCharacteristics: IWineTasteCharacteristic[];

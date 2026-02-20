@@ -51,3 +51,5 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
         </View>
     );
 };
+
+TasteCharacteristicItem.displayName = 'TasteCharacteristicItem';

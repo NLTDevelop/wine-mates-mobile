@@ -26,6 +26,7 @@ export const StatisticItemsList = ({ sectionType, items }: IProps) => {
                             <ColorPaletteItem
                                 text={`${item.name} (${item.count})`}
                                 colorHex={item.colorHex}
+                                isFullWidthText
                             />
                         </View>
                     ))}

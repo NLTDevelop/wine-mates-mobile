@@ -19,7 +19,8 @@
         "generate": "Згенерувати",
         "copiedToClipboard": "Текст скопійований до буферу обміну",
         "filters": "Фільтри",
-        "clear": "Очистити"
+        "clear": "Очистити",
+        "showResults": "Показати результати"
     },
     "errors": {
         "somethingWentWrong": "Вибачте, щось пішло не так",
@@ -171,6 +172,7 @@
         "enterReview": "Поділіться своїм відгуком",
         "notes": "Улюблені нотатки",
         "color": "Колір",
+        "colors": "Кольори",
         "aroma": "Аромат",
         "taste": "Смак",
         "details": "Деталі",
@@ -263,6 +265,7 @@
         "tastes": "Смаки",
         "sortBy": "Сортувати за",
         "typeOfWine": "Тип вина",
-        "colorOfWine": "Колір вина"
+        "colorOfWine": "Колір вина",
+        "winePeaks": "Піки вин"
     }
 }

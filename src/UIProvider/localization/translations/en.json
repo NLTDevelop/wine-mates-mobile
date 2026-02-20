@@ -20,7 +20,8 @@
         "generate": "Generate",
         "copiedToClipboard": "Text copied to clipboard",
         "filters": "Filters",
-        "clear": "Clear"
+        "clear": "Clear",
+        "showResults": "Show results"
     },
     "errors": {
         "somethingWentWrong": "Sorry, something went wrong",
@@ -172,6 +173,7 @@
         "enterReview": "Share you review",
         "notes": "Favorite Notes",
         "color": "Color",
+        "colors": "Colors",
         "aroma": "Aroma",
         "taste": "Taste",
         "details": "Details",
@@ -260,6 +262,7 @@
         "tastes": "Tastes",
         "sortBy": "Sort by",
         "typeOfWine": "Type of wine",
-        "colorOfWine": "Color of wine"
+        "colorOfWine": "Color of wine",
+        "winePeaks": "Wine Peaks"
     }
 }
