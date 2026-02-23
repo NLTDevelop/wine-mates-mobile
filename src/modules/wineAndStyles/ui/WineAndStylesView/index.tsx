@@ -6,12 +6,22 @@ import { TabBar } from '../components/TabBar';
 import { useWineAndStylesTabs } from '../../presenters/useEventsListTabs';
 import { useWineAndStylesView } from '../../presenters/useWineAndStylesView';
 import { size } from '@/utils';
+import { userModel } from '@/entities/users/UserModel';
 
 export const WineAndStylesView = () => {
     const { t } = useUiContext();
 
     const { screenIndex, handleIndexChange } = useWineAndStylesTabs();
     const { routes, renderScene } = useWineAndStylesView();
+    const hasPremium = userModel.user?.hasPremium || false;
+
+    const handleIndexChangeWithPremiumCheck = (index: number) => {
+        const isTasteProfileTab = routes[index]?.key === 'muTasteProfile';
+        if (isTasteProfileTab && !hasPremium) {
+            return;
+        }
+        handleIndexChange(index);
+    };
 
     return (
         <ScreenContainer
@@ -21,10 +31,11 @@ export const WineAndStylesView = () => {
         >
          <TabView
                 lazy
-                renderTabBar={props => <TabBar tabBarProps={props} handleIndexChange={handleIndexChange} />}
+                swipeEnabled={hasPremium}
+                renderTabBar={props => <TabBar tabBarProps={props} handleIndexChange={handleIndexChangeWithPremiumCheck} hasPremium={hasPremium} />}
                 navigationState={{ index: screenIndex, routes }}
                 renderScene={renderScene}
-                onIndexChange={handleIndexChange}
+                onIndexChange={handleIndexChangeWithPremiumCheck}
                 initialLayout={{ width: size.width }}
             />
         </ScreenContainer>
