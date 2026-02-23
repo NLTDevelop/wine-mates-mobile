@@ -8,9 +8,10 @@ import { View } from 'react-native';
 
 interface IProps {
     onSearch: (offset: number) => Promise<void>;
+    scrollToTop?: (() => void) | null;
 }
 
-const MyWineSearchBarComponent = ({ onSearch }: IProps) => {
+const MyWineSearchBarComponent = ({ onSearch, scrollToTop }: IProps) => {
     const { t } = useUiContext();
     const { 
         search, 
@@ -28,7 +29,7 @@ const MyWineSearchBarComponent = ({ onSearch }: IProps) => {
         onApplyFilters,
         filterTags,
         onRemoveTag,
-    } = useMyWineSearchBar({ onSearch });
+    } = useMyWineSearchBar({ onSearch, scrollToTop });
 
     return (
         <>

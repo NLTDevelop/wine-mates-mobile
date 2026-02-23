@@ -14,6 +14,7 @@ const OFFSET = 0;
 export const useMyWine = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(false);
+    const [scrollToTop, setScrollToTop] = useState<(() => void) | null>(null);
     const data = wineListsModel.list?.rows;
 
     const getList = useCallback(async (offset: number) => {
@@ -74,5 +75,5 @@ export const useMyWine = () => {
         navigation.navigate('WineDetailsView', {wineId: item.id});
     },[navigation]);
 
-    return { data, onRefresh, onEndReached, onItemPress, isLoading, getList };
+    return { data, onRefresh, onEndReached, onItemPress, isLoading, getList, setScrollToTop, scrollToTop };
 };

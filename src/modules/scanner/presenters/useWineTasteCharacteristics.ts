@@ -8,6 +8,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { storage } from '@/libs/storage/MMKVStorage';
 import { TASTE_CHARACTERISTICS_CACHE_KEY } from '@/libs/storage/cacheUtils';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -18,10 +19,13 @@ export const useWineTasteCharacteristics = () => {
         const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY);
         return cached || {};
     });
+    const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
 
     const data = wineModel.tasteCharacteristics;
 
     const isPremiumUser = userModel.user?.hasPremium || false;
+    const isExpertOrWinemaker = userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT ||
+        userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR;
 
     const getTasteCharacteristics = useCallback(async () => {
         try {
@@ -113,6 +117,11 @@ export const useWineTasteCharacteristics = () => {
         [data],
     );
 
+    const handleWinePeakChange = useCallback((year: number | null) => {
+        setWinePeak(year);
+        wineModel.winePeak = year;
+    }, []);
+
     const handleNextPress = useCallback(() => {
         if (data) {
             wineModel.tasteCharacteristics = data.map(item => ({
@@ -121,8 +130,12 @@ export const useWineTasteCharacteristics = () => {
             }));
         }
 
-        navigation.navigate('WineReviewView');
-    }, [data, navigation, sliderValues]);
+        if (winePeak) {
+            wineModel.winePeak = winePeak;
+        }
 
-    return { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues, isPremiumUser };
+        navigation.navigate('WineReviewView');
+    }, [data, navigation, sliderValues, winePeak]);
+
+    return { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues, isPremiumUser, winePeak, handleWinePeakChange, isExpertOrWinemaker };
 };

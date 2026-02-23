@@ -15,25 +15,55 @@ import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics';
 import { TasteCharacteristicItem } from '../components/TasteCharacteristicItem';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
+import { WinePeakPicker } from '../components/WinePeakPicker';
+
+type ListItemType =
+    | { type: 'characteristic'; data: IWineTasteCharacteristic }
+    | { type: 'winePeak' };
 
 export const WineTasteCharacteristicsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues,
-        isPremiumUser } = useWineTasteCharacteristics();
+        isPremiumUser, winePeak, handleWinePeakChange, isExpertOrWinemaker } = useWineTasteCharacteristics();
 
-    const keyExtractor = useCallback((item: IWineTasteCharacteristic, index: number) => `${item.id}-${index}`, []);
+    const listData = useMemo<ListItemType[]>(() => {
+        const items: ListItemType[] = [];
+        if (data) {
+            data.forEach(characteristic => {
+                items.push({ type: 'characteristic', data: characteristic });
+            });
+            if (isExpertOrWinemaker) {
+                items.push({ type: 'winePeak' });
+            }
+        }
+        return items;
+    }, [data, isExpertOrWinemaker]);
+
+
+    const keyExtractor = useCallback((item: ListItemType, index: number) => {
+        if (item.type === 'characteristic') {
+            return `characteristic-${item.data.id}-${index}`;
+        }
+        return 'winePeak';
+    }, []);
+
     const renderItem = useCallback(
-        ({ item }: { item: IWineTasteCharacteristic }) => (
-            <TasteCharacteristicItem
-                item={item}
-                value={sliderValues[item.id] ?? 0}
-                onChange={value => handleSliderChange(item.id, value)}
-                isPremiumUser={isPremiumUser}
-            />
-        ),
-        [handleSliderChange, sliderValues, isPremiumUser],
+        ({ item }: { item: ListItemType }) => {
+            if (item.type === 'characteristic') {
+                return (
+                    <TasteCharacteristicItem
+                        item={item.data}
+                        value={sliderValues[item.data.id] ?? 0}
+                        onChange={value => handleSliderChange(item.data.id, value)}
+                        isPremiumUser={isPremiumUser}
+                    />
+                );
+            }
+            return <WinePeakPicker value={winePeak} onChange={handleWinePeakChange} />;
+        },
+        [handleSliderChange, sliderValues, isPremiumUser, winePeak, handleWinePeakChange],
     );
 
     return (
@@ -49,9 +79,9 @@ export const WineTasteCharacteristicsView = observer(() => {
                 ) : (
                     <View style={styles.container}>
                         <View>
-                            {data.length > 0 && (
+                            {listData.length > 0 && (
                                 <FlatList
-                                    data={data}
+                                    data={listData}
                                     keyExtractor={keyExtractor}
                                     renderItem={renderItem}
                                     style={styles.list}

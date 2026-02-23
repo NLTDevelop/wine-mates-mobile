@@ -10,9 +10,10 @@ import { computed } from 'mobx';
 
 interface IUseMyWineSearchBarProps {
     onSearch: (offset: number) => Promise<void>;
+    scrollToTop?: (() => void) | null;
 }
 
-export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
+export const useMyWineSearchBar = ({ onSearch, scrollToTop }: IUseMyWineSearchBarProps) => {
     const search = wineListsModel.search;
     const { 
         filtersModalRef, 
@@ -54,8 +55,9 @@ export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
 
     const onSearchChange = useCallback((text: string) => {
         wineListsModel.search = text;
+        scrollToTop?.();
         debouncedSearch();
-    }, [debouncedSearch]);
+    }, [debouncedSearch, scrollToTop]);
 
     const onFilterPress = useCallback(() => {
         onOpen();
@@ -64,8 +66,9 @@ export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
     const onApplyFilters = useCallback(() => {
         applyFilters();
         onClose();
+        scrollToTop?.();
         onSearch(0);
-    }, [applyFilters, onClose, onSearch]);
+    }, [applyFilters, onClose, onSearch, scrollToTop]);
 
     const filterTags = computed((): IFilterTagItem[] => {
         const tags: IFilterTagItem[] = [];
@@ -114,8 +117,9 @@ export const useMyWineSearchBar = ({ onSearch }: IUseMyWineSearchBarProps) => {
             wineListsModel.setTypes(newTypes);
         }
 
+        scrollToTop?.();
         onSearch(0);
-    }, [onSearch]);
+    }, [onSearch, scrollToTop]);
 
     return { 
         search, 

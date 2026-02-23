@@ -23,7 +23,7 @@ export const useScanner = () => {
 
         if (shouldResize && width && height) {
             try {
-                if (ImageResizer && ImageResizer.createResizedImage) {
+                if (ImageResizer?.createResizedImage) {
                     const resized = await ImageResizer.createResizedImage(
                         normalizedUri,
                         width,

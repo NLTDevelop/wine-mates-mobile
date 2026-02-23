@@ -24,6 +24,9 @@ export const getStyles = (colors: IColors) => {
         activeTabItem: {
             backgroundColor: colors.background,
         },
+        disabledTabItem: {
+            opacity: 0.5,
+        },
         tabLabel: {
             color: colors.text,
         },
@@ -34,6 +37,14 @@ export const getStyles = (colors: IColors) => {
         },
         crownIcon: {
             marginRight: scaleHorizontal(4),
+        },
+        blurOverlay: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            borderRadius: 8,
         },
     });
 

@@ -45,3 +45,5 @@ export const MyTasteProfile = observer(() => {
         </>
     );
 });
+
+MyTasteProfile.displayName = 'MyTasteProfile';

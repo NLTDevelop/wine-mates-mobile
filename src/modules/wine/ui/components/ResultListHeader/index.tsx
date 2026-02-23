@@ -14,6 +14,7 @@ import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 import { userModel } from '@/entities/users/UserModel';
 import { useColorShades } from '@/modules/wine/presenters/useColorShades';
 import { StatisticCard } from '../StatisticCard';
+import { WinePeaksGrid } from '@/modules/wineAndStyles/ui/components/MyTasteProfileItem/components/WinePeaksGrid';
 
 interface IProps {
     data: IWineDetails;
@@ -33,8 +34,6 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCu
     );
 
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
-
-    console.log('tasteCharacteristics', data.statistics);
 
     return (
         <View>
@@ -108,6 +107,10 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCu
                         ))}
                     </View>
                 </>
+            )}
+
+            {data.statistics.topWinePeaks && data.statistics.topWinePeaks.length > 0 && (
+                <WinePeaksGrid peaks={data.statistics.topWinePeaks} />
             )}
 
             {tasteCharacteristics.length > 0 && (
