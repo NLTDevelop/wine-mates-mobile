@@ -192,6 +192,10 @@ export const useWineReviewResult = () => {
                 payload.image = wineModel.image;
             }
 
+            if (wineModel.winePeak !== null) {
+                payload.winePeak = wineModel.winePeak;
+            }
+
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
                 if (wineModel.review?.starRate && wineModel.review.starRate > 0) {
                     payload.userRating = wineModel.review.starRate;

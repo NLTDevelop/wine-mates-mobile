@@ -18,6 +18,7 @@ export const useWineTasteCharacteristics = () => {
         const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY);
         return cached || {};
     });
+    const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
 
     const data = wineModel.tasteCharacteristics;
 
@@ -113,6 +114,11 @@ export const useWineTasteCharacteristics = () => {
         [data],
     );
 
+    const handleWinePeakChange = useCallback((year: number | null) => {
+        setWinePeak(year);
+        wineModel.winePeak = year;
+    }, []);
+
     const handleNextPress = useCallback(() => {
         if (data) {
             wineModel.tasteCharacteristics = data.map(item => ({
@@ -121,8 +127,12 @@ export const useWineTasteCharacteristics = () => {
             }));
         }
 
-        navigation.navigate('WineReviewView');
-    }, [data, navigation, sliderValues]);
+        if (winePeak) {
+            wineModel.winePeak = winePeak;
+        }
 
-    return { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues, isPremiumUser };
+        navigation.navigate('WineReviewView');
+    }, [data, navigation, sliderValues, winePeak]);
+
+    return { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues, isPremiumUser, winePeak, handleWinePeakChange };
 };

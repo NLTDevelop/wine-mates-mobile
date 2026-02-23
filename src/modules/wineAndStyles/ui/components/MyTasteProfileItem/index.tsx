@@ -45,7 +45,7 @@ export const MyTasteProfileItem = ({ title, statistics, color, type }: IProps) =
                     />
                 )}
 
-                {statistics.topWinePeaks.length > 0 && (
+                {statistics.topWinePeaks && statistics.topWinePeaks.length > 0 && (
                     <WinePeaksGrid peaks={statistics.topWinePeaks} />
                 )}
 

@@ -21,6 +21,11 @@ export interface IColorStatistic extends Omit<IStatistic, 'userCount'> {
     deepCount: number
 }
 
+export interface IWinePeakStatistic {
+    year: number;
+    userCount: number;
+}
+
 export interface IWineDetails {
     id: number;
     name: string | null;
@@ -62,5 +67,6 @@ export interface IWineDetails {
         topAromas: IStatistic[];
         topFlavors: IStatistic[];
         tasteCharacteristics: IWineTasteCharacteristic[];
+        topWinePeaks: IWinePeakStatistic[];
     };
 }

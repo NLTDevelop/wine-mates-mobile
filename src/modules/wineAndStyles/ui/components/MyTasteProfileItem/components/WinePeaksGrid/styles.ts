@@ -4,14 +4,22 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        nestedCollapseWrapper: {
+        titleContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             marginBottom: scaleVertical(8),
+            marginHorizontal: scaleHorizontal(16),
+        },
+        text: {
+            color: colors.text_light,
         },
         gridContainer: {
             flexDirection: 'row',
             flexWrap: 'wrap',
-            gap: scaleHorizontal(8),
-            paddingTop: scaleVertical(8),
+            gap: scaleVertical(8),
+            marginBottom: scaleVertical(16),
+            marginHorizontal: scaleHorizontal(16),
         },
         gridItem: {
             width: `${(100 - 4) / 3}%`,
@@ -20,13 +28,6 @@ export const getStyles = (colors: IColors) => {
             paddingVertical: scaleVertical(12),
             alignItems: 'center',
             justifyContent: 'center',
-        },
-        yearText: {
-            color: colors.text_primary,
-        },
-        countText: {
-            color: colors.text_primary,
-            opacity: 0.7,
         },
     });
     return styles;
