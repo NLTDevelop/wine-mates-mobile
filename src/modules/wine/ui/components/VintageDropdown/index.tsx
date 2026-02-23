@@ -15,8 +15,6 @@ interface IProps {
 export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onVintageChange }: IProps) => {
     const dropdownRef = useRef<any>(null);
 
-    console.log(selectedVintage);
-
     const handleCustomVintageAdd = (year: number) => {
         onVintageChange({
             label: year.toString(),

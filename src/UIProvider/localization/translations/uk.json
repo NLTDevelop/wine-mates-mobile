@@ -20,7 +20,8 @@
         "copiedToClipboard": "Текст скопійований до буферу обміну",
         "filters": "Фільтри",
         "clear": "Очистити",
-        "showResults": "Показати результати"
+        "showResults": "Показати результати",
+        "reset": "Скинути"
     },
     "errors": {
         "somethingWentWrong": "Вибачте, щось пішло не так",
@@ -164,8 +165,11 @@
         "tasteDescription": "Виберіть основний смак вашого вина",
         "addCustomTaste": "Додайте власний смак",
         "tasteCharacteristics": "Смакові якості",
-        "letsRate": "Давайте оцінимо це",
-        "review": "Огляд",
+        "winePeak": "Рік розкриття",
+        "winePeakDescription": "Оберіть рік, коли це вино досягне свого піку",
+        "selectYear": "Оберіть рік",
+        "letsRate": "Давайте оцінимо",
+        "review": "Відгук",
         "rateThisWine": "Оцініть це вино",
         "ratedWine": "Ви оцінили це вино",
         "tastingResult": "Результат дегустації",

@@ -21,7 +21,8 @@
         "copiedToClipboard": "Text copied to clipboard",
         "filters": "Filters",
         "clear": "Clear",
-        "showResults": "Show results"
+        "showResults": "Show results",
+        "reset": "Reset"
     },
     "errors": {
         "somethingWentWrong": "Sorry, something went wrong",
@@ -165,7 +166,10 @@
         "tasteDescription": "Select the main taste of your wine",
         "addCustomTaste": "Add custom taste",
         "tasteCharacteristics": "Taste characteristics",
-        "letsRate": "Let’s rate it",
+        "winePeak": "Wine Peak",
+        "winePeakDescription": "Select the year when this wine will reach its peak",
+        "selectYear": "Select year",
+        "letsRate": "Let's rate it",
         "review": "Review",
         "rateThisWine": "Rate this wine",
         "ratedWine": "You rated this wine",

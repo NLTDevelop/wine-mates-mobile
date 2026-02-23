@@ -26,4 +26,5 @@ export interface AddRateDto {
         flavors?: string[];
     };
     image?: IWineImage;
+    winePeak?: number;
 }

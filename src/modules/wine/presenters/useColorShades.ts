@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { IColorStatistic } from '@/entities/wine/types/IWineDetails';
 import { useUiContext } from '@/UIProvider';
 import { declOfWord } from '@/utils';
+import { wineModel } from '@/entities/wine/WineModel';
 
 export interface IColorShadeItem {
     id: string;
@@ -19,10 +20,12 @@ export const useColorShades = (topColors: IColorStatistic[] | null) => {
         const items: IColorShadeItem[] = [];
 
         topColors.forEach((colorItem) => {
+            const colorShade = wineModel.colorsShades?.find(shade => shade.colorId === colorItem.id);
+
             if (colorItem.paleCount > 0) {
                 items.push({
                     id: `${colorItem.id}-pale`,
-                    colorHex: colorItem.colorHex || '',
+                    colorHex: colorShade?.tonePale || colorItem.colorHex || '',
                     label: `${t('wine.pale')} ${colorItem.name}`,
                     count: `(${declOfWord(
                         Number(colorItem.paleCount),
@@ -34,7 +37,7 @@ export const useColorShades = (topColors: IColorStatistic[] | null) => {
             if (colorItem.mediumCount > 0) {
                 items.push({
                     id: `${colorItem.id}-medium`,
-                    colorHex: colorItem.colorHex || '',
+                    colorHex: colorShade?.toneMedium || colorItem.colorHex || '',
                     label: `${t('wine.medium')} ${colorItem.name}`,
                     count: `(${declOfWord(
                         Number(colorItem.mediumCount),
@@ -46,7 +49,7 @@ export const useColorShades = (topColors: IColorStatistic[] | null) => {
             if (colorItem.deepCount > 0) {
                 items.push({
                     id: `${colorItem.id}-deep`,
-                    colorHex: colorItem.colorHex || '',
+                    colorHex: colorShade?.toneDeep || colorItem.colorHex || '',
                     label: `${t('wine.deep')} ${colorItem.name}`,
                     count: `(${declOfWord(
                         Number(colorItem.deepCount),

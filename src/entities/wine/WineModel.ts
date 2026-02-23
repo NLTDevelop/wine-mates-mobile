@@ -28,6 +28,7 @@ export interface IWineListModel {
     tastes: IWineTasteGroup[] | null;
     selectedTastes: IWineTaste[] | null;
     tasteCharacteristics: IWineTasteCharacteristic[] | null;
+    winePeak: number | null;
     review: IWineReview | null;
     clear: () => void;
 }
@@ -46,6 +47,7 @@ class WineModel implements IWineListModel {
     private tastesRepository = new MobXRepository<IWineTasteGroup[] | null>(null);
     private selectedTastesRepository = new MobXRepository<IWineTaste[] | null>(null);
     private tasteCharacteristicsRepository = new MobXRepository<IWineTasteCharacteristic[] | null>(null);
+    private winePeakRepository = new MobXRepository<number | null>(null);
     private reviewRepository = new MobXRepository<IWineReview | null>(null);
 
     public get wine() {
@@ -152,6 +154,14 @@ class WineModel implements IWineListModel {
         this.tasteCharacteristicsRepository.save(value);
     }
 
+    public get winePeak() {
+        return this.winePeakRepository.data;
+    }
+
+    public set winePeak(value: number | null) {
+        this.winePeakRepository.save(value);
+    }
+
     public get review() {
         return this.reviewRepository.data;
     }
@@ -172,6 +182,7 @@ class WineModel implements IWineListModel {
         this.tastes = null;
         this.selectedTastes = null;
         this.tasteCharacteristics = null;
+        this.winePeak = null;
         this.review = null;
     }
 }
