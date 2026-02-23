@@ -19,7 +19,7 @@ export const useColorShades = (topColors: IColorStatistic[] | null) => {
         const items: IColorShadeItem[] = [];
 
         topColors.forEach((colorItem) => {
-            if (colorItem.pale.userCount > 0) {
+            if (colorItem.pale?.userCount && colorItem.pale.userCount > 0) {
                 items.push({
                     id: `${colorItem.id}-pale`,
                     colorHex: colorItem.pale.colorHex,
@@ -31,7 +31,7 @@ export const useColorShades = (topColors: IColorStatistic[] | null) => {
                 });
             }
 
-            if (colorItem.medium.userCount > 0) {
+            if (colorItem.medium?.userCount && colorItem.medium.userCount > 0) {
                 items.push({
                     id: `${colorItem.id}-medium`,
                     colorHex: colorItem.medium.colorHex,
@@ -43,7 +43,7 @@ export const useColorShades = (topColors: IColorStatistic[] | null) => {
                 });
             }
 
-            if (colorItem.deep.userCount > 0) {
+            if (colorItem.deep?.userCount && colorItem.deep.userCount > 0) {
                 items.push({
                     id: `${colorItem.id}-deep`,
                     colorHex: colorItem.deep.colorHex,
