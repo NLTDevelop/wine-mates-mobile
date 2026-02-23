@@ -26,7 +26,7 @@ export const WineTasteCharacteristicsView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues,
-        isPremiumUser, winePeak, handleWinePeakChange } = useWineTasteCharacteristics();
+        isPremiumUser, winePeak, handleWinePeakChange, isExpertOrWinemaker } = useWineTasteCharacteristics();
 
     const listData = useMemo<ListItemType[]>(() => {
         const items: ListItemType[] = [];
@@ -34,10 +34,12 @@ export const WineTasteCharacteristicsView = observer(() => {
             data.forEach(characteristic => {
                 items.push({ type: 'characteristic', data: characteristic });
             });
-            items.push({ type: 'winePeak' });
+            if (isExpertOrWinemaker) {
+                items.push({ type: 'winePeak' });
+            }
         }
         return items;
-    }, [data]);
+    }, [data, isExpertOrWinemaker]);
 
 
     const keyExtractor = useCallback((item: ListItemType, index: number) => {

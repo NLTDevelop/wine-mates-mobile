@@ -2,7 +2,7 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
     const styles = StyleSheet.create({
         container: {
             gap: scaleVertical(4),
@@ -23,6 +23,9 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'center',
             width: '50%',
+            position: 'relative',
+            overflow: 'hidden',
+            opacity: isPremiumUser ? 1 : 0.6,
         },
         pickerText: {
             color: colors.text,
@@ -52,6 +55,19 @@ export const getStyles = (colors: IColors) => {
         pickerContainer: {
             alignItems: 'center',
             justifyContent: 'center',
+        },
+        crownIconContainer: {
+            position: 'absolute',
+            top: scaleVertical(8),
+            right: scaleHorizontal(8),
+        },
+        blurOverlay: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            borderRadius: 12,
         },
     });
     return styles;

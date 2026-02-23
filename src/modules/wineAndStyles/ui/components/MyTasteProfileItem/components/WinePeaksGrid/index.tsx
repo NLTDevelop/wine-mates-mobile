@@ -1,20 +1,25 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { Typography } from '@/UIKit/Typography';
 import { useUiContext } from '@/UIProvider';
 import { ITasteProfileTopWinePeak } from '@/entities/wine/types/ITasteProfile';
 import { declOfWord, getContrastColor } from '@/utils';
 import { getStyles } from './styles';
+import { userModel } from '@/entities/users/UserModel';
+import { observer } from 'mobx-react-lite';
+import { BlurView } from '@sbaiahmed1/react-native-blur';
+import { LockIcon } from '@assets/icons/LockIcon';
 
 interface IProps {
     peaks: ITasteProfileTopWinePeak[];
 }
 
-export const WinePeaksGrid = ({ peaks }: IProps) => {
+export const WinePeaksGrid = observer(({ peaks }: IProps) => {
     const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const isPremiumUser = userModel.user?.hasPremium || false;
+    const styles = useMemo(() => getStyles(colors, isPremiumUser), [colors, isPremiumUser]);
     const title = t('wine.winePeak');
-    const textColor = getContrastColor(colors.primary);
+    const textColor = isPremiumUser ? getContrastColor(colors.primary) : colors.text;
 
     return (
         <>
@@ -36,7 +41,25 @@ export const WinePeaksGrid = ({ peaks }: IProps) => {
                         />
                     </View>
                 ))}
+                {!isPremiumUser && (
+                    <>
+                        {Platform.OS === 'ios' ? (
+                            <BlurView
+                                style={styles.blurOverlay}
+                                blurType={'light'}
+                                blurAmount={12}
+                                reducedTransparencyFallbackColor={colors.background}
+                            />
+                        ) : (
+                            <View style={styles.androidOverlay} />
+                        )}
+                        <View style={styles.lockIconContainer}>
+                            <LockIcon />
+                        </View>
+                    </>
+                )}
             </View>
         </>
     );
-};
+
+});

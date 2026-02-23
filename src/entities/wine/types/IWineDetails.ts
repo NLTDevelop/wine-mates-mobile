@@ -15,10 +15,18 @@ export interface IVintage {
     totalReviews: number;
 }
 
-export interface IColorStatistic extends Omit<IStatistic, 'userCount'> {
-    paleCount: number,
-    mediumCount: number,
-    deepCount: number
+export interface IColorShade {
+    colorHex: string;
+    userCount: number;
+}
+
+export interface IColorStatistic {
+    id: number;
+    colorHex: string;
+    name: string;
+    pale: IColorShade;
+    medium: IColorShade;
+    deep: IColorShade;
 }
 
 export interface IWinePeakStatistic {
