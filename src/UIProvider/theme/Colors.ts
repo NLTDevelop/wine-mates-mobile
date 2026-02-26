@@ -41,5 +41,6 @@ export const COLORS: { light: IColors } = {
         info: '#2563EB',
 
         stars: '#ECC024',
+        lockBackground: '#E4E4E4',
     },
 };

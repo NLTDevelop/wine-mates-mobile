@@ -149,6 +149,7 @@
         "colorOfWine": "Колір вина",
         "country": "Країна",
         "region": "Регіон",
+        "withoutRegion": "Без регіону",
         "wineryName": "Назва виноробні",
         "grapeVariety": "Сорт винограду",
         "vintage": "Винтаж",
@@ -172,6 +173,7 @@
         "review": "Відгук",
         "rateThisWine": "Оцініть це вино",
         "ratedWine": "Ви оцінили це вино",
+        "didNotRateWine": "Ви не оцінили вино",
         "tastingResult": "Результат дегустації",
         "enterReview": "Поділіться своїм відгуком",
         "notes": "Улюблені нотатки",
@@ -209,7 +211,8 @@
             "defective": "Дефектне вино"
         },
         "overallScore": "Загальний бал",
-        "customVintage": "Власний винтаж"
+        "customVintage": "Власний винтаж",
+        "expertScoreTitle": "Оцінка від експерта"
     },
     "aiAttempts": {
         "label1": "У вас є ",

@@ -1,22 +1,21 @@
 import { useCallback, useMemo } from 'react';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
-import { useUiContext } from '@/UIProvider';
-import { getStyles } from './styles';
 import { useSelectablePressGuard } from '@/hooks/useSelectablePressGuard';
+import { useUiContext } from '@/UIProvider';
+import { declOfWord } from '@/utils';
 
 interface IProps {
     item: IWineListItem;
-    onPress: (item: IWineListItem) => void;
+    onPress?: (item: IWineListItem) => void;
     hideSimilarity?: boolean;
     showDate?: boolean;
 }
 
-export const useWineListItem = ({ item, onPress, hideSimilarity = false, showDate = false }: IProps) => {
-    const { colors, locale } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+export const useWineListItem = ({ item, onPress }: IProps) => {
+    const { t } = useUiContext();
     const guard = useSelectablePressGuard();
 
-    const handleItemPress = useCallback(() => guard.bindPressable.onPress(() => onPress(item)), [item, onPress, guard]);
+    const handleItemPress = useCallback(() => guard.bindPressable.onPress(() => onPress && onPress(item)), [item, onPress, guard]);
 
     const similarityText = useMemo(() => {
         if (!item.similarity) return '-';
@@ -27,7 +26,7 @@ export const useWineListItem = ({ item, onPress, hideSimilarity = false, showDat
         if (item.averageUserRating > 0) {
             return item.averageUserRating.toFixed(1);
         }
-        if (item.averageExpertRating > 0) {
+        if (item.averageExpertRating && item.averageExpertRating > 0) {
             return ((item.averageExpertRating / 100) * 5).toFixed(1);
         }
         return '-';
@@ -37,10 +36,23 @@ export const useWineListItem = ({ item, onPress, hideSimilarity = false, showDat
         return item.lastRate || item.lastReview || null;
     }, [item.lastRate, item.lastReview]);
 
-    const formattedDate = useMemo(() => {
-        if (!lastReviewData?.createdAt) return null;
+    const reviewCount = useMemo(() => {
+        return declOfWord(item.totalReviews || 0, t('scanner.reviewCount') as unknown as Array<string>);
+    }, [item.totalReviews, t]);
 
-        const date = new Date(lastReviewData.createdAt);
+    const locationText = useMemo(() => {
+        const parts: string[] = [];
+        if (item.country?.name) {
+            parts.push(item.country.name);
+        }
+        if (item.region?.name) {
+            parts.push(item.region.name);
+        }
+        return parts.length > 0 ? parts.join(', ') : null;
+    }, [item.country, item.region]);
+
+    const getFormattedDate = useCallback((createdAt: string, locale: string) => {
+        const date = new Date(createdAt);
         const isEnglish = locale === 'en';
 
         const options: Intl.DateTimeFormatOptions = {
@@ -53,17 +65,16 @@ export const useWineListItem = ({ item, onPress, hideSimilarity = false, showDat
         };
 
         return new Intl.DateTimeFormat(isEnglish ? 'en-US' : 'uk-UA', options).format(date);
-    }, [lastReviewData, locale]);
+    }, []);
 
     return {
-        styles,
         guard,
         handleItemPress,
         similarityText,
         displayRating,
+        reviewCount,
         lastReviewData,
-        hideSimilarity,
-        showDate,
-        formattedDate,
+        getFormattedDate,
+        locationText,
     };
 };

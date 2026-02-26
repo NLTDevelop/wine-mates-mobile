@@ -34,6 +34,11 @@ export interface IWinePeakStatistic {
     userCount: number;
 }
 
+export interface IOverallVintageScore {
+    averageUserRating: number;
+    totalReviews: number;
+}
+
 export interface IWineDetails {
     id: number;
     name: string | null;
@@ -41,6 +46,7 @@ export interface IWineDetails {
     currentVintage: IVintage | null;
     isTasted: boolean;
     vintages: IVintage[];
+    overallVintageScore: IOverallVintageScore;
     producer: string | null;
     grapeVariety: string;
     userId: number;

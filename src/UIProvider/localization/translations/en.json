@@ -150,6 +150,7 @@
         "colorOfWine": "Color of wine",
         "country": "Country",
         "region": "Region",
+        "withoutRegion": "Without region",
         "wineryName": "Winery",
         "grapeVariety": "Grape variety",
         "vintage": "Vintage year",
@@ -173,6 +174,7 @@
         "review": "Review",
         "rateThisWine": "Rate this wine",
         "ratedWine": "You rated this wine",
+        "didNotRateWine": "You didn't rate wine",
         "tastingResult": "Tasting result",
         "enterReview": "Share you review",
         "notes": "Favorite Notes",
@@ -206,7 +208,8 @@
             "defective": "Defective wine"
         },
         "overallScore": "Overall Score",
-        "customVintage": "Custom vintage"
+        "customVintage": "Custom vintage",
+        "expertScoreTitle": "Expert Rate"
     },
     "aiAttempts": {
         "label1": "You have ",

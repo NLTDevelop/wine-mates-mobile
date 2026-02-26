@@ -86,11 +86,13 @@ export const useWineReviewResult = () => {
             };
 
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
-                if (wineModel.review?.starRate && wineModel.review.starRate > 0) {
+                if (wineModel.review?.hasChangedStarRate && wineModel.review?.starRate && wineModel.review.starRate > 0) {
                     payload.userRating = wineModel.review.starRate;
                 }
             } else {
-                payload.expertRating = wineModel.review?.rate;
+                if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
+                    payload.expertRating = wineModel.review.rate;
+                }
             }
 
             if (wineModel.base?.typeOfWine.isSparkling) {
@@ -197,11 +199,13 @@ export const useWineReviewResult = () => {
             }
 
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
-                if (wineModel.review?.starRate && wineModel.review.starRate > 0) {
+                if (wineModel.review?.hasChangedStarRate && wineModel.review?.starRate && wineModel.review.starRate > 0) {
                     payload.userRating = wineModel.review.starRate;
                 }
             } else {
-                payload.expertRating = wineModel.review?.rate;
+                if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
+                    payload.expertRating = wineModel.review.rate;
+                }
             }
 
             if (wineModel.base?.typeOfWine.isSparkling) {

@@ -39,6 +39,7 @@ export const WineReviewResultView = observer(() => {
                             sliderValue={wineModel.review?.rate || 0}
                             starRate={wineModel.review?.starRate || 0}
                             disabled={true}
+                            hasChangedRating={wineModel.review?.hasChangedRate || wineModel.review?.hasChangedStarRate || false}
                         />
                         <Notes />
                         <View style={styles.limitContainer}>
