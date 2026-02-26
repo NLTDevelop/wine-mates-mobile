@@ -10,7 +10,6 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
-import { storage } from '@/libs/storage/MMKVStorage';
 import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
 
 export const useWineReviewResult = () => {
@@ -29,7 +28,7 @@ export const useWineReviewResult = () => {
             setIsLoadingLimits(true);
 
             const params = { wineId: wineModel.wine?.id };
-            
+
             const response = await wineService.getLimits(params);
 
             if (response.isError || !response.data) {
@@ -286,14 +285,14 @@ export const useWineReviewResult = () => {
                 if (hasDetailsScreen) {
                     const detailsRoute = state.routes.find(route => route.name === 'WineDetailsView');
                     if (detailsRoute) {
-                        const updatedRoutes = state.routes.map(route => 
-                            route.name === 'WineDetailsView' 
+                        const updatedRoutes = state.routes.map(route =>
+                            route.name === 'WineDetailsView'
                                 ? { ...route, params: wineDetailsParams }
                                 : route
                         );
                         const detailsIndex = updatedRoutes.findIndex(r => r.name === 'WineDetailsView');
                         const filteredRoutes = updatedRoutes.slice(0, detailsIndex + 1);
-                        
+
                         navigation.dispatch(
                             CommonActions.reset({
                                 ...state,
@@ -320,6 +319,15 @@ export const useWineReviewResult = () => {
                 }
 
                 clearTasteCharacteristicsCache();
+                setLimits(prevState => {
+                    if (!prevState) {
+                        return prevState;
+                    }
+                    return {
+                        ...prevState,
+                        snacks: null,
+                    };
+                });
                 wineModel.clear();
             }
         } catch (error) {

@@ -26,6 +26,7 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         imageContainer: {
             width: '34.6%',
             position: 'relative',
+            alignSelf: 'stretch',
         },
         similarityBadge: {
             position: 'absolute',
@@ -49,6 +50,11 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         },
         imagePlaceholder: {
             borderRadius: 12,
+        },
+        imagePlaceholderContainer: {
+            width: '100%',
+            flex: 1,
+            minHeight: scaleVertical(200),
         },
         rightColumn: {
             flex: 1,
@@ -88,6 +94,12 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         },
         star: {
             marginHorizontal: scaleHorizontal(1),
+        },
+        dateContainer: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: scaleVertical(12),
+            marginBottom: -scaleVertical(6),
         },
         footerContainer: {
             flexGrow: 1,

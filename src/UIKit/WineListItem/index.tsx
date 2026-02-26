@@ -20,23 +20,19 @@ interface IProps {
     footer?: ReactNode;
     wineName?: string;
     removeCardStyles?: boolean;
+    showDate?: boolean;
 }
 
-export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wineName, removeCardStyles = false }: IProps) => {
-    const { colors } = useUiContext();
+export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wineName, removeCardStyles = false, showDate = false }: IProps) => {
+    const { colors, locale } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
-    const { guard, handleItemPress, similarityText, displayRating, reviewCount, locationText } = useWineListItem({ item, onPress });
+    const { guard, handleItemPress, similarityText, displayRating, reviewCount, locationText, lastReviewData, getFormattedDate } = useWineListItem({ item, onPress, showDate });
 
     const hasPremium = userModel.user?.hasPremium ?? false;
     const showMedal = item.averageExpertRating && item.averageExpertRating > 0;
 
-    return (
-        <Pressable
-            style={({ pressed }) => [styles.container, pressed && styles.pressed]}
-            onPress={handleItemPress}
-            onPressOut={guard.bindPressable.onPressOut}
-        >
-            <View style={styles.content}>
+    const content = (
+        <View style={styles.content}>
                 <View style={styles.imageContainer}>
                     {!hideSimilarity && (
                         <View style={styles.similarityBadge}>
@@ -50,7 +46,7 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
                             radius={12}
                         />
                     ) : (
-                        <View style={styles.image}>
+                        <View style={styles.imagePlaceholderContainer}>
                             <EmptyWine containerStyle={styles.imagePlaceholder} />
                         </View>
                     )}
@@ -112,6 +108,36 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
                     </View>
                 </View>
             </View>
-        </Pressable>
+    );
+
+    const dateContent = (showDate && lastReviewData?.createdAt) ? (
+        <View style={styles.dateContainer}>
+            <Typography
+                variant="subtitle_12_400"
+                text={getFormattedDate(lastReviewData.createdAt, locale)}
+                numberOfLines={1}
+                style={styles.locationText}
+            />
+        </View>
+    ) : null;
+
+    if (onPress) {
+        return (
+            <Pressable
+                style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+                onPress={handleItemPress}
+                onPressOut={guard.bindPressable.onPressOut}
+            >
+                {content}
+                {dateContent}
+            </Pressable>
+        );
+    }
+
+    return (
+        <View style={styles.container}>
+            {content}
+            {dateContent}
+        </View>
     );
 };

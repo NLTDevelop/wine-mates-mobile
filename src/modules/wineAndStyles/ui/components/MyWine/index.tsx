@@ -11,6 +11,7 @@ import { AnimatedWineListItem } from './components/AnimatedWineListItem';
 import { useRefresh } from '@/hooks/useRefresh';
 import { observer } from 'mobx-react-lite';
 import { MyWineSearchBar } from './components/MyWineSearchBar';
+import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
 
 export const MyWine = observer(() => {
     const { colors , t } = useUiContext();
@@ -29,9 +30,17 @@ export const MyWine = observer(() => {
     }, [handleScrollToTop, setScrollToTop]);
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
+    
+    const renderFooter = useCallback((item: IWineListItem) => {
+        const lastReviewData = item.lastRate || item.lastReview;
+        if (!lastReviewData) return null;
+
+        return <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review} />;
+    }, []);
+
     const renderItem = useCallback(({ item, index }: { item: IWineListItem; index: number }) => {
-        return <AnimatedWineListItem item={item} index={index} onPress={onItemPress} />;
-    }, [onItemPress]);
+        return <AnimatedWineListItem item={item} index={index} onPress={onItemPress} footer={renderFooter(item)} />;
+    }, [onItemPress, renderFooter]);
 
     return (
         <View style={styles.container}>
