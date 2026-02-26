@@ -14,6 +14,7 @@ import { EmptyListView } from '@/UIKit/EmptyListView';
 import { observer } from 'mobx-react-lite';
 import { WineListItem } from '@/UIKit/WineListItem';
 import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
+import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
 
 export const ScanResultsListView = observer(() => {
     const { colors, t } = useUiContext();
@@ -23,9 +24,19 @@ export const ScanResultsListView = observer(() => {
     const { refreshControl } = useRefresh(onRefresh);
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
+
+    const renderFooter = useCallback((item: IWineListItem) => {
+        console.log('check review', item);
+        const lastReviewData = item.lastRate || item.lastReview;
+        if (!lastReviewData) return null;
+
+        return <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review} />;
+    }, []);
+
     const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
-        return <WineListItem item={item} onPress={handleItemPress} />;
-    }, [handleItemPress]);
+        return <WineListItem item={item} onPress={handleItemPress} footer={renderFooter(item)} />;
+    }, [handleItemPress, renderFooter]);
+
 
     return (
         // <WithErrorHandler error={null} onRetry={() => {}}>

@@ -80,7 +80,7 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             paddingTop: scaleVertical(2),
         },
         rateReviewText: {
-            color: colors.text,
+            color: colors.text_light,
             paddingTop: scaleVertical(2),
             marginTop: -scaleVertical(4),
         },
