@@ -45,8 +45,9 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             color: colors.background,
         },
         image: {
+            position: 'absolute',
             width: '100%',
-            minHeight: scaleVertical(220),
+            minHeight: scaleVertical(200),
         },
         imagePlaceholder: {
             borderRadius: 12,

@@ -39,16 +39,15 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
                             <Typography numberOfLines={1} variant="subtitle_12_400" style={styles.similarityText} text={similarityText} />
                         </View>
                     )}
-                    {item.image?.originalUrl ? (
+                    <View style={styles.imagePlaceholderContainer}>
+                        <EmptyWine containerStyle={styles.imagePlaceholder} />
+                    </View>
+                    {item.image?.originalUrl && (
                         <FasterImageView
                             source={{ uri: item.image.originalUrl, resizeMode: 'cover' }}
                             style={styles.image}
                             radius={12}
                         />
-                    ) : (
-                        <View style={styles.imagePlaceholderContainer}>
-                            <EmptyWine containerStyle={styles.imagePlaceholder} />
-                        </View>
                     )}
                 </View>
 

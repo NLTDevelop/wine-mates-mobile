@@ -74,6 +74,18 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             gap: scaleHorizontal(4),
         },
+        reviewSection: {
+            gap: scaleVertical(4),
+            marginTop: scaleVertical(8),
+        },
+        userRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(8),
+        },
+        text: {
+            color: colors.text_light,
+        },
     });
     return { styles, medalSize };
 };
