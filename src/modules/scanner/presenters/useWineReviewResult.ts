@@ -319,15 +319,6 @@ export const useWineReviewResult = () => {
                 }
 
                 clearTasteCharacteristicsCache();
-                setLimits(prevState => {
-                    if (!prevState) {
-                        return prevState;
-                    }
-                    return {
-                        ...prevState,
-                        snacks: null,
-                    };
-                });
                 wineModel.clear();
             }
         } catch (error) {

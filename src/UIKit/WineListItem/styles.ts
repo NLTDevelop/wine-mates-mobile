@@ -1,5 +1,5 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
@@ -59,6 +59,11 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         rightColumn: {
             flex: 1,
             alignItems: 'center',
+        },
+        expertReviewText: {
+          fontSize: scaleFontSize(10),
+            marginTop: -scaleVertical(4),
+            color: colors.text_light,
         },
         medalContainer: {
             width: scaleHorizontal(medalSize),

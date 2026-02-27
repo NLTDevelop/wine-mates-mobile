@@ -13,6 +13,7 @@ export const useWineDetails = () => {
     const [id, setId] = useState<number | null>(wineId);
     const previousWineIdRef = useRef<number | null>(wineId);
     const isManualChangeRef = useRef(false);
+    const clearCustomVintagesRef = useRef<(() => void) | null>(null);
 
     const getDetails = useCallback(async (preserveImage: boolean = false) => {
         try {
@@ -104,5 +105,24 @@ export const useWineDetails = () => {
     const isVintageInList = details?.vintages.some(v => v.vintage === details.vintage) ?? false;
     const hasCurrentVintageData = details?.currentVintage !== null;
 
-    return { details, isError, getDetails, id, onVintageChange, isVintageInList, hasCurrentVintageData };
+    const clearCustomVintage = useCallback(() => {
+        if (details && details.currentVintage !== null) {
+            setDetails(prev => prev ? {
+                ...prev,
+                vintage: prev.currentVintage?.vintage ?? prev.vintage,
+            } : null);
+        }
+    }, [details]);
+
+    const setClearCustomVintagesFn = useCallback((fn: () => void) => {
+        clearCustomVintagesRef.current = fn;
+    }, []);
+
+    const clearAllCustomVintages = useCallback(() => {
+        if (clearCustomVintagesRef.current) {
+            clearCustomVintagesRef.current();
+        }
+    }, []);
+
+    return { details, isError, getDetails, id, onVintageChange, isVintageInList, hasCurrentVintageData, clearCustomVintage, setClearCustomVintagesFn, clearAllCustomVintages };
 };

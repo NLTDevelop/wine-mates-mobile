@@ -1,84 +1,79 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { colorOpacity, scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors) => {
+    const medalSize = 54;
+
     const styles = StyleSheet.create({
         container: {
+            padding: scaleVertical(12),
+            paddingHorizontal: scaleHorizontal(12),
+            backgroundColor: colors.background,
+        },
+        content: {
             flexDirection: 'row',
             gap: scaleHorizontal(12),
-            width: '100%',
         },
         imageContainer: {
-            width: scaleHorizontal(76),
-            height: scaleVertical(175),
+            width: '34.6%',
+            position: 'relative',
+            alignSelf: 'stretch',
         },
         image: {
-            width: scaleHorizontal(76),
-            height: scaleVertical(175),
+            position: 'absolute',
+            width: '100%',
+            minHeight: scaleVertical(220),
+        },
+        imagePlaceholder: {
+            borderRadius: 12,
+        },
+        imagePlaceholderContainer: {
+            width: '100%',
+            flex: 1,
+            minHeight: scaleVertical(200),
         },
         rightColumn: {
             flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-        },
-        header: {
-            height: scaleVertical(70),
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-        },
-        headerLeft: {
-            flex: 1,
-            gap: scaleVertical(4),
-            justifyContent: 'flex-start',
-        },
-        headerRight: {
             alignItems: 'center',
-            justifyContent: 'flex-start',
         },
-        medalContainer: {
-            alignItems: 'center',
-            justifyContent: 'center',
-            alignSelf: 'center',
-            gap: scaleHorizontal(4),
-        },
-        lockedMedalContainer: {
-            width: scaleHorizontal(32),
-            height: scaleHorizontal(32),
-            borderRadius: scaleHorizontal(16),
-            backgroundColor: colors.text_light,
-            alignItems: 'center',
-            justifyContent: 'center',
-            alignSelf: 'center',
-        },
-        rateContainer: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: scaleHorizontal(4),
-        },
-        rateWrapper: {
-            flexDirection: 'row',
-            backgroundColor: colorOpacity(colors.stars, 32),
-            paddingHorizontal: scaleHorizontal(4),
-            paddingVertical: scaleVertical(2),
-            borderRadius: 8,
-            alignItems: 'center',
-            gap: scaleHorizontal(2),
-        },
-        reviewSection: {
-            gap: scaleVertical(4),
-        },
-        userRow: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: scaleHorizontal(8),
-        },
-        text: {
+        expertReviewText: {
+            fontSize: scaleFontSize(10),
+            marginTop: -scaleVertical(4),
             color: colors.text_light,
         },
-        medalText: {
+        medalContainer: {
+            width: scaleHorizontal(medalSize),
+            height: scaleHorizontal(medalSize),
+            borderRadius: medalSize,
+            overflow: 'hidden',
+            marginBottom: scaleVertical(6),
+        },
+        titleText: {
             textAlign: 'center',
         },
+        locationText: {
+            color: colors.text_light,
+            paddingTop: scaleVertical(2),
+            marginTop: -scaleVertical(4),
+        },
+        rateText: {
+            color: colors.text,
+            paddingTop: scaleVertical(2),
+        },
+        rateReviewText: {
+            color: colors.text_light,
+            paddingTop: scaleVertical(2),
+            marginTop: -scaleVertical(4),
+        },
+        rateContainer: {
+            alignItems: 'center',
+        },
+        starsContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(4),
+        },
     });
-    return styles;
+    return { styles, medalSize };
 };

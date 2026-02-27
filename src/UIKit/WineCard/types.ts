@@ -35,6 +35,7 @@ export interface ICarouselWineCardData {
     producer: string;
     averageUserRating: number;
     countUserRating: number;
+    totalReviews?: number;
     averageExpertRating?: number;
     image: ICarouselWineCardImage;
     type: ICarouselWineCardType;

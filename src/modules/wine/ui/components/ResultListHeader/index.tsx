@@ -21,9 +21,12 @@ interface IProps {
     onVintageChange: (item: IDropdownItem) => void;
     onFavoritePress: () => void;
     hasCurrentVintageData: boolean;
+    clearCustomVintage: () => void;
+    setClearCustomVintagesFn: (fn: () => void) => void;
+    clearAllCustomVintages: () => void;
 }
 
-export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCurrentVintageData }: IProps) => {
+export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCurrentVintageData, clearCustomVintage, setClearCustomVintagesFn, clearAllCustomVintages }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isPremiumUser = userModel.user?.hasPremium || false;
@@ -37,7 +40,7 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCu
 
     return (
         <View>
-            <ResultHeader item={data} onVintageChange={onVintageChange} onFavoritePress={onFavoritePress} hasCurrentVintageData={hasCurrentVintageData}/>
+            <ResultHeader item={data} onVintageChange={onVintageChange} onFavoritePress={onFavoritePress} hasCurrentVintageData={hasCurrentVintageData} clearCustomVintage={clearCustomVintage} setClearCustomVintagesFn={setClearCustomVintagesFn} clearAllCustomVintages={clearAllCustomVintages}/>
 
             {data.isTasted && (
                 <View style={styles.tasted}>

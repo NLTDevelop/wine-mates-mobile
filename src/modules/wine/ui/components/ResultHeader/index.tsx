@@ -16,13 +16,16 @@ interface IProps {
     onVintageChange: (item: IDropdownItem) => void;
     onFavoritePress: () => void;
     hasCurrentVintageData: boolean;
+    clearCustomVintage: () => void;
+    setClearCustomVintagesFn: (fn: () => void) => void;
+    clearAllCustomVintages: () => void;
 }
 
-export const ResultHeader = ({ item, onVintageChange, onFavoritePress, hasCurrentVintageData }: IProps) => {
+export const ResultHeader = ({ item, onVintageChange, onFavoritePress, hasCurrentVintageData, clearCustomVintage, setClearCustomVintagesFn, clearAllCustomVintages }: IProps) => {
     const { t } = useUiContext();
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { onPress, isCreating } = useResultHeader(item);
+    const { onPress, isCreating } = useResultHeader(item, clearCustomVintage, clearAllCustomVintages);
     const { description } = useResultHeaderLogic({ item, styles });
 
     const footer = useMemo(() => (
@@ -32,6 +35,7 @@ export const ResultHeader = ({ item, onVintageChange, onFavoritePress, hasCurren
                 currentVintage={item.currentVintage}
                 selectedVintage={item.vintage}
                 onVintageChange={onVintageChange}
+                onClearCustomVintages={setClearCustomVintagesFn}
             />
             <View style={styles.buttonTasteContainer}>
                 <Button

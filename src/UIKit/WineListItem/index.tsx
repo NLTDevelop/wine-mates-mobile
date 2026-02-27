@@ -57,11 +57,19 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
                         {!hasPremium ? (
                             <ShowLock iconSize={medalSize} />
                         ) : showMedal ? (
-                            <RateMedal sliderValue={item.averageExpertRating!} size={medalSize} />
+                                <View>
+                                    <RateMedal sliderValue={item.averageExpertRating!} size={medalSize} />
+                                    <Typography variant="subtitle_12_400" text={item.averageExpertRating!.toFixed(1)} />
+                                </View>
                         ) : (
                             <EmptyMedal size={medalSize} />
                         )}
                     </View>
+
+                    {
+                        hasPremium &&
+                        <Typography variant="subtitle_12_400" text={'Expert review'} style={styles.expertReviewText} />
+                    }
 
                     <Typography
                         variant="h5"

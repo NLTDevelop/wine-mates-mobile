@@ -7,7 +7,10 @@ interface IProps {
     text: string;
 }
 
-export const BronzeMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
+export const BronzeMedalIcon = ({ width = 32, height = 32, text }: IProps) => {
+    const fontSize = width * 1.75;
+    
+    return (
     <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 235 230" fill='none'>
         <Path
       fill="url(#a)"
@@ -16,7 +19,7 @@ export const BronzeMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
      <Text
                 x="117"
                 y="60"
-                fontSize={scaleFontSize(24)}
+                fontSize={scaleFontSize(fontSize * 0.2)}
                 fill="#2C1D0C"
                 fontFamily="VisueltPro"
                 fontWeight="700"
@@ -27,8 +30,8 @@ export const BronzeMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
     
             <Text
                 x="117"
-                y="150"
-                fontSize={scaleFontSize(96)}
+                y="146"
+                fontSize={scaleFontSize(fontSize * 0.8)}
                 fill="#2C1D0C"
                 fontFamily="VisueltPro"
                 fontWeight="500"
@@ -40,7 +43,7 @@ export const BronzeMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
             <Text
                 x="117"
                 y="195"
-                fontSize={scaleFontSize(32)}
+                fontSize={scaleFontSize(fontSize * 0.3)}
                 fill="#2C1D0C"
                 fontFamily="VisueltPro"
                 fontWeight="700"
@@ -67,3 +70,4 @@ export const BronzeMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
     </Defs>
     </Svg>
 );
+};

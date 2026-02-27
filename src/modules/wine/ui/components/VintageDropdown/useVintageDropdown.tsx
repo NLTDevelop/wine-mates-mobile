@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -171,6 +171,10 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
         closeDropdown();
     }, [onVintageChange]);
 
+    const clearCustomVintages = useCallback(() => {
+        setCustomVintages([]);
+    }, []);
+
     return {
         vintageData,
         selectedVintageValue,
@@ -178,6 +182,7 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
         renderVintageItem,
         existingYears,
         handleAddVintage,
+        clearCustomVintages,
         styles,
     };
 };

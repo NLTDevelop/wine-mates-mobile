@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useMemo, useState } from 'react';
 
-export const useResultHeader = (item: IWineDetails) => {
+export const useResultHeader = (item: IWineDetails, clearCustomVintage: () => void, clearAllCustomVintages: () => void) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isCreating, setIsCreating] = useState(false);
 
@@ -40,6 +40,12 @@ export const useResultHeader = (item: IWineDetails) => {
 
     const onPress = useCallback(async () => {
         try {
+            if (item.currentVintage !== null) {
+                clearCustomVintage();
+            }
+            
+            clearAllCustomVintages();
+
             const isNewVintage = item.currentVintage === null;
 
             if (isNewVintage) {
@@ -151,7 +157,7 @@ export const useResultHeader = (item: IWineDetails) => {
                 localization.t('common.somethingWentWrong'),
             );
         }
-    }, [navigation, item]);
+    }, [navigation, item, clearCustomVintage, clearAllCustomVintages]);
 
     const selectedVintageValue = item.currentVintage?.vintage != null ? item.currentVintage.vintage.toString() : null;
     const vintagePlaceholder =
