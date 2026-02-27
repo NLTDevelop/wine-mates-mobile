@@ -139,6 +139,28 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
             dropdownItem.totalReviews ?? 0,
             t('scanner.reviewCount') as unknown as Array<string>,
         );
+        const displayLabel = dropdownItem.value === null ? '-' : dropdownItem.label;
+
+        return (
+            <View style={styles.rateContainer}>
+                <Typography variant="subtitle_12_500" text={displayLabel} />
+                {dropdownItem.averageUserRating !== undefined && (
+                    <>
+                        <StarIcon />
+                        <Typography variant="subtitle_12_500" text={rating} />
+                        <Typography variant="subtitle_12_400" text={`(${reviewsText})`} style={styles.text} />
+                    </>
+                )}
+            </View>
+        );
+    };
+
+    const renderVintageItemValue = (dropdownItem: VintageDropdownItem) => {
+        const rating = dropdownItem.averageUserRating ?? 0;
+        const reviewsText = declOfWord(
+            dropdownItem.totalReviews ?? 0,
+            t('scanner.reviewCount') as unknown as Array<string>,
+        );
 
         return (
             <View style={styles.rateContainer}>
@@ -156,7 +178,7 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
 
     const renderVintageItem = (dropdownItem: VintageDropdownItem, selected?: boolean) => (
         <View style={styles.dropdownItem}>
-            {renderVintageValue(dropdownItem)}
+            {renderVintageItemValue(dropdownItem)}
             {selected ? <TickIcon /> : null}
         </View>
     );
