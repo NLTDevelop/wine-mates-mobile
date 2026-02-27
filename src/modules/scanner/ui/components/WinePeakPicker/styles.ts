@@ -15,6 +15,11 @@ export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
         description: {
             color: colors.text_light,
         },
+        pickerRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(12),
+        },
         pickerButton: {
             backgroundColor: colors.background_grey,
             borderRadius: 12,
@@ -26,6 +31,14 @@ export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
             position: 'relative',
             overflow: 'hidden',
             opacity: isPremiumUser ? 1 : 0.6,
+        },
+        resetButton: {
+            backgroundColor: colors.background_grey,
+            borderRadius: 12,
+            width: scaleHorizontal(48),
+            height: scaleVertical(48),
+            alignItems: 'center',
+            justifyContent: 'center',
         },
         pickerText: {
             color: colors.text,

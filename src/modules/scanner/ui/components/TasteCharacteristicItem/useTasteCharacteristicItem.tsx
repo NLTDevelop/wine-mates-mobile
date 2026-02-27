@@ -11,6 +11,14 @@ interface UseTasteCharacteristicItemParams {
     isPremiumUser: boolean;
 }
 
+const hexToRgba = (hex: string, alpha: number): string => {
+    const cleanHex = hex.replace('#', '');
+    const r = parseInt(cleanHex.substring(0, 2), 16);
+    const g = parseInt(cleanHex.substring(2, 4), 16);
+    const b = parseInt(cleanHex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
 export const useTasteCharacteristicItem = ({ item, value, isPremiumUser }: UseTasteCharacteristicItemParams) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -66,6 +74,10 @@ export const useTasteCharacteristicItem = ({ item, value, isPremiumUser }: UseTa
 
     const showBlur = item.isPremium && isFocused && !isPremiumUser;
 
+    const trackColor = useMemo(() => {
+        return hexToRgba(item.colorHex, 0.2);
+    }, [item.colorHex]);
+
     return {
         styles,
         maxIndex,
@@ -73,5 +85,6 @@ export const useTasteCharacteristicItem = ({ item, value, isPremiumUser }: UseTa
         sliderLabels,
         decorator,
         showBlur,
+        trackColor,
     };
 };

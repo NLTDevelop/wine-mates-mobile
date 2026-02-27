@@ -4,7 +4,7 @@ import { ISnack } from '@/entities/snacks/types/ISnack';
 import { wineModel } from '@/entities/wine/WineModel';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 
@@ -13,6 +13,10 @@ type SetLimits = Dispatch<SetStateAction<IRateContext | null>>;
 export const useFoodPairing = (limits: IRateContext | null, setLimits: SetLimits) => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [snacks, setSnacks] = useState<ISnack[] | null>(limits?.snacks ?? null);
+
+    useEffect(() => {
+        setSnacks(limits?.snacks ?? null);
+    }, [limits?.snacks]);
 
     const onGeneratePress = useCallback(async () => {
         try {

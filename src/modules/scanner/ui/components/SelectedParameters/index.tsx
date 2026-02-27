@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { TouchableOpacity, View, ViewStyle } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -13,8 +13,8 @@ interface IProps {
 
 export const SelectedParameters = ({ containerStyle }: IProps) => {
     const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
     const { isOpened, onPress } = useSelectedParameters();
+    const [maxLabelWidth, setMaxLabelWidth] = useState(0);
 
     const parameters = useMemo(() => [
         { key: 'typeOfWine', label: t('wine.typeOfWine'), value: wineModel.base?.typeOfWine?.value || t('wine.typeOfWine') },
@@ -27,6 +27,12 @@ export const SelectedParameters = ({ containerStyle }: IProps) => {
         { key: 'wineName', label: t('wine.wineName'), value: wineModel.base?.wineName?.value || '–', isBold: true },
     ], [t]);
 
+    const styles = useMemo(() => getStyles(colors, maxLabelWidth), [colors, maxLabelWidth]);
+
+    const handleLabelLayout = (width: number) => {
+        setMaxLabelWidth(prev => Math.max(prev, width));
+    };
+
     return (
         <View style={[styles.container, containerStyle]}>
             <TouchableOpacity style={styles.header} onPress={onPress}>
@@ -34,32 +40,27 @@ export const SelectedParameters = ({ containerStyle }: IProps) => {
                 <ArrowDownIcon rotate={isOpened ? 180 : 0} />
             </TouchableOpacity>
             {isOpened && (
-                <>
-                    <View style={styles.columnsContainer}>
-                        <View style={styles.leftColumn}>
-                            {parameters.map((param) => (
+                <View style={styles.rowsContainer}>
+                    {parameters.map((param) => (
+                        <View key={param.key} style={styles.row}>
+                            <View style={styles.labelContainer}>
                                 <Typography
-                                    key={param.key}
                                     variant="body_400"
                                     text={`${param.label}:`}
                                     style={styles.label}
-                                    numberOfLines={1}
+                                    onLayout={(e) => handleLabelLayout(e.nativeEvent.layout.width)}
                                 />
-                            ))}
-                        </View>
-                        <View style={styles.rightColumn}>
-                            {parameters.map((param) => (
+                            </View>
+                            <View style={styles.valueContainer}>
                                 <Typography
-                                    key={param.key}
-                                    variant={'body_500'}
+                                    variant="body_500"
                                     text={param.value}
                                     style={styles.value}
-                                    numberOfLines={1}
                                 />
-                            ))}
+                            </View>
                         </View>
-                    </View>
-                </>
+                    ))}
+                </View>
             )}
         </View>
     );
