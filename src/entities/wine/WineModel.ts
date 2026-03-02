@@ -13,9 +13,13 @@ import { IWineImage } from './types/IWineImage';
 import { IWineAroma } from './types/IWineAroma';
 import { IWine } from './types/IWine';
 import { IWineTasteGroup } from './types/IWineTatseGroup';
+import { IVintage } from './types/IWineDetails';
 
 export interface IWineListModel {
     wine: IWine | null;
+    selectedWineId: number | null;
+    vintages: IVintage[];
+    customVintage: number | null;
     image: IWineImage | null;
     base: IWineBase | null;
     look: IWineLook | null;
@@ -35,6 +39,9 @@ export interface IWineListModel {
 
 class WineModel implements IWineListModel {
     private wineRepository = new MobXRepository<IWine | null>(null);
+    private selectedWineIdRepository = new MobXRepository<number | null>(null);
+    private vintagesRepository = new MobXRepository<IVintage[]>([]);
+    private customVintageRepository = new MobXRepository<number | null>(null);
     private imageRepository = new MobXRepository<IWineImage | null>(null);
     private baseRepository = new MobXRepository<IWineBase | null>(null);
     private lookRepository = new MobXRepository<IWineLook | null>(null);
@@ -56,6 +63,30 @@ class WineModel implements IWineListModel {
 
     public set wine(value: IWine | null) {
         this.wineRepository.save(value);
+    }
+
+    public get selectedWineId() {
+        return this.selectedWineIdRepository.data;
+    }
+
+    public set selectedWineId(value: number | null) {
+        this.selectedWineIdRepository.save(value);
+    }
+
+    public get vintages() {
+        return this.vintagesRepository.data;
+    }
+
+    public set vintages(value: IVintage[]) {
+        this.vintagesRepository.save(value);
+    }
+
+    public get customVintage() {
+        return this.customVintageRepository.data;
+    }
+
+    public set customVintage(value: number | null) {
+        this.customVintageRepository.save(value);
     }
 
     public get image() {

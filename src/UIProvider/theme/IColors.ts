@@ -40,6 +40,7 @@ export type IColors = {
     info: string;
 
     stars: string;
+    lockBackground: string;
 };
 
 export type FontStyle = {

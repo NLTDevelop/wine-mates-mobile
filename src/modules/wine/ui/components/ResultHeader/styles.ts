@@ -77,10 +77,16 @@ export const getStyles = (colors: IColors) => {
         buttonTasteContainer: {
             flexDirection: 'row',
             flex: 1,
-            marginRight: scaleHorizontal(32),
             justifyContent: 'space-between',
             alignItems: 'center',
         },
+        footerContainer: {
+            gap: scaleVertical(4),
+        },
+        cardWrapper: {
+            paddingHorizontal: scaleHorizontal(16),
+            marginBottom: scaleVertical(16),
+        }
     });
     return styles;
 };

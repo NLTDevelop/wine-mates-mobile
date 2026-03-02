@@ -18,7 +18,7 @@ interface IProps {
 }
 
 export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, disabled = false, hideDescription = false, containerStyle, edgeAlignedLabels = false }: IProps) => {
-    const { styles, maxIndex, safeValue, sliderLabels, decorator, showBlur } = useTasteCharacteristicItem({
+    const { styles, maxIndex, safeValue, sliderLabels, decorator, showBlur, trackColor } = useTasteCharacteristicItem({
         item,
         value,
         isPremiumUser,
@@ -41,9 +41,11 @@ export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, 
                 value={safeValue}
                 onChange={onChange}
                 selectedStyle={{ backgroundColor: item.colorHex }}
+                unselectedStyle={{ backgroundColor: trackColor }}
                 disabled={disabled}
                 labels={sliderLabels}
                 decorator={decorator}
+                markerColor={item.colorHex}
                 snapped
                 edgeAlignedLabels={edgeAlignedLabels}
             />

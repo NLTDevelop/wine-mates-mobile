@@ -23,7 +23,7 @@ export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
             position: 'relative',
         },
         gridItem: {
-            width: `${(100 - 4) / 3}%`,
+            width: `${(100 - 5) / 3}%`,
             backgroundColor: isPremiumUser ? colors.primary : colors.background_grey,
             borderRadius: 12,
             paddingVertical: scaleVertical(12),

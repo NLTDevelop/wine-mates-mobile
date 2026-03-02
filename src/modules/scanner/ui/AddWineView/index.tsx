@@ -70,6 +70,7 @@ export const AddWineView = observer(() => {
                                     selectedValue={form.region.value}
                                     disabled={!regions.length}
                                     withSearch={true}
+                                    emptyStateLabel={t('wine.withoutRegion')}
                                 />
                                 <CustomInput
                                     autoCapitalize="none"

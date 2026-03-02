@@ -22,16 +22,17 @@ interface IProps {
     renderItem?: (item: IDropdownItem, selected?: boolean) => ReactElement | null;
     renderSelectedValue?: (item: IDropdownItem) => ReactElement | null;
     renderFooter?: () => ReactElement | null;
+    emptyStateLabel?: string;
 }
 
 export const CustomDropdown = forwardRef<any, IProps>(({ placeholder, onPress, data, withSearch = false, onSelect, disabled = false,
-    selectedValue = null, containerStyle, renderItem, renderSelectedValue, renderFooter }, ref) => {
+    selectedValue = null, containerStyle, renderItem, renderSelectedValue, renderFooter, emptyStateLabel }, ref) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const dropdownRef = useRef<any>(null);
 
     const { value, isOpen, search, filteredData, setSearch, handleSelect, setIsOpen, handleOpen }
-        = useCustomDropdown({onPress, data, onSelect, selectedValue });
+        = useCustomDropdown({onPress, data, onSelect, selectedValue, emptyStateLabel });
     const selectedItem = useMemo(
         () => data.find(item => item.value === value) || null,
         [data, value],

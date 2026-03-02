@@ -10,11 +10,19 @@ export interface IWineListItem {
     createdAt: string;
     image: IMedia | null;
     averageUserRating: number;
-    countUserRating: number;
-    averageExpertRating: number;
-    countExpertRating: number;
+    countUserRating: number | null;
+    averageExpertRating: number | null;
+    countExpertRating: number | null;
     similarity?: number;
     totalReviews?: number;
+    country?: {
+        id: number;
+        name: string;
+    };
+    region?: {
+        id: number;
+        name: string;
+    } | null;
     lastReview?: {
         review: string;
         createdAt: string;

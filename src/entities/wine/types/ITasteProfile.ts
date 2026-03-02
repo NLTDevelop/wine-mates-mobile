@@ -1,8 +1,16 @@
+export interface ITasteProfileColorShade {
+    colorHex: string;
+    count: number;
+}
+
 export interface ITasteProfileStatisticItem {
     id: number;
     name: string;
     colorHex: string;
     count: number;
+    pale?: ITasteProfileColorShade;
+    medium?: ITasteProfileColorShade;
+    deep?: ITasteProfileColorShade;
 }
 
 export interface ITasteProfileCharacteristicLevel {

@@ -3,7 +3,7 @@ import { View, Platform } from 'react-native';
 import { Typography } from '@/UIKit/Typography';
 import { useUiContext } from '@/UIProvider';
 import { ITasteProfileTopWinePeak } from '@/entities/wine/types/ITasteProfile';
-import { declOfWord, getContrastColor } from '@/utils';
+import { declOfWord, getContrastColor, isIOS } from '@/utils';
 import { getStyles } from './styles';
 import { userModel } from '@/entities/users/UserModel';
 import { observer } from 'mobx-react-lite';
@@ -43,7 +43,7 @@ export const WinePeaksGrid = observer(({ peaks }: IProps) => {
                 ))}
                 {!isPremiumUser && (
                     <>
-                        {Platform.OS === 'ios' ? (
+                        {isIOS ? (
                             <BlurView
                                 style={styles.blurOverlay}
                                 blurType={'light'}

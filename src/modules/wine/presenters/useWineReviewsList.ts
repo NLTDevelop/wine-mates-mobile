@@ -3,27 +3,27 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { wineService } from '@/entities/wine/WineService';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
-import { useFocusEffect } from '@react-navigation/native';
+import { wineModel } from '@/entities/wine/WineModel';
 
 const LIMIT = 10;
 const OFFSET = 0;
 
-export const useWineReviewsList = (id: number | null, getDetails: () => Promise<void>) => {
+export const useWineReviewsList = (getDetails: () => Promise<void>) => {
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
     const data = wineReviewsListModel.list?.rows || [];
 
     const getList = useCallback(async (offset: number) => {
         try {
-            if (!id) return;
-            
+            if (!wineModel.selectedWineId) return;
+
             setIsReviewsLoading(true);
             const params = {
                 limit: LIMIT,
                 offset,
-                wineId: id,
+                wineId: wineModel.selectedWineId,
             };
             const response = await wineService.getReviewsList(params);
-    
+
             if (response.isError) {
                 toastService.showError(
                     localization.t('common.errorHappened'),
@@ -35,7 +35,7 @@ export const useWineReviewsList = (id: number | null, getDetails: () => Promise<
         } finally {
             setIsReviewsLoading(false);
         }
-    }, [id]);
+    }, []);
 
     const onRefresh = useCallback(
         async (offset: number = OFFSET) => {
@@ -51,11 +51,11 @@ export const useWineReviewsList = (id: number | null, getDetails: () => Promise<
         }
     }, [isReviewsLoading, getList]);
 
-    useFocusEffect(
-        useCallback(() => {
-            onRefresh();
-        }, [onRefresh]),
-    );
+    useEffect(() => {
+        if (wineModel.selectedWineId) {
+            getList(OFFSET);
+        }
+    }, [wineModel.selectedWineId, getList]);
 
     useEffect(() => {
         return () => wineReviewsListModel.clear();

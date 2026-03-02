@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback } from 'react';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -8,8 +8,10 @@ import { declOfWord } from '@/utils';
 import { IVintage } from '@/entities/wine/types/IWineDetails';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { getStyles } from './styles';
+import { wineModel } from '@/entities/wine/WineModel';
 
-type VintageDropdownItem = IDropdownItem & {
+type VintageDropdownItem = Omit<IDropdownItem, 'value'> & {
+    value: number | null;
     averageUserRating?: number;
     totalReviews?: number;
 };
@@ -24,87 +26,60 @@ interface IProps {
 export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, onVintageChange }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const [customVintages, setCustomVintages] = useState<number[]>([]);
 
     const vintageData = useMemo(() => {
         const currentYear = new Date().getFullYear();
         const startYear = 2010;
-
-        const vintageMap = new Map<number | null, IVintage>();
-
-        vintages.forEach(v => {
-            vintageMap.set(v.vintage, v);
-        });
-
-        if (currentVintage) {
-            vintageMap.set(currentVintage.vintage, currentVintage);
-        }
+        const yearsSet = new Set<number>();
 
         const years: VintageDropdownItem[] = [
             {
                 label: t('wine.withoutVintage'),
                 value: null,
-                ...(vintageMap.has(null) && vintageMap.get(null) ? {
-                    id: vintageMap.get(null)!.wineId,
-                    averageUserRating: vintageMap.get(null)!.averageUserRating,
-                    totalReviews: vintageMap.get(null)!.totalReviews,
-                } : {}),
             }
         ];
 
-        for (let year = currentYear; year >= startYear; year--) {
-            const vintage = vintageMap.get(year);
-
-            if (vintage) {
-                years.push({
-                    label: year.toString(),
-                    value: year,
-                    id: vintage.wineId,
-                    averageUserRating: vintage.averageUserRating,
-                    totalReviews: vintage.totalReviews,
-                });
-            } else {
-                years.push({
-                    label: year.toString(),
-                    value: year,
-                });
-            }
-        }
-
-        if (currentVintage && currentVintage.vintage !== null && (currentVintage.vintage < startYear || currentVintage.vintage > currentYear)) {
-            if (!years.find(y => y.value === currentVintage.vintage)) {
-                years.push({
-                    label: currentVintage.vintage.toString(),
-                    value: currentVintage.vintage,
-                    id: currentVintage.wineId,
-                    averageUserRating: currentVintage.averageUserRating,
-                    totalReviews: currentVintage.totalReviews,
-                });
-            }
-        }
-
         vintages.forEach(v => {
-            if (v.vintage !== null && (v.vintage < startYear || v.vintage > currentYear)) {
-                if (!years.find(y => y.value === v.vintage)) {
-                    years.push({
-                        label: v.vintage.toString(),
-                        value: v.vintage,
-                        id: v.wineId,
-                        averageUserRating: v.averageUserRating,
-                        totalReviews: v.totalReviews,
-                    });
-                }
+            if (v.vintage !== null) {
+                yearsSet.add(v.vintage);
+                years.push({
+                    label: v.vintage.toString(),
+                    value: v.vintage,
+                    id: v.wineId,
+                    averageUserRating: v.averageUserRating,
+                    totalReviews: v.totalReviews,
+                });
             }
         });
 
-        customVintages.forEach(year => {
-            if (!years.find(y => y.value === year)) {
+        if (currentVintage && currentVintage.vintage !== null && !yearsSet.has(currentVintage.vintage)) {
+            yearsSet.add(currentVintage.vintage);
+            years.push({
+                label: currentVintage.vintage.toString(),
+                value: currentVintage.vintage,
+                id: currentVintage.wineId,
+                averageUserRating: currentVintage.averageUserRating,
+                totalReviews: currentVintage.totalReviews,
+            });
+        }
+
+        if (wineModel.customVintage !== null && !yearsSet.has(wineModel.customVintage)) {
+            yearsSet.add(wineModel.customVintage);
+            years.push({
+                label: wineModel.customVintage.toString(),
+                value: wineModel.customVintage,
+            });
+        }
+
+        for (let year = currentYear; year >= startYear; year--) {
+            if (!yearsSet.has(year)) {
+                yearsSet.add(year);
                 years.push({
                     label: year.toString(),
                     value: year,
                 });
             }
-        });
+        }
 
         years.sort((a, b) => {
             if (a.value === null) return -1;
@@ -113,7 +88,7 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
         });
 
         return years;
-    }, [vintages, customVintages]);
+    }, [vintages, currentVintage, t]);
 
     const selectedVintageValue = useMemo(() => {
         const found = vintageData.find(item => item.value === selectedVintage);
@@ -139,14 +114,38 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
             dropdownItem.totalReviews ?? 0,
             t('scanner.reviewCount') as unknown as Array<string>,
         );
+        const displayLabel = dropdownItem.value === null ? '-' : dropdownItem.label;
+        const hasRating = dropdownItem.averageUserRating !== undefined || dropdownItem.totalReviews !== undefined;
+
+        return (
+            <View style={styles.rateContainer}>
+                <Typography variant="subtitle_12_500" text={displayLabel} />
+                {hasRating && (
+                    <>
+                        <StarIcon />
+                        <Typography variant="subtitle_12_500" text={`${rating}`} />
+                        <Typography variant="subtitle_12_400" text={`(${reviewsText})`} style={styles.text} />
+                    </>
+                )}
+            </View>
+        );
+    };
+
+    const renderVintageItemValue = (dropdownItem: VintageDropdownItem) => {
+        const rating = dropdownItem.averageUserRating ?? 0;
+        const reviewsText = declOfWord(
+            dropdownItem.totalReviews ?? 0,
+            t('scanner.reviewCount') as unknown as Array<string>,
+        );
+        const hasRating = dropdownItem.averageUserRating !== undefined || dropdownItem.totalReviews !== undefined;
 
         return (
             <View style={styles.rateContainer}>
                 <Typography variant="subtitle_12_500" text={dropdownItem.label} />
-                {dropdownItem.averageUserRating !== undefined && (
+                {hasRating && (
                     <>
                         <StarIcon />
-                        <Typography variant="subtitle_12_500" text={rating} />
+                        <Typography variant="subtitle_12_500" text={`${rating}`} />
                         <Typography variant="subtitle_12_400" text={`(${reviewsText})`} style={styles.text} />
                     </>
                 )}
@@ -156,7 +155,7 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
 
     const renderVintageItem = (dropdownItem: VintageDropdownItem, selected?: boolean) => (
         <View style={styles.dropdownItem}>
-            {renderVintageValue(dropdownItem)}
+            {renderVintageItemValue(dropdownItem)}
             {selected ? <TickIcon /> : null}
         </View>
     );
@@ -166,7 +165,7 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
     }, [vintageData]);
 
     const handleAddVintage = useCallback((year: number, closeDropdown: () => void) => {
-        setCustomVintages(prev => [...prev, year]);
+        wineModel.customVintage = year;
         onVintageChange(year);
         closeDropdown();
     }, [onVintageChange]);

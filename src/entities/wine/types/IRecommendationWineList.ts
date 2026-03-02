@@ -30,6 +30,20 @@ export interface IRecommendationWineImage {
     originalUrl: string;
 }
 
+export interface IRecommendationWineUser {
+    firstName: string;
+    lastName: string;
+    image?: {
+        originalUrl: string;
+    } | null;
+}
+
+export interface IRecommendationWineLastReview {
+    user: IRecommendationWineUser;
+    review: string | null;
+    createdAt?: string;
+}
+
 export interface IRecommendationWineItem {
     id: number;
     name: string;
@@ -38,6 +52,8 @@ export interface IRecommendationWineItem {
     grapeVariety: string;
     averageUserRating: number;
     countUserRating: number;
+    averageExpertRating?: number;
+    lastReview?: IRecommendationWineLastReview | null;
     image: IRecommendationWineImage;
     color: IRecommendationWineColor;
     type: IRecommendationWineType;

@@ -6,6 +6,7 @@ import { Typography } from '@/UIKit/Typography';
 import { CrownIcon } from '@assets/icons/CrownIcon';
 import { BlurView } from '@sbaiahmed1/react-native-blur';
 import { useTabBar } from './useTabBar';
+import { isIOS } from '@/utils';
 
 interface IProps {
     tabBarProps: any;
@@ -18,7 +19,7 @@ export const TabBar = ({ tabBarProps, handleIndexChange, hasPremium }: IProps) =
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { navigationState } = tabBarProps;
     const { showBlur } = useTabBar();
-    
+
 
     return (
         <View style={styles.tabBarContainer}>
@@ -43,7 +44,7 @@ export const TabBar = ({ tabBarProps, handleIndexChange, hasPremium }: IProps) =
                         ) : (
                             <Typography variant={'body_500'} text={route.title} style={styles.tabLabel} />
                         )}
-                        {isDisabled && Platform.OS === 'ios' && showBlur && (
+                        {isDisabled && isIOS && showBlur && (
                             <BlurView
                                 style={styles.blurOverlay}
                                 blurType={'light'}

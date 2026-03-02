@@ -59,6 +59,19 @@ class WineService {
         }
     };
 
+    getVintages = async (id: number): Promise<IResponse<Array<{ wineId: number; vintage: number | null; averageUserRating: number; totalReviews: number }>>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wines}/${id}/vintages`,
+            });
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getVintages: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
     createWine = async (data: FormData): Promise<IResponse<IWine>> => {
         try {
             const response = await this._requester.request({

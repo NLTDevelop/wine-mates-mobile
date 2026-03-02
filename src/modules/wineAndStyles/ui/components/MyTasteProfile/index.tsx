@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { FlatList } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { MyTasteProfileItem } from '../MyTasteProfileItem';
@@ -9,7 +9,7 @@ import { useTasteProfile } from '@/modules/wineAndStyles/presenters/useTasteProf
 import { useRefresh } from '@/hooks/useRefresh';
 import { getStyles } from './styles';
 
-export const MyTasteProfile = observer(() => {
+export const MyTasteProfile: FC = observer(() => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { isLoading, getData, tasteProfiles } = useTasteProfile();

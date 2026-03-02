@@ -16,9 +16,12 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onV
     const dropdownRef = useRef<any>(null);
 
     const handleCustomVintageAdd = (year: number) => {
+        const vintageInList = vintages.find(v => v.vintage === year);
+        
         onVintageChange({
             label: year.toString(),
             value: year,
+            id: vintageInList?.wineId?.toString(),
         });
     };
 

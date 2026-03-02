@@ -6,10 +6,12 @@ import { useWinePeakPicker } from './useWinePeakPicker';
 import { YearPickerModal } from './YearPickerModal';
 import { getStyles } from './styles';
 import { CrownIcon } from '@assets/icons/CrownIcon';
+import { CrossIcon } from '@assets/icons/CrossIcon';
 import { BlurView } from '@sbaiahmed1/react-native-blur';
 import { Platform } from 'react-native';
 import { userModel } from '@/entities/users/UserModel';
 import { observer } from 'mobx-react-lite';
+import { isIOS } from '@/utils';
 
 interface IProps {
     value: number | null;
@@ -40,26 +42,33 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                     <Typography text={t('wine.winePeak')} variant="h6" />
                     <Typography text={t('wine.winePeakDescription')} variant="subtitle_12_400" style={styles.description} />
                 </View>
-                <Pressable onPress={isPremiumUser ? handleOpen : undefined} style={styles.pickerButton} disabled={!isPremiumUser}>
-                    <Typography
-                        text={displayYear}
-                        variant="h6"
-                        style={styles.pickerText}
-                    />
-                    {!isPremiumUser && (
-                        <View style={styles.crownIconContainer}>
-                            <CrownIcon />
-                        </View>
-                    )}
-                    {!isPremiumUser && Platform.OS === 'ios' && (
-                        <BlurView
-                            style={styles.blurOverlay}
-                            blurType={'light'}
-                            blurAmount={5}
-                            reducedTransparencyFallbackColor={colors.background}
+                <View style={styles.pickerRow}>
+                    <Pressable onPress={isPremiumUser ? handleOpen : undefined} style={styles.pickerButton} disabled={!isPremiumUser}>
+                        <Typography
+                            text={displayYear}
+                            variant="h6"
+                            style={styles.pickerText}
                         />
+                        {!isPremiumUser && (
+                            <View style={styles.crownIconContainer}>
+                                <CrownIcon />
+                            </View>
+                        )}
+                        {!isPremiumUser && isIOS && (
+                            <BlurView
+                                style={styles.blurOverlay}
+                                blurType={'light'}
+                                blurAmount={5}
+                                reducedTransparencyFallbackColor={colors.background}
+                            />
+                        )}
+                    </Pressable>
+                    {value && isPremiumUser && (
+                        <Pressable onPress={handleReset} style={styles.resetButton}>
+                            <CrossIcon width={20} height={20} color={colors.text_light} />
+                        </Pressable>
                     )}
-                </Pressable>
+                </View>
             </View>
             <YearPickerModal
                 visible={isVisible}

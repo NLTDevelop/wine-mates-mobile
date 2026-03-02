@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { useIsFocused } from '@react-navigation/native';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
+import { hexToRgba } from '@/utils';
 import { getStyles } from './styles';
 
 interface UseTasteCharacteristicItemParams {
@@ -66,6 +67,10 @@ export const useTasteCharacteristicItem = ({ item, value, isPremiumUser }: UseTa
 
     const showBlur = item.isPremium && isFocused && !isPremiumUser;
 
+    const trackColor = useMemo(() => {
+        return hexToRgba(item.colorHex, 0.2);
+    }, [item.colorHex]);
+
     return {
         styles,
         maxIndex,
@@ -73,5 +78,6 @@ export const useTasteCharacteristicItem = ({ item, value, isPremiumUser }: UseTa
         sliderLabels,
         decorator,
         showBlur,
+        trackColor,
     };
 };

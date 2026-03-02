@@ -12,7 +12,7 @@ type SetLimits = Dispatch<SetStateAction<IRateContext | null>>;
 
 export const useFoodPairing = (limits: IRateContext | null, setLimits: SetLimits) => {
     const [isGenerating, setIsGenerating] = useState(false);
-    const [snacks, setSnacks] = useState<ISnack[] | null>(limits?.snacks ?? null);
+    const [snacks, setSnacks] = useState<ISnack[] | null>(null);
 
     const onGeneratePress = useCallback(async () => {
         try {
