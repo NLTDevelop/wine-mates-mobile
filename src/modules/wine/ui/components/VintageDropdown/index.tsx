@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
 import { IVintage } from '@/entities/wine/types/IWineDetails';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
@@ -10,16 +10,18 @@ interface IProps {
     currentVintage: IVintage | null;
     selectedVintage: number | null;
     onVintageChange: (item: IDropdownItem) => void;
-    onClearCustomVintages?: (clearFn: () => void) => void;
 }
 
-export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onVintageChange, onClearCustomVintages }: IProps) => {
+export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onVintageChange }: IProps) => {
     const dropdownRef = useRef<any>(null);
 
     const handleCustomVintageAdd = (year: number) => {
+        const vintageInList = vintages.find(v => v.vintage === year);
+        
         onVintageChange({
             label: year.toString(),
             value: year,
+            id: vintageInList?.wineId?.toString(),
         });
     };
 
@@ -34,7 +36,6 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onV
         renderVintageItem,
         existingYears,
         handleAddVintage,
-        clearCustomVintages,
         styles,
     } = useVintageDropdown({
         vintages,
@@ -42,12 +43,6 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onV
         selectedVintage,
         onVintageChange: handleCustomVintageAdd,
     });
-
-    useEffect(() => {
-        if (onClearCustomVintages) {
-            onClearCustomVintages(clearCustomVintages);
-        }
-    }, [onClearCustomVintages, clearCustomVintages]);
 
     return (
         <CustomDropdown

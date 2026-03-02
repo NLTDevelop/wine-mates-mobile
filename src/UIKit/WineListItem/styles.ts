@@ -47,10 +47,12 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         image: {
             position: 'absolute',
             width: '100%',
+            height: '100%',
             minHeight: scaleVertical(200),
         },
         imagePlaceholder: {
             borderRadius: 12,
+            minHeight: scaleVertical(200),
         },
         imagePlaceholderContainer: {
             width: '100%',

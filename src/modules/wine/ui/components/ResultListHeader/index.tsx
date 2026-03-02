@@ -7,7 +7,7 @@ import { declOfWord } from '@/utils';
 import { ResultHeader } from '../ResultHeader';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
 import { TasteCharacteristicItem } from '@/modules/scanner/ui/components/TasteCharacteristicItem';
-import { IStatistic, IWineDetails } from '@/entities/wine/types/IWineDetails';
+import { IStatistic, IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
@@ -18,15 +18,13 @@ import { WinePeaksGrid } from '@/modules/wineAndStyles/ui/components/MyTasteProf
 
 interface IProps {
     data: IWineDetails;
+    vintages: IVintage[];
     onVintageChange: (item: IDropdownItem) => void;
     onFavoritePress: () => void;
     hasCurrentVintageData: boolean;
-    clearCustomVintage: () => void;
-    setClearCustomVintagesFn: (fn: () => void) => void;
-    clearAllCustomVintages: () => void;
 }
 
-export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCurrentVintageData, clearCustomVintage, setClearCustomVintagesFn, clearAllCustomVintages }: IProps) => {
+export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isPremiumUser = userModel.user?.hasPremium || false;
@@ -38,18 +36,29 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCu
 
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
 
+    const isVintageTasted = useMemo(() => {
+        if (!data.isTasted) return false;
+        if (data.vintage === null) return true;
+        
+        const isInVintages = vintages.some(v => v.vintage === data.vintage);
+        const isCurrentVintage = data.currentVintage?.vintage === data.vintage;
+        
+        return isInVintages || isCurrentVintage;
+    }, [data.isTasted, data.vintage, data.currentVintage, vintages]);
+
+
     return (
         <View>
-            <ResultHeader item={data} onVintageChange={onVintageChange} onFavoritePress={onFavoritePress} hasCurrentVintageData={hasCurrentVintageData} clearCustomVintage={clearCustomVintage} setClearCustomVintagesFn={setClearCustomVintagesFn} clearAllCustomVintages={clearAllCustomVintages}/>
+            <ResultHeader item={data} vintages={vintages} onVintageChange={onVintageChange} onFavoritePress={onFavoritePress} hasCurrentVintageData={hasCurrentVintageData} />
 
-            {data.isTasted && (
-                <View style={styles.tasted}>
-                    <Typography text={t('wine.tasted')} style={styles.tastedText} />
-                    <GlassWithWineIcon />
-                </View>
-            )}
+            {isVintageTasted && (
+                <>
+                    <View style={styles.tasted}>
+                        <Typography text={t('wine.tasted')} style={styles.tastedText} />
+                        <GlassWithWineIcon />
+                    </View>
 
-            {colorShadeItems.length > 0 && (
+                    {colorShadeItems.length > 0 && (
                 <>
                     <View style={styles.titleContainer}>
                         <Typography text={t('wine.colors')} variant="h4" />
@@ -136,8 +145,10 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress, hasCu
                 </>
             )}
 
-            {wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0 && (
-                <Typography text={t('wine.reviews')} variant="h4" style={styles.title} />
+                    {wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0 && (
+                        <Typography text={t('wine.reviews')} variant="h4" style={styles.title} />
+                    )}
+                </>
             )}
         </View>
     );

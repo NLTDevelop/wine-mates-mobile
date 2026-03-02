@@ -270,6 +270,11 @@
         "sortBy": "Sort by",
         "typeOfWine": "Type of wine",
         "colorOfWine": "Color of wine",
-        "winePeaks": "Wine Peaks"
+        "winePeaks": "Wine Peaks",
+        "shades": {
+            "deep": "Deep",
+            "medium": "Medium",
+            "pale": "Pale"
+        }
     }
 }

@@ -5,47 +5,14 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-export const useResultHeader = (item: IWineDetails, clearCustomVintage: () => void, clearAllCustomVintages: () => void) => {
+export const useResultHeader = (item: IWineDetails) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isCreating, setIsCreating] = useState(false);
 
-    const vintageData = useMemo(
-        () => {
-            const data = item.vintages.map(vintage => {
-                return {
-                    label: String(vintage.vintage),
-                    value: String(vintage.vintage),
-                    id: vintage.wineId,
-                    averageUserRating: vintage.averageUserRating,
-                    totalReviews: vintage.totalReviews,
-                };
-            });
-
-            if (item.currentVintage && !data.some(vintage => vintage.id === item.currentVintage?.wineId)) {
-                data.unshift({
-                    label: String(item.currentVintage.vintage),
-                    value: String(item.currentVintage.vintage),
-                    id: item.currentVintage.wineId,
-                    averageUserRating: item.currentVintage.averageUserRating,
-                    totalReviews: item.currentVintage.totalReviews,
-                });
-            }
-
-            return data;
-        },
-        [item.vintages, item.currentVintage],
-    );
-
     const onPress = useCallback(async () => {
         try {
-            if (item.currentVintage !== null) {
-                clearCustomVintage();
-            }
-            
-            clearAllCustomVintages();
-
             const isNewVintage = item.currentVintage === null;
 
             if (isNewVintage) {
@@ -148,6 +115,7 @@ export const useResultHeader = (item: IWineDetails, clearCustomVintage: () => vo
                     isSparkling: item.type?.isSparkling ?? false,
                 },
             };
+            wineModel.customVintage = null;
             navigation.navigate('WineLookView');
         } catch (error) {
             setIsCreating(false);
@@ -157,11 +125,7 @@ export const useResultHeader = (item: IWineDetails, clearCustomVintage: () => vo
                 localization.t('common.somethingWentWrong'),
             );
         }
-    }, [navigation, item, clearCustomVintage, clearAllCustomVintages]);
+    }, [navigation, item]);
 
-    const selectedVintageValue = item.currentVintage?.vintage != null ? item.currentVintage.vintage.toString() : null;
-    const vintagePlaceholder =
-        item.currentVintage?.vintage != null ? localization.t('wine.vintage') : localization.t('wine.nonVintage');
-
-    return { onPress, vintageData, selectedVintageValue, vintagePlaceholder, isCreating };
+    return { onPress, isCreating };
 };

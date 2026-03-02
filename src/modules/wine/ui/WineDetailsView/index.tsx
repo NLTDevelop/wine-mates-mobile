@@ -22,8 +22,8 @@ export const WineDetailsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { details, isError, getDetails, id, onVintageChange, hasCurrentVintageData, clearCustomVintage, setClearCustomVintagesFn, clearAllCustomVintages } = useWineDetails();
-    const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(id, getDetails);
+    const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData } = useWineDetails();
+    const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(getDetails);
     const { refreshControl } = useRefresh(onRefresh);
     const  { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave } = useAddToFavoriteBottomSheet();
 
@@ -50,12 +50,10 @@ export const WineDetailsView = observer(() => {
                         ListHeaderComponent={
                             <ResultListHeader
                                 data={details}
+                                vintages={vintages}
                                 onVintageChange={onVintageChange}
                                 onFavoritePress={onOpen}
                                 hasCurrentVintageData={hasCurrentVintageData}
-                                clearCustomVintage={clearCustomVintage}
-                                setClearCustomVintagesFn={setClearCustomVintagesFn}
-                                clearAllCustomVintages={clearAllCustomVintages}
                             />
                         }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}

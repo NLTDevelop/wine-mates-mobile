@@ -1,25 +1,38 @@
-import { IWineDetails } from '@/entities/wine/types/IWineDetails';
+import { IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRoute, useIsFocused } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from 'react';
+import { wineModel } from '@/entities/wine/WineModel';
+import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 
 export const useWineDetails = () => {
     const { wineId } = (useRoute().params as { wineId: number }) || null;
+    const isFocused = useIsFocused();
     const [details, setDetails] = useState<IWineDetails | null>(null);
     const [isError, setIsError] = useState(false);
-    const [id, setId] = useState<number | null>(wineId);
-    const previousWineIdRef = useRef<number | null>(wineId);
-    const isManualChangeRef = useRef(false);
-    const clearCustomVintagesRef = useRef<(() => void) | null>(null);
 
-    const getDetails = useCallback(async (preserveImage: boolean = false) => {
+    const getVintages = useCallback(async () => {
         try {
-            if (!id) return;
+            if (!wineModel.selectedWineId) return;
+            console.log('🔄 getVintages: Завантаження вінтажів для wineId:', wineModel.selectedWineId);
+            const response = await wineService.getVintages(wineModel.selectedWineId);
+            if (!response.isError && response.data) {
+                wineModel.vintages = response.data;
+                console.log('✅ getVintages: Вінтажі завантажено:', response.data.map(v => `${v.vintage} (${v.totalReviews} reviews)`));
+            }
+        } catch (error) {
+            console.error('getVintages error: ', JSON.stringify(error, null, 2));
+        }
+    }, []);
 
-            const response = await wineService.getById(id);
+    const getDetails = useCallback(async () => {
+        try {
+            if (!wineModel.selectedWineId) return;
+
+            const response = await wineService.getById(wineModel.selectedWineId);
 
             if (response.isError || !response.data) {
                 toastService.showError(
@@ -28,101 +41,73 @@ export const useWineDetails = () => {
                 );
                 setIsError(true);
             } else {
-                setDetails(prev => {
-                    if (preserveImage && prev?.image) {
-                        return {
-                            ...response.data,
-                            image: prev.image
-                        };
-                    }
-                    return response.data;
-                });
+                setDetails(response.data);
                 setIsError(false);
             }
         } catch (error) {
             console.error('getTastes error: ', JSON.stringify(error, null, 2));
         }
-    }, [id]);
+    }, []);
 
     const onVintageChange = useCallback(async (item: IDropdownItem) => {
-        isManualChangeRef.current = true;
+        console.log('🎯 onVintageChange: Вибрано вінтаж:', item);
+        console.log('📋 onVintageChange: Поточний список вінтажів:', wineModel.vintages.map(v => `${v.vintage} (wineId: ${v.wineId}, reviews: ${v.totalReviews})`));
         
         if (item.id) {
-            const newId = Number(item.id);
-            setId(newId);
-            
-            try {
-                const response = await wineService.getById(newId);
-                if (!response.isError && response.data) {
-                    setDetails(prev => ({
-                        ...response.data,
-                        image: prev?.image || response.data.image
-                    }));
-                }
-            } catch (error) {
-                console.error('Error loading vintage:', error);
-            }
+            console.log('✅ onVintageChange: Вінтаж з item.id, встановлюємо selectedWineId:', item.id);
+            wineModel.selectedWineId = Number(item.id);
+            await getDetails();
         } else if (details) {
             const newVintageValue = item.value === null ? null : Number(item.value);
-
-            setDetails({
-                ...details,
-                vintage: newVintageValue,
-                currentVintage: null,
-                isTasted: false,
-            });
+            console.log('🔍 onVintageChange: Вінтаж без item.id, шукаємо в списку:', newVintageValue);
+            
+            const vintageInList = wineModel.vintages.find(v => v.vintage === newVintageValue);
+            
+            if (vintageInList) {
+                console.log('✅ onVintageChange: Вінтаж знайдено в списку, встановлюємо selectedWineId:', vintageInList.wineId);
+                wineModel.selectedWineId = vintageInList.wineId;
+                await getDetails();
+            } else {
+                console.log('❌ onVintageChange: Вінтаж НЕ знайдено в списку, встановлюємо isTasted = false');
+                setDetails({
+                    ...details,
+                    vintage: newVintageValue,
+                    isTasted: false,
+                    currentVintage: null,
+                    statistics: {
+                        topColors: [],
+                        topAromas: [],
+                        topFlavors: [],
+                        tasteCharacteristics: [],
+                        topWinePeaks: [],
+                    },
+                });
+                wineReviewsListModel.clear();
+            }
         }
-        
-        setTimeout(() => {
-            isManualChangeRef.current = false;
-        }, 100);
-    }, [details]);
+        console.log('📋 onVintageChange: Список вінтажів після зміни:', wineModel.vintages.map(v => `${v.vintage} (wineId: ${v.wineId}, reviews: ${v.totalReviews})`));
+    }, [details, getDetails]);
 
     useEffect(() => {
-        if (wineId && wineId !== id && !isManualChangeRef.current) {
-            setId(wineId);
+        if (wineId) {
+            wineModel.selectedWineId = wineId;
+            getVintages();
         }
-    }, [wineId, id]);
+    }, [wineId, getVintages]);
 
     useEffect(() => {
-        if (!isManualChangeRef.current) {
+        if (wineModel.selectedWineId) {
             getDetails();
         }
-    }, [getDetails]);
+    }, [wineModel.selectedWineId, getDetails]);
 
-    useFocusEffect(
-        useCallback(() => {
-            if (wineId && wineId !== previousWineIdRef.current) {
-                previousWineIdRef.current = wineId;
-                isManualChangeRef.current = false;
-                setId(wineId);
-            } else if (id && !isManualChangeRef.current) {
-                getDetails();
-            }
-        }, [wineId, id, getDetails])
-    );
+    useEffect(() => {
+        if (isFocused && wineModel.selectedWineId) {
+            getVintages();
+        }
+    }, [isFocused, getVintages]);
 
-    const isVintageInList = details?.vintages.some(v => v.vintage === details.vintage) ?? false;
     const hasCurrentVintageData = details?.currentVintage !== null;
 
-    const clearCustomVintage = useCallback(() => {
-        if (details && details.currentVintage !== null) {
-            setDetails(prev => prev ? {
-                ...prev,
-                vintage: prev.currentVintage?.vintage ?? prev.vintage,
-            } : null);
-        }
-    }, [details]);
-
-    const setClearCustomVintagesFn = useCallback((fn: () => void) => {
-        clearCustomVintagesRef.current = fn;
-    }, []);
-
-    const clearAllCustomVintages = useCallback(() => {
-        if (clearCustomVintagesRef.current) {
-            clearCustomVintagesRef.current();
-        }
-    }, []);
-
-    return { details, isError, getDetails, id, onVintageChange, isVintageInList, hasCurrentVintageData, clearCustomVintage, setClearCustomVintagesFn, clearAllCustomVintages };
+    return { details, vintages: wineModel.vintages, isError, getDetails, onVintageChange, hasCurrentVintageData };
 };

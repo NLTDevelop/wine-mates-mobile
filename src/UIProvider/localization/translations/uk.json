@@ -273,6 +273,11 @@
         "sortBy": "Сортувати за",
         "typeOfWine": "Тип вина",
         "colorOfWine": "Колір вина",
-        "winePeaks": "Піки вин"
+        "winePeaks": "Піки вин",
+        "shades": {
+            "deep": "Глибокий",
+            "medium": "Середній",
+            "pale": "Блідий"
+        }
     }
 }
