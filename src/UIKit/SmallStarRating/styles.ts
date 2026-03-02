@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal } from '@/utils';
 
-export const getStyles = (_colors: IColors) =>
-    StyleSheet.create({
+export const getStyles = (_colors: IColors) => {
+    const styles = StyleSheet.create({
         container: {
             flexDirection: 'row',
             alignItems: 'center',
@@ -19,3 +19,5 @@ export const getStyles = (_colors: IColors) =>
             overflow: 'hidden',
         },
     });
+    return styles;
+}

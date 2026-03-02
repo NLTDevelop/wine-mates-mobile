@@ -11,6 +11,7 @@ import { BlurView } from '@sbaiahmed1/react-native-blur';
 import { Platform } from 'react-native';
 import { userModel } from '@/entities/users/UserModel';
 import { observer } from 'mobx-react-lite';
+import { isIOS } from '@/utils';
 
 interface IProps {
     value: number | null;
@@ -53,7 +54,7 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                                 <CrownIcon />
                             </View>
                         )}
-                        {!isPremiumUser && Platform.OS === 'ios' && (
+                        {!isPremiumUser && isIOS && (
                             <BlurView
                                 style={styles.blurOverlay}
                                 blurType={'light'}

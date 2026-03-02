@@ -26,7 +26,6 @@ export const ScanResultsListView = observer(() => {
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
 
     const renderFooter = useCallback((item: IWineListItem) => {
-        console.log('check review', item);
         const lastReviewData = item.lastRate || item.lastReview;
         if (!lastReviewData) return null;
 

@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors) =>
-    StyleSheet.create({
+export const getStyles = (colors: IColors) => {
+    const styles = StyleSheet.create({
         container: {
             gap: scaleVertical(8),
             borderWidth: scaleHorizontal(1),
@@ -20,3 +20,5 @@ export const getStyles = (colors: IColors) =>
             color: colors.text_light,
         },
     });
+    return styles;
+}

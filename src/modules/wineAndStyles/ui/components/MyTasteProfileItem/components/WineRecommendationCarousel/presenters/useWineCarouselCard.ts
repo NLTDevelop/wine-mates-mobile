@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform } from 'react-native';
+import { isIOS } from '@/utils';
 
 interface IUseWineCarouselCardParams {
     wineId: number;
@@ -8,12 +9,12 @@ interface IUseWineCarouselCardParams {
 }
 
 export const useWineCarouselCard = ({ wineId, onNext, onPrevious }: IUseWineCarouselCardParams) => {
-    const isIos = Platform.OS === 'ios';
-    const [isShadowVisible, setShadowVisible] = useState(isIos);
+
+    const [isShadowVisible, setShadowVisible] = useState(isIOS);
     const hasMountedRef = useRef(false);
 
     useEffect(() => {
-        if (!isIos) {
+        if (!isIOS) {
             return;
         }
 
@@ -29,15 +30,15 @@ export const useWineCarouselCard = ({ wineId, onNext, onPrevious }: IUseWineCaro
         return () => {
             clearTimeout(timeoutId);
         };
-    }, [wineId, isIos]);
+    }, [wineId, isIOS]);
 
     const hideShadowIfNeeded = useCallback(() => {
-        if (!isIos) {
+        if (!isIOS) {
             return;
         }
 
         setShadowVisible(false);
-    }, [isIos]);
+    }, [isIOS]);
 
     const handleNextPress = useCallback(() => {
         hideShadowIfNeeded();
@@ -49,8 +50,8 @@ export const useWineCarouselCard = ({ wineId, onNext, onPrevious }: IUseWineCaro
         onPrevious();
     }, [hideShadowIfNeeded, onPrevious]);
 
-    const shouldShowShadow = isIos && isShadowVisible;
-    const shouldShowBorder = !isIos || !isShadowVisible;
+    const shouldShowShadow = isIOS && isShadowVisible;
+    const shouldShowBorder = !isIOS || !isShadowVisible;
 
     return {
         handleNextPress,

@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { useIsFocused } from '@react-navigation/native';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
+import { hexToRgba } from '@/utils';
 import { getStyles } from './styles';
 
 interface UseTasteCharacteristicItemParams {
@@ -10,14 +11,6 @@ interface UseTasteCharacteristicItemParams {
     value: number;
     isPremiumUser: boolean;
 }
-
-const hexToRgba = (hex: string, alpha: number): string => {
-    const cleanHex = hex.replace('#', '');
-    const r = parseInt(cleanHex.substring(0, 2), 16);
-    const g = parseInt(cleanHex.substring(2, 4), 16);
-    const b = parseInt(cleanHex.substring(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
 
 export const useTasteCharacteristicItem = ({ item, value, isPremiumUser }: UseTasteCharacteristicItemParams) => {
     const { colors } = useUiContext();

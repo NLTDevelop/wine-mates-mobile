@@ -1,7 +1,9 @@
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { WineListItem } from '@/UIKit/WineListItem';
-import { useEffect, useState, ReactNode } from 'react';
-import { Animated, Platform } from 'react-native';
+import { ReactNode } from 'react';
+import { Animated } from 'react-native';
+import { isIOS } from '@/utils';
+import { useAnimatedWineListItem } from './useAnimatedWineListItem';
 
 interface IProps {
     item: IWineListItem;
@@ -10,34 +12,10 @@ interface IProps {
     footer?: ReactNode;
 }
 
-
 export const AnimatedWineListItem = ({ item, index, onPress, footer }: IProps) => {
-    const [fadeAnim] = useState(() => new Animated.Value(0));
-    const [translateYAnim] = useState(() => new Animated.Value(20));
+    const { fadeAnim, translateYAnim } = useAnimatedWineListItem({ index });
 
-    useEffect(() => {
-        if (Platform.OS === 'ios') {
-            Animated.parallel([
-                Animated.timing(fadeAnim, {
-                    toValue: 1,
-                    duration: 400,
-                    delay: index * 50,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(translateYAnim, {
-                    toValue: 0,
-                    duration: 400,
-                    delay: index * 50,
-                    useNativeDriver: true,
-                }),
-            ]).start();
-        } else {
-            fadeAnim.setValue(1);
-            translateYAnim.setValue(0);
-        }
-    }, [fadeAnim, translateYAnim, index]);
-
-    if (Platform.OS !== 'ios') {
+    if (isIOS) {
         return <WineListItem item={item} onPress={onPress} hideSimilarity showDate footer={footer} />;
     }
 

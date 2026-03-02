@@ -1,15 +1,13 @@
 import { useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import { Button } from '@/UIKit/Button';
-import { FavoriteIcon } from '@assets/icons/FavoriteIcon';
 import { IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
 import { useResultHeader } from '@/modules/wine/presenters/useResultHeader';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
-import { VintageDropdown } from '../VintageDropdown';
 import { WineListItem } from '@/UIKit/WineListItem';
 import { useResultHeaderLogic } from './useResultHeaderLogic';
+import { ResultHeaderFooter } from './components/ResultHeaderFooter';
 
 interface IProps {
     item: IWineDetails;
@@ -20,35 +18,22 @@ interface IProps {
 }
 
 export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData }: IProps) => {
-    const { t } = useUiContext();
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { onPress, isCreating } = useResultHeader(item);
     const { description } = useResultHeaderLogic({ item, styles });
 
     const footer = useMemo(() => (
-        <View style={styles.footerContainer}>
-            <VintageDropdown
-                vintages={vintages}
-                currentVintage={item.currentVintage}
-                selectedVintage={item.vintage}
-                onVintageChange={onVintageChange}
-            />
-            <View style={styles.buttonTasteContainer}>
-                <Button
-                    text={hasCurrentVintageData && item.isTasted ? t('wine.tasteAgain') : t('wine.letsTaste')}
-                    onPress={onPress}
-                    type="secondary"
-                    containerStyle={styles.button}
-                    inProgress={isCreating}
-                    disabled={isCreating}
-                />
-                <TouchableOpacity style={styles.favoriteButton} onPress={onFavoritePress}>
-                    <FavoriteIcon />
-                </TouchableOpacity>
-            </View>
-        </View>
-    ), [vintages, item.currentVintage, item.vintage, onVintageChange, hasCurrentVintageData, item.isTasted, t, onPress, isCreating, onFavoritePress, styles.footerContainer, styles.buttonTasteContainer, styles.button, styles.favoriteButton]);
+        <ResultHeaderFooter
+            item={item}
+            vintages={vintages}
+            onVintageChange={onVintageChange}
+            onFavoritePress={onFavoritePress}
+            hasCurrentVintageData={hasCurrentVintageData}
+            onPress={onPress}
+            isCreating={isCreating}
+        />
+    ), [item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, onPress, isCreating]);
 
     return (
         <View style={styles.cardWrapper}>
