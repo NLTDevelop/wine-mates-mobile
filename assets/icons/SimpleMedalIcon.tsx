@@ -46,13 +46,13 @@ export const SimpleMedalIcon = ({
             <Text
                 x="118"
                 y="195"
-                fontSize={scaleFontSize(32)}
+                fontSize={scaleFontSize(28)}
                 fill="#6F6F6F"
                 fontFamily="VisueltPro"
                 fontWeight="700"
                 textAnchor="middle"
             >
-                Simple
+                Simple Wine
             </Text>
         </Svg>
     );
