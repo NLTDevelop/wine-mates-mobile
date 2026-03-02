@@ -14,7 +14,6 @@ export const SimpleMedalIcon = ({
                                 }: IProps) => {
     const w = scaleVertical(width);
     const h = scaleVertical(height);
-    const fontSize = width * 1.75;
 
     return (
         <Svg width={w} height={h} viewBox="0 0 237 232">
@@ -23,7 +22,7 @@ export const SimpleMedalIcon = ({
             <Text
                 x="118"
                 y="60"
-                fontSize={scaleFontSize(fontSize * 0.2)}
+                fontSize={scaleFontSize(24)}
                 fill="#6F6F6F"
                 fontFamily="VisueltPro"
                 fontWeight="700"
@@ -34,8 +33,8 @@ export const SimpleMedalIcon = ({
 
             <Text
                 x="118"
-                y="146"
-                fontSize={scaleFontSize(fontSize * 0.8)}
+                y="150"
+                fontSize={scaleFontSize(96)}
                 fill="#6F6F6F"
                 fontFamily="VisueltPro"
                 fontWeight="500"
@@ -47,13 +46,13 @@ export const SimpleMedalIcon = ({
             <Text
                 x="118"
                 y="195"
-                fontSize={scaleFontSize(fontSize * 0.3)}
+                fontSize={scaleFontSize(28)}
                 fill="#6F6F6F"
                 fontFamily="VisueltPro"
                 fontWeight="700"
                 textAnchor="middle"
             >
-                Simple
+                Simple Wine
             </Text>
         </Svg>
     );
