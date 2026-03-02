@@ -115,14 +115,15 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
             t('scanner.reviewCount') as unknown as Array<string>,
         );
         const displayLabel = dropdownItem.value === null ? '-' : dropdownItem.label;
+        const hasRating = dropdownItem.averageUserRating !== undefined || dropdownItem.totalReviews !== undefined;
 
         return (
             <View style={styles.rateContainer}>
                 <Typography variant="subtitle_12_500" text={displayLabel} />
-                {dropdownItem.averageUserRating !== undefined && (
+                {hasRating && (
                     <>
                         <StarIcon />
-                        <Typography variant="subtitle_12_500" text={rating} />
+                        <Typography variant="subtitle_12_500" text={`${rating}`} />
                         <Typography variant="subtitle_12_400" text={`(${reviewsText})`} style={styles.text} />
                     </>
                 )}
@@ -136,14 +137,15 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
             dropdownItem.totalReviews ?? 0,
             t('scanner.reviewCount') as unknown as Array<string>,
         );
+        const hasRating = dropdownItem.averageUserRating !== undefined || dropdownItem.totalReviews !== undefined;
 
         return (
             <View style={styles.rateContainer}>
                 <Typography variant="subtitle_12_500" text={dropdownItem.label} />
-                {dropdownItem.averageUserRating !== undefined && (
+                {hasRating && (
                     <>
                         <StarIcon />
-                        <Typography variant="subtitle_12_500" text={rating} />
+                        <Typography variant="subtitle_12_500" text={`${rating}`} />
                         <Typography variant="subtitle_12_400" text={`(${reviewsText})`} style={styles.text} />
                     </>
                 )}
