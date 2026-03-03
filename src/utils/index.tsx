@@ -137,4 +137,26 @@ export const colorOpacity = (
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+export const formatEventDate = (date: string): { month: string; day: string } => {
+    if (!date) {
+        return { month: 'DEC', day: '16' };
+    }
+
+    const parts = date.split(', ');
+    if (parts.length < 2) {
+        return { month: 'DEC', day: '16' };
+    }
+
+    const datePart = parts[1];
+    if (!datePart) {
+        return { month: 'DEC', day: '16' };
+    }
+
+    const dateComponents = datePart.split(' ');
+    const month = dateComponents[0]?.toUpperCase() || 'DEC';
+    const day = dateComponents[1] || '16';
+
+    return { month, day };
+};
+
 

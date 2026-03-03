@@ -19,15 +19,6 @@ export const getStyles = (colors: IColors) => {
             height: BUTTON_SIZE,
             minWidth: scaleHorizontal(162),
         },
-        favoriteButton: {
-            width: BUTTON_SIZE,
-            height: BUTTON_SIZE,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: BUTTON_SIZE,
-            borderWidth: 1,
-            borderColor: colors.primary,
-        },
     });
     return styles;
 };

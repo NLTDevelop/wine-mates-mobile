@@ -5,6 +5,7 @@ import { TitledContent } from '@/UIKit/TitledContent';
 import { WineListItem } from '@/UIKit/WineListItem';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { WineOfTheDayFooter, WineOfTheDayMarquee, WineOfTheDayButton } from '@/modules/home/components/WineOfTheDay/components';
+import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
 
 const MOCK_WINE: IWineListItem = {
     "id": 4,
@@ -44,17 +45,20 @@ interface IProps {
 
 export const WineOfTheDay = ({ onArrowPress, onWinePress }: IProps) => {
 
+    const wine = MOCK_WINE;
     //TODO: remove if will not use
     // const { colors } = useUiContext();
     // const styles = useMemo(() => getStyles(colors), [colors]);
 
+    const lastReviewData = wine.lastRate || wine.lastReview;
+
     return (
-        <TitledContent titleVariant="h3" title={'Wine of the day'} rightComponent={<WineOfTheDayButton onPress={onArrowPress} />}>
+        <TitledContent titleVariant="h3" title={'Wine of the day'} rightComponent={<TitledContent.RoundedButton onPress={onArrowPress} />}>
             <WineListItem
                 item={MOCK_WINE}
                 hideSimilarity
                 customBottomComponent={<WineOfTheDayMarquee />}
-                footer={<WineOfTheDayFooter wine={MOCK_WINE} />}
+                footer={lastReviewData ? <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review} /> : null}
                 onPress={onWinePress}
             />
         </TitledContent>

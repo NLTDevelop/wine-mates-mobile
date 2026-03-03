@@ -279,5 +279,9 @@
     },
     "home": {
         "mostTastedWine": "Most tasted wine in the last 24 hours"
+    },
+    "eventMap": {
+        "wineEvents": "Wine events",
+        "readMore": "Read more"
     }
 }

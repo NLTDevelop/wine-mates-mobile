@@ -10,7 +10,7 @@ import { NextArrowIcon } from '@assets/icons/NextArrowIcon.tsx';
 import { SearchIcon } from '@assets/icons/SearchIcon.tsx';
 import { NotificationBadge } from '@/UIKit/NotificationBadge';
 
-export const HomeScreenHeader = observer(() => {
+export const ScreenHeader = observer(() => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -43,5 +43,5 @@ export const HomeScreenHeader = observer(() => {
     );
 });
 
-HomeScreenHeader.displayName = 'HomeScreenHeader';
+ScreenHeader.displayName = 'ScreenHeader';
 
