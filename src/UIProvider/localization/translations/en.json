@@ -276,5 +276,8 @@
             "medium": "Medium",
             "pale": "Pale"
         }
+    },
+    "home": {
+        "mostTastedWine": "Most tasted wine in the last 24 hours"
     }
 }

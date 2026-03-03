@@ -7,6 +7,7 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
 
     const styles = StyleSheet.create({
         container: {
+            overflow: 'hidden',
             ...removeCardStyles ? {} : {
                 padding: scaleVertical(12),
                 paddingHorizontal: scaleHorizontal(12),
@@ -22,6 +23,7 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         content: {
             flexDirection: 'row',
             gap: scaleHorizontal(12),
+            overflow: 'hidden'
         },
         imageContainer: {
             width: '34.6%',
