@@ -1,13 +1,10 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { TitledContent } from '@/UIKit/TitledContent';
-import { Typography } from '@/UIKit/Typography';
 import { WineListItem } from '@/UIKit/WineListItem';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
-import { MarqueeText } from '@/UIKit/MarqueeText';
-import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
+import { WineOfTheDayFooter, WineOfTheDayMarquee, WineOfTheDayButton } from '@/modules/home/components/WineOfTheDay/components';
 
 const MOCK_WINE: IWineListItem = {
     "id": 4,
@@ -40,38 +37,25 @@ const MOCK_WINE: IWineListItem = {
     }
 };
 
-export const WineOfTheDay = () => {
-    const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+interface IProps {
+    onArrowPress?: () => void;
+    onWinePress?: () => void;
+}
 
-    const rightComponent = (
-        <TitledContent.RoundedButton />
-    );
+export const WineOfTheDay = ({ onArrowPress, onWinePress }: IProps) => {
 
-    const customBottomComponent = (
-        <View style={styles.bottomContainer}>
-            <MarqueeText isEverlasting speed={30}>
-                <Typography
-                    text={t('home.mostTastedWine')}
-                    variant="subtitle_12_400"
-                    style={styles.bottomText}
-                />
-            </MarqueeText>
-        </View>
-    );
-
-    const lastReviewData = MOCK_WINE.lastRate || MOCK_WINE.lastReview;
-    const footer = lastReviewData ? (
-        <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review} />
-    ) : null;
+    //TODO: remove if will not use
+    // const { colors } = useUiContext();
+    // const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
-        <TitledContent titleVariant="h3" title={'Wine of the day'} rightComponent={rightComponent}>
+        <TitledContent titleVariant="h3" title={'Wine of the day'} rightComponent={<WineOfTheDayButton onPress={onArrowPress} />}>
             <WineListItem
                 item={MOCK_WINE}
                 hideSimilarity
-                customBottomComponent={customBottomComponent}
-                footer={footer}
+                customBottomComponent={<WineOfTheDayMarquee />}
+                footer={<WineOfTheDayFooter wine={MOCK_WINE} />}
+                onPress={onWinePress}
             />
         </TitledContent>
     );
