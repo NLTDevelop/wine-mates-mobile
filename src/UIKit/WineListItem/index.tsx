@@ -21,12 +21,13 @@ interface IProps {
     wineName?: string;
     removeCardStyles?: boolean;
     showDate?: boolean;
+    customBottomComponent?: ReactNode;
 }
 
-export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wineName, removeCardStyles = false, showDate = false }: IProps) => {
+export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wineName, removeCardStyles = false, showDate = false, customBottomComponent }: IProps) => {
     const { colors, locale } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
-    const { guard, handleItemPress, similarityText, displayRating, reviewCount, locationText, lastReviewData, getFormattedDate } = useWineListItem({ item, onPress, showDate });
+    const { guard, handleItemPress, similarityText, displayRating, reviewCount, lastReviewData, getFormattedDate } = useWineListItem({ item, onPress, showDate });
 
     const hasPremium = userModel.user?.hasPremium ?? false;
     const showMedal = item.averageExpertRating && item.averageExpertRating > 0;
@@ -117,7 +118,7 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
             </View>
     );
 
-    const dateContent = (showDate && lastReviewData?.createdAt) ? (
+    const bottomComponent = customBottomComponent || ((showDate && lastReviewData?.createdAt) ? (
         <View style={styles.dateContainer}>
             <Typography
                 variant="subtitle_12_400"
@@ -126,7 +127,7 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
                 style={styles.locationText}
             />
         </View>
-    ) : null;
+    ) : null);
 
     if (onPress) {
         return (
@@ -136,7 +137,7 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
                 onPressOut={guard.bindPressable.onPressOut}
             >
                 {content}
-                {dateContent}
+                {bottomComponent}
             </Pressable>
         );
     }
@@ -144,7 +145,7 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
     return (
         <View style={styles.container}>
             {content}
-            {dateContent}
+            {bottomComponent}
         </View>
     );
 };

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Button } from '@/UIKit/Button';
-import { FavoriteIcon } from '@assets/icons/FavoriteIcon';
+import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { VintageDropdown } from '../../../VintageDropdown';
@@ -39,9 +39,7 @@ export const ResultHeaderFooter = ({ item, vintages, onVintageChange, onFavorite
                     inProgress={isCreating}
                     disabled={isCreating}
                 />
-                <TouchableOpacity style={styles.favoriteButton} onPress={onFavoritePress}>
-                    <FavoriteIcon />
-                </TouchableOpacity>
+                <FavoriteButton onPress={onFavoritePress} />
             </View>
         </View>
     );
