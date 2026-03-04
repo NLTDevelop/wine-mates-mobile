@@ -40,19 +40,16 @@ export const ReviewListItem = ({ item }: IProps) => {
                                 <StarIcon />
                                 <Typography text={item.userRating || 0} variant="subtitle_12_500" />
                             </>
-                        ) : isLocked ? null : (
+                        ) : (
                             <View style={styles.expertRateContainer}>
-                                <Typography
-                                    text={item.expertRating || 0}
-                                    variant="subtitle_12_500"
-                                />
+                                <Typography text={item.expertRating || 0} variant="subtitle_12_500" />
                             </View>
                         )}
                     </View>
                 </View>
                 <Typography text={isJustNow ? t('common.now') : formattedDate} variant="body_400" style={styles.date} />
             </View>
-            {!isLocked && <Typography text={item.review || '-'} variant="body_400" />}
+            <Typography text={item.review || '-'} variant="body_400" />
             {isLocked && <BlurContainer isLockIconCentered={true} />}
         </View>
     );

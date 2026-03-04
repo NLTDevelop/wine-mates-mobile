@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 
-export const getStyles = (colors: IColors) =>
+export const getStyles = (_colors: IColors) =>
     StyleSheet.create({
         container: {
-            backgroundColor: colors.lockBackground,
+            backgroundColor: 'transparent',
             alignItems: 'center',
             justifyContent: 'center',
             width: '100%',

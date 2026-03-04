@@ -2,7 +2,7 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (_colors: IColors) => {
+export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         lockLayer: {
             position: 'absolute',
@@ -16,19 +16,12 @@ export const getStyles = (_colors: IColors) => {
             alignItems: 'center',
             zIndex: 10,
         },
-        blur: {
+        baseLayer: {
             ...StyleSheet.absoluteFill,
-            zIndex: 5,
-        },
-        androidBaseLayer: {
-            ...StyleSheet.absoluteFill,
-            backgroundColor: 'rgba(250,250,250,0.95)',
-        },
-        androidNoiseLayer: {
-            ...StyleSheet.absoluteFill,
-        },
-        androidNoiseImage: {
-            opacity: 0.15,
+            backgroundColor: colors.background,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: colors.border_light,
         },
     });
     return styles;

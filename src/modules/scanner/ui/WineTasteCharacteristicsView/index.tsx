@@ -73,6 +73,7 @@ export const WineTasteCharacteristicsView = observer(() => {
                 withGradient
                 headerComponent={<HeaderWithBackButton title={t('wine.tasteCharacteristics')} rightComponent={<CloseButton />} />}
                 scrollEnabled
+                isKeyboardAvoiding
             >
                 {!data || data.length === 0 || isLoading ? (
                     <Loader />

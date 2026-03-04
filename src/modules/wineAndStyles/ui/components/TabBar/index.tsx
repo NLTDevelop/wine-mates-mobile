@@ -4,9 +4,8 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { CrownIcon } from '@assets/icons/CrownIcon';
-import { BlurView } from '@sbaiahmed1/react-native-blur';
 import { useTabBar } from './useTabBar';
-import { isIOS } from '@/utils';
+import { BlurContainer } from '@/UIKit/BlurContainer';
 
 interface IProps {
     tabBarProps: any;
@@ -44,13 +43,8 @@ export const TabBar = ({ tabBarProps, handleIndexChange, hasPremium }: IProps) =
                         ) : (
                             <Typography variant={'body_500'} text={route.title} style={styles.tabLabel} />
                         )}
-                        {isDisabled && isIOS && showBlur && (
-                            <BlurView
-                                style={styles.blurOverlay}
-                                blurType={'light'}
-                                blurAmount={5}
-                                reducedTransparencyFallbackColor={'transparent'}
-                            />
+                        {isDisabled && showBlur && (
+                           <BlurContainer/>
                         )}
                     </TouchableOpacity>
                 );

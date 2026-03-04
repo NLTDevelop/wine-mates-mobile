@@ -4,14 +4,14 @@ import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 
 interface UseResultHeaderLogicParams {
     item: IWineDetails;
-    styles: any;
 }
 
-export const useResultHeaderLogic = ({ item, styles }: UseResultHeaderLogicParams) => {
+export const useResultHeaderLogic = ({ item }: UseResultHeaderLogicParams) => {
     const { t } = useUiContext();
 
     const description = useMemo(() => {
         return [
+            item.producer?.toUpperCase(),
             item.grapeVariety,
             item.name,
             item.type?.name,
@@ -21,7 +21,7 @@ export const useResultHeaderLogic = ({ item, styles }: UseResultHeaderLogicParam
         ]
             .filter(Boolean)
             .join(', ');
-    }, [item.type?.name, item.color?.name, item.country?.name, item.region?.name, item.grapeVariety, item.name]);
+    }, [item.type?.name, item.color?.name, item.country?.name, item.region?.name, item.grapeVariety, item.name, item.producer]);
 
     const medalData = useMemo(() => {
         const rating = item.averageExpertRating;

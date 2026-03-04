@@ -10,7 +10,7 @@ import { RateMedal } from '@/modules/scanner/ui/components/RateMedal/ui';
 import { ShowLock } from '@/UIKit/ShowLock';
 import { EmptyMedal } from '@/UIKit/EmptyMedal';
 import { userModel } from '@/entities/users/UserModel';
-import { useWineListItem } from './useWineListItem';
+import { useWineListItem } from './presenters/useWineListItem';
 import { getStyles } from './styles';
 
 interface IProps {
@@ -31,6 +31,7 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
 
     const hasPremium = userModel.user?.hasPremium ?? false;
     const showMedal = item.averageExpertRating && item.averageExpertRating > 0;
+    console.log(item.name)
 
     const content = (
         <View style={styles.content}>
@@ -78,22 +79,21 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
                     <Typography variant="subtitle_12_400" text={'Expert review'} style={styles.expertReviewText} />
                 )}
 
-                <Typography
-                    variant="h5"
-                    text={wineName || `${item.name || '–'} ${item.vintage || ''}`}
-                    numberOfLines={2}
-                    style={styles.titleText}
-                    {...guard.bindText}
-                />
-
-                {item.producer && (
+                {/* {item.producer && (
                     <Typography
                         variant="subtitle_12_400"
                         text={item.producer}
                         numberOfLines={1}
                         style={styles.locationText}
                     />
-                )}
+                )} */}
+
+                <Typography
+                    variant="h5"
+                    text={wineName || `${item.name || '–'} ${item.vintage || ''}`}
+                    style={styles.titleText}
+                    {...guard.bindText}
+                />
 
                 <View style={styles.rateContainer}>
                     <View style={styles.starsContainer}>
