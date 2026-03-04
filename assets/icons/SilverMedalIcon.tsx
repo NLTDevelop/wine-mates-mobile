@@ -5,11 +5,12 @@ interface IProps {
     width?: number;
     height?: number;
     text: string;
+    titleFontSize?: number;
+    mainFontSize?: number;
+    nameFontSize?: number;
 }
 
-export const SilverMedalIcon = ({ width = 32, height = 32, text }: IProps) => {
-    const fontSize = width * 1.75;
-    
+export const SilverMedalIcon = ({ width = 32, height = 32, text, titleFontSize, mainFontSize, nameFontSize }: IProps) => {
     return (
     <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 234 230" fill="none">
         <Path
@@ -18,8 +19,8 @@ export const SilverMedalIcon = ({ width = 32, height = 32, text }: IProps) => {
         />
         <Text
             x="117"
-            y="60"
-            fontSize={scaleFontSize(fontSize * 0.2)}
+            y="50"
+            fontSize={scaleFontSize(titleFontSize || 24)}
             fill="#2F2F2F"
             fontFamily="VisueltPro"
             fontWeight="700"
@@ -30,8 +31,8 @@ export const SilverMedalIcon = ({ width = 32, height = 32, text }: IProps) => {
 
         <Text
             x="117"
-            y="146"
-            fontSize={scaleFontSize(fontSize * 0.8)}
+            y="145"
+            fontSize={scaleFontSize(mainFontSize || 90)}
             fill="#2F2F2F"
             fontFamily="VisueltPro"
             fontWeight="500"
@@ -42,8 +43,8 @@ export const SilverMedalIcon = ({ width = 32, height = 32, text }: IProps) => {
 
         <Text
             x="117"
-            y="195"
-            fontSize={scaleFontSize(fontSize * 0.3)}
+            y="190"
+            fontSize={scaleFontSize(nameFontSize || 26)}
             fill="#2F2F2F"
             fontFamily="VisueltPro"
             fontWeight="700"

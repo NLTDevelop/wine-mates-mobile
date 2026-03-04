@@ -5,10 +5,12 @@ interface IProps {
     width?: number;
     height?: number;
     text: string;
+    titleFontSize?: number;
+    mainFontSize?: number;
+    nameFontSize?: number
 }
 
-export const BronzeMedalIcon = ({ width = 32, height = 32, text }: IProps) => {
-    const fontSize = width * 1.75;
+export const BronzeMedalIcon = ({ width = 32, height = 32, text, titleFontSize,  mainFontSize, nameFontSize }: IProps) => {
     
     return (
     <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 235 230" fill='none'>
@@ -16,10 +18,10 @@ export const BronzeMedalIcon = ({ width = 32, height = 32, text }: IProps) => {
       fill="url(#a)"
       d="M.201 114.96C.201 51.47 51.671 0 115.161 0h4.08c63.491 0 114.96 51.47 114.96 114.96 0 63.491-51.469 114.96-114.96 114.96h-4.08c-63.49 0-114.96-51.469-114.96-114.96Z"
     />
-     <Text
+            <Text
                 x="117"
-                y="60"
-                fontSize={scaleFontSize(fontSize * 0.2)}
+                y="50"
+                fontSize={scaleFontSize(titleFontSize || 24)}
                 fill="#2C1D0C"
                 fontFamily="VisueltPro"
                 fontWeight="700"
@@ -30,8 +32,8 @@ export const BronzeMedalIcon = ({ width = 32, height = 32, text }: IProps) => {
     
             <Text
                 x="117"
-                y="146"
-                fontSize={scaleFontSize(fontSize * 0.8)}
+                y="145"
+                fontSize={scaleFontSize(mainFontSize || 90)}
                 fill="#2C1D0C"
                 fontFamily="VisueltPro"
                 fontWeight="500"
@@ -42,8 +44,8 @@ export const BronzeMedalIcon = ({ width = 32, height = 32, text }: IProps) => {
     
             <Text
                 x="117"
-                y="195"
-                fontSize={scaleFontSize(fontSize * 0.3)}
+                y="190"
+                fontSize={scaleFontSize(nameFontSize || 26)}
                 fill="#2C1D0C"
                 fontFamily="VisueltPro"
                 fontWeight="700"
