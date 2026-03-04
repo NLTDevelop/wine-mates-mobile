@@ -71,6 +71,7 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             color: colors.text_light,
         },
         medalContainer: {
+            maxHeight: scaleVertical(medalSize),
             marginBottom: scaleVertical(6),
         },
         titleText: {
