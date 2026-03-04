@@ -1,4 +1,4 @@
-import { IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
+import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
@@ -46,6 +46,8 @@ export const useWineDetails = () => {
             }
         } catch (error) {
             console.error('getTastes error: ', JSON.stringify(error, null, 2));
+        } finally {
+            
         }
     }, []);
 
@@ -91,9 +93,8 @@ export const useWineDetails = () => {
     useEffect(() => {
         if (wineId) {
             wineModel.selectedWineId = wineId;
-            getVintages();
         }
-    }, [wineId, getVintages]);
+    }, [wineId]);
 
     useEffect(() => {
         if (wineModel.selectedWineId) {

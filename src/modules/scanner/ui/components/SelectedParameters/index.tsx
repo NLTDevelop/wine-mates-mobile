@@ -18,7 +18,7 @@ export const SelectedParameters = ({ containerStyle }: IProps) => {
     return (
         <View style={[styles.container, containerStyle]}>
             <TouchableOpacity style={styles.header} onPress={onPress}>
-                <Typography variant="h4" text={t('wine.selectedParameters')} />
+                <Typography variant="h4" text={t('wine.wineDetails')} />
                 <ArrowDownIcon rotate={isOpened ? 180 : 0} />
             </TouchableOpacity>
             {isOpened && (

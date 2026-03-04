@@ -7,7 +7,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useCallback, useRef, useState } from 'react';
-import { TextInput } from 'react-native';
+import { Keyboard, TextInput } from 'react-native';
 
 interface IProps {
     data: IWineSmell[],
@@ -21,10 +21,6 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
     const [search, setSearch] = useState('');
     const [isSearching, setIsSearching] = useState(false);
     const [isDebouncing, setIsDebouncing] = useState(false);
-
-    const dismissKeyboard = useCallback(() => {
-        searchInputRef.current?.blur();
-    }, []);
 
     const getSearchedAromas = useCallback(async (query: string) => {
         try {
@@ -64,6 +60,7 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
 
         if (selectedSmell) {
             onSelectedItemPress(selectedSmell);
+            Keyboard.dismiss();
             return;
         }
 
@@ -78,6 +75,7 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
             };
 
         onItemPress(aromaToAdd, subgroup?.id ?? item.subgroupId, group?.id ?? null);
+        Keyboard.dismiss();
     }, [data, onItemPress, onSelectedItemPress, selected]);
 
     const onSearchTextChange = useCallback((value: string) => {
@@ -94,5 +92,5 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
 
     const searchedAromas = wineModel.searchedAroma;
         
-    return { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress, searchInputRef, dismissKeyboard };
+    return { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress, searchInputRef };
 };

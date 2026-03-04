@@ -142,7 +142,7 @@
         "selectShade": "Оберіть відтінок",
         "selectAppearance": "Оберіть вигляд",
         "result": "Результат",
-        "selectedParameters": "Обрані параметри",
+        "wineDetails": "Деталі вина",
         "selectMousse": "Оберіть піну",
         "selectPerlage": "Оберіть перляж",
         "typeOfWine": "Тип вина",
@@ -286,5 +286,8 @@
     "eventMap": {
         "wineEvents": "Винні події",
         "readMore": "Читати більше"
+    },
+    "faq": {
+        "faq": "FAQ"
     }
 }

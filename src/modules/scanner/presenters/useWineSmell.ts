@@ -7,6 +7,7 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Keyboard } from 'react-native';
 
 export const useWineSmell = (onHide: () => void) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -127,6 +128,7 @@ export const useWineSmell = (onHide: () => void) => {
             );
         }
         onHide();
+        Keyboard.dismiss();
         return item.id;
     }, [onHide]);
 
@@ -155,10 +157,12 @@ export const useWineSmell = (onHide: () => void) => {
             );
         }
         setSelected(prevState => prevState.filter(smell => smell.id !== item.id));
+        Keyboard.dismiss();
     }, []);
 
     const toggleList = useCallback(() => {
         setIsOpened(prevState => !prevState);
+        Keyboard.dismiss();
     }, []);
 
     const handleGroupPress = useCallback((groupId: number) => {
@@ -166,18 +170,21 @@ export const useWineSmell = (onHide: () => void) => {
         if (nextIndex === -1) return;
         setSelectedIndex(nextIndex);
         setIsOpened(true);
+        Keyboard.dismiss();
     }, [data]);
 
     const handleLeftPress = useCallback(() => {
         if (data?.length) {
             setSelectedIndex(prevState => prevState === 0 ? data.length - 1 : prevState - 1);
         }
+        Keyboard.dismiss();
     }, [data]);
 
     const handleRightPress = useCallback(() => {
         if (data?.length) {
             setSelectedIndex(prevState => prevState === data.length - 1 ? 0 : prevState + 1);
         }
+        Keyboard.dismiss();
     }, [data]);
 
     const handleAddCustomSmell = useCallback((text: string) => {
@@ -190,11 +197,13 @@ export const useWineSmell = (onHide: () => void) => {
             },
             ...prevState,
         ]);
+        Keyboard.dismiss();
         return newId;
     }, []);
 
     const handleNextPress = useCallback(() => {
         navigation.navigate('WineTasteView');
+        Keyboard.dismiss();
     }, [navigation, selected]);
 
     return { 

@@ -22,6 +22,7 @@ export const ReviewListItem = ({ item }: IProps) => {
     const isJustNow = isLessThanMinuteFromNow(item.createdAt);
     const formattedDate = formatRelativeDate(item.createdAt, locale);
     const isPremiumUser = userModel.user?.hasPremium || false;
+    const isLocked = item.user.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && !isPremiumUser;
 
     return (
         <View style={styles.container}>
@@ -41,10 +42,7 @@ export const ReviewListItem = ({ item }: IProps) => {
                             </>
                         ) : (
                             <View style={styles.expertRateContainer}>
-                                <Typography
-                                    text={`${item.expertRating || 0}% ${t('wine.rating')}`}
-                                    variant="subtitle_12_500"
-                                />
+                                <Typography text={item.expertRating || 0} variant="subtitle_12_500" />
                             </View>
                         )}
                     </View>
@@ -52,9 +50,7 @@ export const ReviewListItem = ({ item }: IProps) => {
                 <Typography text={isJustNow ? t('common.now') : formattedDate} variant="body_400" style={styles.date} />
             </View>
             <Typography text={item.review || '-'} variant="body_400" />
-            {item.user.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && !isPremiumUser && (
-                <BlurContainer isLockIconCentered={true} />
-            )}
+            {isLocked && <BlurContainer isLockIconCentered={true} />}
         </View>
     );
 };

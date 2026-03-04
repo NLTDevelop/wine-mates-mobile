@@ -21,7 +21,7 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { onPress, isCreating } = useResultHeader(item);
-    const { description } = useResultHeaderLogic({ item, styles });
+    const { description } = useResultHeaderLogic({ item });
 
     const footer = useMemo(() => (
         <ResultHeaderFooter

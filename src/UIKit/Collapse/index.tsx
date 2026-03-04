@@ -4,7 +4,7 @@ import Animated from 'react-native-reanimated';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
-import { useCollapse } from './useCollapse';
+import { useCollapse } from './presenters/useCollapse';
 import { getStyles } from './styles';
 
 export interface ICollapseProps {

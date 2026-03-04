@@ -37,6 +37,7 @@ export interface ILinks {
     myWine: string;
     tasteProfile: string;
     wineRecommendations: string;
+    faq: string;
 }
 
 class Links implements ILinks {
@@ -65,6 +66,7 @@ class Links implements ILinks {
         myWine: 'myWine',
         tasteProfile: 'users/taste-profile',
         wineRecommendations: 'users/taste-profile/wine-recommendations',
+        faq: 'faq'
     };
 
     private buildDomain() {
@@ -150,6 +152,9 @@ class Links implements ILinks {
     }
     public get wineRecommendations() {
         return `${this._domain}${this._links.wineRecommendations}`;
+    }
+    public get faq() {
+        return `${this._domain}${this._links.faq}`;
     }
 }
 

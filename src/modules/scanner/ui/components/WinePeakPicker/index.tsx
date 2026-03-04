@@ -7,11 +7,9 @@ import { YearPickerModal } from './YearPickerModal';
 import { getStyles } from './styles';
 import { CrownIcon } from '@assets/icons/CrownIcon';
 import { CrossIcon } from '@assets/icons/CrossIcon';
-import { BlurView } from '@sbaiahmed1/react-native-blur';
-import { Platform } from 'react-native';
 import { userModel } from '@/entities/users/UserModel';
 import { observer } from 'mobx-react-lite';
-import { isIOS } from '@/utils';
+import { BlurContainer } from '@/UIKit/BlurContainer';
 
 interface IProps {
     value: number | null;
@@ -54,14 +52,7 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                                 <CrownIcon />
                             </View>
                         )}
-                        {!isPremiumUser && isIOS && (
-                            <BlurView
-                                style={styles.blurOverlay}
-                                blurType={'light'}
-                                blurAmount={5}
-                                reducedTransparencyFallbackColor={colors.background}
-                            />
-                        )}
+                        {!isPremiumUser && <BlurContainer/>}
                     </Pressable>
                     {value && isPremiumUser && (
                         <Pressable onPress={handleReset} style={styles.resetButton}>
