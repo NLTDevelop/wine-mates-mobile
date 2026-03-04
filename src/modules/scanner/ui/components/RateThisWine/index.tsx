@@ -36,24 +36,47 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
         <View style={styles.container}>
             <View style={styles.headerRow}>
                 <Typography text={title} variant="subtitle_20_500" style={styles.title} />
-                {!disabled && userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && <RateMedal sliderValue={debouncedSliderValue} size={65} />}
+                {!disabled && userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
+                    <RateMedal
+                        sliderValue={debouncedSliderValue}
+                        titleFontSize={24}
+                        mainFontSize={90}
+                        nameFontSize={26}
+                    />
+                )}
             </View>
             {userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER && currentRatingDescription && (
                 <View style={styles.ratingDescriptionContainer}>
                     <View style={styles.ratingDescriptionRow}>
                         <FilledStarIcon width={16} height={16} color={colors.stars} />
-                        <Typography text={`${starRate.toFixed(1)} ${currentRatingDescription}`} variant="body_400" style={styles.ratingDescription} />
+                        <Typography
+                            text={`${starRate.toFixed(1)} ${currentRatingDescription}`}
+                            variant="body_400"
+                            style={styles.ratingDescription}
+                        />
                     </View>
                 </View>
             )}
 
             {userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER ? (
                 disabled ? (
-                    <RateMedal sliderValue={debouncedSliderValue}/>
+                    <RateMedal
+                        sliderValue={debouncedSliderValue}
+                        titleFontSize={24}
+                        mainFontSize={90}
+                        nameFontSize={26}
+                    />
                 ) : (
                     <>
                         <PartitionedSlider
-                            parts={[[70, 76], [76, 81], [81, 86], [86, 91], [91, 97], [97, 100]]}
+                            parts={[
+                                [70, 76],
+                                [76, 81],
+                                [81, 86],
+                                [86, 91],
+                                [91, 97],
+                                [97, 100],
+                            ]}
                             value={sliderValue}
                             onChange={handleSliderChange}
                             selectedStyle={{ backgroundColor: colors.selectedSlider }}
