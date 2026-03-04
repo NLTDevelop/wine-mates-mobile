@@ -5,9 +5,7 @@ import { TitleVariant, Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { useBottomModal } from '@/UIKit/BottomModal/presenters/useBottomModal';
 
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-
-interface IBottomModalProps {
+interface IProps {
     visible: boolean;
     onClose: () => void;
     title?: string;
@@ -23,7 +21,7 @@ export const BottomModal = ({
     titleVariant = 'h4',
     customHeader,
     children
-}: IBottomModalProps) => {
+}: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const [isVisible, setIsVisible] = useState(visible);

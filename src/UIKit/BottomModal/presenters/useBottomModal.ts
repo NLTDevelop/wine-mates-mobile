@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Animated, Dimensions } from 'react-native';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;

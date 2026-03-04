@@ -22,7 +22,6 @@ interface IWineEventListItemProps {
 
 export const WineEventListItem = ({
     event,
-    isSelected,
     onReadMorePress,
     onFavoritePress,
     eventId
