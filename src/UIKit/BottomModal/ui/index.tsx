@@ -26,23 +26,23 @@ export const BottomModal = ({
 }: IBottomModalProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const { backdropOpacity, slideAnim, handleOpen, handleClose } = useBottomModal({ 
-        visible, 
+    const [isVisible, setIsVisible] = useState(visible);
+
+    const { backdropOpacity, slideAnim, handleOpen, handleClose } = useBottomModal({
         onClose: () => {
-            setIsModalVisible(false);
+            setIsVisible(false);
             onClose();
         }
     });
 
     useEffect(() => {
         if (visible) {
-            setIsModalVisible(true);
+            setIsVisible(true);
             handleOpen();
-        } else if (isModalVisible) {
+        } else if (isVisible) {
             handleClose();
         }
-    }, [visible, isModalVisible, handleOpen, handleClose]);
+    }, [visible, isVisible, handleOpen, handleClose]);
 
     const renderHeader = () => {
         if (customHeader) {
@@ -62,13 +62,13 @@ export const BottomModal = ({
         );
     };
 
-    if (!isModalVisible && !visible) {
+    if (!isVisible) {
         return null;
     }
 
     return (
         <Modal
-            visible={isModalVisible}
+            visible={isVisible}
             transparent
             animationType="none"
             statusBarTranslucent

@@ -1,4 +1,7 @@
 import { useCallback, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 
 interface IUseWineEventListItemProps {
     eventId: number;
@@ -6,30 +9,33 @@ interface IUseWineEventListItemProps {
     onFavoritePress?: (eventId: number) => void;
 }
 
+type NavigationProp = NativeStackNavigationProp<EventStackParamList>;
+
 export const useWineEventListItem = ({
     eventId,
     onReadMorePress,
     onFavoritePress
 }: IUseWineEventListItemProps) => {
+    const navigation = useNavigation<NavigationProp>();
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const handleReadMorePress = useCallback(() => {
-        setIsModalVisible(true);
+    const onReadMorePressHandler = useCallback(() => {
+        navigation.navigate('EventDetails', { eventId });
         onReadMorePress?.(eventId);
-    }, [eventId, onReadMorePress]);
+    }, [eventId, navigation, onReadMorePress]);
 
-    const handleCloseModal = useCallback(() => {
+    const onCloseModal = useCallback(() => {
         setIsModalVisible(false);
     }, []);
 
-    const handleFavoritePress = useCallback(() => {
+    const onFavoritePressHandler = useCallback(() => {
         onFavoritePress?.(eventId);
     }, [eventId, onFavoritePress]);
 
     return {
         isModalVisible,
-        handleReadMorePress,
-        handleCloseModal,
-        handleFavoritePress,
+        onReadMorePress: onReadMorePressHandler,
+        onCloseModal,
+        onFavoritePress: onFavoritePressHandler,
     };
 };

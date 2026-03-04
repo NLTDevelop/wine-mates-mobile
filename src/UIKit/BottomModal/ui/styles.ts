@@ -45,10 +45,10 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
         },
         scrollView: {
-            flex: 1,
         },
         scrollContent: {
             padding: scaleHorizontal(16),
+            paddingBottom: scaleVertical(32),
         },
     });
     return styles;

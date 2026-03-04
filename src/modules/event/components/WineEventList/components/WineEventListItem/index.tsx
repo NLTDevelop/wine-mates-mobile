@@ -29,13 +29,14 @@ export const WineEventListItem = ({
 }: IWineEventListItemProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { isModalVisible, handleReadMorePress, handleCloseModal, handleFavoritePress } = useWineEventListItem({
+    const { isModalVisible, onReadMorePress: onReadMorePressHandler, onCloseModal, onFavoritePress: onFavoritePressHandler } = useWineEventListItem({
         eventId,
         onReadMorePress,
         onFavoritePress
     });
 
     const { month, day } = formatEventDate(event.date);
+
 
     return (
         <View style={styles.container}>
@@ -111,13 +112,13 @@ export const WineEventListItem = ({
             </View>
 
             <View style={styles.footer}>
-                <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={handleReadMorePress} />
-                <FavoriteButton onPress={handleFavoritePress} size={52} />
+                <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
+                <FavoriteButton onPress={onFavoritePressHandler} size={52} />
             </View>
 
             <BottomModal
                 visible={isModalVisible}
-                onClose={handleCloseModal}
+                onClose={onCloseModal}
                 title={event.title}
                 titleVariant="h4"
             >

@@ -1,17 +1,16 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { Animated, Dimensions } from 'react-native';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const ANIMATION_DURATION = 300;
 
 interface IUseBottomModalProps {
-    visible: boolean;
     onClose: () => void;
 }
 
-export const useBottomModal = ({ visible, onClose }: IUseBottomModalProps) => {
-    const backdropOpacity = useRef(new Animated.Value(0)).current;
-    const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+export const useBottomModal = ({ onClose }: IUseBottomModalProps) => {
+    const backdropOpacity = useMemo(() => new Animated.Value(0), []);
+    const slideAnim = useMemo(() => new Animated.Value(SCREEN_HEIGHT), []);
 
     const handleOpen = useCallback(() => {
         Animated.parallel([
