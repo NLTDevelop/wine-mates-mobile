@@ -87,6 +87,14 @@ export const getStyles = (colors: IColors) => {
         readMoreButton: {
             flex: 1,
         },
+        modalSection: {
+            marginTop: scaleVertical(16),
+            gap: scaleVertical(8),
+        },
+        priceText: {
+            marginTop: scaleVertical(8),
+            color: colors.text,
+        },
     });
     return styles;
 };
