@@ -34,88 +34,90 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
 
     const content = (
         <View style={styles.content}>
-                <View style={styles.imageContainer}>
-                    {!hideSimilarity && (
-                        <View style={styles.similarityBadge}>
-                            <Typography numberOfLines={1} variant="subtitle_12_400" style={styles.similarityText} text={similarityText} />
-                        </View>
-                    )}
-                    <View style={styles.imagePlaceholderContainer}>
-                        <EmptyWine containerStyle={styles.imagePlaceholder} />
-                    </View>
-                    {item.image?.originalUrl && (
-                        <FasterImageView
-                            source={{ uri: item.image.originalUrl, resizeMode: 'cover' }}
-                            style={styles.image}
-                            radius={12}
+            <View style={styles.imageContainer}>
+                {!hideSimilarity && (
+                    <View style={styles.similarityBadge}>
+                        <Typography
+                            numberOfLines={1}
+                            variant="subtitle_12_400"
+                            style={styles.similarityText}
+                            text={similarityText}
                         />
+                    </View>
+                )}
+                <View style={styles.imagePlaceholderContainer}>
+                    <EmptyWine containerStyle={styles.imagePlaceholder} />
+                </View>
+                {item.image?.originalUrl && (
+                    <FasterImageView
+                        source={{ uri: item.image.originalUrl, resizeMode: 'cover' }}
+                        style={styles.image}
+                        radius={12}
+                    />
+                )}
+            </View>
+
+            <View style={styles.rightColumn}>
+                <View style={styles.medalContainer}>
+                    {!hasPremium ? (
+                        <ShowLock iconSize={medalSize} />
+                    ) : showMedal ? (
+                        <RateMedal
+                            sliderValue={item.averageExpertRating!}
+                            size={medalSize}
+                            titleFontSize={24}
+                            mainFontSize={90}
+                            nameFontSize={26}
+                        />
+                    ) : (
+                        <EmptyMedal size={medalSize} />
                     )}
                 </View>
 
-                <View style={styles.rightColumn}>
-                    <View style={styles.medalContainer}>
-                        {!hasPremium ? (
-                            <ShowLock iconSize={medalSize} />
-                        ) : showMedal ? (
-                                <View>
-                                    <RateMedal sliderValue={item.averageExpertRating!} size={medalSize} />
-                                    <Typography variant="subtitle_12_400" text={item.averageExpertRating!.toFixed(1)} />
-                                </View>
-                        ) : (
-                            <EmptyMedal size={medalSize} />
-                        )}
-                    </View>
+                {hasPremium && (
+                    <Typography variant="subtitle_12_400" text={'Expert review'} style={styles.expertReviewText} />
+                )}
 
-                    {
-                        hasPremium &&
-                        <Typography variant="subtitle_12_400" text={'Expert review'} style={styles.expertReviewText} />
-                    }
+                <Typography
+                    variant="h5"
+                    text={wineName || `${item.name || '–'} ${item.vintage || ''}`}
+                    numberOfLines={2}
+                    style={styles.titleText}
+                    {...guard.bindText}
+                />
 
+                {item.producer && (
                     <Typography
-                        variant="h5"
-                        text={wineName || `${item.name || '–'} ${item.vintage || ''}`}
-                        numberOfLines={2}
-                        style={styles.titleText}
-                        {...guard.bindText}
+                        variant="subtitle_12_400"
+                        text={item.producer}
+                        numberOfLines={1}
+                        style={styles.locationText}
                     />
+                )}
 
-                    {item.producer && (
+                <View style={styles.rateContainer}>
+                    <View style={styles.starsContainer}>
+                        <SmallStarRating rating={parseFloat(displayRating) || 0} starSize={12.5} />
+                        <Typography
+                            variant="subtitle_12_500"
+                            text={displayRating}
+                            numberOfLines={1}
+                            style={styles.rateText}
+                        />
+                    </View>
+                    {!!item.totalReviews && (
                         <Typography
                             variant="subtitle_12_400"
-                            text={item.producer}
+                            text={`(${reviewCount})`}
                             numberOfLines={1}
-                            style={styles.locationText}
+                            style={styles.rateReviewText}
                         />
                     )}
-
-                    <View style={styles.rateContainer}>
-                        <View style={styles.starsContainer}>
-                            <SmallStarRating
-                                rating={parseFloat(displayRating) || 0}
-                                starSize={12.5}
-                            />
-                            <Typography
-                                variant="subtitle_12_500"
-                                text={displayRating}
-                                numberOfLines={1}
-                                style={styles.rateText}
-                            />
-                        </View>
-                        {!!item.totalReviews && (
-                            <Typography
-                                variant="subtitle_12_400"
-                                text={`(${reviewCount})`}
-                                numberOfLines={1}
-                                style={styles.rateReviewText}
-                            />
-                        )}
-                    </View>
-
-                    <View style={styles.footerContainer}>
-                        {footer}
-                    </View>
                 </View>
+
+                <View style={styles.footerContainer}>{footer}</View>
             </View>
+        </View>
     );
 
     const bottomComponent = customBottomComponent || ((showDate && lastReviewData?.createdAt) ? (

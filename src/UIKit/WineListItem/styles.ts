@@ -71,10 +71,6 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             color: colors.text_light,
         },
         medalContainer: {
-            width: scaleHorizontal(medalSize),
-            height: scaleHorizontal(medalSize),
-            borderRadius: medalSize,
-            overflow: 'hidden',
             marginBottom: scaleVertical(6),
         },
         titleText: {

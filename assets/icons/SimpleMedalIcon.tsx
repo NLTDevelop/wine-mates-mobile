@@ -5,13 +5,19 @@ interface IProps {
     width?: number;
     height?: number;
     text: string;
+    titleFontSize?: number;
+    mainFontSize?: number;
+    nameFontSize?: number;
 }
 
 export const SimpleMedalIcon = ({
-                                    width = 237,
-                                    height = 232,
-                                    text,
-                                }: IProps) => {
+    width = 237,
+    height = 232,
+    text,
+    titleFontSize,
+    mainFontSize,
+    nameFontSize,
+}: IProps) => {
     const w = scaleVertical(width);
     const h = scaleVertical(height);
 
@@ -21,8 +27,8 @@ export const SimpleMedalIcon = ({
 
             <Text
                 x="118"
-                y="60"
-                fontSize={scaleFontSize(24)}
+                y="50"
+                fontSize={scaleFontSize(titleFontSize || 24)}
                 fill="#6F6F6F"
                 fontFamily="VisueltPro"
                 fontWeight="700"
@@ -33,8 +39,8 @@ export const SimpleMedalIcon = ({
 
             <Text
                 x="118"
-                y="150"
-                fontSize={scaleFontSize(96)}
+                y="145"
+                fontSize={scaleFontSize(mainFontSize || 90)}
                 fill="#6F6F6F"
                 fontFamily="VisueltPro"
                 fontWeight="500"
@@ -45,8 +51,8 @@ export const SimpleMedalIcon = ({
 
             <Text
                 x="118"
-                y="195"
-                fontSize={scaleFontSize(28)}
+                y="190"
+                fontSize={scaleFontSize(nameFontSize || 26)}
                 fill="#6F6F6F"
                 fontFamily="VisueltPro"
                 fontWeight="700"

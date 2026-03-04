@@ -15,25 +15,31 @@ import { scaleHorizontal } from '@/utils';
 interface IProps {
     sliderValue: number;
     size?: number;
+    titleFontSize?: number;
+    mainFontSize?: number;
+    nameFontSize?: number;
 }
 
-export const RateMedal = ({ sliderValue, size }: IProps) => {
+export const RateMedal = ({ sliderValue, size, titleFontSize, mainFontSize, nameFontSize }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { medalType } = useRateMedal(sliderValue);
 
-    const medalSize = size || 55;
+    const medalSize = size || 54;
 
     const medalProps = {
         height: scaleHorizontal(medalSize),
         width: scaleHorizontal(medalSize),
         text: sliderValue ? sliderValue.toString() : '0',
+        titleFontSize,
+        mainFontSize,
+        nameFontSize
     };
 
     const renderMedal = () => {
         switch (medalType) {
             case 'nice':
-                return <NiceWineIcon {...medalProps}/>;
+                return <NiceWineIcon {...medalProps} />;
             case 'bronze':
                 return <BronzeMedalIcon {...medalProps} />;
             case 'silver':
