@@ -16,8 +16,7 @@ export const HomeView = () => {
 
     return (
         // <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
-        <ScreenContainer edges={['top']} scrollEnabled={false}>
-            <ScreenHeader />
+        <ScreenContainer edges={['top']} scrollEnabled={false} headerComponent={<ScreenHeader />}>
 
             {/*TODO: make available at future
             <ScrollView style={styles.container}>

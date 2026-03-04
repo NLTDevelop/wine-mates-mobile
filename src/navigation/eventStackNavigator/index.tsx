@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { EventMapView } from '@/modules/event/ui/EventMapView';
+import { EventMapView } from '@/modules/event/ui';
 
 const Stack = createNativeStackNavigator();
 

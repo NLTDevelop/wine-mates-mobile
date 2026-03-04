@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
-import { View, ScrollView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';

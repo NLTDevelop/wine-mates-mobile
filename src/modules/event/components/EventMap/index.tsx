@@ -6,14 +6,7 @@ import { MapMarker } from '@/UIKit/MapMarker';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-
-interface IEvent {
-    id: number;
-    latitude: number;
-    longitude: number;
-    title: string;
-    description: string;
-}
+import { IEvent } from '@/entities/events/types/IEvent';
 
 interface IEventMapProps {
     events: IEvent[];

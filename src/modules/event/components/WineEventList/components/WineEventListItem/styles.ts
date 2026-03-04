@@ -20,25 +20,6 @@ export const getStyles = (colors: IColors) => {
             flexDirection: 'row',
             gap: scaleHorizontal(12),
         },
-        dateBadge: {
-            width: scaleHorizontal(56),
-            height: scaleHorizontal(56),
-            backgroundColor: colors.text,
-            borderRadius: 8,
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingVertical: scaleVertical(8),
-        },
-        monthText: {
-            color: colors.background,
-            fontSize: 10,
-            fontWeight: '600',
-        },
-        dayText: {
-            color: colors.background,
-            fontSize: 20,
-            fontWeight: 'bold',
-        },
         headerContent: {
             flex: 1,
             gap: scaleVertical(8),
@@ -56,14 +37,14 @@ export const getStyles = (colors: IColors) => {
             flexDirection: 'row',
         },
         avatar: {
-            width: 24,
-            height: 24,
+            width: scaleHorizontal(24),
+            height: scaleHorizontal(24),
             borderRadius: 12,
             borderWidth: 2,
             borderColor: colors.border,
         },
         avatarOverlap: {
-            marginLeft: -8,
+            marginLeft: -scaleHorizontal(8),
         },
         attendeesText: {
             color: colors.text,

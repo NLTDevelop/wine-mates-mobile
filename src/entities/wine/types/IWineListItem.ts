@@ -4,7 +4,7 @@ export interface IWineListItem {
     id: number;
     name: string | null;
     vintage: number | null;
-    producer?: string;
+    producer?: string | null;
     grapeVariety?: string;
     userId?: number;
     createdAt: string;

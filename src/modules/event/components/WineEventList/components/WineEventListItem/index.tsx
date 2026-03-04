@@ -8,6 +8,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { formatEventDate } from '@/utils';
 import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
+import { DateBadge } from '@/UIKit/DateBadge';
 
 interface IWineEventListItemProps {
     event: IEvent;
@@ -40,10 +41,7 @@ export const WineEventListItem = ({
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.dateBadge}>
-                    <Typography text={month} variant="subtitle_12_400" style={styles.monthText} />
-                    <Typography text={day} variant="h3" style={styles.dayText} />
-                </View>
+                <DateBadge month={month} day={day} />
 
                 <View style={styles.headerContent}>
                     <Typography text={event.title} variant="h5" style={styles.title} />
@@ -64,33 +62,31 @@ export const WineEventListItem = ({
                             style={styles.attendeesText}
                         />
                     </View>
-                </View>
-            </View>
 
-            <View style={styles.infoRow}>
-                <Typography
-                    text={`${event.date} · ${event.startTime} - ${event.endTime}`}
-                    variant="subtitle_12_400"
-                    style={styles.timeText}
-                />
-            </View>
+                    <Typography
+                        text={`${event.date} · ${event.startTime} - ${event.endTime}`}
+                        variant="subtitle_12_400"
+                        style={styles.timeText}
+                    />
 
-            <View style={styles.badgesRow}>
-                <View style={styles.badge}>
-                    <Typography text="🍷" variant="h3" />
-                    <Typography
-                        text={`${event.eventType === 'offline' ? 'Offline' : 'Online'} Event`}
-                        variant="h6"
-                        style={styles.badgeText}
-                    />
-                </View>
-                <View style={styles.badge}>
-                    <Typography text="💵" variant="h3" />
-                    <Typography
-                        text={`€${(event.price / 100).toFixed(3)}`}
-                        variant="h6"
-                        style={styles.badgeText}
-                    />
+                    <View style={styles.badgesRow}>
+                        <View style={styles.badge}>
+                            <Typography text="🍷" variant="h5" />
+                            <Typography
+                                text={`${event.eventType === 'offline' ? 'Offline' : 'Online'} Event`}
+                                variant="body_400"
+                                style={styles.badgeText}
+                            />
+                        </View>
+                        <View style={styles.badge}>
+                            <Typography text="💵" variant="h5" />
+                            <Typography
+                                text={`€${(event.price)}`}
+                                variant="body_400"
+                                style={styles.badgeText}
+                            />
+                        </View>
+                    </View>
                 </View>
             </View>
 
