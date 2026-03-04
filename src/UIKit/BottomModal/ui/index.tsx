@@ -1,5 +1,5 @@
 import { useEffect, useMemo, ReactNode, useState } from 'react';
-import { View, Modal, TouchableWithoutFeedback, Animated, Dimensions, ScrollView, Pressable } from 'react-native';
+import { View, Modal, TouchableWithoutFeedback, Animated, ScrollView, Pressable } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { TitleVariant, Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
