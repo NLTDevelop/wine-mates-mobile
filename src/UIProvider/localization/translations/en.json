@@ -283,5 +283,8 @@
     "eventMap": {
         "wineEvents": "Wine events",
         "readMore": "Read more"
+    },
+    "faq": {
+        "faq": "FAQ"
     }
 }

@@ -286,5 +286,8 @@
     "eventMap": {
         "wineEvents": "Винні події",
         "readMore": "Читати більше"
+    },
+    "faq": {
+        "faq": "FAQ"
     }
 }
