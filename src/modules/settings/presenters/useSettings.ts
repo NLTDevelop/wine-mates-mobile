@@ -23,7 +23,7 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
     }, [navigation]);
 
     const onFAQPress = useCallback(() => {
-        navigation.navigate('');
+        navigation.navigate('FAQView');
     }, [navigation]);
 
     const onRateTheAppPress = useCallback(() => {
