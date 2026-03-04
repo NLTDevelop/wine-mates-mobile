@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { getStyles } from './styles';
-import { FlatList, View } from 'react-native';
+import { View } from 'react-native';
 import {FlatListIndicator} from '@fanchenbao/react-native-scroll-indicator';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -42,7 +42,7 @@ export const WineSmellView = observer(() => {
     const [handleAddCustomSmell] = useAnimatedItemAdd(originalHandleAddCustomSmell);
 
     const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
-    const { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress, searchInputRef, dismissKeyboard } = useWineSmellSearch({
+    const { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress, searchInputRef } = useWineSmellSearch({
         data, selected, onItemPress, onSelectedItemPress });
 
     const visibleGroups = useMemo(
@@ -180,10 +180,7 @@ export const WineSmellView = observer(() => {
                 <SelectModal
                     isVisible={isVisible}
                     onHide={onHide}
-                    onItemPress={(item, subgroupId, groupId) => {
-                        dismissKeyboard();
-                        return onItemPress(item, subgroupId, groupId);
-                    }}
+                    onItemPress={onItemPress}
                     data={selectData}
                     subgroupId={selectedSubgroup?.id ?? null}
                     groupId={groupId}

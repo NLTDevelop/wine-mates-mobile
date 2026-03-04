@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { storage } from '@/libs/storage/MMKVStorage';
 import { TASTE_CHARACTERISTICS_CACHE_KEY } from '@/libs/storage/cacheUtils';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { Keyboard } from 'react-native';
 
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -113,6 +114,7 @@ export const useWineTasteCharacteristics = () => {
 
                 return next;
             });
+            Keyboard.dismiss();
         },
         [data],
     );
@@ -120,6 +122,7 @@ export const useWineTasteCharacteristics = () => {
     const handleWinePeakChange = useCallback((year: number | null) => {
         setWinePeak(year);
         wineModel.winePeak = year;
+        Keyboard.dismiss();
     }, []);
 
     const handleNextPress = useCallback(() => {
@@ -135,6 +138,7 @@ export const useWineTasteCharacteristics = () => {
         }
 
         navigation.navigate('WineReviewView');
+        Keyboard.dismiss();
     }, [data, navigation, sliderValues, winePeak]);
 
     return { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues, isPremiumUser, winePeak, handleWinePeakChange, isExpertOrWinemaker };
