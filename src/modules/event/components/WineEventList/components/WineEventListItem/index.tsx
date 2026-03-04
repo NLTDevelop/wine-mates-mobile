@@ -12,7 +12,7 @@ import { DateBadge } from '@/UIKit/DateBadge';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { useWineEventListItem } from './useWineEventListItem';
 
-interface IWineEventListItemProps {
+interface IProps {
     event: IEvent;
     isSelected: boolean;
     onReadMorePress: (eventId: number) => void;
@@ -25,7 +25,7 @@ export const WineEventListItem = ({
     onReadMorePress,
     onFavoritePress,
     eventId
-}: IWineEventListItemProps) => {
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { isModalVisible, onReadMorePress: onReadMorePressHandler, onCloseModal, onFavoritePress: onFavoritePressHandler } = useWineEventListItem({
