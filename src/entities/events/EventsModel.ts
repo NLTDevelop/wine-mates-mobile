@@ -4,18 +4,17 @@ import { IEvent, IEventDetail } from './types/IEvent';
 export interface IEventsModel {
     events: IEvent[];
     selectedEventId: number | null;
-    eventDetails: Map<number, IEventDetail>;
+    eventDetail: IEventDetail | null;
     setEvents: (events: IEvent[]) => void;
     setSelectedEventId: (id: number | null) => void;
-    setEventDetail: (eventDetail: IEventDetail) => void;
-    getEventDetail: (id: number) => IEventDetail | undefined;
+    setEventDetail: (eventDetail: IEventDetail | null) => void;
     clear: () => void;
 }
 
 class EventsModel implements IEventsModel {
     private eventsRepository = new MobXRepository<IEvent[]>([]);
     private selectedEventIdRepository = new MobXRepository<number | null>(null);
-    private eventDetailsRepository = new MobXRepository<Map<number, IEventDetail>>(new Map());
+    private eventDetailRepository = new MobXRepository<IEventDetail | null>(null);
 
     public get events() {
         return this.eventsRepository.data || [];
@@ -33,12 +32,12 @@ class EventsModel implements IEventsModel {
         this.selectedEventIdRepository.save(value);
     }
 
-    public get eventDetails() {
-        return this.eventDetailsRepository.data || new Map();
+    public get eventDetail() {
+        return this.eventDetailRepository.data;
     }
 
-    public set eventDetails(value: Map<number, IEventDetail>) {
-        this.eventDetailsRepository.save(value);
+    public set eventDetail(value: IEventDetail | null) {
+        this.eventDetailRepository.save(value);
     }
 
     public setEvents(events: IEvent[]) {
@@ -49,20 +48,14 @@ class EventsModel implements IEventsModel {
         this.selectedEventId = id;
     }
 
-    public setEventDetail(eventDetail: IEventDetail) {
-        const details = new Map(this.eventDetails);
-        details.set(eventDetail.id, eventDetail);
-        this.eventDetails = details;
-    }
-
-    public getEventDetail(id: number): IEventDetail | undefined {
-        return this.eventDetails.get(id);
+    public setEventDetail(eventDetail: IEventDetail | null) {
+        this.eventDetail = eventDetail;
     }
 
     public clear() {
         this.events = [];
         this.selectedEventId = null;
-        this.eventDetails = new Map();
+        this.eventDetail = null;
     }
 }
 
