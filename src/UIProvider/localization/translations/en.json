@@ -144,6 +144,7 @@
         "selectAppearance": "Select appearance",
         "result": "Result",
         "wineDetails": "Wine details",
+        "selectedParameters": "Selected Parameters",
         "selectMousse": "Select mousse",
         "selectPerlage": "Select perlage",
         "typeOfWine": "Type of wine",
@@ -286,5 +287,22 @@
     },
     "faq": {
         "faq": "FAQ"
+    },
+    "eventDetails": {
+        "title": "Event Details",
+        "theme": "Theme",
+        "restaurant": "Restaurant",
+        "location": "Location",
+        "date": "Date",
+        "time": "Time",
+        "price": "Price",
+        "speaker": "Speaker",
+        "distance": "Distance",
+        "language": "Language",
+        "seats": "Seats",
+        "wineSet": "Wine Set",
+        "bookNow": "Book now",
+        "contactForBooking": "Contact for booking",
+        "callToReserve": "Call to reserve"
     }
 }

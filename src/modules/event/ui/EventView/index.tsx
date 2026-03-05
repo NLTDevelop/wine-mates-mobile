@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { ScreenHeader } from '@/UIKit/ScreenHeader';
 import { Typography } from '@/UIKit/Typography';
 import { EventMap } from '@/modules/event/components/EventMap';
 import { WineEventList } from '@/modules/event/components/WineEventList';
@@ -17,7 +16,7 @@ export const EventMapView = observer(() => {
 
     return (
         // <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
-        <ScreenContainer edges={['top']} scrollEnabled headerComponent={<ScreenHeader />}>
+        <ScreenContainer edges={[]} scrollEnabled>
 
             <View style={styles.titleContainer}>
                 <Typography text={t('eventMap.wineEvents')} variant="h3" />
