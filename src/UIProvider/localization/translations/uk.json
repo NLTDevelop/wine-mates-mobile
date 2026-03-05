@@ -211,6 +211,7 @@
             "defective": "Дефектне вино"
         },
         "overallScore": "Загальний бал",
+        "expertReview": "Огляд експерта",
         "customVintage": "Власний винтаж",
         "expertScoreTitle": "Оцінка від експерта"
     },

@@ -208,6 +208,7 @@
             "defective": "Defective wine"
         },
         "overallScore": "Overall Score",
+        "expertReview": "Expert review",
         "customVintage": "Custom vintage",
         "expertScoreTitle": "Expert Rate"
     },

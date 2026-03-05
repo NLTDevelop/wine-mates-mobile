@@ -103,10 +103,12 @@ export const useWineDetails = () => {
     }, [wineModel.selectedWineId, getDetails]);
 
     useEffect(() => {
-        if (isFocused && wineModel.selectedWineId) {
-            getVintages();
+        if (!isFocused || !wineModel.selectedWineId) {
+            return;
         }
-    }, [isFocused, getVintages]);
+
+        Promise.all([getDetails(), getVintages()]);
+    }, [isFocused, getDetails, getVintages]);
 
     const hasCurrentVintageData = details?.currentVintage !== null;
 

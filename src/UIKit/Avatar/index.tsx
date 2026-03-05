@@ -1,6 +1,6 @@
 import { memo, useMemo, useState, useCallback } from 'react';
 import { DimensionValue, ViewStyle, View, LayoutChangeEvent } from 'react-native';
-import { getStyle } from './styles';
+import { getStyle, getInitialsTextStyle } from './styles';
 import { useUiContext } from '../../UIProvider';
 import { scaleVertical } from '../../utils';
 import { FasterImageView } from '@rraut/react-native-faster-image';
@@ -41,7 +41,8 @@ const AvatarComponent = ({ containerStyle = {}, avatarUrl, fullname, size = 40 }
 
     const textStyle = useMemo(() => {
         const actualSize = typeof size === 'number' ? size : measuredSize;
-        return actualSize ? { fontSize: actualSize / 2 } : {};
+        if (!actualSize) return {};
+        return getInitialsTextStyle(actualSize);
     }, [size, measuredSize]);
 
     return (
@@ -56,7 +57,7 @@ const AvatarComponent = ({ containerStyle = {}, avatarUrl, fullname, size = 40 }
                     style={[styles.avatar, sizeStyle]}
                 />
             ) : (
-                <Typography variant="body_400" text={initials} style={textStyle} />
+                <Typography variant="body_400" text={initials} style={[styles.initials, textStyle]} />
             )}
         </View>
     );

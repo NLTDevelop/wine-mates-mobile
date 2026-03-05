@@ -9,7 +9,7 @@ import { CrownIcon } from '@assets/icons/CrownIcon';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { userModel } from '@/entities/users/UserModel';
 import { observer } from 'mobx-react-lite';
-import { BlurContainer } from '@/UIKit/BlurContainer';
+import { LockContainer } from '@/UIKit/LockContainer';
 
 interface IProps {
     value: number | null;
@@ -52,7 +52,7 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                                 <CrownIcon />
                             </View>
                         )}
-                        {!isPremiumUser && <BlurContainer/>}
+                        {!isPremiumUser && <LockContainer/>}
                     </Pressable>
                     {value && isPremiumUser && (
                         <Pressable onPress={handleReset} style={styles.resetButton}>

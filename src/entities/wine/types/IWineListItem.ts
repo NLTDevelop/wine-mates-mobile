@@ -1,4 +1,5 @@
 import { IMedia } from '@/entities/media/types/IMedia';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 export interface IWineListItem {
     id: number;
@@ -31,6 +32,7 @@ export interface IWineListItem {
             firstName: string;
             lastName: string;
             image: IMedia | null;
+            wineExperienceLevel: WineExperienceLevelEnum;
         };
     } | null;
     lastRate?: {
@@ -42,6 +44,7 @@ export interface IWineListItem {
             firstName: string;
             lastName: string;
             image: IMedia | null;
+            wineExperienceLevel: WineExperienceLevelEnum;
         };
     } | null;
 }

@@ -4,12 +4,14 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { wineService } from '@/entities/wine/WineService';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 import { wineModel } from '@/entities/wine/WineModel';
+import { useIsFocused } from '@react-navigation/native';
 
 const LIMIT = 10;
 const OFFSET = 0;
 
 export const useWineReviewsList = (getDetails: () => Promise<void>) => {
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+    const isFocused = useIsFocused();
     const data = wineReviewsListModel.list?.rows || [];
 
     const getList = useCallback(async (offset: number) => {
@@ -56,6 +58,12 @@ export const useWineReviewsList = (getDetails: () => Promise<void>) => {
             getList(OFFSET);
         }
     }, [wineModel.selectedWineId, getList]);
+
+    useEffect(() => {
+        if (isFocused && wineModel.selectedWineId) {
+            getList(OFFSET);
+        }
+    }, [isFocused, getList]);
 
     useEffect(() => {
         return () => wineReviewsListModel.clear();

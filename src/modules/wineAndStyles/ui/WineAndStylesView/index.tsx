@@ -6,22 +6,11 @@ import { TabBar } from '../components/TabBar';
 import { useWineAndStylesTabs } from '../../presenters/useEventsListTabs';
 import { useWineAndStylesView } from '../../presenters/useWineAndStylesView';
 import { size } from '@/utils';
-import { userModel } from '@/entities/users/UserModel';
 
 export const WineAndStylesView = () => {
     const { t } = useUiContext();
-
-    const { screenIndex, handleIndexChange } = useWineAndStylesTabs();
     const { routes, renderScene } = useWineAndStylesView();
-    const hasPremium = userModel.user?.hasPremium || false;
-
-    const handleIndexChangeWithPremiumCheck = (index: number) => {
-        const isTasteProfileTab = routes[index]?.key === 'muTasteProfile';
-        if (isTasteProfileTab && !hasPremium) {
-            return;
-        }
-        handleIndexChange(index);
-    };
+    const { screenIndex, onIndexChange, hasPremium } = useWineAndStylesTabs({ routes });
 
     return (
         <ScreenContainer
@@ -29,13 +18,15 @@ export const WineAndStylesView = () => {
             withGradient
             headerComponent={<HeaderWithBackButton title={t('wineAndStyles.wineAndStyles')} isCentered={false} />}
         >
-         <TabView
+            <TabView
                 lazy
                 swipeEnabled={hasPremium}
-                renderTabBar={props => <TabBar tabBarProps={props} handleIndexChange={handleIndexChangeWithPremiumCheck} hasPremium={hasPremium} />}
+                renderTabBar={props => (
+                    <TabBar tabBarProps={props} onIndexChange={onIndexChange} hasPremium={hasPremium} />
+                )}
                 navigationState={{ index: screenIndex, routes }}
                 renderScene={renderScene}
-                onIndexChange={handleIndexChangeWithPremiumCheck}
+                onIndexChange={onIndexChange}
                 initialLayout={{ width: size.width }}
             />
         </ScreenContainer>
