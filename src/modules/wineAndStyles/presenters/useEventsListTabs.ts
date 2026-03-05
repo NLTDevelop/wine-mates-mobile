@@ -1,14 +1,27 @@
+import { userModel } from '@/entities/users/UserModel';
 import { useCallback, useEffect, useState } from 'react';
 
 let lastScreenIndex = 0;
 
-export const useWineAndStylesTabs = () => {
-    const [screenIndex, setScreenIndex] = useState(lastScreenIndex);
+interface IParams {
+    routes: { key: string; title: string }[];
+}
 
-    const handleIndexChange = useCallback((index: number) => {
-        setScreenIndex(index);
-        lastScreenIndex = index;
-    }, []);
+export const useWineAndStylesTabs = ({ routes }: IParams) => {
+    const [screenIndex, setScreenIndex] = useState(lastScreenIndex);
+    const hasPremium = userModel.user?.hasPremium || false;
+
+    const onIndexChange = useCallback(
+        (index: number) => {
+            const isTasteProfileTab = routes[index]?.key === 'muTasteProfile';
+            if (isTasteProfileTab && !hasPremium) {
+                return;
+            }
+            setScreenIndex(index);
+            lastScreenIndex = index;
+        },
+        [routes, hasPremium],
+    );
 
     useEffect(() => {
         return () => {
@@ -16,5 +29,5 @@ export const useWineAndStylesTabs = () => {
         };
     }, []);
 
-    return { screenIndex, handleIndexChange };
+    return { screenIndex, onIndexChange, hasPremium };
 };

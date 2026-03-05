@@ -7,7 +7,7 @@ import { Avatar } from '@/UIKit/Avatar';
 import { StarIcon } from '@assets/icons/StartIcon';
 import { formatRelativeDate, isLessThanMinuteFromNow } from '@/utils';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
-import { BlurContainer } from '@/UIKit/BlurContainer';
+import { LockContainer } from '@/UIKit/LockContainer';
 import { IWineReviewsListItem } from '@/entities/wine/types/IWineReviewsListItem';
 import { userModel } from '@/entities/users/UserModel';
 
@@ -39,18 +39,26 @@ export const ReviewListItem = ({ item }: IProps) => {
                             <>
                                 <StarIcon />
                                 <Typography text={item.userRating || 0} variant="subtitle_12_500" />
+                                <View style={styles.expertRateContainer}>
+                                    <Typography text={t(`wineLevel.${item.user?.wineExperienceLevel}`)} variant="subtitle_12_500" />
+                                </View>
                             </>
                         ) : (
-                            <View style={styles.expertRateContainer}>
-                                <Typography text={item.expertRating || 0} variant="subtitle_12_500" />
+                            <View style={styles.row}>
+                                <View style={styles.expertRateContainer}>
+                                    <Typography text={item.expertRating || 0} variant="subtitle_12_500" />
+                                </View>
+                                <View style={styles.expertRateContainer}>
+                                    <Typography text={t(`wineLevel.${item.user?.wineExperienceLevel}`)} variant="subtitle_12_500" />
+                                </View>
                             </View>
                         )}
                     </View>
                 </View>
                 <Typography text={isJustNow ? t('common.now') : formattedDate} variant="body_400" style={styles.date} />
             </View>
-            <Typography text={item.review || '-'} variant="body_400" />
-            {isLocked && <BlurContainer isLockIconCentered={true} />}
+            {item.review ? <Typography text={item.review} variant="body_400" /> : null}
+            {isLocked && <LockContainer/>}
         </View>
     );
 };

@@ -91,24 +91,15 @@ export const useWineDetails = () => {
     }, [details, getDetails]);
 
     useEffect(() => {
-        if (wineId) {
-            wineModel.selectedWineId = wineId;
+        if (!isFocused || !wineId) {
+            return;
         }
-    }, [wineId]);
 
-    useEffect(() => {
-        if (wineModel.selectedWineId) {
-            getDetails();
-        }
-    }, [wineModel.selectedWineId, getDetails]);
-
-    useEffect(() => {
-        if (isFocused && wineModel.selectedWineId) {
-            getVintages();
-        }
-    }, [isFocused, getVintages]);
+        wineModel.selectedWineId = wineId;
+        Promise.all([getDetails(), getVintages()]);
+    }, [wineId, isFocused, getDetails, getVintages]);
 
     const hasCurrentVintageData = details?.currentVintage !== null;
 
-    return { details, vintages: wineModel.vintages, isError, getDetails, onVintageChange, hasCurrentVintageData };
+    return { details, vintages: wineModel.vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, wineId };
 };

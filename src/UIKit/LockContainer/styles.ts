@@ -1,15 +1,8 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        lockLayer: {
-            position: 'absolute',
-            top: 0,
-            right: scaleHorizontal(16),
-            zIndex: 10,
-        },
         centeredLockLayer: {
             ...StyleSheet.absoluteFill,
             justifyContent: 'center',
@@ -19,9 +12,7 @@ export const getStyles = (colors: IColors) => {
         baseLayer: {
             ...StyleSheet.absoluteFill,
             backgroundColor: colors.background,
-            borderRadius: 12,
-            borderWidth: 1,
-            borderColor: colors.border_light,
+            borderRadius: 8,
         },
     });
     return styles;

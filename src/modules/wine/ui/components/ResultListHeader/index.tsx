@@ -24,7 +24,13 @@ interface IProps {
     hasCurrentVintageData: boolean;
 }
 
-export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData }: IProps) => {
+export const ResultListHeader = ({
+    data,
+    vintages,
+    onVintageChange,
+    onFavoritePress,
+    hasCurrentVintageData,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isPremiumUser = userModel.user?.hasPremium || false;
@@ -39,17 +45,22 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
     const isVintageTasted = useMemo(() => {
         if (!data.isTasted) return false;
         if (data.vintage === null) return true;
-        
+
         const isInVintages = vintages.some(v => v.vintage === data.vintage);
         const isCurrentVintage = data.currentVintage?.vintage === data.vintage;
-        
+
         return isInVintages || isCurrentVintage;
     }, [data.isTasted, data.vintage, data.currentVintage, vintages]);
 
-
     return (
         <View>
-            <ResultHeader item={data} vintages={vintages} onVintageChange={onVintageChange} onFavoritePress={onFavoritePress} hasCurrentVintageData={hasCurrentVintageData} />
+            <ResultHeader
+                item={data}
+                vintages={vintages}
+                onVintageChange={onVintageChange}
+                onFavoritePress={onFavoritePress}
+                hasCurrentVintageData={hasCurrentVintageData}
+            />
 
             {isVintageTasted && (
                 <>
@@ -57,15 +68,17 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                         <Typography text={t('wine.tasted')} style={styles.tastedText} />
                         <GlassWithWineIcon />
                     </View>
-
-                    {colorShadeItems.length > 0 && (
+                </>
+            )}
+            
+            {colorShadeItems.length > 0 && (
                 <>
                     <View style={styles.titleContainer}>
                         <Typography text={t('wine.colors')} variant="h4" />
                         <Typography text={t('wine.mostSelectedColor')} variant="body_400" style={styles.text} />
                     </View>
                     <View style={styles.mapListContainer}>
-                        {colorShadeItems.map((item) => (
+                        {colorShadeItems.map(item => (
                             <StatisticCard
                                 key={item.id}
                                 backgroundColor={item.colorHex}
@@ -145,10 +158,8 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 </>
             )}
 
-                    {wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0 && (
-                        <Typography text={t('wine.reviews')} variant="h4" style={styles.title} />
-                    )}
-                </>
+            {wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0 && (
+                <Typography text={t('wine.reviews')} variant="h4" style={styles.title} />
             )}
         </View>
     );

@@ -7,7 +7,7 @@ import { declOfWord, getContrastColor } from '@/utils';
 import { getStyles } from './styles';
 import { userModel } from '@/entities/users/UserModel';
 import { observer } from 'mobx-react-lite';
-import { BlurContainer } from '@/UIKit/BlurContainer';
+import { LockContainer } from '@/UIKit/LockContainer';
 
 interface IProps {
     peaks: ITasteProfileTopWinePeak[];
@@ -41,7 +41,7 @@ export const WinePeaksGrid = observer(({ peaks }: IProps) => {
                     </View>
                 ))}
                 {!isPremiumUser && (
-                   <BlurContainer/>
+                   <LockContainer/>
                 )}
             </View>
         </>

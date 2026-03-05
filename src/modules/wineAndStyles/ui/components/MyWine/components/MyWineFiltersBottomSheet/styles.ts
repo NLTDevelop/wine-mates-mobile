@@ -10,10 +10,20 @@ export const getStyles = (colors: IColors, bottom: number, top: number) => {
             borderTopRightRadius: scaleHorizontal(24),
         },
         header: {
+            position: 'relative',
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
             paddingVertical: scaleVertical(16),
+        },
+        title: {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            textAlign: 'center',
+        },
+        headerAction: {
+            zIndex: 1,
         },
         scrollContent: {
             paddingHorizontal: scaleHorizontal(16),

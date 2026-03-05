@@ -1,5 +1,5 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
@@ -8,22 +8,22 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
     const styles = StyleSheet.create({
         container: {
             overflow: 'hidden',
-            ...removeCardStyles ? {} : {
-                padding: scaleVertical(12),
-                paddingHorizontal: scaleHorizontal(12),
-                backgroundColor: colors.background,
-                borderRadius: 12,
-                shadowColor: colors.shadow,
-                shadowOpacity: 0.12,
-                shadowRadius: 3,
-                shadowOffset: { width: 0, height: 2 },
-                elevation: 3,
-            }
+            ...(removeCardStyles
+                ? {}
+                : {
+                      padding: scaleVertical(12),
+                      backgroundColor: colors.background,
+                      borderRadius: 12,
+                      shadowColor: colors.shadow,
+                      shadowOpacity: 0.12,
+                      shadowRadius: 3,
+                      shadowOffset: { width: 0, height: 2 },
+                      elevation: 3,
+                  }),
         },
         content: {
             flexDirection: 'row',
             gap: scaleHorizontal(12),
-            overflow: 'hidden'
         },
         imageContainer: {
             width: '34.6%',
@@ -66,16 +66,14 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             alignItems: 'center',
         },
         expertReviewText: {
-          fontSize: scaleFontSize(10),
-            marginTop: -scaleVertical(4),
             color: colors.text_light,
         },
         medalContainer: {
-            maxHeight: scaleVertical(medalSize),
-            marginBottom: scaleVertical(6),
+            marginBottom: scaleVertical(2),
         },
         titleText: {
-            textAlign: 'center'
+            textAlign: 'center',
+            marginTop: scaleVertical(6),
         },
         locationText: {
             color: colors.text_light,

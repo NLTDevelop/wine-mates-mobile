@@ -1,13 +1,14 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
+import { scaleVertical } from '@/utils';
 
-export const getStyles = (_colors: IColors) =>
+export const getStyles = (_colors: IColors, iconSize: number) =>
     StyleSheet.create({
         container: {
             backgroundColor: 'transparent',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '100%',
-            height: '100%',
+            width: scaleVertical(iconSize),
+            height: scaleVertical(iconSize),
         },
     });

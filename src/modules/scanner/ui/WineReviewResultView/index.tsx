@@ -20,8 +20,7 @@ export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits } =
-        useWineReviewResult();
+    const { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits } = useWineReviewResult();
 
     return (
         <ScreenContainer

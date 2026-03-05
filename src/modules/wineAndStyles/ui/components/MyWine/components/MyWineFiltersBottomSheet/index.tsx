@@ -54,11 +54,11 @@ export const MyWineFiltersBottomSheet = observer(({ modalRef, onClose, hasFilter
         >
             <BottomSheetScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={onClose} hitSlop={20}>
+                    <TouchableOpacity onPress={onClose} hitSlop={20} style={styles.headerAction}>
                         <CrossIcon />
                     </TouchableOpacity>
-                    <Typography variant="h4" text={t('common.filters')} />
-                    <TouchableOpacity onPress={onClear} hitSlop={20} disabled={!hasFilters}>
+                    <Typography variant="h4" text={t('common.filters')} style={styles.title} pointerEvents="none" />
+                    <TouchableOpacity onPress={onClear} hitSlop={20} disabled={!hasFilters} style={styles.headerAction}>
                         <Typography
                             variant="h6"
                             text={t('common.clear')}

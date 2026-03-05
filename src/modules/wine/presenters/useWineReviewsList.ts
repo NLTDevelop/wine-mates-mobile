@@ -3,24 +3,23 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { wineService } from '@/entities/wine/WineService';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
-import { wineModel } from '@/entities/wine/WineModel';
+import { useIsFocused } from '@react-navigation/native';
 
 const LIMIT = 10;
 const OFFSET = 0;
 
-export const useWineReviewsList = (getDetails: () => Promise<void>) => {
+export const useWineReviewsList = (getDetails: () => Promise<void>, wineId?: number | null) => {
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+    const isFocused = useIsFocused();
     const data = wineReviewsListModel.list?.rows || [];
 
-    const getList = useCallback(async (offset: number) => {
+    const getList = useCallback(async (offset: number, targetWineId: number) => {
         try {
-            if (!wineModel.selectedWineId) return;
-
             setIsReviewsLoading(true);
             const params = {
                 limit: LIMIT,
                 offset,
-                wineId: wineModel.selectedWineId,
+                wineId: targetWineId,
             };
             const response = await wineService.getReviewsList(params);
 
@@ -39,23 +38,24 @@ export const useWineReviewsList = (getDetails: () => Promise<void>) => {
 
     const onRefresh = useCallback(
         async (offset: number = OFFSET) => {
-            await Promise.all([getDetails(), getList(offset)]);
+            if (!wineId) return;
+            await Promise.all([getDetails(), getList(offset, wineId)]);
         },
-        [getList, getDetails],
+        [getList, getDetails, wineId],
     );
 
     const onEndReached = useCallback(async () => {
         const list = wineReviewsListModel.list;
-        if (!isReviewsLoading && list && list.count > list.rows.length) {
-            await getList(list.rows.length);
+        if (!isReviewsLoading && list && list.count > list.rows.length && wineId) {
+            await getList(list.rows.length, wineId);
         }
-    }, [isReviewsLoading, getList]);
+    }, [isReviewsLoading, getList, wineId]);
 
     useEffect(() => {
-        if (wineModel.selectedWineId) {
-            getList(OFFSET);
+        if (isFocused && wineId) {
+            getList(OFFSET, wineId);
         }
-    }, [wineModel.selectedWineId, getList]);
+    }, [isFocused, getList, wineId]);
 
     useEffect(() => {
         return () => wineReviewsListModel.clear();

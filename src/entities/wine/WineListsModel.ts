@@ -45,7 +45,7 @@ class WineListsModel implements IWineListsModel {
     }
 
     public get filters() {
-        return this.filtersRepository.rawData || {
+        return this.filtersRepository.data || {
             sort: [],
             colors: [],
             types: [],
@@ -69,33 +69,35 @@ class WineListsModel implements IWineListsModel {
     }
 
     public clearFilters() {
-        const currentFilters = this.filtersRepository.rawData;
-        if (currentFilters) {
-            currentFilters.sort = [];
-            currentFilters.colors = [];
-            currentFilters.types = [];
-        }
+        this.filtersRepository.save({
+            sort: [],
+            colors: [],
+            types: [],
+        });
     }
 
     public setSort(value: (string | number)[]) {
-        const currentFilters = this.filtersRepository.rawData;
-        if (currentFilters) {
-            currentFilters.sort = value;
-        }
+        const currentFilters = this.filters;
+        this.filtersRepository.save({
+            ...currentFilters,
+            sort: value,
+        });
     }
 
     public setColors(value: (string | number)[]) {
-        const currentFilters = this.filtersRepository.rawData;
-        if (currentFilters) {
-            currentFilters.colors = value;
-        }
+        const currentFilters = this.filters;
+        this.filtersRepository.save({
+            ...currentFilters,
+            colors: value,
+        });
     }
 
     public setTypes(value: (string | number)[]) {
-        const currentFilters = this.filtersRepository.rawData;
-        if (currentFilters) {
-            currentFilters.types = value;
-        }
+        const currentFilters = this.filters;
+        this.filtersRepository.save({
+            ...currentFilters,
+            types: value,
+        });
     }
 
     public append(value: IList<IWineListItem>) {

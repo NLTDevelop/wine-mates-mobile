@@ -10,7 +10,7 @@ interface IProps {
 
 export const ShowLock = ({ iconSize = 24 }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors, iconSize), [colors, iconSize]);
 
     return (
         <View style={styles.container}>

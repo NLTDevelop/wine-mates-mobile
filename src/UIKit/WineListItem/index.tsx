@@ -25,13 +25,12 @@ interface IProps {
 }
 
 export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wineName, removeCardStyles = false, showDate = false, customBottomComponent }: IProps) => {
-    const { colors, locale } = useUiContext();
+    const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
     const { guard, handleItemPress, similarityText, displayRating, reviewCount, lastReviewData, getFormattedDate } = useWineListItem({ item, onPress, showDate });
 
     const hasPremium = userModel.user?.hasPremium ?? false;
     const showMedal = item.averageExpertRating && item.averageExpertRating > 0;
-    console.log(item.name)
 
     const content = (
         <View style={styles.content}>
@@ -76,17 +75,8 @@ export const WineListItem = ({ item, onPress, hideSimilarity = false, footer, wi
                 </View>
 
                 {hasPremium && (
-                    <Typography variant="subtitle_12_400" text={'Expert review'} style={styles.expertReviewText} />
+                    <Typography variant="subtitle_12_400" text={t('wine.expertReview')} style={styles.expertReviewText} />
                 )}
-
-                {/* {item.producer && (
-                    <Typography
-                        variant="subtitle_12_400"
-                        text={item.producer}
-                        numberOfLines={1}
-                        style={styles.locationText}
-                    />
-                )} */}
 
                 <Typography
                     variant="h5"

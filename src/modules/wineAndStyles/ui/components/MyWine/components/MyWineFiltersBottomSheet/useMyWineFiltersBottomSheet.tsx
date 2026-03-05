@@ -9,9 +9,9 @@ export const useMyWineFiltersBottomSheet = () => {
     const appliedFilters = wineListsModel.filters;
     
     const [tempFilters, setTempFilters] = useState<ISelectedFilters>({
-        sort: appliedFilters.sort,
-        colors: appliedFilters.colors,
-        types: appliedFilters.types,
+        sort: [...appliedFilters.sort],
+        colors: [...appliedFilters.colors],
+        types: [...appliedFilters.types],
     });
 
     const hasFilters = computed(() => {
@@ -22,18 +22,18 @@ export const useMyWineFiltersBottomSheet = () => {
 
     const onClose = useCallback(() => {
         setTempFilters({
-            sort: appliedFilters.sort,
-            colors: appliedFilters.colors,
-            types: appliedFilters.types,
+            sort: [...appliedFilters.sort],
+            colors: [...appliedFilters.colors],
+            types: [...appliedFilters.types],
         });
         filtersModalRef.current?.dismiss();
     }, [appliedFilters]);
 
     const onOpen = useCallback(() => {
         setTempFilters({
-            sort: appliedFilters.sort,
-            colors: appliedFilters.colors,
-            types: appliedFilters.types,
+            sort: [...appliedFilters.sort],
+            colors: [...appliedFilters.colors],
+            types: [...appliedFilters.types],
         });
         filtersModalRef.current?.present();
     }, [appliedFilters]);
