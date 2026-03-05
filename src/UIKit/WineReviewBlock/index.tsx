@@ -18,9 +18,10 @@ interface IProps {
         wineExperienceLevel: WineExperienceLevelEnum;
     };
     review: string | null;
+    isMyReview?: boolean;
 }
 
-export const WineReviewBlock = ({ user, review }: IProps) => {
+export const WineReviewBlock = ({ user, review, isMyReview = false}: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -39,7 +40,7 @@ export const WineReviewBlock = ({ user, review }: IProps) => {
                 <Typography variant="body_500" text={`${user.firstName} ${user.lastName}`} numberOfLines={1} />
             </View>
             {review?.trim() ? <Typography variant="body_400" text={review?.trim() || '-'} numberOfLines={3} style={styles.reviewText} /> : null}
-            {isLocked && <LockContainer />}
+            {isLocked && !isMyReview && <LockContainer />}
         </View>
     );
 };
