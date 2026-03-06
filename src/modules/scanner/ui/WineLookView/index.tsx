@@ -18,6 +18,7 @@ import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { wineModel } from '@/entities/wine/WineModel';
 import { SmoothSlider } from '@/UIKit/SmoothSlider';
+import { ScrollViewIndicator } from '@fanchenbao/react-native-scroll-indicator';
 
 export const WineLookView = observer(() => {
     const { colors, t } = useUiContext();
@@ -60,13 +61,20 @@ export const WineLookView = observer(() => {
                 edges={['top', 'bottom']}
                 withGradient
                 headerComponent={<HeaderWithBackButton title={t('wine.look')} rightComponent={<CloseButton />} />}
-                scrollEnabled
             >
                 {!data || !selectedColor || isLoading ? (
                     <Loader />
                 ) : (
                     <View style={styles.container}>
-                        <View>
+                        <ScrollViewIndicator
+                            containerStyle={styles.scrollArea}
+                            indStyle={styles.indicator}
+                            scrollViewProps={{
+                                style: styles.scrollView,
+                                contentContainerStyle: styles.scrollContent,
+                                keyboardShouldPersistTaps: 'handled',
+                            }}
+                        >
                             <Typography text={t('wine.lookDescription')} variant="body_400" style={styles.title} />
 
                             <Typography text={t('wine.selectColor')} variant="h4" style={styles.label} />
@@ -139,7 +147,7 @@ export const WineLookView = observer(() => {
                             )}
 
                             <SelectedParameters />
-                        </View>
+                        </ScrollViewIndicator>
                         <Button
                             text={t('wine.letsSmell')}
                             onPress={handlePressNext}

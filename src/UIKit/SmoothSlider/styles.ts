@@ -5,7 +5,7 @@ import { scaleVertical, scaleHorizontal, scaleFontSize } from '@/utils';
 const LABEL_WIDTH = scaleHorizontal(90);
 const HALF_LABEL = LABEL_WIDTH / 4;
 const TRACK_HEIGHT = scaleVertical(8);
-const THUMB_SIZE = scaleHorizontal(48);
+const THUMB_SIZE = scaleHorizontal(24);
 const HALF_THUMB = THUMB_SIZE / 2;
 
 export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch: boolean = false, edgeAlignedLabels: boolean = false) => {
@@ -95,43 +95,39 @@ export const getStyles = (colors: IColors, sliderLength?: number, shouldStretch:
         },
         labelsContainer: {
             flexDirection: 'row',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-start',
             marginTop: scaleVertical(8),
-            width: sliderLength ? actualSliderLength + THUMB_SIZE : '100%',
-            paddingHorizontal: edgeAlignedLabels ? 0 : HALF_THUMB,
+            width: '100%',
+            paddingHorizontal: 0,
         },
         labelWrapper: {
-            width: edgeAlignedLabels ? undefined : LABEL_WIDTH,
-            maxWidth: edgeAlignedLabels ? LABEL_WIDTH : undefined,
-            alignItems: 'center',
-            flex: edgeAlignedLabels ? 1 : undefined,
+            alignItems: 'stretch',
+            flex: 1,
         },
         middleLabelWrapper: {
-            width: edgeAlignedLabels ? undefined : scaleHorizontal(100),
-            maxWidth: edgeAlignedLabels ? LABEL_WIDTH : undefined,
-            flex: edgeAlignedLabels ? 0 : undefined,
+            alignItems: 'stretch',
         },
         leftLabelWrapper: {
-            alignItems: edgeAlignedLabels ? 'flex-start' : 'center',
-            marginLeft: edgeAlignedLabels ? 0 : -LABEL_WIDTH / 2,
+            alignItems: 'stretch',
         },
         rightLabelWrapper: {
-            alignItems: edgeAlignedLabels ? 'flex-end' : 'center',
-            marginRight: edgeAlignedLabels ? 0 : -LABEL_WIDTH / 2,
+            alignItems: 'stretch',
         },
         labelText: {
             color: colors.text,
             textAlign: 'center',
-            marginTop: scaleVertical(-14),
+            marginTop: 0,
             fontSize: scaleFontSize(10),
+            width: '100%',
+        },
+        middleLabelText: {
+            textAlign: 'center',
         },
         leftLabelText: {
-            textAlign: edgeAlignedLabels ? 'left' : 'center',
-            marginLeft: edgeAlignedLabels ? 0 : scaleHorizontal(8),
+            textAlign: 'left',
         },
         rightLabelText: {
-            textAlign: edgeAlignedLabels ? 'right' : 'center',
-            marginRight: edgeAlignedLabels ? 0 : scaleHorizontal(8),
+            textAlign: 'right',
         },
     });
     return styles;

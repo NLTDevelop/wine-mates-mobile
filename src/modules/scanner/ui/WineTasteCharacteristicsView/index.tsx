@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { getStyles } from './styles';
-import { FlatList, View } from 'react-native';
+import { View } from 'react-native';
+import { FlatListIndicator } from '@fanchenbao/react-native-scroll-indicator';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
@@ -72,32 +73,35 @@ export const WineTasteCharacteristicsView = observer(() => {
                 edges={['top', 'bottom']}
                 withGradient
                 headerComponent={<HeaderWithBackButton title={t('wine.tasteCharacteristics')} rightComponent={<CloseButton />} />}
-                scrollEnabled
-                isKeyboardAvoiding
             >
                 {!data || data.length === 0 || isLoading ? (
                     <Loader />
                 ) : (
                     <View style={styles.container}>
-                        <View>
-                            {listData.length > 0 && (
-                                <FlatList
-                                    data={listData}
-                                    keyExtractor={keyExtractor}
-                                    renderItem={renderItem}
-                                    style={styles.list}
-                                    contentContainerStyle={styles.contentContainer}
-                                    nestedScrollEnabled={true}
-                                />
-                            )}
-                            <SelectedParameters containerStyle={styles.selectedParameters}/>
+                        <View style={styles.content}>
+                            <FlatListIndicator
+                                containerStyle={styles.scrollArea}
+                                flatListProps={{
+                                    data: listData,
+                                    keyExtractor,
+                                    renderItem,
+                                    style: styles.list,
+                                    contentContainerStyle: styles.contentContainer,
+                                    nestedScrollEnabled: true,
+                                    keyboardShouldPersistTaps: 'handled',
+                                    ListFooterComponent: <SelectedParameters containerStyle={styles.selectedParameters} />,
+                                }}
+                                indStyle={styles.indicator}
+                            />
                         </View>
-                        <Button
-                            text={t('wine.letsRate')}
-                            onPress={handleNextPress}
-                            containerStyle={styles.button}
-                            RightAccessory={<NextLongArrowIcon />}
-                        />
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                text={t('wine.letsRate')}
+                                onPress={handleNextPress}
+                                containerStyle={styles.button}
+                                RightAccessory={<NextLongArrowIcon />}
+                            />
+                        </View>
                     </View>
                 )}
             </ScreenContainer>

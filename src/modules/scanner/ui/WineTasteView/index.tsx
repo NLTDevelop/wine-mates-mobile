@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { getStyles } from './styles';
-import { FlatList, View } from 'react-native';
+import { Keyboard, Pressable, View } from 'react-native';
 import {FlatListIndicator} from '@fanchenbao/react-native-scroll-indicator';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -25,6 +25,8 @@ import { wineModel } from '@/entities/wine/WineModel';
 import { IWineTasteGroup } from '@/entities/wine/types/IWineTatseGroup';
 import { useTasteSelectModal } from '../../presenters/useTasteSelectModal';
 import { SelectModal } from '../components/SelectModal';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { scaleVertical } from '@/utils';
 
 export const WineTasteView = observer(() => {
     const { colors, t } = useUiContext();
@@ -51,40 +53,45 @@ export const WineTasteView = observer(() => {
                 edges={['top', 'bottom']}
                 withGradient
                 headerComponent={<HeaderWithBackButton title={t('wine.taste')} rightComponent={<CloseButton />} />}
-                scrollEnabled
-                isKeyboardAvoiding
             >
                 {!wineModel.tastes || wineModel.tastes.length === 0 || isLoading ? (
                     <Loader />
                 ) : (
                     <View style={styles.container}>
-                        <View>
-                            <Typography text={t('wine.tasteDescription')} variant="body_400" style={styles.title} />
+                        <KeyboardAwareScrollView
+                            style={styles.mainContainer}
+                            keyboardShouldPersistTaps="handled"
+                            nestedScrollEnabled
+                            bottomOffset={scaleVertical(24)}
+                        >
+                            <Pressable style={styles.scrollContent} onPress={Keyboard.dismiss}>
+                                <Typography text={t('wine.tasteDescription')} variant="body_400" style={styles.title} />
 
-                            {visibleGroups.length > 0 && (
-                                <FlatListIndicator
-                                    flatListProps={{
-                                        data: visibleGroups,
-                                        keyExtractor,
-                                        renderItem,
-                                        style: styles.list,
-                                        contentContainerStyle: styles.contentContainer,
-                                        nestedScrollEnabled: true,
-                                    }}
-                                    indStyle={styles.indicator}
+                                {visibleGroups.length > 0 && (
+                                    <FlatListIndicator
+                                        flatListProps={{
+                                            data: visibleGroups,
+                                            keyExtractor,
+                                            renderItem,
+                                            style: styles.list,
+                                            contentContainerStyle: styles.contentContainer,
+                                            nestedScrollEnabled: true,
+                                        }}
+                                        indStyle={styles.indicator}
+                                    />
+                                )}
+                                <CustomInput
+                                    value={text}
+                                    onChangeText={setText}
+                                    maxLength={40}
+                                    placeholder={t('wine.addCustomTaste')}
+                                    RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
+                                    containerStyle={styles.input}
                                 />
-                            )}
-                            <CustomInput
-                                value={text}
-                                onChangeText={setText}
-                                maxLength={40}
-                                placeholder={t('wine.addCustomTaste')}
-                                RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
-                                containerStyle={styles.input}
-                            />
-                            {selected.length > 0 && <SelectedItemsList ref={selectedListRef} data={selected} onPress={onSelectedItemPress} />}
-                            <SelectedParameters />
-                        </View>
+                                {selected.length > 0 && <SelectedItemsList ref={selectedListRef} data={selected} onPress={onSelectedItemPress} />}
+                                <SelectedParameters />
+                            </Pressable>
+                        </KeyboardAwareScrollView>
                         <Button
                             text={t('wine.letsTaste')}
                             onPress={handleNextPress}

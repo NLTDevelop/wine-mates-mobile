@@ -9,6 +9,12 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'space-between',
             paddingHorizontal: scaleHorizontal(16),
         },
+        mainContainer: {
+            flex: 1,
+        },
+        scrollContent: {
+            flex: 1,
+        },
         title: {
             textAlign: 'center',
             color: colors.text_light,
