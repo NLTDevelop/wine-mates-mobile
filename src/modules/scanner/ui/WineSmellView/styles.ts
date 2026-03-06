@@ -1,13 +1,18 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { isIOS, scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            justifyContent: 'space-between',
             paddingHorizontal: scaleHorizontal(16),
+        },
+        mainContainer:{
+            flex: 1,
+        },
+        scrollContent: {
+            flex: 1,
         },
         title: {
             textAlign: 'center',

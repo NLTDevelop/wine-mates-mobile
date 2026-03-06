@@ -9,7 +9,7 @@ export const getStyles = (_colors: IColors) => {
             alignItems: 'center',
         },
         star: {
-            marginHorizontal: scaleHorizontal(1),
+            marginHorizontal: scaleHorizontal(2),
         },
         starIconContainer: {
             justifyContent: 'center',

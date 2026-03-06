@@ -21,10 +21,9 @@ export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
             gap: scaleHorizontal(12),
         },
         pickerButton: {
-            backgroundColor: colors.background_grey,
+            backgroundColor: colors.primary,
             borderRadius: 12,
-            paddingVertical: scaleVertical(16),
-            paddingHorizontal: scaleHorizontal(16),
+            height: scaleVertical(40),
             alignItems: 'center',
             justifyContent: 'center',
             width: '50%',
@@ -33,15 +32,15 @@ export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
             opacity: isPremiumUser ? 1 : 0.6,
         },
         resetButton: {
-            backgroundColor: colors.background_grey,
+            backgroundColor: colors.primary,
             borderRadius: 12,
-            width: scaleHorizontal(48),
-            height: scaleVertical(48),
+            width: scaleHorizontal(40),
+            height: scaleVertical(40),
             alignItems: 'center',
             justifyContent: 'center',
         },
         pickerText: {
-            color: colors.text,
+            color: colors.text_inverted,
         },
         modalOverlay: {
             flex: 1,

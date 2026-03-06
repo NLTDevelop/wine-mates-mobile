@@ -6,8 +6,24 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            justifyContent: 'space-between',
-            paddingHorizontal: scaleHorizontal(16),
+            paddingLeft: scaleHorizontal(16),
+            paddingRight: scaleHorizontal(5),
+        },
+        scrollArea: {
+            flex: 1,
+            width: '100%',
+            paddingRight: scaleHorizontal(10),
+            overflow: 'visible',
+        },
+        scrollView: {
+            width: '100%',
+        },
+        scrollContent: {
+            paddingBottom: scaleVertical(16),
+        },
+        indicator: {
+            width: scaleHorizontal(6),
+            backgroundColor: colors.primary,
         },
         title: {
             textAlign: 'center',
@@ -24,14 +40,9 @@ export const getStyles = (colors: IColors) => {
             rowGap: scaleVertical(12),
             marginBottom: scaleVertical(24),
         },
-        resultColor: {
-            borderRadius: 12,
-            width: scaleHorizontal(109),
-            height: scaleVertical(50),
-            marginBottom: scaleVertical(24),
-        },
         button: {
             marginBottom: scaleVertical(16),
+            marginRight: scaleHorizontal(10),
         },
         bottomValues: {
             marginBottom: scaleVertical(24),

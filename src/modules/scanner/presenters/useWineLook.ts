@@ -163,7 +163,7 @@ export const useWineLook = ({t, styles}: IUseWineLookArgs) => {
     }, [navigation, currentColor, mousse, perlage, appearance, selectedColor, shade]);
 
     return {
-        data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades, currentColor,
+        data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades,
         isLoading, onSelectColor, handlePressNext, appearance, setAppearance, shadeSelectorKey, handleShadeAnimationEnd, sliderDecorator, getSparklingSliderData
     };
 };

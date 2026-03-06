@@ -130,7 +130,7 @@
         "resultsTitle": "Виберіть варіант, який найкраще відповідає вашому результату. Або додайте вино вручну",
         "addWine": "Додайте вино вручну",
         "reviewCount": ["відгук", "відгуки", "відгуків"],
-        "whatsInYourGlass": "Що у вашій склянці?",
+        "whatsInYourGlass": "Що у вашому келиху?",
         "enterData": "(Введіть дані вручну або проскануйте етикетку)",
         "tasteWine": "Скуштуйте вино"
     },
@@ -142,7 +142,7 @@
         "selectShade": "Оберіть відтінок",
         "selectAppearance": "Оберіть вигляд",
         "result": "Результат",
-        "wineDetails": "Деталі вина",
+        "wineDetails": "Інформація про вино",
         "selectedParameters": "Обрані параметри",
         "selectMousse": "Оберіть піну",
         "selectPerlage": "Оберіть перляж",
@@ -153,7 +153,7 @@
         "withoutRegion": "Без регіону",
         "wineryName": "Назва виноробні",
         "grapeVariety": "Сорт винограду",
-        "vintage": "Винтаж",
+        "vintage": "Рік врожаю",
         "nonVintage": "Не вінтажне",
         "withoutVintage": "Без вінтажу",
         "wineName": "Назва вина",
@@ -212,9 +212,10 @@
             "defective": "Дефектне вино"
         },
         "overallScore": "Загальний бал",
-        "expertReview": "Огляд експерта",
-        "customVintage": "Власний винтаж",
-        "expertScoreTitle": "Оцінка від експерта"
+        "expertReview": "Оцінка експерта",
+        "customVintage": "Власний вінтаж",
+        "expertScoreTitle": "Оцінка від експерта",
+        "similarity": "Збіг по фото"
     },
     "aiAttempts": {
         "label1": "У вас є ",

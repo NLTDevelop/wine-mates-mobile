@@ -156,7 +156,6 @@ export const SmoothSlider = memo(
                             const isFirst = index === 0;
                             const isLast = index === normalizedLabels.length - 1;
                             const isMiddle = !isFirst && !isLast;
-
                             return (
                                 <Pressable
                                     key={`${label}-${index}`}
@@ -176,6 +175,7 @@ export const SmoothSlider = memo(
                                             variant="subtitle_12_400"
                                             style={[
                                                 styles.labelText,
+                                                isMiddle && styles.middleLabelText,
                                                 isFirst && styles.leftLabelText,
                                                 isLast && styles.rightLabelText,
                                             ]}

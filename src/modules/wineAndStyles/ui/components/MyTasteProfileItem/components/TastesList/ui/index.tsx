@@ -46,7 +46,6 @@ export const TastesList = ({ flavors, characteristics }: IProps) => {
                                     isPremiumUser={isPremiumUser}
                                     disabled
                                     hideDescription
-                                    containerStyle={styles.characteristicItem}
                                     edgeAlignedLabels
                                 />
                             ))}

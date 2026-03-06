@@ -56,7 +56,7 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                     </Pressable>
                     {value && isPremiumUser && (
                         <Pressable onPress={handleReset} style={styles.resetButton}>
-                            <CrossIcon width={20} height={20} color={colors.text_light} />
+                            <CrossIcon width={20} height={20} color={colors.icon_inverted} />
                         </Pressable>
                     )}
                 </View>

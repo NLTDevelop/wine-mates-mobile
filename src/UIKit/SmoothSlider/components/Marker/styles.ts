@@ -6,7 +6,7 @@ const DEFAULT_SIZE = scaleHorizontal(20);
 
 export const getStyles = (colors: IColors, size?: number, color?: string) => {
     const markerSize = size ?? DEFAULT_SIZE;
-    const markerColor = color ?? '#FFFFFF';
+    const markerColor = color ?? colors.background;
 
     const styles = StyleSheet.create({
         marker: {
@@ -15,15 +15,7 @@ export const getStyles = (colors: IColors, size?: number, color?: string) => {
             borderRadius: markerSize / 2,
             backgroundColor: markerColor,
             borderWidth: 1,
-            borderColor: '#000000',
-            shadowColor: '#000',
-            shadowOffset: {
-                width: 0,
-                height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
+            borderColor: colors.background_inverted,
         },
     });
 

@@ -33,7 +33,7 @@ export const ScanResultsListView = observer(() => {
     }, []);
 
     const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
-        return <WineListItem item={item} onPress={handleItemPress} footer={renderFooter(item)} />;
+        return <WineListItem item={item} onPress={handleItemPress} footer={renderFooter(item)} isFromScan={true}/>;
     }, [handleItemPress, renderFooter]);
 
 

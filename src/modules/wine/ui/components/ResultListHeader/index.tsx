@@ -14,7 +14,7 @@ import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 import { userModel } from '@/entities/users/UserModel';
 import { useColorShades } from '@/modules/wine/presenters/useColorShades';
 import { StatisticCard } from '../StatisticCard';
-import { WinePeaksGrid } from '@/modules/wineAndStyles/ui/components/MyTasteProfileItem/components/WinePeaksGrid';
+import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
 
 interface IProps {
     data: IWineDetails;

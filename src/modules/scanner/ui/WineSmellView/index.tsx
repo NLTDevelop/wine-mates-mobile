@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { getStyles } from './styles';
-import { View } from 'react-native';
-import {FlatListIndicator} from '@fanchenbao/react-native-scroll-indicator';
+import { Keyboard, Pressable, View } from 'react-native';
+import { FlatListIndicator } from '@fanchenbao/react-native-scroll-indicator';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
@@ -29,6 +29,8 @@ import { IWineAroma } from '@/entities/wine/types/IWineAroma';
 import { useWineSmellSearch } from '../../presenters/useWineSmellSearch';
 import { useAnimatedItemAdd } from '../../presenters/useAnimatedItemAdd';
 import { EmptyListView } from '@/UIKit/EmptyListView';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { scaleVertical } from '@/utils';
 
 export const WineSmellView = observer(() => {
     const { colors, t } = useUiContext();
@@ -68,8 +70,6 @@ export const WineSmellView = observer(() => {
                 edges={['top', 'bottom']}
                 withGradient
                 headerComponent={<HeaderWithBackButton title={t('wine.smell')} rightComponent={<CloseButton />} />}
-                scrollEnabled
-                isKeyboardAvoiding
             >
                 {isLoading ? (
                     <Loader />
@@ -82,92 +82,99 @@ export const WineSmellView = observer(() => {
                     </View>
                 ) : (
                     <View style={styles.container}>
-                        <View>
-                            <Typography text={t('wine.smellDescription')} variant="body_400" style={styles.title} />
-                            <SearchBar
-                                ref={searchInputRef}
-                                value={search}
-                                onChangeText={onSearchTextChange}
-                                placeholder={t('common.search')}
-                                containerStyle={styles.searchContainer}
-                            />
-                            {search ? (
-                                <FlatListIndicator
-                                    flatListProps={{
-                                        data: searchedAromas,
-                                        keyExtractor,
-                                        renderItem: renderSearchItem,
-                                        style: styles.list,
-                                        contentContainerStyle: styles.contentContainer,
-                                        nestedScrollEnabled: true,
-                                        showsVerticalScrollIndicator: true,
-                                        keyboardShouldPersistTaps: 'handled',
-                                        keyboardDismissMode: 'interactive',
-                                        ListEmptyComponent: (
-                                            <EmptyListView
-                                                isLoading={isSearching || isDebouncing}
-                                                isNothingFound={!searchedAromas?.length && !isSearching && !isDebouncing}
-                                            />
-                                        )
-                                    }}
-                                    indStyle={styles.indicator}
+                        <KeyboardAwareScrollView
+                            style={styles.mainContainer}
+                            keyboardShouldPersistTaps="handled"
+                            nestedScrollEnabled
+                            bottomOffset={scaleVertical(24)}
+                        >
+                            <Pressable style={styles.scrollContent} onPress={Keyboard.dismiss}>
+                                <Typography text={t('wine.smellDescription')} variant="body_400" style={styles.title} />
+                                <SearchBar
+                                    ref={searchInputRef}
+                                    value={search}
+                                    onChangeText={onSearchTextChange}
+                                    placeholder={t('common.search')}
+                                    containerStyle={styles.searchContainer}
                                 />
-                            ) : (
-                                <>
-                                    {isOpened ? (
-                                        <>
-                                            <SmellGroupSelector
-                                                data={data}
-                                                isOpened={isOpened}
-                                                selectedIndex={selectedIndex}
-                                                onPress={toggleList}
-                                                handleLeftPress={handleLeftPress}
-                                                handleRightPress={handleRightPress}
-                                            />
-                                            {visibleSubgroups.length > 0 && (
-                                                <FlatListIndicator
-                                                    flatListProps={{
-                                                        data: visibleSubgroups,
-                                                        keyExtractor,
-                                                        renderItem,
-                                                        style: styles.list,
-                                                        contentContainerStyle: styles.contentContainer,
-                                                        nestedScrollEnabled: true,
-                                                        keyboardShouldPersistTaps: 'handled',
-                                                        keyboardDismissMode: 'interactive'
-                                                    }}
-                                                    indStyle={styles.indicator}
+                                {search ? (
+                                    <FlatListIndicator
+                                        flatListProps={{
+                                            data: searchedAromas,
+                                            keyExtractor,
+                                            renderItem: renderSearchItem,
+                                            style: styles.list,
+                                            contentContainerStyle: styles.contentContainer,
+                                            nestedScrollEnabled: true,
+                                            showsVerticalScrollIndicator: true,
+                                            keyboardShouldPersistTaps: 'handled',
+                                            keyboardDismissMode: 'interactive',
+                                            ListEmptyComponent: (
+                                                <EmptyListView
+                                                    isLoading={isSearching || isDebouncing}
+                                                    isNothingFound={!searchedAromas?.length && !isSearching && !isDebouncing}
                                                 />
-                                            )}
-                                        </>
-                                    ) : (
-                                        <FlatListIndicator
-                                            flatListProps={{
-                                                data: visibleGroups,
-                                                keyExtractor,
-                                                renderItem: renderGroupItem,
-                                                style: styles.list,
-                                                contentContainerStyle: styles.contentContainer,
-                                                nestedScrollEnabled: true,
-                                                keyboardShouldPersistTaps: 'handled',
-                                                keyboardDismissMode: 'interactive'
-                                            }}
-                                            indStyle={styles.indicator}
-                                        />
-                                    )}
-                                </>
-                            )}
-                            <CustomInput
-                                value={text}
-                                onChangeText={setText}
-                                maxLength={40}
-                                placeholder={t('wine.addCustomSmell')}
-                                RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
-                                containerStyle={styles.input}
-                            />
-                            {selected.length > 0 && <SelectedItemsList ref={selectedListRef} data={selected} onPress={onSelectedItemPress} />}
-                            <SelectedParameters />
-                        </View>
+                                            )
+                                        }}
+                                        indStyle={styles.indicator}
+                                    />
+                                ) : (
+                                    <>
+                                        {isOpened ? (
+                                            <>
+                                                <SmellGroupSelector
+                                                    data={data}
+                                                    isOpened={isOpened}
+                                                    selectedIndex={selectedIndex}
+                                                    onPress={toggleList}
+                                                    handleLeftPress={handleLeftPress}
+                                                    handleRightPress={handleRightPress}
+                                                />
+                                                {visibleSubgroups.length > 0 && (
+                                                    <FlatListIndicator
+                                                        flatListProps={{
+                                                            data: visibleSubgroups,
+                                                            keyExtractor,
+                                                            renderItem,
+                                                            style: styles.list,
+                                                            contentContainerStyle: styles.contentContainer,
+                                                            nestedScrollEnabled: true,
+                                                            keyboardShouldPersistTaps: 'handled',
+                                                            keyboardDismissMode: 'interactive'
+                                                        }}
+                                                        indStyle={styles.indicator}
+                                                    />
+                                                )}
+                                            </>
+                                        ) : (
+                                            <FlatListIndicator
+                                                flatListProps={{
+                                                    data: visibleGroups,
+                                                    keyExtractor,
+                                                    renderItem: renderGroupItem,
+                                                    style: styles.list,
+                                                    contentContainerStyle: styles.contentContainer,
+                                                    nestedScrollEnabled: true,
+                                                    keyboardShouldPersistTaps: 'handled',
+                                                    keyboardDismissMode: 'interactive'
+                                                }}
+                                                indStyle={styles.indicator}
+                                            />
+                                        )}
+                                    </>
+                                )}
+                                <CustomInput
+                                    value={text}
+                                    onChangeText={setText}
+                                    maxLength={40}
+                                    placeholder={t('wine.addCustomSmell')}
+                                    RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
+                                    containerStyle={styles.input}
+                                />
+                                {selected.length > 0 && <SelectedItemsList ref={selectedListRef} data={selected} onPress={onSelectedItemPress} />}
+                                <SelectedParameters />
+                            </Pressable>
+                        </KeyboardAwareScrollView>
                         <Button
                             text={t('wine.letsTaste')}
                             onPress={handleNextPress}

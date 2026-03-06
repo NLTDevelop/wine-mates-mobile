@@ -211,7 +211,8 @@
         "overallScore": "Overall Score",
         "expertReview": "Expert review",
         "customVintage": "Custom vintage",
-        "expertScoreTitle": "Expert Rate"
+        "expertScoreTitle": "Expert Rate",
+        "similarity": "Photo match"
     },
     "aiAttempts": {
         "label1": "You have ",
