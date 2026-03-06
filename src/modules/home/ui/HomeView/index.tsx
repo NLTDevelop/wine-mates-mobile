@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
-import { ScreenHeader } from '@/UIKit/ScreenHeader';
 import { Typography } from '@/UIKit/Typography';
 import { View } from 'react-native';
 
@@ -16,7 +15,7 @@ export const HomeView = () => {
 
     return (
         // <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
-        <ScreenContainer edges={['top']} scrollEnabled={false} headerComponent={<ScreenHeader />}>
+        <ScreenContainer edges={[]} scrollEnabled={false}>
 
             {/*TODO: make available at future
             <ScrollView style={styles.container}>

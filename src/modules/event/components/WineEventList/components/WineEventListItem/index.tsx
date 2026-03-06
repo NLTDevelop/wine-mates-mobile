@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { View, Image } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -9,8 +9,10 @@ import { formatEventDate } from '@/utils';
 import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { DateBadge } from '@/UIKit/DateBadge';
+import { BottomModal } from '@/UIKit/BottomModal/ui';
+import { useWineEventListItem } from './useWineEventListItem';
 
-interface IWineEventListItemProps {
+interface IProps {
     event: IEvent;
     isSelected: boolean;
     onReadMorePress: (eventId: number) => void;
@@ -20,23 +22,20 @@ interface IWineEventListItemProps {
 
 export const WineEventListItem = ({
     event,
-    isSelected,
     onReadMorePress,
     onFavoritePress,
     eventId
-}: IWineEventListItemProps) => {
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const { isModalVisible, onReadMorePress: onReadMorePressHandler, onCloseModal, onFavoritePress: onFavoritePressHandler } = useWineEventListItem({
+        eventId,
+        onReadMorePress,
+        onFavoritePress
+    });
 
     const { month, day } = formatEventDate(event.date);
 
-    const handleFavoritePress = () => {
-        onFavoritePress?.(eventId);
-    };
-
-    const handleReadMorePress = useCallback(() => {
-        onReadMorePress?.(eventId);
-    }, [eventId, onReadMorePress])
 
     return (
         <View style={styles.container}>
@@ -112,9 +111,27 @@ export const WineEventListItem = ({
             </View>
 
             <View style={styles.footer}>
-                <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={handleReadMorePress} />
-                <FavoriteButton onPress={handleFavoritePress} size={52} />
+                <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
+                <FavoriteButton onPress={onFavoritePressHandler} size={52} />
             </View>
+
+            <BottomModal
+                visible={isModalVisible}
+                onClose={onCloseModal}
+                title={event.title}
+                titleVariant="h4"
+            >
+                <View>
+                    <Typography text={event.description} variant="body_400" />
+                    <View style={styles.modalSection}>
+                        <Typography text={`${event.date} · ${event.startTime} - ${event.endTime}`} variant="body_400" style={styles.timeText} />
+                    </View>
+                    <View style={styles.modalSection}>
+                        <Typography text={`${event.eventType === 'offline' ? 'Offline' : 'Online'} Event`} variant="body_400" />
+                        <Typography text={`Price: €${event.price}`} variant="body_400" style={styles.priceText} />
+                    </View>
+                </View>
+            </BottomModal>
         </View>
     );
 };

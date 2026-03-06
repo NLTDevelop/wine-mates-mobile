@@ -8,18 +8,22 @@ import { RoundedButton } from '@/UIKit/TitledContent/components/RoundedButton';
 interface IProps {
     title: string;
     children: ReactNode;
+    leftComponent?: ReactNode;
     rightComponent?: ReactNode;
     titleVariant?: TitleVariant;
 }
 
-const TitledContentComponent = ({ title, children, rightComponent, titleVariant = 'h5' }: IProps) => {
+const TitledContentComponent = ({ title, children, leftComponent, rightComponent, titleVariant = 'h5' }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const hasLeft = !!leftComponent;
+    const hasRight = !!rightComponent;
+    const styles = useMemo(() => getStyles(colors, hasLeft, hasRight), [colors, hasLeft, hasRight]);
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Typography text={title} variant={titleVariant} />
+                {leftComponent && <View>{leftComponent}</View>}
+                <Typography text={title} variant={titleVariant} style={styles.title} />
                 {rightComponent && <View>{rightComponent}</View>}
             </View>
             <View style={styles.content}>

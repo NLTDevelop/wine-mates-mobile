@@ -143,6 +143,7 @@
         "selectAppearance": "Оберіть вигляд",
         "result": "Результат",
         "wineDetails": "Інформація про вино",
+        "selectedParameters": "Обрані параметри",
         "selectMousse": "Оберіть піну",
         "selectPerlage": "Оберіть перляж",
         "typeOfWine": "Тип вина",
@@ -291,5 +292,22 @@
     },
     "faq": {
         "faq": "FAQ"
+    },
+    "eventDetails": {
+        "title": "Деталі події",
+        "theme": "Тема",
+        "restaurant": "Ресторан",
+        "location": "Локація",
+        "date": "Дата",
+        "time": "Час",
+        "price": "Ціна",
+        "speaker": "Спікер",
+        "distance": "Відстань",
+        "language": "Мова",
+        "seats": "Місця",
+        "wineSet": "Набір вин",
+        "bookNow": "Забронювати",
+        "contactForBooking": "Контакт для бронювання",
+        "callToReserve": "Зателефонувати для бронювання"
     }
 }
