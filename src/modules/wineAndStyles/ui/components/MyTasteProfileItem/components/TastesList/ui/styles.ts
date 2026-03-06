@@ -19,9 +19,6 @@ export const getStyles = (_colors: IColors) => {
         slidersContainer: {
             gap: scaleVertical(16),
         },
-        characteristicItem: {
-            paddingHorizontal: 0,
-        },
     });
     return styles;
 };

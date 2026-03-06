@@ -24,12 +24,6 @@ export const getStyles = (colors: IColors) => {
             rowGap: scaleVertical(12),
             marginBottom: scaleVertical(24),
         },
-        resultColor: {
-            borderRadius: 12,
-            width: scaleHorizontal(109),
-            height: scaleVertical(50),
-            marginBottom: scaleVertical(24),
-        },
         button: {
             marginBottom: scaleVertical(16),
         },

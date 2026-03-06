@@ -3,24 +3,35 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useSelectablePressGuard } from '@/hooks/useSelectablePressGuard';
 import { useUiContext } from '@/UIProvider';
 import { declOfWord } from '@/utils';
+import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 
 interface IProps {
-    item: IWineListItem;
+    item: IWineListItem | IWineDetails;
     onPress?: (item: IWineListItem) => void;
     hideSimilarity?: boolean;
     showDate?: boolean;
 }
 
+const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
+    return 'similarity' in item || 'lastRate' in item || 'lastReview' in item;
+};
+
 export const useWineListItem = ({ item, onPress }: IProps) => {
     const { t } = useUiContext();
     const guard = useSelectablePressGuard();
 
-    const handleItemPress = useCallback(() => guard.bindPressable.onPress(() => onPress && onPress(item)), [item, onPress, guard]);
+    const handleItemPress = useCallback(() => {
+        guard.bindPressable.onPress(() => {
+            if (onPress && isWineListItem(item)) {
+                onPress(item);
+            }
+        });
+    }, [item, onPress, guard]);
 
     const similarityText = useMemo(() => {
-        if (!item.similarity) return '-';
+        if (!isWineListItem(item) || !item.similarity) return '-';
         return `${Math.round(item.similarity * 100)}%`;
-    }, [item.similarity]);
+    }, [item]);
 
     const displayRating = useMemo(() => {
         if (item.averageUserRating > 0) {
@@ -33,12 +44,14 @@ export const useWineListItem = ({ item, onPress }: IProps) => {
     }, [item.averageUserRating, item.averageExpertRating]);
 
     const lastReviewData = useMemo(() => {
+        if (!isWineListItem(item)) return null;
         return item.lastRate || item.lastReview || null;
-    }, [item.lastRate, item.lastReview]);
+    }, [item]);
 
     const reviewCount = useMemo(() => {
-        return declOfWord(item.totalReviews || 0, t('scanner.reviewCount') as unknown as Array<string>);
-    }, [item.totalReviews, t]);
+        const totalReviews = item.totalReviews ?? item.countUserRating ?? 0;
+        return declOfWord(totalReviews, t('scanner.reviewCount') as unknown as Array<string>);
+    }, [item, t]);
 
     const locationText = useMemo(() => {
         const parts: string[] = [];

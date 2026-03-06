@@ -1,8 +1,9 @@
+import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
+export const getStyles = (colors: IColors, removeCardStyles: boolean, item: IWineListItem) => {
     const medalSize = 54;
 
     const styles = StyleSheet.create({
@@ -24,23 +25,27 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         content: {
             flexDirection: 'row',
             gap: scaleHorizontal(12),
+            alignItems: 'center',
         },
         imageContainer: {
-            width: '34.6%',
+            width: scaleHorizontal(120),
+            height: item.lastReview || removeCardStyles ? scaleVertical(290) : scaleVertical(162),
             position: 'relative',
             alignSelf: 'stretch',
         },
         similarityBadge: {
-            position: 'absolute',
-            top: scaleVertical(8),
-            left: scaleHorizontal(8),
-            padding: scaleHorizontal(4),
-            width: scaleHorizontal(40),
-            height: scaleHorizontal(40),
+            paddingVertical: scaleVertical(4),
+            paddingHorizontal: scaleHorizontal(6),
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: colors.primary,
-            borderRadius: scaleHorizontal(40),
+            borderRadius: 12,
+        },
+        similarityBadgeContainer: {
+            position: 'absolute',
+            top: scaleVertical(8),
+            width: '100%',
+            alignItems: 'center',
             zIndex: 20,
         },
         similarityText: {
@@ -50,20 +55,20 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             position: 'absolute',
             width: '100%',
             height: '100%',
-            minHeight: scaleVertical(200),
         },
         imagePlaceholder: {
             borderRadius: 12,
-            minHeight: scaleVertical(200),
+            width: '100%',
+            height: '100%',
         },
         imagePlaceholderContainer: {
             width: '100%',
-            flex: 1,
-            minHeight: scaleVertical(200),
+            height: '100%',
         },
         rightColumn: {
             flex: 1,
             alignItems: 'center',
+            justifyContent: 'center',
         },
         expertReviewText: {
             color: colors.text_light,
@@ -73,7 +78,7 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         },
         titleText: {
             textAlign: 'center',
-            marginTop: scaleVertical(6),
+            marginTop: scaleVertical(12),
         },
         locationText: {
             color: colors.text_light,
@@ -82,23 +87,19 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         },
         rateText: {
             color: colors.text,
-            paddingTop: scaleVertical(2),
         },
         rateReviewText: {
             color: colors.text_light,
-            paddingTop: scaleVertical(2),
-            marginTop: -scaleVertical(4),
         },
         rateContainer: {
             alignItems: 'center',
+            marginTop: scaleVertical(4),
+            marginBottom: scaleVertical(12),
         },
         starsContainer: {
             flexDirection: 'row',
             alignItems: 'center',
             gap: scaleHorizontal(4),
-        },
-        star: {
-            marginHorizontal: scaleHorizontal(1),
         },
         dateContainer: {
             justifyContent: 'center',
@@ -107,13 +108,10 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             marginBottom: -scaleVertical(6),
         },
         footerContainer: {
-            flexGrow: 1,
-            minHeight: scaleVertical(20),
             width: '100%',
-            justifyContent: 'flex-end',
         },
         pressed: {
-            opacity: 0.6,
+            transform: [{ scale: 0.99 }],
         },
     });
     return { styles, medalSize };

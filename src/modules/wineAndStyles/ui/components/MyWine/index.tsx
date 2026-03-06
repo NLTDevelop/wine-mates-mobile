@@ -35,7 +35,7 @@ export const MyWine = observer(() => {
         const lastReviewData = item.lastRate || item.lastReview;
         if (!lastReviewData) return null;
 
-        return <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review} isMyReview={true}/>;
+        return <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review}/>;
     }, []);
 
     const renderItem = useCallback(({ item, index }: { item: IWineListItem; index: number }) => {
