@@ -4,12 +4,12 @@ import { Collapse } from '@/UIKit/Collapse';
 import { ColorPaletteItem } from '@/UIKit/ColorPaletteItem';
 import { useUiContext } from '@/UIProvider';
 import { ITasteProfileStatisticItem } from '@/entities/wine/types/ITasteProfile';
-import { TasteProfileSectionType } from '../../../types/TasteProfileSectionType';
+import { TasteProfileSectionEnum } from '../../../enums/TasteProfileSectionEnum';
 import { useColorShades } from '../presenters/useColorShades';
 import { getStyles } from './styles';
 
 interface IProps {
-    sectionType: TasteProfileSectionType;
+    sectionType: TasteProfileSectionEnum;
     items: ITasteProfileStatisticItem[];
 }
 
@@ -19,7 +19,7 @@ export const StatisticItemsList = ({ sectionType, items }: IProps) => {
     const title = t(`wineAndStyles.${sectionType}`);
     const { processedColors } = useColorShades(items);
 
-    const displayItems = sectionType === TasteProfileSectionType.COLOR_SHADES ? processedColors : items;
+    const displayItems = sectionType === TasteProfileSectionEnum.COLOR_SHADES ? processedColors : items;
 
     return (
         <View style={styles.nestedCollapseWrapper}>
