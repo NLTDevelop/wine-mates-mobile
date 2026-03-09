@@ -12,7 +12,7 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 export const EventMapView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { events, initialRegion, selectedMarkerId, handleMarkerPress } = useEventMap();
+    const { events, initialRegion, selectedMarkerId, handleMarkerPress, userLocation } = useEventMap();
 
     return (
         // <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
@@ -28,6 +28,7 @@ export const EventMapView = observer(() => {
                     initialRegion={initialRegion}
                     selectedMarkerId={selectedMarkerId}
                     onMarkerPress={handleMarkerPress}
+                    userLocation={userLocation}
                 />
 
                 <WineEventList
