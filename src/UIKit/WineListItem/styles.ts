@@ -14,11 +14,8 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
                       padding: scaleVertical(12),
                       backgroundColor: colors.background,
                       borderRadius: 12,
-                      shadowColor: colors.shadow,
-                      shadowOpacity: 0.12,
-                      shadowRadius: 3,
-                      shadowOffset: { width: 0, height: 2 },
-                      elevation: 3,
+                      borderWidth: 1,
+                      borderColor: colors.border,
                   }),
         },
         content: {
