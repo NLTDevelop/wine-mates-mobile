@@ -3,13 +3,13 @@ import { View, TouchableOpacity } from 'react-native';
 import Animated, { FadeInRight, FadeOutLeft, FadeInLeft, FadeOutRight } from 'react-native-reanimated';
 import { useUiContext } from '@/UIProvider';
 import { ArrowRightIcon } from '@assets/icons/ArrowRightIcon.tsx';
-import { IRecommendationWineItem } from '@/entities/wine/types/IRecommendationWineList';
-import { CarouselWineCard } from '@/UIKit/WineCard';
+import { CarouselWineCard } from '@/UIKit/CarouselWineCard';
 import { getStyles } from './styles';
-import { useWineCarouselCard } from '@/modules/wineAndStyles/ui/components/MyTasteProfileItem/components/WineRecommendationCarousel/presenters/useWineCarouselCard.ts';
+import { useWineCarouselCard } from '@/modules/wineAndStyles/ui/components/MyTasteProfileItem/components/WineRecommendationCarousel/presenters/useWineCarouselCard';
+import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 
 interface IProps {
-    wine: IRecommendationWineItem;
+    wine: IWineListItem;
     onPrevious: () => void;
     onNext: () => void;
     direction: 'forward' | 'backward';

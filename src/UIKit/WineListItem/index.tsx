@@ -11,34 +11,32 @@ import { ShowLock } from '@/UIKit/ShowLock';
 import { userModel } from '@/entities/users/UserModel';
 import { useWineListItem } from './presenters/useWineListItem';
 import { getStyles } from './styles';
+import { useWineDescription } from './presenters/useWineDescription';
 
 interface IProps {
     item: IWineListItem;
     onPress?: (item: IWineListItem) => void;
-    hideSimilarity?: boolean;
+    showSimilarity?: boolean;
     footer?: ReactNode;
-    wineName?: string;
     removeCardStyles?: boolean;
     showDate?: boolean;
-    isFromScan?: boolean;
     customBottomComponent?: ReactNode;
 }
 
 export const WineListItem = ({
     item,
     onPress,
-    hideSimilarity = false,
+    showSimilarity = false,
     footer,
-    wineName,
-    isFromScan = false,
     removeCardStyles = false,
     showDate = false,
     customBottomComponent,
 }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
-    const { guard, handleItemPress, similarityText, displayRating, userReviewCount, expertReviewCount, lastReviewData, getFormattedDate } =
+    const { guard, onItemPress, similarityText, displayRating, userReviewCount, expertReviewCount, lastReviewData, getFormattedDate } =
         useWineListItem({ item, onPress, showDate });
+    const { description } = useWineDescription({ item });
 
     const hasPremium = userModel.user?.hasPremium ?? false;
     const showMedal = item.averageExpertRating && item.averageExpertRating > 0;
@@ -46,13 +44,13 @@ export const WineListItem = ({
     return (
         <Pressable
             style={({ pressed }) => [styles.container, pressed && styles.pressed]}
-            onPress={handleItemPress}
+            onPress={onItemPress}
             onPressOut={guard.bindPressable.onPressOut}
             disabled={!onPress}
         >
             <View style={styles.content}>
                 <View style={styles.imageContainer} pointerEvents="none">
-                    {!hideSimilarity && (
+                    {showSimilarity && (
                         <View style={styles.similarityBadgeContainer}>
                             <View style={styles.similarityBadge}>
                                 <Typography
@@ -115,7 +113,7 @@ export const WineListItem = ({
 
                     <Typography
                         variant="subtitle_10_400"
-                        text={wineName || `${item.name || '-'} ${isFromScan ? '' : item.vintage || ''}`}
+                        text={description || `-`}
                         style={styles.descriptionText}
                         {...guard.bindText}
                     />

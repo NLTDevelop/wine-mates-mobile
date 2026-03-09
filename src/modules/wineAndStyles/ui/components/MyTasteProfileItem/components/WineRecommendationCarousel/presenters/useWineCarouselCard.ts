@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Platform } from 'react-native';
 import { isIOS } from '@/utils';
 
 interface IUseWineCarouselCardParams {

@@ -1,5 +1,5 @@
 import { useUiContext } from '@/UIProvider';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FlatList, View } from 'react-native';
 import { getStyles } from './styles';
 import { useMyWine } from '@/modules/wineAndStyles/presenters/useMyWine';
@@ -7,39 +7,30 @@ import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
-import { AnimatedWineListItem } from './components/AnimatedWineListItem';
 import { useRefresh } from '@/hooks/useRefresh';
 import { observer } from 'mobx-react-lite';
-import { MyWineSearchBar } from './components/MyWineSearchBar';
+import { MyWineSearchBar } from '../MyWineSearchBar';
 import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
+import { WineListItem } from '@/UIKit/WineListItem';
 
 export const MyWine = observer(() => {
     const { colors , t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const listRef = useRef<FlatList>(null);
-
-    const { data, onRefresh, onEndReached, onItemPress, isLoading, getList, setScrollToTop, scrollToTop } = useMyWine();
+    
+    const { data, onRefresh, onEndReached, onItemPress, isLoading, getList, listRef, scrollToTop } = useMyWine();
     const { refreshControl } = useRefresh(onRefresh);
-
-    const handleScrollToTop = useCallback(() => {
-        listRef.current?.scrollToOffset({ offset: 0, animated: true });
-    }, []);
-
-    useEffect(() => {
-        setScrollToTop(() => handleScrollToTop);
-    }, [handleScrollToTop, setScrollToTop]);
-
+    
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
     
     const renderFooter = useCallback((item: IWineListItem) => {
-        const lastReviewData = item.lastRate || item.lastReview;
+        const lastReviewData = item.myReview || item.lastReview;
         if (!lastReviewData) return null;
 
         return <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review}/>;
     }, []);
 
-    const renderItem = useCallback(({ item, index }: { item: IWineListItem; index: number }) => {
-        return <AnimatedWineListItem item={item} index={index} onPress={onItemPress} footer={renderFooter(item)} />;
+    const renderItem = useCallback(({ item }: { item: IWineListItem; index: number }) => {
+        return <WineListItem item={item} onPress={onItemPress} showDate footer={renderFooter(item)} />;
     }, [onItemPress, renderFooter]);
 
     return (

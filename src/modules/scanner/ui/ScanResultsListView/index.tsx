@@ -26,14 +26,16 @@ export const ScanResultsListView = observer(() => {
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
 
     const renderFooter = useCallback((item: IWineListItem) => {
-        const lastReviewData = item.lastRate || item.lastReview;
+        const lastReviewData = item.myReview || item.lastReview;
         if (!lastReviewData) return null;
 
         return <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review} />;
     }, []);
 
     const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
-        return <WineListItem item={item} onPress={handleItemPress} footer={renderFooter(item)} isFromScan={true}/>;
+           
+        
+        return <WineListItem item={item} onPress={handleItemPress} showSimilarity footer={renderFooter(item)} />;
     }, [handleItemPress, renderFooter]);
 
 

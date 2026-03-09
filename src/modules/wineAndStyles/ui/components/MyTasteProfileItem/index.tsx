@@ -7,8 +7,8 @@ import { ITasteProfileStatistics, ITasteProfileColor, ITasteProfileType } from '
 import { StatisticItemsList } from './components/StatisticItemsList/ui';
 import { TastesList } from './components/TastesList/ui';
 import { TasteProfileSectionType } from './types/TasteProfileSectionType';
-import { WineRecommendationCarousel } from './components/WineRecommendationCarousel/ui';
 import { WinePeaksGrid } from '../../../../../UIKit/WinePeaksGrid';
+import { WineRecommendationCarousel } from './components/WineRecommendationCarousel/ui';
 
 interface IProps {
     title: string;

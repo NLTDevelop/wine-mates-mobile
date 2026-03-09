@@ -57,6 +57,13 @@ export const useWineReviewResult = () => {
                 return;
             }
 
+            const suggestedAromas = (wineModel.selectedSmells || [])
+                .filter(item => !item.colorHex && item.name?.trim())
+                .map(item => item.name.trim());
+            const suggestedFlavors = (wineModel.selectedTastes || [])
+                .filter(item => !item.colorHex && item.name?.trim())
+                .map(item => item.name.trim());
+
             const payload: GenerateNoteDto = {
                 wineId: wineModel.wine?.id || 0,
                 review: wineModel.review?.review.trim() || '',
@@ -101,6 +108,21 @@ export const useWineReviewResult = () => {
                     perlage: wineModel.look.perlage,
                     appearance: wineModel.look.appearance,
                 };
+            }
+
+            const hasSuggestedAromas = suggestedAromas.length > 0;
+            const hasSuggestedFlavors = suggestedFlavors.length > 0;
+
+            if (hasSuggestedAromas || hasSuggestedFlavors) {
+                payload.suggestions = {};
+
+                if (hasSuggestedAromas) {
+                    payload.suggestions.aromas = suggestedAromas;
+                }
+
+                if (hasSuggestedFlavors) {
+                    payload.suggestions.flavors = suggestedFlavors;
+                }
             }
 
             const response = await wineService.generateNote(payload);

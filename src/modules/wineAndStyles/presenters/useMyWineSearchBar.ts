@@ -4,8 +4,8 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useCallback, useEffect } from 'react';
-import { useMyWineFiltersBottomSheet } from '../MyWineFiltersBottomSheet/useMyWineFiltersBottomSheet';
-import { IFilterTagItem } from './components/FilterTags';
+import { useMyWineFiltersBottomSheet } from './useMyWineFiltersBottomSheet';
+import { IFilterTagItem } from '../ui/components/FilterTags';
 import { computed } from 'mobx';
 
 interface IUseMyWineSearchBarProps {
@@ -41,7 +41,6 @@ export const useMyWineSearchBar = ({ onSearch, scrollToTop }: IUseMyWineSearchBa
                     response.message || localization.t('common.somethingWentWrong'),
                 );
             } else {
-                console.log('FILTERS DATA:', JSON.stringify(response.data, null, 2));
                 wineListsModel.filtersData = response.data;
             }
         } catch (error) {

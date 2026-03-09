@@ -1,9 +1,9 @@
 import { SearchBarWithFilter } from '@/UIKit/SearchBarWithFilter';
 import { useUiContext } from '@/UIProvider';
-import { useMyWineSearchBar } from './useMyWineSearchBar';
+import { useMyWineSearchBar } from '../../../presenters/useMyWineSearchBar';
 import { MyWineFiltersBottomSheet } from '../MyWineFiltersBottomSheet';
 import { observer } from 'mobx-react-lite';
-import { FilterTags } from './components/FilterTags';
+import { FilterTags } from '../FilterTags';
 import { View } from 'react-native';
 
 interface IProps {
