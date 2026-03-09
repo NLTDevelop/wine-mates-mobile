@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-vision-camera/ios/Core/Extensions/UIApplication+interfaceOrientation.swift b/node_modules/react-native-vision-camera/ios/Core/Extensions/UIApplication+interfaceOrientation.swift
+index 1cb93ed..fe95e4e 100644
+--- a/node_modules/react-native-vision-camera/ios/Core/Extensions/UIApplication+interfaceOrientation.swift
++++ b/node_modules/react-native-vision-camera/ios/Core/Extensions/UIApplication+interfaceOrientation.swift
+@@ -8,6 +8,7 @@
+ import Foundation
+ import UIKit
+ 
++@available(iOS 13.0, *)
+ extension UIApplication {
+   private var windowScene: UIWindowScene? {
+     // Get all active scenes

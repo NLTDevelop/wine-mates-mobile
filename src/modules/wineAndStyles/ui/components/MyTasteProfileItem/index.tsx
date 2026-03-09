@@ -4,11 +4,11 @@ import { useMemo } from 'react';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { ITasteProfileStatistics, ITasteProfileColor, ITasteProfileType } from '@/entities/wine/types/ITasteProfile';
-import { StatisticItemsList } from './components/StatisticItemsList/ui';
-import { TastesList } from './components/TastesList/ui';
+import { StatisticItemsList } from './components/StatisticItemsList';
+import { TastesList } from './components/TastesList';
 import { TasteProfileSectionEnum } from './enums/TasteProfileSectionEnum';
 import { WinePeaksGrid } from '../../../../../UIKit/WinePeaksGrid';
-import { WineRecommendationCarousel } from './components/WineRecommendationCarousel/ui';
+import { WineRecommendationCarousel } from './components/WineRecommendationCarousel';
 
 interface IProps {
     title: string;

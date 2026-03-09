@@ -13,7 +13,7 @@ interface IProps {
 }
 
 const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
-    return 'similarity' in item || 'myReview' in item || 'lastReview' in item;
+    return 'similarity' in item || 'myReview' in item || 'lastReview' in item || 'lastRate' in item
 };
 
 export const useWineListItem = ({ item, onPress }: IProps) => {

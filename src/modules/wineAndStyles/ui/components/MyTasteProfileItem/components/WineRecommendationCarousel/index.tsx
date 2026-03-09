@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useUiContext } from '@/UIProvider';
-import { useWineRecommendationCarousel } from '../presenters/useWineRecommendationCarousel';
+import { useWineRecommendationCarousel } from './presenters/useWineRecommendationCarousel';
 import Animated, { FadeInRight, FadeOutLeft, FadeInLeft, FadeOutRight } from 'react-native-reanimated';
 import { getStyles } from './styles';
 import { CarouselWineCard } from '@/UIKit/CarouselWineCard';

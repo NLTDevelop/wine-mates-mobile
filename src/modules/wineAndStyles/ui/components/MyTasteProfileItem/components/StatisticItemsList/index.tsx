@@ -4,8 +4,8 @@ import { Collapse } from '@/UIKit/Collapse';
 import { ColorPaletteItem } from '@/UIKit/ColorPaletteItem';
 import { useUiContext } from '@/UIProvider';
 import { ITasteProfileStatisticItem } from '@/entities/wine/types/ITasteProfile';
-import { TasteProfileSectionEnum } from '../../../enums/TasteProfileSectionEnum';
-import { useColorShades } from '../presenters/useColorShades';
+import { TasteProfileSectionEnum } from '../../enums/TasteProfileSectionEnum';
+import { useColorShades } from './presenters/useColorShades';
 import { getStyles } from './styles';
 
 interface IProps {
