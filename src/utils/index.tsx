@@ -4,6 +4,7 @@ import { enUS, uk } from 'date-fns/locale';
 import { colorTheme } from '@/UIProvider/theme/ColorTheme';
 
 export const isIOS = Platform.OS === 'ios';
+export const isAndroid = Platform.OS === 'android';
 
 const idealWidth: number = 375;
 const idealHeight: number = 812;

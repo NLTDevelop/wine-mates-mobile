@@ -3,30 +3,37 @@ import { View } from 'react-native';
 import { Region } from 'react-native-maps';
 import { MapView } from '@/UIKit/MapView';
 import { MapMarker } from '@/UIKit/MapMarker';
-import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { IEvent } from '@/entities/events/types/IEvent';
+import { IUserLocation } from '@/entities/location/types/IUserLocation';
+import { observer } from 'mobx-react-lite';
 
 interface IEventMapProps {
     events: IEvent[];
     initialRegion: Region;
     selectedMarkerId: number | null;
     onMarkerPress: (markerId: number) => void;
+    userLocation?: IUserLocation | null;
 }
 
-export const EventMap = ({
-    events,
-    initialRegion,
-    selectedMarkerId,
-    onMarkerPress,
-}: IEventMapProps) => {
+export const EventMap = observer(({
+                                      events,
+                                      initialRegion,
+                                      selectedMarkerId,
+                                      onMarkerPress,
+                                      userLocation,
+                                  }: IEventMapProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
         <View style={styles.mapContainer}>
-            <MapView initialRegion={initialRegion}>
+            <MapView
+                initialRegion={initialRegion}
+                showsUserLocation={!!userLocation}
+                showsMyLocationButton={!!userLocation}
+            >
                 {events.map((event) => (
                     <MapMarker
                         key={event.id}
@@ -34,16 +41,13 @@ export const EventMap = ({
                             coordinate: { latitude: event.latitude, longitude: event.longitude }
                         }}
                         selected={selectedMarkerId === event.id}
+                        eventId={event.id}
                         onPress={() => onMarkerPress(event.id)}
-                        customIcon={
-                            <Typography
-                                text="🍷"
-                                variant="h4"
-                            />
-                        }
                     />
                 ))}
             </MapView>
         </View>
     );
-};
+});
+
+EventMap.displayName = 'EventMap';

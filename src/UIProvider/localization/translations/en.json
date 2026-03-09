@@ -306,5 +306,12 @@
         "bookNow": "Book now",
         "contactForBooking": "Contact for booking",
         "callToReserve": "Call to reserve"
+    },
+    "permissions": {
+        "locationTitle": "Location Permission",
+        "locationMessage": "The app needs access to your location to show events near you",
+        "askLater": "Ask later",
+        "cancel": "Cancel",
+        "ok": "OK"
     }
 }
