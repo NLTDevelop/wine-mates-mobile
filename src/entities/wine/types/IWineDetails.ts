@@ -13,6 +13,8 @@ export interface IVintage {
     vintage: number | null;
     averageUserRating: number;
     totalReviews: number;
+    averageExpertRating?: number | null;
+    countExpertRating?: number | null;
 }
 
 export interface IColorShade {

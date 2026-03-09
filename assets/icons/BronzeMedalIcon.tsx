@@ -7,10 +7,19 @@ interface IProps {
     text: string;
     titleFontSize?: number;
     mainFontSize?: number;
-    nameFontSize?: number
+    nameFontSize?: number;
+    hideText?: boolean;
 }
 
-export const BronzeMedalIcon = ({ width = 32, height = 32, text, titleFontSize,  mainFontSize, nameFontSize }: IProps) => {
+export const BronzeMedalIcon = ({
+    width = 32,
+    height = 32,
+    text,
+    titleFontSize,
+    mainFontSize,
+    nameFontSize,
+    hideText = false,
+}: IProps) => {
     
     return (
     <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 235 230" fill='none'>
@@ -18,41 +27,45 @@ export const BronzeMedalIcon = ({ width = 32, height = 32, text, titleFontSize, 
       fill="url(#a)"
       d="M.201 114.96C.201 51.47 51.671 0 115.161 0h4.08c63.491 0 114.96 51.47 114.96 114.96 0 63.491-51.469 114.96-114.96 114.96h-4.08c-63.49 0-114.96-51.469-114.96-114.96Z"
     />
-            <Text
-                x="117"
-                y="50"
-                fontSize={scaleFontSize(titleFontSize || 24)}
-                fill="#2C1D0C"
-                fontFamily="VisueltPro"
-                fontWeight="700"
-                textAnchor="middle"
-            >
-                WineMates
-            </Text>
-    
-            <Text
-                x="117"
-                y="145"
-                fontSize={scaleFontSize(mainFontSize || 90)}
-                fill="#2C1D0C"
-                fontFamily="VisueltPro"
-                fontWeight="500"
-                textAnchor="middle"
-            >
-                {text}
-            </Text>
-    
-            <Text
-                x="117"
-                y="190"
-                fontSize={scaleFontSize(nameFontSize || 26)}
-                fill="#2C1D0C"
-                fontFamily="VisueltPro"
-                fontWeight="700"
-                textAnchor="middle"
-            >
-                Bronze
-            </Text>
+            {!hideText && (
+                <>
+                    <Text
+                        x="117"
+                        y="50"
+                        fontSize={scaleFontSize(titleFontSize || 24)}
+                        fill="#2C1D0C"
+                        fontFamily="VisueltPro"
+                        fontWeight="700"
+                        textAnchor="middle"
+                    >
+                        WineMates
+                    </Text>
+        
+                    <Text
+                        x="117"
+                        y="145"
+                        fontSize={scaleFontSize(mainFontSize || 90)}
+                        fill="#2C1D0C"
+                        fontFamily="VisueltPro"
+                        fontWeight="500"
+                        textAnchor="middle"
+                    >
+                        {text}
+                    </Text>
+        
+                    <Text
+                        x="117"
+                        y="190"
+                        fontSize={scaleFontSize(nameFontSize || 26)}
+                        fill="#2C1D0C"
+                        fontFamily="VisueltPro"
+                        fontWeight="700"
+                        textAnchor="middle"
+                    >
+                        Bronze
+                    </Text>
+                </>
+            )}
     <Defs>
       <Pattern
         id="a"

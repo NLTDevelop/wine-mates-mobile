@@ -5,8 +5,8 @@ import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
-import { VintageDropdown } from '../../../VintageDropdown';
 import { getStyles } from './styles';
+import { VintageDropdown } from '../VintageDropdown';
 
 interface IProps {
     item: IWineDetails;

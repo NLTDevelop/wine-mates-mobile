@@ -70,6 +70,12 @@ export const getStyle = (colors: IColors) => {
             color: colors.text,
             flexShrink: 1,
         },
+        subtitle_10_400: {
+            fontSize: scaleFontSize(10),
+            fontFamily: 'VisueltPro-Regular',
+            color: colors.text,
+            flexShrink: 1,
+        },
     });
     return styles;
 };

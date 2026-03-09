@@ -6,8 +6,8 @@ import { IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
 import { useResultHeader } from '@/modules/wine/presenters/useResultHeader';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { WineListItem } from '@/UIKit/WineListItem';
-import { useResultHeaderLogic } from './useResultHeaderLogic';
-import { ResultHeaderFooter } from './components/ResultHeaderFooter';
+import { useResultHeaderLogic } from '../../../presenters/useResultHeaderLogic';
+import { ResultHeaderFooter } from '../ResultHeaderFooter';
 
 interface IProps {
     item: IWineDetails;
@@ -23,24 +23,20 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
     const { onPress, isCreating } = useResultHeader(item);
     const { description } = useResultHeaderLogic({ item });
 
-    const footer = useMemo(() => (
-        <ResultHeaderFooter
-            item={item}
-            vintages={vintages}
-            onVintageChange={onVintageChange}
-            onFavoritePress={onFavoritePress}
-            hasCurrentVintageData={hasCurrentVintageData}
-            onPress={onPress}
-            isCreating={isCreating}
-        />
-    ), [item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, onPress, isCreating]);
-
     return (
         <View style={styles.cardWrapper}>
             <WineListItem
                 item={item}
                 hideSimilarity={true}
-                footer={footer}
+                footer={ <ResultHeaderFooter
+                    item={item}
+                    vintages={vintages}
+                    onVintageChange={onVintageChange}
+                    onFavoritePress={onFavoritePress}
+                    hasCurrentVintageData={hasCurrentVintageData}
+                    onPress={onPress}
+                    isCreating={isCreating}
+                />}
                 wineName={description}
                 removeCardStyles
             />

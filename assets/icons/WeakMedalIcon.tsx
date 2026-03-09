@@ -8,9 +8,18 @@ interface IProps {
     titleFontSize?: number;
     mainFontSize?: number;
     nameFontSize?: number;
+    hideText?: boolean;
 }
 
-export const WeakMedalIcon = ({ width = 237, height = 232, text, titleFontSize, mainFontSize, nameFontSize }: IProps) => {
+export const WeakMedalIcon = ({
+    width = 237,
+    height = 232,
+    text,
+    titleFontSize,
+    mainFontSize,
+    nameFontSize,
+    hideText = false,
+}: IProps) => {
     const w = scaleVertical(width);
     const h = scaleVertical(height);
 
@@ -21,41 +30,45 @@ export const WeakMedalIcon = ({ width = 237, height = 232, text, titleFontSize, 
                 fill="#F5F5F5"
             />
 
-            <Text
-                x="118"
-                y="50"
-                fontSize={scaleFontSize(titleFontSize || 24)}
-                fill="#6F6F6F"
-                fontFamily="VisueltPro"
-                fontWeight="700"
-                textAnchor="middle"
-            >
-                WineMates
-            </Text>
+            {!hideText && (
+                <>
+                    <Text
+                        x="118"
+                        y="50"
+                        fontSize={scaleFontSize(titleFontSize || 24)}
+                        fill="#6F6F6F"
+                        fontFamily="VisueltPro"
+                        fontWeight="700"
+                        textAnchor="middle"
+                    >
+                        WineMates
+                    </Text>
 
-            <Text
-                x="118"
-                y="145"
-                fontSize={scaleFontSize(mainFontSize || 90)}
-                fill="#6F6F6F"
-                fontFamily="VisueltPro"
-                fontWeight="500"
-                textAnchor="middle"
-            >
-                {text}
-            </Text>
+                    <Text
+                        x="118"
+                        y="145"
+                        fontSize={scaleFontSize(mainFontSize || 90)}
+                        fill="#6F6F6F"
+                        fontFamily="VisueltPro"
+                        fontWeight="500"
+                        textAnchor="middle"
+                    >
+                        {text}
+                    </Text>
 
-            <Text
-                x="118"
-                y="190"
-                fontSize={scaleFontSize(nameFontSize || 26)}
-                fill="#6F6F6F"
-                fontFamily="VisueltPro"
-                fontWeight="700"
-                textAnchor="middle"
-            >
-                Weak wine
-            </Text>
+                    <Text
+                        x="118"
+                        y="190"
+                        fontSize={scaleFontSize(nameFontSize || 26)}
+                        fill="#6F6F6F"
+                        fontFamily="VisueltPro"
+                        fontWeight="700"
+                        textAnchor="middle"
+                    >
+                        Weak wine
+                    </Text>
+                </>
+            )}
         </Svg>
     );
 };

@@ -8,16 +8,27 @@ interface IProps {
     titleFontSize?: number;
     mainFontSize?: number;
     nameFontSize?: number;
+    hideText?: boolean;
 }
 
-export const GoldMedalIcon = ({ width = 32, height = 32, text, titleFontSize, mainFontSize, nameFontSize }: IProps) => {
+export const GoldMedalIcon = ({
+    width = 32,
+    height = 32,
+    text,
+    titleFontSize,
+    mainFontSize,
+    nameFontSize,
+    hideText = false,
+}: IProps) => {
     return (
     <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 235 230" fill='none'>
        <Path
       fill="url(#a)"
       d="M0 115C0 51.487 51.487 0 115 0h5c63.513 0 115 51.487 115 115s-51.487 115-115 115h-5C51.487 230 0 178.513 0 115Z"
     />
-    <Text
+    {!hideText && (
+        <>
+            <Text
                 x="117"
                 y="50"
                 fontSize={scaleFontSize(titleFontSize || 24)}
@@ -52,6 +63,8 @@ export const GoldMedalIcon = ({ width = 32, height = 32, text, titleFontSize, ma
             >
                 Gold
             </Text>
+        </>
+    )}
     <Defs>
       <Pattern
         id="a"
