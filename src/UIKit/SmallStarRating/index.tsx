@@ -37,13 +37,14 @@ const getStars = (rating: number, maxStars: number): IStar[] => {
 export const SmallStarRating = ({ rating, starSize = 16, maxStars = 5 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const emptyStarColor = rating <= 0 ? colors.border : colors.icon;
     
     const stars = useMemo(() => {
         return getStars(rating, maxStars).map((star, index) => {
             if (star.fill <= 0) {
                 return (
                     <View key={index} style={styles.star}>
-                        <EmptyStarIcon width={starSize} height={starSize} color={colors.icon} />
+                        <EmptyStarIcon width={starSize} height={starSize} color={emptyStarColor} />
                     </View>
                 );
             }
@@ -59,7 +60,7 @@ export const SmallStarRating = ({ rating, starSize = 16, maxStars = 5 }: IProps)
             return (
                 <View key={index} style={styles.star}>
                     <View style={[styles.starIconContainer, { width: starSize, height: starSize }]}>
-                        <EmptyStarIcon width={starSize} height={starSize} color={colors.icon} />
+                        <EmptyStarIcon width={starSize} height={starSize} color={emptyStarColor} />
                         <View
                             style={[
                                 styles.starFillOverlay,
@@ -75,7 +76,7 @@ export const SmallStarRating = ({ rating, starSize = 16, maxStars = 5 }: IProps)
                 </View>
             );
         });
-    }, [rating, maxStars, starSize, colors, styles]);
+    }, [rating, maxStars, starSize, colors.stars, emptyStarColor, styles]);
 
     return (
         <View style={styles.container}>

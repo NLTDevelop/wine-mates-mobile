@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import { getStyles } from './styles.ts';
 import { useUiContext } from '@/UIProvider';
 import { useRateMedal } from '../presenters/useRateMedal.ts';
-import { NiceWineIcon } from '@assets/icons/NiceWineIcon.tsx';
 import { BronzeMedalIcon } from '@assets/icons/BronzeMedalIcon.tsx';
 import { GoldMedalIcon } from '@assets/icons/GoldMedalIcon.tsx';
 import { PlatinumMedalIcon } from '@assets/icons/PlatinumMedalIcon.tsx';
@@ -11,6 +10,7 @@ import { SilverMedalIcon } from '@assets/icons/SilverMedalIcon.tsx';
 import { SimpleMedalIcon } from '@assets/icons/SimpleMedalIcon.tsx';
 import { WeakMedalIcon } from '@assets/icons/WeakMedalIcon.tsx';
 import { scaleHorizontal } from '@/utils';
+import { NiceMedalIcon } from '@assets/icons/NiceMedalIcon.tsx';
 
 interface IProps {
     sliderValue: number;
@@ -18,9 +18,10 @@ interface IProps {
     titleFontSize?: number;
     mainFontSize?: number;
     nameFontSize?: number;
+    hideText?: boolean;
 }
 
-export const RateMedal = ({ sliderValue, size, titleFontSize, mainFontSize, nameFontSize }: IProps) => {
+export const RateMedal = ({ sliderValue, size, titleFontSize, mainFontSize, nameFontSize, hideText }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { medalType } = useRateMedal(sliderValue);
@@ -33,13 +34,14 @@ export const RateMedal = ({ sliderValue, size, titleFontSize, mainFontSize, name
         text: sliderValue ? sliderValue.toString() : '0',
         titleFontSize,
         mainFontSize,
-        nameFontSize
+        nameFontSize,
+        hideText
     };
 
     const renderMedal = () => {
         switch (medalType) {
             case 'nice':
-                return <NiceWineIcon {...medalProps} />;
+                return <NiceMedalIcon {...medalProps} />;
             case 'bronze':
                 return <BronzeMedalIcon {...medalProps} />;
             case 'silver':

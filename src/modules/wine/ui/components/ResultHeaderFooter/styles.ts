@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 
 const BUTTON_SIZE = scaleVertical(40);
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
         footerContainer: {
             gap: scaleVertical(4),

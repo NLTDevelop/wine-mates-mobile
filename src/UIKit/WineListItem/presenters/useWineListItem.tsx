@@ -36,20 +36,24 @@ export const useWineListItem = ({ item, onPress }: IProps) => {
     const displayRating = useMemo(() => {
         if (item.averageUserRating > 0) {
             return item.averageUserRating.toFixed(1);
+        } else {
+            return '0';
         }
-        if (item.averageExpertRating && item.averageExpertRating > 0) {
-            return ((item.averageExpertRating / 100) * 5).toFixed(1);
-        }
-        return '-';
-    }, [item.averageUserRating, item.averageExpertRating]);
+      
+    }, [item.averageUserRating]);
 
     const lastReviewData = useMemo(() => {
         if (!isWineListItem(item)) return null;
         return item.lastRate || item.lastReview || null;
     }, [item]);
 
-    const reviewCount = useMemo(() => {
-        const totalReviews = item.totalReviews ?? item.countUserRating ?? 0;
+    const userReviewCount = useMemo(() => {
+        const totalReviews = item.countUserRating ?? 0;
+        return declOfWord(totalReviews, t('scanner.reviewCount') as unknown as Array<string>);
+    }, [item, t]);
+
+    const expertReviewCount = useMemo(() => {
+        const totalReviews = item.countExpertRating ?? 0;
         return declOfWord(totalReviews, t('scanner.reviewCount') as unknown as Array<string>);
     }, [item, t]);
 
@@ -85,9 +89,10 @@ export const useWineListItem = ({ item, onPress }: IProps) => {
         handleItemPress,
         similarityText,
         displayRating,
-        reviewCount,
+        userReviewCount,
         lastReviewData,
         getFormattedDate,
         locationText,
+        expertReviewCount
     };
 };

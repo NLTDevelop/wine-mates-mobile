@@ -11,7 +11,6 @@ export const useResultHeaderLogic = ({ item }: UseResultHeaderLogicParams) => {
 
     const description = useMemo(() => {
         return [
-            item.producer?.toUpperCase(),
             item.grapeVariety,
             item.name,
             item.type?.name,
@@ -21,7 +20,7 @@ export const useResultHeaderLogic = ({ item }: UseResultHeaderLogicParams) => {
         ]
             .filter(Boolean)
             .join(', ');
-    }, [item.type?.name, item.color?.name, item.country?.name, item.region?.name, item.grapeVariety, item.name, item.producer]);
+    }, [item.type?.name, item.color?.name, item.country?.name, item.region?.name, item.grapeVariety, item.name]);
 
     const medalData = useMemo(() => {
         const rating = item.averageExpertRating;

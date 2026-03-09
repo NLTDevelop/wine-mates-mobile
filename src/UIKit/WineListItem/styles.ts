@@ -1,9 +1,8 @@
-import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors, removeCardStyles: boolean, item: IWineListItem) => {
+export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
     const medalSize = 54;
 
     const styles = StyleSheet.create({
@@ -29,7 +28,7 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean, item: IWin
         },
         imageContainer: {
             width: scaleHorizontal(120),
-            height: item.lastReview || removeCardStyles ? scaleVertical(290) : scaleVertical(162),
+            height: scaleVertical(286),
             position: 'relative',
             alignSelf: 'stretch',
         },
@@ -70,15 +69,17 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean, item: IWin
             alignItems: 'center',
             justifyContent: 'center',
         },
-        expertReviewText: {
-            color: colors.text_light,
-        },
+       
         medalContainer: {
             marginBottom: scaleVertical(2),
         },
         titleText: {
             textAlign: 'center',
             marginTop: scaleVertical(12),
+        },
+        descriptionText: {
+            textAlign: 'center',
+            color: colors.text_light,
         },
         locationText: {
             color: colors.text_light,

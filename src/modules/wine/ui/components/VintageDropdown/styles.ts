@@ -2,7 +2,7 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
         dropdown: {
             width: '100%',
@@ -11,8 +11,19 @@ export const getStyles = (colors: IColors) => {
         rateContainer: {
             flexDirection: 'row',
             alignItems: 'center',
-            gap: scaleHorizontal(4),
+            justifyContent: 'space-between',
+            flex: 1,
             paddingVertical: scaleVertical(4),
+        },
+        ratingInfoContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(10),
+        },
+        ratingItem: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(4),
         },
         dropdownItem: {
             flexDirection: 'row',
@@ -20,9 +31,6 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'space-between',
             paddingVertical: scaleVertical(4),
             paddingHorizontal: scaleHorizontal(14),
-        },
-        text: {
-            color: colors.text_light,
         },
     });
     return styles;

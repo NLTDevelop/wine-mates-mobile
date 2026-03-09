@@ -36,11 +36,8 @@ export const WineListItem = ({
     customBottomComponent,
 }: IProps) => {
     const { colors, locale, t } = useUiContext();
-    const { styles, medalSize } = useMemo(
-        () => getStyles(colors, removeCardStyles, item),
-        [colors, removeCardStyles, item],
-    );
-    const { guard, handleItemPress, similarityText, displayRating, reviewCount, lastReviewData, getFormattedDate } =
+    const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
+    const { guard, handleItemPress, similarityText, displayRating, userReviewCount, expertReviewCount, lastReviewData, getFormattedDate } =
         useWineListItem({ item, onPress, showDate });
 
     const hasPremium = userModel.user?.hasPremium ?? false;
@@ -97,17 +94,29 @@ export const WineListItem = ({
                     </View>
 
                     {showMedal ? (
-                        <Typography
-                            variant="subtitle_12_400"
-                            text={t('wine.expertReview')}
-                            style={styles.expertReviewText}
-                        />
+                        <>
+                            <Typography
+                                variant="subtitle_10_400"
+                                text={t('wine.expertReview')}
+                            />
+                            {expertReviewCount ? (
+                                <Typography
+                                    variant="subtitle_10_400"
+                                    text={`(${expertReviewCount})`}
+                                    numberOfLines={1}
+                                />
+                            ) : null}
+                        </>
+                    ) : null}
+
+                    {item.producer ? (
+                        <Typography variant="h5" text={item.producer} style={styles.titleText} {...guard.bindText} />
                     ) : null}
 
                     <Typography
-                        variant="h5"
+                        variant="subtitle_10_400"
                         text={wineName || `${item.name || '-'} ${isFromScan ? '' : item.vintage || ''}`}
-                        style={styles.titleText}
+                        style={styles.descriptionText}
                         {...guard.bindText}
                     />
 
@@ -122,8 +131,8 @@ export const WineListItem = ({
                             />
                         </View>
                         <Typography
-                            variant="subtitle_12_400"
-                            text={`(${reviewCount})`}
+                            variant="subtitle_10_400"
+                            text={`(${userReviewCount})`}
                             numberOfLines={1}
                             style={styles.rateReviewText}
                         />
