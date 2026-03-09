@@ -4,11 +4,11 @@ import { useMemo } from 'react';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { ITasteProfileStatistics, ITasteProfileColor, ITasteProfileType } from '@/entities/wine/types/ITasteProfile';
-import { StatisticItemsList } from './components/StatisticItemsList/ui';
-import { TastesList } from './components/TastesList/ui';
-import { TasteProfileSectionType } from './types/TasteProfileSectionType';
-import { WineRecommendationCarousel } from './components/WineRecommendationCarousel/ui';
+import { StatisticItemsList } from './components/StatisticItemsList';
+import { TastesList } from './components/TastesList';
+import { TasteProfileSectionEnum } from './enums/TasteProfileSectionEnum';
 import { WinePeaksGrid } from '../../../../../UIKit/WinePeaksGrid';
+import { WineRecommendationCarousel } from './components/WineRecommendationCarousel';
 
 interface IProps {
     title: string;
@@ -25,11 +25,11 @@ export const MyTasteProfileItem = ({ title, statistics, color, type }: IProps) =
         <Collapse title={title}>
             <View style={styles.contentContainer}>
                 {statistics.colors.length > 0 && (
-                    <StatisticItemsList sectionType={TasteProfileSectionType.COLOR_SHADES} items={statistics.colors} />
+                    <StatisticItemsList sectionType={TasteProfileSectionEnum.COLOR_SHADES} items={statistics.colors} />
                 )}
 
                 {statistics.aromas.length > 0 && (
-                    <StatisticItemsList sectionType={TasteProfileSectionType.AROMA} items={statistics.aromas} />
+                    <StatisticItemsList sectionType={TasteProfileSectionEnum.AROMA} items={statistics.aromas} />
                 )}
 
                 {(statistics.flavors.length > 0 || statistics.tasteCharacteristics.length > 0) && (

@@ -22,7 +22,6 @@ import { IRateContext } from './types/IRateContext';
 import { IAIData } from './types/IAIData';
 import { IWineTasteGroup } from './types/IWineTatseGroup';
 import { ITasteProfile } from './types/ITasteProfile';
-import { IRecommendationWineList } from './types/IRecommendationWineList';
 import { IRecommendationWineListParams } from './params/IRecommendationWineListParams';
 
 class WineService {
@@ -337,7 +336,7 @@ class WineService {
         }
     };
 
-    getRecommendations = async (params: IRecommendationWineListParams): Promise<IResponse<IRecommendationWineList>> => {
+    getRecommendations = async (params: IRecommendationWineListParams): Promise<IResponse<IList<IWineListItem>>>  => {
         try {
             const response = await this._requester.request({
                 method: 'GET',

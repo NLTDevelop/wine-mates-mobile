@@ -6,7 +6,8 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FlatList } from 'react-native';
 
 const LIMIT = 10;
 const OFFSET = 0;
@@ -16,6 +17,15 @@ export const useMyWine = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [scrollToTop, setScrollToTop] = useState<(() => void) | null>(null);
     const data = wineListsModel.list?.rows;
+    const listRef = useRef<FlatList>(null);
+
+    const handleScrollToTop = useCallback(() => {
+        listRef.current?.scrollToOffset({ offset: 0, animated: true });
+    }, []);
+
+    useEffect(() => {
+        setScrollToTop(() => handleScrollToTop);
+    }, [handleScrollToTop, setScrollToTop]);
 
     const getList = useCallback(async (offset: number) => {
         try {
@@ -64,6 +74,10 @@ export const useMyWine = () => {
         }, [onRefresh])
     );
 
+    useEffect(() => {
+        return () => wineListsModel.clear();
+    }, []);
+
     const onEndReached = useCallback(async () => {
         const list = wineListsModel.list;
         if (!isLoading && list && list.count > list.rows.length) {
@@ -75,5 +89,5 @@ export const useMyWine = () => {
         navigation.navigate('WineDetailsView', {wineId: item.id});
     },[navigation]);
 
-    return { data, onRefresh, onEndReached, onItemPress, isLoading, getList, setScrollToTop, scrollToTop };
+    return { data, onRefresh, onEndReached, onItemPress, isLoading, getList, scrollToTop, listRef };
 };

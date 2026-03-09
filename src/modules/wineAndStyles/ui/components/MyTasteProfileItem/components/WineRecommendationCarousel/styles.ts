@@ -1,17 +1,18 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
+            marginTop: scaleVertical(16),
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
             width: '100%',
         },
         arrowContainer: {
-          position: 'absolute',
+            position: 'absolute',
             flexDirection: 'row',
             width: '100%',
             height: scaleHorizontal(40),

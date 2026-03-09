@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IWineFilters } from '@/entities/wine/types/IWineFilters';
 import { Button } from '@/UIKit/Button';
 import { observer } from 'mobx-react-lite';
-import { FiltersContent } from './components/FiltersContent';
+import { FiltersContent } from '../FiltersContent';
 
 interface IProps {
     modalRef: React.RefObject<BottomSheetModal | null>;

@@ -4,7 +4,7 @@ import { Collapse } from '@/UIKit/Collapse';
 import { ColorPaletteItem } from '@/UIKit/ColorPaletteItem';
 import { TasteCharacteristicItem } from '@/modules/scanner/ui/components/TasteCharacteristicItem';
 import { useUiContext } from '@/UIProvider';
-import { useTastesList } from '../presenters/useTastesList';
+import { useTastesList } from './presenters/useTastesList';
 import { ITasteProfileStatisticItem, ITasteProfileCharacteristic } from '@/entities/wine/types/ITasteProfile';
 import { getStyles } from './styles';
 

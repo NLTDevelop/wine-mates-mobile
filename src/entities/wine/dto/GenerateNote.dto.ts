@@ -14,6 +14,10 @@ export interface GenerateNoteDto {
     aromas: number[];
     flavors: number[];
     tasteCharacteristics: ITasteCharacteristic[];
+    suggestions?: {
+        aromas?: string[];
+        flavors?: string[];
+    };
 }
 
 interface ITasteCharacteristic {

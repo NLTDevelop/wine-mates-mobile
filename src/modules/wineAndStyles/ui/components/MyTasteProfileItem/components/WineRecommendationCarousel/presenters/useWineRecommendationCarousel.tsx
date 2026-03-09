@@ -1,6 +1,9 @@
 import { useCallback, useRef, useState } from 'react';
 import { wineAndStylesModel } from '@/entities/wine/WineAndStylesModel';
 import { wineService } from '@/entities/wine/WineService';
+import { IWineListItem } from '@/entities/wine/types/IWineListItem';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
 const LIMIT = 10;
 const PREFETCH_THRESHOLD = 8;
@@ -11,6 +14,7 @@ interface IUseWineRecommendationCarouselParams {
 }
 
 export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecommendationCarouselParams) => {
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
     const isFetchingRef = useRef(false);
@@ -18,6 +22,10 @@ export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecom
     const key = wineAndStylesModel.getRecommendationKey(typeId, colorId);
     const wines = wineAndStylesModel.recommendations[key] ?? [];
     const pagination = wineAndStylesModel.recommendationsPagination[key];
+
+    const onWinePress = useCallback((item: IWineListItem) => {
+        navigation.navigate('WineDetailsView', { wineId: item.id });
+    }, [navigation]);
 
     const fetchNextPage = useCallback(async () => {
         if (!pagination || isFetchingRef.current) {
@@ -46,9 +54,9 @@ export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecom
         isFetchingRef.current = false;
     }, [key, typeId, colorId, pagination]);
 
-    const handleNext = useCallback(() => {
+    const onNext = useCallback(() => {
         setDirection('forward');
-        setCurrentIndex((prev) => {
+        setCurrentIndex(prev => {
             const next = (prev + 1) % wines.length;
 
             if (wines.length - next <= PREFETCH_THRESHOLD) {
@@ -59,16 +67,17 @@ export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecom
         });
     }, [wines.length, fetchNextPage]);
 
-    const handlePrevious = useCallback(() => {
+    const onPrevious = useCallback(() => {
         setDirection('backward');
-        setCurrentIndex((prev) => (prev - 1 + wines.length) % wines.length);
+        setCurrentIndex(prev => (prev - 1 + wines.length) % wines.length);
     }, [wines.length]);
 
     return {
         wines,
         currentIndex,
-        handleNext,
-        handlePrevious,
+        onNext,
+        onPrevious,
         direction,
+        onWinePress
     };
 };

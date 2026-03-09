@@ -35,7 +35,7 @@ export interface IWineListItem {
             wineExperienceLevel: WineExperienceLevelEnum;
         };
     } | null;
-    lastRate?: {
+    myReview?: {
         id: number;
         review: string;
         createdAt: string;
@@ -47,4 +47,14 @@ export interface IWineListItem {
             wineExperienceLevel: WineExperienceLevelEnum;
         };
     } | null;
+    color: {
+        id: number;
+        colorHex: string;
+        name: string;
+    };
+    type: {
+        id: number;
+        isSparkling: boolean;
+        name: string;
+    };
 }

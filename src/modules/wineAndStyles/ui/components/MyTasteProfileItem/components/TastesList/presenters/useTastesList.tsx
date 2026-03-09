@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useUiContext } from '@/UIProvider';
 import { userModel } from '@/entities/users/UserModel';
-import { TasteProfileSectionType } from '../../../types/TasteProfileSectionType';
+import { TasteProfileSectionEnum } from '../../../enums/TasteProfileSectionEnum';
 import { ITasteProfileCharacteristic } from '@/entities/wine/types/ITasteProfile';
 
 export const useTastesList = () => {
@@ -9,7 +9,7 @@ export const useTastesList = () => {
     const isPremiumUser = userModel.user?.hasPremium || false;
 
     const title = useMemo(() => {
-        return t(`wineAndStyles.${TasteProfileSectionType.TASTES}` as any);
+        return t(`wineAndStyles.${TasteProfileSectionEnum.TASTES}` as any);
     }, [t]);
 
     const mapCharacteristicToItem = useCallback((char: ITasteProfileCharacteristic) => {

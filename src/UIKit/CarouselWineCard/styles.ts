@@ -87,5 +87,5 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
         },
     });
-    return { styles, medalSize };
+    return { styles };
 };

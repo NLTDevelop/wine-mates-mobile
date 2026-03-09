@@ -13,14 +13,14 @@ interface IProps {
 }
 
 const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
-    return 'similarity' in item || 'lastRate' in item || 'lastReview' in item;
+    return 'similarity' in item || 'myReview' in item || 'lastReview' in item || 'lastRate' in item
 };
 
 export const useWineListItem = ({ item, onPress }: IProps) => {
     const { t } = useUiContext();
     const guard = useSelectablePressGuard();
 
-    const handleItemPress = useCallback(() => {
+    const onItemPress = useCallback(() => {
         guard.bindPressable.onPress(() => {
             if (onPress && isWineListItem(item)) {
                 onPress(item);
@@ -39,12 +39,11 @@ export const useWineListItem = ({ item, onPress }: IProps) => {
         } else {
             return '0';
         }
-      
     }, [item.averageUserRating]);
 
     const lastReviewData = useMemo(() => {
         if (!isWineListItem(item)) return null;
-        return item.lastRate || item.lastReview || null;
+        return item.myReview || item.lastReview || null;
     }, [item]);
 
     const userReviewCount = useMemo(() => {
@@ -86,13 +85,13 @@ export const useWineListItem = ({ item, onPress }: IProps) => {
 
     return {
         guard,
-        handleItemPress,
+        onItemPress,
         similarityText,
         displayRating,
         userReviewCount,
         lastReviewData,
         getFormattedDate,
         locationText,
-        expertReviewCount
+        expertReviewCount,
     };
 };

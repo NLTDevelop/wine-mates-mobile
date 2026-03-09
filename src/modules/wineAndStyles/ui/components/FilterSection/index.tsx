@@ -3,7 +3,7 @@ import { Typography } from '@/UIKit/Typography';
 import { useMemo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { getStyles } from './styles';
-import { useFilterSection } from './useFilterSection';
+import { useFilterSection } from '../../../presenters/useFilterSection';
 import { IWineFilterOption } from '@/entities/wine/types/IWineFilters';
 import { observer } from 'mobx-react-lite';
 

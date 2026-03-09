@@ -50,13 +50,12 @@ export const WineOfTheDay = ({ onArrowPress, onWinePress }: IProps) => {
     // const { colors } = useUiContext();
     // const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const lastReviewData = wine.lastRate || wine.lastReview;
+    const lastReviewData = wine.myReview || wine.lastReview;
 
     return (
         <TitledContent titleVariant="h3" title={'Wine of the day'} rightComponent={<TitledContent.RoundedButton onPress={onArrowPress} />}>
             <WineListItem
                 item={MOCK_WINE}
-                hideSimilarity
                 customBottomComponent={<WineOfTheDayMarquee />}
                 footer={lastReviewData ? <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review} /> : null}
                 onPress={onWinePress}
