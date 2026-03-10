@@ -1,6 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { colorOpacity, scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
+
+export enum WineSliderColors {
+    MOUSSE = '#FFF9E3',
+    PERLAGE = '#EAE0D5',
+    CLARITY = '#F0F8FF',
+}
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -67,11 +73,9 @@ export const getStyles = (colors: IColors) => {
             zIndex: 1,
         },
         decoratorItem: {
-            width: scaleHorizontal(1.2),
-            height: '280%',
-            transform: [{ rotate: '32deg' }],
-            backgroundColor: colorOpacity(colors.background, 15),
-            marginLeft: scaleHorizontal(-20),
+            width: scaleHorizontal(2),
+            height: '100%',
+            backgroundColor: colors.background,
         },
     });
     return styles;

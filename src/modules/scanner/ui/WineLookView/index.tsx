@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { getStyles } from './styles';
+import { getStyles, WineSliderColors } from './styles';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -43,12 +43,14 @@ export const WineLookView = observer(() => {
         shadeSelectorKey,
         handleShadeAnimationEnd,
         getSparklingSliderData,
-        sliderDecorator
     } = useWineLook({ t, styles });
 
     const decorator = useMemo(() => {
-        return sliderDecorator(<View style={styles.decoratorItem} />)
-    }, [])
+        return {
+            item: <View style={styles.decoratorItem} />,
+            count: 3,
+        };
+    }, [styles.decoratorItem]);
 
 
     return (
@@ -106,8 +108,7 @@ export const WineLookView = observer(() => {
                                             snapped
                                             labels={getSparklingSliderData.mousseData}
                                             containerStyle={styles.smoothSlider}
-                                            trackStyle={styles.track}
-                                            selectedStyle={styles.selected}
+                                            selectedStyle={{ backgroundColor: WineSliderColors.MOUSSE }}
                                             decorator={decorator}
                                         />
                                     </View>
@@ -122,8 +123,7 @@ export const WineLookView = observer(() => {
                                             snapped
                                             labels={getSparklingSliderData.perlageData}
                                             containerStyle={styles.smoothSlider}
-                                            trackStyle={styles.track}
-                                            selectedStyle={styles.selected}
+                                            selectedStyle={{ backgroundColor: WineSliderColors.PERLAGE }}
                                             decorator={decorator}
                                         />
                                     </View>
@@ -138,8 +138,7 @@ export const WineLookView = observer(() => {
                                             snapped
                                             labels={getSparklingSliderData.appearanceData}
                                             containerStyle={styles.smoothSlider}
-                                            trackStyle={styles.track}
-                                            selectedStyle={styles.selected}
+                                            selectedStyle={{ backgroundColor: WineSliderColors.CLARITY }}
                                             decorator={decorator}
                                         />
                                     </View>

@@ -7,6 +7,7 @@ import { IWineColor } from './types/IWineColors';
 import { IWineSmell } from './types/IWineSmell';
 import { IWineTaste } from './types/IWineTaste';
 import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
+import { ITasteCharacteristicDetail } from './types/ITasteCharacteristicDetail';
 import { IWineSelectedSmell } from './types/IWineSelectedSmell';
 import { IWineReview } from './types/IWineReview';
 import { IWineImage } from './types/IWineImage';
@@ -32,6 +33,7 @@ export interface IWineListModel {
     tastes: IWineTasteGroup[] | null;
     selectedTastes: IWineTaste[] | null;
     tasteCharacteristics: IWineTasteCharacteristic[] | null;
+    tasteCharacteristicDetails: ITasteCharacteristicDetail[] | null;
     winePeak: number | null;
     review: IWineReview | null;
     clear: () => void;
@@ -54,6 +56,7 @@ class WineModel implements IWineListModel {
     private tastesRepository = new MobXRepository<IWineTasteGroup[] | null>(null);
     private selectedTastesRepository = new MobXRepository<IWineTaste[] | null>(null);
     private tasteCharacteristicsRepository = new MobXRepository<IWineTasteCharacteristic[] | null>(null);
+    private tasteCharacteristicDetailsRepository = new MobXRepository<ITasteCharacteristicDetail[] | null>(null);
     private winePeakRepository = new MobXRepository<number | null>(null);
     private reviewRepository = new MobXRepository<IWineReview | null>(null);
 
@@ -74,7 +77,7 @@ class WineModel implements IWineListModel {
     }
 
     public get vintages() {
-        return this.vintagesRepository.data;
+        return this.vintagesRepository.data || [];
     }
 
     public set vintages(value: IVintage[]) {
@@ -185,6 +188,14 @@ class WineModel implements IWineListModel {
         this.tasteCharacteristicsRepository.save(value);
     }
 
+    public get tasteCharacteristicDetails() {
+        return this.tasteCharacteristicDetailsRepository.data;
+    }
+
+    public set tasteCharacteristicDetails(value: ITasteCharacteristicDetail[] | null) {
+        this.tasteCharacteristicDetailsRepository.save(value);
+    }
+
     public get winePeak() {
         return this.winePeakRepository.data;
     }
@@ -213,6 +224,7 @@ class WineModel implements IWineListModel {
         this.tastes = null;
         this.selectedTastes = null;
         this.tasteCharacteristics = null;
+        this.tasteCharacteristicDetails = null;
         this.winePeak = null;
         this.review = null;
     }

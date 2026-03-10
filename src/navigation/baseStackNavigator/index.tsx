@@ -19,6 +19,7 @@ import { WineReviewView } from '@/modules/scanner/ui/WineReviewView';
 import { WineReviewResultView } from '@/modules/scanner/ui/WineReviewResultView';
 import { SavedWinesView } from '@/modules/wine/ui/SavedWinesView';
 import { WineDetailsView } from '@/modules/wine/ui/WineDetailsView';
+import { DeleteAccountView } from '@/modules/settings/ui/DeleteAccountView';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +49,7 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="WineReviewView" component={WineReviewView} options={{ gestureEnabled: false }} />
             <Stack.Screen name="WineReviewResultView" component={WineReviewResultView} />
             <Stack.Screen name="SavedWinesView" component={SavedWinesView} />
+            <Stack.Screen name="DeleteAccountView" component={DeleteAccountView} />
         </Stack.Navigator>
     );
 });
