@@ -1,5 +1,5 @@
 import { memo, useMemo, useCallback } from 'react';
-import { View } from 'react-native';
+import { StyleProp, TextStyle, View } from 'react-native';
 import WheelPicker from '@quidone/react-native-wheel-picker';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -18,15 +18,19 @@ export const YearPicker = memo(({ value, onChange, minimumYear }: IProps) => {
 
     const { data, handleValueChange } = useYearPicker({ value, onChange, minimumYear, styles });
 
-    const renderItem = useCallback(({ item }: { item: { value: number; label: string }; index: number }) => {
+    const renderItem = useCallback(({ item, itemTextStyle }: {
+        item: { value: number; label: string };
+        index: number;
+        itemTextStyle: StyleProp<TextStyle>;
+    }) => {
         return (
             <Typography
                 text={item.label}
                 variant="h3"
-                style={styles.itemText}
+                style={itemTextStyle}
             />
         );
-    }, [styles]);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -39,9 +43,8 @@ export const YearPicker = memo(({ value, onChange, minimumYear }: IProps) => {
                 itemHeight={50}
                 renderItem={renderItem}
                 itemTextStyle={styles.itemText}
-                selectedItemTextStyle={styles.selectedItemText}
                 overlayItemStyle={styles.overlayHidden}
-                enableScrollByTapOnItem={true}
+                enableScrollByTapOnItem
             />
         </View>
     );
