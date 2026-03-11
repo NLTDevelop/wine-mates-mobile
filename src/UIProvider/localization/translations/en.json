@@ -253,7 +253,15 @@
         "inviteFriends": "Invite Friends",
         "changePassword": "Change password",
         "logOut": "Log out",
-        "deleteAccount": "Delete account"
+        "deleteAccount": "Delete account",
+        "deleteAccountWarning1": "By confirming the deletion of your account, associated information will be permanently removed. This includes:",
+        "deleteAccountListItem1": "• Personal details provided",
+        "deleteAccountListItem2": "• Transaction history and purchase records",
+        "deleteAccountListItem3": "• Preferences and customized settings",
+        "deleteAccountWarning2": "Account deletion is an irreversible process, and once completed, the data cannot be recovered. Please be certain that you want to proceed with this action.",
+        "deleteAccountQuestion": "Do you want to delete your account?",
+        "deleteAccountConfirm": "Yes, delete my account",
+        "deleteAccountButton": "Delete account"
     },
     "logout": {
         "logout": "Log out?",

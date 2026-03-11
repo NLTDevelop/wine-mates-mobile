@@ -10,6 +10,8 @@ import { storage } from '@/libs/storage/MMKVStorage';
 import { TASTE_CHARACTERISTICS_CACHE_KEY } from '@/libs/storage/cacheUtils';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { Keyboard } from 'react-native';
+import { ITasteCharacteristicDetail } from '@/entities/wine/types/ITasteCharacteristicDetail';
+import { runInAction } from 'mobx';
 
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -94,6 +96,27 @@ export const useWineTasteCharacteristics = () => {
         });
     }, [data]);
 
+    const saveCharacteristicDetails = useCallback((sliderVals: Record<number, number>) => {
+        if (!data?.length) return;
+
+        const isPremiumUser = userModel.user?.hasPremium || false;
+        const available = isPremiumUser
+            ? data
+            : data.filter(c => !c.isPremium);
+
+        const details: ITasteCharacteristicDetail[] = available
+            .map(item => ({
+                id: item.id,
+                label: item.name,
+                value: item.levels[sliderVals[item.id] ?? 0]?.name || '',
+            }))
+            .filter(detail => detail.value);
+
+        runInAction(() => {
+            wineModel.tasteCharacteristicDetails = details;
+        });
+    }, [data]);
+
     const handleSliderChange = useCallback(
         (id: number, value: number) => {
             setSliderValues(prev => {
@@ -106,36 +129,44 @@ export const useWineTasteCharacteristics = () => {
                 storage.set(TASTE_CHARACTERISTICS_CACHE_KEY, next);
 
                 if (data?.length) {
-                    wineModel.tasteCharacteristics = data.map(item => ({
-                        ...item,
-                        selectedIndex: next[item.id] ?? item.selectedIndex ?? 0,
-                    }));
+                    runInAction(() => {
+                        wineModel.tasteCharacteristics = data.map(item => ({
+                            ...item,
+                            selectedIndex: next[item.id] ?? item.selectedIndex ?? 0,
+                        }));
+                    });
                 }
+
+                saveCharacteristicDetails(next);
 
                 return next;
             });
             Keyboard.dismiss();
         },
-        [data],
+        [data, saveCharacteristicDetails],
     );
 
     const handleWinePeakChange = useCallback((year: number | null) => {
         setWinePeak(year);
-        wineModel.winePeak = year;
+        runInAction(() => {
+            wineModel.winePeak = year;
+        });
         Keyboard.dismiss();
     }, []);
 
     const handleNextPress = useCallback(() => {
-        if (data) {
-            wineModel.tasteCharacteristics = data.map(item => ({
-                ...item,
-                selectedIndex: sliderValues[item.id] ?? 0,
-            }));
-        }
+        runInAction(() => {
+            if (data) {
+                wineModel.tasteCharacteristics = data.map(item => ({
+                    ...item,
+                    selectedIndex: sliderValues[item.id] ?? 0,
+                }));
+            }
 
-        if (winePeak) {
-            wineModel.winePeak = winePeak;
-        }
+            if (winePeak) {
+                wineModel.winePeak = winePeak;
+            }
+        });
 
         navigation.navigate('WineReviewView');
         Keyboard.dismiss();
