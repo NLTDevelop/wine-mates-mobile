@@ -7,32 +7,20 @@ import { useRoute, useIsFocused } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
 import { wineModel } from '@/entities/wine/WineModel';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
+import { NONE_VINTAGE_DROPDOWN_VALUE } from './useVintageDropdown';
 
 export const useWineDetails = () => {
     const { wineId } = (useRoute().params as { wineId: number }) || null;
     const isFocused = useIsFocused();
     const [details, setDetails] = useState<IWineDetails | null>(null);
     const [isError, setIsError] = useState(false);
+    const [isAllVintagesSelected, setIsAllVintagesSelected] = useState(false);
 
-    const getVintages = useCallback(async () => {
-        try {
-            if (!wineModel.selectedWineId) return;
-            console.log('🔄 getVintages: Завантаження вінтажів для wineId:', wineModel.selectedWineId);
-            const response = await wineService.getVintages(wineModel.selectedWineId);
-            if (!response.isError && response.data) {
-                wineModel.vintages = response.data;
-                console.log('✅ getVintages: Вінтажі завантажено:', response.data.map(v => `${v.vintage} (${v.totalReviews} reviews)`));
-            }
-        } catch (error) {
-            console.error('getVintages error: ', JSON.stringify(error, null, 2));
-        }
-    }, []);
-
-    const getDetails = useCallback(async () => {
+    const getDetails = useCallback(async (params?: { vintages?: 'All' }) => {
         try {
             if (!wineModel.selectedWineId) return;
 
-            const response = await wineService.getById(wineModel.selectedWineId);
+            const response = await wineService.getById(wineModel.selectedWineId, params);
 
             if (response.isError || !response.data) {
                 toastService.showError(
@@ -42,6 +30,7 @@ export const useWineDetails = () => {
                 setIsError(true);
             } else {
                 setDetails(response.data);
+                wineModel.vintages = response.data.vintages;
                 setIsError(false);
             }
         } catch (error) {
@@ -52,54 +41,78 @@ export const useWineDetails = () => {
     }, []);
 
     const onVintageChange = useCallback(async (item: IDropdownItem) => {
-        console.log('🎯 onVintageChange: Вибрано вінтаж:', item);
-        console.log('📋 onVintageChange: Поточний список вінтажів:', wineModel.vintages.map(v => `${v.vintage} (wineId: ${v.wineId}, reviews: ${v.totalReviews})`));
-        
-        if (item.id) {
-            console.log('✅ onVintageChange: Вінтаж з item.id, встановлюємо selectedWineId:', item.id);
-            wineModel.selectedWineId = Number(item.id);
-            await getDetails();
-        } else if (details) {
-            const newVintageValue = item.value === null ? null : Number(item.value);
-            console.log('🔍 onVintageChange: Вінтаж без item.id, шукаємо в списку:', newVintageValue);
-            
-            const vintageInList = wineModel.vintages.find(v => v.vintage === newVintageValue);
-            
-            if (vintageInList) {
-                console.log('✅ onVintageChange: Вінтаж знайдено в списку, встановлюємо selectedWineId:', vintageInList.wineId);
-                wineModel.selectedWineId = vintageInList.wineId;
-                await getDetails();
-            } else {
-                console.log('❌ onVintageChange: Вінтаж НЕ знайдено в списку, встановлюємо isTasted = false');
-                setDetails({
-                    ...details,
-                    vintage: newVintageValue,
-                    isTasted: false,
-                    currentVintage: null,
-                    statistics: {
-                        topColors: [],
-                        topAromas: [],
-                        topFlavors: [],
-                        tasteCharacteristics: [],
-                        topWinePeaks: [],
-                    },
-                });
-                wineReviewsListModel.clear();
-            }
-        }
-        console.log('📋 onVintageChange: Список вінтажів після зміни:', wineModel.vintages.map(v => `${v.vintage} (wineId: ${v.wineId}, reviews: ${v.totalReviews})`));
-    }, [details, getDetails]);
+        const isNoneVintage = item.value === NONE_VINTAGE_DROPDOWN_VALUE;
+        const isAllVintages = item.value === null
+            || (typeof item.label === 'string' && item.label.toLowerCase() === localization.t('wine.allVintages').toLowerCase())
+            || (typeof item.value === 'string' && item.value.toLowerCase() === 'all');
 
-    useEffect(() => {
-        if (!isFocused || !wineId) {
+        if (isAllVintages) {
+            setIsAllVintagesSelected(true);
+            await getDetails({ vintages: 'All' });
             return;
         }
 
+        setIsAllVintagesSelected(false);
+        const selectedWineId = item.id ? Number(item.id) : null;
+        const selectedVintage = isNoneVintage || item.value === null ? null : Number(item.value);
+
+        if (selectedWineId && selectedWineId !== wineModel.selectedWineId) {
+            wineModel.selectedWineId = selectedWineId;
+            await getDetails();
+            return;
+        }
+
+        if (selectedWineId && selectedWineId === wineModel.selectedWineId) {
+            await getDetails();
+            return;
+        }
+
+        if (selectedVintage !== null && Number.isNaN(selectedVintage)) {
+            return;
+        }
+
+        if (details) {
+            setDetails({
+                ...details,
+                vintage: selectedVintage,
+                isTasted: false,
+                currentVintage: null,
+                averageUserRating: 0,
+                averageExpertRating: 0,
+                countUserRating: 0,
+                countExpertRating: 0,
+                totalReviews: 0,
+                statistics: {
+                    topColors: [],
+                    topAromas: [],
+                    topFlavors: [],
+                    tasteCharacteristics: [],
+                    topWinePeaks: [],
+                },
+            });
+            wineReviewsListModel.clear();
+        }
+    }, [details, getDetails]);
+
+    useEffect(() => {
+        if (!isFocused || !wineId) return;
+
+        setIsAllVintagesSelected(false);
         wineModel.selectedWineId = wineId;
-        Promise.all([getDetails(), getVintages()]);
-    }, [wineId, isFocused, getDetails, getVintages]);
+        getDetails();
+    }, [wineId, isFocused, getDetails]);
 
-    const hasCurrentVintageData = details?.currentVintage !== null;
+    const hasCurrentVintageData = !!details?.currentVintage && typeof details.currentVintage === 'object';
 
-    return { details, vintages: wineModel.vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, wineId };
+    return {
+        details,
+        vintages: wineModel.vintages ?? [],
+        isError,
+        getDetails,
+        onVintageChange,
+        hasCurrentVintageData,
+        isAllVintagesSelected,
+        wineId,
+        selectedWineId: wineModel.selectedWineId,
+    };
 };

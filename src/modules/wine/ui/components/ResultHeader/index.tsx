@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import { IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
+import { IWineDetails, IVintagesItem } from '@/entities/wine/types/IWineDetails';
 import { useResultHeader } from '@/modules/wine/presenters/useResultHeader';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { WineListItem } from '@/UIKit/WineListItem';
@@ -10,13 +10,14 @@ import { ResultHeaderFooter } from '../ResultHeaderFooter';
 
 interface IProps {
     item: IWineDetails;
-    vintages: IVintage[];
+    vintages: IVintagesItem[];
     onVintageChange: (item: IDropdownItem) => void;
     onFavoritePress: () => void;
     hasCurrentVintageData: boolean;
+    isAllVintagesSelected: boolean;
 }
 
-export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData }: IProps) => {
+export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { onPress, isCreating } = useResultHeader(item);
@@ -31,6 +32,7 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
                     onVintageChange={onVintageChange}
                     onFavoritePress={onFavoritePress}
                     hasCurrentVintageData={hasCurrentVintageData}
+                    isAllVintagesSelected={isAllVintagesSelected}
                     onPress={onPress}
                     isCreating={isCreating}
                 />}

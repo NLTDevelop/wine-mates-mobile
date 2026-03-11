@@ -45,28 +45,16 @@ class WineService {
         }
     };
 
-    getById = async (id: number): Promise<IResponse<IWineDetails>> => {
+    getById = async (id: number, params?: { vintages?: 'All' }): Promise<IResponse<IWineDetails>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.wines}/${id}`,
+                params,
             });
             return response;
         } catch (error) {
             console.warn('WineService -> getById: ', error);
-            return { isError: true, data: null, message: '' } as any;
-        }
-    };
-
-    getVintages = async (id: number): Promise<IResponse<Array<{ wineId: number; vintage: number | null; averageUserRating: number; totalReviews: number }>>> => {
-        try {
-            const response = await this._requester.request({
-                method: 'GET',
-                url: `${this._links.wines}/${id}/vintages`,
-            });
-            return response;
-        } catch (error) {
-            console.warn('WineService -> getVintages: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

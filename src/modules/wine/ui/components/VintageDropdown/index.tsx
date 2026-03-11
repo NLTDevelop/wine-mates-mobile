@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
-import { IVintage } from '@/entities/wine/types/IWineDetails';
+import { IVintage, IVintagesItem } from '@/entities/wine/types/IWineDetails';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
-import { useVintageDropdown } from '../../../presenters/useVintageDropdown';
+import { NONE_VINTAGE_DROPDOWN_VALUE, useVintageDropdown } from '../../../presenters/useVintageDropdown';
 import { CustomVintageFooter } from '../CustomVintageFooter';
 import { getStyles } from './styles';
 import { View } from 'react-native';
@@ -16,9 +16,9 @@ import { userModel } from '@/entities/users/UserModel';
 import { IVintageDropdownItem } from './types/IVintageDropdownItem';
 
 interface IProps {
-    vintages: IVintage[];
-    currentVintage: IVintage | null;
-    selectedVintage: number | null;
+    vintages: IVintagesItem[];
+    currentVintage: IVintage | string | null;
+    selectedVintage: number | string | null;
     onVintageChange: (item: IDropdownItem) => void;
 }
 
@@ -28,10 +28,14 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onV
 
     const hasPremium = userModel.user?.hasPremium ?? false;
 
-    const { vintageData, existingYears, handleAddVintage, dropdownRef, onCloseDropdown } = 
-        useVintageDropdown({ vintages, currentVintage, onVintageChange, selectedVintage });
+    const { vintageData, existingYears, handleAddVintage, dropdownRef, onCloseDropdown, selectedValue } =
+        useVintageDropdown({ vintages, currentVintage, selectedVintage: typeof selectedVintage === 'number' ? selectedVintage : null, onVintageChange });
 
     const renderRatingInfo = useCallback((dropdownItem: IVintageDropdownItem) => {
+        if (dropdownItem.hideRatingInfo || dropdownItem.value === null || dropdownItem.value === NONE_VINTAGE_DROPDOWN_VALUE) {
+            return null;
+        }
+
         const userRating = dropdownItem.averageUserRating ?? 0;
         const expertRating = dropdownItem.averageExpertRating ?? 0;
 
@@ -87,7 +91,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onV
             data={vintageData}
             placeholder=""
             onPress={onVintageChange}
-            selectedValue={selectedVintage}
+            selectedValue={selectedValue}
             containerStyle={styles.dropdown}
             disabled={vintageData.length === 0}
             renderItem={renderVintageItem}

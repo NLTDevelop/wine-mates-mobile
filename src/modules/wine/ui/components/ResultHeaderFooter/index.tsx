@@ -3,22 +3,32 @@ import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
-import { IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
+import { IWineDetails, IVintagesItem } from '@/entities/wine/types/IWineDetails';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { getStyles } from './styles';
 import { VintageDropdown } from '../VintageDropdown';
 
 interface IProps {
     item: IWineDetails;
-    vintages: IVintage[];
+    vintages: IVintagesItem[];
     onVintageChange: (item: IDropdownItem) => void;
     onFavoritePress: () => void;
     hasCurrentVintageData: boolean;
+    isAllVintagesSelected: boolean;
     onPress: () => void;
     isCreating: boolean;
 }
 
-export const ResultHeaderFooter = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, onPress, isCreating }: IProps) => {
+export const ResultHeaderFooter = ({
+    item,
+    vintages,
+    onVintageChange,
+    onFavoritePress,
+    hasCurrentVintageData,
+    isAllVintagesSelected,
+    onPress,
+    isCreating,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -37,9 +47,10 @@ export const ResultHeaderFooter = ({ item, vintages, onVintageChange, onFavorite
                     type="secondary"
                     containerStyle={styles.button}
                     inProgress={isCreating}
-                    disabled={isCreating}
+                    disabled={isCreating || isAllVintagesSelected}
+                    applyDisabledStyle={false}
                 />
-                <FavoriteButton onPress={onFavoritePress} />
+                <FavoriteButton onPress={onFavoritePress} disabled={isAllVintagesSelected} />
             </View>
         </View>
     );
