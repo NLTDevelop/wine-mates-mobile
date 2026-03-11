@@ -47,11 +47,15 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(36),
             minWidth: scaleHorizontal(109),
         },
+        noteInputContainer: {
+            borderWidth: 0,
+        },
         noteInput: {
             color: colors.text,
             fontSize: scaleFontSize(16),
             fontWeight: '500',
             flex: 1,
+            borderWidth: 0,
         },
         buttonGroup: {
             flexDirection: 'row',

@@ -10,6 +10,7 @@ import { useTastingNote } from '@/modules/scanner/presenters/useTastingNote';
 import { NoteLoader } from '../NoteLoader';
 import { Button } from '@/UIKit/Button';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
+import { CustomInput } from '@/UIKit/CustomInput';
 
 interface IProps {
     note: string | null;
@@ -42,9 +43,10 @@ export const TastingNote = ({ note, isLoading, limits, onGeneratePress }: IProps
                 <NoteLoader />
             ) : displayNote ? (
                 <View style={styles.noteContainer}>
-                    <TextInput
+                    <CustomInput
                         ref={inputRef}
                         style={styles.noteInput}
+                        inputContainerStyle={styles.noteInputContainer}
                         value={editedNote}
                         onChangeText={setEditedNote}
                         editable={isEditing}

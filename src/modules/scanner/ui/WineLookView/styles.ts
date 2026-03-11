@@ -2,12 +2,6 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export enum WineSliderColors {
-    MOUSSE = '#FFF9E3',
-    PERLAGE = '#EAE0D5',
-    CLARITY = '#F0F8FF',
-}
-
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
@@ -80,3 +74,5 @@ export const getStyles = (colors: IColors) => {
     });
     return styles;
 };
+
+export * from '@/entities/wine/enums/WineSliderColorsEnum';
