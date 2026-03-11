@@ -11,14 +11,13 @@ export const getStyles = (_colors: IColors) => {
         rateContainer: {
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            flex: 1,
+            gap: scaleHorizontal(8),
             paddingVertical: scaleVertical(4),
         },
         ratingInfoContainer: {
             flexDirection: 'row',
             alignItems: 'center',
-            gap: scaleHorizontal(10),
+            gap: scaleHorizontal(8),
         },
         ratingItem: {
             flexDirection: 'row',

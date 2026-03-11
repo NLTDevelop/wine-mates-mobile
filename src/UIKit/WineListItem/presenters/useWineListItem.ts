@@ -9,14 +9,15 @@ interface IProps {
     item: IWineListItem | IWineDetails;
     onPress?: (item: IWineListItem) => void;
     hideSimilarity?: boolean;
-    showDate?: boolean;
+    removeCardStyles?: boolean;
 }
 
 const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
     return 'similarity' in item || 'myReview' in item || 'lastReview' in item || 'lastRate' in item
 };
+const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails => 'currentVintage' in item;
 
-export const useWineListItem = ({ item, onPress }: IProps) => {
+export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => {
     const { t } = useUiContext();
     const guard = useSelectablePressGuard();
 
@@ -33,13 +34,18 @@ export const useWineListItem = ({ item, onPress }: IProps) => {
         return `${Math.round(item.similarity * 100)}%`;
     }, [item]);
 
-    const displayRating = useMemo(() => {
-        if (item.averageUserRating > 0) {
-            return item.averageUserRating.toFixed(1);
+    const userRating = useMemo(() => {
+        const currentVintageUserRating = isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
+            ? item.currentVintage.averageUserRating
+            : 0;
+        const rating = removeCardStyles && currentVintageUserRating ? currentVintageUserRating : item.averageUserRating;
+
+        if (rating > 0) {
+            return rating.toFixed(1);
         } else {
             return '0';
         }
-    }, [item.averageUserRating]);
+    }, [item, removeCardStyles]);
 
     const lastReviewData = useMemo(() => {
         if (!isWineListItem(item)) return null;
@@ -47,14 +53,20 @@ export const useWineListItem = ({ item, onPress }: IProps) => {
     }, [item]);
 
     const userReviewCount = useMemo(() => {
-        const totalReviews = item.countUserRating ?? 0;
+        const currentVintageUserReviews = isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
+            ? item.currentVintage.countUserRating
+            : 0;
+        const totalReviews = removeCardStyles && currentVintageUserReviews ? currentVintageUserReviews : item.countUserRating ?? 0;
         return declOfWord(totalReviews, t('scanner.reviewCount') as unknown as Array<string>);
-    }, [item, t]);
+    }, [item, removeCardStyles, t]);
 
     const expertReviewCount = useMemo(() => {
-        const totalReviews = item.countExpertRating ?? 0;
+        const currentVintageExpertReviews = isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
+            ? item.currentVintage.countExpertRating
+            : 0;
+        const totalReviews = removeCardStyles && currentVintageExpertReviews ? currentVintageExpertReviews : item.countExpertRating ?? 0;
         return declOfWord(totalReviews, t('scanner.reviewCount') as unknown as Array<string>);
-    }, [item, t]);
+    }, [item, removeCardStyles, t]);
 
     const locationText = useMemo(() => {
         const parts: string[] = [];
@@ -87,7 +99,7 @@ export const useWineListItem = ({ item, onPress }: IProps) => {
         guard,
         onItemPress,
         similarityText,
-        displayRating,
+        userRating,
         userReviewCount,
         lastReviewData,
         getFormattedDate,

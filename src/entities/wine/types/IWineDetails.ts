@@ -9,13 +9,16 @@ export interface IStatistic {
 }
 
 export interface IVintage {
-    wineId: number;
-    vintage: number | null;
+    averageExpertRating: number;
     averageUserRating: number;
+    countExpertRating: number;
+    countUserRating: number;
     totalReviews: number;
-    averageExpertRating?: number | null;
-    countExpertRating?: number | null;
+    vintage: number | null;
+    wineId: number;
 }
+
+export type IVintagesItem = number | string | IVintage;
 
 export interface IColorShade {
     colorHex: string;
@@ -42,42 +45,22 @@ export interface IOverallVintageScore {
 }
 
 export interface IWineDetails {
-    id: number;
-    name: string | null;
-    vintage: number | null;
-    currentVintage: IVintage | null;
-    isTasted: boolean;
-    vintages: IVintage[];
-    overallVintageScore: IOverallVintageScore;
-    producer: string | null;
-    grapeVariety: string;
-    userId: number;
-    searchVector: string;
-    createdAt: string;
-    image: IMedia | null;
-    averageUserRating: number;
     averageExpertRating: number;
+    averageUserRating: number;
+    color: { id: number; colorHex: string; name: string };
     countExpertRating: number;
     countUserRating: number;
-    totalReviews: number;
-    color: {
-        id: number;
-        colorHex: string;
-        name: string;
-    };
-    type: {
-        id: number;
-        name: string;
-        isSparkling: boolean;
-    };
-    country: {
-        id: number;
-        name: string;
-    };
-    region: {
-        id: number;
-        name: string;
-    } | null;
+    country: { id: number; name: string };
+    createdAt: string;
+    currentVintage: IVintage | string | null;
+    grapeVariety: string;
+    id: number;
+    image: IMedia;
+    isTasted: boolean;
+    name: string;
+    producer: string;
+    region: { id: number; name: string };
+    searchVector: string;
     statistics: {
         topColors: IColorStatistic[];
         topAromas: IStatistic[];
@@ -85,4 +68,9 @@ export interface IWineDetails {
         tasteCharacteristics: IWineTasteCharacteristic[];
         topWinePeaks: IWinePeakStatistic[];
     };
+    type: { id: number; isSparkling: boolean; name: string };
+    userId: number;
+    vintage: number | null;
+    vintages: IVintagesItem[];
+    totalReviews: number;
 }

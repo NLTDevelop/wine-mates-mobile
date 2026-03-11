@@ -8,7 +8,11 @@ import { useIsFocused } from '@react-navigation/native';
 const LIMIT = 10;
 const OFFSET = 0;
 
-export const useWineReviewsList = (getDetails: () => Promise<void>, wineId?: number | null) => {
+export const useWineReviewsList = (
+    getDetails: (params?: { vintages?: 'All' }) => Promise<void>,
+    wineId?: number | null,
+    isAllVintagesSelected: boolean = false,
+) => {
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
     const isFocused = useIsFocused();
     const data = wineReviewsListModel.list?.rows || [];
@@ -20,6 +24,7 @@ export const useWineReviewsList = (getDetails: () => Promise<void>, wineId?: num
                 limit: LIMIT,
                 offset,
                 wineId: targetWineId,
+                ...(isAllVintagesSelected ? { vintages: 'All' as const } : {}),
             };
             const response = await wineService.getReviewsList(params);
 
@@ -34,14 +39,14 @@ export const useWineReviewsList = (getDetails: () => Promise<void>, wineId?: num
         } finally {
             setIsReviewsLoading(false);
         }
-    }, []);
+    }, [isAllVintagesSelected]);
 
     const onRefresh = useCallback(
         async (offset: number = OFFSET) => {
             if (!wineId) return;
-            await Promise.all([getDetails(), getList(offset, wineId)]);
+            await Promise.all([getDetails(isAllVintagesSelected ? { vintages: 'All' } : undefined), getList(offset, wineId)]);
         },
-        [getList, getDetails, wineId],
+        [getList, getDetails, wineId, isAllVintagesSelected],
     );
 
     const onEndReached = useCallback(async () => {
@@ -53,9 +58,10 @@ export const useWineReviewsList = (getDetails: () => Promise<void>, wineId?: num
 
     useEffect(() => {
         if (isFocused && wineId) {
+            wineReviewsListModel.clear();
             getList(OFFSET, wineId);
         }
-    }, [isFocused, getList, wineId]);
+    }, [isFocused, getList, wineId, isAllVintagesSelected]);
 
     useEffect(() => {
         return () => wineReviewsListModel.clear();

@@ -16,9 +16,8 @@ export const getStyles = (colors: IColors) => {
         },
         itemText: {
             color: colors.text_light,
-        },
-        selectedItemText: {
-            color: colors.primary,
+            textAlign: 'center',
+            includeFontPadding: false,
         },
         selectionIndicator: {
             position: 'absolute',
@@ -33,9 +32,6 @@ export const getStyles = (colors: IColors) => {
         },
         overlayHidden: {
             backgroundColor: 'transparent',
-        },
-        itemTextAlign: {
-            textAlign: 'center',
         },
     });
     return styles;

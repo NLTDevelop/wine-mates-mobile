@@ -5,4 +5,5 @@ export interface IVintageDropdownItem extends IDropdownItem {
     averageExpertRating?: number | null;
     totalReviews?: number;
     countExpertRating?: number | null;
+    hideRatingInfo?: boolean;
 }

@@ -7,14 +7,19 @@ import { getStyles } from './styles';
 interface IFavoriteButtonProps {
     onPress: () => void;
     size?: number;
+    disabled?: boolean;
 }
 
-export const FavoriteButton = ({ onPress, size }: IFavoriteButtonProps) => {
+export const FavoriteButton = ({ onPress, size, disabled = false }: IFavoriteButtonProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors, size), [colors, size]);
 
     return (
-        <TouchableOpacity style={styles.favoriteButton} onPress={onPress}>
+        <TouchableOpacity
+            style={styles.favoriteButton}
+            onPress={onPress}
+            disabled={disabled}
+        >
             <FavoriteIcon />
         </TouchableOpacity>
     );
