@@ -4,13 +4,14 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles.ts';
 import { IEvent } from '@/entities/events/types/IEvent';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { formatEventDate } from '@/utils';
 import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { DateBadge } from '@/UIKit/DateBadge';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { useWineEventListItem } from './useWineEventListItem';
+import { MapMarker } from '@/UIKit/MapMarker';
 
 interface IProps {
     event: IEvent;
@@ -104,8 +105,11 @@ export const WineEventListItem = ({
                     pitchEnabled={false}
                     rotateEnabled={false}
                 >
-                    <Marker
-                        coordinate={{ latitude: event.latitude, longitude: event.longitude }}
+                    <MapMarker
+                        markerProps={{
+                            coordinate: { latitude: event.latitude, longitude: event.longitude }
+                        }}
+                        eventId={event.id}
                     />
                 </MapView>
             </View>

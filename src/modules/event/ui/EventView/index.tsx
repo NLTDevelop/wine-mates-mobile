@@ -8,11 +8,24 @@ import { EventMap } from '@/modules/event/components/EventMap';
 import { WineEventList } from '@/modules/event/components/WineEventList';
 import { useEventMap } from '@/modules/event/presenters/useEventMap';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { BottomModal } from '@/UIKit/BottomModal/ui';
+import { WineEventListItem } from '@/modules/event/components/WineEventList/components/WineEventListItem';
 
 export const EventMapView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { events, initialRegion, selectedMarkerId, handleMarkerPress, userLocation } = useEventMap();
+    const {
+        events,
+        initialRegion,
+        selectedMarkerId,
+        handleMarkerPress,
+        userLocation,
+        isModalVisible,
+        handleCloseModal,
+        handleFavoritePress
+    } = useEventMap();
+
+    const selectedEvent = events.find(event => event.id === selectedMarkerId);
 
     return (
         // <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
@@ -38,6 +51,22 @@ export const EventMapView = observer(() => {
                     onFavoritePress={() => {}}
                 />
             </View>
+
+            {selectedEvent && (
+                <BottomModal
+                    visible={isModalVisible}
+                    onClose={handleCloseModal}
+                    title={'Event details'}
+                >
+                    <WineEventListItem
+                        event={selectedEvent}
+                        isSelected
+                        onReadMorePress={handleMarkerPress}
+                        onFavoritePress={handleFavoritePress}
+                        eventId={selectedEvent.id}
+                    />
+                </BottomModal>
+            )}
 
         </ScreenContainer>
         // </WithErrorHandler>

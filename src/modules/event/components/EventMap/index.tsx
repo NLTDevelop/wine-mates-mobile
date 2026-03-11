@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
+import { TouchableWithoutFeedback, View } from 'react-native';
 import { Region } from 'react-native-maps';
 import { MapView } from '@/UIKit/MapView';
 import { MapMarker } from '@/UIKit/MapMarker';
@@ -40,9 +40,8 @@ export const EventMap = observer(({
                         markerProps={{
                             coordinate: { latitude: event.latitude, longitude: event.longitude }
                         }}
-                        selected={selectedMarkerId === event.id}
                         eventId={event.id}
-                        onPress={() => onMarkerPress(event.id)}
+                        onPress={onMarkerPress}
                     />
                 ))}
             </MapView>

@@ -1,9 +1,9 @@
-import { useEffect, useMemo, ReactNode, useState } from 'react';
+import { useMemo, ReactNode } from 'react';
 import { View, Modal, TouchableWithoutFeedback, Animated, ScrollView, Pressable } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { TitleVariant, Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
-import { useBottomModal } from '@/UIKit/BottomModal/presenters/useBottomModal';
+import { useBottomModalState } from '@/UIKit/BottomModal/presenters/useBottomModalState';
 
 interface IProps {
     visible: boolean;
@@ -24,23 +24,7 @@ export const BottomModal = ({
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const [isVisible, setIsVisible] = useState(visible);
-
-    const { backdropOpacity, slideAnim, handleOpen, handleClose } = useBottomModal({
-        onClose: () => {
-            setIsVisible(false);
-            onClose();
-        }
-    });
-
-    useEffect(() => {
-        if (visible) {
-            setIsVisible(true);
-            handleOpen();
-        } else if (isVisible) {
-            handleClose();
-        }
-    }, [visible, isVisible, handleOpen, handleClose]);
+    const { isVisible, backdropOpacity, slideAnim, handleClose } = useBottomModalState({ visible, onClose });
 
     const renderHeader = () => {
         if (customHeader) {

@@ -1,44 +1,39 @@
-import { ReactNode } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { ReactNode, useCallback } from 'react';
 import { Marker, MapMarkerProps } from 'react-native-maps';
 import { useUiContext } from '@/UIProvider';
 import { MapMarkerIcon } from '@assets/icons/MapMarkerIcon';
 
 interface IMapMarkerProps {
-    onPress?: () => void;
+    onPress?: (id: number) => void;
     customIcon?: ReactNode;
-    selected?: boolean;
     markerProps: MapMarkerProps;
     eventId: number;
 }
 
 export const MapMarker = ({
-    onPress,
-    customIcon,
-    selected = false,
-    markerProps,
-    eventId
-}: IMapMarkerProps) => {
+                              onPress,
+                              customIcon,
+                              markerProps,
+                              eventId
+                          }: IMapMarkerProps) => {
     const { colors } = useUiContext();
+
+    const onPressHandler = useCallback(() => {
+        onPress?.(eventId);
+    }, [eventId, onPress]);
 
     return (
         <Marker
-            onPress={onPress}
-            key={`${selected}-${eventId}`}
             {...markerProps}
+            onPress={onPressHandler}
         >
-            <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={onPress}
-            >
-                {customIcon ? (
-                    customIcon
-                ) : (
-                    <MapMarkerIcon
-                        bodyColor={selected ? colors.primary : colors.background}
-                    />
-                )}
-            </TouchableOpacity>
+            {customIcon ? (
+                customIcon
+            ) : (
+                <MapMarkerIcon
+                    bodyColor={colors.background}
+                />
+            )}
         </Marker>
     );
 };
