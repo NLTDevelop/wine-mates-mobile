@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { TouchableOpacity, View, TextInput } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';

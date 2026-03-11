@@ -10,9 +10,9 @@ import { IRateContext } from '@/entities/wine/types/IRateContext';
 
 type SetLimits = Dispatch<SetStateAction<IRateContext | null>>;
 
-export const useFoodPairing = (limits: IRateContext | null, setLimits: SetLimits) => {
+export const useFoodPairing = (setLimits?: SetLimits, generatedSnacks?: ISnack[]) => {
     const [isGenerating, setIsGenerating] = useState(false);
-    const [snacks, setSnacks] = useState<ISnack[] | null>(null);
+    const [snacks, setSnacks] = useState<ISnack[] | null>(generatedSnacks || null);
 
     const onGeneratePress = useCallback(async () => {
         try {
@@ -55,7 +55,7 @@ export const useFoodPairing = (limits: IRateContext | null, setLimits: SetLimits
                     response.message || localization.t('common.somethingWentWrong'),
                 );
             } else {
-                setLimits(prevState => {
+                setLimits?.(prevState => {
                     if (!prevState) {
                         return prevState;
                     }

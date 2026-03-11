@@ -6,7 +6,7 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             marginHorizontal: scaleHorizontal(16),
-            marginBottom: scaleVertical(24),
+            marginBottom: scaleVertical(16),
         },
         header: {
             flexDirection: 'row',
@@ -23,21 +23,14 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(36),
             minWidth: scaleHorizontal(109),
         },
-        cardShadow: {
-            borderRadius: 12,
-            backgroundColor: 'transparent',
-            shadowColor: colors.shadow,
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 3,
-            elevation: 3,
-        },
         card: {
             borderRadius: 12,
             backgroundColor: colors.background,
             minHeight: scaleVertical(212),
             paddingVertical: scaleVertical(14),
             paddingHorizontal: scaleHorizontal(16),
+            borderWidth: 1,
+            borderColor: colors.border,
         },
         item: {
             marginBottom: scaleVertical(12),

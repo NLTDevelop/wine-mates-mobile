@@ -1,6 +1,6 @@
 import { MobXRepository } from '@/repository/MobXRepository';
 import { ITasteProfile } from './types/ITasteProfile';
-import { IRecommendationWineItem } from './types/IRecommendationWineList';
+import { IWineListItem } from './types/IWineListItem';
 
 export interface IRecommendationPagination {
     page: number;
@@ -9,17 +9,17 @@ export interface IRecommendationPagination {
 
 export interface IWineAndStylesModel {
     tasteProfiles: ITasteProfile[];
-    recommendations: Record<string, IRecommendationWineItem[]>;
+    recommendations: Record<string, IWineListItem[]>;
     recommendationsPagination: Record<string, IRecommendationPagination>;
     setTasteProfiles: (value: ITasteProfile[]) => void;
-    setRecommendations: (key: string, rows: IRecommendationWineItem[], page: number, totalPages: number) => void;
-    appendRecommendations: (key: string, rows: IRecommendationWineItem[], page: number) => void;
+    setRecommendations: (key: string, rows: IWineListItem[], page: number, totalPages: number) => void;
+    appendRecommendations: (key: string, rows: IWineListItem[], page: number) => void;
     getRecommendationKey: (typeId: number, colorId: number) => string;
 }
 
 class WineAndStylesModel implements IWineAndStylesModel {
     private tasteProfilesRepository = new MobXRepository<ITasteProfile[]>([]);
-    private recommendationsRepository = new MobXRepository<Record<string, IRecommendationWineItem[]>>({});
+    private recommendationsRepository = new MobXRepository<Record<string, IWineListItem[]>>({});
     private recommendationsPaginationRepository = new MobXRepository<Record<string, IRecommendationPagination>>({});
 
     public get tasteProfiles() {
@@ -42,7 +42,7 @@ class WineAndStylesModel implements IWineAndStylesModel {
         this.tasteProfilesRepository.save(value);
     }
 
-    public setRecommendations(key: string, rows: IRecommendationWineItem[], page: number, totalPages: number) {
+    public setRecommendations(key: string, rows: IWineListItem[], page: number, totalPages: number) {
         const currentRows = this.recommendationsRepository.rawData ?? {};
         currentRows[key] = rows;
         this.recommendationsRepository.save({ ...currentRows });
@@ -52,7 +52,7 @@ class WineAndStylesModel implements IWineAndStylesModel {
         this.recommendationsPaginationRepository.save({ ...currentPagination });
     }
 
-    public appendRecommendations(key: string, rows: IRecommendationWineItem[], page: number) {
+    public appendRecommendations(key: string, rows: IWineListItem[], page: number) {
         const currentRows = this.recommendationsRepository.rawData ?? {};
         currentRows[key] = [...(currentRows[key] ?? []), ...rows];
         this.recommendationsRepository.save({ ...currentRows });
