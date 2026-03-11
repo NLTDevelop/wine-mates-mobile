@@ -1,13 +1,16 @@
 import { useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, TextInput } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { CopyIcon } from '@assets/icons/CopyIcon';
+import { PencilIcon } from '@assets/icons/PencilIcon';
+import { CheckIcon } from '@assets/icons/CheckIcon';
 import { useTastingNote } from '@/modules/scanner/presenters/useTastingNote';
 import { NoteLoader } from '../NoteLoader';
 import { Button } from '@/UIKit/Button';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
+import { CustomInput } from '@/UIKit/CustomInput';
 
 interface IProps {
     note: string | null;
@@ -20,7 +23,8 @@ export const TastingNote = ({ note, isLoading, limits, onGeneratePress }: IProps
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { onCopyPress } = useTastingNote(note);
+    const { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, onConfirmEdit, inputRef } = useTastingNote(note);
+    const displayNote = note || limits?.note;
 
     return (
         <View style={styles.container}>
@@ -30,26 +34,36 @@ export const TastingNote = ({ note, isLoading, limits, onGeneratePress }: IProps
                 </View>
                 <Button
                     text={t('common.generate')}
-                    onPress={ onGeneratePress}
+                    onPress={onGeneratePress}
                     containerStyle={styles.button}
                     disabled={isLoading || !limits || limits?.aiUsage.left === 0}
                 />
             </View>
             {isLoading ? (
                 <NoteLoader />
-            ) : note ? (
+            ) : displayNote ? (
                 <View style={styles.noteContainer}>
-                    <Typography variant="h6" text={note} />
-                    <TouchableOpacity style={styles.copyButton} onPress={onCopyPress} hitSlop={15}>
-                        <CopyIcon />
-                    </TouchableOpacity>
-                </View>
-            ) : limits?.note ? (
-                <View style={styles.noteContainer}>
-                    <Typography variant="h6" text={limits.note} />
-                    <TouchableOpacity style={styles.copyButton} onPress={onCopyPress} hitSlop={15}>
-                        <CopyIcon />
-                    </TouchableOpacity>
+                    <CustomInput
+                        ref={inputRef}
+                        style={styles.noteInput}
+                        inputContainerStyle={styles.noteInputContainer}
+                        value={editedNote}
+                        onChangeText={setEditedNote}
+                        editable={isEditing}
+                        multiline
+                        scrollEnabled={false}
+                    />
+                    <View style={styles.buttonGroup}>
+                        <TouchableOpacity onPress={onCopyPress} hitSlop={15}>
+                            <CopyIcon />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={isEditing ? onConfirmEdit : onEditPress}
+                            hitSlop={15}
+                        >
+                            {isEditing ? <CheckIcon width={24} height={24} /> : <PencilIcon width={24} height={24} />}
+                        </TouchableOpacity>
+                    </View>
                 </View>
             ) : null}
         </View>

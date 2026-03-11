@@ -39,7 +39,7 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
     }, [navigation]);
 
     const onDeleteAccountPress = useCallback(() => {
-        navigation.navigate('');
+        navigation.navigate('DeleteAccountView');
     }, [navigation]);
 
     const APP_BUTTONS = [

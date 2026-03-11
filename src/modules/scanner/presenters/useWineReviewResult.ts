@@ -92,8 +92,9 @@ export const useWineReviewResult = () => {
             };
 
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
-                if (wineModel.review?.hasChangedStarRate && wineModel.review?.starRate && wineModel.review.starRate > 0) {
-                    payload.userRating = wineModel.review.starRate;
+                const starRate = wineModel.review?.starRate ?? 0;
+                if (typeof starRate === 'number' && !Number.isNaN(starRate)) {
+                    payload.userRating = Number(starRate.toFixed(1));
                 }
             } else {
                 if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
@@ -220,8 +221,9 @@ export const useWineReviewResult = () => {
             }
 
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
-                if (wineModel.review?.hasChangedStarRate && wineModel.review?.starRate && wineModel.review.starRate > 0) {
-                    payload.userRating = wineModel.review.starRate;
+                const starRate = wineModel.review?.starRate ?? 0;
+                if (typeof starRate === 'number' && !Number.isNaN(starRate)) {
+                    payload.userRating = Number(starRate.toFixed(1));
                 }
             } else {
                 if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
