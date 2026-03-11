@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { TouchableWithoutFeedback, View } from 'react-native';
+import { View } from 'react-native';
 import { Region } from 'react-native-maps';
 import { MapView } from '@/UIKit/MapView';
 import { MapMarker } from '@/UIKit/MapMarker';
@@ -12,7 +12,6 @@ import { observer } from 'mobx-react-lite';
 interface IEventMapProps {
     events: IEvent[];
     initialRegion: Region;
-    selectedMarkerId: number | null;
     onMarkerPress: (markerId: number) => void;
     userLocation?: IUserLocation | null;
 }
@@ -20,7 +19,6 @@ interface IEventMapProps {
 export const EventMap = observer(({
                                       events,
                                       initialRegion,
-                                      selectedMarkerId,
                                       onMarkerPress,
                                       userLocation,
                                   }: IEventMapProps) => {

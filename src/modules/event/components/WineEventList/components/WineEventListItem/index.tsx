@@ -104,6 +104,7 @@ export const WineEventListItem = ({
                     zoomEnabled={false}
                     pitchEnabled={false}
                     rotateEnabled={false}
+                    toolbarEnabled={false}
                 >
                     <MapMarker
                         markerProps={{
