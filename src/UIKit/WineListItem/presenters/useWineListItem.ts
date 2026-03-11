@@ -9,14 +9,15 @@ interface IProps {
     item: IWineListItem | IWineDetails;
     onPress?: (item: IWineListItem) => void;
     hideSimilarity?: boolean;
-    showDate?: boolean;
+    removeCardStyles?: boolean;
 }
 
 const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
     return 'similarity' in item || 'myReview' in item || 'lastReview' in item || 'lastRate' in item
 };
+const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails => 'currentVintage' in item;
 
-export const useWineListItem = ({ item, onPress }: IProps) => {
+export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => {
     const { t } = useUiContext();
     const guard = useSelectablePressGuard();
 
@@ -52,9 +53,12 @@ export const useWineListItem = ({ item, onPress }: IProps) => {
     }, [item, t]);
 
     const expertReviewCount = useMemo(() => {
-        const totalReviews = item.countExpertRating ?? 0;
+        const currentVintageExpertReviews = isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
+            ? item.currentVintage.countExpertRating
+            : 0;
+        const totalReviews = removeCardStyles && currentVintageExpertReviews ? currentVintageExpertReviews : item.countExpertRating ?? 0;
         return declOfWord(totalReviews, t('scanner.reviewCount') as unknown as Array<string>);
-    }, [item, t]);
+    }, [item, removeCardStyles, t]);
 
     const locationText = useMemo(() => {
         const parts: string[] = [];

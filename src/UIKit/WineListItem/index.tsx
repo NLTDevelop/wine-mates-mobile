@@ -12,9 +12,10 @@ import { userModel } from '@/entities/users/UserModel';
 import { useWineListItem } from './presenters/useWineListItem';
 import { getStyles } from './styles';
 import { useWineDescription } from './presenters/useWineDescription';
+import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 
 interface IProps {
-    item: IWineListItem;
+    item: IWineListItem | IWineDetails;
     onPress?: (item: IWineListItem) => void;
     showSimilarity?: boolean;
     footer?: ReactNode;
@@ -23,23 +24,23 @@ interface IProps {
     customBottomComponent?: ReactNode;
 }
 
-export const WineListItem = ({
-    item,
-    onPress,
-    showSimilarity = false,
-    footer,
-    removeCardStyles = false,
-    showDate = false,
-    customBottomComponent,
-}: IProps) => {
+const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails => 'currentVintage' in item;
+
+export const WineListItem = ({ item, onPress, showSimilarity = false, footer, removeCardStyles = false,
+    showDate = false, customBottomComponent }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
     const { guard, onItemPress, similarityText, displayRating, userReviewCount, expertReviewCount, lastReviewData, getFormattedDate } =
-        useWineListItem({ item, onPress, showDate });
+        useWineListItem({ item, onPress, removeCardStyles });
     const { description } = useWineDescription({ item });
-
     const hasPremium = userModel.user?.hasPremium ?? false;
-    const showMedal = item.averageExpertRating && item.averageExpertRating > 0;
+    const currentVintageData = isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
+        ? item.currentVintage
+        : null;
+    const expertRating = removeCardStyles && currentVintageData
+        ? currentVintageData?.averageExpertRating ?? 0
+        : item.averageExpertRating ?? 0
+    const showMedal = expertRating > 0;
 
     return (
         <Pressable
@@ -82,7 +83,7 @@ export const WineListItem = ({
                             <ShowLock iconSize={medalSize} />
                         ) : showMedal ? (
                             <RateMedal
-                                sliderValue={item.averageExpertRating!}
+                                sliderValue={expertRating}
                                 size={medalSize}
                                 titleFontSize={24}
                                 mainFontSize={90}

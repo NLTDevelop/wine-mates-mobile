@@ -7,7 +7,7 @@ import { declOfWord } from '@/utils';
 import { ResultHeader } from '../ResultHeader';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
 import { TasteCharacteristicItem } from '@/modules/scanner/ui/components/TasteCharacteristicItem';
-import { IStatistic, IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
+import { IStatistic, IWineDetails, IVintagesItem } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
@@ -18,36 +18,39 @@ import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
 
 interface IProps {
     data: IWineDetails;
-    vintages: IVintage[];
+    vintages: IVintagesItem[];
     onVintageChange: (item: IDropdownItem) => void;
     onFavoritePress: () => void;
     hasCurrentVintageData: boolean;
+    isAllVintagesSelected: boolean;
 }
 
-export const ResultListHeader = ({
-    data,
-    vintages,
-    onVintageChange,
-    onFavoritePress,
-    hasCurrentVintageData,
-}: IProps) => {
+export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const isPremiumUser = userModel.user?.hasPremium || false;
+    const { colorShadeItems } = useColorShades(data.statistics.topColors);
 
+    const isPremiumUser = userModel.user?.hasPremium || false;
     const tasteCharacteristics = useMemo(
         () => data?.statistics?.tasteCharacteristics?.filter(item => item?.levels && item?.selectedIndex != null) ?? [],
         [data.statistics.tasteCharacteristics],
     );
-
-    const { colorShadeItems } = useColorShades(data.statistics.topColors);
-
     const isVintageTasted = useMemo(() => {
         if (!data.isTasted) return false;
         if (data.vintage === null) return true;
 
-        const isInVintages = vintages.some(v => v.vintage === data.vintage);
-        const isCurrentVintage = data.currentVintage?.vintage === data.vintage;
+        const isInVintages = vintages.some(v => {
+            if (typeof v === 'number') return v === data.vintage;
+            if (typeof v === 'string') {
+                const parsedValue = Number(v);
+                return !Number.isNaN(parsedValue) && parsedValue === data.vintage;
+            }
+
+            return v.vintage === data.vintage;
+        });
+        const isCurrentVintage = typeof data.currentVintage === 'object'
+            && data.currentVintage !== null
+            && data.currentVintage.vintage === data.vintage;
 
         return isInVintages || isCurrentVintage;
     }, [data.isTasted, data.vintage, data.currentVintage, vintages]);
@@ -60,6 +63,7 @@ export const ResultListHeader = ({
                 onVintageChange={onVintageChange}
                 onFavoritePress={onFavoritePress}
                 hasCurrentVintageData={hasCurrentVintageData}
+                isAllVintagesSelected={isAllVintagesSelected}
             />
 
             {isVintageTasted && (
