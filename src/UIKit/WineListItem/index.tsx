@@ -30,7 +30,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
     showDate = false, customBottomComponent }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
-    const { guard, onItemPress, similarityText, displayRating, userReviewCount, expertReviewCount, lastReviewData, getFormattedDate } =
+    const { guard, onItemPress, similarityText, userRating, userReviewCount, expertReviewCount, lastReviewData, getFormattedDate } =
         useWineListItem({ item, onPress, removeCardStyles });
     const { description } = useWineDescription({ item });
     const hasPremium = userModel.user?.hasPremium ?? false;
@@ -121,10 +121,10 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
 
                     <View style={styles.rateContainer}>
                         <View style={styles.starsContainer}>
-                            <SmallStarRating rating={parseFloat(displayRating) || 0} starSize={12.5} />
+                            <SmallStarRating rating={parseFloat(userRating) || 0} starSize={12.5} />
                             <Typography
                                 variant="subtitle_12_500"
-                                text={displayRating}
+                                text={userRating}
                                 numberOfLines={1}
                                 style={styles.rateText}
                             />
