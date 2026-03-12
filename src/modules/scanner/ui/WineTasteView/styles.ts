@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { isIOS, scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -28,7 +28,6 @@ export const getStyles = (colors: IColors) => {
         contentContainer: {
             flexGrow: 1,
             rowGap: scaleVertical(7),
-            paddingRight: isIOS ? scaleHorizontal(16) : 0,
         },
         input: {
             marginBottom: scaleVertical(16),
