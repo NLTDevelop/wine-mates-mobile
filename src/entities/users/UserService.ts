@@ -145,9 +145,28 @@ class UserService {
                 data: body,
             });
 
+            if (!response.isError) {
+                userModel.user = response.data?.user;
+                userModel.token = response.data?.token;
+            }
+
             return response;
         } catch (error) {
             console.warn('UserService -> confirmPasswordReset: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    delete = async (): Promise<IResponse<{}>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'DELETE',
+                url: `${this._links.me}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> delete: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

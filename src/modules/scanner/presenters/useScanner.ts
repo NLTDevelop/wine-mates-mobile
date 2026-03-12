@@ -7,6 +7,7 @@ import { Camera, PhotoFile, TakePhotoOptions, useCameraDevice, useCameraPermissi
 import ImageResizer from 'react-native-image-resizer';
 import { IWineImage } from '@/entities/wine/types/IWineImage';
 import { wineModel } from '@/entities/wine/WineModel';
+import { isAndroid } from '@/utils';
 
 export const useScanner = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -20,8 +21,7 @@ export const useScanner = () => {
     const prepareImage = async ({ uri, name, type, width, height, shouldResize }: { uri: string; name?: string | null; type?: string | null; width?: number; height?: number; shouldResize?: boolean }): Promise<IWineImage> => {
         const normalizedUri = uri.startsWith('file://') ? uri : `file://${uri}`;
         const uriName = normalizedUri.split('/').pop();
-
-        if (shouldResize && width && height) {
+        if (shouldResize && width && height && isAndroid) {
             try {
                 if (ImageResizer?.createResizedImage) {
                     const resized = await ImageResizer.createResizedImage(

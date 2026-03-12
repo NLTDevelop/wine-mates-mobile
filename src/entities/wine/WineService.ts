@@ -23,6 +23,7 @@ import { IAIData } from './types/IAIData';
 import { IWineTasteGroup } from './types/IWineTatseGroup';
 import { ITasteProfile } from './types/ITasteProfile';
 import { IRecommendationWineListParams } from './params/IRecommendationWineListParams';
+import { UpdateNoteDto } from './dto/UpdateNote.dto.';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -291,6 +292,21 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> generateNote: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    updateAINote = async (data: UpdateNoteDto): Promise<IResponse<{note: string}>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'PATCH',
+                url: `${this._links.updateNote}`,
+                data,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> updateAINote: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

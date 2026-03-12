@@ -12,7 +12,7 @@ import { useDeleteAccount } from '../../presenters/useDeleteAccount';
 export const DeleteAccountView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { isConfirmed, handleDeleteAccount, handleCancel, toggleConfirmation } = useDeleteAccount();
+    const { isConfirmed, onDeleteAccount, onCancel, toggleConfirmation, isInProgress } = useDeleteAccount();
 
     return (
         <ScreenContainer
@@ -59,16 +59,17 @@ export const DeleteAccountView = () => {
                 <View style={styles.buttonContainer}>
                     <Button
                         text={t('settings.deleteAccountButton')}
-                        onPress={handleDeleteAccount}
+                        onPress={onDeleteAccount}
                         containerStyle={styles.deleteButton}
                         disabled={!isConfirmed}
                         type="main"
                     />
                     <Button
                         text={t('common.cancel')}
-                        onPress={handleCancel}
+                        onPress={onCancel}
                         containerStyle={styles.cancelButton}
                         type="secondary"
+                        inProgress={isInProgress}
                     />
                 </View>
             </View>

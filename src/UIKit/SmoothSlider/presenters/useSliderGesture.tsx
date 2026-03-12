@@ -93,7 +93,7 @@ export const useSliderGesture = ({
             const newPosition = startPosition.value + delta;
             position.value = Math.max(minValue, Math.min(maxValue, newPosition));
         })
-        .onEnd((event) => {
+        .onEnd((_event) => {
             snapToNearest(position.value);
         });
 

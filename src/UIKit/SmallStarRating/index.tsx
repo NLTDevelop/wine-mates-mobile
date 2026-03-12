@@ -4,6 +4,7 @@ import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { EmptyStarIcon } from '@assets/icons/EmptyStarIcon';
+import { scaleVertical } from '@/utils';
 
 interface IProps {
     rating: number;
@@ -38,6 +39,7 @@ export const SmallStarRating = ({ rating, starSize = 16, maxStars = 5 }: IProps)
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const emptyStarColor = rating <= 0 ? colors.border : colors.icon;
+    const actualStarSize = scaleVertical(starSize);
     
     const stars = useMemo(() => {
         return getStars(rating, maxStars).map((star, index) => {
@@ -59,24 +61,24 @@ export const SmallStarRating = ({ rating, starSize = 16, maxStars = 5 }: IProps)
 
             return (
                 <View key={index} style={styles.star}>
-                    <View style={[styles.starIconContainer, { width: starSize, height: starSize }]}>
-                        <EmptyStarIcon width={starSize} height={starSize} color={emptyStarColor} />
+                    <View style={[styles.starIconContainer, { width: actualStarSize, height: actualStarSize }]}>
                         <View
                             style={[
                                 styles.starFillOverlay,
                                 {
-                                    width: starSize * star.fill,
-                                    height: starSize,
+                                    width: actualStarSize * star.fill,
+                                    height: actualStarSize,
                                 },
                             ]}
                         >
                             <FilledStarIcon width={starSize} height={starSize} color={colors.stars} />
                         </View>
+                        <EmptyStarIcon width={starSize} height={starSize} color={emptyStarColor} />
                     </View>
                 </View>
             );
         });
-    }, [rating, maxStars, starSize, colors.stars, emptyStarColor, styles]);
+    }, [rating, maxStars, starSize, colors.stars, emptyStarColor, styles, actualStarSize]);
 
     return (
         <View style={styles.container}>

@@ -153,7 +153,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                     <View style={styles.slidersListContainer}>
                         {tasteCharacteristics.map((item: IWineTasteCharacteristic) => (
                             <TasteCharacteristicItem
-                                key={item.id}
+                                key={`${item.id}-${item.selectedIndex ?? 0}-${data.vintage ?? 'none'}`}
                                 item={item}
                                 value={item.selectedIndex || 0}
                                 isPremiumUser={isPremiumUser}
