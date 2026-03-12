@@ -43,6 +43,7 @@ export const WineLookView = observer(() => {
         shadeSelectorKey,
         handleShadeAnimationEnd,
         getSparklingSliderData,
+        currentColor,
     } = useWineLook({ t, styles });
 
     const decorator = useMemo(() => {
@@ -85,6 +86,9 @@ export const WineLookView = observer(() => {
                                 selectedColor={selectedColor}
                                 onSelectColor={onSelectColor}
                             />
+
+                            <Typography text={t('wine.result')} variant="h4" style={styles.label} />
+                            <View style={[styles.resultContainer, { backgroundColor: currentColor }]} />
 
                             <Typography text={t('wine.selectShade')} variant="h4" style={styles.label} />
                             <ShadeSelector

@@ -22,41 +22,35 @@ export const DeleteAccountView = () => {
         >
             <View style={styles.container}>
                 <View style={styles.content}>
-                    <View style={styles.warningBlock}>
-                        <Typography variant="body_500" style={styles.warningText}>
-                            {t('settings.deleteAccountWarning1')}
+                    <Typography variant="h6" style={styles.warningText}>
+                        {t('settings.deleteAccountWarning1')}
+                    </Typography>
+
+                    <View style={styles.listContainer}>
+                        <Typography variant="h6" style={styles.listItem}>
+                            {t('settings.deleteAccountListItem1')}
                         </Typography>
-
-                        <View style={styles.listContainer}>
-                            <Typography variant="body_500" style={styles.listItem}>
-                                {t('settings.deleteAccountListItem1')}
-                            </Typography>
-                            <Typography variant="body_500" style={styles.listItem}>
-                                {t('settings.deleteAccountListItem2')}
-                            </Typography>
-                            <Typography variant="body_500" style={styles.listItem}>
-                                {t('settings.deleteAccountListItem3')}
-                            </Typography>
-                        </View>
-
-                        <Typography variant="body_500" style={styles.warningText}>
-                            {t('settings.deleteAccountWarning2')}
+                        <Typography variant="h6" style={styles.listItem}>
+                            {t('settings.deleteAccountListItem2')}
+                        </Typography>
+                        <Typography variant="h6" style={styles.listItem}>
+                            {t('settings.deleteAccountListItem3')}
                         </Typography>
                     </View>
 
-                    <Typography variant="body_500" style={styles.questionText}>
+                    <Typography variant="h6" style={styles.warningText}>
+                        {t('settings.deleteAccountWarning2')}
+                    </Typography>
+
+                    <Typography variant="h6" style={styles.questionText}>
                         {t('settings.deleteAccountQuestion')}
                     </Typography>
 
-                    <TouchableOpacity
-                        style={styles.checkboxContainer}
-                        onPress={toggleConfirmation}
-                        activeOpacity={0.7}
-                    >
+                    <TouchableOpacity style={styles.checkboxContainer} onPress={toggleConfirmation} activeOpacity={0.7}>
                         <Checkbox isChecked={isConfirmed} onPress={toggleConfirmation} />
                         <Typography
                             text={t('settings.deleteAccountConfirm')}
-                            variant="body_500"
+                            variant="h6"
                             style={styles.checkboxLabel}
                         />
                     </TouchableOpacity>

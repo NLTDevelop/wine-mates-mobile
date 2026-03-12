@@ -21,12 +21,12 @@ export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
             gap: scaleHorizontal(12),
         },
         pickerButton: {
+            flex:1,
             backgroundColor: colors.primary,
             borderRadius: 12,
             height: scaleVertical(40),
             alignItems: 'center',
             justifyContent: 'center',
-            width: '50%',
             position: 'relative',
             overflow: 'hidden',
             opacity: isPremiumUser ? 1 : 0.6,

@@ -11,10 +11,10 @@ import { RateThisWine } from '../components/RateThisWine';
 import { Notes } from '../components/Notes';
 import { wineModel } from '@/entities/wine/WineModel';
 import { useWineReviewResult } from '../../presenters/useWineReviewResult';
-import { FoodPairing } from '../components/FoodPairing';
 import { TastingNote } from '../components/TastingNote';
 import { Loader } from '@/UIKit/Loader';
 import { Typography } from '@/UIKit/Typography';
+import { FoodPairing } from '@/UIKit/FoodPairing';
 
 export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
@@ -64,7 +64,7 @@ export const WineReviewResultView = observer(() => {
                                 </Typography>
                             )}
                         </View>
-                        <FoodPairing limits={limits} setLimits={setLimits} />
+                        <FoodPairing setLimits={setLimits} />
                         <TastingNote note={note} isLoading={isLoading} limits={limits} onGeneratePress={getNote} />
                         <SelectedParameters containerStyle={styles.selectedParameters} />
                     </View>

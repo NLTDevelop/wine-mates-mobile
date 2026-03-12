@@ -1,5 +1,6 @@
 import { IMedia } from '@/entities/media/types/IMedia';
 import { IWineTasteCharacteristic } from './IWineTasteCharacteristic';
+import { ISnack } from '@/entities/snacks/types/ISnack';
 
 export interface IStatistic {
     id: number;
@@ -73,4 +74,6 @@ export interface IWineDetails {
     vintage: number | null;
     vintages: IVintagesItem[];
     totalReviews: number;
+    aiTastingNote?: 'string';
+    aiSnacks?: ISnack[];
 }
