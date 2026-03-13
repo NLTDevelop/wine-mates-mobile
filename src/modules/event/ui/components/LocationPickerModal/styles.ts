@@ -19,8 +19,8 @@ export const getStyles = (colors: IColors, top: number) => {
             zIndex: 1,
         },
         closeButton: {
-            width: 40,
-            height: 40,
+            width: scaleHorizontal(40),
+            height: scaleHorizontal(40),
             alignItems: 'center',
             justifyContent: 'center',
         },
