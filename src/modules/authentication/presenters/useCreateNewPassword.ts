@@ -4,14 +4,12 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
-import { userModel } from '@/entities/users/UserModel';
 import { featuresService } from '@/entities/features/FeaturesService';
-import { IUser } from '@/entities/users/types/IUser';
 
 export const useCreateNewPassword = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { email, token, user, isFromSettings }
-        = useRoute().params as { email: string, token: string, user: IUser, isFromSettings: boolean };
+    const { email, token, isFromSettings }
+        = useRoute().params as { email: string, token: string, isFromSettings: boolean };
     const [form, setForm] = useState({ password: '', confirmPassword: '' });
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const [isLoading, setIsLoading] = useState(false);
@@ -66,16 +64,13 @@ export const useCreateNewPassword = () => {
                     setIsError({ status: true, errorText: '' });
                 }
             } else {
-                userModel.token = token;
-                userModel.user = user;
-
                 featuresService.list();
                 navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
             }
         } finally {
             setIsLoading(false);
         }
-    }, [email, form, navigation, token, user]);
+    }, [email, form, navigation, token]);
 
     const handleRetry = useCallback(() => {
         setIsError({ status: false, errorText: '' });

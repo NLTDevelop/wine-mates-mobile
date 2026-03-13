@@ -63,6 +63,7 @@ export const WineTasteView = observer(() => {
                             keyboardShouldPersistTaps="handled"
                             nestedScrollEnabled
                             bottomOffset={scaleVertical(24)}
+                            showsVerticalScrollIndicator={false}
                         >
                             <Pressable style={styles.scrollContent} onPress={Keyboard.dismiss}>
                                 <Typography text={t('wine.tasteDescription')} variant="body_400" style={styles.title} />

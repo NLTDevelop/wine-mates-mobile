@@ -12,7 +12,7 @@ import { useDeleteAccount } from '../../presenters/useDeleteAccount';
 export const DeleteAccountView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { isConfirmed, handleDeleteAccount, handleCancel, toggleConfirmation } = useDeleteAccount();
+    const { isConfirmed, onDeleteAccount, onCancel, toggleConfirmation, isInProgress } = useDeleteAccount();
 
     return (
         <ScreenContainer
@@ -22,41 +22,35 @@ export const DeleteAccountView = () => {
         >
             <View style={styles.container}>
                 <View style={styles.content}>
-                    <View style={styles.warningBlock}>
-                        <Typography variant="body_500" style={styles.warningText}>
-                            {t('settings.deleteAccountWarning1')}
+                    <Typography variant="h6" style={styles.warningText}>
+                        {t('settings.deleteAccountWarning1')}
+                    </Typography>
+
+                    <View style={styles.listContainer}>
+                        <Typography variant="h6" style={styles.listItem}>
+                            {t('settings.deleteAccountListItem1')}
                         </Typography>
-
-                        <View style={styles.listContainer}>
-                            <Typography variant="body_500" style={styles.listItem}>
-                                {t('settings.deleteAccountListItem1')}
-                            </Typography>
-                            <Typography variant="body_500" style={styles.listItem}>
-                                {t('settings.deleteAccountListItem2')}
-                            </Typography>
-                            <Typography variant="body_500" style={styles.listItem}>
-                                {t('settings.deleteAccountListItem3')}
-                            </Typography>
-                        </View>
-
-                        <Typography variant="body_500" style={styles.warningText}>
-                            {t('settings.deleteAccountWarning2')}
+                        <Typography variant="h6" style={styles.listItem}>
+                            {t('settings.deleteAccountListItem2')}
+                        </Typography>
+                        <Typography variant="h6" style={styles.listItem}>
+                            {t('settings.deleteAccountListItem3')}
                         </Typography>
                     </View>
 
-                    <Typography variant="body_500" style={styles.questionText}>
+                    <Typography variant="h6" style={styles.warningText}>
+                        {t('settings.deleteAccountWarning2')}
+                    </Typography>
+
+                    <Typography variant="h6" style={styles.questionText}>
                         {t('settings.deleteAccountQuestion')}
                     </Typography>
 
-                    <TouchableOpacity
-                        style={styles.checkboxContainer}
-                        onPress={toggleConfirmation}
-                        activeOpacity={0.7}
-                    >
+                    <TouchableOpacity style={styles.checkboxContainer} onPress={toggleConfirmation} activeOpacity={0.7}>
                         <Checkbox isChecked={isConfirmed} onPress={toggleConfirmation} />
                         <Typography
                             text={t('settings.deleteAccountConfirm')}
-                            variant="body_500"
+                            variant="h6"
                             style={styles.checkboxLabel}
                         />
                     </TouchableOpacity>
@@ -65,16 +59,17 @@ export const DeleteAccountView = () => {
                 <View style={styles.buttonContainer}>
                     <Button
                         text={t('settings.deleteAccountButton')}
-                        onPress={handleDeleteAccount}
+                        onPress={onDeleteAccount}
                         containerStyle={styles.deleteButton}
                         disabled={!isConfirmed}
                         type="main"
                     />
                     <Button
                         text={t('common.cancel')}
-                        onPress={handleCancel}
+                        onPress={onCancel}
                         containerStyle={styles.cancelButton}
                         type="secondary"
+                        inProgress={isInProgress}
                     />
                 </View>
             </View>

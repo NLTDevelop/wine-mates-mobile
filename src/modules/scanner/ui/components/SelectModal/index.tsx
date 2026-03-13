@@ -3,10 +3,11 @@ import Modal from 'react-native-modal';
 import { useCallback, useMemo } from 'react';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import { FlatList } from 'react-native-gesture-handler';
 import { IAroma } from '@/entities/wine/types/IWineSmell';
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { SmellListItem } from '../SmellListItem';
+import { FlatListIndicator } from '@fanchenbao/react-native-scroll-indicator';
+import { useSelectModalIndicator } from '../../../presenters/useSelectModalIndicator';
 
 type SelectableItem = IAroma | IWineTaste;
 
@@ -28,12 +29,14 @@ export const SelectModal = <T extends SelectableItem>({
     groupId,
 }: IProps<T>) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const { hasIndicatorOffset, onListLayout, onListScroll } = useSelectModalIndicator(data.length);
+    const styles = useMemo(() => getStyles(colors, hasIndicatorOffset), [colors, hasIndicatorOffset]);
 
     const keyExtractor = useCallback((item: T, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(
         ({ item }: { item: T }) => <SmellListItem item={item} onPress={() => onItemPress(item, subgroupId, groupId)} />,
-    [groupId, onItemPress, subgroupId]);
+        [groupId, onItemPress, subgroupId],
+    );
 
     return (
         <Modal
@@ -53,14 +56,20 @@ export const SelectModal = <T extends SelectableItem>({
             statusBarTranslucent
         >
             <View style={styles.modalContent}>
-                <FlatList
-                    data={data}
-                    keyExtractor={keyExtractor}
-                    renderItem={renderItem}
-                    style={styles.list}
-                    contentContainerStyle={styles.contentContainer}
-                    keyboardShouldPersistTaps="handled"
-                    keyboardDismissMode="interactive"
+                <FlatListIndicator
+                    flatListProps={{
+                        data,
+                        keyExtractor,
+                        renderItem,
+                        style: styles.list,
+                        contentContainerStyle: styles.contentContainer,
+                        keyboardShouldPersistTaps: 'handled',
+                        keyboardDismissMode: 'interactive',
+                        showsVerticalScrollIndicator: true,
+                        onLayout: event => onListLayout(event.nativeEvent.layout.height),
+                        onScroll: onListScroll,
+                    }}
+                    indStyle={styles.indicator}
                 />
             </View>
         </Modal>

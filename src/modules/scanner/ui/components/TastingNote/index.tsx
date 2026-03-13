@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { TouchableOpacity, View, TextInput } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -15,16 +15,19 @@ import { CustomInput } from '@/UIKit/CustomInput';
 interface IProps {
     note: string | null;
     isLoading: boolean;
+    isUpdating: boolean;
     limits: IRateContext | null;
     onGeneratePress: () => void;
+    onUpdateNote: (updatedNote: string) => Promise<boolean>;
 }
 
-export const TastingNote = ({ note, isLoading, limits, onGeneratePress }: IProps) => {
+export const TastingNote = ({ note, isLoading, isUpdating, limits, onGeneratePress, onUpdateNote }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, onConfirmEdit, inputRef } = useTastingNote(note);
-    const displayNote = note || limits?.note;
+    const displayNote = note ?? limits?.note ?? null;
+    const { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, onConfirmEdit, inputRef }
+        = useTastingNote(displayNote, onUpdateNote);
 
     return (
         <View style={styles.container}>
@@ -36,7 +39,7 @@ export const TastingNote = ({ note, isLoading, limits, onGeneratePress }: IProps
                     text={t('common.generate')}
                     onPress={onGeneratePress}
                     containerStyle={styles.button}
-                    disabled={isLoading || !limits || limits?.aiUsage.left === 0}
+                    disabled={isLoading || isUpdating || !limits || limits?.aiUsage.left === 0}
                 />
             </View>
             {isLoading ? (
@@ -49,17 +52,18 @@ export const TastingNote = ({ note, isLoading, limits, onGeneratePress }: IProps
                         inputContainerStyle={styles.noteInputContainer}
                         value={editedNote}
                         onChangeText={setEditedNote}
-                        editable={isEditing}
+                        editable={isEditing && !isUpdating}
                         multiline
                         scrollEnabled={false}
                     />
                     <View style={styles.buttonGroup}>
-                        <TouchableOpacity onPress={onCopyPress} hitSlop={15}>
+                        <TouchableOpacity onPress={onCopyPress} hitSlop={15} disabled={isUpdating}>
                             <CopyIcon />
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={isEditing ? onConfirmEdit : onEditPress}
                             hitSlop={15}
+                            disabled={isUpdating}
                         >
                             {isEditing ? <CheckIcon width={24} height={24} /> : <PencilIcon width={24} height={24} />}
                         </TouchableOpacity>

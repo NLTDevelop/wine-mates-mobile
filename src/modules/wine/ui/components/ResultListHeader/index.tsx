@@ -15,6 +15,8 @@ import { userModel } from '@/entities/users/UserModel';
 import { useColorShades } from '@/modules/wine/presenters/useColorShades';
 import { StatisticCard } from '../StatisticCard';
 import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
+import { FoodPairing } from '@/UIKit/FoodPairing';
+import { TastingNote } from '../TastingNote';
 
 interface IProps {
     data: IWineDetails;
@@ -153,7 +155,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                     <View style={styles.slidersListContainer}>
                         {tasteCharacteristics.map((item: IWineTasteCharacteristic) => (
                             <TasteCharacteristicItem
-                                key={item.id}
+                                key={`${item.id}-${item.selectedIndex ?? 0}-${data.vintage ?? 'none'}`}
                                 item={item}
                                 value={item.selectedIndex || 0}
                                 isPremiumUser={isPremiumUser}
@@ -164,8 +166,12 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 </>
             )}
 
+            {data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
+
+            {data.aiSnacks?.length ? <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton/> : null}
+
             {wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0 && (
-                <Typography text={t('wine.reviews')} variant="h4" style={styles.title} />
+                <Typography text={t('wine.reviews')} variant="h3" style={styles.title} />
             )}
         </View>
     );

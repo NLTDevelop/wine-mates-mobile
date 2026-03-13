@@ -13,13 +13,8 @@ export const getStyles = (colors: IColors) => {
             flex: 1,
             paddingTop: scaleVertical(24),
         },
-        warningBlock: {
-            marginBottom: scaleVertical(24),
-        },
         warningText: {
             color: colors.text,
-            fontSize: scaleFontSize(16),
-            lineHeight: 20,
             marginBottom: scaleVertical(32),
         },
         listContainer: {
@@ -33,10 +28,6 @@ export const getStyles = (colors: IColors) => {
         },
         questionText: {
             color: colors.text,
-            fontSize: scaleFontSize(14),
-            lineHeight: 20,
-            fontWeight: '600',
-            marginBottom: 0,
         },
         checkboxContainer: {
             flexDirection: 'row',

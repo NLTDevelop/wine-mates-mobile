@@ -28,7 +28,7 @@ export const getStyles = (colors: IColors) => {
         title: {
             textAlign: 'center',
             color: colors.text_light,
-            marginBottom: scaleVertical(24),
+            marginBottom: scaleVertical(16),
         },
         label: {
             marginBottom: scaleVertical(12),
@@ -38,14 +38,19 @@ export const getStyles = (colors: IColors) => {
             flexWrap: 'wrap',
             columnGap: scaleHorizontal(7),
             rowGap: scaleVertical(12),
-            marginBottom: scaleVertical(24),
+            marginBottom: scaleVertical(16),
         },
         button: {
             marginBottom: scaleVertical(16),
             marginRight: scaleHorizontal(10),
         },
         bottomValues: {
-            marginBottom: scaleVertical(24),
+            marginBottom: scaleVertical(16),
+        },
+        resultContainer: {
+            height: scaleVertical(48),
+            borderRadius: 12,
+            marginBottom: scaleVertical(16),
         },
         smoothSlider: {
             marginBottom: 0,
@@ -60,7 +65,7 @@ export const getStyles = (colors: IColors) => {
         },
         sliderContainer: {
             gap: scaleVertical(20),
-            marginBottom: scaleVertical(24),
+            marginBottom: scaleVertical(16),
         },
         decoratorContainerStyle: {
             width: '110%',
