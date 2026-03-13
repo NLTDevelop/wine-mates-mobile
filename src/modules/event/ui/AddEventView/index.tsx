@@ -34,9 +34,9 @@ export const AddEventView = () => {
         onChangePrice,
         onChangeEventLanguage,
         onChangeNumberOfSeats,
-        handleLocationPress,
-        handleCloseLocationModal,
-        handleSubmit,
+        onLocationPress,
+        onCloseLocationModal,
+        onSubmit,
     } = useAddEvent();
 
     const {
@@ -45,9 +45,9 @@ export const AddEventView = () => {
         pickerDate,
         openDatePicker,
         openTimePicker,
-        handleClose,
-        handleConfirm,
-        handleDateChange,
+        onClose,
+        onConfirm,
+        onDateChange,
     } = useDateTimePicker({ onDateSelect, onTimeSelect });
 
     const { formattedDate, formattedTime } = useEventDateTimeFormatter({
@@ -80,7 +80,7 @@ export const AddEventView = () => {
                     maxLength={30}
                 />
 
-                <TouchableOpacity onPress={handleLocationPress} style={styles.locationButton}>
+                <TouchableOpacity onPress={onLocationPress} style={styles.locationButton}>
                     <Typography
                         text={form.location ? `${form.location.latitude.toFixed(6)}, ${form.location.longitude.toFixed(6)}` : t('event.selectLocation')}
                         variant="h6"
@@ -138,7 +138,7 @@ export const AddEventView = () => {
 
                 <Button
                     text={t('event.createEvent')}
-                    onPress={handleSubmit}
+                    onPress={onSubmit}
                     type="secondary"
                     disabled={disabled}
                     inProgress={isLoading}
@@ -150,7 +150,7 @@ export const AddEventView = () => {
 
             <LocationPickerModal
                 visible={isLocationModalVisible}
-                onClose={handleCloseLocationModal}
+                onClose={onCloseLocationModal}
                 onSelectLocation={onChangeLocation}
                 initialLocation={form.location}
             />
@@ -159,9 +159,9 @@ export const AddEventView = () => {
                 visible={isVisible}
                 mode={mode}
                 date={pickerDate}
-                onClose={handleClose}
-                onConfirm={handleConfirm}
-                onDateChange={handleDateChange}
+                onClose={onClose}
+                onConfirm={onConfirm}
+                onDateChange={onDateChange}
             />
         </>
     );

@@ -4,7 +4,7 @@ import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -16,6 +16,9 @@ const filterGroups = (groups: IWineTasteGroup[], selected: IWineTaste[]) =>
 
 export const useWineTaste = (onHide?: () => void) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const route = useRoute();
+    const source = (route.params as { source?: string } | undefined)?.source ?? 'scanner';
+    const wineId = (route.params as { wineId?: number } | undefined)?.wineId;
 
     const initialSelected = wineModel.selectedTastes ?? [];
     const [isLoading, setIsLoading] = useState(() => !wineModel.tastes?.length);
@@ -136,8 +139,8 @@ export const useWineTaste = (onHide?: () => void) => {
     }, []);
 
     const handleNextPress = useCallback(() => {
-        navigation.navigate('WineTasteCharacteristicsView');
-    }, [navigation, selected]);
+        navigation.navigate('WineTasteCharacteristicsView', { source, wineId });
+    }, [navigation, selected, source, wineId]);
 
     return { 
         data, selected, isError, getTastes, isLoading, onItemPress, handleAddCustomTaste, onSelectedItemPress, handleNextPress

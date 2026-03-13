@@ -23,16 +23,16 @@ export const EventMapView = observer(() => {
         events,
         initialRegion,
         selectedMarkerId,
-        handleMarkerPress,
+        onMarkerPress,
         userLocation,
         isModalVisible,
-        handleCloseModal,
-        handleFavoritePress
+        onCloseModal,
+        onFavoritePress
     } = useEventMap();
 
     const selectedEvent = events.find(event => event.id === selectedMarkerId);
 
-    const handleAddEvent = useCallback(() => {
+    const onAddEvent = useCallback(() => {
         navigation.navigate('AddEventView');
     }, [navigation]);
 
@@ -49,14 +49,14 @@ export const EventMapView = observer(() => {
                     <EventMap
                         events={events}
                         initialRegion={initialRegion}
-                        onMarkerPress={handleMarkerPress}
+                        onMarkerPress={onMarkerPress}
                         userLocation={userLocation}
                     />
 
                     <WineEventList
                         events={events}
                         selectedEventId={selectedMarkerId}
-                        onReadMorePress={handleMarkerPress}
+                        onReadMorePress={onMarkerPress}
                         onFavoritePress={() => {}}
                     />
                 </View>
@@ -64,21 +64,21 @@ export const EventMapView = observer(() => {
                 {selectedEvent && (
                     <BottomModal
                         visible={isModalVisible}
-                        onClose={handleCloseModal}
+                        onClose={onCloseModal}
                         title={'Event details'}
                     >
                         <WineEventListItem
                             event={selectedEvent}
                             isSelected
-                            onReadMorePress={handleMarkerPress}
-                            onFavoritePress={handleFavoritePress}
+                            onReadMorePress={onMarkerPress}
+                            onFavoritePress={onFavoritePress}
                             eventId={selectedEvent.id}
                         />
                     </BottomModal>
                 )}
 
             </ScreenContainer>
-            <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={handleAddEvent}>
+            <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onAddEvent}>
                 <PlusIcon width={32} height={32} color="white" />
             </TouchableOpacity>
         </>

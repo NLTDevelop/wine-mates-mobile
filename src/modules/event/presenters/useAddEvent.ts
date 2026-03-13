@@ -73,15 +73,15 @@ export const useAddEvent = () => {
         setForm(prev => ({ ...prev, numberOfSeats: numericValue }));
     }, []);
 
-    const handleLocationPress = useCallback(() => {
+    const onLocationPress = useCallback(() => {
         setIsLocationModalVisible(true);
     }, []);
 
-    const handleCloseLocationModal = useCallback(() => {
+    const onCloseLocationModal = useCallback(() => {
         setIsLocationModalVisible(false);
     }, []);
 
-    const handleSubmit = useCallback(async () => {
+    const onSubmit = useCallback(async () => {
         try {
             setIsLoading(true);
             // TODO: Implement event creation logic
@@ -118,8 +118,8 @@ export const useAddEvent = () => {
         onChangePrice,
         onChangeEventLanguage,
         onChangeNumberOfSeats,
-        handleLocationPress,
-        handleCloseLocationModal,
-        handleSubmit,
+        onLocationPress,
+        onCloseLocationModal,
+        onSubmit,
     };
 };

@@ -15,12 +15,13 @@ interface IProps {
     onFavoritePress: () => void;
     hasCurrentVintageData: boolean;
     isAllVintagesSelected: boolean;
+    fromScanner?: boolean;
 }
 
-export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected }: IProps) => {
+export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { onPress, isCreating } = useResultHeader(item);
+    const { onPress, isCreating } = useResultHeader(item, fromScanner);
 
     return (
         <View style={styles.cardWrapper}>

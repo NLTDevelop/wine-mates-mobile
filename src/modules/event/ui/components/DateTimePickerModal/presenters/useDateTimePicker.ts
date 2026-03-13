@@ -22,11 +22,11 @@ export const useDateTimePicker = ({ onDateSelect, onTimeSelect }: IUseDateTimePi
         setIsVisible(true);
     }, []);
 
-    const handleClose = useCallback(() => {
+    const onClose = useCallback(() => {
         setIsVisible(false);
     }, []);
 
-    const handleConfirm = useCallback(() => {
+    const onConfirm = useCallback(() => {
         if (mode === 'date') {
             onDateSelect(pickerDate);
         } else {
@@ -35,7 +35,7 @@ export const useDateTimePicker = ({ onDateSelect, onTimeSelect }: IUseDateTimePi
         setIsVisible(false);
     }, [mode, pickerDate, onDateSelect, onTimeSelect]);
 
-    const handleDateChange = useCallback((date: Date) => {
+    const onDateChange = useCallback((date: Date) => {
         setPickerDate(date);
     }, []);
 
@@ -45,8 +45,8 @@ export const useDateTimePicker = ({ onDateSelect, onTimeSelect }: IUseDateTimePi
         pickerDate,
         openDatePicker,
         openTimePicker,
-        handleClose,
-        handleConfirm,
-        handleDateChange,
+        onClose,
+        onConfirm,
+        onDateChange,
     };
 };

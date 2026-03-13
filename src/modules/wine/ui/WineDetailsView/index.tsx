@@ -23,7 +23,7 @@ export const WineDetailsView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
-        selectedWineId } = useWineDetails();
+        selectedWineId, fromScanner } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
         selectedWineId ?? wineId,
@@ -60,6 +60,7 @@ export const WineDetailsView = observer(() => {
                                 onFavoritePress={onOpen}
                                 hasCurrentVintageData={hasCurrentVintageData}
                                 isAllVintagesSelected={isAllVintagesSelected}
+                                fromScanner={fromScanner}
                             />
                         }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}

@@ -38,16 +38,16 @@ export const useEventMap = () => {
         };
     }, [userLocation]);
 
-    const handleMarkerPress = useCallback((markerId: number) => {
+    const onMarkerPress = useCallback((markerId: number) => {
         eventsModel.setSelectedEventId(markerId);
         setIsModalVisible(true);
     }, []);
 
-    const handleCloseModal = useCallback(() => {
+    const onCloseModal = useCallback(() => {
         setIsModalVisible(false);
     }, []);
 
-    const handleFavoritePress = useCallback((eventId: number) => {
+    const onFavoritePress = useCallback((eventId: number) => {
         console.log('Favorite pressed for event:', eventId);
     }, []);
 
@@ -55,11 +55,11 @@ export const useEventMap = () => {
         events: eventsModel.events,
         initialRegion,
         selectedMarkerId: eventsModel.selectedEventId,
-        handleMarkerPress,
+        onMarkerPress,
         userLocation,
         isLocationLoading,
         isModalVisible,
-        handleCloseModal,
-        handleFavoritePress,
+        onCloseModal,
+        onFavoritePress,
     };
 };

@@ -4,13 +4,16 @@ import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Keyboard } from 'react-native';
 
 export const useWineSmell = (onHide: () => void) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const route = useRoute();
+    const source = (route.params as { source?: string } | undefined)?.source ?? 'scanner';
+    const wineId = (route.params as { wineId?: number } | undefined)?.wineId;
 
     const initialSelected = wineModel.selectedSmells ?? [];
     const [data, setData] = useState<IWineSmell[]>(() => {
@@ -201,9 +204,9 @@ export const useWineSmell = (onHide: () => void) => {
     }, []);
 
     const handleNextPress = useCallback(() => {
-        navigation.navigate('WineTasteView');
+        navigation.navigate('WineTasteView', { source, wineId });
         Keyboard.dismiss();
-    }, [navigation, selected]);
+    }, [navigation, selected, source, wineId]);
 
     return { 
         data, selected, isError, getSmells, isLoading, isOpened, onItemPress, toggleList, selectedIndex,

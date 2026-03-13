@@ -22,9 +22,9 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         ];
     }, [eventDetail, t]);
 
-    const handleLabelLayout = (width: number) => {
+    const onLabelLayout = (width: number) => {
         setMaxLabelWidth(prev => Math.max(prev, width));
     };
 
-    return { detailsData, maxLabelWidth, handleLabelLayout };
+    return { detailsData, maxLabelWidth, onLabelLayout };
 };

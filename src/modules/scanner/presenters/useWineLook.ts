@@ -3,7 +3,7 @@ import { wineModel } from "@/entities/wine/WineModel";
 import { wineService } from "@/entities/wine/WineService";
 import { toastService } from "@/libs/toast/toastService";
 import { localization } from "@/UIProvider/localization/Localization";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -15,6 +15,9 @@ interface IUseWineLookArgs {
 
 export const useWineLook = ({t, styles}: IUseWineLookArgs) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const route = useRoute();
+    const source = (route.params as { source?: string } | undefined)?.source ?? 'scanner';
+    const wineId = (route.params as { wineId?: number } | undefined)?.wineId;
     const [isLoading, setIsLoading] = useState(() => !wineModel.colorsShades?.length);
     const [perlage, setPerlage] = useState(0);
     const [appearance, setAppearance] = useState(0);
@@ -139,7 +142,6 @@ export const useWineLook = ({t, styles}: IUseWineLookArgs) => {
 
     const handlePressNext = useCallback(() => {
         if (!currentColor) return;
-        console.log(selectedColor)
 
         if (wineModel.base?.typeOfWine.isSparkling) {
             wineModel.look = {
@@ -159,8 +161,8 @@ export const useWineLook = ({t, styles}: IUseWineLookArgs) => {
                 name: selectedColor?.name || '-',
             }
         }
-        navigation.navigate('WineSmellView');
-    }, [navigation, currentColor, mousse, perlage, appearance, selectedColor, shade]);
+        navigation.navigate('WineSmellView', { source, wineId });
+    }, [navigation, currentColor, mousse, perlage, appearance, selectedColor, shade, source, wineId]);
 
     return {
         data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades,

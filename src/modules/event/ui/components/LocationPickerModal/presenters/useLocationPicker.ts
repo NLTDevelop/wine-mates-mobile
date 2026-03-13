@@ -11,12 +11,12 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
         initialLocation || null
     );
 
-    const handleMapPress = useCallback((event: any) => {
+    const onMapPress = useCallback((event: any) => {
         const { latitude, longitude } = event.nativeEvent.coordinate;
         setSelectedLocation({ latitude, longitude });
     }, []);
 
-    const handleConfirm = useCallback(() => {
+    const onConfirm = useCallback(() => {
         if (selectedLocation) {
             onSelectLocation(selectedLocation.latitude, selectedLocation.longitude);
             onClose();
@@ -25,7 +25,7 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
 
     return {
         selectedLocation,
-        handleMapPress,
-        handleConfirm,
+        onMapPress,
+        onConfirm,
     };
 };

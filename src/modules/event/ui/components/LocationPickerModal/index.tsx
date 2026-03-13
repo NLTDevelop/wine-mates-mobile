@@ -22,7 +22,7 @@ export const LocationPickerModal = ({ visible, onClose, onSelectLocation, initia
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors, top), [colors, top]);
 
-    const { selectedLocation, handleMapPress, handleConfirm } = useLocationPicker({
+    const { selectedLocation, onMapPress, onConfirm } = useLocationPicker({
         initialLocation,
         onSelectLocation,
         onClose,
@@ -51,7 +51,7 @@ export const LocationPickerModal = ({ visible, onClose, onSelectLocation, initia
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}
-                    onPress={handleMapPress}
+                    onPress={onMapPress}
                     style={styles.map}
                 >
                     {selectedLocation && (
@@ -74,7 +74,7 @@ export const LocationPickerModal = ({ visible, onClose, onSelectLocation, initia
                     )}
                     <Button
                         text={t('common.confirm')}
-                        onPress={handleConfirm}
+                        onPress={onConfirm}
                         type="main"
                         disabled={!selectedLocation}
                     />

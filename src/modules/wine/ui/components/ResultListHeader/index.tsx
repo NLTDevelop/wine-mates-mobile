@@ -23,9 +23,10 @@ interface IProps {
     onFavoritePress: () => void;
     hasCurrentVintageData: boolean;
     isAllVintagesSelected: boolean;
+    fromScanner?: boolean;
 }
 
-export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected }: IProps) => {
+export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
@@ -64,6 +65,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 onFavoritePress={onFavoritePress}
                 hasCurrentVintageData={hasCurrentVintageData}
                 isAllVintagesSelected={isAllVintagesSelected}
+                fromScanner={fromScanner}
             />
 
             {isVintageTasted && (
