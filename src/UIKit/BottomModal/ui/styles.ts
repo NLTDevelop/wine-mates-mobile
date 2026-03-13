@@ -1,8 +1,6 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '@/utils';
-
-const SCREEN_HEIGHT = Dimensions.get('window').height;
+import { scaleHorizontal, scaleVertical, size } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -18,7 +16,7 @@ export const getStyles = (colors: IColors) => {
             backgroundColor: colors.background,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            maxHeight: SCREEN_HEIGHT * 0.9,
+            maxHeight: size.height * 0.9,
             overflow: 'hidden',
         },
         header: {
@@ -26,13 +24,11 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             paddingHorizontal: scaleHorizontal(16),
-            paddingVertical: scaleVertical(16),
-            borderBottomWidth: 1,
-            borderBottomColor: colors.border,
+            paddingTop: scaleVertical(16),
         },
         closeButton: {
-            width: 40,
-            height: 40,
+            width: scaleHorizontal(40),
+            height: scaleHorizontal(40),
             alignItems: 'center',
             justifyContent: 'center',
         },

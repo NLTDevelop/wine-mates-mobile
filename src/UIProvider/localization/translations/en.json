@@ -295,6 +295,20 @@
         "wineEvents": "Wine events",
         "readMore": "Read more"
     },
+    "event": {
+        "addEvent": "Add wine event",
+        "tastingTheme": "Tasting theme",
+        "restaurant": "Restaurant",
+        "location": "Location",
+        "eventDate": "Event date",
+        "eventTime": "Event time",
+        "phoneNumber": "Phone number",
+        "price": "Price",
+        "eventLanguage": "Event language",
+        "numberOfSeats": "Number of seats",
+        "selectLocation": "Select location",
+        "createEvent": "Create event"
+    },
     "faq": {
         "faq": "FAQ"
     },

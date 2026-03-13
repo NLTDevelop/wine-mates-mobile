@@ -298,6 +298,20 @@
         "wineEvents": "Винні події",
         "readMore": "Читати більше"
     },
+    "event": {
+        "addEvent": "Додати винну подію",
+        "tastingTheme": "Тема дегустації",
+        "restaurant": "Ресторан",
+        "location": "Локація",
+        "eventDate": "Дата події",
+        "eventTime": "Час події",
+        "phoneNumber": "Номер телефону",
+        "price": "Ціна",
+        "eventLanguage": "Мова події",
+        "numberOfSeats": "Кількість місць",
+        "selectLocation": "Вибрати локацію",
+        "createEvent": "Створити подію"
+    },
     "faq": {
         "faq": "FAQ"
     },

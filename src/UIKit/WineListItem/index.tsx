@@ -34,13 +34,15 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
         useWineListItem({ item, onPress, removeCardStyles });
     const { description } = useWineDescription({ item });
     const hasPremium = userModel.user?.hasPremium ?? false;
+    const userId = userModel.user?.id ?? null;
+    const shouldReviewShow = userId === lastReviewData?.user.id;
     const currentVintageData = isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
         ? item.currentVintage
         : null;
     const expertRating = removeCardStyles && currentVintageData
         ? currentVintageData?.averageExpertRating ?? 0
         : item.averageExpertRating ?? 0
-    const showMedal = expertRating > 0;
+    const showMedal = shouldReviewShow || expertRating > 0;
 
     return (
         <Pressable
@@ -79,7 +81,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
 
                 <View style={styles.rightColumn}>
                     <View style={styles.medalContainer}>
-                        {!hasPremium && showMedal ? (
+                        {!hasPremium && showMedal && !shouldReviewShow ? (
                             <ShowLock iconSize={medalSize} />
                         ) : showMedal ? (
                             <RateMedal
@@ -141,7 +143,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                 </View>
             </View>
             {customBottomComponent ||
-                (showDate && lastReviewData?.createdAt ? (
+                ((showDate || shouldReviewShow) && lastReviewData?.createdAt ? (
                     <View style={styles.dateContainer}>
                         <Typography
                             variant="subtitle_12_400"

@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useState } from 'react';
 
-export const useResultHeader = (item: IWineDetails) => {
+export const useResultHeader = (item: IWineDetails, fromScanner?: boolean) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isCreating, setIsCreating] = useState(false);
 
@@ -116,7 +116,8 @@ export const useResultHeader = (item: IWineDetails) => {
                 },
             };
             wineModel.customVintage = null;
-            navigation.navigate('WineLookView');
+            const source = fromScanner ? 'scanner' : 'wineDetails';
+            navigation.navigate('WineLookView', { source, wineId: item.id });
         } catch (error) {
             setIsCreating(false);
             console.error('Create wine for new vintage error:', error);
@@ -125,7 +126,7 @@ export const useResultHeader = (item: IWineDetails) => {
                 localization.t('common.somethingWentWrong'),
             );
         }
-    }, [navigation, item]);
+    }, [navigation, item, fromScanner]);
 
     return { onPress, isCreating };
 };

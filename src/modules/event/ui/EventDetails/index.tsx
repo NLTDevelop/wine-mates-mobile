@@ -24,16 +24,16 @@ export const EventDetails = observer(() => {
 
     const { eventId } = route.params;
     const { eventDetail, isError } = useEventDetails(eventId);
-    const { detailsData, maxLabelWidth, handleLabelLayout } = useEventDetailsData(eventDetail);
+    const { detailsData, maxLabelWidth, onLabelLayout } = useEventDetailsData(eventDetail);
     const [isBookingModalVisible, setIsBookingModalVisible] = React.useState(false);
 
     const styles = useMemo(() => getStyles(colors, maxLabelWidth), [colors, maxLabelWidth]);
 
-    const handleBookNowPress = () => {
+    const onBookNowPress = () => {
         setIsBookingModalVisible(true);
     };
 
-    const handleCloseModal = () => {
+    const onCloseModal = () => {
         setIsBookingModalVisible(false);
     };
 
@@ -52,7 +52,7 @@ export const EventDetails = observer(() => {
                                                 text={`${item.label}:`}
                                                 variant="body_400"
                                                 style={styles.label}
-                                                onLayout={(e) => handleLabelLayout(e.nativeEvent.layout.width)}
+                                                onLayout={(e) => onLabelLayout(e.nativeEvent.layout.width)}
                                             />
                                         </View>
                                         <View style={styles.valueContainer}>
@@ -84,13 +84,13 @@ export const EventDetails = observer(() => {
                 }
             </TitledContent>
             <View style={styles.footer}>
-                <Button type="main" containerStyle={styles.bookNowButton} text={t('eventDetails.bookNow')} onPress={handleBookNowPress} />
+                <Button type="main" containerStyle={styles.bookNowButton} text={t('eventDetails.bookNow')} onPress={onBookNowPress} />
                 <FavoriteButton onPress={() => {}} size={52} />
             </View>
 
             <BottomModal
                 visible={isBookingModalVisible}
-                onClose={handleCloseModal}
+                onClose={onCloseModal}
                 title={t('eventDetails.contactForBooking')}
             >
                 <View>

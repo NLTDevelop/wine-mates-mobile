@@ -11,6 +11,16 @@ const GEOLOCATION_ERROR_CODES = {
     TIMEOUT: 3,
 };
 
+const GEOLOCATION_TIMEOUT = {
+    STANDARD: 15000,
+    HIGH_ACCURACY: 25000,
+};
+
+const GEOLOCATION_MAXIMUM_AGE = {
+    STANDARD: 10000,
+    HIGH_ACCURACY: 5000,
+};
+
 export const useLocationPermission = () => {
     const { t } = useUiContext();
 
@@ -56,17 +66,17 @@ export const useLocationPermission = () => {
                 locationModel.setIsLoading(false);
             },
             (error) => {
-                console.warn('Error getting location:', error);
                 if (!highAccuracy && error.code === GEOLOCATION_ERROR_CODES.TIMEOUT) {
                     getCurrentLocation(true);
                     return;
                 }
+                console.warn('Error getting location:', error);
                 locationModel.setIsLoading(false);
             },
             {
                 enableHighAccuracy: highAccuracy,
-                timeout: highAccuracy ? 25000 : 15000,
-                maximumAge: highAccuracy ? 5000 : 10000,
+                timeout: highAccuracy ? GEOLOCATION_TIMEOUT.HIGH_ACCURACY : GEOLOCATION_TIMEOUT.STANDARD,
+                maximumAge: highAccuracy ? GEOLOCATION_MAXIMUM_AGE.HIGH_ACCURACY : GEOLOCATION_MAXIMUM_AGE.STANDARD,
             }
         );
     };

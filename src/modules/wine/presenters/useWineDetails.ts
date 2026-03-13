@@ -10,7 +10,8 @@ import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 import { NONE_VINTAGE_DROPDOWN_VALUE } from './useVintageDropdown';
 
 export const useWineDetails = () => {
-    const { wineId } = (useRoute().params as { wineId: number }) || null;
+    const route = useRoute();
+    const { wineId, fromScanner } = (route.params as { wineId: number; fromScanner?: boolean }) || { wineId: null, fromScanner: false };
     const isFocused = useIsFocused();
     const [details, setDetails] = useState<IWineDetails | null>(null);
     const [isError, setIsError] = useState(false);
@@ -114,5 +115,6 @@ export const useWineDetails = () => {
         isAllVintagesSelected,
         wineId,
         selectedWineId: wineModel.selectedWineId,
+        fromScanner,
     };
 };

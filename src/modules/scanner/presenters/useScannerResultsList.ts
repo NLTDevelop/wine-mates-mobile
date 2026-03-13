@@ -57,7 +57,7 @@ export const useScannerResultsList = () => {
     }, []);
 
     const handleItemPress = useCallback((item: IWineListItem) => {
-        navigation.navigate('WineDetailsView', {wineId: item.id});
+        navigation.navigate('WineDetailsView', {wineId: item.id, fromScanner: true});
     },[navigation]);
 
     const handleAddWinePress = useCallback(() => {

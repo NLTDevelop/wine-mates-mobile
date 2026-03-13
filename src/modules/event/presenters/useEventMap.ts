@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Region } from 'react-native-maps';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { MOCK_EVENTS } from '@/entities/events/mocks/eventMocks';
@@ -16,6 +16,7 @@ const MAP_DELTA = {
 
 export const useEventMap = () => {
     const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
         if (eventsModel.events.length === 0) {
@@ -37,16 +38,28 @@ export const useEventMap = () => {
         };
     }, [userLocation]);
 
-    const handleMarkerPress = (markerId: number) => {
+    const onMarkerPress = useCallback((markerId: number) => {
         eventsModel.setSelectedEventId(markerId);
-    };
+        setIsModalVisible(true);
+    }, []);
+
+    const onCloseModal = useCallback(() => {
+        setIsModalVisible(false);
+    }, []);
+
+    const onFavoritePress = useCallback((eventId: number) => {
+        console.log('Favorite pressed for event:', eventId);
+    }, []);
 
     return {
         events: eventsModel.events,
         initialRegion,
         selectedMarkerId: eventsModel.selectedEventId,
-        handleMarkerPress,
+        onMarkerPress,
         userLocation,
         isLocationLoading,
+        isModalVisible,
+        onCloseModal,
+        onFavoritePress,
     };
 };

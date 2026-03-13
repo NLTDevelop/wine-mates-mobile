@@ -58,6 +58,8 @@ export const MapView = observer(({ initialRegion, children, ...props }: IMapView
                 provider={PROVIDER_GOOGLE}
                 style={styles.map}
                 initialRegion={initialRegion || defaultRegion}
+                zoomControlEnabled={false}
+                toolbarEnabled={false}
                 {...props}
             >
                 {children}

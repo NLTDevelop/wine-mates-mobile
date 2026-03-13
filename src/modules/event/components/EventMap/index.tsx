@@ -12,7 +12,6 @@ import { observer } from 'mobx-react-lite';
 interface IEventMapProps {
     events: IEvent[];
     initialRegion: Region;
-    selectedMarkerId: number | null;
     onMarkerPress: (markerId: number) => void;
     userLocation?: IUserLocation | null;
 }
@@ -20,7 +19,6 @@ interface IEventMapProps {
 export const EventMap = observer(({
                                       events,
                                       initialRegion,
-                                      selectedMarkerId,
                                       onMarkerPress,
                                       userLocation,
                                   }: IEventMapProps) => {
@@ -40,9 +38,8 @@ export const EventMap = observer(({
                         markerProps={{
                             coordinate: { latitude: event.latitude, longitude: event.longitude }
                         }}
-                        selected={selectedMarkerId === event.id}
                         eventId={event.id}
-                        onPress={() => onMarkerPress(event.id)}
+                        onPress={onMarkerPress}
                     />
                 ))}
             </MapView>

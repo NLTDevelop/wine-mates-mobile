@@ -3,4 +3,5 @@ export type EventStackParamList = {
     EventDetails: {
         eventId: number;
     };
+    AddEventView: undefined;
 };
