@@ -87,6 +87,7 @@ export const WineSmellView = observer(() => {
                             keyboardShouldPersistTaps="handled"
                             nestedScrollEnabled
                             bottomOffset={scaleVertical(24)}
+                            showsVerticalScrollIndicator={false}
                         >
                             <Pressable style={styles.scrollContent} onPress={Keyboard.dismiss}>
                                 <Typography text={t('wine.smellDescription')} variant="body_400" style={styles.title} />

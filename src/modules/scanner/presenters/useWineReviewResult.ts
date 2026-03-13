@@ -6,6 +6,7 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
 import { GenerateNoteDto } from '@/entities/wine/dto/GenerateNote.dto';
+import { UpdateNoteDto } from '@/entities/wine/dto/UpdateNote.dto.';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
@@ -16,6 +17,7 @@ export const useWineReviewResult = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoadingLimits, setIsLoadingLimits] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
+    const [isUpdatingNote, setIsUpdatingNote] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [note, setNote] = useState<string | null>(null);
     const [limits, setLimits] = useState<IRateContext | null>(null);
@@ -171,6 +173,55 @@ export const useWineReviewResult = () => {
             isActiveRef.current = false;
         };
     }, [load]);
+
+    const updateNote = useCallback(async (updatedNote: string) => {
+        const trimmedNote = updatedNote.trim();
+
+        if (!trimmedNote) {
+            return false;
+        }
+
+        if (!wineModel.wine?.id) {
+            toastService.showError(
+                localization.t('common.errorHappened'),
+                localization.t('common.somethingWentWrong'),
+            );
+            return false;
+        }
+
+        try {
+            setIsUpdatingNote(true);
+
+            const payload: UpdateNoteDto = {
+                wineId: wineModel.wine.id,
+                note: trimmedNote,
+            };
+
+            const response = await wineService.updateAINote(payload);
+
+            if (response.isError || !response.data) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    response.message || localization.t('common.somethingWentWrong'),
+                );
+                return false;
+            }
+
+            const nextNote = response.data.note || trimmedNote;
+            setNote(nextNote);
+            setLimits(prevState => (prevState ? { ...prevState, note: nextNote } : prevState));
+            return true;
+        } catch (error) {
+            console.error(JSON.stringify(error, null, 2));
+            toastService.showError(
+                localization.t('common.errorHappened'),
+                localization.t('common.somethingWentWrong'),
+            );
+            return false;
+        } finally {
+            setIsUpdatingNote(false);
+        }
+    }, []);
 
     const handleSavePress = useCallback(async () => {
         try {
@@ -352,5 +403,5 @@ export const useWineReviewResult = () => {
         }
     }, [navigation, isPremiumUser]);
 
-    return { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits };
+    return { handleSavePress, note, isLoading, isUpdatingNote, isSaving, limits, isLoadingLimits, getNote, setLimits, updateNote };
 };

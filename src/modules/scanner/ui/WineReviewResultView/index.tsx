@@ -20,7 +20,7 @@ export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits } = useWineReviewResult();
+    const { handleSavePress, note, isLoading, isUpdatingNote, isSaving, limits, isLoadingLimits, getNote, setLimits, updateNote } = useWineReviewResult();
 
     return (
         <ScreenContainer
@@ -28,6 +28,7 @@ export const WineReviewResultView = observer(() => {
             withGradient
             headerComponent={<HeaderWithBackButton title={t('wine.review')} />}
             scrollEnabled
+            isKeyboardAvoiding
         >
             {isLoadingLimits ? (
                 <Loader />
@@ -65,7 +66,14 @@ export const WineReviewResultView = observer(() => {
                             )}
                         </View>
                         <FoodPairing setLimits={setLimits} />
-                        <TastingNote note={note} isLoading={isLoading} limits={limits} onGeneratePress={getNote} />
+                        <TastingNote
+                            note={note}
+                            isLoading={isLoading}
+                            isUpdating={isUpdatingNote}
+                            limits={limits}
+                            onGeneratePress={getNote}
+                            onUpdateNote={updateNote}
+                        />
                         <SelectedParameters containerStyle={styles.selectedParameters} />
                     </View>
                     <Button

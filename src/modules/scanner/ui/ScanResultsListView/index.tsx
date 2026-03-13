@@ -33,8 +33,6 @@ export const ScanResultsListView = observer(() => {
     }, []);
 
     const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
-           
-        
         return <WineListItem item={item} onPress={handleItemPress} showSimilarity footer={renderFooter(item)} />;
     }, [handleItemPress, renderFooter]);
 

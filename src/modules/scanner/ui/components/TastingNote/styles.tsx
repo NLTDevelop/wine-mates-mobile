@@ -1,5 +1,5 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors) => {
@@ -19,15 +19,11 @@ export const getStyles = (colors: IColors) => {
         },
         noteContainer: {
             borderRadius: 12,
-            paddingVertical: scaleVertical(14),
-            paddingHorizontal: scaleHorizontal(16),
+            paddingVertical: scaleVertical(12),
             minHeight: scaleVertical(212),
             backgroundColor: colors.background,
-            shadowColor: colors.shadow,
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 3,
-            elevation: 3,
+            borderWidth: 1,
+            borderColor: colors.border,
         },
         text: {
             color: colors.primary,
@@ -52,14 +48,13 @@ export const getStyles = (colors: IColors) => {
         },
         noteInput: {
             color: colors.text,
-            fontSize: scaleFontSize(16),
-            fontWeight: '500',
             flex: 1,
             borderWidth: 0,
+            paddingVertical: 0,
         },
         buttonGroup: {
+            paddingHorizontal: scaleHorizontal(12),
             flexDirection: 'row',
-            marginTop: scaleVertical(8),
             alignSelf: 'flex-end',
             gap: scaleHorizontal(8),
         },
