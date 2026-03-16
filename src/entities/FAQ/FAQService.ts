@@ -11,7 +11,7 @@ class FAQService {
     list = async (): Promise<IResponse<IFAQListItem[]>> => {
         try {
             const response = await this._requester.request({
-                method: 'POST',
+                method: 'GET',
                 url: `${this._links.faq}`,
             });
 
