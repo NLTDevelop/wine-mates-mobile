@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
-import { useSelectablePressGuard } from '@/hooks/useSelectablePressGuard';
 import { useUiContext } from '@/UIProvider';
 import { declOfWord } from '@/utils';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
@@ -19,15 +18,12 @@ const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails
 
 export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => {
     const { t } = useUiContext();
-    const guard = useSelectablePressGuard();
 
     const onItemPress = useCallback(() => {
-        guard.bindPressable.onPress(() => {
-            if (onPress && isWineListItem(item)) {
-                onPress(item);
-            }
-        });
-    }, [item, onPress, guard]);
+        if (onPress && isWineListItem(item)) {
+            onPress(item);
+        }
+    }, [item, onPress]);
 
     const similarityText = useMemo(() => {
         if (!isWineListItem(item) || !item.similarity) return '-';
@@ -96,7 +92,6 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
     }, []);
 
     return {
-        guard,
         onItemPress,
         similarityText,
         userRating,

@@ -30,7 +30,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
     showDate = false, customBottomComponent }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
-    const { guard, onItemPress, similarityText, userRating, userReviewCount, expertReviewCount, lastReviewData, getFormattedDate } =
+    const { onItemPress, similarityText, userRating, userReviewCount, expertReviewCount, lastReviewData, getFormattedDate } =
         useWineListItem({ item, onPress, removeCardStyles });
     const { description } = useWineDescription({ item });
     const hasPremium = userModel.user?.hasPremium ?? false;
@@ -48,7 +48,6 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
         <Pressable
             style={({ pressed }) => [styles.container, pressed && styles.pressed]}
             onPress={onItemPress}
-            onPressOut={guard.bindPressable.onPressOut}
             disabled={!onPress}
         >
             <View style={styles.content}>
@@ -110,15 +109,12 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                         </>
                     ) : null}
 
-                    {item.producer ? (
-                        <Typography variant="h5" text={item.producer} style={styles.titleText} {...guard.bindText} />
-                    ) : null}
+                    {item.producer ? <Typography variant="h5" text={item.producer} style={styles.titleText} /> : null}
 
                     <Typography
                         variant="subtitle_10_400"
                         text={description || `-`}
                         style={styles.descriptionText}
-                        {...guard.bindText}
                     />
 
                     <View style={styles.rateContainer}>
