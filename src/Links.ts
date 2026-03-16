@@ -69,7 +69,7 @@ class Links implements ILinks {
         myWine: 'myWine',
         tasteProfile: 'users/taste-profile',
         wineRecommendations: 'users/taste-profile/wine-recommendations',
-        faq: 'faq',
+        faq: 'faq/topics',
         me: 'users/me',
     };
 
