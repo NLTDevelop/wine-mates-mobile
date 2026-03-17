@@ -45,9 +45,6 @@ export const useWineReviewResult = () => {
                 return null;
             } else {
                 setLimits(response.data);
-                if (response.data.snacks?.length && !wineModel.review?.aiSnacks?.length) {
-                    patchReview({ aiSnacks: response.data.snacks });
-                }
                 return response.data;
             }
         } catch (error) {
@@ -56,7 +53,7 @@ export const useWineReviewResult = () => {
         } finally {
             setIsLoadingLimits(false);
         }
-    }, [patchReview]);
+    }, []);
 
     const getNote = useCallback(async () => {
         try {
@@ -174,7 +171,7 @@ export const useWineReviewResult = () => {
     }, [patchReview]);
 
     const load = useCallback(async (isActiveRef: { current: boolean }) => {
-        const rateContext = await getLimits();
+        await getLimits();
         if (!isActiveRef.current) {
             return;
         }
@@ -186,20 +183,8 @@ export const useWineReviewResult = () => {
             return;
         }
 
-        const noteFromContext = rateContext?.note || null;
-        if (noteFromContext) {
-            setNote(noteFromContext);
-            patchReview({
-                aiTastingNote: noteFromContext,
-                initialAiTastingNote: noteFromContext,
-                hasEditedAiTastingNote: false,
-            });
-            setIsLoading(false);
-            return;
-        }
-
         await getNote();
-    }, [getLimits, getNote, patchReview]);
+    }, [getLimits, getNote]);
 
     useEffect(() => {
         const isActiveRef = { current: true };
