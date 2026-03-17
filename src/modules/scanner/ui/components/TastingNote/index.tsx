@@ -5,7 +5,6 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { CopyIcon } from '@assets/icons/CopyIcon';
 import { PencilIcon } from '@assets/icons/PencilIcon';
-import { CheckIcon } from '@assets/icons/CheckIcon';
 import { useTastingNote } from '@/modules/scanner/presenters/useTastingNote';
 import { NoteLoader } from '../NoteLoader';
 import { Button } from '@/UIKit/Button';
@@ -15,18 +14,18 @@ import { CustomInput } from '@/UIKit/CustomInput';
 interface IProps {
     note: string | null;
     isLoading: boolean;
-    isUpdating: boolean;
     limits: IRateContext | null;
     onGeneratePress: () => void;
-    onUpdateNote: (updatedNote: string) => Promise<boolean>;
+    onUpdateNote: (updatedNote: string) => void;
 }
 
-export const TastingNote = ({ note, isLoading, isUpdating, limits, onGeneratePress, onUpdateNote }: IProps) => {
+export const TastingNote = ({ note, isLoading, limits, onGeneratePress, onUpdateNote }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const displayNote = note ?? limits?.note ?? null;
-    const { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, onConfirmEdit, inputRef }
+    const hasNote = note !== null || limits?.note !== null;
+    const displayNote = note ?? limits?.note ?? '';
+    const { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, inputRef }
         = useTastingNote(displayNote, onUpdateNote);
 
     return (
@@ -39,12 +38,12 @@ export const TastingNote = ({ note, isLoading, isUpdating, limits, onGeneratePre
                     text={t('common.generate')}
                     onPress={onGeneratePress}
                     containerStyle={styles.button}
-                    disabled={isLoading || isUpdating || !limits || limits?.aiUsage.left === 0}
+                    disabled={isLoading || !limits || limits?.aiUsage.left === 0}
                 />
             </View>
             {isLoading ? (
                 <NoteLoader />
-            ) : displayNote ? (
+            ) : hasNote ? (
                 <View style={styles.noteContainer}>
                     <CustomInput
                         ref={inputRef}
@@ -52,20 +51,16 @@ export const TastingNote = ({ note, isLoading, isUpdating, limits, onGeneratePre
                         inputContainerStyle={styles.noteInputContainer}
                         value={editedNote}
                         onChangeText={setEditedNote}
-                        editable={isEditing && !isUpdating}
+                        editable={isEditing}
                         multiline
                         scrollEnabled={false}
                     />
                     <View style={styles.buttonGroup}>
-                        <TouchableOpacity onPress={onCopyPress} hitSlop={15} disabled={isUpdating}>
+                        <TouchableOpacity onPress={onCopyPress} hitSlop={15}>
                             <CopyIcon />
                         </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={isEditing ? onConfirmEdit : onEditPress}
-                            hitSlop={15}
-                            disabled={isUpdating}
-                        >
-                            {isEditing ? <CheckIcon width={24} height={24} /> : <PencilIcon width={24} height={24} />}
+                        <TouchableOpacity onPress={onEditPress} hitSlop={15}>
+                            <PencilIcon width={24} height={24} color={isEditing ? colors.text_light : undefined} />
                         </TouchableOpacity>
                     </View>
                 </View>

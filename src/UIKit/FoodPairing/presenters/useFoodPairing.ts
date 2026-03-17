@@ -4,7 +4,7 @@ import { ISnack } from '@/entities/snacks/types/ISnack';
 import { wineModel } from '@/entities/wine/WineModel';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 
@@ -12,7 +12,13 @@ type SetLimits = Dispatch<SetStateAction<IRateContext | null>>;
 
 export const useFoodPairing = (setLimits?: SetLimits, generatedSnacks?: ISnack[]) => {
     const [isGenerating, setIsGenerating] = useState(false);
-    const [snacks, setSnacks] = useState<ISnack[] | null>(generatedSnacks || null);
+    const [snacks, setSnacks] = useState<ISnack[] | null>(generatedSnacks || wineModel.review?.aiSnacks || null);
+
+    useEffect(() => {
+        if (generatedSnacks) {
+            setSnacks(generatedSnacks);
+        }
+    }, [generatedSnacks]);
 
     const onGeneratePress = useCallback(async () => {
         try {
@@ -71,6 +77,10 @@ export const useFoodPairing = (setLimits?: SetLimits, generatedSnacks?: ISnack[]
                     ? response.data.snacks
                     : [response.data.snacks];
                 setSnacks(snacksData);
+                wineModel.review = {
+                    ...(wineModel.review || { review: '' }),
+                    aiSnacks: snacksData,
+                };
             }
         } catch (error) {
             console.error('onGeneratePress error: ', JSON.stringify(error, null, 2));

@@ -6,7 +6,6 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
 import { GenerateNoteDto } from '@/entities/wine/dto/GenerateNote.dto';
-import { UpdateNoteDto } from '@/entities/wine/dto/UpdateNote.dto.';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
@@ -17,15 +16,21 @@ export const useWineReviewResult = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoadingLimits, setIsLoadingLimits] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
-    const [isUpdatingNote, setIsUpdatingNote] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-    const [note, setNote] = useState<string | null>(null);
+    const [note, setNote] = useState<string | null>(wineModel.review?.aiTastingNote || null);
     const [limits, setLimits] = useState<IRateContext | null>(null);
     const isPremiumUser = userModel.user?.hasPremium || false;
 
+    const patchReview = useCallback((payload: Partial<NonNullable<typeof wineModel.review>>) => {
+        wineModel.review = {
+            ...(wineModel.review || { review: '' }),
+            ...payload,
+        };
+    }, []);
+
     const getLimits = useCallback(async () => {
         try {
-            if (!wineModel.wine?.id) return;
+            if (!wineModel.wine?.id) return null;
 
             setIsLoadingLimits(true);
 
@@ -37,15 +42,21 @@ export const useWineReviewResult = () => {
                 if (response.message) {
                     toastService.showError(localization.t('common.errorHappened'), response.message);
                 }
+                return null;
             } else {
                 setLimits(response.data);
+                if (response.data.snacks?.length && !wineModel.review?.aiSnacks?.length) {
+                    patchReview({ aiSnacks: response.data.snacks });
+                }
+                return response.data;
             }
         } catch (error) {
             console.error(JSON.stringify(error, null, 2));
+            return null;
         } finally {
             setIsLoadingLimits(false);
         }
-    }, []);
+    }, [patchReview]);
 
     const getNote = useCallback(async () => {
         try {
@@ -147,22 +158,48 @@ export const useWineReviewResult = () => {
                         },
                     };
                 });
-                setNote(response.data.note);
+                const generatedNote = response.data.note || null;
+                setNote(generatedNote);
+                patchReview({
+                    aiTastingNote: generatedNote,
+                    initialAiTastingNote: generatedNote,
+                    hasEditedAiTastingNote: false,
+                });
             }
         } catch (error) {
             console.error(JSON.stringify(error, null, 2));
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [patchReview]);
 
     const load = useCallback(async (isActiveRef: { current: boolean }) => {
-        await getLimits();
+        const rateContext = await getLimits();
         if (!isActiveRef.current) {
             return;
         }
+
+        const cachedNote = wineModel.review?.aiTastingNote || null;
+        if (cachedNote) {
+            setNote(cachedNote);
+            setIsLoading(false);
+            return;
+        }
+
+        const noteFromContext = rateContext?.note || null;
+        if (noteFromContext) {
+            setNote(noteFromContext);
+            patchReview({
+                aiTastingNote: noteFromContext,
+                initialAiTastingNote: noteFromContext,
+                hasEditedAiTastingNote: false,
+            });
+            setIsLoading(false);
+            return;
+        }
+
         await getNote();
-    }, [getLimits, getNote]);
+    }, [getLimits, getNote, patchReview]);
 
     useEffect(() => {
         const isActiveRef = { current: true };
@@ -174,58 +211,54 @@ export const useWineReviewResult = () => {
         };
     }, [load]);
 
-    const updateNote = useCallback(async (updatedNote: string) => {
+    const updateNote = useCallback((updatedNote: string) => {
         const trimmedNote = updatedNote.trim();
+        const initialNote = (wineModel.review?.initialAiTastingNote || '').trim();
+        const hasEdited = Boolean(trimmedNote) && trimmedNote !== initialNote;
 
-        if (!trimmedNote) {
-            return false;
-        }
-
-        if (!wineModel.wine?.id) {
-            toastService.showError(
-                localization.t('common.errorHappened'),
-                localization.t('common.somethingWentWrong'),
-            );
-            return false;
-        }
-
-        try {
-            setIsUpdatingNote(true);
-
-            const payload: UpdateNoteDto = {
-                wineId: wineModel.wine.id,
-                note: trimmedNote,
-            };
-
-            const response = await wineService.updateAINote(payload);
-
-            if (response.isError || !response.data) {
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    response.message || localization.t('common.somethingWentWrong'),
-                );
-                return false;
-            }
-
-            const nextNote = response.data.note || trimmedNote;
-            setNote(nextNote);
-            setLimits(prevState => (prevState ? { ...prevState, note: nextNote } : prevState));
-            return true;
-        } catch (error) {
-            console.error(JSON.stringify(error, null, 2));
-            toastService.showError(
-                localization.t('common.errorHappened'),
-                localization.t('common.somethingWentWrong'),
-            );
-            return false;
-        } finally {
-            setIsUpdatingNote(false);
-        }
-    }, []);
+        setNote(updatedNote);
+        patchReview({
+            aiTastingNote: updatedNote,
+            hasEditedAiTastingNote: hasEdited,
+        });
+    }, [patchReview]);
 
     const handleSavePress = useCallback(async () => {
         try {
             setIsSaving(true);
+
+            const editedAiNote = wineModel.review?.aiTastingNote?.trim() || '';
+            if (wineModel.review?.hasEditedAiTastingNote && editedAiNote) {
+                if (!wineModel.wine?.id) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        localization.t('common.somethingWentWrong'),
+                    );
+                    return;
+                }
+
+                const updateNoteResponse = await wineService.updateAINote({
+                    wineId: wineModel.wine.id,
+                    note: editedAiNote,
+                });
+
+                if (updateNoteResponse.isError || !updateNoteResponse.data) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        updateNoteResponse.message || localization.t('common.somethingWentWrong'),
+                    );
+                    return;
+                }
+
+                const nextNote = updateNoteResponse.data.note || editedAiNote;
+                setNote(nextNote);
+                setLimits(prevState => (prevState ? { ...prevState, note: nextNote } : prevState));
+                patchReview({
+                    aiTastingNote: nextNote,
+                    initialAiTastingNote: nextNote,
+                    hasEditedAiTastingNote: false,
+                });
+            }
 
             const available = isPremiumUser
                 ? wineModel.tasteCharacteristics
@@ -401,7 +434,7 @@ export const useWineReviewResult = () => {
         } finally {
             setIsSaving(false);
         }
-    }, [navigation, isPremiumUser]);
+    }, [navigation, isPremiumUser, patchReview]);
 
-    return { handleSavePress, note, isLoading, isUpdatingNote, isSaving, limits, isLoadingLimits, getNote, setLimits, updateNote };
+    return { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits, updateNote };
 };

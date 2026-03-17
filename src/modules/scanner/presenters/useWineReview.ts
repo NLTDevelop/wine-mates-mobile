@@ -28,6 +28,7 @@ export const useWineReview = () => {
 
     const handleNextPress = useCallback(() => {
         wineModel.review = {
+            ...(wineModel.review || { review: '' }),
             starRate,
             rate: sliderValue,
             review,

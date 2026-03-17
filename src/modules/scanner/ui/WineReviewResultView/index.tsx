@@ -20,7 +20,7 @@ export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { handleSavePress, note, isLoading, isUpdatingNote, isSaving, limits, isLoadingLimits, getNote, setLimits, updateNote } = useWineReviewResult();
+    const { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits, updateNote } = useWineReviewResult();
 
     return (
         <ScreenContainer
@@ -65,11 +65,10 @@ export const WineReviewResultView = observer(() => {
                                 </Typography>
                             )}
                         </View>
-                        <FoodPairing setLimits={setLimits} />
+                        <FoodPairing setLimits={setLimits} generatedSnacks={wineModel.review?.aiSnacks || undefined} />
                         <TastingNote
                             note={note}
                             isLoading={isLoading}
-                            isUpdating={isUpdatingNote}
                             limits={limits}
                             onGeneratePress={getNote}
                             onUpdateNote={updateNote}
