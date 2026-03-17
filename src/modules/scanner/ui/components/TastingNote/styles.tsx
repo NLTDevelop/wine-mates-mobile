@@ -24,6 +24,7 @@ export const getStyles = (colors: IColors) => {
             backgroundColor: colors.background,
             borderWidth: 1,
             borderColor: colors.border,
+            justifyContent: 'space-between',
         },
         text: {
             color: colors.primary,

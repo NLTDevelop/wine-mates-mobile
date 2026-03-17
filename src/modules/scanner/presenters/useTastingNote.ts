@@ -5,11 +5,10 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { isIOS } from '@/utils';
 import { TextInput } from 'react-native';
 
-export const useTastingNote = (note: string | null, onUpdateNote: (updatedNote: string) => Promise<boolean>) => {
+export const useTastingNote = (note: string | null, onChangeNote?: (updatedNote: string) => void) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [draftNote, setDraftNote] = useState('');
     const inputRef = useRef<TextInput>(null);
-    const editedNote = isEditing ? draftNote : note || '';
+    const editedNote = note || '';
 
     const onCopyPress = useCallback(() => {
         if (!editedNote) {
@@ -24,28 +23,24 @@ export const useTastingNote = (note: string | null, onUpdateNote: (updatedNote: 
     }, [editedNote]);
 
     const onEditPress = useCallback(() => {
-        setDraftNote(note || '');
-        setIsEditing(true);
-        setTimeout(() => {
-            inputRef.current?.focus();
-        }, 100);
-    }, [note]);
+        setIsEditing(prevState => {
+            const nextState = !prevState;
 
-    const onConfirmEdit = useCallback(async () => {
-        const nextNote = draftNote.trim();
-        const currentNote = (note || '').trim();
+            if (nextState) {
+                setTimeout(() => {
+                    inputRef.current?.focus();
+                }, 100);
+            } else {
+                inputRef.current?.blur();
+            }
 
-        if (!nextNote || nextNote === currentNote) {
-            setIsEditing(false);
-            return;
-        }
+            return nextState;
+        });
+    }, []);
 
-        const isUpdated = await onUpdateNote(nextNote);
+    const setEditedNote = useCallback((updatedNote: string) => {
+        onChangeNote?.(updatedNote);
+    }, [onChangeNote]);
 
-        if (isUpdated) {
-            setIsEditing(false);
-        }
-    }, [draftNote, note, onUpdateNote]);
-
-    return { onCopyPress, isEditing, editedNote, setEditedNote: setDraftNote, onEditPress, onConfirmEdit, inputRef };
+    return { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, inputRef };
 };

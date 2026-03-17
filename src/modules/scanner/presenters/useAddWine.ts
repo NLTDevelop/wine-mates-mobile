@@ -62,7 +62,7 @@ const fromDropdown = (item?: IDropdownItem | null): IWineBaseValue => {
 
     return {
         id: parsedId,
-        value: item.value || '',
+        value: String(item.value) || '',
     };
 };
 
