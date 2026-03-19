@@ -26,6 +26,9 @@ export const getStyles = (colors: IColors) => {
             borderColor: colors.border,
             justifyContent: 'space-between',
         },
+        noteContainerError: {
+            borderColor: colors.error,
+        },
         text: {
             color: colors.primary,
         },
@@ -58,6 +61,9 @@ export const getStyles = (colors: IColors) => {
             flexDirection: 'row',
             alignSelf: 'flex-end',
             gap: scaleHorizontal(8),
+        },
+        warning: {
+            marginTop: scaleVertical(8),
         },
     });
     return styles;

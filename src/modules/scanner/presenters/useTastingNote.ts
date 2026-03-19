@@ -42,5 +42,10 @@ export const useTastingNote = (note: string | null, onChangeNote?: (updatedNote:
         onChangeNote?.(updatedNote);
     }, [onChangeNote]);
 
-    return { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, inputRef };
+    const stopEditing = useCallback(() => {
+        setIsEditing(false);
+        inputRef.current?.blur();
+    }, []);
+
+    return { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, stopEditing, inputRef };
 };
