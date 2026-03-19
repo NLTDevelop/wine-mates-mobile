@@ -32,6 +32,7 @@ export const WineReviewResultView = observer(() => {
         updateNote,
         noteValidationError,
         onNoteEditingChange,
+        onInvalidNoteEditingComplete,
     } = useWineReviewResult();
 
     return (
@@ -86,6 +87,7 @@ export const WineReviewResultView = observer(() => {
                             onUpdateNote={updateNote}
                             noteError={noteValidationError || undefined}
                             onEditingChange={onNoteEditingChange}
+                            onInvalidEditComplete={onInvalidNoteEditingComplete}
                         />
                         <SelectedParameters containerStyle={styles.selectedParameters} />
                     </View>

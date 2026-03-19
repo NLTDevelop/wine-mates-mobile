@@ -449,6 +449,11 @@ export const useWineReviewResult = () => {
         }
     }, []);
 
+    const onInvalidNoteEditingComplete = useCallback(() => {
+        setIsNoteEditing(true);
+        setNoteValidationError(localization.t('wine.emptyTastingNoteError'));
+    }, []);
+
     return {
         onSavePress,
         note,
@@ -461,5 +466,6 @@ export const useWineReviewResult = () => {
         updateNote,
         noteValidationError,
         onNoteEditingChange,
+        onInvalidNoteEditingComplete,
     };
 };

@@ -19,6 +19,7 @@ interface IProps {
     onGeneratePress: () => void;
     onUpdateNote: (updatedNote: string) => void;
     onEditingChange?: (isEditing: boolean) => void;
+    onInvalidEditComplete?: () => void;
     noteError?: string;
 }
 
@@ -29,6 +30,7 @@ export const TastingNote = ({
     onGeneratePress,
     onUpdateNote,
     onEditingChange,
+    onInvalidEditComplete,
     noteError,
 }: IProps) => {
     const { colors, t } = useUiContext();
@@ -36,23 +38,12 @@ export const TastingNote = ({
 
     const hasNote = note !== null || limits?.note !== null;
     const displayNote = note ?? limits?.note ?? '';
-    const { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, stopEditing, inputRef }
-        = useTastingNote(displayNote, onUpdateNote);
-
-    const handleGeneratePress = () => {
-        if (isEditing) {
-            stopEditing();
-            onEditingChange?.(false);
-        }
-
-        onGeneratePress();
-    };
-
-    const handleEditPress = () => {
-        const nextEditingState = !isEditing;
-        onEditPress();
-        onEditingChange?.(nextEditingState);
-    };
+    const { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, onGeneratePress: onGenerateNotePress, inputRef }
+        = useTastingNote(displayNote, onUpdateNote, {
+            onGeneratePress,
+            onEditingChange,
+            onInvalidEditComplete,
+        });
 
     return (
         <View style={styles.container}>
@@ -62,7 +53,7 @@ export const TastingNote = ({
                 </View>
                 <Button
                     text={t('common.generate')}
-                    onPress={handleGeneratePress}
+                    onPress={onGenerateNotePress}
                     containerStyle={styles.button}
                     disabled={isLoading || !limits || limits?.aiUsage.left === 0}
                 />
@@ -86,7 +77,7 @@ export const TastingNote = ({
                             <TouchableOpacity onPress={onCopyPress} hitSlop={15}>
                                 <CopyIcon />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={handleEditPress} hitSlop={15}>
+                            <TouchableOpacity onPress={onEditPress} hitSlop={15}>
                                 <PencilIcon width={24} height={24} color={isEditing ? colors.text_light : undefined} />
                             </TouchableOpacity>
                         </View>
