@@ -20,7 +20,20 @@ export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits, updateNote } = useWineReviewResult();
+    const {
+        onSavePress,
+        note,
+        isLoading,
+        isSaving,
+        limits,
+        isLoadingLimits,
+        getNote,
+        setLimits,
+        updateNote,
+        noteValidationError,
+        onNoteEditingChange,
+        onInvalidNoteEditingComplete,
+    } = useWineReviewResult();
 
     return (
         <ScreenContainer
@@ -72,12 +85,15 @@ export const WineReviewResultView = observer(() => {
                             limits={limits}
                             onGeneratePress={getNote}
                             onUpdateNote={updateNote}
+                            noteError={noteValidationError || undefined}
+                            onEditingChange={onNoteEditingChange}
+                            onInvalidEditComplete={onInvalidNoteEditingComplete}
                         />
                         <SelectedParameters containerStyle={styles.selectedParameters} />
                     </View>
                     <Button
                         text={t('common.save')}
-                        onPress={handleSavePress}
+                        onPress={onSavePress}
                         containerStyle={styles.button}
                         inProgress={isSaving}
                     />

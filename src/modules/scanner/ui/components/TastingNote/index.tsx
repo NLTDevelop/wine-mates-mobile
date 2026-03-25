@@ -10,6 +10,7 @@ import { NoteLoader } from '../NoteLoader';
 import { Button } from '@/UIKit/Button';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 import { CustomInput } from '@/UIKit/CustomInput';
+import { Warning } from '@/modules/authentication/ui/components/Warning';
 
 interface IProps {
     note: string | null;
@@ -17,16 +18,32 @@ interface IProps {
     limits: IRateContext | null;
     onGeneratePress: () => void;
     onUpdateNote: (updatedNote: string) => void;
+    onEditingChange?: (isEditing: boolean) => void;
+    onInvalidEditComplete?: () => void;
+    noteError?: string;
 }
 
-export const TastingNote = ({ note, isLoading, limits, onGeneratePress, onUpdateNote }: IProps) => {
+export const TastingNote = ({
+    note,
+    isLoading,
+    limits,
+    onGeneratePress,
+    onUpdateNote,
+    onEditingChange,
+    onInvalidEditComplete,
+    noteError,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const hasNote = note !== null || limits?.note !== null;
     const displayNote = note ?? limits?.note ?? '';
-    const { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, inputRef }
-        = useTastingNote(displayNote, onUpdateNote);
+    const { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, onGeneratePress: onGenerateNotePress, inputRef }
+        = useTastingNote(displayNote, onUpdateNote, {
+            onGeneratePress,
+            onEditingChange,
+            onInvalidEditComplete,
+        });
 
     return (
         <View style={styles.container}>
@@ -36,7 +53,7 @@ export const TastingNote = ({ note, isLoading, limits, onGeneratePress, onUpdate
                 </View>
                 <Button
                     text={t('common.generate')}
-                    onPress={onGeneratePress}
+                    onPress={onGenerateNotePress}
                     containerStyle={styles.button}
                     disabled={isLoading || !limits || limits?.aiUsage.left === 0}
                 />
@@ -44,25 +61,32 @@ export const TastingNote = ({ note, isLoading, limits, onGeneratePress, onUpdate
             {isLoading ? (
                 <NoteLoader />
             ) : hasNote ? (
-                <View style={styles.noteContainer}>
-                    <CustomInput
-                        ref={inputRef}
-                        style={styles.noteInput}
-                        inputContainerStyle={styles.noteInputContainer}
-                        value={editedNote}
-                        onChangeText={setEditedNote}
-                        editable={isEditing}
-                        multiline
-                        scrollEnabled={false}
-                    />
-                    <View style={styles.buttonGroup}>
-                        <TouchableOpacity onPress={onCopyPress} hitSlop={15}>
-                            <CopyIcon />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={onEditPress} hitSlop={15}>
-                            <PencilIcon width={24} height={24} color={isEditing ? colors.text_light : undefined} />
-                        </TouchableOpacity>
+                <View>
+                    <View style={[styles.noteContainer, noteError && styles.noteContainerError]}>
+                        <CustomInput
+                            ref={inputRef}
+                            style={styles.noteInput}
+                            inputContainerStyle={styles.noteInputContainer}
+                            value={editedNote}
+                            onChangeText={setEditedNote}
+                            editable={isEditing}
+                            multiline
+                            scrollEnabled={false}
+                        />
+                        <View style={styles.buttonGroup}>
+                            <TouchableOpacity onPress={onCopyPress} hitSlop={15}>
+                                <CopyIcon />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={onEditPress} hitSlop={15}>
+                                <PencilIcon width={24} height={24} color={isEditing ? colors.text_light : undefined} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
+                    {!!noteError && (
+                        <View style={styles.warning}>
+                            <Warning warningText={noteError} />
+                        </View>
+                    )}
                 </View>
             ) : null}
         </View>

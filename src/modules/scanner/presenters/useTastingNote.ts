@@ -5,7 +5,18 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { isIOS } from '@/utils';
 import { TextInput } from 'react-native';
 
-export const useTastingNote = (note: string | null, onChangeNote?: (updatedNote: string) => void) => {
+interface IUseTastingNoteParams {
+    onGeneratePress?: () => void;
+    onEditingChange?: (isEditing: boolean) => void;
+    onInvalidEditComplete?: () => void;
+}
+
+export const useTastingNote = (
+    note: string | null,
+    onChangeNote?: (updatedNote: string) => void,
+    params?: IUseTastingNoteParams,
+) => {
+    const { onGeneratePress: onGenerate, onEditingChange, onInvalidEditComplete } = params || {};
     const [isEditing, setIsEditing] = useState(false);
     const inputRef = useRef<TextInput>(null);
     const editedNote = note || '';
@@ -23,6 +34,11 @@ export const useTastingNote = (note: string | null, onChangeNote?: (updatedNote:
     }, [editedNote]);
 
     const onEditPress = useCallback(() => {
+        if (isEditing && !editedNote.trim()) {
+            onInvalidEditComplete?.();
+            return;
+        }
+
         setIsEditing(prevState => {
             const nextState = !prevState;
 
@@ -34,13 +50,24 @@ export const useTastingNote = (note: string | null, onChangeNote?: (updatedNote:
                 inputRef.current?.blur();
             }
 
+            onEditingChange?.(nextState);
             return nextState;
         });
-    }, []);
+    }, [editedNote, isEditing, onEditingChange, onInvalidEditComplete]);
 
     const setEditedNote = useCallback((updatedNote: string) => {
         onChangeNote?.(updatedNote);
     }, [onChangeNote]);
 
-    return { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, inputRef };
+    const onGeneratePress = useCallback(() => {
+        if (isEditing) {
+            setIsEditing(false);
+            inputRef.current?.blur();
+            onEditingChange?.(false);
+        }
+
+        onGenerate?.();
+    }, [isEditing, onEditingChange, onGenerate]);
+
+    return { onCopyPress, isEditing, editedNote, setEditedNote, onEditPress, onGeneratePress, inputRef };
 };

@@ -197,6 +197,7 @@
         "attemptsLeft": "attempts left",
         "exhaustedAllAttempts": "You have exhausted all attempts.",
         "tastingNotes": "Tasting notes",
+        "emptyTastingNoteError": "Tasting notes cannot be empty.",
         "generationInProgress": "Generation in progress, please wait",
         "getAttempts": "Get Attempts",
         "ratingScale": {

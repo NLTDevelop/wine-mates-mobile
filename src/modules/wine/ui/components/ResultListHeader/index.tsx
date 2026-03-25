@@ -166,9 +166,9 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 </>
             )}
 
-            {data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
+            {hasCurrentVintageData && data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
 
-            {data.aiSnacks?.length ? <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton/> : null}
+            {hasCurrentVintageData && data.aiSnacks?.length ? <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton/> : null}
 
             {wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0 && (
                 <Typography text={t('wine.reviews')} variant="h3" style={styles.title} />

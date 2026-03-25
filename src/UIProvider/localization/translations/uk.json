@@ -200,6 +200,7 @@
         "attemptsLeft": "залишилось спроб",
         "exhaustedAllAttempts": "Ви вичерпали всі спроби.",
         "tastingNotes": "Дегустаційні нотатки",
+        "emptyTastingNoteError": "Поле дегустаційних нотаток не може бути порожнім.",
         "generationInProgress": "Триває генерація, будь ласка, зачекайте",
         "getAttempts": "Отримати спроби",
         "ratingScale": {

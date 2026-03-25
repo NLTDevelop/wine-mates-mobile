@@ -83,6 +83,8 @@ export const useWineDetails = () => {
                 countUserRating: 0,
                 countExpertRating: 0,
                 totalReviews: 0,
+                aiTastingNote: undefined,
+                aiSnacks: [],
                 statistics: {
                     topColors: [],
                     topAromas: [],

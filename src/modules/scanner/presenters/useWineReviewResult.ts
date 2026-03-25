@@ -17,6 +17,8 @@ export const useWineReviewResult = () => {
     const [isLoadingLimits, setIsLoadingLimits] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [isNoteEditing, setIsNoteEditing] = useState(false);
+    const [noteValidationError, setNoteValidationError] = useState<string | null>(null);
     const [note, setNote] = useState<string | null>(wineModel.review?.aiTastingNote || null);
     const [limits, setLimits] = useState<IRateContext | null>(null);
     const isPremiumUser = userModel.user?.hasPremium || false;
@@ -58,6 +60,8 @@ export const useWineReviewResult = () => {
     const getNote = useCallback(async () => {
         try {
             setIsLoading(true);
+            setIsNoteEditing(false);
+            setNoteValidationError(null);
 
             if (!wineModel.look) {
                 toastService.showError(
@@ -171,7 +175,7 @@ export const useWineReviewResult = () => {
     }, [patchReview]);
 
     const load = useCallback(async (isActiveRef: { current: boolean }) => {
-        await getLimits();
+        const limitsData = await getLimits();
         if (!isActiveRef.current) {
             return;
         }
@@ -179,6 +183,11 @@ export const useWineReviewResult = () => {
         const cachedNote = wineModel.review?.aiTastingNote || null;
         if (cachedNote) {
             setNote(cachedNote);
+            setIsLoading(false);
+            return;
+        }
+
+        if (limitsData?.aiUsage.left === 0) {
             setIsLoading(false);
             return;
         }
@@ -201,6 +210,10 @@ export const useWineReviewResult = () => {
         const initialNote = (wineModel.review?.initialAiTastingNote || '').trim();
         const hasEdited = Boolean(trimmedNote) && trimmedNote !== initialNote;
 
+        if (trimmedNote) {
+            setNoteValidationError(null);
+        }
+
         setNote(updatedNote);
         patchReview({
             aiTastingNote: updatedNote,
@@ -208,11 +221,18 @@ export const useWineReviewResult = () => {
         });
     }, [patchReview]);
 
-    const handleSavePress = useCallback(async () => {
+    const onSavePress = useCallback(async () => {
+        const editedAiNote = wineModel.review?.aiTastingNote?.trim() || '';
+        if (isNoteEditing && !editedAiNote) {
+            setNoteValidationError(localization.t('wine.emptyTastingNoteError'));
+            return;
+        }
+
+        setNoteValidationError(null);
+
         try {
             setIsSaving(true);
 
-            const editedAiNote = wineModel.review?.aiTastingNote?.trim() || '';
             if (wineModel.review?.hasEditedAiTastingNote && editedAiNote) {
                 if (!wineModel.wine?.id) {
                     toastService.showError(
@@ -419,7 +439,33 @@ export const useWineReviewResult = () => {
         } finally {
             setIsSaving(false);
         }
-    }, [navigation, isPremiumUser, patchReview]);
+    }, [navigation, isPremiumUser, patchReview, isNoteEditing]);
 
-    return { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits, updateNote };
+    const onNoteEditingChange = useCallback((isEditing: boolean) => {
+        setIsNoteEditing(isEditing);
+
+        if (!isEditing) {
+            setNoteValidationError(null);
+        }
+    }, []);
+
+    const onInvalidNoteEditingComplete = useCallback(() => {
+        setIsNoteEditing(true);
+        setNoteValidationError(localization.t('wine.emptyTastingNoteError'));
+    }, []);
+
+    return {
+        onSavePress,
+        note,
+        isLoading,
+        isSaving,
+        limits,
+        isLoadingLimits,
+        getNote,
+        setLimits,
+        updateNote,
+        noteValidationError,
+        onNoteEditingChange,
+        onInvalidNoteEditingComplete,
+    };
 };
