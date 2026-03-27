@@ -11,10 +11,17 @@ interface IProps {
     vintages: IVintagesItem[];
     currentVintage: IVintage | string | null;
     selectedVintage: number | null;
+    isAllVintagesSelected: boolean;
     onVintageChange: (item: IDropdownItem) => void;
 }
 
-export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, onVintageChange }: IProps) => {
+export const useVintageDropdown = ({
+    vintages,
+    currentVintage,
+    selectedVintage,
+    isAllVintagesSelected,
+    onVintageChange,
+}: IProps) => {
     const dropdownRef = useRef<any>(null);
     const isVintageObject = (item: IVintagesItem): item is IVintage => typeof item === 'object' && item !== null;
 
@@ -22,7 +29,6 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
         const currentYear = new Date().getFullYear();
         const startYear = 2010;
         const yearsSet = new Set<number>();
-        let hasAllOption = false;
         let shouldShowNoneVintage = false;
         let noneVintageWineId: number | undefined;
 
@@ -32,7 +38,6 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
 
         const ensureAllVintagesItem = () => {
             if (years.some(item => item.value === null)) return;
-            hasAllOption = true;
             years.unshift({
                 label: allVintagesLabel,
                 value: null,
@@ -134,21 +139,18 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
         }
 
         ensureAllVintagesItem();
-
-        if (shouldShowNoneVintage || (selectedVintage === null && !hasAllOption)) {
-            ensureNoneVintageItem(noneVintageWineId);
-        }
+        ensureNoneVintageItem(shouldShowNoneVintage ? noneVintageWineId : undefined);
 
         years.sort((a, b) => {
             if (a.value === null) return -1;
             if (b.value === null) return 1;
-            if (a.value === NONE_VINTAGE_DROPDOWN_VALUE) return -1;
-            if (b.value === NONE_VINTAGE_DROPDOWN_VALUE) return 1;
+            if (a.value === NONE_VINTAGE_DROPDOWN_VALUE) return 1;
+            if (b.value === NONE_VINTAGE_DROPDOWN_VALUE) return -1;
             return (b.value as number) - (a.value as number);
         });
 
         return years;
-    }, [vintages, currentVintage, selectedVintage]);
+    }, [vintages, currentVintage]);
 
     const onCustomVintageAdd = useCallback(
         (year: number) => {
@@ -183,13 +185,17 @@ export const useVintageDropdown = ({ vintages, currentVintage, selectedVintage, 
     );
 
     const selectedValue = useMemo(() => {
+        if (isAllVintagesSelected) {
+            return null;
+        }
+
         if (selectedVintage === null) {
             const hasNoneVintageOption = vintageData.some(item => item.value === NONE_VINTAGE_DROPDOWN_VALUE);
             return hasNoneVintageOption ? NONE_VINTAGE_DROPDOWN_VALUE : null;
         }
 
         return selectedVintage;
-    }, [selectedVintage, vintageData]);
+    }, [isAllVintagesSelected, selectedVintage, vintageData]);
 
     return { vintageData, existingYears, handleAddVintage, dropdownRef, onCloseDropdown, selectedValue };
 };
