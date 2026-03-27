@@ -36,15 +36,18 @@ export const WineRecommendationCarousel = observer(({ typeId, colorId }: IProps)
                 <CarouselWineCard item={wines[currentIndex]} onPress={onWinePress} />
             </Animated.View>
 
-            <View style={styles.arrowContainer}>
-                <TouchableOpacity style={styles.arrowButton} onPress={onPrevious}>
-                    <ArrowRightIcon rotate={180} />
-                </TouchableOpacity>
+            {
+               wines.length > 1 && <>
+                    <TouchableOpacity style={[styles.arrowButton, styles.leftArrowContainer]} onPress={onPrevious} activeOpacity={0.6}>
+                        <ArrowRightIcon rotate={180} />
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.arrowButton} onPress={onNext}>
-                    <ArrowRightIcon />
-                </TouchableOpacity>
-            </View>
+                    <TouchableOpacity style={[styles.arrowButton, styles.rightArrowContainer]} onPress={onNext} activeOpacity={0.6}>
+                        <ArrowRightIcon />
+                    </TouchableOpacity>
+               </>
+            }
+
         </View>
     );
 });

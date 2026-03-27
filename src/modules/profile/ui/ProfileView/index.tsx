@@ -8,8 +8,9 @@ import { useProfile } from '../../presenters/useProfile';
 import { Avatar } from '@/UIKit/Avatar';
 import { userModel } from '@/entities/users/UserModel';
 import { ProfileListButton } from '../components/ProfileListButton';
+import { observer } from 'mobx-react-lite';
 
-export const ProfileView = () => {
+export const ProfileView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { BUTTONS } = useProfile();
@@ -41,4 +42,4 @@ export const ProfileView = () => {
             </View>
         </ScreenContainer>
     );
-};
+});
