@@ -38,6 +38,7 @@ export const ResultHeaderFooter = ({
                 vintages={vintages}
                 currentVintage={item.currentVintage}
                 selectedVintage={item.vintage}
+                isAllVintagesSelected={isAllVintagesSelected}
                 onVintageChange={onVintageChange}
             />
             <View style={styles.buttonTasteContainer}>
