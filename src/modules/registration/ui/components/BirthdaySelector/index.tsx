@@ -11,9 +11,11 @@ interface IProps {
     handlePress: () => void;
     isOpened: boolean;
     isError: boolean;
+    displayText?: string;
+    disabled?: boolean;
 }
 
-export const BirthdaySelector = ({ date, handlePress, isOpened, isError }: IProps) => {
+export const BirthdaySelector = ({ date, handlePress, isOpened, isError, displayText, disabled = false }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const formattedDate = useMemo(() => {
@@ -28,8 +30,14 @@ export const BirthdaySelector = ({ date, handlePress, isOpened, isError }: IProp
     }, [date, t]);
 
     return (
-        <TouchableOpacity style={isError ? styles.containerError : styles.container} onPress={handlePress} onPressIn={Keyboard.dismiss}>
-            <Typography variant="h6" text={formattedDate || t('registration.birthday')} />
+        <TouchableOpacity
+            style={isError ? styles.containerError : styles.container}
+            onPress={handlePress}
+            onPressIn={Keyboard.dismiss}
+            disabled={disabled}
+            activeOpacity={disabled ? 1 : 0.2}
+        >
+            <Typography variant="h6" text={displayText || formattedDate || t('registration.birthday')} />
             <ArrowDownIcon rotate={isOpened ? 180 : 0} />
         </TouchableOpacity>
     );
