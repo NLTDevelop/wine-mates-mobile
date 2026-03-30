@@ -19,6 +19,7 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'space-between',
         },
         arrowButton: {
+            position: 'absolute',
             width: scaleHorizontal(40),
             height: scaleHorizontal(40),
             borderRadius: scaleHorizontal(20),
@@ -27,6 +28,12 @@ export const getStyles = (colors: IColors) => {
             borderWidth: 1,
             borderColor: colors.border,
             backgroundColor: colors.background,
+        },
+        leftArrowContainer: {
+            left: -scaleHorizontal(10),
+        },
+        rightArrowContainer: {
+            right: -scaleHorizontal(10),
         },
         cardContainer: {
             flex: 1,

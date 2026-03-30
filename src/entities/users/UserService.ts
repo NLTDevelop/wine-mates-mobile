@@ -10,9 +10,38 @@ import { ProvidersSignIn } from './dto/ProvidersSignIn.dto';
 import { localization } from '@/UIProvider/localization/Localization';
 import { EmailValidation } from './dto/EmailValidation.dto';
 import { IUserData } from './types/IUserData';
+import { IUser } from './types/IUser';
 
 class UserService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
+
+    private extractUser = (data: any): IUser | null => {
+        if (!data) return null;
+        if (data.user) return data.user as IUser;
+        if (typeof data.id === 'number' && typeof data.email === 'string') return data as IUser;
+        return null;
+    };
+
+    me = async (): Promise<IResponse<IUser>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.me}`,
+            });
+
+            if (!response.isError) {
+                const user = this.extractUser(response.data);
+                if (user) {
+                    userModel.user = user;
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> me: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
 
     signIn = async (body: UserSignInDto): Promise<IResponse<IUserData>> => {
         try {
@@ -167,6 +196,28 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> delete: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    update = async (formData: FormData): Promise<IResponse<IUserData>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'PATCH',
+                url: `${this._links.me}`,
+                data: formData,
+            });
+
+            if (!response.isError) {
+                const user = this.extractUser(response.data);
+                if (user) {
+                    userModel.user = user;
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> update: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

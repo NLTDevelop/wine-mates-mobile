@@ -20,6 +20,7 @@ import { WineReviewResultView } from '@/modules/scanner/ui/WineReviewResultView'
 import { SavedWinesView } from '@/modules/wine/ui/SavedWinesView';
 import { WineDetailsView } from '@/modules/wine/ui/WineDetailsView';
 import { DeleteAccountView } from '@/modules/settings/ui/DeleteAccountView';
+import { ProfileSettingsView } from '@/modules/settings/ui/ProfileSettingsView';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +51,7 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="WineReviewResultView" component={WineReviewResultView} />
             <Stack.Screen name="SavedWinesView" component={SavedWinesView} />
             <Stack.Screen name="DeleteAccountView" component={DeleteAccountView} />
+            <Stack.Screen name="ProfileSettingsView" component={ProfileSettingsView} />
         </Stack.Navigator>
     );
 });
