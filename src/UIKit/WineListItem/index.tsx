@@ -1,10 +1,9 @@
 import { useMemo, ReactNode } from 'react';
-import { Pressable, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { EmptyWine } from '@/UIKit/EmptyWine';
-import { FasterImageView } from '@rraut/react-native-faster-image';
 import { SmallStarRating } from '@/UIKit/SmallStarRating';
 import { RateMedal } from '@/modules/scanner/ui/components/RateMedal/ui';
 import { ShowLock } from '@/UIKit/ShowLock';
@@ -65,11 +64,10 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                         </View>
                     )}
 
-                    {item.image?.originalUrl ? (
-                        <FasterImageView
-                            source={{ uri: item.image.originalUrl, resizeMode: 'cover' }}
+                    {item.image?.originalUrl || item.defaultImage?.originalUrl ? (
+                        <Image
+                            source={{ uri: item.image?.originalUrl || item.defaultImage?.originalUrl }}
                             style={styles.image}
-                            radius={12}
                         />
                     ) : (
                         <View style={styles.imagePlaceholderContainer}>

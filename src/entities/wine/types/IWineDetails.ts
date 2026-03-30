@@ -56,7 +56,8 @@ export interface IWineDetails {
     currentVintage: IVintage | string | null;
     grapeVariety: string;
     id: number;
-    image: IMedia;
+    image: IMedia | null;
+    defaultImage: IMedia | null;
     isTasted: boolean;
     name: string;
     producer: string;

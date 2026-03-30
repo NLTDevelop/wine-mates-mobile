@@ -51,6 +51,8 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             position: 'absolute',
             width: '100%',
             height: '100%',
+            resizeMode: 'cover',
+            borderRadius: 12,
         },
         imagePlaceholder: {
             borderRadius: 12,
@@ -66,7 +68,7 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             alignItems: 'center',
             justifyContent: 'center',
         },
-       
+
         medalContainer: {
             marginBottom: scaleVertical(2),
         },

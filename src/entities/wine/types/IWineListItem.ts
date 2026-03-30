@@ -10,6 +10,7 @@ export interface IWineListItem {
     userId?: number;
     createdAt: string;
     image: IMedia | null;
+    defaultImage: IMedia | null;
     averageUserRating: number;
     countUserRating: number | null;
     averageExpertRating: number | null;
