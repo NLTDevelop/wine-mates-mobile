@@ -19,17 +19,24 @@ interface IProps {
     vintages: IVintagesItem[];
     currentVintage: IVintage | string | null;
     selectedVintage: number | string | null;
+    isAllVintagesSelected: boolean;
     onVintageChange: (item: IDropdownItem) => void;
 }
 
-export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, onVintageChange }: IProps) => {
+export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isAllVintagesSelected, onVintageChange }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const hasPremium = userModel.user?.hasPremium ?? false;
 
     const { vintageData, existingYears, handleAddVintage, dropdownRef, onCloseDropdown, selectedValue } =
-        useVintageDropdown({ vintages, currentVintage, selectedVintage: typeof selectedVintage === 'number' ? selectedVintage : null, onVintageChange });
+        useVintageDropdown({
+            vintages,
+            currentVintage,
+            selectedVintage: typeof selectedVintage === 'number' ? selectedVintage : null,
+            isAllVintagesSelected,
+            onVintageChange,
+        });
 
     const renderRatingInfo = useCallback((dropdownItem: IVintageDropdownItem) => {
         if (dropdownItem.hideRatingInfo || dropdownItem.value === null || dropdownItem.value === NONE_VINTAGE_DROPDOWN_VALUE) {

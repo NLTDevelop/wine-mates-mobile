@@ -22,7 +22,7 @@ export const useResultHeader = (item: IWineDetails, fromScanner?: boolean) => {
                 if (item.name) {
                     formData.append('name', item.name);
                 }
-                if (item.vintage) {
+                if (item.vintage !== null) {
                     formData.append('vintage', item.vintage);
                 }
                 formData.append('countryId', item.country?.id ?? 0);
