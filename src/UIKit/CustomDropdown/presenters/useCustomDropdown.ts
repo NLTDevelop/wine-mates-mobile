@@ -9,10 +9,11 @@ interface IProps {
     selectedValue?: string | number | null;
     emptyStateLabel?: string;
     withSearch?: boolean;
+    disableLocalFilter?: boolean;
 }
 
 const EMPTY_STATE_VALUE = '__EMPTY_STATE__';
-export const useCustomDropdown = ({ onPress, data, onSelect, selectedValue = null, emptyStateLabel, withSearch = false }: IProps) => {
+export const useCustomDropdown = ({ onPress, data, onSelect, selectedValue = null, emptyStateLabel, withSearch = false, disableLocalFilter = false }: IProps) => {
     const [value, setValue] = useState<string | number | null>(selectedValue);
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
@@ -23,30 +24,33 @@ export const useCustomDropdown = ({ onPress, data, onSelect, selectedValue = nul
     }, [selectedValue]);
 
     const filteredData = useMemo(() => {
-        const query = search.trim().toLowerCase();
-    
-        const baseData = !query
-            ? data
-            : data.filter(item => {
-                  return (
-                      item.label.toLowerCase().includes(query) ||
-                      String(item.value).toLowerCase().includes(query)
-                  );
-              });
+        let baseData = data;
+
+        if (!disableLocalFilter) {
+            const query = search.trim().toLowerCase();
+            baseData = !query
+                ? data
+                : data.filter(item => {
+                      return (
+                          item.label.toLowerCase().includes(query) ||
+                          String(item.value).toLowerCase().includes(query)
+                      );
+                  });
+        }
     
         if (emptyStateLabel) {
             return [{ label: emptyStateLabel, value: EMPTY_STATE_VALUE }, ...baseData];
         }
     
         return baseData;
-    }, [search, data, emptyStateLabel]);
+    }, [search, data, emptyStateLabel, disableLocalFilter]);
 
     const selectedItem = useMemo(
         () => data.find(item => item.value === value) || null,
         [data, value],
     );
 
-    const shouldShowSearch = useMemo(() => withSearch && data.length > 10, [withSearch, data.length]);
+    const shouldShowSearch = useMemo(() => withSearch, [withSearch]);
 
     const handleSelect = useCallback((item: IDropdownItem) => {
         if (item.value === EMPTY_STATE_VALUE) {

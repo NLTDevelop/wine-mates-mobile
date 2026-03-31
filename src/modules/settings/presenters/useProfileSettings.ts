@@ -11,6 +11,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useRef } from 'react';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useFocusEffect } from '@react-navigation/native';
+import { useLocation } from '@/hooks/useLocation';
 
 interface IProfileForm {
     fullName: string;
@@ -28,6 +29,8 @@ interface IProfileForm {
 }
 
 export const useProfileSettings = () => {
+    const { citySuggestions, searchCities } = useLocation();
+
     const normalizeE164Phone = useCallback((raw: string) => {
         const trimmed = raw.trim().replace(/\s+/g, '');
         if (!trimmed) return '';
@@ -103,11 +106,32 @@ export const useProfileSettings = () => {
     const selectExpertiseModalRef = useRef<BottomSheetModal | null>(null);
     const isCountryCodeInitializedRef = useRef(!!getCallingCodeFromUser());
 
+    const [isBirthdayModalVisible, setIsBirthdayModalVisible] = useState(false);
+    const [pickerDate, setPickerDate] = useState<Date>(() => {
+        if (userModel.user?.birthday) {
+            const parsed = new Date(userModel.user.birthday);
+            if (!Number.isNaN(parsed.getTime())) {
+                return parsed;
+            }
+        }
+        return new Date();
+    });
+    const [draftBirthday, setDraftBirthday] = useState<string | null>(null);
+
     const countryOptions = useMemo<IDropdownItem[]>(() => {
         return countries
             .map(item => ({ label: item.name.common, value: item.cca2 }))
             .sort((a, b) => a.label.localeCompare(b.label));
     }, []);
+
+    const cityOptions = useMemo<IDropdownItem[]>(() => {
+        const options = citySuggestions.map(city => ({
+            label: city.description,
+            value: city.description,
+        }));
+        console.log('[useProfileSettings] cityOptions updated:', options.length);
+        return options;
+    }, [citySuggestions]);
 
     const genderOptions = useMemo<IDropdownItem[]>(() => ([
         { label: localization.t('registration.genderMale'), value: 'male' },
@@ -141,6 +165,38 @@ export const useProfileSettings = () => {
             isCountryCodeInitializedRef.current = !!callingCode;
         }
     }, [getInitialForm, getCallingCodeFromUser, isEditing]);
+
+    const onOpenBirthdayModal = useCallback(() => {
+        if (form.birthday) {
+            const parsed = new Date(form.birthday);
+            if (!Number.isNaN(parsed.getTime())) {
+                setPickerDate(parsed);
+                setDraftBirthday(parsed.toISOString());
+            }
+        } else {
+            const now = new Date();
+            setPickerDate(now);
+            setDraftBirthday(now.toISOString());
+        }
+
+        setIsBirthdayModalVisible(true);
+    }, [form.birthday]);
+
+    const onCloseBirthdayModal = useCallback(() => {
+        setIsBirthdayModalVisible(false);
+    }, []);
+
+    const onChangePickerDate = useCallback((date: Date) => {
+        setPickerDate(date);
+        setDraftBirthday(date.toISOString());
+    }, []);
+
+    const onConfirmBirthday = useCallback(() => {
+        if (draftBirthday) {
+            setForm(prev => ({ ...prev, birthday: draftBirthday }));
+        }
+        setIsBirthdayModalVisible(false);
+    }, [draftBirthday]);
 
     useFocusEffect(
         useCallback(() => {
@@ -238,6 +294,7 @@ export const useProfileSettings = () => {
         isEditing,
         genderOptions,
         countryOptions,
+        cityOptions,
         onToggleEdit,
         onChangeField,
         onChangeCountryCode,
@@ -248,6 +305,13 @@ export const useProfileSettings = () => {
             setExpertiseLevel(value);
             selectExpertiseModalRef.current?.dismiss();
         },
+        isBirthdayModalVisible,
+        pickerDate,
+        onOpenBirthdayModal,
+        onCloseBirthdayModal,
+        onChangePickerDate,
+        onConfirmBirthday,
+        onSearchCity: searchCities,
         onSave,
         isDisabled,
         isInProgress,

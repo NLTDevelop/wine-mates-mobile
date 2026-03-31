@@ -14,6 +14,7 @@ interface IProps {
     children: ReactNode;
 }
 
+
 export const BottomModal = ({
     visible,
     onClose,
