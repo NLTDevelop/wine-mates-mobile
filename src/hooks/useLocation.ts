@@ -10,15 +10,19 @@ export const useLocation = () => {
     const [isCityLoading, setIsCityLoading] = useState(false);
     const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const searchCities = useCallback((query: string) => {
+    const searchCities = useCallback((query: string, country: string) => {
         const trimmed = query.trim();
-        console.log('[useLocation] searchCities called:', query);
 
         if (searchTimeoutRef.current) {
             clearTimeout(searchTimeoutRef.current);
         }
 
-        if (!trimmed) {
+        if (!country) {
+            setCitySuggestions([]);
+            return;
+        }
+
+        if (!trimmed && query !== '') {
             setCitySuggestions([]);
             return;
         }
@@ -26,12 +30,9 @@ export const useLocation = () => {
         searchTimeoutRef.current = setTimeout(async () => {
             try {
                 setIsCityLoading(true);
-                console.log('[useLocation] Calling API for:', trimmed);
-                const results = await locationService.searchCities(trimmed, locale);
-                console.log('[useLocation] Got results:', results.length);
+                const results = await locationService.searchCities(query, country, locale);
                 setCitySuggestions(results);
             } catch (error) {
-                console.log('[useLocation] Error:', error);
                 setCitySuggestions([]);
             } finally {
                 setIsCityLoading(false);

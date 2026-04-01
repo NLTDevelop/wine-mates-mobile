@@ -59,7 +59,7 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
 
         const { value, isOpen, search, filteredData, selectedItem, triggerContainerRef, dropdownLiftOffset, shouldShowSearch,
             setSearch, handleSelect, onBlurDropdown, onPressDropdown, onCloseDropdown, onOpenDropdown, handleOpen,
-        } = useCustomDropdown({ onPress, data, onSelect, selectedValue, emptyStateLabel, withSearch, disableLocalFilter });
+        } = useCustomDropdown({ onPress, data, onSelect, selectedValue, emptyStateLabel, withSearch, disableLocalFilter, onSearchChange });
         const { animatedArrowStyle, animatedLiftOffset } = useCustomDropdownAnimation({ isOpen, dropdownLiftOffset });
 
         useImperativeHandle(ref, () => ({

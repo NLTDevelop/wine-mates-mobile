@@ -10,10 +10,11 @@ interface IProps {
     emptyStateLabel?: string;
     withSearch?: boolean;
     disableLocalFilter?: boolean;
+    onSearchChange?: (value: string) => void;
 }
 
 const EMPTY_STATE_VALUE = '__EMPTY_STATE__';
-export const useCustomDropdown = ({ onPress, data, onSelect, selectedValue = null, emptyStateLabel, withSearch = false, disableLocalFilter = false }: IProps) => {
+export const useCustomDropdown = ({ onPress, data, onSelect, selectedValue = null, emptyStateLabel, withSearch = false, disableLocalFilter = false, onSearchChange }: IProps) => {
     const [value, setValue] = useState<string | number | null>(selectedValue);
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
@@ -66,7 +67,10 @@ export const useCustomDropdown = ({ onPress, data, onSelect, selectedValue = nul
 
     const handleOpen = useCallback(() => {
         setIsOpen(true);
-    }, []);
+        if (disableLocalFilter && onSearchChange) {
+            onSearchChange('');
+        }
+    }, [disableLocalFilter, onSearchChange]);
 
     const onBlurDropdown = useCallback(() => {
         setIsOpen(false);

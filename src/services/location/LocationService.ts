@@ -1,10 +1,4 @@
-import { config } from '@/config';
-
-const GOOGLE_PLACES_BASE_URL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-
-const getGoogleApiKey = () => {
-    return config.googlePlacesApiKey;
-};
+const COUNTRIES_NOW_BASE_URL = 'https://countriesnow.space/api/v0.1/countries/cities';
 
 export interface IPlaceSuggestion {
     id: string;
@@ -12,37 +6,47 @@ export interface IPlaceSuggestion {
 }
 
 class LocationService {
-    searchCities = async (input: string, language: string = 'en'): Promise<IPlaceSuggestion[]> => {
-        const key = getGoogleApiKey();
-        if (!key || !input.trim()) {
-            console.log('[LocationService] No API key or empty input:', { hasKey: !!key, input });
+    searchCities = async (input: string, country: string, language: string = 'en'): Promise<IPlaceSuggestion[]> => {
+        
+        if (!country) {
             return [];
         }
 
-        const params = new URLSearchParams({
-            input,
-            key,
-            language,
-            types: '(cities)',
+        const response = await fetch(COUNTRIES_NOW_BASE_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                country,
+            }),
         });
 
-        const response = await fetch(`${GOOGLE_PLACES_BASE_URL}?${params.toString()}`);
         if (!response.ok) {
-            console.log('[LocationService] API request failed:', response.status);
             return [];
         }
 
         const json = await response.json();
-        if (!Array.isArray(json.predictions)) {
-            console.log('[LocationService] Invalid response format:', json);
+        
+        if (!Array.isArray(json.data)) {
             return [];
         }
 
-        const results = json.predictions.map((p: any) => ({
-            id: p.place_id,
-            description: p.description,
+        const trimmedInput = input.trim();
+        let filteredCities = json.data;
+
+        if (trimmedInput) {
+            const lowerInput = trimmedInput.toLowerCase();
+            filteredCities = json.data.filter((city: string) =>
+                city.toLowerCase().includes(lowerInput)
+            );
+        }
+
+        const results = filteredCities.map((city: string) => ({
+            id: city,
+            description: city,
         }));
-        console.log('[LocationService] Found cities:', results.length);
+
         return results;
     };
 }

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useRef } from 'react';
 import { userModel } from '@/entities/users/UserModel';
 import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
@@ -8,7 +8,6 @@ import countries from 'world-countries';
 import { format } from 'date-fns';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useRef } from 'react';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useFocusEffect } from '@react-navigation/native';
 import { useLocation } from '@/hooks/useLocation';
@@ -97,12 +96,15 @@ export const useProfileSettings = () => {
         };
     }, [normalizeE164Phone]);
     const [form, setForm] = useState<IProfileForm>(getInitialForm);
+    const [changedFields, setChangedFields] = useState<Set<string>>(new Set());
     const [isInProgress, setIsInProgress] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [countryCode, setCountryCode] = useState(getCallingCodeFromUser);
     const [expertiseLevel, setExpertiseLevel] = useState<WineExperienceLevelEnum>(
         userModel.user?.wineExperienceLevel || WineExperienceLevelEnum.LOVER
     );
+    const [expertiseLevelChanged, setExpertiseLevelChanged] = useState(false);
+    const [countryCodeChanged, setCountryCodeChanged] = useState(false);
     const selectExpertiseModalRef = useRef<BottomSheetModal | null>(null);
     const isCountryCodeInitializedRef = useRef(!!getCallingCodeFromUser());
 
@@ -129,7 +131,6 @@ export const useProfileSettings = () => {
             label: city.description,
             value: city.description,
         }));
-        console.log('[useProfileSettings] cityOptions updated:', options.length);
         return options;
     }, [citySuggestions]);
 
@@ -140,15 +141,19 @@ export const useProfileSettings = () => {
 
     const onChangeField = useCallback((key: keyof IProfileForm, value: string) => {
         setForm(prev => ({ ...prev, [key]: value }));
+        setChangedFields(prev => new Set(prev).add(key));
     }, []);
 
     const onToggleEdit = useCallback(() => {
         setIsEditing(prev => {
             if (prev) {
                 setForm(getInitialForm());
+                setChangedFields(new Set());
                 setExpertiseLevel(userModel.user?.wineExperienceLevel || WineExperienceLevelEnum.LOVER);
+                setExpertiseLevelChanged(false);
                 const callingCode = getCallingCodeFromUser();
                 setCountryCode(callingCode);
+                setCountryCodeChanged(false);
                 isCountryCodeInitializedRef.current = !!callingCode;
             }
             return !prev;
@@ -159,9 +164,12 @@ export const useProfileSettings = () => {
         const response = await userService.me();
         if (!response.isError && !isEditing) {
             setForm(getInitialForm());
+            setChangedFields(new Set());
             setExpertiseLevel(userModel.user?.wineExperienceLevel || WineExperienceLevelEnum.LOVER);
+            setExpertiseLevelChanged(false);
             const callingCode = getCallingCodeFromUser();
             setCountryCode(callingCode);
+            setCountryCodeChanged(false);
             isCountryCodeInitializedRef.current = !!callingCode;
         }
     }, [getInitialForm, getCallingCodeFromUser, isEditing]);
@@ -194,6 +202,7 @@ export const useProfileSettings = () => {
     const onConfirmBirthday = useCallback(() => {
         if (draftBirthday) {
             setForm(prev => ({ ...prev, birthday: draftBirthday }));
+            setChangedFields(prev => new Set(prev).add('birthday'));
         }
         setIsBirthdayModalVisible(false);
     }, [draftBirthday]);
@@ -205,8 +214,6 @@ export const useProfileSettings = () => {
     );
 
     const onChangeCountryCode = useCallback((value: string) => {
-        // PhoneInputField calls this once on mount with locale-detected code.
-        // If we already have a calling code from saved E.164 number, ignore that first call.
         const callingCode = getCallingCodeFromUser();
         if (isCountryCodeInitializedRef.current && callingCode) {
             isCountryCodeInitializedRef.current = false;
@@ -214,6 +221,7 @@ export const useProfileSettings = () => {
         }
         isCountryCodeInitializedRef.current = false;
         setCountryCode(value);
+        setCountryCodeChanged(true);
     }, [getCallingCodeFromUser]);
 
     const onSave = useCallback(async () => {
@@ -222,30 +230,69 @@ export const useProfileSettings = () => {
             return;
         }
 
-        const [firstName = '', ...rest] = fullName.split(' ');
-        const lastName = rest.join(' ');
-
         try {
             setIsInProgress(true);
 
             const formData = new FormData();
-            formData.append('firstName', firstName);
-            formData.append('lastName', lastName);
-            const rawPhone = form.phoneNumber.trim();
-            const phoneNumber = rawPhone.startsWith('+')
-                ? rawPhone
-                : `${countryCode}${rawPhone}`.replace(/\s+/g, '');
-            formData.append('phoneNumber', phoneNumber);
-            formData.append('country', form.country.trim());
-            formData.append('city', form.city.trim());
-            formData.append('birthday', form.birthday);
-            formData.append('gender', form.gender);
-            formData.append('wineExperienceLevel', expertiseLevel);
-            formData.append('occupation', form.occupation.trim());
-            formData.append('wineryName', form.placeOfWork.trim());
-            formData.append('instagramLink', form.instagramLink.trim());
-            formData.append('website', form.website.trim());
-            formData.append('bio', form.bio.trim());
+
+            if (changedFields.has('fullName')) {
+                const [firstName = '', ...rest] = fullName.split(' ');
+                const lastName = rest.join(' ');
+                formData.append('firstName', firstName);
+                formData.append('lastName', lastName);
+            }
+
+            if (changedFields.has('email')) {
+                formData.append('email', form.email.trim());
+            }
+
+            if (changedFields.has('phoneNumber') || countryCodeChanged) {
+                const rawPhone = form.phoneNumber.trim();
+                const phoneNumber = rawPhone.startsWith('+')
+                    ? rawPhone
+                    : `${countryCode}${rawPhone}`.replace(/\s+/g, '');
+                formData.append('phoneNumber', phoneNumber);
+            }
+
+            if (changedFields.has('country')) {
+                formData.append('country', form.country.trim());
+            }
+
+            if (changedFields.has('city')) {
+                formData.append('city', form.city.trim());
+            }
+
+            if (changedFields.has('birthday')) {
+                formData.append('birthday', form.birthday);
+            }
+
+            if (changedFields.has('gender')) {
+                formData.append('gender', form.gender);
+            }
+
+            if (expertiseLevelChanged) {
+                formData.append('wineExperienceLevel', expertiseLevel);
+            }
+
+            if (changedFields.has('occupation')) {
+                formData.append('occupation', form.occupation.trim());
+            }
+
+            if (changedFields.has('placeOfWork')) {
+                formData.append('wineryName', form.placeOfWork.trim());
+            }
+
+            if (changedFields.has('instagramLink')) {
+                formData.append('instagramLink', form.instagramLink.trim());
+            }
+
+            if (changedFields.has('website')) {
+                formData.append('website', form.website.trim());
+            }
+
+            if (changedFields.has('bio')) {
+                formData.append('bio', form.bio.trim());
+            }
 
             const response = await userService.update(formData);
 
@@ -261,17 +308,21 @@ export const useProfileSettings = () => {
                     localization.t('settings.profileUpdated')
                 );
                 setIsEditing(false);
+                setChangedFields(new Set());
+                setExpertiseLevelChanged(false);
+                setCountryCodeChanged(false);
             }
         } catch (error) {
             console.error('Error updating profile: ', JSON.stringify(error, null, 4));
         } finally {
             setIsInProgress(false);
         }
-    }, [form, expertiseLevel, countryCode]);
+    }, [form, expertiseLevel, countryCode, changedFields, expertiseLevelChanged, countryCodeChanged]);
 
     const isDisabled = useMemo(() => {
-        return !form.fullName.trim() || !form.email.trim() || isInProgress;
-    }, [form, isInProgress]);
+        const hasChanges = changedFields.size > 0 || expertiseLevelChanged || countryCodeChanged;
+        return !form.fullName.trim() || !form.email.trim() || isInProgress || !hasChanges;
+    }, [form, isInProgress, changedFields, expertiseLevelChanged, countryCodeChanged]);
 
     const birthdayDisplayText = useMemo(() => {
         if (!form.birthday) {
@@ -285,6 +336,17 @@ export const useProfileSettings = () => {
 
         return format(selectedDate, 'MMMM d, yyyy');
     }, [form.birthday]);
+
+    const getCountryName = useCallback((cca2: string): string => {
+        if (!cca2) return '';
+        const country = countries.find(c => c.cca2?.toLowerCase() === cca2.toLowerCase());
+        return country?.name?.common || '';
+    }, []);
+
+    const onSearchCity = useCallback((query: string) => {
+        const countryName = getCountryName(form.country);
+        searchCities(query, countryName);
+    }, [searchCities, form.country, getCountryName]);
 
     return {
         form,
@@ -303,6 +365,7 @@ export const useProfileSettings = () => {
         onCloseExpertiseModal: () => selectExpertiseModalRef.current?.dismiss(),
         onSelectExpertise: (value: WineExperienceLevelEnum) => {
             setExpertiseLevel(value);
+            setExpertiseLevelChanged(true);
             selectExpertiseModalRef.current?.dismiss();
         },
         isBirthdayModalVisible,
@@ -311,7 +374,7 @@ export const useProfileSettings = () => {
         onCloseBirthdayModal,
         onChangePickerDate,
         onConfirmBirthday,
-        onSearchCity: searchCities,
+        onSearchCity,
         onSave,
         isDisabled,
         isInProgress,
