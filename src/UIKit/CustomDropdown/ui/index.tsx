@@ -24,6 +24,8 @@ interface IProps {
     renderSelectedValue?: (item: IDropdownItem) => ReactElement | null;
     renderFooter?: () => ReactElement | null;
     emptyStateLabel?: string;
+    onSearchChange?: (value: string) => void;
+    disableLocalFilter?: boolean;
 }
 
 export interface ICustomDropdownRef {
@@ -46,6 +48,8 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
             renderSelectedValue,
             renderFooter,
             emptyStateLabel,
+            onSearchChange,
+            disableLocalFilter = false,
         },
         ref,
     ) => {
@@ -55,7 +59,7 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
 
         const { value, isOpen, search, filteredData, selectedItem, triggerContainerRef, dropdownLiftOffset, shouldShowSearch,
             setSearch, handleSelect, onBlurDropdown, onPressDropdown, onCloseDropdown, onOpenDropdown, handleOpen,
-        } = useCustomDropdown({ onPress, data, onSelect, selectedValue, emptyStateLabel, withSearch });
+        } = useCustomDropdown({ onPress, data, onSelect, selectedValue, emptyStateLabel, withSearch, disableLocalFilter, onSearchChange });
         const { animatedArrowStyle, animatedLiftOffset } = useCustomDropdownAnimation({ isOpen, dropdownLiftOffset });
 
         useImperativeHandle(ref, () => ({
@@ -71,6 +75,11 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
             onPressDropdown(disabled, dropdownRef.current);
         }, [disabled, onPressDropdown]);
 
+        const onSearchTextChange = useCallback((text: string) => {
+            setSearch(text);
+            onSearchChange?.(text);
+        }, [setSearch, onSearchChange]);
+
         const renderInputSearch = useCallback(() => {
             if (!shouldShowSearch) {
                 return null;
@@ -79,12 +88,12 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
             return (
                 <SearchBar
                     value={search}
-                    onChangeText={setSearch}
+                    onChangeText={onSearchTextChange}
                     placeholder={t('common.search')}
                     containerStyle={styles.searchContainer}
                 />
             );
-        }, [search, setSearch, shouldShowSearch, styles.searchContainer, t]);
+        }, [search, onSearchTextChange, shouldShowSearch, styles.searchContainer, t]);
 
         const renderRightIcon = useCallback(() => (
             <Animated.View style={animatedArrowStyle}>

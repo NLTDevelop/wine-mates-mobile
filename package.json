@@ -39,6 +39,7 @@
         "react": "19.2.3",
         "react-native": "0.83.1",
         "react-native-awesome-slider": "^2.9.0",
+        "react-native-calendars": "^1.1314.0",
         "react-native-confirmation-code-field": "^8.0.1",
         "react-native-date-picker": "^5.0.13",
         "react-native-device-info": "^15.0.1",

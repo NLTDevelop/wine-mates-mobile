@@ -58,11 +58,10 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'center',
         },
-        pickerWrapper: {
-            width: '100%',
-            backgroundColor: colors.background_grey,
-            justifyContent: 'center',
+        calendarContainer: {
+            flex: 1,
             alignItems: 'center',
+            justifyContent: 'center',
         },
     });
     return styles;
