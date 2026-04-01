@@ -34,3 +34,5 @@ export const SearchBar = forwardRef<TextInput, IProps>((props, ref) => {
         </View>
     );
 });
+
+SearchBar.displayName = 'SearchBar';

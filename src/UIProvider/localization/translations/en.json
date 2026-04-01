@@ -23,7 +23,10 @@
         "filters": "Filters",
         "clear": "Clear",
         "showResults": "Show results",
-        "reset": "Reset"
+        "reset": "Reset",
+        "selectPhoto": "Select Photo",
+        "takePhoto": "Take Photo",
+        "chooseFromGallery": "Choose from Gallery"
     },
     "errors": {
         "somethingWentWrong": "Sorry, something went wrong",

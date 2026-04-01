@@ -8,7 +8,7 @@ import { CustomInput } from '@/UIKit/CustomInput';
 import { Button } from '@/UIKit/Button';
 import { Typography } from '@/UIKit/Typography';
 import { useProfileSettings } from '../../presenters/useProfileSettings';
-import { Avatar } from '@/UIKit/Avatar';
+import { AvatarPicker } from '@/UIKit/AvatarPicker/ui';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
 import { BirthdaySelector } from '@/modules/registration/ui/components/BirthdaySelector';
@@ -27,6 +27,10 @@ export const ProfileSettingsView = () => {
     const {
         form,
         avatarUrl,
+        selectedAvatarUri,
+        hasAvatar,
+        onOpenCamera,
+        onRemoveAvatar,
         expertiseLevel,
         birthdayDisplayText,
         isEditing,
@@ -78,12 +82,18 @@ export const ProfileSettingsView = () => {
         >
             <View style={styles.container}>
                 <View style={styles.content}>
-                    <Avatar
-                        size={64}
-                        avatarUrl={avatarUrl}
-                        fullname={form.fullName}
-                        containerStyle={styles.avatar}
-                    />
+                    <View style={styles.avatarContainer}>
+                        <AvatarPicker
+                            size={64}
+                            avatarUrl={avatarUrl}
+                            fullname={form.fullName}
+                            isEditing={isEditing}
+                            selectedImageUri={selectedAvatarUri}
+                            hasAvatar={hasAvatar}
+                            onPress={onOpenCamera}
+                            onRemove={onRemoveAvatar}
+                        />
+                    </View>
                     {isEditing && (
                         <ExpertiseSelectorRow expertiseLevel={expertiseLevel} onPress={onOpenExpertiseModal} />
                     )}

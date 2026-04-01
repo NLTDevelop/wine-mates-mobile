@@ -22,7 +22,10 @@
         "filters": "Фільтри",
         "clear": "Очистити",
         "showResults": "Показати результати",
-        "reset": "Скинути"
+        "reset": "Скинути",
+        "selectPhoto": "Виберіть фото",
+        "takePhoto": "Зробити фото",
+        "chooseFromGallery": "Вибрати з галереї"
     },
     "errors": {
         "somethingWentWrong": "Вибачте, щось пішло не так",

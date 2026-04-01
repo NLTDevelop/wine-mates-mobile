@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, useRef } from 'react';
+import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { userModel } from '@/entities/users/UserModel';
 import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
@@ -9,8 +9,9 @@ import { format } from 'date-fns';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { useLocation } from '@/hooks/useLocation';
+import { useAvatarPicker } from '@/UIKit/AvatarPicker/presenters/useAvatarPicker';
 
 interface IProfileForm {
     fullName: string;
@@ -28,7 +29,12 @@ interface IProfileForm {
 }
 
 export const useProfileSettings = () => {
+    const route = useRoute();
     const { citySuggestions, searchCities } = useLocation();
+    const { onOpenCamera } = useAvatarPicker();
+    const [selectedAvatarImage, setSelectedAvatarImage] = useState<{ uri: string; name: string; type: string } | null>(null);
+    const [isAvatarChanged, setIsAvatarChanged] = useState(false);
+    const [shouldRemoveAvatar, setShouldRemoveAvatar] = useState(false);
 
     const normalizeE164Phone = useCallback((raw: string) => {
         const trimmed = raw.trim().replace(/\s+/g, '');
@@ -155,6 +161,9 @@ export const useProfileSettings = () => {
                 setCountryCode(callingCode);
                 setCountryCodeChanged(false);
                 isCountryCodeInitializedRef.current = !!callingCode;
+                setSelectedAvatarImage(null);
+                setIsAvatarChanged(false);
+                setShouldRemoveAvatar(false);
             }
             return !prev;
         });
@@ -294,6 +303,24 @@ export const useProfileSettings = () => {
                 formData.append('bio', form.bio.trim());
             }
 
+            if (shouldRemoveAvatar) {
+                formData.append('removeAvatar', 'true');
+                console.log('📝 Removing avatar, removeAvatar flag set');
+            } else if (isAvatarChanged && selectedAvatarImage) {
+                const imageFile = {
+                    uri: selectedAvatarImage.uri,
+                    type: selectedAvatarImage.type,
+                    name: selectedAvatarImage.name,
+                };
+                formData.append('image', imageFile as any);
+                console.log('📸 Avatar image added to FormData:', {
+                    uri: selectedAvatarImage.uri,
+                    type: selectedAvatarImage.type,
+                    name: selectedAvatarImage.name,
+                });
+            }
+
+            console.log('📤 FormData _parts:', (formData as any)._parts);
             const response = await userService.update(formData);
 
             if (response.isError) {
@@ -311,18 +338,21 @@ export const useProfileSettings = () => {
                 setChangedFields(new Set());
                 setExpertiseLevelChanged(false);
                 setCountryCodeChanged(false);
+                setSelectedAvatarImage(null);
+                setIsAvatarChanged(false);
+                setShouldRemoveAvatar(false);
             }
         } catch (error) {
             console.error('Error updating profile: ', JSON.stringify(error, null, 4));
         } finally {
             setIsInProgress(false);
         }
-    }, [form, expertiseLevel, countryCode, changedFields, expertiseLevelChanged, countryCodeChanged]);
+    }, [form, expertiseLevel, countryCode, changedFields, expertiseLevelChanged, countryCodeChanged, isAvatarChanged, shouldRemoveAvatar, selectedAvatarImage]);
 
     const isDisabled = useMemo(() => {
-        const hasChanges = changedFields.size > 0 || expertiseLevelChanged || countryCodeChanged;
+        const hasChanges = changedFields.size > 0 || expertiseLevelChanged || countryCodeChanged || isAvatarChanged || shouldRemoveAvatar;
         return !form.fullName.trim() || !form.email.trim() || isInProgress || !hasChanges;
-    }, [form, isInProgress, changedFields, expertiseLevelChanged, countryCodeChanged]);
+    }, [form, isInProgress, changedFields, expertiseLevelChanged, countryCodeChanged, isAvatarChanged, shouldRemoveAvatar]);
 
     const birthdayDisplayText = useMemo(() => {
         if (!form.birthday) {
@@ -348,9 +378,32 @@ export const useProfileSettings = () => {
         searchCities(query, countryName);
     }, [searchCities, form.country, getCountryName]);
 
+    const onRemoveAvatar = useCallback(() => {
+        setSelectedAvatarImage(null);
+        setShouldRemoveAvatar(true);
+        setIsAvatarChanged(false);
+    }, []);
+
+    const hasAvatar = useMemo(() => {
+        return !shouldRemoveAvatar && (!!selectedAvatarImage || !!userModel.user?.avatarUrl);
+    }, [selectedAvatarImage, shouldRemoveAvatar]);
+
+    useEffect(() => {
+        const params = route.params as { selectedAvatar?: { uri: string; name: string; type: string } } | undefined;
+        if (params?.selectedAvatar) {
+            setSelectedAvatarImage(params.selectedAvatar);
+            setIsAvatarChanged(true);
+            setShouldRemoveAvatar(false);
+        }
+    }, [route.params]);
+
     return {
         form,
         avatarUrl: userModel.user?.avatarUrl || null,
+        selectedAvatarUri: selectedAvatarImage?.uri || null,
+        hasAvatar,
+        onOpenCamera,
+        onRemoveAvatar,
         expertiseLevel,
         birthdayDisplayText,
         isEditing,

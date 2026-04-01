@@ -13,7 +13,7 @@ export const getStyles = (colors: IColors) => {
             flex: 1,
             paddingTop: scaleVertical(8),
         },
-        avatar: {
+        avatarContainer: {
             alignSelf: 'center',
             marginBottom: scaleVertical(16),
         },
