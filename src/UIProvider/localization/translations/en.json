@@ -23,7 +23,10 @@
         "filters": "Filters",
         "clear": "Clear",
         "showResults": "Show results",
-        "reset": "Reset"
+        "reset": "Reset",
+        "selectPhoto": "Select Photo",
+        "takePhoto": "Take Photo",
+        "chooseFromGallery": "Choose from Gallery"
     },
     "errors": {
         "somethingWentWrong": "Sorry, something went wrong",
@@ -274,6 +277,7 @@
         "occupation": "Occupation",
         "placeOfWork": "Place of work",
         "instagram": "Enter your instagram link",
+        "invalidInstagramLink": "Please enter a valid Instagram link or username",
         "website": "Enter your website",
         "bio": "Bio",
         "expertise": "Expertise",

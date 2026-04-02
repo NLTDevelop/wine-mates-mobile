@@ -28,6 +28,7 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             height: scaleVertical(286),
             position: 'relative',
             alignSelf: 'stretch',
+            backgroundColor: 'transparent',
         },
         similarityBadge: {
             paddingVertical: scaleVertical(4),
@@ -53,15 +54,18 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             height: '100%',
             resizeMode: 'cover',
             borderRadius: 12,
+            backgroundColor: 'transparent',
         },
         imagePlaceholder: {
             borderRadius: 12,
             width: '100%',
             height: '100%',
+            backgroundColor: 'transparent',
         },
         imagePlaceholderContainer: {
             width: '100%',
             height: '100%',
+            backgroundColor: 'transparent',
         },
         rightColumn: {
             flex: 1,

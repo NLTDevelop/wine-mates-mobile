@@ -17,9 +17,23 @@ class UserService {
 
     private extractUser = (data: any): IUser | null => {
         if (!data) return null;
-        if (data.user) return data.user as IUser;
-        if (typeof data.id === 'number' && typeof data.email === 'string') return data as IUser;
-        return null;
+
+        let user: any = null;
+        if (data.user) {
+            user = data.user;
+        } else if (typeof data.id === 'number' && typeof data.email === 'string') {
+            user = data;
+        }
+
+        if (!user) return null;
+
+        if (user.avatar && typeof user.avatar === 'object') {
+            user.avatarUrl = user.avatar.mediumUrl || user.avatar.originalUrl || user.avatar.smallUrl || '';
+        } else if (!user.avatarUrl) {
+            user.avatarUrl = '';
+        }
+
+        return user as IUser;
     };
 
     me = async (): Promise<IResponse<IUser>> => {
