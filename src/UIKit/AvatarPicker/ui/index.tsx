@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Pressable, TouchableOpacity, View } from 'react-native';
 import { FasterImageView } from '@rraut/react-native-faster-image';
 import { CrossIcon } from '@assets/icons/CrossIcon';
+import { DeleteForeverIcon } from '@assets/icons/DeleteForeverIcon';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -13,17 +14,23 @@ interface IProps {
     isEditing: boolean;
     selectedImageUri: string | null;
     hasAvatar: boolean;
+    isMarkedForDeletion?: boolean;
     onPress: () => void;
     onRemove: () => void;
+    onCancelDeletion: () => void;
 }
 
-export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedImageUri, hasAvatar, onPress, onRemove }: IProps) => {
+export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedImageUri, hasAvatar, isMarkedForDeletion = false, onPress, onRemove, onCancelDeletion }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors, size), [colors, size]);
 
     const onAvatarPress = () => {
         if (!isEditing) return;
-        onPress();
+        if (isMarkedForDeletion) {
+            onCancelDeletion();
+        } else {
+            onPress();
+        }
     };
 
     const displayUri = selectedImageUri || avatarUrl;
@@ -47,6 +54,11 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
                 ) : (
                     <View style={styles.placeholder}>
                         <Typography text={initials} variant="h3" style={styles.initials} />
+                    </View>
+                )}
+                {isMarkedForDeletion && (avatarUrl || selectedImageUri) && (
+                    <View style={styles.deleteOverlay}>
+                        <DeleteForeverIcon width={32} height={32} color={colors.background} />
                     </View>
                 )}
             </Pressable>

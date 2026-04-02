@@ -280,6 +280,7 @@
         "occupation": "Рід занять",
         "placeOfWork": "Місце роботи",
         "instagram": "Додайте посилання на Instagram",
+        "invalidInstagramLink": "Будь ласка, введіть дійсне посилання на Instagram або ім'я користувача",
         "website": "Додайте ваш сайт",
         "bio": "Біо",
         "expertise": "Експертиза",

@@ -29,8 +29,10 @@ export const ProfileSettingsView = () => {
         avatarUrl,
         selectedAvatarUri,
         hasAvatar,
+        isMarkedForDeletion,
         onOpenCamera,
         onRemoveAvatar,
+        onCancelDeletion,
         expertiseLevel,
         birthdayDisplayText,
         isEditing,
@@ -54,6 +56,7 @@ export const ProfileSettingsView = () => {
         onChangePickerDate,
         onConfirmBirthday,
         onSearchCity,
+        instagramLinkError,
     } = useProfileSettings();
     const { scrollRef } = useBirthdaySelector(() => {});
 
@@ -90,8 +93,10 @@ export const ProfileSettingsView = () => {
                             isEditing={isEditing}
                             selectedImageUri={selectedAvatarUri}
                             hasAvatar={hasAvatar}
+                            isMarkedForDeletion={isMarkedForDeletion}
                             onPress={onOpenCamera}
                             onRemove={onRemoveAvatar}
+                            onCancelDeletion={onCancelDeletion}
                         />
                     </View>
                     {isEditing && (
@@ -177,6 +182,8 @@ export const ProfileSettingsView = () => {
                         onChangeText={(value) => onChangeField('instagramLink', value)}
                         editable={isEditing}
                         placeholder={t('settings.instagram')}
+                        error={!!instagramLinkError}
+                        errorText={instagramLinkError || undefined}
                         LeftAccessory={(
                             <View style={styles.instagramAccessory}>
                                 <InstagramIcon color={colors.text} />

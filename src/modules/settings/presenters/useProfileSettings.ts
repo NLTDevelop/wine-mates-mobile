@@ -35,6 +35,7 @@ export const useProfileSettings = () => {
     const [selectedAvatarImage, setSelectedAvatarImage] = useState<{ uri: string; name: string; type: string } | null>(null);
     const [isAvatarChanged, setIsAvatarChanged] = useState(false);
     const [shouldRemoveAvatar, setShouldRemoveAvatar] = useState(false);
+    const [instagramLinkError, setInstagramLinkError] = useState<string | null>(null);
 
     const normalizeE164Phone = useCallback((raw: string) => {
         const trimmed = raw.trim().replace(/\s+/g, '');
@@ -96,8 +97,8 @@ export const useProfileSettings = () => {
             gender: userModel.user?.gender || '',
             occupation: userModel.user?.occupation || '',
             placeOfWork: userModel.user?.wineryName || '',
-            instagramLink: '',
-            website: '',
+            instagramLink: userModel.user?.instagramLink || '',
+            website: userModel.user?.website || '',
             bio: userModel.user?.bio || '',
         };
     }, [normalizeE164Phone]);
@@ -145,10 +146,37 @@ export const useProfileSettings = () => {
         { label: localization.t('registration.genderFemale'), value: 'female' },
     ]), []);
 
+    const validateInstagramLink = useCallback((link: string): boolean => {
+        if (!link.trim()) {
+            setInstagramLinkError(null);
+            return true;
+        }
+
+        const trimmedLink = link.trim();
+        
+        const instagramUrlPattern = /^(?:https?:\/\/)?(?:www\.)?instagram\.com\/([a-zA-Z0-9._]+)\/?(?:\?.*)?$/;
+        const usernamePattern = /^@?([a-zA-Z0-9._]{1,30})$/;
+        
+        const isInstagramUrl = instagramUrlPattern.test(trimmedLink);
+        const isUsername = usernamePattern.test(trimmedLink) && !trimmedLink.includes('www.') && !trimmedLink.includes('http');
+
+        if (!isInstagramUrl && !isUsername) {
+            setInstagramLinkError(localization.t('settings.invalidInstagramLink'));
+            return false;
+        }
+
+        setInstagramLinkError(null);
+        return true;
+    }, []);
+
     const onChangeField = useCallback((key: keyof IProfileForm, value: string) => {
         setForm(prev => ({ ...prev, [key]: value }));
         setChangedFields(prev => new Set(prev).add(key));
-    }, []);
+
+        if (key === 'instagramLink') {
+            validateInstagramLink(value);
+        }
+    }, [validateInstagramLink]);
 
     const onToggleEdit = useCallback(() => {
         setIsEditing(prev => {
@@ -164,6 +192,7 @@ export const useProfileSettings = () => {
                 setSelectedAvatarImage(null);
                 setIsAvatarChanged(false);
                 setShouldRemoveAvatar(false);
+                setInstagramLinkError(null);
             }
             return !prev;
         });
@@ -307,20 +336,11 @@ export const useProfileSettings = () => {
                 formData.append('removeAvatar', 'true');
                 console.log('📝 Removing avatar, removeAvatar flag set');
             } else if (isAvatarChanged && selectedAvatarImage) {
-                const imageFile = {
-                    uri: selectedAvatarImage.uri,
-                    type: selectedAvatarImage.type,
-                    name: selectedAvatarImage.name,
-                };
-                formData.append('image', imageFile as any);
-                console.log('📸 Avatar image added to FormData:', {
-                    uri: selectedAvatarImage.uri,
-                    type: selectedAvatarImage.type,
-                    name: selectedAvatarImage.name,
-                });
+                formData.append('image', selectedAvatarImage as any);
+                console.log('📸 Avatar image added to FormData:', selectedAvatarImage);
             }
 
-            console.log('📤 FormData _parts:', (formData as any)._parts);
+            console.log('📤 Sending FormData with _parts:', (formData as any)._parts);
             const response = await userService.update(formData);
 
             if (response.isError) {
@@ -351,8 +371,8 @@ export const useProfileSettings = () => {
 
     const isDisabled = useMemo(() => {
         const hasChanges = changedFields.size > 0 || expertiseLevelChanged || countryCodeChanged || isAvatarChanged || shouldRemoveAvatar;
-        return !form.fullName.trim() || !form.email.trim() || isInProgress || !hasChanges;
-    }, [form, isInProgress, changedFields, expertiseLevelChanged, countryCodeChanged, isAvatarChanged, shouldRemoveAvatar]);
+        return !form.fullName.trim() || !form.email.trim() || isInProgress || !hasChanges || !!instagramLinkError;
+    }, [form, isInProgress, changedFields, expertiseLevelChanged, countryCodeChanged, isAvatarChanged, shouldRemoveAvatar, instagramLinkError]);
 
     const birthdayDisplayText = useMemo(() => {
         if (!form.birthday) {
@@ -384,6 +404,10 @@ export const useProfileSettings = () => {
         setIsAvatarChanged(false);
     }, []);
 
+    const onCancelDeletion = useCallback(() => {
+        setShouldRemoveAvatar(false);
+    }, []);
+
     const hasAvatar = useMemo(() => {
         return !shouldRemoveAvatar && (!!selectedAvatarImage || !!userModel.user?.avatarUrl);
     }, [selectedAvatarImage, shouldRemoveAvatar]);
@@ -402,8 +426,10 @@ export const useProfileSettings = () => {
         avatarUrl: userModel.user?.avatarUrl || null,
         selectedAvatarUri: selectedAvatarImage?.uri || null,
         hasAvatar,
+        isMarkedForDeletion: shouldRemoveAvatar,
         onOpenCamera,
         onRemoveAvatar,
+        onCancelDeletion,
         expertiseLevel,
         birthdayDisplayText,
         isEditing,
@@ -431,5 +457,6 @@ export const useProfileSettings = () => {
         onSave,
         isDisabled,
         isInProgress,
+        instagramLinkError,
     };
 };
