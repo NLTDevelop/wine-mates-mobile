@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors.ts';
-import { scaleHorizontal, scaleVertical } from '@/utils';
+import { colorOpacity, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors, size: number) => {
     const styles = StyleSheet.create({
@@ -46,7 +46,7 @@ export const getStyles = (colors: IColors, size: number) => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(255, 59, 48, 0.5)',
+            backgroundColor: colorOpacity(colors.primary, 50),
             borderRadius: size / 2,
             justifyContent: 'center',
             alignItems: 'center',
