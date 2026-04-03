@@ -7,8 +7,6 @@ export const useFavoriteWineLists = () => {
     const [isInitialized, setIsInitialized] = useState(false);
 
     const loadLists = useCallback(async () => {
-        if (isLoading) return;
-
         try {
             setIsLoading(true);
             await favoriteWineListService.getAll();
@@ -18,7 +16,7 @@ export const useFavoriteWineLists = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [isLoading]);
+    }, []);
 
     useEffect(() => {
         if (!isInitialized && !favoriteWinesListModel.lists) {

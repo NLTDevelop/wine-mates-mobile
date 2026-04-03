@@ -13,15 +13,11 @@ export const useSavedWineListItem = (listId: number) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
-
-    const wines = favoriteWinesListModel.currentListId === listId 
-        ? favoriteWinesListModel.currentListWines?.rows || []
-        : [];
+    const [wines, setWines] = useState<IWineListItem[]>([]);
 
     const getWines = useCallback(async () => {
         try {
             setIsLoading(true);
-            favoriteWinesListModel.currentListId = listId;
 
             const response = await favoriteWineService.getWinesByListId(listId, {
                 offset: 0,
@@ -33,6 +29,8 @@ export const useSavedWineListItem = (listId: number) => {
                     localization.t('common.errorHappened'),
                     response.message || localization.t('common.somethingWentWrong'),
                 );
+            } else {
+                setWines(response.data?.rows || []);
             }
         } catch (error) {
             console.error('getWines error: ', JSON.stringify(error, null, 2));
@@ -41,12 +39,12 @@ export const useSavedWineListItem = (listId: number) => {
         }
     }, [listId]);
 
-    const onExpand = useCallback(() => {
+    const onExpand = useCallback(async () => {
         setIsExpanded(true);
-        if (favoriteWinesListModel.currentListId !== listId) {
-            getWines();
+        if (wines.length === 0) {
+            await getWines();
         }
-    }, [listId, getWines]);
+    }, [wines.length, getWines]);
 
     const onCollapse = useCallback(() => {
         setIsExpanded(false);
@@ -58,12 +56,6 @@ export const useSavedWineListItem = (listId: number) => {
         },
         [navigation],
     );
-
-    useEffect(() => {
-        if (isExpanded && favoriteWinesListModel.currentListId !== listId) {
-            getWines();
-        }
-    }, [isExpanded, listId, getWines]);
 
     return { wines, isLoading, onWinePress, onExpand, onCollapse };
 };

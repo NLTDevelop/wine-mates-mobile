@@ -3,17 +3,17 @@ import { useCallback, useState } from 'react';
 export const useDropdownButton = (onExpand?: () => void, onCollapse?: () => void) => {
     const [isOpened, setIsOpened] = useState(false);
 
-    const onPress = useCallback(() => {
-        setIsOpened(prevState => {
-            const newState = !prevState;
-            if (newState) {
-                onExpand?.();
-            } else {
-                onCollapse?.();
+    const onToggle = useCallback(() => {
+        setIsOpened(prev => {
+            const newValue = !prev;
+            if (newValue && onExpand) {
+                onExpand();
+            } else if (!newValue && onCollapse) {
+                onCollapse();
             }
-            return newState;
+            return newValue;
         });
     }, [onExpand, onCollapse]);
 
-    return { isOpened, onPress };
+    return { isOpened, onToggle };
 };

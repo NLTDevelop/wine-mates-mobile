@@ -6,16 +6,18 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         title: {
             textAlign: 'center',
+            marginBottom: scaleVertical(8),
         },
         message: {
             textAlign: 'center',
-            color: colors.text_middle,
+            marginBottom: scaleVertical(16),
         },
         buttonsContainer: {
+            flexDirection: 'row',
             gap: scaleVertical(12),
         },
         button: {
-            width: '100%',
+            flex: 1,
         },
     });
 

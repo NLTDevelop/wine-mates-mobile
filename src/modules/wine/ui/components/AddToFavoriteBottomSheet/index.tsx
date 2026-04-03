@@ -25,7 +25,6 @@ export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data,
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom, top), [colors, bottom, top]);
-    const buttonDisabled = useMemo(() => data.filter(item => item.isSelected).length === 0, [data]);
 
     const keyExtractor = useCallback((item: IFavoriteItem) => `${item.id}`, []);
 
@@ -74,7 +73,7 @@ export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data,
                     type='main'
                     onPress={onSave}
                     text={t('common.choose')}
-                    disabled={buttonDisabled || isSaving || isLoading}
+                    disabled={isSaving || isLoading}
                 />
             </BottomSheetView>
         </BottomSheetModal>

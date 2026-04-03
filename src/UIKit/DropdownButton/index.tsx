@@ -18,11 +18,11 @@ export const DropdownButton = ({ title, children, onExpand, onCollapse, onLongPr
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { isOpened, onPress } = useDropdownButton(onExpand, onCollapse);
+    const { isOpened, onToggle } = useDropdownButton(onExpand, onCollapse);
 
     return (
         <View>
-            <TouchableOpacity style={styles.button} onPress={onPress} onLongPress={onLongPress}>
+            <TouchableOpacity style={styles.button} onPress={onToggle} onLongPress={onLongPress}>
                 <Typography variant="h6" text={title} />
                 <ArrowDownIcon rotate={isOpened ? 180 : 0} />
             </TouchableOpacity>

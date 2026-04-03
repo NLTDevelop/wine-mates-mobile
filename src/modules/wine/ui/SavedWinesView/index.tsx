@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { FlatList, View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -17,27 +17,49 @@ import { IFavoriteWineList } from '@/entities/wine/types/IFavoriteWineList';
 import { CreateListBottomSheet } from '../components/CreateListBottomSheet';
 import { useCreateListBottomSheet } from '../../presenters/useCreateListBottomSheet';
 import { useDeleteFavoriteList } from '../../presenters/useDeleteFavoriteList';
-import { ConfirmAlert } from '@/UIKit/CustomAlert/ui/ConfirmAlert';
+import { DeleteListAlert } from './components/DeleteListAlert';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type RootStackParamList = {
+    FavoriteWineListView: {
+        listId: number;
+        listName: string;
+    };
+};
 
 export const SavedWinesView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     const { isLoading, lists, isError, getSavedWines } = useSavedWines();
     const { refreshControl } = useRefresh(getSavedWines);
     const { createListModalRef, listName, setListName, onClose, onOpen, onCreate, isCreating } = useCreateListBottomSheet();
     const { onDeleteList, isDeleting, isAlertVisible, selectedList, onCloseAlert, onConfirmDelete } = useDeleteFavoriteList();
 
+    useEffect(() => {
+        getSavedWines();
+    }, [getSavedWines]);
+
+    const onListPress = useCallback(
+        (id: number, name: string) => {
+            navigation.navigate('FavoriteWineListView', { listId: id, listName: name });
+        },
+        [navigation],
+    );
+
     const keyExtractor = useCallback((item: IFavoriteWineList, index: number) => `${item.id || index}`, []);
     const renderItem = useCallback(
         ({ item }: { item: IFavoriteWineList }) => (
-            <SavedWineListItem 
-                listId={item.id} 
-                title={item.name} 
+            <SavedWineListItem
+                listId={item.id}
+                title={item.name}
+                onPress={() => onListPress(item.id, item.name)}
                 onLongPress={() => onDeleteList(item.id, item.name)}
             />
         ),
-        [onDeleteList],
+        [onListPress, onDeleteList],
     );
 
     return (
@@ -79,14 +101,15 @@ export const SavedWinesView = observer(() => {
                     onClose={onClose}
                     isCreating={isCreating}
                 />
-                <ConfirmAlert
-                    visible={isAlertVisible}
-                    onClose={onCloseAlert}
-                    onConfirm={onConfirmDelete}
-                    title={t('savedWine.deleteListTitle')}
-                    message={selectedList ? t('savedWine.deleteListMessage', { name: selectedList.name }) : ''}
-                    isLoading={isDeleting}
-                />
+                {selectedList && (
+                    <DeleteListAlert
+                        visible={isAlertVisible}
+                        onClose={onCloseAlert}
+                        onConfirm={onConfirmDelete}
+                        listName={selectedList.name}
+                        isLoading={isDeleting}
+                    />
+                )}
             </ScreenContainer>
         </WithErrorHandler>
     );

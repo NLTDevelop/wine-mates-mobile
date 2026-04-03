@@ -99,7 +99,7 @@
         "lastName": "Last name",
         "occupation": "Occupation",
         "wineryName": "Winery name",
-        "birthday": "Birthday (dd/mm/yyyy)",
+        "birthday": "Birthday",
         "birthdayWithoutFormat": "Birthday",
         "birthdayError": "You must be at least 18 years old.",
         "birthdayTitle": "To sign up, you need to be at least 18 years.",
