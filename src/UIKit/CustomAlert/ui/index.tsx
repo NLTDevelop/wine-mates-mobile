@@ -29,7 +29,7 @@ export const CustomAlert = ({ visible, onClose, header, content, footer }: IProp
                         style={[
                             styles.backdrop,
                             {
-                                opacity: backdropOpacity,
+                                opacity: backdropOpacity.current,
                             },
                         ]}
                     />
@@ -39,8 +39,8 @@ export const CustomAlert = ({ visible, onClose, header, content, footer }: IProp
                     style={[
                         styles.alertContainer,
                         {
-                            opacity: backdropOpacity,
-                            transform: [{ scale: scaleAnim }],
+                            opacity: backdropOpacity.current,
+                            transform: [{ scale: scaleAnim.current }],
                         },
                     ]}
                 >

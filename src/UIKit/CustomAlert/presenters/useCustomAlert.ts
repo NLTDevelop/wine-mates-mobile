@@ -63,8 +63,8 @@ export const useCustomAlert = ({ visible, onClose }: IUseCustomAlertProps) => {
 
     return {
         isVisible,
-        backdropOpacity: backdropOpacityRef.current,
-        scaleAnim: scaleAnimRef.current,
+        backdropOpacity: backdropOpacityRef,
+        scaleAnim: scaleAnimRef,
         handleClose,
     };
 };
