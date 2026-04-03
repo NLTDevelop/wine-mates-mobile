@@ -8,17 +8,17 @@ interface IUseCustomAlertProps {
 
 export const useCustomAlert = ({ visible, onClose }: IUseCustomAlertProps) => {
     const [isVisible, setIsVisible] = useState(visible);
-    const backdropOpacity = useRef(new Animated.Value(0)).current;
-    const scaleAnim = useRef(new Animated.Value(0.8)).current;
+    const backdropOpacityRef = useRef(new Animated.Value(0));
+    const scaleAnimRef = useRef(new Animated.Value(0.8));
 
     const handleClose = useCallback(() => {
         Animated.parallel([
-            Animated.timing(backdropOpacity, {
+            Animated.timing(backdropOpacityRef.current, {
                 toValue: 0,
                 duration: 200,
                 useNativeDriver: true,
             }),
-            Animated.timing(scaleAnim, {
+            Animated.timing(scaleAnimRef.current, {
                 toValue: 0.8,
                 duration: 200,
                 useNativeDriver: true,
@@ -27,18 +27,18 @@ export const useCustomAlert = ({ visible, onClose }: IUseCustomAlertProps) => {
             setIsVisible(false);
             onClose();
         });
-    }, [backdropOpacity, scaleAnim, onClose]);
+    }, [onClose]);
 
     useEffect(() => {
         if (visible) {
             setIsVisible(true);
             Animated.parallel([
-                Animated.timing(backdropOpacity, {
+                Animated.timing(backdropOpacityRef.current, {
                     toValue: 1,
                     duration: 200,
                     useNativeDriver: true,
                 }),
-                Animated.spring(scaleAnim, {
+                Animated.spring(scaleAnimRef.current, {
                     toValue: 1,
                     friction: 8,
                     tension: 40,
@@ -48,7 +48,7 @@ export const useCustomAlert = ({ visible, onClose }: IUseCustomAlertProps) => {
         } else {
             handleClose();
         }
-    }, [visible, backdropOpacity, scaleAnim, handleClose]);
+    }, [visible, handleClose]);
 
     useEffect(() => {
         if (!isVisible) return;
@@ -63,8 +63,8 @@ export const useCustomAlert = ({ visible, onClose }: IUseCustomAlertProps) => {
 
     return {
         isVisible,
-        backdropOpacity,
-        scaleAnim,
+        backdropOpacity: backdropOpacityRef.current,
+        scaleAnim: scaleAnimRef.current,
         handleClose,
     };
 };
