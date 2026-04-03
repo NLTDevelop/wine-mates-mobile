@@ -1,21 +1,23 @@
-import { useMemo } from 'react';
+import { useMemo, ReactNode } from 'react';
 import { View } from 'react-native';
 import { CustomAlert } from './index';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { useUiContext } from '@/UIProvider';
-import { StyleSheet } from 'react-native';
-import { scaleVertical } from '@/utils';
+import { getStyles } from './ConfirmAlertStyles';
 
 interface IProps {
     visible: boolean;
     onClose: () => void;
     onConfirm: () => void;
-    title: string;
+    title?: string;
     message?: string;
     confirmText?: string;
     cancelText?: string;
     isLoading?: boolean;
+    customHeader?: ReactNode | string;
+    customContent?: ReactNode | string;
+    customFooter?: ReactNode;
 }
 
 export const ConfirmAlert = ({
@@ -27,26 +29,42 @@ export const ConfirmAlert = ({
     confirmText,
     cancelText,
     isLoading,
+    customHeader,
+    customContent,
+    customFooter,
 }: IProps) => {
     const { colors, t } = useUiContext();
-    const styles = useMemo(() => getLocalStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const header = (
+    const header = customHeader ? (
+        typeof customHeader === 'string' ? (
+            <Typography variant="h4" text={customHeader} style={styles.title} />
+        ) : (
+            customHeader
+        )
+    ) : title ? (
         <Typography variant="h4" text={title} style={styles.title} />
-    );
+    ) : null;
 
-    const content = message ? (
+    const content = customContent ? (
+        typeof customContent === 'string' ? (
+            <Typography variant="body_400" text={customContent} style={styles.message} />
+        ) : (
+            customContent
+        )
+    ) : message ? (
         <Typography variant="body_400" text={message} style={styles.message} />
     ) : null;
 
-    const footer = (
+    const footer = customFooter ? (
+        customFooter
+    ) : (
         <View style={styles.buttonsContainer}>
             <Button
                 text={confirmText || t('common.yes')}
                 onPress={onConfirm}
                 type="main"
                 containerStyle={styles.button}
-                isLoading={isLoading}
                 disabled={isLoading}
             />
             <Button
@@ -60,22 +78,4 @@ export const ConfirmAlert = ({
     );
 
     return <CustomAlert visible={visible} onClose={onClose} header={header} content={content} footer={footer} />;
-};
-
-const getLocalStyles = (colors: any) => {
-    return StyleSheet.create({
-        title: {
-            textAlign: 'center',
-        },
-        message: {
-            textAlign: 'center',
-            color: colors.textSecondary,
-        },
-        buttonsContainer: {
-            gap: scaleVertical(12),
-        },
-        button: {
-            width: '100%',
-        },
-    });
 };
