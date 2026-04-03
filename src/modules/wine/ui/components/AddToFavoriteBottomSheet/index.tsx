@@ -17,9 +17,11 @@ interface IProps {
     onClose: () => void;
     data: IFavoriteItem[];
     onSave: () => void;
+    isLoading?: boolean;
+    isSaving?: boolean;
 }
 
-export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data, onSave }: IProps) => {
+export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data, onSave, isLoading, isSaving }: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom, top), [colors, bottom, top]);
@@ -68,7 +70,12 @@ export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data,
                     contentContainerStyle={styles.contentContainer}
                     showsVerticalScrollIndicator={false}
                 />
-                <Button type='main' onPress={onSave} text={t('common.choose')} disabled={buttonDisabled}/>
+                <Button
+                    type='main'
+                    onPress={onSave}
+                    text={t('common.choose')}
+                    disabled={buttonDisabled || isSaving || isLoading}
+                />
             </BottomSheetView>
         </BottomSheetModal>
     );

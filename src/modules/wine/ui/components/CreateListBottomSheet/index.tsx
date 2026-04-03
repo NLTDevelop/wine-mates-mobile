@@ -15,9 +15,10 @@ interface IProps {
     onChangeValue: (v: string) => void;
     onCreate: () => void;
     onClose: () => void;
+    isCreating?: boolean;
 }
 
-export const CreateListBottomSheet = ({ modalRef, value, onChangeValue, onCreate, onClose }: IProps) => {
+export const CreateListBottomSheet = ({ modalRef, value, onChangeValue, onCreate, onClose, isCreating }: IProps) => {
     const { colors, t } = useUiContext();
     const { bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
@@ -53,8 +54,15 @@ export const CreateListBottomSheet = ({ modalRef, value, onChangeValue, onCreate
                     onChangeText={onChangeValue}
                     placeholder={t('savedWine.listName')}
                     containerStyle={styles.inputContainer}
+                    onSubmitEditing={onCreate}
+                    returnKeyType="done"
                 />
-                <Button text={t('common.create')} onPress={onCreate} containerStyle={styles.button} disabled={!value}/>
+                <Button
+                    text={t('common.create')}
+                    onPress={onCreate}
+                    containerStyle={styles.button}
+                    disabled={!value || isCreating}
+                />
             </BottomSheetView>
         </BottomSheetModal>
     );
