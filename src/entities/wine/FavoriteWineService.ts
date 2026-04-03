@@ -22,9 +22,9 @@ class FavoriteWineService {
 
             if (!response.isError) {
                 if (params.offset === 0) {
-                    favoriteWinesListModel.setCurrentListWines(response.data);
+                    favoriteWinesListModel.currentListWines = response.data;
                 } else {
-                    favoriteWinesListModel.appendCurrentListWines(response.data);
+                    favoriteWinesListModel.append(response.data);
                 }
             }
 
@@ -61,7 +61,14 @@ class FavoriteWineService {
             });
 
             if (!response.isError) {
-                favoriteWinesListModel.removeWineFromCurrentList(wineId);
+                const currentWines = favoriteWinesListModel.currentListWines;
+                if (currentWines) {
+                    favoriteWinesListModel.currentListWines = {
+                        ...currentWines,
+                        count: currentWines.count - 1,
+                        rows: currentWines.rows.filter(wine => wine.id !== wineId),
+                    };
+                }
             }
 
             return response;

@@ -16,7 +16,7 @@ class FavoriteWineListService {
             });
 
             if (!response.isError) {
-                favoriteWinesListModel.setLists(response.data);
+                favoriteWinesListModel.lists = response.data;
             }
 
             return response;
@@ -35,7 +35,8 @@ class FavoriteWineListService {
             });
 
             if (!response.isError) {
-                favoriteWinesListModel.addList(response.data);
+                const currentLists = favoriteWinesListModel.lists || [];
+                favoriteWinesListModel.lists = [...currentLists, response.data];
             }
 
             return response;
@@ -54,7 +55,12 @@ class FavoriteWineListService {
             });
 
             if (!response.isError) {
-                favoriteWinesListModel.updateList(id, response.data);
+                const currentLists = favoriteWinesListModel.lists;
+                if (currentLists) {
+                    favoriteWinesListModel.lists = currentLists.map(list => 
+                        list.id === id ? response.data : list
+                    );
+                }
             }
 
             return response;
@@ -72,7 +78,14 @@ class FavoriteWineListService {
             });
 
             if (!response.isError) {
-                favoriteWinesListModel.removeList(id);
+                const currentLists = favoriteWinesListModel.lists;
+                if (currentLists) {
+                    favoriteWinesListModel.lists = currentLists.filter(list => list.id !== id);
+                }
+                if (favoriteWinesListModel.currentListId === id) {
+                    favoriteWinesListModel.currentListId = null;
+                    favoriteWinesListModel.currentListWines = null;
+                }
             }
 
             return response;
