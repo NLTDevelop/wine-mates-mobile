@@ -13,6 +13,11 @@ export const getStyles = (_colors: IColors) => {
         separator: {
             height: scaleVertical(16),
         },
+        loaderContainer: {
+            paddingVertical: scaleVertical(24),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
     });
     return styles;
 };

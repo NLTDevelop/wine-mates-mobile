@@ -34,7 +34,7 @@ class FavoriteWineListService {
                 data,
             });
 
-            if (!response.isError) {
+            if (!response.isError && response.data && response.data.id) {
                 const currentLists = favoriteWinesListModel.lists || [];
                 favoriteWinesListModel.lists = [...currentLists, response.data];
             }

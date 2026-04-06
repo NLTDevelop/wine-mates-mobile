@@ -9,17 +9,20 @@ import { useDropdownButton } from './presenters/useDropdownButton';
 interface IProps {
     children: ReactElement;
     title: string;
+    onExpand?: () => void;
+    onCollapse?: () => void;
+    onLongPress?: () => void;
 }
 
-export const DropdownButton = ({ title, children }: IProps) => {
+export const DropdownButton = ({ title, children, onExpand, onCollapse, onLongPress }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { isOpened, onPress } = useDropdownButton();
+    const { isOpened, onToggle } = useDropdownButton(onExpand, onCollapse);
 
     return (
         <View>
-            <TouchableOpacity style={styles.button} onPress={onPress}>
+            <TouchableOpacity style={styles.button} onPress={onToggle} onLongPress={onLongPress}>
                 <Typography variant="h6" text={title} />
                 <ArrowDownIcon rotate={isOpened ? 180 : 0} />
             </TouchableOpacity>

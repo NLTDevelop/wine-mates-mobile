@@ -17,6 +17,8 @@
         "nothingFoundDescription": "We couldn't find any results for your query. Please check your spelling or try different keywords.",
         "confirm": "Confirm",
         "cancel": "Cancel",
+        "yes": "Yes",
+        "no": "No",
         "choose": "Choose",
         "generate": "Generate",
         "copiedToClipboard": "Text copied to clipboard",
@@ -97,7 +99,7 @@
         "lastName": "Last name",
         "occupation": "Occupation",
         "wineryName": "Winery name",
-        "birthday": "Birthday (dd/mm/yyyy)",
+        "birthday": "Birthday",
         "birthdayWithoutFormat": "Birthday",
         "birthdayError": "You must be at least 18 years old.",
         "birthdayTitle": "To sign up, you need to be at least 18 years.",
@@ -229,7 +231,9 @@
     "savedWine": {
         "savedWine": "Saved wine",
         "createList": "Create List",
-        "listName": "List name"
+        "listName": "List name",
+        "deleteListTitle": "Delete list?",
+        "deleteListMessage": "Are you sure you want to delete the list \"{{name}}\"?"
     },
     "medal": {
         "silver": "Silver medal",
