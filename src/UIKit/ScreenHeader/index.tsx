@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -9,11 +9,16 @@ import { Typography } from '@/UIKit/Typography';
 import { NextArrowIcon } from '@assets/icons/NextArrowIcon.tsx';
 import { SearchIcon } from '@assets/icons/SearchIcon.tsx';
 import { NotificationBadge } from '@/UIKit/NotificationBadge';
+import { useNavigation } from '@react-navigation/native';
 
 export const ScreenHeader = observer(() => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const navigation = useNavigation<any>();
 
+    const onProfilePress = useCallback(() => {
+        navigation.navigate('ProfileSettingsView');
+    }, [navigation]);
 
     return (
         <View style={styles.container}>
@@ -23,7 +28,7 @@ export const ScreenHeader = observer(() => {
                     avatarUrl={userModel.user?.avatarUrl ?? null}
                     fullname={`${userModel.user?.firstName} ${userModel.user?.lastName}`}
                 />
-                <TouchableOpacity activeOpacity={0.7} style={styles.userNameWrapper}>
+                <TouchableOpacity activeOpacity={0.7} style={styles.userNameWrapper} onPress={onProfilePress}>
                     <Typography
                         text={`Hi, ${userModel.user?.firstName} 👋🏻`}
                         variant="h5"

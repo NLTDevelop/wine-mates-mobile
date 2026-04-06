@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View, useWindowDimensions, TouchableOpacity } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useUiContext } from '@/UIProvider';
 import { useWineRecommendationCarousel } from './presenters/useWineRecommendationCarousel';
-import Animated, { FadeInRight, FadeOutLeft, FadeInLeft, FadeOutRight } from 'react-native-reanimated';
+import Carousel from 'react-native-reanimated-carousel';
 import { getStyles } from './styles';
 import { CarouselWineCard } from '@/UIKit/CarouselWineCard';
+import { scaleHorizontal } from '@/utils';
 import { ArrowRightIcon } from '@assets/icons/ArrowRightIcon';
 
 interface IProps {
@@ -16,7 +17,8 @@ interface IProps {
 export const WineRecommendationCarousel = observer(({ typeId, colorId }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { wines, currentIndex, onPrevious, onNext, direction, onWinePress } = useWineRecommendationCarousel({
+    const { width } = useWindowDimensions();
+    const { wines, carouselRef, onSnapToItem, onWinePress, onNext, onPrevious } = useWineRecommendationCarousel({
         typeId,
         colorId,
     });
@@ -25,29 +27,48 @@ export const WineRecommendationCarousel = observer(({ typeId, colorId }: IProps)
         return null;
     }
 
+    const carouselWidth = width - scaleHorizontal(48);
+
     return (
         <View style={styles.container}>
-            <Animated.View
-                key={wines[currentIndex].id}
-                entering={direction === 'forward' ? FadeInRight.duration(300) : FadeInLeft.duration(300)}
-                exiting={direction === 'forward' ? FadeOutLeft.duration(300) : FadeOutRight.duration(300)}
-                style={styles.cardContainer}
-            >
-                <CarouselWineCard item={wines[currentIndex]} onPress={onWinePress} />
-            </Animated.View>
+            <Carousel
+                ref={carouselRef}
+                loop={false}
+                width={carouselWidth}
+                height={styles.carouselHeight.height}
+                data={wines}
+                onSnapToItem={onSnapToItem}
+                renderItem={({ item }) => (
+                    <View style={styles.cardContainer}>
+                        <CarouselWineCard item={item} onPress={onWinePress} />
+                    </View>
+                )}
+                mode="parallax"
+                modeConfig={{
+                    parallaxScrollingScale: 0.9,
+                    parallaxScrollingOffset: 50,
+                }}
+            />
 
-            {
-               wines.length > 1 && <>
-                    <TouchableOpacity style={[styles.arrowButton, styles.leftArrowContainer]} onPress={onPrevious} activeOpacity={0.6}>
+            {wines.length > 1 && (
+                <>
+                    <TouchableOpacity
+                        style={[styles.arrowButton, styles.leftArrowContainer]}
+                        onPress={onPrevious}
+                        activeOpacity={0.6}
+                    >
                         <ArrowRightIcon rotate={180} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[styles.arrowButton, styles.rightArrowContainer]} onPress={onNext} activeOpacity={0.6}>
+                    <TouchableOpacity
+                        style={[styles.arrowButton, styles.rightArrowContainer]}
+                        onPress={onNext}
+                        activeOpacity={0.6}
+                    >
                         <ArrowRightIcon />
                     </TouchableOpacity>
-               </>
-            }
-
+                </>
+            )}
         </View>
     );
 });

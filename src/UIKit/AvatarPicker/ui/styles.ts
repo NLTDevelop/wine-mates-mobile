@@ -51,6 +51,27 @@ export const getStyles = (colors: IColors, size: number) => {
             justifyContent: 'center',
             alignItems: 'center',
         },
+        editOverlay: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: colorOpacity(colors.text, 30),
+            borderRadius: size / 2,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        editBadge: {
+            position: 'absolute',
+            alignSelf: 'center',
+            top: "35%",
+            width: size * 0.35,
+            height: size * 0.35,
+            borderRadius: (size * 0.35) / 2,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
     });
 
     return styles;

@@ -1,22 +1,20 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleVertical, scaleHorizontal } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             marginTop: scaleVertical(16),
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
             width: '100%',
+            position: 'relative',
         },
-        arrowContainer: {
-            position: 'absolute',
-            flexDirection: 'row',
-            width: '100%',
-            height: scaleHorizontal(40),
-            justifyContent: 'space-between',
+        carouselHeight: {
+            height: scaleVertical(300),
+        },
+        cardContainer: {
+            flex: 1,
+            paddingHorizontal: scaleHorizontal(8),
         },
         arrowButton: {
             position: 'absolute',
@@ -28,16 +26,16 @@ export const getStyles = (colors: IColors) => {
             borderWidth: 1,
             borderColor: colors.border,
             backgroundColor: colors.background,
+            opacity: 0.3,
+            zIndex: 10,
+            top: '50%',
+            marginTop: -scaleHorizontal(20),
         },
         leftArrowContainer: {
             left: -scaleHorizontal(10),
         },
         rightArrowContainer: {
             right: -scaleHorizontal(10),
-        },
-        cardContainer: {
-            flex: 1,
-            marginHorizontal: scaleHorizontal(8),
         },
     });
     return styles;

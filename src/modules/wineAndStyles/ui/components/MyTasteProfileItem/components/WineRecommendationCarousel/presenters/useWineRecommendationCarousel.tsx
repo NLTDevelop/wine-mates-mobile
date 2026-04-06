@@ -1,9 +1,10 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import { wineAndStylesModel } from '@/entities/wine/WineAndStylesModel';
 import { wineService } from '@/entities/wine/WineService';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
+import type { ICarouselInstance } from 'react-native-reanimated-carousel';
 
 const LIMIT = 10;
 const PREFETCH_THRESHOLD = 8;
@@ -15,8 +16,7 @@ interface IUseWineRecommendationCarouselParams {
 
 export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecommendationCarouselParams) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
+    const carouselRef = useRef<ICarouselInstance>(null);
     const isFetchingRef = useRef(false);
 
     const key = wineAndStylesModel.getRecommendationKey(typeId, colorId);
@@ -54,30 +54,26 @@ export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecom
         isFetchingRef.current = false;
     }, [key, typeId, colorId, pagination]);
 
-    const onNext = useCallback(() => {
-        setDirection('forward');
-        setCurrentIndex(prev => {
-            const next = (prev + 1) % wines.length;
-
-            if (wines.length - next <= PREFETCH_THRESHOLD) {
-                fetchNextPage();
-            }
-
-            return next;
-        });
+    const onSnapToItem = useCallback((index: number) => {
+        if (wines.length - index <= PREFETCH_THRESHOLD) {
+            fetchNextPage();
+        }
     }, [wines.length, fetchNextPage]);
 
+    const onNext = useCallback(() => {
+        carouselRef.current?.next();
+    }, []);
+
     const onPrevious = useCallback(() => {
-        setDirection('backward');
-        setCurrentIndex(prev => (prev - 1 + wines.length) % wines.length);
-    }, [wines.length]);
+        carouselRef.current?.prev();
+    }, []);
 
     return {
         wines,
-        currentIndex,
+        carouselRef,
+        onSnapToItem,
+        onWinePress,
         onNext,
-        onPrevious,
-        direction,
-        onWinePress
+        onPrevious
     };
 };
