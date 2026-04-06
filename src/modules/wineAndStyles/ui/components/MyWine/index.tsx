@@ -23,10 +23,9 @@ export const MyWine = observer(() => {
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
     
     const renderFooter = useCallback((item: IWineListItem) => {
-        const lastReviewData = item.myReview || item.lastReview;
-        if (!lastReviewData) return null;
+        if (!item.myReview) return null;
 
-        return <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review}/>;
+        return <WineReviewBlock user={item.myReview.user} review={item.myReview.review}/>;
     }, []);
 
     const renderItem = useCallback(({ item }: { item: IWineListItem; index: number }) => {

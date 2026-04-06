@@ -3,6 +3,7 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { declOfWord } from '@/utils';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
+import { userModel } from '@/entities/users/UserModel';
 
 interface IProps {
     item: IWineListItem | IWineDetails;
@@ -91,6 +92,30 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
         return new Intl.DateTimeFormat(isEnglish ? 'en-US' : 'uk-UA', options).format(date);
     }, []);
 
+    const hasPremium = useMemo(() => userModel.user?.hasPremium ?? false, []);
+
+    const userId = useMemo(() => userModel.user?.id ?? null, []);
+
+    const shouldReviewShow = useMemo(() => {
+        return userId === lastReviewData?.user.id;
+    }, [userId, lastReviewData]);
+
+    const currentVintageData = useMemo(() => {
+        return isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
+            ? item.currentVintage
+            : null;
+    }, [item]);
+
+    const expertRating = useMemo(() => {
+        return removeCardStyles && currentVintageData
+            ? currentVintageData?.averageExpertRating ?? 0
+            : item.averageExpertRating ?? 0;
+    }, [removeCardStyles, currentVintageData, item.averageExpertRating]);
+
+    const showMedal = useMemo(() => {
+        return shouldReviewShow || expertRating > 0;
+    }, [shouldReviewShow, expertRating]);
+
     return {
         onItemPress,
         similarityText,
@@ -100,5 +125,11 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
         getFormattedDate,
         locationText,
         expertReviewCount,
+        hasPremium,
+        userId,
+        shouldReviewShow,
+        currentVintageData,
+        expertRating,
+        showMedal,
     };
 };

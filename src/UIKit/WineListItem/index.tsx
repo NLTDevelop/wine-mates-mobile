@@ -7,7 +7,6 @@ import { EmptyWine } from '@/UIKit/EmptyWine';
 import { SmallStarRating } from '@/UIKit/SmallStarRating';
 import { RateMedal } from '@/modules/scanner/ui/components/RateMedal/ui';
 import { ShowLock } from '@/UIKit/ShowLock';
-import { userModel } from '@/entities/users/UserModel';
 import { useWineListItem } from './presenters/useWineListItem';
 import { getStyles } from './styles';
 import { useWineDescription } from './presenters/useWineDescription';
@@ -23,25 +22,24 @@ interface IProps {
     customBottomComponent?: ReactNode;
 }
 
-const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails => 'currentVintage' in item;
-
 export const WineListItem = ({ item, onPress, showSimilarity = false, footer, removeCardStyles = false,
     showDate = false, customBottomComponent }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
-    const { onItemPress, similarityText, userRating, userReviewCount, expertReviewCount, lastReviewData, getFormattedDate } =
-        useWineListItem({ item, onPress, removeCardStyles });
+    const { 
+        onItemPress, 
+        similarityText, 
+        userRating, 
+        userReviewCount, 
+        expertReviewCount, 
+        lastReviewData, 
+        getFormattedDate,
+        hasPremium,
+        shouldReviewShow,
+        expertRating,
+        showMedal
+    } = useWineListItem({ item, onPress, removeCardStyles });
     const { description } = useWineDescription({ item });
-    const hasPremium = userModel.user?.hasPremium ?? false;
-    const userId = userModel.user?.id ?? null;
-    const shouldReviewShow = userId === lastReviewData?.user.id;
-    const currentVintageData = isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
-        ? item.currentVintage
-        : null;
-    const expertRating = removeCardStyles && currentVintageData
-        ? currentVintageData?.averageExpertRating ?? 0
-        : item.averageExpertRating ?? 0
-    const showMedal = shouldReviewShow || expertRating > 0;
 
     return (
         <Pressable
