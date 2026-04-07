@@ -1,11 +1,10 @@
 import { favoriteWineService } from '@/entities/wine/FavoriteWineService';
-import { favoriteWinesListModel } from '@/entities/wine/FavoriteWineListsModel';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 const LIMIT = 10;
 
@@ -55,6 +54,14 @@ export const useSavedWineListItem = (listId: number) => {
             navigation.navigate('WineDetailsView', { wineId: item.id });
         },
         [navigation],
+    );
+
+    useFocusEffect(
+        useCallback(() => {
+            if (isExpanded && wines.length > 0) {
+                getWines();
+            }
+        }, [isExpanded, wines.length, getWines]),
     );
 
     return { wines, isLoading, onWinePress, onExpand, onCollapse };

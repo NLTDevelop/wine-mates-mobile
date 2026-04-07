@@ -8,13 +8,12 @@ import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 interface IProps {
     children: ReactElement;
     title: string;
-    onPress?: () => void;
-    onLongPress?: () => void;
     onExpand?: () => void;
     onCollapse?: () => void;
+    onLongPress?: () => void;
 }
 
-export const FavoriteListDropdown = ({ title, children, onPress, onLongPress, onExpand, onCollapse }: IProps) => {
+export const FavoriteListDropdown = ({ title, children, onExpand, onCollapse, onLongPress }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const [isOpened, setIsOpened] = useState(false);
@@ -33,11 +32,9 @@ export const FavoriteListDropdown = ({ title, children, onPress, onLongPress, on
 
     return (
         <View>
-            <TouchableOpacity style={styles.button} onPress={onPress} onLongPress={onLongPress}>
+            <TouchableOpacity style={styles.button} onPress={onToggle} onLongPress={onLongPress}>
                 <Typography variant="h6" text={title} />
-                <TouchableOpacity onPress={onToggle} hitSlop={8}>
-                    <ArrowDownIcon rotate={isOpened ? 180 : 0} />
-                </TouchableOpacity>
+                <ArrowDownIcon rotate={isOpened ? 180 : 0} />
             </TouchableOpacity>
 
             {isOpened && children}

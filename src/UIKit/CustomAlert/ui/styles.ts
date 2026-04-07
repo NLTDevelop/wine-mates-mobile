@@ -10,7 +10,7 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
         },
         backdrop: {
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
         },
         alertContainer: {
@@ -23,8 +23,21 @@ export const getStyles = (colors: IColors) => {
         },
         header: {
             paddingHorizontal: scaleHorizontal(16),
-            paddingTop: scaleVertical(20),
+            paddingTop: scaleVertical(12),
             paddingBottom: scaleVertical(12),
+        },
+        headerWithClose: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+        },
+        headerText: {
+            color: colors.text,
+            marginLeft: scaleHorizontal(8),
+        },
+        closeButton: {
+            padding: scaleVertical(4),
+            marginLeft: scaleHorizontal(8),
         },
         content: {
             paddingHorizontal: scaleHorizontal(16),
@@ -33,7 +46,7 @@ export const getStyles = (colors: IColors) => {
         footer: {
             paddingHorizontal: scaleHorizontal(16),
             paddingTop: scaleVertical(12),
-            paddingBottom: scaleVertical(20),
+            paddingBottom: scaleVertical(16),
         },
     });
 

@@ -16,10 +16,17 @@ import DatePicker from 'react-native-date-picker';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { EditIcon } from '@assets/icons/EditIcon';
 import { InstagramIcon } from '@assets/icons/InstagramIcon';
-import { CrossIcon } from '@assets/icons/CrossIcon';
 import { useBirthdaySelector } from '@/modules/registration/presenters/useBirthdaySelector';
 import { SelectExpertiseBottomSheet } from '../components/SelectExpertiseBottomSheet';
 import { ExpertiseSelectorRow } from './components/ExpertiseSelectorRow';
+import { CustomAlert } from '@/UIKit/CustomAlert/ui';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum.ts';
+import { WineLoverIcon } from '@assets/icons/WineLoverIcon.tsx';
+import { WineExpertIcon } from '@assets/icons/WineExpertIcon.tsx';
+import { WinemakerIcon } from '@assets/icons/WinemakerIcon.tsx';
+import { scaleHorizontal } from '@/utils';
+
+const EXPERTISE_SIZE = scaleHorizontal(16);
 
 export const ProfileSettingsView = () => {
     const { colors, t, locale, theme } = useUiContext();
@@ -57,6 +64,10 @@ export const ProfileSettingsView = () => {
         onConfirmBirthday,
         onSearchCity,
         instagramLinkError,
+        isDeleteAvatarAlertVisible,
+        onCloseDeleteAvatarAlert,
+        onConfirmDeleteAvatar,
+        onEditModeBackHandler,
     } = useProfileSettings();
     const { scrollRef } = useBirthdaySelector(() => {});
 
@@ -69,16 +80,13 @@ export const ProfileSettingsView = () => {
             headerComponent={(
                 <HeaderWithBackButton
                     title={t('settings.profileSettings')}
+                    onPressBack={onEditModeBackHandler}
                     isCentered={false}
-                    rightComponent={(
-                    <Pressable onPress={onToggleEdit} style={styles.editButton}>
-                            {isEditing ? (
-                                <CrossIcon width={20} height={20} color={colors.text_light} />
-                            ) : (
-                                <EditIcon width={20} height={20} color={colors.text} />
-                            )}
+                    rightComponent={!isEditing ? (
+                        <Pressable onPress={onToggleEdit} style={styles.editButton}>
+                            <EditIcon width={20} height={20} color={colors.text} />
                         </Pressable>
-                    )}
+                    ) : undefined}
                 />
             )}
             isKeyboardAvoiding
@@ -87,7 +95,7 @@ export const ProfileSettingsView = () => {
                 <View style={styles.content}>
                     <View style={styles.avatarContainer}>
                         <AvatarPicker
-                            size={64}
+                            size={72}
                             avatarUrl={avatarUrl}
                             fullname={form.fullName}
                             isEditing={isEditing}
@@ -98,6 +106,16 @@ export const ProfileSettingsView = () => {
                             onRemove={onRemoveAvatar}
                             onCancelDeletion={onCancelDeletion}
                         />
+                        <View style={styles.roleContainer}>
+                            <Typography
+                                text={expertiseLevel === 'lover' ? t('registration.wineLover') : expertiseLevel === 'expert' ? t('registration.wineExpert') : t('registration.winemaker')}
+                                variant="subtitle_12_500"
+                                style={styles.roleText}
+                            />
+                            {expertiseLevel === WineExperienceLevelEnum.LOVER && <WineLoverIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />}
+                            {expertiseLevel === WineExperienceLevelEnum.EXPERT && <WineExpertIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />}
+                            {expertiseLevel === WineExperienceLevelEnum.CREATOR && <WinemakerIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />}
+                        </View>
                     </View>
                     {isEditing && (
                         <ExpertiseSelectorRow expertiseLevel={expertiseLevel} onPress={onOpenExpertiseModal} />
@@ -230,12 +248,12 @@ export const ProfileSettingsView = () => {
                 visible={isBirthdayModalVisible && isEditing}
                 onClose={onCloseBirthdayModal}
                 customHeader={(
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 16 }}>
-                        <Pressable onPress={onCloseBirthdayModal} style={{ padding: 8 }}>
+                    <View style={styles.birthdayModalHeader}>
+                        <Pressable onPress={onCloseBirthdayModal} style={styles.birthdayModalButton}>
                             <Typography text="✕" variant="h4" />
                         </Pressable>
                         <Typography text={t('registration.birthday')} variant="h4" />
-                        <Pressable onPress={onConfirmBirthday} style={{ padding: 8 }}>
+                        <Pressable onPress={onConfirmBirthday} style={styles.birthdayModalButton}>
                             <Typography text="OK" variant="h6" />
                         </Pressable>
                     </View>
@@ -252,6 +270,30 @@ export const ProfileSettingsView = () => {
                     />
                 </View>
             </BottomModal>
+            <CustomAlert
+                visible={isDeleteAvatarAlertVisible}
+                onClose={onCloseDeleteAvatarAlert}
+                header={t('settings.deleteProfilePhotoTitle')}
+                content={
+                    <Typography text={t('settings.deleteProfilePhotoMessage')} variant="subtitle_12_400" style={styles.alertMessage} />
+                }
+                footer={
+                    <View style={styles.alertFooter}>
+                        <Button
+                            text={t('settings.delete')}
+                            onPress={onConfirmDeleteAvatar}
+                            type="main"
+                            containerStyle={styles.alertButton}
+                        />
+                        <Button
+                            text={t('common.cancel')}
+                            onPress={onCloseDeleteAvatarAlert}
+                            type="secondary"
+                            containerStyle={styles.alertButton}
+                        />
+                    </View>
+                }
+            />
         </ScreenContainer>
     );
 };

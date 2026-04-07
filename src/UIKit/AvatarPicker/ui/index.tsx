@@ -4,6 +4,7 @@ import { FasterImageView } from '@rraut/react-native-faster-image';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { DeleteForeverIcon } from '@assets/icons/DeleteForeverIcon';
 import { CameraIcon } from '@assets/icons/CameraIcon';
+import { PlusIcon } from '@assets/icons/PlusIcon';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -54,7 +55,11 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
                     <FasterImageView source={{ uri: displayUri }} style={styles.image} />
                 ) : (
                     <View style={styles.placeholder}>
-                        <Typography text={initials} variant="h3" style={styles.initials} />
+                        {isEditing ? (
+                            <PlusIcon width={24} height={24} color={colors.primary} />
+                        ) : (
+                            <Typography text={initials} variant="h3" style={styles.initials} />
+                        )}
                     </View>
                 )}
                 {isMarkedForDeletion && (avatarUrl || selectedImageUri) && (
@@ -62,18 +67,13 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
                         <DeleteForeverIcon width={32} height={32} color={colors.background} />
                     </View>
                 )}
-                {isEditing && !isMarkedForDeletion && (
+                {isEditing && !isMarkedForDeletion && displayUri && (
                     <View style={styles.editOverlay} />
                 )}
             </Pressable>
-            {isEditing && !isMarkedForDeletion && (
-                <View style={styles.editBadge}>
-                    <CameraIcon width={16} height={16} color={colors.background} />
-                </View>
-            )}
-            {isEditing && hasAvatar && (
+            {isEditing && hasAvatar && !isMarkedForDeletion && (
                 <TouchableOpacity onPress={onDeletePress} style={styles.deleteBadge}>
-                    <CrossIcon color={colors.background} width={12} height={12} />
+                    <CrossIcon color={colors.text} width={12} height={12} />
                 </TouchableOpacity>
             )}
         </>

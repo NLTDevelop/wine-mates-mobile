@@ -289,7 +289,10 @@
         "website": "Додайте ваш сайт",
         "bio": "Біо",
         "expertise": "Експертиза",
-        "socialMediaLinks": "Посилання на соцмережі"
+        "socialMediaLinks": "Посилання на соцмережі",
+        "deleteProfilePhotoTitle": "Видалити фото профілю?",
+        "deleteProfilePhotoMessage": "Ви впевнені, що хочете видалити фото профілю? Цю дію не можна скасувати.",
+        "delete": "Видалити"
     },
     "logout": {
         "logout": "Вийти?",

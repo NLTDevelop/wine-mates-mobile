@@ -16,12 +16,12 @@ import { WineListItem } from '@/UIKit/WineListItem';
 export const MyWine = observer(() => {
     const { colors , t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    
+
     const { data, onRefresh, onEndReached, onItemPress, isLoading, getList, listRef, scrollToTop } = useMyWine();
     const { refreshControl } = useRefresh(onRefresh);
-    
+
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
-    
+
     const renderFooter = useCallback((item: IWineListItem) => {
         if (!item.myReview) return null;
 
@@ -29,7 +29,7 @@ export const MyWine = observer(() => {
     }, []);
 
     const renderItem = useCallback(({ item }: { item: IWineListItem; index: number }) => {
-        return <WineListItem item={item} onPress={onItemPress} showDate footer={renderFooter(item)} />;
+        return <WineListItem item={item} onPress={onItemPress} showDate showVintage footer={renderFooter(item)} />;
     }, [onItemPress, renderFooter]);
 
     return (

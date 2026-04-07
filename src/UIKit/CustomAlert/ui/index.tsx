@@ -1,13 +1,15 @@
 import { ReactNode, useMemo } from 'react';
-import { View, Modal, TouchableWithoutFeedback, Animated } from 'react-native';
+import { View, Modal, TouchableWithoutFeedback, Animated, Pressable } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { useCustomAlert } from '../presenters/useCustomAlert';
+import { Typography } from '@/UIKit/Typography';
+import { CrossIcon } from '@assets/icons/CrossIcon';
 
 interface IProps {
     visible: boolean;
     onClose: () => void;
-    header?: ReactNode;
+    header?: ReactNode | string;
     content?: ReactNode;
     footer?: ReactNode;
 }
@@ -44,7 +46,21 @@ export const CustomAlert = ({ visible, onClose, header, content, footer }: IProp
                         },
                     ]}
                 >
-                    {header && <View style={styles.header}>{header}</View>}
+                    {header && (
+                        <View style={styles.header}>
+                            {typeof header === 'string' ? (
+                                <View style={styles.headerWithClose}>
+                                    <View/>
+                                    <Typography text={header} variant="h4" style={styles.headerText} />
+                                    <Pressable onPress={handleClose} style={styles.closeButton}>
+                                        <CrossIcon width={20} height={20} color={colors.text} />
+                                    </Pressable>
+                                </View>
+                            ) : (
+                                header
+                            )}
+                        </View>
+                    )}
                     {content && <View style={styles.content}>{content}</View>}
                     {footer && <View style={styles.footer}>{footer}</View>}
                 </Animated.View>

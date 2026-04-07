@@ -285,7 +285,10 @@
         "website": "Enter your website",
         "bio": "Bio",
         "expertise": "Expertise",
-        "socialMediaLinks": "Social media links"
+        "socialMediaLinks": "Social media links",
+        "deleteProfilePhotoTitle": "Delete profile photo?",
+        "deleteProfilePhotoMessage": "Are you sure you want to delete your profile photo? This action cannot be undone.",
+        "delete": "Delete"
     },
     "logout": {
         "logout": "Log out?",

@@ -22,7 +22,7 @@ export const CarouselWineCard = ({ item, onPress }: IProps) => {
             onPress={onPress}
             removeCardStyles={true}
             footer={
-                item.lastReview ? (
+                item.lastReview && item.lastReview.review ? (
                     <View style={styles.reviewSection}>
                         <View style={styles.userRow}>
                             <Avatar
@@ -38,7 +38,7 @@ export const CarouselWineCard = ({ item, onPress }: IProps) => {
                         </View>
                         <Typography
                             variant="body_400"
-                            text={item.lastReview.review ?? '-'}
+                            text={item.lastReview.review}
                             numberOfLines={3}
                             style={styles.text}
                         />

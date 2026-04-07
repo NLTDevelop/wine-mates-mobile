@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useRoute, useNavigation } from '@react-navigation/native';
 import { useLocation } from '@/hooks/useLocation';
 import { useAvatarPicker } from '@/UIKit/AvatarPicker/presenters/useAvatarPicker';
 
@@ -30,12 +30,14 @@ interface IProfileForm {
 
 export const useProfileSettings = () => {
     const route = useRoute();
+    const navigation = useNavigation();
     const { citySuggestions, searchCities } = useLocation();
     const { onOpenCamera } = useAvatarPicker();
     const [selectedAvatarImage, setSelectedAvatarImage] = useState<{ uri: string; name: string; type: string } | null>(null);
     const [isAvatarChanged, setIsAvatarChanged] = useState(false);
     const [shouldRemoveAvatar, setShouldRemoveAvatar] = useState(false);
     const [instagramLinkError, setInstagramLinkError] = useState<string | null>(null);
+    const [isDeleteAvatarAlertVisible, setIsDeleteAvatarAlertVisible] = useState(false);
 
     const normalizeE164Phone = useCallback((raw: string) => {
         const trimmed = raw.trim().replace(/\s+/g, '');
@@ -398,15 +400,32 @@ export const useProfileSettings = () => {
         searchCities(query, countryName);
     }, [searchCities, form.country, getCountryName]);
 
-    const onRemoveAvatar = useCallback(() => {
+    const onShowDeleteAvatarAlert = useCallback(() => {
+        setIsDeleteAvatarAlertVisible(true);
+    }, []);
+
+    const onCloseDeleteAvatarAlert = useCallback(() => {
+        setIsDeleteAvatarAlertVisible(false);
+    }, []);
+
+    const onConfirmDeleteAvatar = useCallback(() => {
         setSelectedAvatarImage(null);
         setShouldRemoveAvatar(true);
         setIsAvatarChanged(false);
+        setIsDeleteAvatarAlertVisible(false);
     }, []);
 
     const onCancelDeletion = useCallback(() => {
         setShouldRemoveAvatar(false);
     }, []);
+
+    const onEditModeBackHandler = useCallback(() => {
+        if (isEditing) {
+            onToggleEdit();
+        } else {
+            navigation.goBack();
+        }
+    }, [isEditing, navigation, onToggleEdit]);
 
     const hasAvatar = useMemo(() => {
         return !shouldRemoveAvatar && (!!selectedAvatarImage || !!userModel.user?.avatarUrl);
@@ -428,8 +447,11 @@ export const useProfileSettings = () => {
         hasAvatar,
         isMarkedForDeletion: shouldRemoveAvatar,
         onOpenCamera,
-        onRemoveAvatar,
+        onRemoveAvatar: onShowDeleteAvatarAlert,
         onCancelDeletion,
+        isDeleteAvatarAlertVisible,
+        onCloseDeleteAvatarAlert,
+        onConfirmDeleteAvatar,
         expertiseLevel,
         birthdayDisplayText,
         isEditing,
@@ -458,5 +480,6 @@ export const useProfileSettings = () => {
         isDisabled,
         isInProgress,
         instagramLinkError,
+        onEditModeBackHandler,
     };
 };

@@ -19,27 +19,28 @@ interface IProps {
     footer?: ReactNode;
     removeCardStyles?: boolean;
     showDate?: boolean;
+    showVintage?: boolean;
     customBottomComponent?: ReactNode;
 }
 
 export const WineListItem = ({ item, onPress, showSimilarity = false, footer, removeCardStyles = false,
-    showDate = false, customBottomComponent }: IProps) => {
+    showDate = false, showVintage = false, customBottomComponent }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
-    const { 
-        onItemPress, 
-        similarityText, 
-        userRating, 
-        userReviewCount, 
-        expertReviewCount, 
-        lastReviewData, 
+    const {
+        onItemPress,
+        similarityText,
+        userRating,
+        userReviewCount,
+        expertReviewCount,
+        lastReviewData,
         getFormattedDate,
         hasPremium,
         shouldReviewShow,
         expertRating,
         showMedal
     } = useWineListItem({ item, onPress, removeCardStyles });
-    const { description } = useWineDescription({ item });
+    const { description } = useWineDescription({ item, showVintage });
 
     return (
         <Pressable
@@ -80,7 +81,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                             <ShowLock iconSize={medalSize} />
                         ) : showMedal ? (
                             <RateMedal
-                                sliderValue={expertRating}
+                                sliderValue={expertRating ?? 0}
                                 size={medalSize}
                                 titleFontSize={24}
                                 mainFontSize={90}
@@ -89,7 +90,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                         ) : null}
                     </View>
 
-                    {showMedal ? (
+                    {showMedal && (hasPremium || shouldReviewShow) ? (
                         <>
                             <Typography
                                 variant="subtitle_10_400"

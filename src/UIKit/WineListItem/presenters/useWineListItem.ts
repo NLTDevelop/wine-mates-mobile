@@ -97,7 +97,7 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
     const userId = useMemo(() => userModel.user?.id ?? null, []);
 
     const shouldReviewShow = useMemo(() => {
-        return userId === lastReviewData?.user.id;
+        return userId === lastReviewData?.user.id && (item.averageExpertRating && item.averageExpertRating >= 70);
     }, [userId, lastReviewData]);
 
     const currentVintageData = useMemo(() => {
@@ -107,13 +107,15 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
     }, [item]);
 
     const expertRating = useMemo(() => {
-        return removeCardStyles && currentVintageData
-            ? currentVintageData?.averageExpertRating ?? 0
-            : item.averageExpertRating ?? 0;
+        const rating = removeCardStyles && currentVintageData
+            ? currentVintageData?.averageExpertRating
+            : item.averageExpertRating;
+
+        return rating && rating >= 70 ? rating : null;
     }, [removeCardStyles, currentVintageData, item.averageExpertRating]);
 
     const showMedal = useMemo(() => {
-        return shouldReviewShow || expertRating > 0;
+        return shouldReviewShow || !!expertRating;
     }, [shouldReviewShow, expertRating]);
 
     return {

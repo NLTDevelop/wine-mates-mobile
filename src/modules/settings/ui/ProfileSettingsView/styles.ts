@@ -13,9 +13,24 @@ export const getStyles = (colors: IColors) => {
             flex: 1,
             paddingTop: scaleVertical(8),
         },
+        roleContainer: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: colors.background_grey,
+            borderRadius: 99,
+            marginTop: scaleVertical(7),
+            paddingHorizontal: scaleHorizontal(8),
+            paddingVertical: scaleVertical(2),
+            gap: scaleHorizontal(2),
+        },
         avatarContainer: {
             alignSelf: 'center',
             marginBottom: scaleVertical(16),
+            alignItems: 'center',
+        },
+        roleText: {
+            color: colors.text,
         },
         expertiseContainer: {
             marginBottom: scaleVertical(12),
@@ -62,6 +77,26 @@ export const getStyles = (colors: IColors) => {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
+        },
+        alertMessage: {
+            color: colors.text_light,
+            textAlign: 'center',
+        },
+        alertFooter: {
+            gap: scaleVertical(12),
+        },
+        alertButton: {
+            width: '100%',
+        },
+        birthdayModalHeader: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: scaleHorizontal(16),
+            paddingTop: scaleVertical(16),
+        },
+        birthdayModalButton: {
+            padding: scaleVertical(8),
         },
     });
     return styles;
