@@ -29,8 +29,8 @@ export const getStyles = (colors: IColors, size: number) => {
         },
         deleteBadge: {
             position: 'absolute',
-            top: scaleVertical(-2),
-            right: scaleHorizontal(-2),
+            top: scaleVertical(4),
+            right: scaleHorizontal(16),
             width: size * 0.35,
             height: size * 0.35,
             borderRadius: (size * 0.35) / 2,
