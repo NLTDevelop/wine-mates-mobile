@@ -5,12 +5,14 @@ interface IProps {
     width?: number;
     height?: number;
     color?: string;
+    isSaved?: boolean;
 }
 
-export const FavoriteIcon = ({ width = 20, height = 20, color }: IProps) => (
+export const FavoriteIcon = ({ width = 20, height = 20, color, isSaved = false }: IProps) => (
     <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 20 20" fill="none">
         <Path
             stroke={color || '#910D0D'}
+            fill={isSaved ? (color || '#910D0D') : 'none'}
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={1.5}

@@ -78,7 +78,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                     </View>
                 </>
             )}
-            
+
             {colorShadeItems.length > 0 && (
                 <>
                     <View style={styles.titleContainer}>

@@ -51,7 +51,7 @@ export const ResultHeaderFooter = ({
                     disabled={isCreating || isAllVintagesSelected}
                     applyDisabledStyle={false}
                 />
-                <FavoriteButton onPress={onFavoritePress} disabled={isAllVintagesSelected} />
+                <FavoriteButton onPress={onFavoritePress} disabled={isAllVintagesSelected} isSaved={item.isSaved} />
             </View>
         </View>
     );

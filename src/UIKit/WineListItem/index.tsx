@@ -20,11 +20,12 @@ interface IProps {
     removeCardStyles?: boolean;
     showDate?: boolean;
     showVintage?: boolean;
+    showNonVintage?: boolean;
     customBottomComponent?: ReactNode;
 }
 
 export const WineListItem = ({ item, onPress, showSimilarity = false, footer, removeCardStyles = false,
-    showDate = false, showVintage = false, customBottomComponent }: IProps) => {
+    showDate = false, showVintage = false, showNonVintage = false, customBottomComponent }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
     const {
@@ -36,11 +37,12 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
         lastReviewData,
         getFormattedDate,
         hasPremium,
+        isExpertOrCreator,
         shouldReviewShow,
         expertRating,
         showMedal
     } = useWineListItem({ item, onPress, removeCardStyles });
-    const { description } = useWineDescription({ item, showVintage });
+    const { description } = useWineDescription({ item, showVintage, showNonVintage });
 
     return (
         <Pressable
@@ -77,7 +79,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
 
                 <View style={styles.rightColumn}>
                     <View style={styles.medalContainer}>
-                        {!hasPremium && showMedal && !shouldReviewShow ? (
+                        {!hasPremium && !isExpertOrCreator && showMedal ? (
                             <ShowLock iconSize={medalSize} />
                         ) : showMedal ? (
                             <RateMedal
@@ -90,7 +92,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                         ) : null}
                     </View>
 
-                    {showMedal && (hasPremium || shouldReviewShow) ? (
+                    {showMedal && (hasPremium || isExpertOrCreator || shouldReviewShow) ? (
                         <>
                             <Typography
                                 variant="subtitle_10_400"

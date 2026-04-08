@@ -23,14 +23,14 @@ export const WineDetailsView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
-        selectedWineId, fromScanner } = useWineDetails();
+        selectedWineId, fromScanner, onUpdateIsSaved } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
         selectedWineId ?? wineId,
         isAllVintagesSelected,
     );
     const { refreshControl } = useRefresh(onRefresh);
-    const { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave, isLoading, isSaving } = useAddToFavoriteBottomSheet(wineId);
+    const { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave, isLoading, isSaving } = useAddToFavoriteBottomSheet(wineId, onUpdateIsSaved);
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
     const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);

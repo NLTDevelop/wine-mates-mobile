@@ -28,11 +28,7 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
 
     const onAvatarPress = () => {
         if (!isEditing) return;
-        if (isMarkedForDeletion) {
-            onCancelDeletion();
-        } else {
-            onPress();
-        }
+        onPress();
     };
 
     const displayUri = selectedImageUri || avatarUrl;
@@ -51,7 +47,7 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
     return (
         <>
             <Pressable onPress={onAvatarPress} style={styles.container}>
-                {displayUri ? (
+                {displayUri && !isMarkedForDeletion ? (
                     <FasterImageView source={{ uri: displayUri }} style={styles.image} />
                 ) : (
                     <View style={styles.placeholder}>
@@ -62,16 +58,11 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
                         )}
                     </View>
                 )}
-                {isMarkedForDeletion && (avatarUrl || selectedImageUri) && (
-                    <View style={styles.deleteOverlay}>
-                        <DeleteForeverIcon width={32} height={32} color={colors.background} />
-                    </View>
-                )}
                 {isEditing && !isMarkedForDeletion && displayUri && (
                     <View style={styles.editOverlay} />
                 )}
             </Pressable>
-            {isEditing && hasAvatar && !isMarkedForDeletion && (
+            {isEditing && displayUri && !isMarkedForDeletion && (
                 <TouchableOpacity onPress={onDeletePress} style={styles.deleteBadge}>
                     <CrossIcon color={colors.text} width={12} height={12} />
                 </TouchableOpacity>

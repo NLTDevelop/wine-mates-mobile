@@ -16,6 +16,7 @@ export const useWineDetails = () => {
     const [details, setDetails] = useState<IWineDetails | null>(null);
     const [isError, setIsError] = useState(false);
     const [isAllVintagesSelected, setIsAllVintagesSelected] = useState(false);
+    const [localIsSaved, setLocalIsSaved] = useState<boolean | undefined>(undefined);
 
     const getDetails = useCallback(async (params?: { vintages?: 'All' }) => {
         try {
@@ -32,6 +33,7 @@ export const useWineDetails = () => {
             } else {
                 setDetails(response.data);
                 wineModel.vintages = response.data.vintages;
+                setLocalIsSaved(response.data.isSaved);
                 setIsError(false);
             }
         } catch (error) {
@@ -107,8 +109,17 @@ export const useWineDetails = () => {
 
     const hasCurrentVintageData = !!details?.currentVintage && typeof details.currentVintage === 'object';
 
+    const detailsWithLocalIsSaved = details ? {
+        ...details,
+        isSaved: localIsSaved ?? details.isSaved,
+    } : null;
+
+    const onUpdateIsSaved = useCallback((isSaved: boolean) => {
+        setLocalIsSaved(isSaved);
+    }, []);
+
     return {
-        details,
+        details: detailsWithLocalIsSaved,
         vintages: wineModel.vintages ?? [],
         isError,
         getDetails,
@@ -118,5 +129,6 @@ export const useWineDetails = () => {
         wineId,
         selectedWineId: wineModel.selectedWineId,
         fromScanner,
+        onUpdateIsSaved,
     };
 };

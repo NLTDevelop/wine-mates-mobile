@@ -11,7 +11,7 @@ export interface IFavoriteItem {
     isSelected: boolean;
 }
 
-export const useAddToFavoriteBottomSheet = (wineId?: number) => {
+export const useAddToFavoriteBottomSheet = (wineId?: number, onUpdateIsSaved?: (isSaved: boolean) => void) => {
     const addToFavoriteModalRef = useRef<BottomSheetModal | null>(null);
     const { lists, isLoading: isLoadingLists, loadLists } = useFavoriteWineLists();
     const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
@@ -98,6 +98,10 @@ export const useAddToFavoriteBottomSheet = (wineId?: number) => {
             );
 
             await Promise.all([...addPromises, ...removePromises]);
+
+            if (onUpdateIsSaved) {
+                onUpdateIsSaved(selectedIds.size > 0);
+            }
 
             onClose();
         } catch (error) {

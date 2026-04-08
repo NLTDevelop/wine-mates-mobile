@@ -77,4 +77,5 @@ export interface IWineDetails {
     totalReviews: number;
     aiTastingNote?: 'string';
     aiSnacks?: ISnack[];
+    isSaved?: boolean;
 }
