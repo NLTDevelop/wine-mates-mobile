@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Pressable, TouchableOpacity, View } from 'react-native';
+import { Pressable, TouchableOpacity, View, Image } from 'react-native';
 import { FasterImageView } from '@rraut/react-native-faster-image';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { DeleteForeverIcon } from '@assets/icons/DeleteForeverIcon';
@@ -32,6 +32,9 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
     };
 
     const displayUri = selectedImageUri || avatarUrl;
+    const normalizedDisplayUri = displayUri && !displayUri.startsWith('http') && !displayUri.startsWith('file://')
+        ? `file://${displayUri}`
+        : displayUri;
     const initials = fullname
         .split(' ')
         .map(n => n[0])
@@ -46,9 +49,9 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
 
     return (
         <>
-            <Pressable onPress={onAvatarPress} style={styles.container}>
+            <TouchableOpacity onPress={onAvatarPress} style={styles.container}>
                 {displayUri && !isMarkedForDeletion ? (
-                    <FasterImageView source={{ uri: displayUri }} style={styles.image} />
+                    <Image source={{ uri: normalizedDisplayUri || undefined }} style={styles.image} />
                 ) : (
                     <View style={styles.placeholder}>
                         {isEditing ? (
@@ -58,10 +61,8 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
                         )}
                     </View>
                 )}
-                {isEditing && !isMarkedForDeletion && displayUri && (
-                    <View style={styles.editOverlay} />
-                )}
-            </Pressable>
+
+            </TouchableOpacity>
             {isEditing && displayUri && !isMarkedForDeletion && (
                 <TouchableOpacity onPress={onDeletePress} style={styles.deleteBadge}>
                     <CrossIcon color={colors.text} width={12} height={12} />
