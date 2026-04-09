@@ -49,7 +49,7 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
 
     return (
         <>
-            <TouchableOpacity onPress={onAvatarPress} style={styles.container}>
+            <TouchableOpacity disabled={!isEditing} onPress={onAvatarPress} style={styles.container}>
                 {displayUri && !isMarkedForDeletion ? (
                     <Image source={{ uri: normalizedDisplayUri || undefined }} style={styles.image} />
                 ) : (
