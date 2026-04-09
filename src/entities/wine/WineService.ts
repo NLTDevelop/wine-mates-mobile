@@ -60,6 +60,20 @@ class WineService {
         }
     };
 
+    getMyWineDetails = async (id: number, rateId: number): Promise<IResponse<IWineDetails>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wines}/${id}/my-details`,
+                params: { rateId },
+            });
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getMyWineDetails: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
     createWine = async (data: FormData): Promise<IResponse<IWine>> => {
         try {
             const response = await this._requester.request({

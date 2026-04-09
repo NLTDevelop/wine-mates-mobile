@@ -11,7 +11,7 @@ import { NONE_VINTAGE_DROPDOWN_VALUE } from './useVintageDropdown';
 
 export const useWineDetails = () => {
     const route = useRoute();
-    const { wineId, fromScanner } = (route.params as { wineId: number; fromScanner?: boolean }) || { wineId: null, fromScanner: false };
+    const { wineId, fromScanner, wineDetailsData } = (route.params as { wineId?: number; fromScanner?: boolean; wineDetailsData?: IWineDetails }) || { wineId: null, fromScanner: false, wineDetailsData: undefined };
     const isFocused = useIsFocused();
     const [details, setDetails] = useState<IWineDetails | null>(null);
     const [isError, setIsError] = useState(false);
@@ -100,12 +100,24 @@ export const useWineDetails = () => {
     }, [details, getDetails]);
 
     useEffect(() => {
-        if (!isFocused || !wineId) return;
+        if (!isFocused) return;
+
+        if (wineDetailsData) {
+            setIsAllVintagesSelected(false);
+            wineModel.selectedWineId = wineDetailsData.id;
+            setDetails(wineDetailsData);
+            wineModel.vintages = wineDetailsData.vintages;
+            setLocalIsSaved(wineDetailsData.isSaved);
+            setIsError(false);
+            return;
+        }
+
+        if (!wineId) return;
 
         setIsAllVintagesSelected(false);
         wineModel.selectedWineId = wineId;
         getDetails();
-    }, [wineId, isFocused, getDetails]);
+    }, [wineId, wineDetailsData, isFocused, getDetails]);
 
     const hasCurrentVintageData = !!details?.currentVintage && typeof details.currentVintage === 'object';
 
@@ -130,5 +142,7 @@ export const useWineDetails = () => {
         selectedWineId: wineModel.selectedWineId,
         fromScanner,
         onUpdateIsSaved,
+        isPreloadedData: !!wineDetailsData,
+        myReview: details?.myReview ?? null,
     };
 };

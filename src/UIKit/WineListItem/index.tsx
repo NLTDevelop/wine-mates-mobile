@@ -116,23 +116,25 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                         style={styles.descriptionText}
                     />
 
-                    <View style={styles.rateContainer}>
-                        <View style={styles.starsContainer}>
-                            <SmallStarRating rating={parseFloat(userRating) || 0} starSize={12.5} />
+                    {userRating !== null ? (
+                        <View style={styles.rateContainer}>
+                            <View style={styles.starsContainer}>
+                                <SmallStarRating rating={parseFloat(userRating) || 0} starSize={12.5} />
+                                <Typography
+                                    variant="subtitle_12_500"
+                                    text={userRating}
+                                    numberOfLines={1}
+                                    style={styles.rateText}
+                                />
+                            </View>
                             <Typography
-                                variant="subtitle_12_500"
-                                text={userRating}
+                                variant="subtitle_10_400"
+                                text={`(${userReviewCount})`}
                                 numberOfLines={1}
-                                style={styles.rateText}
+                                style={styles.rateReviewText}
                             />
                         </View>
-                        <Typography
-                            variant="subtitle_10_400"
-                            text={`(${userReviewCount})`}
-                            numberOfLines={1}
-                            style={styles.rateReviewText}
-                        />
-                    </View>
+                    ) : <View style={styles.emptyDivider}/>}
 
                     <View style={styles.footerContainer}>{footer}</View>
                 </View>

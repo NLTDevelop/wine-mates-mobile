@@ -17,6 +17,8 @@ import { StatisticCard } from '../StatisticCard';
 import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
 import { FoodPairing } from '@/UIKit/FoodPairing';
 import { TastingNote } from '../TastingNote';
+import { ShowLock } from '@/UIKit/ShowLock';
+import { CrownIcon } from '@assets/icons/CrownIcon';
 
 interface IProps {
     data: IWineDetails;
@@ -26,9 +28,10 @@ interface IProps {
     hasCurrentVintageData: boolean;
     isAllVintagesSelected: boolean;
     fromScanner?: boolean;
+    hasReviews?: boolean;
 }
 
-export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner }: IProps) => {
+export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, hasReviews }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
@@ -166,11 +169,25 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 </>
             )}
 
-            {hasCurrentVintageData && data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
+            {data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
 
-            {hasCurrentVintageData && data.aiSnacks?.length ? <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton/> : null}
+            {data.aiSnacks?.length ? (
+                isPremiumUser ? (
+                    <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton/>
+                ) : (
+                    <View style={styles.foodPairingContainer}>
+                        <View style={styles.foodPairingHeader}>
+                            <Typography variant="subtitle_20_500" text={t('wine.foodPairing')} />
+                            <CrownIcon />
+                        </View>
+                        <View style={styles.lockContainer}>
+                            <ShowLock iconSize={24} />
+                        </View>
+                    </View>
+                )
+            ) : null}
 
-            {wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0 && (
+            {(hasReviews || (wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0)) && (
                 <Typography text={t('wine.reviews')} variant="h3" style={styles.title} />
             )}
         </View>

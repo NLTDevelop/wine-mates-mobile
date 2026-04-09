@@ -1,6 +1,7 @@
 import { IMedia } from '@/entities/media/types/IMedia';
 import { IWineTasteCharacteristic } from './IWineTasteCharacteristic';
 import { ISnack } from '@/entities/snacks/types/ISnack';
+import { IWineReviewsListItem } from './IWineReviewsListItem';
 
 export interface IStatistic {
     id: number;
@@ -10,13 +11,14 @@ export interface IStatistic {
 }
 
 export interface IVintage {
-    averageExpertRating: number;
-    averageUserRating: number;
+    averageExpertRating: number | null;
+    averageUserRating: number | null;
     countExpertRating: number;
     countUserRating: number;
     totalReviews: number;
     vintage: number | null;
     wineId: number;
+    myRateId?: number | null;
 }
 
 export type IVintagesItem = number | string | IVintage;
@@ -41,13 +43,13 @@ export interface IWinePeakStatistic {
 }
 
 export interface IOverallVintageScore {
-    averageUserRating: number;
+    averageUserRating: number | null;
     totalReviews: number;
 }
 
 export interface IWineDetails {
-    averageExpertRating: number;
-    averageUserRating: number;
+    averageExpertRating: number | null;
+    averageUserRating: number | null;
     color: { id: number; colorHex: string; name: string };
     countExpertRating: number;
     countUserRating: number;
@@ -78,4 +80,5 @@ export interface IWineDetails {
     aiTastingNote?: 'string';
     aiSnacks?: ISnack[];
     isSaved?: boolean;
+    myReview?: IWineReviewsListItem | null;
 }

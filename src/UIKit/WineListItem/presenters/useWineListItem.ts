@@ -35,14 +35,14 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
     const userRating = useMemo(() => {
         const currentVintageUserRating = isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
             ? item.currentVintage.averageUserRating
-            : 0;
-        const rating = removeCardStyles && currentVintageUserRating ? currentVintageUserRating : item.averageUserRating;
+            : null;
+        const rating = removeCardStyles && currentVintageUserRating !== null ? currentVintageUserRating : item.averageUserRating;
 
-        if (rating > 0) {
-            return rating.toFixed(1);
-        } else {
-            return '0';
+        if (rating === null || rating === undefined) {
+            return null;
         }
+        
+        return rating.toFixed(1);
     }, [item, removeCardStyles]);
 
     const lastReviewData = useMemo(() => {

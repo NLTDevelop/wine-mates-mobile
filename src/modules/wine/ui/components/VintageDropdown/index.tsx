@@ -47,7 +47,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isA
         const expertRating = dropdownItem.averageExpertRating ?? null;
 
         const hasUserRating = userRating !== null;
-        const hasExpertRating = expertRating !== null;
+        const hasExpertRating = expertRating !== null && expertRating >= 70;
 
         if (!hasUserRating && !hasExpertRating) {
             return null;

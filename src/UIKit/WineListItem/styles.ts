@@ -111,6 +111,9 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             marginTop: scaleVertical(12),
             marginBottom: -scaleVertical(6),
         },
+        emptyDivider: {
+            marginVertical: scaleVertical(12),
+        },
         footerContainer: {
             width: '100%',
         },
