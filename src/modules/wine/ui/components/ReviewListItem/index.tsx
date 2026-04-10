@@ -11,9 +11,10 @@ import { useReviewListItem } from './presenters/useReviewListItem';
 
 interface IProps {
     item: IWineReviewsListItem;
+    hideReviewCount?: boolean;
 }
 
-export const ReviewListItem = ({ item }: IProps) => {
+export const ReviewListItem = ({ item, hideReviewCount }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 

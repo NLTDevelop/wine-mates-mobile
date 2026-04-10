@@ -12,7 +12,8 @@ export const useReviewListItem = ({ item, locale }: IProps) => {
     const isJustNow = isLessThanMinuteFromNow(item.createdAt);
     const formattedDate = formatRelativeDate(item.createdAt, locale);
     const isPremiumUser = userModel.user?.hasPremium || false;
-    const isLocked = item.user.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && !isPremiumUser;
+    const isMyReview = item.user.id === userModel.user?.id;
+    const isLocked = !isMyReview && item.user.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && !isPremiumUser;
     const isLoverLevel = item.user.wineExperienceLevel === WineExperienceLevelEnum.LOVER;
 
     const formattedUserRating = (item.userRating || 0).toFixed(1);

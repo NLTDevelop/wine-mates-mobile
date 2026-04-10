@@ -1,5 +1,6 @@
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { wineService } from '@/entities/wine/WineService';
+import { myWineService } from '@/entities/wine/MyWineService';
 import { toastService } from '@/libs/toast/toastService';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -17,12 +18,15 @@ export const useWineDetails = () => {
     const [isError, setIsError] = useState(false);
     const [isAllVintagesSelected, setIsAllVintagesSelected] = useState(false);
     const [localIsSaved, setLocalIsSaved] = useState<boolean | undefined>(undefined);
+    const [rateId, setRateId] = useState<number | null>(null);
 
     const getDetails = useCallback(async (params?: { vintages?: 'All' }) => {
         try {
             if (!wineModel.selectedWineId) return;
 
-            const response = await wineService.getById(wineModel.selectedWineId, params);
+            const response = rateId
+                ? await myWineService.getMyWineDetails(wineModel.selectedWineId, rateId)
+                : await wineService.getById(wineModel.selectedWineId, params);
 
             if (response.isError || !response.data) {
                 toastService.showError(
@@ -41,7 +45,7 @@ export const useWineDetails = () => {
         } finally {
             
         }
-    }, []);
+    }, [rateId]);
 
     const onVintageChange = useCallback(async (item: IDropdownItem) => {
         const isNoneVintage = item.value === NONE_VINTAGE_DROPDOWN_VALUE;
@@ -87,6 +91,7 @@ export const useWineDetails = () => {
                 totalReviews: 0,
                 aiTastingNote: undefined,
                 aiSnacks: [],
+                myReview: null,
                 statistics: {
                     topColors: [],
                     topAromas: [],
@@ -108,6 +113,7 @@ export const useWineDetails = () => {
             setDetails(wineDetailsData);
             wineModel.vintages = wineDetailsData.vintages;
             setLocalIsSaved(wineDetailsData.isSaved);
+            setRateId(wineDetailsData.myReview?.id ?? null);
             setIsError(false);
             return;
         }

@@ -35,7 +35,7 @@ export const WineDetailsView = observer(() => {
     const { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave, isLoading, isSaving } = useAddToFavoriteBottomSheet(details?.id, onUpdateIsSaved);
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
-    const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);
+    const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} hideReviewCount={isPreloadedData} />, [isPreloadedData]);
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getDetails}>
@@ -64,6 +64,7 @@ export const WineDetailsView = observer(() => {
                                 isAllVintagesSelected={isAllVintagesSelected}
                                 fromScanner={fromScanner}
                                 hasReviews={data.length > 0}
+                                hideReviewCount={isPreloadedData}
                             />
                         }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
