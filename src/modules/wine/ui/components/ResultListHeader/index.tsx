@@ -17,8 +17,6 @@ import { StatisticCard } from '../StatisticCard';
 import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
 import { FoodPairing } from '@/UIKit/FoodPairing';
 import { TastingNote } from '../TastingNote';
-import { ShowLock } from '@/UIKit/ShowLock';
-import { CrownIcon } from '@assets/icons/CrownIcon';
 
 interface IProps {
     data: IWineDetails;
@@ -172,19 +170,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
             {data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
 
             {data.aiSnacks?.length ? (
-                isPremiumUser ? (
-                    <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton/>
-                ) : (
-                    <View style={styles.foodPairingContainer}>
-                        <View style={styles.foodPairingHeader}>
-                            <Typography variant="subtitle_20_500" text={t('wine.foodPairing')} />
-                            <CrownIcon />
-                        </View>
-                        <View style={styles.lockContainer}>
-                            <ShowLock iconSize={24} />
-                        </View>
-                    </View>
-                )
+                <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton isLocked={!isPremiumUser} />
             ) : null}
 
             {(hasReviews || (wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0)) && (

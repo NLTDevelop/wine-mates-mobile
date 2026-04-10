@@ -57,23 +57,6 @@ export const getStyles = (colors: IColors) => {
             gap: scaleVertical(10),
             marginBottom: scaleVertical(16),
         },
-        foodPairingContainer: {
-            marginHorizontal: scaleHorizontal(16),
-            marginBottom: scaleVertical(16),
-        },
-        foodPairingHeader: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: scaleHorizontal(8),
-            marginBottom: scaleVertical(12),
-        },
-        lockContainer: {
-            backgroundColor: colors.background_grey,
-            borderRadius: 12,
-            paddingVertical: scaleVertical(40),
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
     });
     return styles;
 };

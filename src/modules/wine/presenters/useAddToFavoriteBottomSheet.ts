@@ -56,29 +56,42 @@ export const useAddToFavoriteBottomSheet = (wineId?: number, onUpdateIsSaved?: (
     }, []);
 
     const onOpen = useCallback(async () => {
+        console.log('onOpen called, wineId:', wineId);
         addToFavoriteModalRef.current?.present();
         if (!lists) {
+            console.log('Loading lists...');
             await loadLists();
         }
         if (wineId) {
+            console.log('Checking wine in lists...');
             await checkWineInLists();
         }
     }, [lists, loadLists, wineId, checkWineInLists]);
 
     const onItemPress = useCallback((item: IFavoriteItem) => {
+        console.log('onItemPress called with item:', item);
         setSelectedIds(prev => {
             const newSet = new Set(prev);
             if (newSet.has(item.id)) {
                 newSet.delete(item.id);
+                console.log('Removed from selection:', item.id);
             } else {
                 newSet.add(item.id);
+                console.log('Added to selection:', item.id);
             }
+            console.log('New selectedIds:', Array.from(newSet));
             return newSet;
         });
     }, []);
 
     const onSave = useCallback(async () => {
+        console.log('onSave called');
+        console.log('wineId:', wineId);
+        console.log('selectedIds:', Array.from(selectedIds));
+        console.log('initialSelectedIds:', Array.from(initialSelectedIds));
+        
         if (!wineId) {
+            console.log('No wineId, closing modal');
             onClose();
             return;
         }
@@ -89,17 +102,24 @@ export const useAddToFavoriteBottomSheet = (wineId?: number, onUpdateIsSaved?: (
             const listsToAdd = Array.from(selectedIds).filter(id => !initialSelectedIds.has(id));
             const listsToRemove = Array.from(initialSelectedIds).filter(id => !selectedIds.has(id));
 
-            const addPromises = listsToAdd.map(listId =>
-                favoriteWineService.addWineToList(listId, { wineId }),
-            );
+            console.log('Lists to add:', listsToAdd);
+            console.log('Lists to remove:', listsToRemove);
 
-            const removePromises = listsToRemove.map(listId =>
-                favoriteWineService.removeWineFromList(listId, wineId),
-            );
+            const addPromises = listsToAdd.map(listId => {
+                console.log('Adding wine to list:', listId);
+                return favoriteWineService.addWineToList(listId, { wineId });
+            });
 
-            await Promise.all([...addPromises, ...removePromises]);
+            const removePromises = listsToRemove.map(listId => {
+                console.log('Removing wine from list:', listId);
+                return favoriteWineService.removeWineFromList(listId, wineId);
+            });
+
+            const results = await Promise.all([...addPromises, ...removePromises]);
+            console.log('Save results:', results);
 
             if (onUpdateIsSaved) {
+                console.log('Updating isSaved to:', selectedIds.size > 0);
                 onUpdateIsSaved(selectedIds.size > 0);
             }
 
@@ -113,7 +133,7 @@ export const useAddToFavoriteBottomSheet = (wineId?: number, onUpdateIsSaved?: (
         } finally {
             setIsSaving(false);
         }
-    }, [wineId, selectedIds, initialSelectedIds, onClose]);
+    }, [wineId, selectedIds, initialSelectedIds, onClose, onUpdateIsSaved]);
 
     const favoriteData = useMemo(() => {
         if (!lists) return [];

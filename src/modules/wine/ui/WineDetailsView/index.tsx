@@ -32,7 +32,7 @@ export const WineDetailsView = observer(() => {
         myReview,
     );
     const { refreshControl } = useRefresh(onRefresh);
-    const { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave, isLoading, isSaving } = useAddToFavoriteBottomSheet(wineId, onUpdateIsSaved);
+    const { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave, isLoading, isSaving } = useAddToFavoriteBottomSheet(details?.id, onUpdateIsSaved);
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
     const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);

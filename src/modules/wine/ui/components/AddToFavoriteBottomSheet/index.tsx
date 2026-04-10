@@ -74,6 +74,7 @@ export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data,
                     onPress={onSave}
                     text={t('common.choose')}
                     disabled={isSaving || isLoading}
+                    inProgress={isSaving}
                 />
             </BottomSheetView>
         </BottomSheetModal>
