@@ -35,7 +35,7 @@ export const useScannerResultsList = () => {
             setAiData(response.data.aiData);
             setData(response.data.raws);
             if (response.data.raws.length === 0) {
-                navigation.navigate('AddWineView', { aiData: response.data.aiData });
+                navigation.navigate('AddWineView', { aiData: response.data.aiData, hasResults: false });
             }
         }
 
@@ -61,7 +61,7 @@ export const useScannerResultsList = () => {
     },[navigation]);
 
     const handleAddWinePress = useCallback(() => {
-        navigation.navigate('AddWineView', { aiData });
+        navigation.navigate('AddWineView', { aiData, hasResults: true });
     },[navigation, aiData]);
 
     return { data, isLoading, onRefresh, handleItemPress, handleAddWinePress };

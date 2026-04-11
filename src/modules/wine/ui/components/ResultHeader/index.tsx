@@ -39,7 +39,7 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
                     isCreating={isCreating}
                 />}
                 removeCardStyles
-                hideReviewCount={hideReviewCount}
+                hideReviewCount={false}
                 showExpertRatingWithoutPremium={false}
             />
         </View>

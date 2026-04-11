@@ -8,6 +8,7 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
 import { useRefresh } from '@/hooks/useRefresh';
 import { useScannerResultsList } from '../../presenters/useScannerResultsList';
+import { useScanResultsListBackButton } from '../../presenters/useScanResultsListBackButton';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 import { EmptyListView } from '@/UIKit/EmptyListView';
@@ -22,6 +23,7 @@ export const ScanResultsListView = observer(() => {
 
     const { data, isLoading, onRefresh, handleItemPress, handleAddWinePress } = useScannerResultsList();
     const { refreshControl } = useRefresh(onRefresh);
+    const { onPressBack } = useScanResultsListBackButton();
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
 
@@ -42,7 +44,7 @@ export const ScanResultsListView = observer(() => {
         <ScreenContainer
             edges={['top', 'bottom']}
             withGradient
-            headerComponent={<HeaderWithBackButton title={t('scanner.results')} />}
+            headerComponent={<HeaderWithBackButton title={t('scanner.results')} onPressBack={onPressBack} />}
         >
             <Typography text={t('scanner.resultsTitle')} variant="body_400" style={styles.title} />
             <View style={styles.container}>
