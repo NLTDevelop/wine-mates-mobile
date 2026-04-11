@@ -233,38 +233,6 @@ export const useWineReviewResult = () => {
         try {
             setIsSaving(true);
 
-            if (wineModel.review?.hasEditedAiTastingNote && editedAiNote) {
-                if (!wineModel.wine?.id) {
-                    toastService.showError(
-                        localization.t('common.errorHappened'),
-                        localization.t('common.somethingWentWrong'),
-                    );
-                    return;
-                }
-
-                const updateNoteResponse = await wineService.updateAINote({
-                    wineId: wineModel.wine.id,
-                    note: editedAiNote,
-                });
-
-                if (updateNoteResponse.isError || !updateNoteResponse.data) {
-                    toastService.showError(
-                        localization.t('common.errorHappened'),
-                        updateNoteResponse.message || localization.t('common.somethingWentWrong'),
-                    );
-                    return;
-                }
-
-                const nextNote = updateNoteResponse.data.note || editedAiNote;
-                setNote(nextNote);
-                setLimits(prevState => (prevState ? { ...prevState, note: nextNote } : prevState));
-                patchReview({
-                    aiTastingNote: nextNote,
-                    initialAiTastingNote: nextNote,
-                    hasEditedAiTastingNote: false,
-                });
-            }
-
             const available = isPremiumUser
                 ? wineModel.tasteCharacteristics
                 : wineModel.tasteCharacteristics?.filter(item => !item.isPremium);
@@ -342,6 +310,14 @@ export const useWineReviewResult = () => {
                 if (hasSuggestedFlavors) {
                     payload.suggestions.flavors = suggestedFlavors;
                 }
+            }
+
+            if (wineModel.review?.aiTastingNote) {
+                payload.aiTastingNote = wineModel.review.aiTastingNote;
+            }
+
+            if (wineModel.review?.aiSnacks) {
+                payload.aiSnacks = wineModel.review.aiSnacks;
             }
 
             const response = await wineService.addToRate(payload);

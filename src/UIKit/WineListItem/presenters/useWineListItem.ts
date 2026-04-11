@@ -4,6 +4,7 @@ import { useUiContext } from '@/UIProvider';
 import { declOfWord } from '@/utils';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { userModel } from '@/entities/users/UserModel';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 interface IProps {
     item: IWineListItem | IWineDetails;
@@ -34,14 +35,14 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
     const userRating = useMemo(() => {
         const currentVintageUserRating = isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
             ? item.currentVintage.averageUserRating
-            : 0;
-        const rating = removeCardStyles && currentVintageUserRating ? currentVintageUserRating : item.averageUserRating;
+            : null;
+        const rating = removeCardStyles && currentVintageUserRating !== null ? currentVintageUserRating : item.averageUserRating;
 
-        if (rating > 0) {
-            return rating.toFixed(1);
-        } else {
-            return '0';
+        if (rating === null || rating === undefined) {
+            return null;
         }
+        
+        return rating.toFixed(1);
     }, [item, removeCardStyles]);
 
     const lastReviewData = useMemo(() => {
@@ -94,11 +95,17 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
 
     const hasPremium = useMemo(() => userModel.user?.hasPremium ?? false, []);
 
+    const isExpertOrCreator = useMemo(() => {
+        const level = userModel.user?.wineExperienceLevel;
+        return level === WineExperienceLevelEnum.EXPERT || level === WineExperienceLevelEnum.CREATOR;
+    }, []);
+
     const userId = useMemo(() => userModel.user?.id ?? null, []);
 
     const shouldReviewShow = useMemo(() => {
-        return userId === lastReviewData?.user.id;
-    }, [userId, lastReviewData]);
+        if (!isWineListItem(item)) return false;
+        return !!item.myReview && (item.averageExpertRating && item.averageExpertRating >= 70);
+    }, [item]);
 
     const currentVintageData = useMemo(() => {
         return isWineDetails(item) && typeof item.currentVintage === 'object' && item.currentVintage !== null
@@ -107,13 +114,15 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
     }, [item]);
 
     const expertRating = useMemo(() => {
-        return removeCardStyles && currentVintageData
-            ? currentVintageData?.averageExpertRating ?? 0
-            : item.averageExpertRating ?? 0;
+        const rating = removeCardStyles && currentVintageData
+            ? currentVintageData?.averageExpertRating
+            : item.averageExpertRating;
+
+        return rating && rating >= 70 ? rating : null;
     }, [removeCardStyles, currentVintageData, item.averageExpertRating]);
 
     const showMedal = useMemo(() => {
-        return shouldReviewShow || expertRating > 0;
+        return shouldReviewShow || !!expertRating;
     }, [shouldReviewShow, expertRating]);
 
     return {
@@ -126,6 +135,7 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
         locationText,
         expertReviewCount,
         hasPremium,
+        isExpertOrCreator,
         userId,
         shouldReviewShow,
         currentVintageData,

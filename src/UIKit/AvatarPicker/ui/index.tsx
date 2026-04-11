@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
-import { Pressable, TouchableOpacity, View } from 'react-native';
+import { Pressable, TouchableOpacity, View, Image } from 'react-native';
 import { FasterImageView } from '@rraut/react-native-faster-image';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { DeleteForeverIcon } from '@assets/icons/DeleteForeverIcon';
 import { CameraIcon } from '@assets/icons/CameraIcon';
+import { PlusIcon } from '@assets/icons/PlusIcon';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -27,14 +28,13 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
 
     const onAvatarPress = () => {
         if (!isEditing) return;
-        if (isMarkedForDeletion) {
-            onCancelDeletion();
-        } else {
-            onPress();
-        }
+        onPress();
     };
 
     const displayUri = selectedImageUri || avatarUrl;
+    const normalizedDisplayUri = displayUri && !displayUri.startsWith('http') && !displayUri.startsWith('file://')
+        ? `file://${displayUri}`
+        : displayUri;
     const initials = fullname
         .split(' ')
         .map(n => n[0])
@@ -49,31 +49,23 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
 
     return (
         <>
-            <Pressable onPress={onAvatarPress} style={styles.container}>
-                {displayUri ? (
-                    <FasterImageView source={{ uri: displayUri }} style={styles.image} />
+            <TouchableOpacity disabled={!isEditing} onPress={onAvatarPress} style={styles.container}>
+                {displayUri && !isMarkedForDeletion ? (
+                    <Image source={{ uri: normalizedDisplayUri || undefined }} style={styles.image} />
                 ) : (
                     <View style={styles.placeholder}>
-                        <Typography text={initials} variant="h3" style={styles.initials} />
+                        {isEditing ? (
+                            <PlusIcon width={24} height={24} color={colors.primary} />
+                        ) : (
+                            <Typography text={initials} variant="h3" style={styles.initials} />
+                        )}
                     </View>
                 )}
-                {isMarkedForDeletion && (avatarUrl || selectedImageUri) && (
-                    <View style={styles.deleteOverlay}>
-                        <DeleteForeverIcon width={32} height={32} color={colors.background} />
-                    </View>
-                )}
-                {isEditing && !isMarkedForDeletion && (
-                    <View style={styles.editOverlay} />
-                )}
-            </Pressable>
-            {isEditing && !isMarkedForDeletion && (
-                <View style={styles.editBadge}>
-                    <CameraIcon width={16} height={16} color={colors.background} />
-                </View>
-            )}
-            {isEditing && hasAvatar && (
+
+            </TouchableOpacity>
+            {isEditing && displayUri && !isMarkedForDeletion && (
                 <TouchableOpacity onPress={onDeletePress} style={styles.deleteBadge}>
-                    <CrossIcon color={colors.background} width={12} height={12} />
+                    <CrossIcon color={colors.text} width={12} height={12} />
                 </TouchableOpacity>
             )}
         </>

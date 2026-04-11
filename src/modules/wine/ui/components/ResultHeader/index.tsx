@@ -16,9 +16,10 @@ interface IProps {
     hasCurrentVintageData: boolean;
     isAllVintagesSelected: boolean;
     fromScanner?: boolean;
+    hideReviewCount?: boolean;
 }
 
-export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner }: IProps) => {
+export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, hideReviewCount }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { onPress, isCreating } = useResultHeader(item, fromScanner);
@@ -38,6 +39,8 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
                     isCreating={isCreating}
                 />}
                 removeCardStyles
+                hideReviewCount={false}
+                showExpertRatingWithoutPremium={false}
             />
         </View>
     );

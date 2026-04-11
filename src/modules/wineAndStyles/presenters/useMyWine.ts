@@ -85,9 +85,31 @@ export const useMyWine = () => {
         }
     }, [isLoading, getList]);
 
-    const onItemPress = useCallback((item: IWineListItem) => {
-        navigation.navigate('WineDetailsView', {wineId: item.id});
-    },[navigation]);
+    const onItemPress = useCallback(async (item: IWineListItem) => {
+        if (item.myReview?.id) {
+            try {
+                const response = await myWineService.getMyWineDetails(item.id, item.myReview.id);
+                
+                if (response.isError || !response.data) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        response.message || localization.t('common.somethingWentWrong'),
+                    );
+                    return;
+                }
+                
+                navigation.navigate('WineDetailsView', { wineDetailsData: response.data });
+            } catch (error) {
+                console.error('onItemPress error: ', JSON.stringify(error, null, 2));
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('common.somethingWentWrong'),
+                );
+            }
+        } else {
+            navigation.navigate('WineDetailsView', { wineId: item.id });
+        }
+    }, [navigation]);
 
     return { data, onRefresh, onEndReached, onItemPress, isLoading, getList, scrollToTop, listRef };
 };

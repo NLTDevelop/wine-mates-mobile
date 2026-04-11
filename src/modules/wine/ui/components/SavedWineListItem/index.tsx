@@ -7,28 +7,27 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { WineListItem } from '@/UIKit/WineListItem';
 import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
 import { useSavedWineListItem } from '@/modules/wine/presenters/useSavedWineListItem';
+import { useSavedWineListItemView } from './presenters/useSavedWineListItemView';
 
 interface IProps {
     listId: number;
     title: string;
-    onPress?: () => void;
     onLongPress?: () => void;
 }
 
-export const SavedWineListItem = ({ listId, title, onPress, onLongPress }: IProps) => {
+export const SavedWineListItem = ({ listId, title, onLongPress }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { wines, isLoading, onWinePress, onExpand, onCollapse } = useSavedWineListItem(listId);
-
-    const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
+    const { keyExtractor, renderFooterData } = useSavedWineListItemView();
 
     const renderFooter = useCallback((item: IWineListItem) => {
-        const lastReviewData = item.myReview || item.lastReview;
+        const lastReviewData = renderFooterData(item);
         if (!lastReviewData) return null;
 
         return <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review} />;
-    }, []);
+    }, [renderFooterData]);
 
     const renderItem = useCallback(
         ({ item }: { item: IWineListItem }) => (
@@ -40,7 +39,7 @@ export const SavedWineListItem = ({ listId, title, onPress, onLongPress }: IProp
 
     return (
         <View style={styles.container}>
-            <FavoriteListDropdown title={title} onExpand={onExpand} onCollapse={onCollapse} onPress={onPress} onLongPress={onLongPress}>
+            <FavoriteListDropdown title={title} onExpand={onExpand} onCollapse={onCollapse} onLongPress={onLongPress}>
                 {isLoading ? (
                     <View style={styles.loaderContainer}>
                         <ActivityIndicator size="small" color={colors.primary} />

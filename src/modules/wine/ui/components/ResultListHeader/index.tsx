@@ -26,9 +26,11 @@ interface IProps {
     hasCurrentVintageData: boolean;
     isAllVintagesSelected: boolean;
     fromScanner?: boolean;
+    hasReviews?: boolean;
+    hideReviewCount?: boolean;
 }
 
-export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner }: IProps) => {
+export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, hasReviews, hideReviewCount }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
@@ -68,6 +70,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 hasCurrentVintageData={hasCurrentVintageData}
                 isAllVintagesSelected={isAllVintagesSelected}
                 fromScanner={fromScanner}
+                hideReviewCount={hideReviewCount}
             />
 
             {isVintageTasted && (
@@ -78,7 +81,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                     </View>
                 </>
             )}
-            
+
             {colorShadeItems.length > 0 && (
                 <>
                     <View style={styles.titleContainer}>
@@ -166,11 +169,13 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 </>
             )}
 
-            {hasCurrentVintageData && data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
+            {data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
 
-            {hasCurrentVintageData && data.aiSnacks?.length ? <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton/> : null}
+            {data.aiSnacks?.length ? (
+                <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton isLocked={!isPremiumUser} />
+            ) : null}
 
-            {wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0 && (
+            {(hasReviews || (wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0)) && (
                 <Typography text={t('wine.reviews')} variant="h3" style={styles.title} />
             )}
         </View>

@@ -214,6 +214,10 @@ class WineModel implements IWineListModel {
 
     public clear() {
         this.wine = null;
+        this.selectedWineId = null;
+        this.vintages = null;
+        this.customVintage = null;
+        this.image = null;
         this.base = null;
         this.look = null;
         this.colors = null;

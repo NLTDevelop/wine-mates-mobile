@@ -8,6 +8,7 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { useAddWine } from '../../presenters/useAddWine';
+import { useAddWineBackButton } from '@/modules/scanner/presenters/useAddWineBackButton';
 import { CustomDropdown } from '../../../../UIKit/CustomDropdown/ui';
 import { useWineInitialData } from '../../presenters/useWineInitialData';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
@@ -26,13 +27,14 @@ export const AddWineView = observer(() => {
     const { countries, typeData, getTypes, isLoading, isError } = useWineInitialData();
     const { colorsData } = useWineColor(form.typeOfWine.id);
     const { regions } = useWineRegion(form.country.id);
+    const { onPressBack } = useAddWineBackButton();
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getTypes} isLoading={isLoading}>
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton title={t('scanner.whatsInYourGlass')} />}
+                headerComponent={<HeaderWithBackButton title={t('scanner.whatsInYourGlass')} onPressBack={onPressBack} />}
                 isKeyboardAvoiding
                 scrollEnabled
             >

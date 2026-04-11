@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (colors: IColors, isLocked: boolean = false) => {
     const styles = StyleSheet.create({
         container: {
             marginHorizontal: scaleHorizontal(16),
@@ -26,11 +26,12 @@ export const getStyles = (colors: IColors) => {
         card: {
             borderRadius: 12,
             backgroundColor: colors.background,
-            minHeight: scaleVertical(212),
+            minHeight: isLocked ? scaleVertical(100) : scaleVertical(212),
             paddingVertical: scaleVertical(14),
             paddingHorizontal: scaleHorizontal(16),
             borderWidth: 1,
             borderColor: colors.border,
+            maxHeight: isLocked ? scaleVertical(100) : undefined,
         },
         item: {
             marginBottom: scaleVertical(12),

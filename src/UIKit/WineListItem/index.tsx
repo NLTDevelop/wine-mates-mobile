@@ -19,27 +19,32 @@ interface IProps {
     footer?: ReactNode;
     removeCardStyles?: boolean;
     showDate?: boolean;
+    showVintage?: boolean;
+    showNonVintage?: boolean;
     customBottomComponent?: ReactNode;
+    hideReviewCount?: boolean;
+    showExpertRatingWithoutPremium?: boolean;
 }
 
 export const WineListItem = ({ item, onPress, showSimilarity = false, footer, removeCardStyles = false,
-    showDate = false, customBottomComponent }: IProps) => {
+    showDate = false, showVintage = false, showNonVintage = false, customBottomComponent, hideReviewCount = false, showExpertRatingWithoutPremium = false }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
-    const { 
-        onItemPress, 
-        similarityText, 
-        userRating, 
-        userReviewCount, 
-        expertReviewCount, 
-        lastReviewData, 
+    const {
+        onItemPress,
+        similarityText,
+        userRating,
+        userReviewCount,
+        expertReviewCount,
+        lastReviewData,
         getFormattedDate,
         hasPremium,
+        isExpertOrCreator,
         shouldReviewShow,
         expertRating,
         showMedal
     } = useWineListItem({ item, onPress, removeCardStyles });
-    const { description } = useWineDescription({ item });
+    const { description } = useWineDescription({ item, showVintage, showNonVintage });
 
     return (
         <Pressable
@@ -76,11 +81,11 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
 
                 <View style={styles.rightColumn}>
                     <View style={styles.medalContainer}>
-                        {!hasPremium && showMedal && !shouldReviewShow ? (
+                        {!hasPremium && showMedal && !showExpertRatingWithoutPremium ? (
                             <ShowLock iconSize={medalSize} />
                         ) : showMedal ? (
                             <RateMedal
-                                sliderValue={expertRating}
+                                sliderValue={expertRating ?? 0}
                                 size={medalSize}
                                 titleFontSize={24}
                                 mainFontSize={90}
@@ -89,13 +94,13 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                         ) : null}
                     </View>
 
-                    {showMedal ? (
+                    {showMedal && (hasPremium || showExpertRatingWithoutPremium) ? (
                         <>
                             <Typography
                                 variant="subtitle_10_400"
                                 text={t('wine.expertReview')}
                             />
-                            {expertReviewCount ? (
+                            {expertReviewCount && !hideReviewCount ? (
                                 <Typography
                                     variant="subtitle_10_400"
                                     text={`(${expertReviewCount})`}
@@ -113,23 +118,27 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                         style={styles.descriptionText}
                     />
 
-                    <View style={styles.rateContainer}>
-                        <View style={styles.starsContainer}>
-                            <SmallStarRating rating={parseFloat(userRating) || 0} starSize={12.5} />
-                            <Typography
-                                variant="subtitle_12_500"
-                                text={userRating}
-                                numberOfLines={1}
-                                style={styles.rateText}
-                            />
+                    {userRating !== null ? (
+                        <View style={styles.rateContainer}>
+                            <View style={styles.starsContainer}>
+                                <SmallStarRating rating={parseFloat(userRating) || 0} starSize={12.5} />
+                                <Typography
+                                    variant="subtitle_12_500"
+                                    text={userRating}
+                                    numberOfLines={1}
+                                    style={styles.rateText}
+                                />
+                            </View>
+                            {!hideReviewCount && (
+                                <Typography
+                                    variant="subtitle_10_400"
+                                    text={`(${userReviewCount})`}
+                                    numberOfLines={1}
+                                    style={styles.rateReviewText}
+                                />
+                            )}
                         </View>
-                        <Typography
-                            variant="subtitle_10_400"
-                            text={`(${userReviewCount})`}
-                            numberOfLines={1}
-                            style={styles.rateReviewText}
-                        />
-                    </View>
+                    ) : <View style={styles.emptyDivider}/>}
 
                     <View style={styles.footerContainer}>{footer}</View>
                 </View>

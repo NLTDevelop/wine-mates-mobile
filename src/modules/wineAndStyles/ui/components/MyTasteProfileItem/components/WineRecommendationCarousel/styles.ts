@@ -14,7 +14,7 @@ export const getStyles = (colors: IColors) => {
         },
         cardContainer: {
             flex: 1,
-            paddingHorizontal: scaleHorizontal(8),
+            paddingHorizontal: scaleHorizontal(12),
         },
         arrowButton: {
             position: 'absolute',

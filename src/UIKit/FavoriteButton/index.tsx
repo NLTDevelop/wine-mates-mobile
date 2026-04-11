@@ -8,9 +8,10 @@ interface IFavoriteButtonProps {
     onPress: () => void;
     size?: number;
     disabled?: boolean;
+    isSaved?: boolean;
 }
 
-export const FavoriteButton = ({ onPress, size, disabled = false }: IFavoriteButtonProps) => {
+export const FavoriteButton = ({ onPress, size, disabled = false, isSaved = false }: IFavoriteButtonProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors, size), [colors, size]);
 
@@ -20,7 +21,7 @@ export const FavoriteButton = ({ onPress, size, disabled = false }: IFavoriteBut
             onPress={onPress}
             disabled={disabled}
         >
-            <FavoriteIcon />
+            <FavoriteIcon isSaved={isSaved} />
         </TouchableOpacity>
     );
 };

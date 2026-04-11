@@ -43,11 +43,11 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isA
             return null;
         }
 
-        const userRating = dropdownItem.averageUserRating ?? 0;
-        const expertRating = dropdownItem.averageExpertRating ?? 0;
+        const userRating = dropdownItem.averageUserRating ?? null;
+        const expertRating = dropdownItem.averageExpertRating ?? null;
 
-        const hasUserRating = userRating > 0;
-        const hasExpertRating = expertRating > 0;
+        const hasUserRating = userRating !== null;
+        const hasExpertRating = expertRating !== null && expertRating >= 70;
 
         if (!hasUserRating && !hasExpertRating) {
             return null;
@@ -58,7 +58,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isA
                 {hasUserRating ? (
                     <View style={styles.ratingItem}>
                         <StarIcon />
-                        <Typography variant="subtitle_12_500" text={`${userRating}`} />
+                        <Typography variant="subtitle_12_500" text={userRating.toFixed(1)} />
                     </View>
                 ) : null}
 
@@ -66,7 +66,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isA
                     hasPremium ? (
                         <View style={styles.ratingItem}>
                             <RateMedal sliderValue={expertRating} size={16} hideText />
-                            <Typography variant="subtitle_12_500" text={`${expertRating}`} />
+                            <Typography variant="subtitle_12_500" text={expertRating.toFixed(1)} />
                         </View>
                     ) : (
                         <ShowLock iconSize={16} />

@@ -9,16 +9,18 @@ import { useFoodPairing } from '@/UIKit/FoodPairing/presenters/useFoodPairing';
 import { userModel } from '@/entities/users/UserModel';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 import { ISnack } from '@/entities/snacks/types/ISnack';
+import { LockContainer } from '@/UIKit/LockContainer';
 
 interface IProps {
     setLimits?: Dispatch<SetStateAction<IRateContext | null>>;
     hideGenerateButton?: boolean;
     generatedSnacks?: ISnack[];
+    isLocked?: boolean;
 }
 
-export const FoodPairing = ({ setLimits, hideGenerateButton = false, generatedSnacks }: IProps) => {
+export const FoodPairing = ({ setLimits, hideGenerateButton = false, generatedSnacks, isLocked = false }: IProps) => {
     const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors, isLocked), [colors, isLocked]);
 
     const { snacks, isGenerating, onGeneratePress } = useFoodPairing(setLimits, generatedSnacks);
     const hasSnacks = !!snacks && snacks.length > 0;
@@ -41,7 +43,7 @@ export const FoodPairing = ({ setLimits, hideGenerateButton = false, generatedSn
                 )}
             </View>
             <View style={styles.card}>
-                {hasSnacks ? (
+                {(hasSnacks && !isLocked) ? (
                     snacks.map(snack => (
                         <View key={snack.label} style={styles.item}>
                             <Typography variant="h6" text={snack.label} />
@@ -55,6 +57,7 @@ export const FoodPairing = ({ setLimits, hideGenerateButton = false, generatedSn
                         <Typography variant="body_500" text={t('wine.emptyFoodPairing')} style={styles.emptyText} />
                     </View>
                 )}
+                {isLocked && <LockContainer />}
             </View>
         </View>
     );
