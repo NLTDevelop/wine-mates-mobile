@@ -23,6 +23,7 @@ export const getStyles = (colors: IColors) => {
         input: {
             flex: 1,
             marginBottom: 0,
+            backgroundColor: colors.background,
         },
         flag: {
             width: scaleVertical(20),

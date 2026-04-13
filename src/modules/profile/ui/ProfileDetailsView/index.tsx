@@ -68,7 +68,6 @@ export const ProfileDetailsView = observer(() => {
                 <HeaderWithBackButton
                     title={t('settings.profileSettings')}
                     onPressBack={onPressBack}
-                    isCentered={false}
                     rightComponent={(
                         <Pressable onPress={onPressEdit} style={styles.editButton}>
                             <EditIcon width={20} height={20} color={colors.text} />

@@ -2,14 +2,14 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical, size } from '@/utils';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (colors: IColors, bottomInset: number) => {
     const styles = StyleSheet.create({
         modalContainer: {
             flex: 1,
             justifyContent: 'flex-end',
         },
         backdrop: {
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
             backgroundColor: colors.text,
         },
         contentContainer: {
@@ -44,7 +44,7 @@ export const getStyles = (colors: IColors) => {
         },
         scrollContent: {
             padding: scaleHorizontal(16),
-            paddingBottom: scaleVertical(32),
+            paddingBottom: bottomInset + scaleVertical(16),
         },
     });
     return styles;

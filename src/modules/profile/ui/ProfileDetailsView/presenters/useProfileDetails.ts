@@ -14,7 +14,25 @@ const getCountryName = (cca2: string) => {
     }
 
     const country = countries.find(item => item.cca2?.toLowerCase() === cca2.toLowerCase());
-    return country?.name?.common || '';
+    if (!country) {
+        return '';
+    }
+
+    try {
+        const formatter = new Intl.DisplayNames([localization.locale || 'en'], { type: 'region' });
+        const localized = formatter.of(country.cca2);
+        if (localized) {
+            return localized;
+        }
+    } catch {
+        // fallback below
+    }
+
+    if ((localization.locale || '').startsWith('uk')) {
+        return country.name?.native?.ukr?.common || country.name?.common || '';
+    }
+
+    return country.name?.common || '';
 };
 
 const getBirthdayDisplayText = (birthday: string) => {
@@ -105,7 +123,11 @@ export const useProfileDetails = () => {
         country: getCountryName(userModel.user?.country || ''),
         city: userModel.user?.city || '',
         birthdayDisplayText,
-        gender: userModel.user?.gender || '',
+        gender: userModel.user?.gender === 'male'
+            ? localization.t('registration.genderMale')
+            : userModel.user?.gender === 'female'
+                ? localization.t('registration.genderFemale')
+                : '',
         occupation: userModel.user?.occupation || '',
         placeOfWork: userModel.user?.wineryName || '',
         instagramLink: userModel.user?.instagramLink || '',

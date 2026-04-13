@@ -4,6 +4,7 @@ import { useUiContext } from '@/UIProvider';
 import { TitleVariant, Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { useBottomModalState } from '@/UIKit/BottomModal/presenters/useBottomModalState';
+import { useBottomModalInsets } from '@/UIKit/BottomModal/presenters/useBottomModalInsets';
 
 interface IProps {
     visible: boolean;
@@ -24,7 +25,8 @@ export const BottomModal = ({
     children
 }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const { bottomInset } = useBottomModalInsets();
+    const styles = useMemo(() => getStyles(colors, bottomInset), [colors, bottomInset]);
     const { isVisible, backdropOpacity, slideAnim, handleClose } = useBottomModalState({ visible, onClose });
 
     const renderHeader = () => {
@@ -55,6 +57,7 @@ export const BottomModal = ({
             transparent
             animationType="none"
             statusBarTranslucent
+            navigationBarTranslucent
             onRequestClose={handleClose}
         >
             <View style={styles.modalContainer}>
