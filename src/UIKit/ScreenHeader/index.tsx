@@ -17,7 +17,7 @@ export const ScreenHeader = observer(() => {
     const navigation = useNavigation<any>();
 
     const onProfilePress = useCallback(() => {
-        navigation.navigate('ProfileSettingsView');
+        navigation.navigate('ProfileDetailsView');
     }, [navigation]);
 
     return (

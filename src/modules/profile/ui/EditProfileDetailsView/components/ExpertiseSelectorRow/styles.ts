@@ -14,9 +14,7 @@ export const getStyles = (colors: IColors) => {
         row: {
             minHeight: scaleVertical(48),
             borderRadius: scaleVertical(12),
-            borderWidth: 1,
-            borderColor: colors.border,
-            backgroundColor: colors.background,
+            backgroundColor: colors.background_middle,
             flexDirection: 'row',
             alignItems: 'center',
             paddingHorizontal: scaleHorizontal(12),

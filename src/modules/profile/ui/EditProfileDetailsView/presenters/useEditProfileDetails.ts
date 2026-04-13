@@ -12,6 +12,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useFocusEffect, useRoute, useNavigation } from '@react-navigation/native';
 import { useLocation } from '@/hooks/useLocation';
 import { useAvatarPicker } from '@/UIKit/AvatarPicker/presenters/useAvatarPicker';
+import { useUiContext } from '@/UIProvider';
 
 interface IProfileForm {
     fullName: string;
@@ -28,9 +29,10 @@ interface IProfileForm {
     bio: string;
 }
 
-export const useProfileSettings = () => {
+export const useEditProfileDetails = () => {
     const route = useRoute();
     const navigation = useNavigation();
+    const { locale } = useUiContext();
     const { citySuggestions, searchCities } = useLocation();
     const { onOpenCamera } = useAvatarPicker();
     const [selectedAvatarImage, setSelectedAvatarImage] = useState<{ uri: string; name: string; type: string } | null>(null);
@@ -64,6 +66,13 @@ export const useProfileSettings = () => {
         return parsed?.countryCallingCode ? `+${parsed.countryCallingCode}` : '';
     }, [normalizeE164Phone]);
 
+    const getPhoneCca2FromUser = useCallback(() => {
+        if (!userModel.user?.phoneNumber) return null;
+        const normalized = normalizeE164Phone(userModel.user.phoneNumber);
+        const parsed = normalized ? parsePhoneNumberFromString(normalized) : null;
+        return parsed?.country || null;
+    }, [normalizeE164Phone]);
+
     const getInitialForm = useCallback((): IProfileForm => {
         const firstName = userModel.user?.firstName || '';
         const lastName = userModel.user?.lastName || '';
@@ -93,7 +102,7 @@ export const useProfileSettings = () => {
             fullName,
             email: userModel.user?.email || '',
             phoneNumber: derivedNational || '',
-            country: userModel.user?.country || parsedPhone?.country || '',
+            country: userModel.user?.country || '',
             city: userModel.user?.city || '',
             birthday: userModel.user?.birthday || '',
             gender: userModel.user?.gender || '',
@@ -107,8 +116,7 @@ export const useProfileSettings = () => {
     const [form, setForm] = useState<IProfileForm>(getInitialForm);
     const [changedFields, setChangedFields] = useState<Set<string>>(new Set());
     const [isInProgress, setIsInProgress] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [countryCode, setCountryCode] = useState(getCallingCodeFromUser);
+        const [countryCode, setCountryCode] = useState(getCallingCodeFromUser);
     const [expertiseLevel, setExpertiseLevel] = useState<WineExperienceLevelEnum>(
         userModel.user?.wineExperienceLevel || WineExperienceLevelEnum.LOVER
     );
@@ -128,20 +136,47 @@ export const useProfileSettings = () => {
         return new Date();
     });
     const [draftBirthday, setDraftBirthday] = useState<string | null>(null);
+    const currentLocale = locale || localization.locale || 'en';
+
+    const getLocalizedCountryLabel = useCallback((countryItem: (typeof countries)[number]) => {
+        try {
+            const formatter = new Intl.DisplayNames([currentLocale], { type: 'region' });
+            const localized = formatter.of(countryItem.cca2);
+            if (localized) {
+                return localized;
+            }
+        } catch {
+            // Fallback below
+        }
+
+        return countryItem.name?.common || '';
+    }, [currentLocale]);
 
     const countryOptions = useMemo<IDropdownItem[]>(() => {
         return countries
-            .map(item => ({ label: item.name.common, value: item.cca2 }))
+            .map(item => ({ label: getLocalizedCountryLabel(item), value: item.cca2 }))
             .sort((a, b) => a.label.localeCompare(b.label));
-    }, []);
+    }, [getLocalizedCountryLabel]);
 
     const cityOptions = useMemo<IDropdownItem[]>(() => {
-        const options = citySuggestions.map(city => ({
-            label: city.description,
-            value: city.description,
-        }));
-        return options;
-    }, [citySuggestions]);
+        const optionsMap = new Map<string, IDropdownItem>();
+
+        if (form.city) {
+            optionsMap.set(form.city, {
+                label: form.city,
+                value: form.city,
+            });
+        }
+
+        citySuggestions.forEach(city => {
+            optionsMap.set(city.description, {
+                label: city.description,
+                value: city.description,
+            });
+        });
+
+        return Array.from(optionsMap.values());
+    }, [citySuggestions, form.city]);
 
     const genderOptions = useMemo<IDropdownItem[]>(() => ([
         { label: localization.t('registration.genderMale'), value: 'male' },
@@ -180,29 +215,9 @@ export const useProfileSettings = () => {
         }
     }, [validateInstagramLink]);
 
-    const onToggleEdit = useCallback(() => {
-        setIsEditing(prev => {
-            if (prev) {
-                setForm(getInitialForm());
-                setChangedFields(new Set());
-                setExpertiseLevel(userModel.user?.wineExperienceLevel || WineExperienceLevelEnum.LOVER);
-                setExpertiseLevelChanged(false);
-                const callingCode = getCallingCodeFromUser();
-                setCountryCode(callingCode);
-                setCountryCodeChanged(false);
-                isCountryCodeInitializedRef.current = !!callingCode;
-                setSelectedAvatarImage(null);
-                setIsAvatarChanged(false);
-                setShouldRemoveAvatar(false);
-                setInstagramLinkError(null);
-            }
-            return !prev;
-        });
-    }, [getInitialForm, getCallingCodeFromUser]);
-
     const onRefetchUser = useCallback(async () => {
         const response = await userService.me();
-        if (!response.isError && !isEditing) {
+        if (!response.isError) {
             setForm(getInitialForm());
             setChangedFields(new Set());
             setExpertiseLevel(userModel.user?.wineExperienceLevel || WineExperienceLevelEnum.LOVER);
@@ -212,7 +227,7 @@ export const useProfileSettings = () => {
             setCountryCodeChanged(false);
             isCountryCodeInitializedRef.current = !!callingCode;
         }
-    }, [getInitialForm, getCallingCodeFromUser, isEditing]);
+    }, [getInitialForm, getCallingCodeFromUser]);
 
     const onOpenBirthdayModal = useCallback(() => {
         if (form.birthday) {
@@ -255,13 +270,18 @@ export const useProfileSettings = () => {
 
     const onChangeCountryCode = useCallback((value: string) => {
         const callingCode = getCallingCodeFromUser();
-        if (isCountryCodeInitializedRef.current && callingCode) {
+        const isInitialValue = isCountryCodeInitializedRef.current && value === callingCode;
+
+        if (isInitialValue) {
             isCountryCodeInitializedRef.current = false;
+            setCountryCode(value);
+            setCountryCodeChanged(false);
             return;
         }
+
         isCountryCodeInitializedRef.current = false;
         setCountryCode(value);
-        setCountryCodeChanged(true);
+        setCountryCodeChanged(value !== callingCode);
     }, [getCallingCodeFromUser]);
 
     const onSave = useCallback(async () => {
@@ -356,20 +376,20 @@ export const useProfileSettings = () => {
                     localization.t('common.success'),
                     localization.t('settings.profileUpdated')
                 );
-                setIsEditing(false);
-                setChangedFields(new Set());
+                                setChangedFields(new Set());
                 setExpertiseLevelChanged(false);
                 setCountryCodeChanged(false);
                 setSelectedAvatarImage(null);
                 setIsAvatarChanged(false);
                 setShouldRemoveAvatar(false);
+                navigation.goBack();
             }
         } catch (error) {
             console.error('Error updating profile: ', JSON.stringify(error, null, 4));
         } finally {
             setIsInProgress(false);
         }
-    }, [form, expertiseLevel, countryCode, changedFields, expertiseLevelChanged, countryCodeChanged, isAvatarChanged, shouldRemoveAvatar, selectedAvatarImage]);
+    }, [form, expertiseLevel, countryCode, changedFields, expertiseLevelChanged, countryCodeChanged, isAvatarChanged, shouldRemoveAvatar, selectedAvatarImage, navigation]);
 
     const isDisabled = useMemo(() => {
         const hasChanges = changedFields.size > 0 || expertiseLevelChanged || countryCodeChanged || isAvatarChanged || shouldRemoveAvatar;
@@ -386,19 +406,27 @@ export const useProfileSettings = () => {
             return '';
         }
 
-        return format(selectedDate, 'MMMM d, yyyy');
-    }, [form.birthday]);
+        try {
+            return new Intl.DateTimeFormat(currentLocale, {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+            }).format(selectedDate);
+        } catch {
+            return format(selectedDate, 'MMMM d, yyyy');
+        }
+    }, [form.birthday, currentLocale]);
 
-    const getCountryName = useCallback((cca2: string): string => {
+    const getCountryNameForSearch = useCallback((cca2: string): string => {
         if (!cca2) return '';
         const country = countries.find(c => c.cca2?.toLowerCase() === cca2.toLowerCase());
         return country?.name?.common || '';
     }, []);
 
     const onSearchCity = useCallback((query: string) => {
-        const countryName = getCountryName(form.country);
+        const countryName = getCountryNameForSearch(form.country);
         searchCities(query, countryName);
-    }, [searchCities, form.country, getCountryName]);
+    }, [searchCities, form.country, getCountryNameForSearch]);
 
     const onShowDeleteAvatarAlert = useCallback(() => {
         setIsDeleteAvatarAlertVisible(true);
@@ -420,12 +448,8 @@ export const useProfileSettings = () => {
     }, []);
 
     const onEditModeBackHandler = useCallback(() => {
-        if (isEditing) {
-            onToggleEdit();
-        } else {
-            navigation.goBack();
-        }
-    }, [isEditing, navigation, onToggleEdit]);
+        navigation.goBack();
+    }, [navigation]);
 
     const hasAvatar = useMemo(() => {
         return !shouldRemoveAvatar && (!!selectedAvatarImage || !!userModel.user?.avatarUrl);
@@ -442,6 +466,7 @@ export const useProfileSettings = () => {
 
     return {
         form,
+        phoneInitialCca2: getPhoneCca2FromUser(),
         avatarUrl: userModel.user?.avatarUrl || null,
         selectedAvatarUri: selectedAvatarImage?.uri || null,
         hasAvatar,
@@ -454,11 +479,9 @@ export const useProfileSettings = () => {
         onConfirmDeleteAvatar,
         expertiseLevel,
         birthdayDisplayText,
-        isEditing,
         genderOptions,
         countryOptions,
         cityOptions,
-        onToggleEdit,
         onChangeField,
         onChangeCountryCode,
         selectExpertiseModalRef,

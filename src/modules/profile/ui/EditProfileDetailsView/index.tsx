@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Pressable, View } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -7,17 +8,14 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { Button } from '@/UIKit/Button';
 import { Typography } from '@/UIKit/Typography';
-import { useProfileSettings } from '../../presenters/useProfileSettings';
+import { useEditProfileDetails } from './presenters/useEditProfileDetails';
 import { AvatarPicker } from '@/UIKit/AvatarPicker/ui';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
 import { BirthdaySelector } from '@/modules/registration/ui/components/BirthdaySelector';
-import DatePicker from 'react-native-date-picker';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
-import { EditIcon } from '@assets/icons/EditIcon';
 import { InstagramIcon } from '@assets/icons/InstagramIcon';
-import { useBirthdaySelector } from '@/modules/registration/presenters/useBirthdaySelector';
-import { SelectExpertiseBottomSheet } from '../components/SelectExpertiseBottomSheet';
+import { SelectExpertiseBottomSheet } from './components/SelectExpertiseBottomSheet';
 import { ExpertiseSelectorRow } from './components/ExpertiseSelectorRow';
 import { CustomAlert } from '@/UIKit/CustomAlert/ui';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum.ts';
@@ -28,11 +26,13 @@ import { scaleHorizontal } from '@/utils';
 
 const EXPERTISE_SIZE = scaleHorizontal(16);
 
-export const ProfileSettingsView = () => {
+export const EditProfileDetailsView = () => {
     const { colors, t, locale, theme } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+
     const {
         form,
+        phoneInitialCca2,
         avatarUrl,
         selectedAvatarUri,
         hasAvatar,
@@ -42,11 +42,9 @@ export const ProfileSettingsView = () => {
         onCancelDeletion,
         expertiseLevel,
         birthdayDisplayText,
-        isEditing,
         genderOptions,
         countryOptions,
         cityOptions,
-        onToggleEdit,
         onChangeField,
         onChangeCountryCode,
         selectExpertiseModalRef,
@@ -68,25 +66,18 @@ export const ProfileSettingsView = () => {
         onCloseDeleteAvatarAlert,
         onConfirmDeleteAvatar,
         onEditModeBackHandler,
-    } = useProfileSettings();
-    const { scrollRef } = useBirthdaySelector(() => {});
+    } = useEditProfileDetails();
 
     return (
         <ScreenContainer
             edges={['top', 'bottom']}
             withGradient
             scrollEnabled
-            scrollRef={scrollRef}
             headerComponent={(
                 <HeaderWithBackButton
                     title={t('settings.profileSettings')}
                     onPressBack={onEditModeBackHandler}
                     isCentered={false}
-                    rightComponent={!isEditing ? (
-                        <Pressable onPress={onToggleEdit} style={styles.editButton}>
-                            <EditIcon width={20} height={20} color={colors.text} />
-                        </Pressable>
-                    ) : undefined}
                 />
             )}
             isKeyboardAvoiding
@@ -98,7 +89,7 @@ export const ProfileSettingsView = () => {
                             size={72}
                             avatarUrl={avatarUrl}
                             fullname={form.fullName}
-                            isEditing={isEditing}
+                            isEditing
                             selectedImageUri={selectedAvatarUri}
                             hasAvatar={hasAvatar}
                             isMarkedForDeletion={isMarkedForDeletion}
@@ -117,20 +108,20 @@ export const ProfileSettingsView = () => {
                             {expertiseLevel === WineExperienceLevelEnum.CREATOR && <WinemakerIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />}
                         </View>
                     </View>
-                    {isEditing && (
-                        <ExpertiseSelectorRow expertiseLevel={expertiseLevel} onPress={onOpenExpertiseModal} />
-                    )}
+
+                    <ExpertiseSelectorRow expertiseLevel={expertiseLevel} onPress={onOpenExpertiseModal} />
+
                     <CustomInput
                         value={form.fullName}
                         onChangeText={(value) => onChangeField('fullName', value)}
-                        editable={isEditing}
+                        editable
                         placeholder={t('settings.fullName')}
                         containerStyle={styles.input}
                     />
                     <CustomInput
                         value={form.email}
                         onChangeText={(value) => onChangeField('email', value)}
-                        editable={isEditing}
+                        editable
                         placeholder={t('settings.email')}
                         containerStyle={styles.input}
                     />
@@ -139,8 +130,8 @@ export const ProfileSettingsView = () => {
                             value={form.phoneNumber}
                             onChangeText={(value) => onChangeField('phoneNumber', value)}
                             onChangeCountryCode={onChangeCountryCode}
-                            editable={isEditing}
-                            initialCca2={form.country || null}
+                            editable
+                            initialCca2={phoneInitialCca2}
                         />
                     </View>
                     <CustomDropdown
@@ -149,7 +140,7 @@ export const ProfileSettingsView = () => {
                         onPress={item => onChangeField('country', String(item.value))}
                         withSearch
                         selectedValue={form.country}
-                        disabled={!isEditing}
+                        disabled={false}
                         containerStyle={styles.input}
                     />
                     <CustomDropdown
@@ -158,7 +149,7 @@ export const ProfileSettingsView = () => {
                         onPress={item => onChangeField('city', String(item.value))}
                         withSearch
                         selectedValue={form.city}
-                        disabled={!isEditing}
+                        disabled={false}
                         containerStyle={styles.input}
                         onSearchChange={onSearchCity}
                         disableLocalFilter
@@ -170,7 +161,7 @@ export const ProfileSettingsView = () => {
                             isOpened={isBirthdayModalVisible}
                             isError={false}
                             displayText={birthdayDisplayText}
-                            disabled={!isEditing}
+                            disabled={false}
                         />
                     </View>
                     <CustomDropdown
@@ -178,27 +169,27 @@ export const ProfileSettingsView = () => {
                         placeholder={t('settings.gender')}
                         onPress={item => onChangeField('gender', String(item.value))}
                         selectedValue={form.gender}
-                        disabled={!isEditing}
+                        disabled={false}
                         containerStyle={styles.input}
                     />
                     <CustomInput
                         value={form.occupation}
                         onChangeText={(value) => onChangeField('occupation', value)}
-                        editable={isEditing}
+                        editable
                         placeholder={t('settings.occupation')}
                         containerStyle={styles.input}
                     />
                     <CustomInput
                         value={form.placeOfWork}
                         onChangeText={(value) => onChangeField('placeOfWork', value)}
-                        editable={isEditing}
+                        editable
                         placeholder={t('settings.placeOfWork')}
                         containerStyle={styles.input}
                     />
                     <CustomInput
                         value={form.instagramLink}
                         onChangeText={(value) => onChangeField('instagramLink', value)}
-                        editable={isEditing}
+                        editable
                         placeholder={t('settings.instagram')}
                         error={!!instagramLinkError}
                         errorText={instagramLinkError || undefined}
@@ -212,32 +203,32 @@ export const ProfileSettingsView = () => {
                     <CustomInput
                         value={form.website}
                         onChangeText={(value) => onChangeField('website', value)}
-                        editable={isEditing}
+                        editable
                         placeholder={t('settings.website')}
                         containerStyle={styles.input}
                     />
                     <CustomInput
                         value={form.bio}
                         onChangeText={(value) => onChangeField('bio', value)}
-                        editable={isEditing}
+                        editable
                         placeholder={t('settings.bio')}
                         multiline
-                        containerStyle={styles.input}
+                        inputContainerStyle={styles.bigInput}
+                        // containerStyle={styles.bigInput}
                     />
                 </View>
 
-                {isEditing && (
-                    <View style={styles.buttonContainer}>
-                        <Button
-                            text={t('common.save')}
-                            onPress={onSave}
-                            type="secondary"
-                            disabled={isDisabled}
-                            inProgress={isInProgress}
-                        />
-                    </View>
-                )}
+                <View style={styles.buttonContainer}>
+                    <Button
+                        text={t('common.save')}
+                        onPress={onSave}
+                        type="secondary"
+                        disabled={isDisabled}
+                        inProgress={isInProgress}
+                    />
+                </View>
             </View>
+
             <SelectExpertiseBottomSheet
                 modalRef={selectExpertiseModalRef}
                 selectedValue={expertiseLevel}
@@ -245,7 +236,7 @@ export const ProfileSettingsView = () => {
                 onClose={onCloseExpertiseModal}
             />
             <BottomModal
-                visible={isBirthdayModalVisible && isEditing}
+                visible={isBirthdayModalVisible}
                 onClose={onCloseBirthdayModal}
                 customHeader={(
                     <View style={styles.birthdayModalHeader}>
@@ -274,10 +265,10 @@ export const ProfileSettingsView = () => {
                 visible={isDeleteAvatarAlertVisible}
                 onClose={onCloseDeleteAvatarAlert}
                 header={t('settings.deleteProfilePhotoTitle')}
-                content={
+                content={(
                     <Typography text={t('settings.deleteProfilePhotoMessage')} variant="subtitle_12_400" style={styles.alertMessage} />
-                }
-                footer={
+                )}
+                footer={(
                     <View style={styles.alertFooter}>
                         <Button
                             text={t('settings.delete')}
@@ -292,7 +283,7 @@ export const ProfileSettingsView = () => {
                             containerStyle={styles.alertButton}
                         />
                     </View>
-                }
+                )}
             />
         </ScreenContainer>
     );

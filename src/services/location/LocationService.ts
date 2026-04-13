@@ -16,9 +16,11 @@ class LocationService {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept-Language': language,
             },
             body: JSON.stringify({
                 country,
+                language,
             }),
         });
 
