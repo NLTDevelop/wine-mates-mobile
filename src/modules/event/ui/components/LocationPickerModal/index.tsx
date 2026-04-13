@@ -13,7 +13,7 @@ import { RoundedButton } from '@/UIKit/TitledContent/components/RoundedButton';
 interface IProps {
     visible: boolean;
     onClose: () => void;
-    onSelectLocation: (latitude: number, longitude: number) => void;
+    onSelectLocation: (latitude: number, longitude: number, label: string) => void;
     initialLocation?: { latitude: number; longitude: number } | null;
 }
 

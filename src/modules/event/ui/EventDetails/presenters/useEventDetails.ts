@@ -1,22 +1,29 @@
 import { useEffect, useState } from 'react';
 import { IEventDetail } from '@/entities/events/types/IEvent';
-import { getEventDetailById } from '@/entities/events/mocks/eventMocks';
+import { eventService } from '@/entities/events/EventService';
 
 export const useEventDetails = (eventId: number) => {
     const [eventDetail, setEventDetail] = useState<IEventDetail | null>(null);
     const [isError, setIsError] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const loadEventDetails = async () => {
-            setTimeout(() => {
-                const detail = getEventDetailById(eventId);
-                if (detail) {
-                    setEventDetail(detail);
+            setIsLoading(true);
+            try {
+                const response = await eventService.getById(eventId);
+                if (!response.isError && response.data) {
+                    setEventDetail(response.data);
                     setIsError(false);
                 } else {
                     setIsError(true);
                 }
-            }, 1000);
+            } catch (error) {
+                console.warn('useEventDetails -> loadEventDetails: ', error);
+                setIsError(true);
+            } finally {
+                setIsLoading(false);
+            }
         };
 
         loadEventDetails();
@@ -25,5 +32,6 @@ export const useEventDetails = (eventId: number) => {
     return {
         eventDetail,
         isError,
+        isLoading,
     };
 };

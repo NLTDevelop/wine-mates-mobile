@@ -48,7 +48,6 @@ export const TabNavigator = observer(() => {
                     tabBarInactiveTintColor: colors.text_light,
                     tabBarLabel: t('tabNavigator.eventMap'),
                     tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} Icon={LocationIcon} />,
-                    tabBarAccessibilityLabel: 'disabled',
                 }}
             />
             <Tab.Screen

@@ -40,6 +40,8 @@ export interface ILinks {
     faq: string;
     me: string;
     favoriteWineLists: string;
+    events: string;
+    eventMapPins: string;
 }
 
 class Links implements ILinks {
@@ -71,6 +73,8 @@ class Links implements ILinks {
         faq: 'faq/topics',
         me: 'users/me',
         favoriteWineLists: 'favorite/wine-lists',
+        events: 'events',
+        eventMapPins: 'events/map-pins',
     };
 
     private buildDomain() {
@@ -165,6 +169,12 @@ class Links implements ILinks {
     }
     public get favoriteWineLists() {
         return `${this._domain}${this._links.favoriteWineLists}`;
+    }
+    public get events() {
+        return `${this._domain}${this._links.events}`;
+    }
+    public get eventMapPins() {
+        return `${this._domain}${this._links.eventMapPins}`;
     }
 }
 
