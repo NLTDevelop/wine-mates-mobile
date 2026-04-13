@@ -14,6 +14,8 @@ interface IProps {
         firstName: string;
         lastName: string;
         image?: {
+            smallUrl: string;
+            mediumUrl: string;
             originalUrl: string;
         } | null;
         wineExperienceLevel: WineExperienceLevelEnum;
@@ -35,7 +37,7 @@ export const WineReviewBlock = ({ user, review }: IProps) => {
                 <View style={styles.container}>
                     <View style={styles.userRow}>
                         <Avatar
-                            avatarUrl={user.image?.originalUrl || null}
+                            avatarUrl={user.image?.mediumUrl ?? null}
                             fullname={`${user.firstName} ${user.lastName}`}
                             size={24}
                         />

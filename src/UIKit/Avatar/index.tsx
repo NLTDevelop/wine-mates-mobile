@@ -1,8 +1,8 @@
 import { memo, useMemo, useState, useCallback } from 'react';
-import { DimensionValue, ViewStyle, View, LayoutChangeEvent } from 'react-native';
+import { DimensionValue, ViewStyle, View, LayoutChangeEvent, Image } from 'react-native';
 import { getStyle, getInitialsTextStyle } from './styles';
-import { useUiContext } from '../../UIProvider';
-import { scaleVertical } from '../../utils';
+import { useUiContext } from '@/UIProvider';
+import { scaleVertical } from '@/utils';
 import { FasterImageView } from '@rraut/react-native-faster-image';
 import { Typography } from '../Typography';
 
@@ -49,11 +49,10 @@ const AvatarComponent = ({ containerStyle = {}, avatarUrl, fullname, size = 40 }
         <View
             onLayout={typeof size === 'string' ? onLayout : undefined}
             style={[styles.container, containerStyle, sizeStyle]}
-            key={avatarUrl}
         >
             {avatarUrl ? (
-                <FasterImageView
-                    source={{ uri: avatarUrl, resizeMode: 'cover' }}
+                <Image
+                    source={{ uri: avatarUrl }}
                     style={[styles.avatar, sizeStyle]}
                 />
             ) : (

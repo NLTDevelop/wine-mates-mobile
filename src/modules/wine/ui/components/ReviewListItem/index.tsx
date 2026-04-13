@@ -27,7 +27,7 @@ export const ReviewListItem = ({ item, hideReviewCount }: IProps) => {
         <View style={styles.container}>
             <View style={styles.row}>
                 <Avatar
-                    avatarUrl={item.user.avatar?.smallUrl || null}
+                    avatarUrl={item.user.avatar?.smallUrl || item.user.image?.smallUrl || null}
                     fullname={`${item.user.firstName} ${item.user.lastName}`}
                     size={40}
                 />
