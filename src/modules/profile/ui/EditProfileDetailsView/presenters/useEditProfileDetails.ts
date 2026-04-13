@@ -149,6 +149,10 @@ export const useEditProfileDetails = () => {
             // Fallback below
         }
 
+        if (currentLocale.startsWith('uk')) {
+            return countryItem.name?.native?.ukr?.common || countryItem.name?.common || '';
+        }
+
         return countryItem.name?.common || '';
     }, [currentLocale]);
 
@@ -417,16 +421,10 @@ export const useEditProfileDetails = () => {
         }
     }, [form.birthday, currentLocale]);
 
-    const getCountryNameForSearch = useCallback((cca2: string): string => {
-        if (!cca2) return '';
-        const country = countries.find(c => c.cca2?.toLowerCase() === cca2.toLowerCase());
-        return country?.name?.common || '';
-    }, []);
-
     const onSearchCity = useCallback((query: string) => {
-        const countryName = getCountryNameForSearch(form.country);
-        searchCities(query, countryName);
-    }, [searchCities, form.country, getCountryNameForSearch]);
+        // Pass ISO country code to location service for better locale-aware search.
+        searchCities(query, form.country);
+    }, [searchCities, form.country]);
 
     const onShowDeleteAvatarAlert = useCallback(() => {
         setIsDeleteAvatarAlertVisible(true);
