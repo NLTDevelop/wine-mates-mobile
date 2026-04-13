@@ -77,7 +77,6 @@ export const EditProfileDetailsView = () => {
                 <HeaderWithBackButton
                     title={t('settings.profileSettings')}
                     onPressBack={onEditModeBackHandler}
-                    isCentered={false}
                 />
             )}
             isKeyboardAvoiding
@@ -214,7 +213,6 @@ export const EditProfileDetailsView = () => {
                         placeholder={t('settings.bio')}
                         multiline
                         inputContainerStyle={styles.bigInput}
-                        // containerStyle={styles.bigInput}
                     />
                 </View>
 
@@ -222,7 +220,7 @@ export const EditProfileDetailsView = () => {
                     <Button
                         text={t('common.save')}
                         onPress={onSave}
-                        type="secondary"
+                        type="main"
                         disabled={isDisabled}
                         inProgress={isInProgress}
                     />
