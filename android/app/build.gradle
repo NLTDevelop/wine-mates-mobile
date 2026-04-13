@@ -83,8 +83,8 @@ android {
         applicationId "com.winemates"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 72
-        versionName "1.4.12"
+        versionCode 73
+        versionName "1.4.13"
 
         externalNativeBuild {
             cmake {
