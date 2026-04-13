@@ -5,19 +5,19 @@ import { MapView } from '@/UIKit/MapView';
 import { MapMarker } from '@/UIKit/MapMarker';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import { IEvent } from '@/entities/events/types/IEvent';
+import { IEventMapPin } from '@/entities/events/types/IEventMapPin';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { observer } from 'mobx-react-lite';
 
 interface IEventMapProps {
-    events: IEvent[];
+    mapPins: IEventMapPin[];
     initialRegion: Region;
     onMarkerPress: (markerId: number) => void;
     userLocation?: IUserLocation | null;
 }
 
 export const EventMap = observer(({
-                                      events,
+                                      mapPins,
                                       initialRegion,
                                       onMarkerPress,
                                       userLocation,
@@ -32,13 +32,13 @@ export const EventMap = observer(({
                 showsUserLocation={!!userLocation}
                 showsMyLocationButton={!!userLocation}
             >
-                {events.map((event) => (
+                {mapPins.map((pin) => (
                     <MapMarker
-                        key={event.id}
+                        key={pin.id}
                         markerProps={{
-                            coordinate: { latitude: event.latitude, longitude: event.longitude }
+                            coordinate: { latitude: pin.latitude, longitude: pin.longitude }
                         }}
-                        eventId={event.id}
+                        eventId={pin.id}
                         onPress={onMarkerPress}
                     />
                 ))}

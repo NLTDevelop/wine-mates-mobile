@@ -1,3 +1,5 @@
+import { Sex } from '../enums/Sex';
+
 export interface IEvent {
     id: number;
     latitude: number;
@@ -12,6 +14,9 @@ export interface IEvent {
     price: number;
     eventType: 'online' | 'offline';
     isSaved: boolean;
+    distance?: number;
+    language?: string;
+    theme?: string;
 }
 
 export interface IEventDetail {
@@ -32,8 +37,11 @@ export interface IEventDetail {
     restaurant: string;
     location: string;
     speaker: string;
-    distance: string;
+    distance: number;
     language: string;
     seats: number;
     wineSet?: string[];
+    minAge?: number;
+    maxAge?: number;
+    sex?: Sex;
 }

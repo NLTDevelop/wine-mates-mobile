@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { useNavigation, RouteProp, useRoute } from '@react-navigation/native';
 import { useUiContext } from '@/UIProvider';
@@ -23,9 +23,9 @@ export const EventDetails = observer(() => {
     const {goBack} = useNavigation();
 
     const { eventId } = route.params;
-    const { eventDetail, isError } = useEventDetails(eventId);
+    const { eventDetail, isError, isLoading } = useEventDetails(eventId);
     const { detailsData, maxLabelWidth, onLabelLayout } = useEventDetailsData(eventDetail);
-    const [isBookingModalVisible, setIsBookingModalVisible] = React.useState(false);
+    const [isBookingModalVisible, setIsBookingModalVisible] = useState(false);
 
     const styles = useMemo(() => getStyles(colors, maxLabelWidth), [colors, maxLabelWidth]);
 
@@ -42,7 +42,7 @@ export const EventDetails = observer(() => {
             <TitledContent title={t('eventDetails.title')} leftComponent={<RoundedButton isArrowLeft onPress={goBack} />} titleVariant="h3">
                 {
                     !eventDetail ?
-                        <EmptyListView isLoading={!isError} isNothingFound={isError} /> :
+                        <EmptyListView isLoading={isLoading} isNothingFound={isError} /> :
                         <ScrollView contentContainerStyle={styles.content}>
                             <View style={styles.card}>
                                 {detailsData.map((item) => (

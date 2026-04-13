@@ -25,15 +25,18 @@ export const AddEventView = () => {
         isLoading,
         disabled,
         isLocationModalVisible,
-        onChangeTastingTheme,
-        onChangeRestaurant,
+        onChangeTheme,
+        onChangeDescription,
+        onChangeRestaurantName,
+        onChangeLocationLabel,
         onChangeLocation,
         onDateSelect,
         onTimeSelect,
         onChangePhoneNumber,
         onChangePrice,
-        onChangeEventLanguage,
-        onChangeNumberOfSeats,
+        onChangeSpeakerName,
+        onChangeLanguage,
+        onChangeSeats,
         onLocationPress,
         onCloseLocationModal,
         onSubmit,
@@ -65,17 +68,17 @@ export const AddEventView = () => {
             >
             <View style={styles.contentContainerStyle}>
                 <CustomInput
-                    value={form.tastingTheme}
+                    value={form.theme}
                     containerStyle={styles.inputContainerStyle}
-                    onChangeText={onChangeTastingTheme}
+                    onChangeText={onChangeTheme}
                     placeholder={t('event.tastingTheme')}
                     maxLength={80}
                 />
 
                 <CustomInput
-                    value={form.restaurant}
+                    value={form.restaurantName}
                     containerStyle={styles.inputContainerStyle}
-                    onChangeText={onChangeRestaurant}
+                    onChangeText={onChangeRestaurantName}
                     placeholder={t('event.restaurant')}
                     maxLength={30}
                 />
@@ -122,16 +125,16 @@ export const AddEventView = () => {
                 />
 
                 <CustomInput
-                    value={form.eventLanguage}
+                    value={form.language}
                     containerStyle={styles.inputContainerStyle}
-                    onChangeText={onChangeEventLanguage}
+                    onChangeText={onChangeLanguage}
                     placeholder={t('event.eventLanguage')}
                 />
 
                 <CustomInput
-                    value={form.numberOfSeats}
+                    value={form.seats}
                     containerStyle={styles.inputContainerStyle}
-                    onChangeText={onChangeNumberOfSeats}
+                    onChangeText={onChangeSeats}
                     placeholder={t('event.numberOfSeats')}
                     keyboardType="numeric"
                 />

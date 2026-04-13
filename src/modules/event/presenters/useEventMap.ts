@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Region } from 'react-native-maps';
 import { eventsModel } from '@/entities/events/EventsModel';
-import { MOCK_EVENTS } from '@/entities/events/mocks/eventMocks';
+import { eventService } from '@/entities/events/EventService';
 import { useLocationPermission } from '@/hooks/useLocationPermission.ts';
 
 const KYIV_COORDINATES = {
@@ -14,15 +14,36 @@ const MAP_DELTA = {
     longitudeDelta: 0.1,
 };
 
+const DEFAULT_RADIUS_KM = 100;
+const DEFAULT_LIMIT = 50;
+
 export const useEventMap = () => {
     const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isLoadingEvents, setIsLoadingEvents] = useState(false);
+
+    const loadEvents = useCallback(async () => {
+        const location = userLocation || KYIV_COORDINATES;
+
+        setIsLoadingEvents(true);
+        try {
+            await eventService.getMapPins({
+                latitude: location.latitude,
+                longitude: location.longitude,
+                radiusKm: DEFAULT_RADIUS_KM,
+            });
+        } catch (error) {
+            console.warn('useEventMap -> loadEvents: ', error);
+        } finally {
+            setIsLoadingEvents(false);
+        }
+    }, [userLocation]);
 
     useEffect(() => {
-        if (eventsModel.events.length === 0) {
-            eventsModel.setEvents(MOCK_EVENTS);
+        if (!isLocationLoading) {
+            loadEvents();
         }
-    }, []);
+    }, [isLocationLoading, loadEvents]);
 
     const initialRegion: Region = useMemo(() => {
         if (userLocation) {
@@ -47,17 +68,22 @@ export const useEventMap = () => {
         setIsModalVisible(false);
     }, []);
 
-    const onFavoritePress = useCallback((eventId: number) => {
-        console.log('Favorite pressed for event:', eventId);
+    const onFavoritePress = useCallback(async (eventId: number) => {
+        try {
+            await eventService.toggleSave(eventId);
+        } catch (error) {
+            console.warn('useEventMap -> onFavoritePress: ', error);
+        }
     }, []);
 
     return {
-        events: eventsModel.events,
+        mapPins: eventsModel.mapPins,
         initialRegion,
         selectedMarkerId: eventsModel.selectedEventId,
         onMarkerPress,
         userLocation,
         isLocationLoading,
+        isLoadingEvents,
         isModalVisible,
         onCloseModal,
         onFavoritePress,

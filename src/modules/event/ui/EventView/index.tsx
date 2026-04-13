@@ -7,11 +7,8 @@ import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { Typography } from '@/UIKit/Typography';
 import { EventMap } from '@/modules/event/components/EventMap';
-import { WineEventList } from '@/modules/event/components/WineEventList';
 import { useEventMap } from '@/modules/event/presenters/useEventMap';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
-import { BottomModal } from '@/UIKit/BottomModal/ui';
-import { WineEventListItem } from '@/modules/event/components/WineEventList/components/WineEventListItem';
 import { PlusIcon } from '@assets/icons/PlusIcon';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 
@@ -20,17 +17,11 @@ export const EventMapView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
     const {
-        events,
+        mapPins,
         initialRegion,
-        selectedMarkerId,
         onMarkerPress,
         userLocation,
-        isModalVisible,
-        onCloseModal,
-        onFavoritePress
     } = useEventMap();
-
-    const selectedEvent = events.find(event => event.id === selectedMarkerId);
 
     const onAddEvent = useCallback(() => {
         navigation.navigate('AddEventView');
@@ -47,35 +38,12 @@ export const EventMapView = observer(() => {
 
                 <View style={styles.content}>
                     <EventMap
-                        events={events}
+                        mapPins={mapPins}
                         initialRegion={initialRegion}
                         onMarkerPress={onMarkerPress}
                         userLocation={userLocation}
                     />
-
-                    <WineEventList
-                        events={events}
-                        selectedEventId={selectedMarkerId}
-                        onReadMorePress={onMarkerPress}
-                        onFavoritePress={() => {}}
-                    />
                 </View>
-
-                {selectedEvent && (
-                    <BottomModal
-                        visible={isModalVisible}
-                        onClose={onCloseModal}
-                        title={'Event details'}
-                    >
-                        <WineEventListItem
-                            event={selectedEvent}
-                            isSelected
-                            onReadMorePress={onMarkerPress}
-                            onFavoritePress={onFavoritePress}
-                            eventId={selectedEvent.id}
-                        />
-                    </BottomModal>
-                )}
 
             </ScreenContainer>
             <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onAddEvent}>

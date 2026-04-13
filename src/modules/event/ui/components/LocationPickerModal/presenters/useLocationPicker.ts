@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 interface IUseLocationPickerProps {
     initialLocation?: { latitude: number; longitude: number } | null;
-    onSelectLocation: (latitude: number, longitude: number) => void;
+    onSelectLocation: (latitude: number, longitude: number, label: string) => void;
     onClose: () => void;
 }
 
@@ -18,7 +18,8 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
 
     const onConfirm = useCallback(() => {
         if (selectedLocation) {
-            onSelectLocation(selectedLocation.latitude, selectedLocation.longitude);
+            const label = `${selectedLocation.latitude.toFixed(4)}, ${selectedLocation.longitude.toFixed(4)}`;
+            onSelectLocation(selectedLocation.latitude, selectedLocation.longitude, label);
             onClose();
         }
     }, [selectedLocation, onSelectLocation, onClose]);
