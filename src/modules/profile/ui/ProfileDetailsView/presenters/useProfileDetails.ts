@@ -27,7 +27,15 @@ const getBirthdayDisplayText = (birthday: string) => {
         return '';
     }
 
-    return format(date, 'MMMM d, yyyy');
+    try {
+        return new Intl.DateTimeFormat(localization.locale || 'en', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        }).format(date);
+    } catch {
+        return format(date, 'MMMM d, yyyy');
+    }
 };
 
 const getPhoneParts = (phoneNumber: string) => {
