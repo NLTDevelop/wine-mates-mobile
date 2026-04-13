@@ -17,7 +17,7 @@ export const getStyles = (colors: IColors) => {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: colors.background_grey,
+            backgroundColor: colors.background_light,
             borderRadius: 99,
             marginTop: scaleVertical(7),
             paddingHorizontal: scaleHorizontal(8),
@@ -56,6 +56,10 @@ export const getStyles = (colors: IColors) => {
         },
         input: {
             marginBottom: scaleVertical(16),
+        },
+        bigInput: {
+            marginBottom: scaleVertical(16),
+            minHeight: scaleVertical(120),
         },
         instagramAccessory: {
             marginLeft: scaleHorizontal(16),

@@ -21,7 +21,8 @@ import { SavedWinesView } from '@/modules/wine/ui/SavedWinesView';
 import { FavoriteWineListView } from '@/modules/wine/ui/FavoriteWineListView';
 import { WineDetailsView } from '@/modules/wine/ui/WineDetailsView';
 import { DeleteAccountView } from '@/modules/settings/ui/DeleteAccountView';
-import { ProfileSettingsView } from '@/modules/settings/ui/ProfileSettingsView';
+import { ProfileDetailsView } from '@/modules/profile/ui/ProfileDetailsView';
+import { EditProfileDetailsView } from '@/modules/profile/ui/EditProfileDetailsView';
 import { AvatarCameraView } from '@/UIKit/AvatarPicker/ui/AvatarCameraView';
 
 const Stack = createNativeStackNavigator();
@@ -54,7 +55,8 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="SavedWinesView" component={SavedWinesView} />
             <Stack.Screen name="FavoriteWineListView" component={FavoriteWineListView} />
             <Stack.Screen name="DeleteAccountView" component={DeleteAccountView} />
-            <Stack.Screen name="ProfileSettingsView" component={ProfileSettingsView} />
+            <Stack.Screen name="ProfileDetailsView" component={ProfileDetailsView} />
+            <Stack.Screen name="EditProfileDetailsView" component={EditProfileDetailsView} />
             <Stack.Screen name="AvatarCameraView" component={AvatarCameraView} />
         </Stack.Navigator>
     );

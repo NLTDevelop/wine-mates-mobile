@@ -6,7 +6,7 @@ export const useSettingsHeader = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const onProfilePress = useCallback(() => {
-        navigation.navigate('ProfileSettingsView');
+        navigation.navigate('ProfileDetailsView');
     }, [navigation]);
 
     return {
