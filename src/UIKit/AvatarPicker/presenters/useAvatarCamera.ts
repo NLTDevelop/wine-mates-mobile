@@ -2,9 +2,7 @@ import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { useAppState } from '@react-native-community/hooks';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { Camera, PhotoFile, TakePhotoOptions, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
-import ImageResizer from 'react-native-image-resizer';
+import { Camera, TakePhotoOptions, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { useUiContext } from '@/UIProvider';
 import { isAndroid } from '@/utils';
@@ -21,7 +19,7 @@ export const useAvatarCamera = (targetSize: number) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { colors } = useUiContext();
     const appState = useAppState();
-    const isFocused = useIsFocused();
+    useIsFocused();
     const cameraRef = useRef<Camera>(null);
     const [cameraPosition, setCameraPosition] = useState<CameraPosition>('front');
     const { hasPermission, requestPermission } = useCameraPermission();
@@ -44,40 +42,6 @@ export const useAvatarCamera = (targetSize: number) => {
         }),
     }), [targetSize, colors]);
 
-    const prepareImage = async ({ uri, name, type, width, height, shouldResize, rotation }: { uri: string; name?: string | null; type?: string | null; width?: number; height?: number; shouldResize?: boolean; rotation?: number }): Promise<IAvatarImage> => {
-        const normalizedUri = uri.startsWith('file://') ? uri : `file://${uri}`;
-        const uriName = normalizedUri.split('/').pop();
-
-        if (shouldResize && width && height) {
-            try {
-                if (ImageResizer?.createResizedImage) {
-                    const resized = await ImageResizer.createResizedImage(
-                        normalizedUri,
-                        width,
-                        height,
-                        'JPEG',
-                        100,
-                        rotation || 0,
-                    );
-
-                    return {
-                        uri: resized.uri,
-                        name: name || uriName || `avatar-${Date.now()}.jpg`,
-                        type: type || 'image/jpeg',
-                    };
-                }
-            } catch (error) {
-                console.error('Error resizing image:', error);
-            }
-        }
-
-        return {
-            uri: normalizedUri,
-            name: name || uriName || `avatar-${Date.now()}.jpg`,
-            type: type || 'image/jpeg',
-        };
-    };
-
     useEffect(() => {
         if (!hasPermission) {
             requestPermission();
@@ -97,7 +61,7 @@ export const useAvatarCamera = (targetSize: number) => {
 
             navigation.goBack();
             setTimeout(() => {
-                navigation.navigate('ProfileSettingsView', { selectedAvatar: avatarImage });
+                navigation.navigate('EditProfileDetailsView', { selectedAvatar: avatarImage });
             }, 0);
         } catch (error) {
             console.log('User cancelled image picker or error:', error);
@@ -130,7 +94,7 @@ export const useAvatarCamera = (targetSize: number) => {
 
                 navigation.goBack();
                 setTimeout(() => {
-                    navigation.navigate('ProfileSettingsView', { selectedAvatar: avatarImage });
+                    navigation.navigate('EditProfileDetailsView', { selectedAvatar: avatarImage });
                 }, 0);
             }
         } catch (error) {
