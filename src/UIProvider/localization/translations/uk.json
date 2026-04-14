@@ -26,6 +26,7 @@
         "clear": "Очистити",
         "showResults": "Показати результати",
         "reset": "Скинути",
+        "loading": "Завантаження...",
         "selectPhoto": "Виберіть фото",
         "takePhoto": "Зробити фото",
         "chooseFromGallery": "Вибрати з галереї"
@@ -281,6 +282,8 @@
         "email": "Електронна пошта",
         "country": "Країна",
         "city": "Місто",
+        "startTypingCity": "Почніть вводити назву міста",
+        "cityNotFound": "Міст не знайдено",
         "gender": "Стать",
         "occupation": "Рід занять",
         "placeOfWork": "Місце роботи",

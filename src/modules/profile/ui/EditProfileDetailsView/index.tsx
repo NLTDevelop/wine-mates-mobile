@@ -17,6 +17,8 @@ import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { InstagramIcon } from '@assets/icons/InstagramIcon';
 import { SelectExpertiseBottomSheet } from './components/SelectExpertiseBottomSheet';
 import { ExpertiseSelectorRow } from './components/ExpertiseSelectorRow';
+import { CitySelectorRow } from './components/CitySelectorRow';
+import { SelectCityBottomSheet } from './components/SelectCityBottomSheet';
 import { CustomAlert } from '@/UIKit/CustomAlert/ui';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum.ts';
 import { WineLoverIcon } from '@assets/icons/WineLoverIcon.tsx';
@@ -45,7 +47,17 @@ export const EditProfileDetailsView = () => {
         genderOptions,
         countryOptions,
         cityOptions,
+        citySearch,
+        cityEmptyStateText,
+        isCitySelectorDisabled,
+        isCityLoading,
         onChangeField,
+        onChangeCountry,
+        cityModalRef,
+        onOpenCitySelector,
+        onCloseCitySelector,
+        onSearchCityChange,
+        onSelectCityOption,
         onChangeCountryCode,
         selectExpertiseModalRef,
         onOpenExpertiseModal,
@@ -60,7 +72,6 @@ export const EditProfileDetailsView = () => {
         onCloseBirthdayModal,
         onChangePickerDate,
         onConfirmBirthday,
-        onSearchCity,
         instagramLinkError,
         isDeleteAvatarAlertVisible,
         onCloseDeleteAvatarAlert,
@@ -136,22 +147,17 @@ export const EditProfileDetailsView = () => {
                     <CustomDropdown
                         data={countryOptions}
                         placeholder={t('settings.country')}
-                        onPress={item => onChangeField('country', String(item.value))}
+                        onPress={onChangeCountry}
                         withSearch
                         selectedValue={form.country}
                         disabled={false}
                         containerStyle={styles.input}
                     />
-                    <CustomDropdown
-                        data={cityOptions}
+                    <CitySelectorRow
+                        value={form.city}
                         placeholder={t('settings.city')}
-                        onPress={item => onChangeField('city', String(item.value))}
-                        withSearch
-                        selectedValue={form.city}
-                        disabled={false}
-                        containerStyle={styles.input}
-                        onSearchChange={onSearchCity}
-                        disableLocalFilter
+                        disabled={isCitySelectorDisabled}
+                        onPress={onOpenCitySelector}
                     />
                     <View style={styles.input}>
                         <BirthdaySelector
@@ -232,6 +238,16 @@ export const EditProfileDetailsView = () => {
                 selectedValue={expertiseLevel}
                 onSelect={onSelectExpertise}
                 onClose={onCloseExpertiseModal}
+            />
+            <SelectCityBottomSheet
+                modalRef={cityModalRef}
+                value={citySearch}
+                data={cityOptions}
+                isLoading={isCityLoading}
+                emptyText={cityEmptyStateText}
+                onChangeText={onSearchCityChange}
+                onSelect={onSelectCityOption}
+                onClose={onCloseCitySelector}
             />
             <BottomModal
                 visible={isBirthdayModalVisible}

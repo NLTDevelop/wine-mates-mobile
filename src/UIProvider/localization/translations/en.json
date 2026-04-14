@@ -26,6 +26,7 @@
         "clear": "Clear",
         "showResults": "Show results",
         "reset": "Reset",
+        "loading": "Loading...",
         "selectPhoto": "Select Photo",
         "takePhoto": "Take Photo",
         "chooseFromGallery": "Choose from Gallery"
@@ -277,6 +278,8 @@
         "email": "Email",
         "country": "Country",
         "city": "City",
+        "startTypingCity": "Start typing the city name",
+        "cityNotFound": "No cities found",
         "gender": "Gender",
         "occupation": "Occupation",
         "placeOfWork": "Place of work",
