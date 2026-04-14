@@ -24,8 +24,13 @@ export const useWineDetails = () => {
         try {
             if (!wineModel.selectedWineId) return;
 
+            const detailsParams = {
+                rateId,
+                vintages: params ? params.vintages : undefined,
+            }; 
+
             const response = rateId
-                ? await myWineService.getMyWineDetails(wineModel.selectedWineId, rateId)
+                ? await myWineService.getMyWineDetails(wineModel.selectedWineId, detailsParams)
                 : await wineService.getById(wineModel.selectedWineId, params);
 
             if (response.isError || !response.data) {

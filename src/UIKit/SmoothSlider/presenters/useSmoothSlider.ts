@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
+import type { GestureResponderEvent, LayoutChangeEvent, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { useSliderGesture, UseSliderGestureReturn } from './useSliderGesture.tsx';
 import { getStyles } from '../styles.ts';
@@ -14,6 +15,9 @@ interface UseSmoothSliderReturn extends UseSliderGestureReturn {
     normalizedLabels: NormalizedLabel[] | undefined;
     hasLabels: boolean;
     decoratorItems: DecoratorItem[];
+    trackContainerRef: React.RefObject<View | null>;
+    onTrackLayout: (event: LayoutChangeEvent) => void;
+    onTrackPress: (event: GestureResponderEvent) => void;
     handleLabelClick: (targetIndex: number) => void;
 }
 
@@ -35,6 +39,8 @@ export const useSmoothSlider = ({
     edgeAlignedLabels = false,
 }: UseSmoothSliderProps): UseSmoothSliderReturn => {
     const { colors } = useUiContext();
+    const trackContainerRef = useRef<View | null>(null);
+    const trackPageXRef = useRef(0);
 
     const actualMax = max ?? (data ? data.length - 1 : 100);
     const actualValue = value ?? values?.[0] ?? initialValue ?? min;
@@ -64,6 +70,22 @@ export const useSmoothSlider = ({
         handleLabelPressInternal(targetIndex);
         onLabelPress?.(targetIndex);
     };
+
+    const onTrackLayout = useCallback((event: LayoutChangeEvent) => {
+        handleLayout(event.nativeEvent.layout.width);
+
+        requestAnimationFrame(() => {
+            trackContainerRef.current?.measureInWindow((x) => {
+                trackPageXRef.current = x;
+            });
+        });
+    }, [handleLayout]);
+
+    const onTrackPress = useCallback((event: GestureResponderEvent) => {
+        const pageX = event.nativeEvent.pageX;
+        const locationX = pageX - trackPageXRef.current;
+        handleTrackPress(locationX);
+    }, [handleTrackPress]);
 
     const normalizedLabels = useMemo(() => {
         if (labelsProp && labelsProp.length > 0) {
@@ -125,6 +147,9 @@ export const useSmoothSlider = ({
         normalizedLabels,
         hasLabels,
         decoratorItems,
+        trackContainerRef,
+        onTrackLayout,
+        onTrackPress,
         handleLabelClick,
     };
 };

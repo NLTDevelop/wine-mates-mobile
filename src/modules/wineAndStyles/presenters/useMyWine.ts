@@ -88,7 +88,10 @@ export const useMyWine = () => {
     const onItemPress = useCallback(async (item: IWineListItem) => {
         if (item.myReview?.id) {
             try {
-                const response = await myWineService.getMyWineDetails(item.id, item.myReview.id);
+                const params = {
+                    rateId: item.myReview.id
+                };
+                const response = await myWineService.getMyWineDetails(item.id, params);
                 
                 if (response.isError || !response.data) {
                     toastService.showError(

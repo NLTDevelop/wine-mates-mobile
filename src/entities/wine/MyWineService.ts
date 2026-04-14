@@ -47,12 +47,12 @@ class MyWineService {
         }
     };
 
-    getMyWineDetails = async (id: number, rateId: number): Promise<IResponse<IWineDetails>> => {
+    getMyWineDetails = async (id: number, params: { vintages?: 'All', rateId: number | null }): Promise<IResponse<IWineDetails>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.wines}/${id}/my-details`,
-                params: { rateId },
+                params,
             });
             return response;
         } catch (error) {
