@@ -16,7 +16,8 @@ class LocationService {
         const headers: Record<string, string> = {
             'Content-Type': 'application/json',
             'X-Goog-Api-Key': config.googlePlacesApiKey,
-            'X-Goog-FieldMask': 'suggestions.placePrediction.place,suggestions.placePrediction.placeId,suggestions.placePrediction.text.text',
+            'X-Goog-FieldMask':
+                'suggestions.placePrediction.place,suggestions.placePrediction.placeId,suggestions.placePrediction.text.text',
             'X-Skip-Auth': 'true',
         };
 
@@ -114,14 +115,16 @@ class LocationService {
             const errorPayload = response?.errors || response?.encrypted_error || {};
             const signature = `${response?.status || ''}:${errorPayload?.error?.status || ''}:${errorPayload?.error?.message || response?.message || ''}`;
             const now = Date.now();
-            const shouldLog =
-                signature !== this.lastGoogleErrorSignature ||
-                now - this.lastGoogleErrorAt > 5000;
+            const shouldLog = signature !== this.lastGoogleErrorSignature || now - this.lastGoogleErrorAt > 5000;
 
             if (shouldLog) {
                 this.lastGoogleErrorSignature = signature;
                 this.lastGoogleErrorAt = now;
-                console.warn('LocationService -> Google Places error:', response?.status, JSON.stringify(errorPayload || response));
+                console.warn(
+                    'LocationService -> Google Places error:',
+                    response?.status,
+                    JSON.stringify(errorPayload || response),
+                );
             }
             return [];
         }

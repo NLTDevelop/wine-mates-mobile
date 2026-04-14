@@ -1,23 +1,22 @@
 import { useCallback, useMemo } from 'react';
-import { ActivityIndicator, FlatList, Image, Pressable, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import {
     BottomSheetBackdrop,
     BottomSheetBackdropProps,
+    BottomSheetFlatList,
     BottomSheetModal,
-    BottomSheetView,
-    WINDOW_HEIGHT,
 } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated from 'react-native-reanimated';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { BottomSheetInput } from '@/UIKit/BottomSheetInput';
 import { CrossIcon } from '@assets/icons/CrossIcon';
-import { SearchIcon } from '@assets/icons/SearchIcon';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
+import { EmptyListView } from '@/UIKit/EmptyListView';
 import { getStyles } from './styles';
 import { CityOptionItem } from '../CityOptionItem';
-import { SearchClearButton } from '../SearchClearButton';
 import { useSelectCityBottomSheet } from './presenters/useSelectCityBottomSheet';
+import { SearchBar } from '@/UIKit/SearchBar';
 
 interface IProps {
     modalRef: React.RefObject<BottomSheetModal | null>;
@@ -42,85 +41,74 @@ export const SelectCityBottomSheet = ({
 }: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
-    const styles = useMemo(() => getStyles(colors, bottom, top), [colors, bottom, top]);
-    const { onClearSearch } = useSelectCityBottomSheet({ onChangeText });
+    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
+    const { animatedListOffsetStyle, snapPoints, onSheetAnimate } = useSelectCityBottomSheet({
+        modalRef,
+        bottomInset: bottom,
+    });
 
-    const renderBackdrop = useCallback(
-        (props: BottomSheetBackdropProps) => (
-            <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
-        ),
-        [],
-    );
-
-    const renderHandle = useCallback(() => null, []);
+    const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
+        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
+    ), []);
 
     const keyExtractor = useCallback((item: IDropdownItem) => String(item.value), []);
 
-    const renderItem = useCallback(({ item }: { item: IDropdownItem }) => {
-        return <CityOptionItem item={item} onSelect={onSelect} />;
-    }, [onSelect]);
+    const renderItem = useCallback(
+        ({ item }: { item: IDropdownItem }) => {
+            return <CityOptionItem item={item} onSelect={onSelect} />;
+        },
+        [onSelect],
+    );
 
     return (
         <BottomSheetModal
             ref={modalRef}
-            topInset={top}
-            enablePanDownToClose
-            enableDynamicSizing
-            maxDynamicContentSize={WINDOW_HEIGHT}
-            keyboardBehavior="interactive"
-            keyboardBlurBehavior="restore"
-            android_keyboardInputMode="adjustResize"
-            handleComponent={renderHandle}
-            backdropComponent={renderBackdrop}
             backgroundStyle={styles.bottomSheetContainer}
+            handleComponent={null}
+            enableDynamicSizing={false}
+            snapPoints={snapPoints}
+            topInset={top}
+            enablePanDownToClose={false}
             onDismiss={onClose}
+            onAnimate={onSheetAnimate}
+            backdropComponent={renderBackdrop}
+            keyboardBehavior={'interactive'}
+            keyboardBlurBehavior="restore"
+            enableHandlePanningGesture={false}
         >
-            <BottomSheetView style={styles.container}>
+            <View style={styles.container}>
                 <View style={styles.header}>
                     <View style={styles.headerSpacer} />
                     <Typography variant="h4" text={t('settings.city')} />
-                    <Pressable style={styles.closeButton} onPress={onClose} hitSlop={20}>
+                    <TouchableOpacity style={styles.closeButton} onPress={onClose} hitSlop={20}>
                         <CrossIcon />
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
 
-                <BottomSheetInput
+                <SearchBar
                     value={value}
                     onChangeText={onChangeText}
                     placeholder={t('common.search')}
                     containerStyle={styles.searchContainer}
-                    LeftAccessory={
-                        <View style={styles.searchIconContainer}>
-                            <SearchIcon />
-                        </View>
-                    }
-                    RightAccessory={<SearchClearButton visible={!!value} onPress={onClearSearch} />}
                 />
 
-                <FlatList
-                    data={data}
-                    style={styles.list}
-                    keyExtractor={keyExtractor}
-                    renderItem={renderItem}
-                    keyboardShouldPersistTaps="handled"
-                    contentContainerStyle={styles.listContent}
-                    ListEmptyComponent={
-                        <View style={styles.emptyContainer}>
-                            {isLoading ? (
-                                <ActivityIndicator size="small" color={colors.text} style={styles.loader} />
-                            ) : (
-                                <>
-                                    <Image
-                                        source={require('@assets/images/city_search.jpeg')}
-                                        style={styles.emptyImage}
-                                    />
-                                    <Typography text={emptyText} variant="h5" style={styles.emptyText} />
-                                </>
-                            )}
-                        </View>
-                    }
-                />
-            </BottomSheetView>
+                <Animated.View style={[styles.listContainer, animatedListOffsetStyle]}>
+                        <BottomSheetFlatList
+                            data={data}
+                            keyExtractor={keyExtractor}
+                            renderItem={renderItem}
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={styles.listContent}
+                            ListEmptyComponent={ <EmptyListView
+                                image={<Image source={require('@assets/images/city_search.jpeg')} style={styles.emptyImage} />}
+                                text={emptyText}
+                                isLoading={isLoading}
+                            />}
+                            
+                        />
+                </Animated.View>
+                <View style={styles.footer}/>
+            </View>
         </BottomSheetModal>
     );
 };

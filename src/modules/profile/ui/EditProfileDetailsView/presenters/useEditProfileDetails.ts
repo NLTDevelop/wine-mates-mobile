@@ -14,6 +14,7 @@ import { useLocation } from '@/libs/locations/presenters/useLocation';
 import { useAvatarPicker } from '@/UIKit/AvatarPicker/presenters/useAvatarPicker';
 import { useUiContext } from '@/UIProvider';
 import { countryDisplayNames } from '@/libs/countryCodePicker/countryDisplayNames';
+import { Keyboard } from 'react-native';
 
 interface IProfileForm {
     fullName: string;
@@ -509,6 +510,7 @@ export const useEditProfileDetails = () => {
     }, [form.country]);
 
     const onCloseCitySelector = useCallback(() => {
+        Keyboard.dismiss();
         setCitySearch('');
         clearCitySuggestions();
         selectCityModalRef.current?.dismiss();

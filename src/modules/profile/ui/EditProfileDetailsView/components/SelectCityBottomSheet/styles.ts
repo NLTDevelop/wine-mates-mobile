@@ -1,11 +1,8 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
-import { WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
 
-export const getStyles = (colors: IColors, bottomInset: number, topInset: number) => {
-    const maxHeight = WINDOW_HEIGHT - topInset;
-
+export const getStyles = (colors: IColors, bottomInset: number) => {
     const styles = StyleSheet.create({
         bottomSheetContainer: {
             backgroundColor: colors.background,
@@ -13,9 +10,8 @@ export const getStyles = (colors: IColors, bottomInset: number, topInset: number
             borderTopRightRadius: 12,
         },
         container: {
-            maxHeight,
+            flex: 1,
             paddingHorizontal: scaleHorizontal(16),
-            paddingBottom: bottomInset + scaleVertical(16),
             gap: scaleVertical(16),
         },
         header: {
@@ -34,37 +30,21 @@ export const getStyles = (colors: IColors, bottomInset: number, topInset: number
         searchContainer: {
             marginBottom: scaleVertical(8),
         },
-        searchIconContainer: {
-            marginLeft: scaleHorizontal(12),
-            marginRight: scaleHorizontal(-4),
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        list: {
-            minHeight: scaleVertical(180),
+        listContainer: {
+            height: scaleVertical(300),
         },
         listContent: {
-            paddingBottom: scaleVertical(8),
+            flexGrow: 1,
             gap: scaleVertical(12),
-        },
-        emptyContainer: {
-            minHeight: scaleVertical(120),
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingHorizontal: scaleHorizontal(16),
         },
         emptyImage: {
             width: scaleVertical(230),
             height: scaleVertical(230),
             resizeMode: 'cover',
         },
-        emptyText: {
-            textAlign: 'center',
-            color: colors.text,
-        },
-        loader: {
-            marginTop: scaleVertical(8),
-        },
+        footer: {
+            paddingBottom: bottomInset + scaleVertical(16),
+        }
     });
 
     return styles;
