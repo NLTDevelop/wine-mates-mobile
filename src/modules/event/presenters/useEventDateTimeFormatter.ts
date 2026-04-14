@@ -18,11 +18,7 @@ export const useEventDateTimeFormatter = ({ eventDate, eventTime }: IUseEventDat
 
     const formattedTime = useMemo(() => {
         if (!eventTime) return '';
-        try {
-            return format(new Date(eventTime), 'HH:mm');
-        } catch {
-            return '';
-        }
+        return eventTime;
     }, [eventTime]);
 
     return { formattedDate, formattedTime };

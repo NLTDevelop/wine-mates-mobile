@@ -6,6 +6,7 @@ export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
         listContainer: {
             paddingVertical: scaleVertical(16),
+            paddingHorizontal: scaleVertical(16),
             gap: scaleVertical(12),
         },
     });

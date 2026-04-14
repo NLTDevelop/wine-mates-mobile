@@ -1,31 +1,52 @@
 import { useMemo, useCallback } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { observer } from 'mobx-react-lite';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
 import { useUiContext } from '@/UIProvider';
-import { getStyles } from './styles';
 import { Typography } from '@/UIKit/Typography';
-import { EventMap } from '@/modules/event/components/EventMap';
-import { useEventMap } from '@/modules/event/presenters/useEventMap';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { PlusIcon } from '@assets/icons/PlusIcon';
-import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
+import { EventMap } from '@/modules/event/components/EventMap';
+import { WineEventList } from '@/modules/event/components/WineEventList';
+import { EventModalCard } from '@/modules/event/components/EventModalCard';
+import { useEventMap } from '@/modules/event/presenters/useEventMap';
+import { useEventsList } from '@/modules/event/presenters/useEventsList';
+import { useEventMapView } from '@/modules/event/presenters/useEventMapView';
+import { getStyles } from './styles';
 
 export const EventMapView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
+    
     const {
-        mapPins,
         initialRegion,
-        onMarkerPress,
         userLocation,
     } = useEventMap();
 
-    const onAddEvent = useCallback(() => {
-        navigation.navigate('AddEventView');
-    }, [navigation]);
+    const {
+        events,
+        loadEvents,
+    } = useEventsList();
+
+    const {
+        mapPins,
+        selectedEvent,
+        isModalVisible,
+        onAddEvent,
+        onMarkerPress,
+        onCloseModal,
+        onBookingPress,
+        onModalFavoritePress,
+        onReadMorePress,
+        onFavoritePress,
+    } = useEventMapView({ events });
+
+    useFocusEffect(
+        useCallback(() => {
+            loadEvents(true);
+        }, [])
+    );
 
     return (
         // <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
@@ -45,10 +66,30 @@ export const EventMapView = observer(() => {
                     />
                 </View>
 
+                <WineEventList
+                    events={events}
+                    selectedEventId={null}
+                    onReadMorePress={onReadMorePress}
+                    onFavoritePress={onFavoritePress}
+                />
+
             </ScreenContainer>
             <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onAddEvent}>
                 <PlusIcon width={32} height={32} color="white" />
             </TouchableOpacity>
+
+            {selectedEvent && (
+                <BottomModal
+                    visible={isModalVisible}
+                    onClose={onCloseModal}
+                >
+                    <EventModalCard
+                        event={selectedEvent}
+                        onBookingPress={onBookingPress}
+                        onFavoritePress={onModalFavoritePress}
+                    />
+                </BottomModal>
+            )}
         </>
         // </WithErrorHandler>
     );

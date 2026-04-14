@@ -1,6 +1,6 @@
 import { Currency } from '../enums/Currency';
 import { RepeatRule } from '../enums/RepeatRule';
-import { EventTastingType } from '../enums/EventTastingType';
+import { TastingType } from '../enums/TastingType';
 import { Sex } from '../enums/Sex';
 
 interface IWineSetItem {
@@ -25,7 +25,7 @@ export interface CreateEventDto {
     phoneNumber: string;
     age: number;
     sex: Sex;
-    tastingType: EventTastingType;
+    tastingType: TastingType;
     requiresConfirmation: boolean;
     repeatRule: RepeatRule;
     wineSet?: IWineSetItem[];

@@ -13,7 +13,7 @@ export const getStyles = (colors: IColors, top: number) => {
             position: 'absolute',
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-start',
             top: top + scaleVertical(16),
             left: scaleHorizontal(16),
             zIndex: 1,
@@ -42,9 +42,10 @@ export const getStyles = (colors: IColors, top: number) => {
             width: '100%',
             paddingBottom: scaleVertical(32),
         },
-        coordinates: {
-            textAlign: 'center',
+        addressText: {
             color: colors.text_light,
+            fontSize: 14,
+            lineHeight: 20,
         },
     });
     return styles;

@@ -18,7 +18,7 @@ export const getStyles = (colors: IColors) => {
             fontSize: scaleFontSize(14),
         },
         dayContainer: {
-          flex: 1,
+            flex: 1,
             width: '100%',
             backgroundColor: colors.border,
             alignItems: 'center',

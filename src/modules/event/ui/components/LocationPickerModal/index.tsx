@@ -2,18 +2,19 @@ import { useMemo } from 'react';
 import { Modal, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { MapView } from '@/UIKit/MapView';
+import MapView from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocationPicker } from './presenters/useLocationPicker';
 import { RoundedButton } from '@/UIKit/TitledContent/components/RoundedButton';
+import { LocationSearchInput } from './components/LocationSearchInput/ui';
 
 interface IProps {
     visible: boolean;
     onClose: () => void;
-    onSelectLocation: (latitude: number, longitude: number, label: string) => void;
+    onSelectLocation: (latitude: number, longitude: number, label: string, placeName?: string) => void;
     initialLocation?: { latitude: number; longitude: number } | null;
 }
 
@@ -22,7 +23,18 @@ export const LocationPickerModal = ({ visible, onClose, onSelectLocation, initia
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors, top), [colors, top]);
 
-    const { selectedLocation, onMapPress, onConfirm } = useLocationPicker({
+    const {
+        selectedLocation,
+        searchQuery,
+        suggestions,
+        showSuggestions,
+        mapRef,
+        onMapPress,
+        onPoiClick,
+        onSearchChange,
+        onSelectSuggestion,
+        onConfirm,
+    } = useLocationPicker({
         initialLocation,
         onSelectLocation,
         onClose,
@@ -45,6 +57,10 @@ export const LocationPickerModal = ({ visible, onClose, onSelectLocation, initia
                 </View>
 
                 <MapView
+                    provider="google"
+                    showsPointsOfInterests
+                    ref={mapRef}
+                    onPoiClick={onPoiClick}
                     initialRegion={{
                         latitude: selectedLocation?.latitude || 50.4501,
                         longitude: selectedLocation?.longitude || 30.5234,
@@ -65,11 +81,18 @@ export const LocationPickerModal = ({ visible, onClose, onSelectLocation, initia
                 </MapView>
 
                 <View style={styles.footer}>
-                    {selectedLocation && (
+                    <LocationSearchInput
+                        value={searchQuery}
+                        onChangeText={onSearchChange}
+                        suggestions={suggestions}
+                        onSelectSuggestion={onSelectSuggestion}
+                        showSuggestions={showSuggestions}
+                    />
+                    {selectedLocation?.label && (
                         <Typography
-                            text={`${selectedLocation.latitude.toFixed(6)}, ${selectedLocation.longitude.toFixed(6)}`}
+                            text={selectedLocation.label}
                             variant="body_400"
-                            style={styles.coordinates}
+                            style={styles.addressText}
                         />
                     )}
                     <Button

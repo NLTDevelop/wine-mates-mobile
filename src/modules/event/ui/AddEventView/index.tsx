@@ -85,7 +85,7 @@ export const AddEventView = () => {
 
                 <TouchableOpacity onPress={onLocationPress} style={styles.locationButton}>
                     <Typography
-                        text={form.location ? `${form.location.latitude.toFixed(6)}, ${form.location.longitude.toFixed(6)}` : t('event.selectLocation')}
+                        text={form.locationLabel || t('event.selectLocation')}
                         variant="h6"
                         style={styles.locationText}
                     />

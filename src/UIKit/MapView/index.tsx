@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, forwardRef } from 'react';
 import { View } from 'react-native';
 import RNMapView, { MapViewProps, Region, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useUiContext } from '@/UIProvider';
@@ -10,7 +10,7 @@ interface IMapViewProps extends Partial<MapViewProps> {
     children?: React.ReactNode;
 }
 
-export const MapView = observer(({ initialRegion, children, ...props }: IMapViewProps) => {
+export const MapView = observer(forwardRef<RNMapView, IMapViewProps>(({ initialRegion, children, ...props }, ref) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -55,6 +55,7 @@ export const MapView = observer(({ initialRegion, children, ...props }: IMapView
     return (
         <View style={styles.container}>
             <RNMapView
+                ref={ref}
                 provider={PROVIDER_GOOGLE}
                 style={styles.map}
                 initialRegion={initialRegion || defaultRegion}
@@ -66,7 +67,7 @@ export const MapView = observer(({ initialRegion, children, ...props }: IMapView
             </RNMapView>
         </View>
     );
-});
+}));
 
 MapView.displayName = 'MapView';
 
