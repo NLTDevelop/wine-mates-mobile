@@ -1,53 +1,29 @@
 import { useMemo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { DateBadge } from '@/UIKit/DateBadge';
-import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { MapMarker } from '@/UIKit/MapMarker';
-import { EventModalCard } from '@/modules/event/components/EventModalCard';
 import { IEvent } from '@/entities/events/types/IEvent';
-import { useWineEventListItem } from './useWineEventListItem';
+import { useEventModalCard } from './presenters/useEventModalCard';
 import { getStyles } from './styles';
 
 interface IProps {
     event: IEvent;
-    isSelected: boolean;
-    onReadMorePress: (eventId: number) => void;
-    onFavoritePress?: (eventId: number) => void;
-    eventId: number;
+    onBookingPress: () => void;
+    onFavoritePress: () => void;
 }
 
-export const WineEventListItem = ({
-    event,
-    onReadMorePress,
-    onFavoritePress,
-    eventId
-}: IProps) => {
+export const EventModalCard = ({ event, onBookingPress, onFavoritePress }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { 
-        month, 
-        day, 
-        isModalVisible, 
-        onCardPress, 
-        onBookingPress, 
-        onCloseModal, 
-        onReadMorePress: onReadMorePressHandler,
-        onFavoritePress: onFavoritePressHandler 
-    } = useWineEventListItem({
-        eventId,
-        eventDate: event.eventDate,
-        onReadMorePress,
-        onFavoritePress
-    });
-
+    const { month, day } = useEventModalCard({ event });
 
     return (
-        <TouchableOpacity style={styles.container} onPress={onCardPress} activeOpacity={0.7}>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <DateBadge month={month} day={day} />
 
@@ -107,20 +83,14 @@ export const WineEventListItem = ({
             </View>
 
             <View style={styles.footer}>
-                <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
-                <FavoriteButton onPress={onFavoritePressHandler} size={52} />
-            </View>
-
-            <BottomModal
-                visible={isModalVisible}
-                onClose={onCloseModal}
-            >
-                <EventModalCard
-                    event={event}
-                    onBookingPress={onBookingPress}
-                    onFavoritePress={onFavoritePressHandler}
+                <Button 
+                    type="main" 
+                    containerStyle={styles.bookingButton} 
+                    text={t('eventDetails.bookNow')} 
+                    onPress={onBookingPress} 
                 />
-            </BottomModal>
-        </TouchableOpacity>
+                <FavoriteButton onPress={onFavoritePress} size={52} />
+            </View>
+        </View>
     );
 };

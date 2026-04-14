@@ -39,6 +39,7 @@ export const EventMap = observer(({
                             coordinate: { latitude: pin.latitude, longitude: pin.longitude }
                         }}
                         eventId={pin.id}
+                        tastingType={pin.tastingType}
                         onPress={onMarkerPress}
                     />
                 ))}

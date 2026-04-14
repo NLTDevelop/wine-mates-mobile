@@ -143,21 +143,16 @@ export const formatEventDate = (date: string): { month: string; day: string } =>
         return { month: 'DEC', day: '16' };
     }
 
-    const parts = date.split(', ');
-    if (parts.length < 2) {
+    try {
+        const dateObj = new Date(date);
+        const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+        const month = monthNames[dateObj.getMonth()];
+        const day = dateObj.getDate().toString();
+
+        return { month, day };
+    } catch (error) {
         return { month: 'DEC', day: '16' };
     }
-
-    const datePart = parts[1];
-    if (!datePart) {
-        return { month: 'DEC', day: '16' };
-    }
-
-    const dateComponents = datePart.split(' ');
-    const month = dateComponents[0]?.toUpperCase() || 'DEC';
-    const day = dateComponents[1] || '16';
-
-    return { month, day };
 };
 
 

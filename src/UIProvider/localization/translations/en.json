@@ -323,7 +323,8 @@
     },
     "eventMap": {
         "wineEvents": "Wine events",
-        "readMore": "Read more"
+        "readMore": "Read more",
+        "showList": "Show list"
     },
     "event": {
         "addEvent": "Add wine event",
@@ -337,6 +338,7 @@
         "eventLanguage": "Event language",
         "numberOfSeats": "Number of seats",
         "selectLocation": "Select location",
+        "searchLocation": "Search location",
         "createEvent": "Create event"
     },
     "faq": {

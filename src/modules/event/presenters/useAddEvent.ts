@@ -4,7 +4,7 @@ import { useValidator } from '@/hooks/useValidator';
 import { eventService } from '@/entities/events/EventService';
 import { Currency } from '@/entities/events/enums/Currency';
 import { RepeatRule } from '@/entities/events/enums/RepeatRule';
-import { EventTastingType } from '@/entities/events/enums/EventTastingType';
+import { TastingType } from '@/entities/events/enums/TastingType';
 import { Sex } from '@/entities/events/enums/Sex';
 
 interface IEventForm {
@@ -23,7 +23,7 @@ interface IEventForm {
     seats: string;
     age: string;
     sex: Sex;
-    tastingType: EventTastingType;
+    tastingType: TastingType;
     requiresConfirmation: boolean;
     repeatRule: RepeatRule;
 }
@@ -49,8 +49,8 @@ export const useAddEvent = () => {
         seats: '',
         age: '18',
         sex: Sex.All,
-        tastingType: EventTastingType.WineSet,
-        requiresConfirmation: true,
+        tastingType: TastingType.Parties,
+        requiresConfirmation: false,
         repeatRule: RepeatRule.Never,
     });
 
@@ -74,8 +74,13 @@ export const useAddEvent = () => {
         setForm(prev => ({ ...prev, locationLabel: value }));
     }, []);
 
-    const onChangeLocation = useCallback((latitude: number, longitude: number, label: string) => {
-        setForm(prev => ({ ...prev, location: { latitude, longitude }, locationLabel: label }));
+    const onChangeLocation = useCallback((latitude: number, longitude: number, label: string, placeName?: string) => {
+        setForm(prev => ({ 
+            ...prev, 
+            location: { latitude, longitude }, 
+            locationLabel: label,
+            restaurantName: placeName || prev.restaurantName,
+        }));
     }, []);
 
     const onDateSelect = useCallback((date: Date) => {
@@ -125,6 +130,7 @@ export const useAddEvent = () => {
 
         try {
             setIsLoading(true);
+            // TODO: Implement wine selection functionality
             const response = await eventService.createEvent({
                 theme: form.theme,
                 description: form.description || 'Event description',
@@ -145,7 +151,11 @@ export const useAddEvent = () => {
                 tastingType: form.tastingType,
                 requiresConfirmation: form.requiresConfirmation,
                 repeatRule: form.repeatRule,
-                wineSet: [],
+                wineSet: [
+                    { wineId: 204, sortOrder: 1 },
+                    { wineId: 203, sortOrder: 2 },
+                    { wineId: 202, sortOrder: 3 },
+                ],
             });
 
             if (!response.isError) {

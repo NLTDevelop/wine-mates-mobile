@@ -5,16 +5,7 @@ import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
-            backgroundColor: colors.background,
-            borderRadius: 16,
-            padding: scaleHorizontal(16),
             gap: scaleVertical(12),
-            borderWidth: 1,
-            borderColor: colors.border,
-        },
-        selectedContainer: {
-            borderColor: colors.primary,
-            borderWidth: 2,
         },
         header: {
             flexDirection: 'row',
@@ -54,13 +45,13 @@ export const getStyles = (colors: IColors) => {
             overflow: 'hidden',
         },
         map: {
-            ...StyleSheet.absoluteFill,
+            ...StyleSheet.absoluteFillObject,
         },
         footer: {
             flexDirection: 'row',
             gap: scaleHorizontal(12),
         },
-        readMoreButton: {
+        bookingButton: {
             flex: 1,
         },
     });

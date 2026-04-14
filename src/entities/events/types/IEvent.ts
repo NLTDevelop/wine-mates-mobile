@@ -1,22 +1,20 @@
 import { Sex } from '../enums/Sex';
+import { Currency } from '../enums/Currency';
+import { TastingType } from '../enums/TastingType';
 
 export interface IEvent {
     id: number;
+    theme: string;
+    eventDate: string;
+    eventTime: string;
+    price: number;
+    priceUsd: number;
+    currency: Currency;
+    description: string;
     latitude: number;
     longitude: number;
-    title: string;
-    description: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    attendees: string[];
-    attendeesCount: number;
-    price: number;
-    eventType: 'online' | 'offline';
-    isSaved: boolean;
-    distance?: number;
-    language?: string;
-    theme?: string;
+    distanceKm: string;
+    tastingType?: TastingType;
 }
 
 export interface IEventDetail {

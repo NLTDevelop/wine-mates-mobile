@@ -3,3 +3,5 @@ export enum Sex {
     Women = 'women',
     All = 'all',
 }
+
+export const EVENT_SEX = ['men', 'women', 'all'] as const;

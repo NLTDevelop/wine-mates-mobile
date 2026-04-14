@@ -327,7 +327,8 @@
     },
     "eventMap": {
         "wineEvents": "Винні події",
-        "readMore": "Читати більше"
+        "readMore": "Детальніше",
+        "showList": "Показати список"
     },
     "event": {
         "addEvent": "Додати винну подію",
@@ -341,6 +342,7 @@
         "eventLanguage": "Мова події",
         "numberOfSeats": "Кількість місць",
         "selectLocation": "Вибрати локацію",
+        "searchLocation": "Пошук локації",
         "createEvent": "Створити подію"
     },
     "faq": {

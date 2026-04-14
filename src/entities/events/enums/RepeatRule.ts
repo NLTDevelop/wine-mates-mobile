@@ -4,3 +4,5 @@ export enum RepeatRule {
     Weekly = 'weekly',
     Monthly = 'monthly',
 }
+
+export const REPEAT_RULES = ['never', 'daily', 'weekly', 'monthly'] as const;
