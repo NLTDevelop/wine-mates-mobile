@@ -64,7 +64,6 @@ export const WineDetailsView = observer(() => {
                                 isAllVintagesSelected={isAllVintagesSelected}
                                 fromScanner={fromScanner}
                                 hasReviews={data.length > 0}
-                                hideReviewCount={isPreloadedData}
                             />
                         }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}

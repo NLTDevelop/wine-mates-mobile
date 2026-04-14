@@ -10,9 +10,10 @@ import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLe
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useFocusEffect, useRoute, useNavigation } from '@react-navigation/native';
-import { useLocation } from '@/hooks/useLocation';
+import { useLocation } from '@/libs/locations/presenters/useLocation';
 import { useAvatarPicker } from '@/UIKit/AvatarPicker/presenters/useAvatarPicker';
 import { useUiContext } from '@/UIProvider';
+import { countryDisplayNames } from '@/libs/countryCodePicker/countryDisplayNames';
 
 interface IProfileForm {
     fullName: string;
@@ -29,11 +30,55 @@ interface IProfileForm {
     bio: string;
 }
 
+const getInitialCountryCode = (countryValue?: string) => {
+    const rawValue = (countryValue || '').trim();
+    if (!rawValue) {
+        return '';
+    }
+
+    const maybeCode = rawValue.toUpperCase();
+    const foundByCode = countries.find(item => item.cca2 === maybeCode);
+    if (foundByCode) {
+        return foundByCode.cca2;
+    }
+
+    const normalizedRaw = rawValue.toLocaleLowerCase();
+    const foundByName = countries.find(item => {
+        const commonName = (item.name?.common || '').toLocaleLowerCase();
+        const officialName = (item.name?.official || '').toLocaleLowerCase();
+        const nativeNames = Object.values(item.name?.native || {})
+            .flatMap((nativeItem: any) => [nativeItem?.common || '', nativeItem?.official || ''])
+            .map(name => String(name).toLocaleLowerCase());
+        const translationNames = Object.values(item.translations || {})
+            .flatMap((translation: any) => [translation?.common || '', translation?.official || ''])
+            .map(name => String(name).toLocaleLowerCase());
+
+        if (commonName === normalizedRaw || officialName === normalizedRaw) {
+            return true;
+        }
+
+        if (nativeNames.includes(normalizedRaw) || translationNames.includes(normalizedRaw)) {
+            return true;
+        }
+
+        return false;
+    });
+
+    return foundByName?.cca2 || '';
+};
+
 export const useEditProfileDetails = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const { locale } = useUiContext();
-    const { citySuggestions, searchCities } = useLocation();
+    const {
+        citySuggestions,
+        isCityLoading,
+        searchCities,
+        onCountryChanged,
+        onSelectCity,
+        clearCitySuggestions,
+    } = useLocation();
     const { onOpenCamera } = useAvatarPicker();
     const [selectedAvatarImage, setSelectedAvatarImage] = useState<{ uri: string; name: string; type: string } | null>(null);
     const [isAvatarChanged, setIsAvatarChanged] = useState(false);
@@ -80,18 +125,11 @@ export const useEditProfileDetails = () => {
 
         const normalized = userModel.user?.phoneNumber ? normalizeE164Phone(userModel.user.phoneNumber) : '';
         const parsedPhone = normalized ? parsePhoneNumberFromString(normalized) : null;
-        const fallbackCallingCodeDigits = (() => {
-            const cca2 = userModel.user?.country;
-            if (!cca2) return '';
-            const matched = countries.find(c => c.cca2?.toLowerCase?.() === cca2.toLowerCase());
-            const callingCode = `${matched?.idd?.root || ''}${matched?.idd?.suffixes?.[0] || ''}`; // e.g. +380
-            return callingCode.replace('+', '');
-        })();
         const normalizedDigits = normalized.startsWith('+') ? normalized.slice(1) : normalized;
         const derivedNational =
             parsedPhone?.nationalNumber ||
             (() => {
-                const callingCodeDigits = parsedPhone?.countryCallingCode || fallbackCallingCodeDigits;
+                const callingCodeDigits = parsedPhone?.countryCallingCode || '';
                 if (callingCodeDigits && normalizedDigits.startsWith(callingCodeDigits)) {
                     return normalizedDigits.slice(callingCodeDigits.length);
                 }
@@ -102,7 +140,7 @@ export const useEditProfileDetails = () => {
             fullName,
             email: userModel.user?.email || '',
             phoneNumber: derivedNational || '',
-            country: userModel.user?.country || '',
+            country: getInitialCountryCode(userModel.user?.country),
             city: userModel.user?.city || '',
             birthday: userModel.user?.birthday || '',
             gender: userModel.user?.gender || '',
@@ -116,14 +154,16 @@ export const useEditProfileDetails = () => {
     const [form, setForm] = useState<IProfileForm>(getInitialForm);
     const [changedFields, setChangedFields] = useState<Set<string>>(new Set());
     const [isInProgress, setIsInProgress] = useState(false);
-        const [countryCode, setCountryCode] = useState(getCallingCodeFromUser);
+    const [countryCode, setCountryCode] = useState(getCallingCodeFromUser);
     const [expertiseLevel, setExpertiseLevel] = useState<WineExperienceLevelEnum>(
         userModel.user?.wineExperienceLevel || WineExperienceLevelEnum.LOVER
     );
     const [expertiseLevelChanged, setExpertiseLevelChanged] = useState(false);
     const [countryCodeChanged, setCountryCodeChanged] = useState(false);
     const selectExpertiseModalRef = useRef<BottomSheetModal | null>(null);
+    const selectCityModalRef = useRef<BottomSheetModal | null>(null);
     const isCountryCodeInitializedRef = useRef(!!getCallingCodeFromUser());
+    const [citySearch, setCitySearch] = useState('');
 
     const [isBirthdayModalVisible, setIsBirthdayModalVisible] = useState(false);
     const [pickerDate, setPickerDate] = useState<Date>(() => {
@@ -138,49 +178,66 @@ export const useEditProfileDetails = () => {
     const [draftBirthday, setDraftBirthday] = useState<string | null>(null);
     const currentLocale = locale || localization.locale || 'en';
 
-    const getLocalizedCountryLabel = useCallback((countryItem: (typeof countries)[number]) => {
-        try {
-            const formatter = new Intl.DisplayNames([currentLocale], { type: 'region' });
-            const localized = formatter.of(countryItem.cca2);
-            if (localized) {
-                return localized;
+    const countryOptions = useMemo<IDropdownItem[]>(() => {
+        const resolvedLocale = (currentLocale || 'en').toLowerCase();
+        const translationKeyMap: Record<string, string> = {
+            ar: 'ara', cs: 'ces', de: 'deu', et: 'est', fi: 'fin', fr: 'fra',
+            hr: 'hrv', hu: 'hun', it: 'ita', ja: 'jpn', ko: 'kor', nl: 'nld',
+            fa: 'per', pl: 'pol', pt: 'por', ru: 'rus', sk: 'slk', es: 'spa',
+            sr: 'srp', sv: 'swe', tr: 'tur', ur: 'urd', zh: 'zho', uk: 'ukr',
+        };
+
+        const displayNames = (() => {
+            const DisplayNames = (Intl as typeof Intl & { DisplayNames?: any }).DisplayNames;
+            if (typeof DisplayNames !== 'function') {
+                return null;
             }
-        } catch {
-            // Fallback below
-        }
 
-        if (currentLocale.startsWith('uk')) {
-            return countryItem.name?.native?.ukr?.common || countryItem.name?.common || '';
-        }
+            try {
+                return new DisplayNames([currentLocale], { type: 'region' });
+            } catch {
+                return null;
+            }
+        })();
 
-        return countryItem.name?.common || '';
+        const translationKey = translationKeyMap[resolvedLocale];
+        const customNames = countryDisplayNames[resolvedLocale] || null;
+
+        return countries
+            .map(item => {
+                const label =
+                    customNames?.[item.cca2] ||
+                    (displayNames?.of(item.cca2) as string | undefined) ||
+                    (translationKey ? item.translations?.[translationKey]?.common : undefined) ||
+                    item.name.common;
+
+                return {
+                    label,
+                    value: item.cca2,
+                };
+            })
+            .sort((a, b) => a.label.localeCompare(b.label, currentLocale));
     }, [currentLocale]);
 
-    const countryOptions = useMemo<IDropdownItem[]>(() => {
-        return countries
-            .map(item => ({ label: getLocalizedCountryLabel(item), value: item.cca2 }))
-            .sort((a, b) => a.label.localeCompare(b.label));
-    }, [getLocalizedCountryLabel]);
-
     const cityOptions = useMemo<IDropdownItem[]>(() => {
-        const optionsMap = new Map<string, IDropdownItem>();
+        return citySuggestions.map(city => ({
+            label: city.description,
+            value: city.description,
+        }));
+    }, [citySuggestions]);
 
-        if (form.city) {
-            optionsMap.set(form.city, {
-                label: form.city,
-                value: form.city,
-            });
+    const cityEmptyStateText = useMemo(() => {
+        const trimmed = citySearch.trim();
+        if (!trimmed) {
+            return localization.t('settings.startTypingCity');
         }
 
-        citySuggestions.forEach(city => {
-            optionsMap.set(city.description, {
-                label: city.description,
-                value: city.description,
-            });
-        });
+        if (!isCityLoading && !cityOptions.length) {
+            return localization.t('settings.cityNotFound');
+        }
 
-        return Array.from(optionsMap.values());
-    }, [citySuggestions, form.city]);
+        return '';
+    }, [cityOptions.length, citySearch, isCityLoading]);
 
     const genderOptions = useMemo<IDropdownItem[]>(() => ([
         { label: localization.t('registration.genderMale'), value: 'male' },
@@ -421,10 +478,53 @@ export const useEditProfileDetails = () => {
         }
     }, [form.birthday, currentLocale]);
 
-    const onSearchCity = useCallback((query: string) => {
-        // Pass ISO country code to location service for better locale-aware search.
-        searchCities(query, form.country);
-    }, [searchCities, form.country]);
+    const onChangeCountry = useCallback((item: IDropdownItem) => {
+        const value = String(item.value || '').toUpperCase();
+
+        if (!value) {
+            onChangeField('country', '');
+            onChangeField('city', '');
+            setCitySearch('');
+            clearCitySuggestions();
+            onCountryChanged('');
+            return;
+        }
+
+        if (value !== form.country) {
+            onChangeField('city', '');
+            setCitySearch('');
+            clearCitySuggestions();
+            onCountryChanged(value);
+        }
+
+        onChangeField('country', value);
+    }, [clearCitySuggestions, form.country, onChangeField, onCountryChanged]);
+
+    const onOpenCitySelector = useCallback(() => {
+        if (!form.country) {
+            return;
+        }
+
+        selectCityModalRef.current?.present();
+    }, [form.country]);
+
+    const onCloseCitySelector = useCallback(() => {
+        setCitySearch('');
+        clearCitySuggestions();
+        selectCityModalRef.current?.dismiss();
+    }, [clearCitySuggestions]);
+
+    const onSearchCityChange = useCallback((value: string) => {
+        setCitySearch(value);
+        searchCities(value, form.country);
+    }, [form.country, searchCities]);
+
+    const onSelectCityOption = useCallback((item: IDropdownItem) => {
+        const value = String(item.value || '');
+        onChangeField('city', value);
+        onSelectCity();
+        onCloseCitySelector();
+    }, [onChangeField, onCloseCitySelector, onSelectCity]);
 
     const onShowDeleteAvatarAlert = useCallback(() => {
         setIsDeleteAvatarAlertVisible(true);
@@ -480,7 +580,17 @@ export const useEditProfileDetails = () => {
         genderOptions,
         countryOptions,
         cityOptions,
+        citySearch,
+        cityEmptyStateText,
+        isCityLoading,
+        isCitySelectorDisabled: !form.country,
         onChangeField,
+        onChangeCountry,
+        cityModalRef: selectCityModalRef,
+        onOpenCitySelector,
+        onCloseCitySelector,
+        onSearchCityChange,
+        onSelectCityOption,
         onChangeCountryCode,
         selectExpertiseModalRef,
         onOpenExpertiseModal: () => selectExpertiseModalRef.current?.present(),
@@ -496,7 +606,6 @@ export const useEditProfileDetails = () => {
         onCloseBirthdayModal,
         onChangePickerDate,
         onConfirmBirthday,
-        onSearchCity,
         onSave,
         isDisabled,
         isInProgress,
