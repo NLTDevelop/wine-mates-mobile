@@ -29,7 +29,7 @@ export const MyWine = observer(() => {
     }, []);
 
     const renderItem = useCallback(({ item }: { item: IWineListItem; index: number }) => {
-        return <WineListItem item={item} onPress={onItemPress} showDate showVintage showNonVintage footer={renderFooter(item)} hideReviewCount showExpertRatingWithoutPremium />;
+        return <WineListItem item={item} onPress={onItemPress} showDate showVintage showNonVintage isMyWine footer={renderFooter(item)} showExpertRatingWithoutPremium />;
     }, [onItemPress, renderFooter]);
 
     return (

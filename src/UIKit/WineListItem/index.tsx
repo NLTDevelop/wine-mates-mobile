@@ -22,12 +22,12 @@ interface IProps {
     showVintage?: boolean;
     showNonVintage?: boolean;
     customBottomComponent?: ReactNode;
-    hideReviewCount?: boolean;
     showExpertRatingWithoutPremium?: boolean;
+    isMyWine?: boolean;
 }
 
 export const WineListItem = ({ item, onPress, showSimilarity = false, footer, removeCardStyles = false,
-    showDate = false, showVintage = false, showNonVintage = false, customBottomComponent, hideReviewCount = false, showExpertRatingWithoutPremium = false }: IProps) => {
+    showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent, showExpertRatingWithoutPremium = false }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
     const {
@@ -39,11 +39,12 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
         lastReviewData,
         getFormattedDate,
         hasPremium,
-        isExpertOrCreator,
         shouldReviewShow,
         expertRating,
-        showMedal
-    } = useWineListItem({ item, onPress, removeCardStyles });
+        showMedal, 
+        showUserReviewCount,
+        showExpertReviewCount
+    } = useWineListItem({ item, onPress, removeCardStyles, isMyWine });
     const { description } = useWineDescription({ item, showVintage, showNonVintage });
 
     return (
@@ -96,11 +97,8 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
 
                     {showMedal && (hasPremium || showExpertRatingWithoutPremium) ? (
                         <>
-                            <Typography
-                                variant="subtitle_10_400"
-                                text={t('wine.expertReview')}
-                            />
-                            {expertReviewCount && !hideReviewCount ? (
+                            <Typography variant="subtitle_10_400" text={t('wine.expertReview')} />
+                            {expertReviewCount && showExpertReviewCount ? (
                                 <Typography
                                     variant="subtitle_10_400"
                                     text={`(${expertReviewCount})`}
@@ -112,11 +110,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
 
                     {item.producer ? <Typography variant="h5" text={item.producer} style={styles.titleText} /> : null}
 
-                    <Typography
-                        variant="subtitle_10_400"
-                        text={description || `-`}
-                        style={styles.descriptionText}
-                    />
+                    <Typography variant="subtitle_10_400" text={description || `-`} style={styles.descriptionText} />
 
                     {userRating !== null ? (
                         <View style={styles.rateContainer}>
@@ -129,7 +123,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                                     style={styles.rateText}
                                 />
                             </View>
-                            {!hideReviewCount && (
+                            {showUserReviewCount && (
                                 <Typography
                                     variant="subtitle_10_400"
                                     text={`(${userReviewCount})`}
@@ -138,7 +132,9 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                                 />
                             )}
                         </View>
-                    ) : <View style={styles.emptyDivider}/>}
+                    ) : (
+                        <View style={styles.emptyDivider} />
+                    )}
 
                     <View style={styles.footerContainer}>{footer}</View>
                 </View>
