@@ -11,6 +11,7 @@ interface IProps {
     onPress?: (item: IWineListItem) => void;
     hideSimilarity?: boolean;
     removeCardStyles?: boolean;
+    isMyWine?: boolean;
 }
 
 const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
@@ -18,7 +19,7 @@ const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListIt
 };
 const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails => 'currentVintage' in item;
 
-export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => {
+export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: IProps) => {
     const { t } = useUiContext();
 
     const onItemPress = useCallback(() => {
@@ -95,11 +96,6 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
 
     const hasPremium = useMemo(() => userModel.user?.hasPremium ?? false, []);
 
-    const isExpertOrCreator = useMemo(() => {
-        const level = userModel.user?.wineExperienceLevel;
-        return level === WineExperienceLevelEnum.EXPERT || level === WineExperienceLevelEnum.CREATOR;
-    }, []);
-
     const userId = useMemo(() => userModel.user?.id ?? null, []);
 
     const shouldReviewShow = useMemo(() => {
@@ -125,6 +121,26 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
         return shouldReviewShow || !!expertRating;
     }, [shouldReviewShow, expertRating]);
 
+    const isCurrentUserLover = useMemo(() => {
+        return userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER;
+    }, [userModel.user?.wineExperienceLevel]);
+
+    const showExpertReviewCount = useMemo(() => {
+        if (!isMyWine) {
+            return true;
+        }
+
+        return isCurrentUserLover;
+    }, [isCurrentUserLover, isMyWine]);
+
+    const showUserReviewCount = useMemo(() => {
+        if (!isMyWine) {
+            return true;
+        }
+
+        return !isCurrentUserLover;
+    }, [isCurrentUserLover, isMyWine]);
+
     return {
         onItemPress,
         similarityText,
@@ -135,11 +151,12 @@ export const useWineListItem = ({ item, onPress, removeCardStyles }: IProps) => 
         locationText,
         expertReviewCount,
         hasPremium,
-        isExpertOrCreator,
         userId,
         shouldReviewShow,
         currentVintageData,
         expertRating,
         showMedal,
+        showUserReviewCount,
+        showExpertReviewCount
     };
 };
