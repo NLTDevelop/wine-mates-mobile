@@ -328,10 +328,12 @@
     "eventMap": {
         "wineEvents": "Винні події",
         "readMore": "Детальніше",
-        "showList": "Показати список"
+        "showList": "Показати список",
+        "all": "Всі"
     },
     "event": {
         "addEvent": "Додати винну подію",
+        "updateEvent": "Оновити подію",
         "tastingTheme": "Тема дегустації",
         "restaurant": "Ресторан",
         "location": "Локація",
@@ -343,7 +345,10 @@
         "numberOfSeats": "Кількість місць",
         "selectLocation": "Вибрати локацію",
         "searchLocation": "Пошук локації",
-        "createEvent": "Створити подію"
+        "createEvent": "Створити подію",
+        "eventType": "Тип події",
+        "tastings": "Дегустації",
+        "parties": "Вечірки"
     },
     "faq": {
         "faq": "FAQ"

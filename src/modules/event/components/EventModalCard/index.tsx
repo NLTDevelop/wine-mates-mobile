@@ -78,6 +78,7 @@ export const EventModalCard = ({ event, onBookingPress, onFavoritePress }: IProp
                             coordinate: { latitude: event.latitude, longitude: event.longitude }
                         }}
                         eventId={event.id}
+                        tastingType={event.tastingType}
                     />
                 </MapView>
             </View>

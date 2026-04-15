@@ -49,7 +49,7 @@ export const useAddEvent = () => {
         seats: '',
         age: '18',
         sex: Sex.All,
-        tastingType: TastingType.Parties,
+        tastingType: TastingType.Tastings,
         requiresConfirmation: false,
         repeatRule: RepeatRule.Never,
     });
@@ -115,6 +115,10 @@ export const useAddEvent = () => {
     const onChangeSeats = useCallback((value: string) => {
         const numericValue = value.replace(/[^0-9]/g, '');
         setForm(prev => ({ ...prev, seats: numericValue }));
+    }, []);
+
+    const onChangeTastingType = useCallback((value: TastingType) => {
+        setForm(prev => ({ ...prev, tastingType: value }));
     }, []);
 
     const onLocationPress = useCallback(() => {
@@ -195,6 +199,7 @@ export const useAddEvent = () => {
         onChangeSpeakerName,
         onChangeLanguage,
         onChangeSeats,
+        onChangeTastingType,
         onLocationPress,
         onCloseLocationModal,
         onSubmit,

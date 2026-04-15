@@ -3,6 +3,7 @@ import { eventService } from '@/entities/events/EventService';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { IEventsListParams } from '@/entities/events/params/IEventsListParams';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
+import { Sex } from '@/entities/events/enums/Sex';
 
 const KYIV_COORDINATES = {
     latitude: 50.4501,
@@ -17,7 +18,7 @@ interface IFilters {
     language?: string;
     minPrice?: number;
     maxPrice?: number;
-    sex?: 'men' | 'women' | 'all';
+    sex?: Sex;
     minAge?: number;
     maxAge?: number;
 }
@@ -91,6 +92,10 @@ export const useEventsList = () => {
         setHasMore(true);
     }, []);
 
+    const refetch = useCallback(() => {
+        loadEvents(true);
+    }, [loadEvents]);
+
     return {
         events: eventsModel.events,
         isLoading,
@@ -102,5 +107,6 @@ export const useEventsList = () => {
         onLoadMore,
         onApplyFilters,
         onClearFilters,
+        refetch,
     };
 };

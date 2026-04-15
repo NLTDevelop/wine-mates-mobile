@@ -324,10 +324,12 @@
     "eventMap": {
         "wineEvents": "Wine events",
         "readMore": "Read more",
-        "showList": "Show list"
+        "showList": "Show list",
+        "all": "All"
     },
     "event": {
         "addEvent": "Add wine event",
+        "updateEvent": "Update event",
         "tastingTheme": "Tasting theme",
         "restaurant": "Restaurant",
         "location": "Location",
@@ -339,7 +341,10 @@
         "numberOfSeats": "Number of seats",
         "selectLocation": "Select location",
         "searchLocation": "Search location",
-        "createEvent": "Create event"
+        "createEvent": "Create event",
+        "eventType": "Event type",
+        "tastings": "Tastings",
+        "parties": "Parties"
     },
     "faq": {
         "faq": "FAQ"

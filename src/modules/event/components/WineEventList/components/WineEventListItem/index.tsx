@@ -102,6 +102,7 @@ export const WineEventListItem = ({
                             coordinate: { latitude: event.latitude, longitude: event.longitude }
                         }}
                         eventId={event.id}
+                        tastingType={event.tastingType}
                     />
                 </MapView>
             </View>

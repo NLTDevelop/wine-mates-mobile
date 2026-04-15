@@ -15,6 +15,8 @@ import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { DateTimePickerModal } from '../components/DateTimePickerModal';
 import { useDateTimePicker } from '../components/DateTimePickerModal/presenters/useDateTimePicker';
 import { useEventDateTimeFormatter } from '../../presenters/useEventDateTimeFormatter';
+import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
+import { TastingType } from '@/entities/events/enums/TastingType';
 
 export const AddEventView = () => {
     const { colors, t } = useUiContext();
@@ -37,6 +39,7 @@ export const AddEventView = () => {
         onChangeSpeakerName,
         onChangeLanguage,
         onChangeSeats,
+        onChangeTastingType,
         onLocationPress,
         onCloseLocationModal,
         onSubmit,
@@ -139,6 +142,17 @@ export const AddEventView = () => {
                     keyboardType="numeric"
                 />
 
+                <CustomDropdown
+                    placeholder={t('event.eventType')}
+                    data={[
+                        { label: t('event.tastings'), value: TastingType.Tastings },
+                        { label: t('event.parties'), value: TastingType.Parties },
+                    ]}
+                    selectedValue={form.tastingType}
+                    onPress={(item) => onChangeTastingType(item.value as TastingType)}
+                    containerStyle={styles.inputContainerStyle}
+                />
+
                 <Button
                     text={t('event.createEvent')}
                     onPress={onSubmit}
@@ -156,6 +170,7 @@ export const AddEventView = () => {
                 onClose={onCloseLocationModal}
                 onSelectLocation={onChangeLocation}
                 initialLocation={form.location}
+                tastingType={form.tastingType}
             />
 
             <DateTimePickerModal

@@ -3,22 +3,24 @@ import { Modal, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import MapView from 'react-native-maps';
-import { Marker } from 'react-native-maps';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocationPicker } from './presenters/useLocationPicker';
 import { RoundedButton } from '@/UIKit/TitledContent/components/RoundedButton';
 import { LocationSearchInput } from './components/LocationSearchInput/ui';
+import { MapMarker } from '@/UIKit/MapMarker';
+import { TastingType } from '@/entities/events/enums/TastingType';
 
 interface IProps {
     visible: boolean;
     onClose: () => void;
     onSelectLocation: (latitude: number, longitude: number, label: string, placeName?: string) => void;
     initialLocation?: { latitude: number; longitude: number } | null;
+    tastingType?: TastingType;
 }
 
-export const LocationPickerModal = ({ visible, onClose, onSelectLocation, initialLocation }: IProps) => {
+export const LocationPickerModal = ({ visible, onClose, onSelectLocation, initialLocation, tastingType = TastingType.Tastings }: IProps) => {
     const { top } = useSafeAreaInsets();
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors, top), [colors, top]);
@@ -71,11 +73,15 @@ export const LocationPickerModal = ({ visible, onClose, onSelectLocation, initia
                     style={styles.map}
                 >
                     {selectedLocation && (
-                        <Marker
-                            coordinate={{
-                                latitude: selectedLocation.latitude,
-                                longitude: selectedLocation.longitude,
+                        <MapMarker
+                            markerProps={{
+                                coordinate: {
+                                    latitude: selectedLocation.latitude,
+                                    longitude: selectedLocation.longitude,
+                                },
                             }}
+                            eventId={0}
+                            tastingType={tastingType}
                         />
                     )}
                 </MapView>
