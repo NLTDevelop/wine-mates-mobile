@@ -3,6 +3,7 @@ import { Region } from 'react-native-maps';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { eventService } from '@/entities/events/EventService';
 import { useLocationPermission } from '@/hooks/useLocationPermission.ts';
+import { TastingType } from '@/entities/events/enums/TastingType';
 
 const KYIV_COORDINATES = {
     latitude: 50.4501,
@@ -21,6 +22,9 @@ export const useEventMap = () => {
     const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoadingEvents, setIsLoadingEvents] = useState(false);
+    const [selectedTab, setSelectedTab] = useState<'all' | 'tastings' | 'parties'>('all');
+    const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+    const [filterCount, setFilterCount] = useState(0);
 
     const loadEvents = useCallback(async () => {
         const location = userLocation || KYIV_COORDINATES;
@@ -76,8 +80,33 @@ export const useEventMap = () => {
         }
     }, []);
 
+    const onTabChange = useCallback((tab: 'all' | 'tastings' | 'parties') => {
+        setSelectedTab(tab);
+    }, []);
+
+    const onFilterPress = useCallback(() => {
+        setIsFilterModalVisible(true);
+    }, []);
+
+    const onCloseFilterModal = useCallback(() => {
+        setIsFilterModalVisible(false);
+    }, []);
+
+    const filteredMapPins = useMemo(() => {
+        const pins = eventsModel.mapPins;
+        if (selectedTab === 'all') {
+            return pins;
+        }
+        const tastingType = selectedTab === 'tastings' ? TastingType.Tastings : TastingType.Parties;
+        return pins.filter(pin => pin.tastingType === tastingType);
+    }, [selectedTab]);
+
+    const refetch = useCallback(() => {
+        loadEvents();
+    }, [loadEvents]);
+
     return {
-        mapPins: eventsModel.mapPins,
+        mapPins: filteredMapPins,
         initialRegion,
         selectedMarkerId: eventsModel.selectedEventId,
         onMarkerPress,
@@ -87,5 +116,12 @@ export const useEventMap = () => {
         isModalVisible,
         onCloseModal,
         onFavoritePress,
+        selectedTab,
+        onTabChange,
+        onFilterPress,
+        isFilterModalVisible,
+        onCloseFilterModal,
+        filterCount,
+        refetch,
     };
 };

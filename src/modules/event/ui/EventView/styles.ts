@@ -10,11 +10,6 @@ export const getStyles = (colors: IColors) => {
             flex: 1,
             backgroundColor: colors.background,
         },
-        titleContainer: {
-            paddingHorizontal: scaleHorizontal(16),
-            paddingBottom: scaleVertical(16),
-            backgroundColor: colors.background,
-        },
         scrollContent: {
             flexGrow: 1,
         },
@@ -34,6 +29,11 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'center',
             alignItems: 'center',
             ...shadows.medium,
+        },
+        loaderContainer: {
+            paddingVertical: scaleVertical(16),
+            alignItems: 'center',
+            justifyContent: 'center',
         },
     });
     return styles;

@@ -1,8 +1,9 @@
-import { ReactNode, useCallback } from 'react';
+import { ReactNode } from 'react';
 import { Marker, MapMarkerProps } from 'react-native-maps';
 import { useUiContext } from '@/UIProvider';
 import { MapMarkerIcon } from '@assets/icons/MapMarkerIcon';
 import { TastingType } from '@/entities/events/enums/TastingType';
+import { useMapMarker } from './presenters/useMapMarker';
 
 interface IMapMarkerProps {
     onPress?: (id: number) => void;
@@ -17,16 +18,11 @@ export const MapMarker = ({
                               customIcon,
                               markerProps,
                               eventId,
-                              tastingType
+                              tastingType = TastingType.Tastings
                           }: IMapMarkerProps) => {
     const { colors } = useUiContext();
 
-    const onPressHandler = useCallback(() => {
-        onPress?.(eventId);
-    }, [eventId, onPress]);
-
-    // TODO: Use different icons based on tastingType (parties vs tastings)
-    // const markerIcon = tastingType === TastingType.Tastings ? <TastingsIcon /> : <PartiesIcon />;
+    const { onPressHandler, emoji } = useMapMarker({ eventId, tastingType, onPress });
 
     return (
         <Marker
@@ -38,6 +34,7 @@ export const MapMarker = ({
             ) : (
                 <MapMarkerIcon
                     bodyColor={colors.background}
+                    emoji={emoji}
                 />
             )}
         </Marker>
