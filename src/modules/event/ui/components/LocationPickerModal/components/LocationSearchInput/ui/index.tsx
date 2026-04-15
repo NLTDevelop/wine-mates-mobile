@@ -25,7 +25,7 @@ export const LocationSearchInput = ({
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const renderSuggestionItem = ({ item }: { item: IPlaceAutocomplete }) => (
+    const renderItem = ({ item }: { item: IPlaceAutocomplete }) => (
         <TouchableOpacity style={styles.suggestionItem} onPress={() => onSelectSuggestion(item)}>
             <LocationIcon width={16} height={16} color={colors.icon} />
             <View style={styles.suggestionTextContainer}>
@@ -51,7 +51,7 @@ export const LocationSearchInput = ({
                 <View style={styles.suggestionsContainer}>
                     <FlatList
                         data={suggestions}
-                        renderItem={renderSuggestionItem}
+                        renderItem={renderItem}
                         keyExtractor={keyExtractor}
                         keyboardShouldPersistTaps="handled"
                     />

@@ -1,7 +1,6 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { observer } from 'mobx-react-lite';
-import { useFocusEffect } from '@react-navigation/native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -40,13 +39,7 @@ export const EventMapView = observer(() => {
         onModalFavoritePress,
         onReadMorePress,
         onFavoritePress,
-    } = useEventMapView({ events });
-
-    useFocusEffect(
-        useCallback(() => {
-            loadEvents(true);
-        }, [])
-    );
+    } = useEventMapView({ events, loadEvents });
 
     return (
         // <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>

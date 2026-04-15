@@ -45,7 +45,7 @@ export const getStyles = (colors: IColors) => {
             overflow: 'hidden',
         },
         map: {
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
         },
         footer: {
             flexDirection: 'row',
