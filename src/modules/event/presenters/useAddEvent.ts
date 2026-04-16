@@ -35,6 +35,7 @@ export const useAddEvent = () => {
     const route = useRoute<RouteProp<EventStackParamList, 'AddEventView'>>();
     const { validateEmptyString } = useValidator();
     const [isLoading, setIsLoading] = useState(false);
+    const [isEventTypeModalVisible, setIsEventTypeModalVisible] = useState(false);
     const [form, setForm] = useState<IEventForm>({
         theme: '',
         description: '',
@@ -123,6 +124,19 @@ export const useAddEvent = () => {
         setForm(prev => ({ ...prev, tastingType: value }));
     }, []);
 
+    const onOpenEventTypeModal = useCallback(() => {
+        setIsEventTypeModalVisible(true);
+    }, []);
+
+    const onCloseEventTypeModal = useCallback(() => {
+        setIsEventTypeModalVisible(false);
+    }, []);
+
+    const onSelectEventType = useCallback((value: TastingType) => {
+        onChangeTastingType(value);
+        setIsEventTypeModalVisible(false);
+    }, [onChangeTastingType]);
+
     const onLocationPress = useCallback(() => {
         navigation.navigate('LocationPickerView', {
             initialLocation: form.location,
@@ -202,6 +216,7 @@ export const useAddEvent = () => {
     return {
         form,
         isLoading,
+        isEventTypeModalVisible,
         disabled,
         onChangeTheme,
         onChangeDescription,
@@ -216,6 +231,9 @@ export const useAddEvent = () => {
         onChangeLanguage,
         onChangeSeats,
         onChangeTastingType,
+        onOpenEventTypeModal,
+        onCloseEventTypeModal,
+        onSelectEventType,
         onLocationPress,
         onSubmit,
     };

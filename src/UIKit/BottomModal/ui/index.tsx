@@ -37,10 +37,12 @@ export const BottomModal = ({
 
         return (
             <View style={styles.header}>
-                {title && (
-                    <Typography text={title} variant={titleVariant} style={styles.title} />
-                )}
                 <View style={styles.closeButton} />
+                {title && (
+                    <View style={styles.titleContainer} pointerEvents="none">
+                        <Typography text={title} variant={titleVariant} style={styles.title} />
+                    </View>
+                )}
                 <TouchableOpacity onPress={onClose} style={styles.closeButton} hitSlop={8}>
                     <CrossIcon/>
                 </TouchableOpacity>
