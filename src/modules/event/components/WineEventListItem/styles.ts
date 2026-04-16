@@ -6,7 +6,7 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             backgroundColor: colors.background,
-            borderRadius: 16,
+            borderRadius: 20,
             padding: scaleHorizontal(16),
             gap: scaleVertical(12),
             borderWidth: 1,
@@ -18,39 +18,43 @@ export const getStyles = (colors: IColors) => {
         },
         header: {
             flexDirection: 'row',
+            alignItems: 'center',
             gap: scaleHorizontal(12),
         },
-        headerContent: {
-            flex: 1,
-            gap: scaleVertical(8),
-        },
-        title: {
-            color: colors.text,
-            fontWeight: '600',
-        },
-        timeText: {
-            color: colors.text_light,
-            fontSize: scaleFontSize(16)
-        },
-        badgesRow: {
+        metaRow: {
             flexDirection: 'row',
             gap: scaleHorizontal(8),
         },
-        badge: {
+        metaBadge: {
             flexDirection: 'row',
             alignItems: 'center',
-            backgroundColor: colors.border,
-            paddingHorizontal: scaleHorizontal(12),
+            borderRadius: 6,
+            paddingHorizontal: scaleHorizontal(8),
             paddingVertical: scaleVertical(6),
-            borderRadius: 8,
-            gap: scaleHorizontal(4),
+            gap: scaleHorizontal(6),
+            backgroundColor: colors.background_middle
         },
-        badgeText: {
+        metaText: {
             color: colors.text,
         },
+        headerContent: {
+            gap: scaleVertical(2),
+        },
+        title: {
+            color: colors.text,
+        },
+        timeText: {
+            color: colors.text_light,
+            fontSize: scaleFontSize(16),
+        },
+        descriptionText: {
+            color: colors.text_light,
+            fontSize: scaleFontSize(18),
+            lineHeight: scaleFontSize(26),
+        },
         mapContainer: {
-            height: scaleVertical(120),
-            borderRadius: 12,
+            height: scaleVertical(140),
+            borderRadius: 14,
             overflow: 'hidden',
         },
         map: {
@@ -62,6 +66,7 @@ export const getStyles = (colors: IColors) => {
         },
         readMoreButton: {
             flex: 1,
+            borderRadius: 16,
         },
     });
     return styles;

@@ -10,7 +10,7 @@ import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { MapMarker } from '@/UIKit/MapMarker';
 import { EventModalCard } from '@/modules/event/components/EventModalCard';
 import { IEvent } from '@/entities/events/types/IEvent';
-import { useWineEventListItem } from './useWineEventListItem';
+import { useWineEventListItem } from './presenters/useWineEventListItem';
 import { getStyles } from './styles';
 
 interface IProps {
@@ -18,29 +18,29 @@ interface IProps {
     isSelected: boolean;
     onReadMorePress: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
-    eventId: number;
 }
 
 export const WineEventListItem = ({
     event,
     onReadMorePress,
-    onFavoritePress,
-    eventId
+    onFavoritePress
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { 
-        month, 
-        day, 
-        isModalVisible, 
-        onCardPress, 
-        onBookingPress, 
-        onCloseModal, 
+    const {
+        month,
+        day,
+        formattedDateTime,
+        priceLabel,
+        eventTypeLabel,
+        isModalVisible,
+        onCardPress,
+        onBookingPress,
+        onCloseModal,
         onReadMorePress: onReadMorePressHandler,
-        onFavoritePress: onFavoritePressHandler 
+        onFavoritePress: onFavoritePressHandler
     } = useWineEventListItem({
-        eventId,
-        eventDate: event.eventDate,
+        event,
         onReadMorePress,
         onFavoritePress
     });
@@ -48,38 +48,27 @@ export const WineEventListItem = ({
 
     return (
         <TouchableOpacity style={styles.container} onPress={onCardPress} activeOpacity={0.7}>
+            <View style={styles.metaRow}>
+                <View style={styles.metaBadge}>
+                    <Typography text="🍷" variant="h5" />
+                    <Typography text={eventTypeLabel} variant="body_400" style={styles.metaText} />
+                </View>
+                <View style={styles.metaBadge}>
+                    <Typography text="💵" variant="h5" />
+                    <Typography text={priceLabel} variant="body_400" style={styles.metaText} />
+                </View>
+            </View>
+
             <View style={styles.header}>
                 <DateBadge month={month} day={day} />
 
                 <View style={styles.headerContent}>
-                    <Typography text={event.theme} variant="h5" style={styles.title} />
-
-                    <Typography
-                        text={event.eventTime}
-                        variant="subtitle_12_400"
-                        style={styles.timeText}
-                    />
-
-                    <View style={styles.badgesRow}>
-                        <View style={styles.badge}>
-                            <Typography text="📍" variant="h5" />
-                            <Typography
-                                text={`${event.distanceKm} km`}
-                                variant="body_400"
-                                style={styles.badgeText}
-                            />
-                        </View>
-                        <View style={styles.badge}>
-                            <Typography text="💵" variant="h5" />
-                            <Typography
-                                text={`${event.currency} ${event.price}`}
-                                variant="body_400"
-                                style={styles.badgeText}
-                            />
-                        </View>
-                    </View>
+                    <Typography text={event.theme} variant="h4" style={styles.title} />
+                    <Typography text={formattedDateTime} variant="body_400" style={styles.timeText} />
                 </View>
             </View>
+
+            <Typography text={event.description} variant="body_400" numberOfLines={2} style={styles.descriptionText} />
 
             <View style={styles.mapContainer}>
                 <MapView
@@ -109,7 +98,7 @@ export const WineEventListItem = ({
 
             <View style={styles.footer}>
                 <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
-                <FavoriteButton onPress={onFavoritePressHandler} size={52} />
+                <FavoriteButton onPress={onFavoritePressHandler} size={56} />
             </View>
 
             <BottomModal

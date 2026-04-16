@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { FlatList, ListRenderItem } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { WineEventListItem } from '@/modules/event/components/WineEventList/components/WineEventListItem';
+import { WineEventListItem } from '@/modules/event/components/WineEventListItem';
 import { IEvent } from '@/entities/events/types/IEvent';
 
 interface IWineEventListProps {
@@ -27,7 +27,6 @@ export const WineEventList = ({
             isSelected={selectedEventId === item.id}
             onReadMorePress={onReadMorePress}
             onFavoritePress={onFavoritePress}
-            eventId={item.id}
         />
     );
 

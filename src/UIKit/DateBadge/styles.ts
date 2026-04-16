@@ -1,26 +1,27 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleFontSize, scaleHorizontal } from '@/utils';
+import { scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         dateBadge: {
-            width: scaleHorizontal(56),
-            height: scaleHorizontal(56),
-            backgroundColor: colors.text,
+            width: scaleVertical(48),
+            height: scaleVertical(48),
             borderRadius: 8,
+            overflow: 'hidden',
+        },
+        monthContainer: {
             alignItems: 'center',
             justifyContent: 'center',
-            overflow: 'hidden',
+            backgroundColor: colors.text,
         },
         monthText: {
             color: colors.background,
-            fontSize: scaleFontSize(14),
         },
         dayContainer: {
-            flex: 1,
+            height: scaleVertical(30),
             width: '100%',
-            backgroundColor: colors.border,
+            backgroundColor: colors.background_middle,
             alignItems: 'center',
             justifyContent: 'center',
         },
