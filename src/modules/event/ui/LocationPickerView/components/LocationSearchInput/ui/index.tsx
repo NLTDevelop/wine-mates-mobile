@@ -4,7 +4,7 @@ import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { SearchBar } from '@/UIKit/SearchBar';
 import { Typography } from '@/UIKit/Typography';
-import { IPlaceAutocomplete } from '@/services/location/GooglePlacesService';
+import { IPlaceAutocomplete } from '@/libs/locations/types/IPlaceAutocomplete';
 import { LocationIcon } from '@assets/icons/LocationIcon';
 
 interface IProps {

@@ -36,7 +36,9 @@ export const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarPro
         activeRoute.name === 'ScannerStack' && focusedRouteName === 'ScannerStack'
             ? 'ScannerView'
             : focusedRouteName;
-    const shouldHideTabBar = activeRoute.name === 'ScannerStack' && normalizedRouteName === 'ScannerView';
+    const shouldHideTabBar =
+        (activeRoute.name === 'ScannerStack' && normalizedRouteName === 'ScannerView') ||
+        (activeRoute.name === 'EventStack' && normalizedRouteName === 'LocationPickerView');
 
     if (shouldHideTabBar) {
         return null;

@@ -8,7 +8,6 @@ import { CustomInput } from '@/UIKit/CustomInput';
 import { Button } from '@/UIKit/Button';
 import { Typography } from '@/UIKit/Typography';
 import { useAddEvent } from '../../presenters/useAddEvent';
-import { LocationPickerModal } from '../components/LocationPickerModal';
 import { MapLocationIcon } from '@assets/icons/MapLocationIcon';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
@@ -26,22 +25,16 @@ export const AddEventView = () => {
         form,
         isLoading,
         disabled,
-        isLocationModalVisible,
         onChangeTheme,
-        onChangeDescription,
         onChangeRestaurantName,
-        onChangeLocationLabel,
-        onChangeLocation,
         onDateSelect,
         onTimeSelect,
         onChangePhoneNumber,
         onChangePrice,
-        onChangeSpeakerName,
         onChangeLanguage,
         onChangeSeats,
         onChangeTastingType,
         onLocationPress,
-        onCloseLocationModal,
         onSubmit,
     } = useAddEvent();
 
@@ -64,7 +57,7 @@ export const AddEventView = () => {
     return (
         <>
             <ScreenContainer
-                edges={[]}
+                edges={['top']}
                 scrollEnabled
                 headerComponent={<HeaderWithBackButton title={t('event.addEvent')} isCentered={false} />}
                 isKeyboardAvoiding
@@ -164,14 +157,6 @@ export const AddEventView = () => {
             </View>
 
             </ScreenContainer>
-
-            <LocationPickerModal
-                visible={isLocationModalVisible}
-                onClose={onCloseLocationModal}
-                onSelectLocation={onChangeLocation}
-                initialLocation={form.location}
-                tastingType={form.tastingType}
-            />
 
             <DateTimePickerModal
                 visible={isVisible}

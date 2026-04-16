@@ -341,6 +341,7 @@
         "numberOfSeats": "Number of seats",
         "selectLocation": "Select location",
         "searchLocation": "Search location",
+        "confirmPlace": "Confirm place",
         "createEvent": "Create event",
         "eventType": "Event type",
         "tastings": "Tastings",

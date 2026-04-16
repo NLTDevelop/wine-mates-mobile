@@ -1,11 +1,13 @@
-import { useCallback, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from 'react';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useValidator } from '@/hooks/useValidator';
 import { eventService } from '@/entities/events/EventService';
 import { Currency } from '@/entities/events/enums/Currency';
 import { RepeatRule } from '@/entities/events/enums/RepeatRule';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { Sex } from '@/entities/events/enums/Sex';
+import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 
 interface IEventForm {
     theme: string;
@@ -29,10 +31,10 @@ interface IEventForm {
 }
 
 export const useAddEvent = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
+    const route = useRoute<RouteProp<EventStackParamList, 'AddEventView'>>();
     const { validateEmptyString } = useValidator();
     const [isLoading, setIsLoading] = useState(false);
-    const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
     const [form, setForm] = useState<IEventForm>({
         theme: '',
         description: '',
@@ -122,12 +124,27 @@ export const useAddEvent = () => {
     }, []);
 
     const onLocationPress = useCallback(() => {
-        setIsLocationModalVisible(true);
-    }, []);
+        navigation.navigate('LocationPickerView', {
+            initialLocation: form.location,
+            tastingType: form.tastingType,
+        });
+    }, [form.location, form.tastingType, navigation]);
 
-    const onCloseLocationModal = useCallback(() => {
-        setIsLocationModalVisible(false);
-    }, []);
+    useEffect(() => {
+        const pickedLocation = route.params?.pickedLocation;
+        if (!pickedLocation) {
+            return;
+        }
+
+        onChangeLocation(
+            pickedLocation.latitude,
+            pickedLocation.longitude,
+            pickedLocation.label,
+            pickedLocation.placeName,
+        );
+
+        navigation.setParams({ pickedLocation: undefined });
+    }, [navigation, onChangeLocation, route.params?.pickedLocation]);
 
     const onSubmit = useCallback(async () => {
         if (!form.location) return;
@@ -186,7 +203,6 @@ export const useAddEvent = () => {
         form,
         isLoading,
         disabled,
-        isLocationModalVisible,
         onChangeTheme,
         onChangeDescription,
         onChangeRestaurantName,
@@ -201,7 +217,6 @@ export const useAddEvent = () => {
         onChangeSeats,
         onChangeTastingType,
         onLocationPress,
-        onCloseLocationModal,
         onSubmit,
     };
 };

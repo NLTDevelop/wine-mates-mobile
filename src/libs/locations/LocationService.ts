@@ -3,8 +3,11 @@ import { Platform } from 'react-native';
 import { getBundleId } from 'react-native-device-info';
 import { IPlaceSuggestion } from './types/IPlaceSuggestion';
 import { IRequester, requester } from '@/libs/requester';
+import { IPlaceAutocomplete, IPlaceDetails } from './types/IPlaceAutocomplete';
 
 const GOOGLE_PLACES_AUTOCOMPLETE_URL = 'https://places.googleapis.com/v1/places:autocomplete';
+const GOOGLE_PLACES_DETAILS_URL = 'https://places.googleapis.com/v1/places';
+const GOOGLE_GEOCODE_URL = 'https://geocode.googleapis.com/v4beta/geocode/location';
 
 class LocationService {
     constructor(private _requester: IRequester) {}
@@ -12,12 +15,11 @@ class LocationService {
     private lastGoogleErrorSignature = '';
     private lastGoogleErrorAt = 0;
 
-    private getAuthHeaders = () => {
+    private getAuthHeaders = (fieldMask: string) => {
         const headers: Record<string, string> = {
             'Content-Type': 'application/json',
             'X-Goog-Api-Key': config.googlePlacesApiKey,
-            'X-Goog-FieldMask':
-                'suggestions.placePrediction.place,suggestions.placePrediction.placeId,suggestions.placePrediction.text.text',
+            'X-Goog-FieldMask': fieldMask,
             'X-Skip-Auth': 'true',
         };
 
@@ -37,7 +39,7 @@ class LocationService {
             return 'en-US';
         }
 
-        const normalized = language.trim();
+        const normalized = language.trim().toLowerCase() === 'ua' ? 'uk' : language.trim();
         if (normalized.includes('_')) {
             return normalized.replace('_', '-');
         }
@@ -107,7 +109,9 @@ class LocationService {
         const response = await this._requester.request({
             method: 'POST',
             url: GOOGLE_PLACES_AUTOCOMPLETE_URL,
-            headers: this.getAuthHeaders(),
+            headers: this.getAuthHeaders(
+                'suggestions.placePrediction.place,suggestions.placePrediction.placeId,suggestions.placePrediction.text.text',
+            ),
             data: body,
         });
 
@@ -238,6 +242,151 @@ class LocationService {
             });
         } catch {
             return [];
+        }
+    };
+
+    searchPlaces = async ({
+        input,
+        language,
+        sessionToken,
+    }: {
+        input: string;
+        language: string;
+        sessionToken?: string;
+    }): Promise<IPlaceAutocomplete[]> => {
+        const trimmedInput = input.trim();
+        if (!trimmedInput || !config.googlePlacesApiKey) {
+            return [];
+        }
+
+        try {
+            const normalizedLanguage = this.normalizeLanguageCode(language);
+            const regionCode = this.normalizeRegionCode(normalizedLanguage);
+            const body: Record<string, unknown> = {
+                input: trimmedInput,
+                languageCode: normalizedLanguage,
+                includeQueryPredictions: false,
+            };
+
+            if (sessionToken) {
+                body.sessionToken = sessionToken;
+            }
+
+            if (regionCode) {
+                body.regionCode = regionCode;
+            }
+
+            const response = await this._requester.request({
+                method: 'POST',
+                url: GOOGLE_PLACES_AUTOCOMPLETE_URL,
+                headers: this.getAuthHeaders(
+                    'suggestions.placePrediction.placeId,suggestions.placePrediction.text.text,suggestions.placePrediction.structuredFormat.mainText.text,suggestions.placePrediction.structuredFormat.secondaryText.text',
+                ),
+                data: body,
+            });
+
+            const suggestions = Array.isArray(response?.data?.suggestions) ? response.data.suggestions : [];
+            if (response?.isError || !suggestions.length) {
+                return [];
+            }
+
+            return suggestions
+                .map((item: any) => {
+                    const prediction = item?.placePrediction;
+                    const description = prediction?.text?.text || '';
+                    const placeId = prediction?.placeId || '';
+
+                    if (!placeId || !description) {
+                        return null;
+                    }
+
+                    return {
+                        placeId,
+                        description,
+                        mainText: prediction?.structuredFormat?.mainText?.text || description,
+                        secondaryText: prediction?.structuredFormat?.secondaryText?.text || '',
+                    } as IPlaceAutocomplete;
+                })
+                .filter(Boolean) as IPlaceAutocomplete[];
+        } catch {
+            return [];
+        }
+    };
+
+    getPlaceDetails = async ({
+        placeId,
+        language,
+        sessionToken,
+    }: {
+        placeId: string;
+        language: string;
+        sessionToken?: string;
+    }): Promise<IPlaceDetails | null> => {
+        if (!placeId || !config.googlePlacesApiKey) {
+            return null;
+        }
+
+        try {
+            const normalizedLanguage = this.normalizeLanguageCode(language);
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${GOOGLE_PLACES_DETAILS_URL}/${placeId}`,
+                headers: this.getAuthHeaders('id,location,formattedAddress'),
+                params: {
+                    languageCode: normalizedLanguage,
+                    sessionToken,
+                },
+            });
+
+            const place = response?.data;
+            if (response?.isError || !place?.location) {
+                return null;
+            }
+
+            return {
+                latitude: place.location.latitude,
+                longitude: place.location.longitude,
+                address: place.formattedAddress || '',
+            };
+        } catch {
+            return null;
+        }
+    };
+
+    reverseGeocode = async ({
+        latitude,
+        longitude,
+        language,
+    }: {
+        latitude: number;
+        longitude: number;
+        language: string;
+    }): Promise<string | null> => {
+        if (!config.googlePlacesApiKey) {
+            return null;
+        }
+
+        try {
+            const normalizedLanguage = this.normalizeLanguageCode(language);
+            const response = await this._requester.request({
+                method: 'GET',
+                url: GOOGLE_GEOCODE_URL,
+                headers: this.getAuthHeaders('results.formattedAddress'),
+                params: {
+                    languageCode: normalizedLanguage,
+                    'location.latitude': latitude,
+                    'location.longitude': longitude,
+                },
+            });
+
+            const results = Array.isArray(response?.data?.results) ? response.data.results : [];
+            if (response?.isError || !results.length) {
+                return null;
+            }
+
+            return results[0]?.formattedAddress || null;
+        } catch {
+            return null;
         }
     };
 }

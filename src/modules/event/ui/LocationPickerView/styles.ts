@@ -2,27 +2,23 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors, top: number) => {
+export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
             backgroundColor: colors.background,
             position: 'relative',
         },
-        header: {
+        headerContainer: {
             position: 'absolute',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            top: top + scaleVertical(16),
-            left: scaleHorizontal(16),
-            zIndex: 1,
+            top: scaleVertical(8),
+            left: 0,
+            right: 0,
+            zIndex: 2,
         },
-        closeButton: {
+        headerRightPlaceholder: {
             width: scaleHorizontal(40),
             height: scaleHorizontal(40),
-            alignItems: 'center',
-            justifyContent: 'center',
         },
         map: {
             flex: 1,

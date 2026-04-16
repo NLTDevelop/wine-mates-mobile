@@ -12,6 +12,7 @@ import { EventMapHeader } from '@/modules/event/ui/components/EventMapHeader/ui'
 import { EventFiltersModal } from '@/modules/event/ui/components/EventFiltersModal/ui';
 import { useEventMapScreen } from './presenters/useEventMapScreen';
 import { getStyles } from './styles';
+import { ScreenHeader } from '@/UIKit/ScreenHeader';
 
 export const EventMapView = observer(() => {
     const { colors } = useUiContext();
@@ -44,7 +45,7 @@ export const EventMapView = observer(() => {
 
     return (
         <>
-            <ScreenContainer edges={[]} scrollEnabled>
+            <ScreenContainer edges={['top']} scrollEnabled headerComponent={<ScreenHeader />}>
                 <EventMapHeader
                     selectedTab={selectedTab}
                     onTabChange={onTabChange}
