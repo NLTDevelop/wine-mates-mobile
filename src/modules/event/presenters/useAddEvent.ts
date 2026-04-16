@@ -2,14 +2,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useValidator } from '@/hooks/useValidator';
-import { eventService } from '@/entities/events/EventService';
 import { Currency } from '@/entities/events/enums/Currency';
-import { RepeatRule } from '@/entities/events/enums/RepeatRule';
 import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
 import { Sex } from '@/entities/events/enums/Sex';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
+import { IAddEventDraft } from '../types/IAddEventDraft';
 
 interface IEventForm {
     theme: string;
@@ -31,14 +30,12 @@ interface IEventForm {
     tastingType: TastingType;
     participationCondition: ParticipationCondition;
     requiresConfirmation: boolean;
-    repeatRule: RepeatRule;
 }
 
 export const useAddEvent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
     const route = useRoute<RouteProp<EventStackParamList, 'AddEventView'>>();
     const { validateEmptyString } = useValidator();
-    const [isLoading, setIsLoading] = useState(false);
     const [isEventTypeModalVisible, setIsEventTypeModalVisible] = useState(false);
     const [form, setForm] = useState<IEventForm>({
         theme: '',
@@ -60,7 +57,6 @@ export const useAddEvent = () => {
         tastingType: TastingType.Regular,
         participationCondition: ParticipationCondition.FixedPrice,
         requiresConfirmation: false,
-        repeatRule: RepeatRule.Never,
     });
 
     const onChangeTheme = useCallback((value: string) => {
@@ -156,59 +152,50 @@ export const useAddEvent = () => {
             return;
         }
 
-        onChangeLocation(
-            pickedLocation.latitude,
-            pickedLocation.longitude,
-            pickedLocation.label,
-            pickedLocation.placeName,
-        );
+        const frameId = requestAnimationFrame(() => {
+            onChangeLocation(
+                pickedLocation.latitude,
+                pickedLocation.longitude,
+                pickedLocation.label,
+                pickedLocation.placeName,
+            );
 
-        navigation.setParams({ pickedLocation: undefined });
+            navigation.setParams({ pickedLocation: undefined });
+        });
+
+        return () => {
+            cancelAnimationFrame(frameId);
+        };
     }, [navigation, onChangeLocation, route.params?.pickedLocation]);
 
-    const onSubmit = useCallback(async () => {
-        if (!form.location) return;
-
-        try {
-            setIsLoading(true);
-            // TODO: Implement wine selection functionality
-            const response = await eventService.createEvent({
-                theme: form.theme,
-                description: form.description || 'Event description',
-                restaurantName: form.restaurantName,
-                locationLabel: form.locationLabel || `${form.location.latitude.toFixed(4)}, ${form.location.longitude.toFixed(4)}`,
-                latitude: form.location.latitude,
-                longitude: form.location.longitude,
-                eventDate: form.eventDate,
-                eventTime: form.eventTime,
-                price: Number(form.price),
-                currency: form.currency,
-                speakerName: form.speakerName || 'Speaker Name',
-                language: form.language,
-                seats: Number(form.seats),
-                phoneNumber: form.phoneNumber,
-                age: Number(form.age),
-                sex: form.sex,
-                eventType: form.eventType,
-                tastingType: form.tastingType,
-                participationCondition: form.participationCondition,
-                requiresConfirmation: form.requiresConfirmation,
-                repeatRule: form.repeatRule,
-                wineSet: [
-                    { wineId: 204, sortOrder: 1 },
-                    { wineId: 203, sortOrder: 2 },
-                    { wineId: 202, sortOrder: 3 },
-                ],
-            });
-
-            if (!response.isError) {
-                navigation.goBack();
-            }
-        } catch (error) {
-            console.warn('useAddEvent -> onSubmit: ', error);
-        } finally {
-            setIsLoading(false);
+    const onSubmit = useCallback(() => {
+        if (!form.location) {
+            return;
         }
+
+        const draft: IAddEventDraft = {
+            theme: form.theme,
+            description: form.description || 'Event description',
+            restaurantName: form.restaurantName,
+            locationLabel: form.locationLabel || `${form.location.latitude.toFixed(4)}, ${form.location.longitude.toFixed(4)}`,
+            location: form.location,
+            eventDate: form.eventDate,
+            eventTime: form.eventTime,
+            phoneNumber: form.phoneNumber,
+            price: form.price,
+            currency: form.currency,
+            speakerName: form.speakerName || 'Speaker Name',
+            language: form.language,
+            seats: form.seats,
+            age: form.age,
+            sex: form.sex,
+            eventType: form.eventType,
+            tastingType: form.tastingType,
+            participationCondition: form.participationCondition,
+            requiresConfirmation: form.requiresConfirmation,
+        };
+
+        navigation.navigate('AddWineSetView', { draft });
     }, [form, navigation]);
 
     const disabled = 
@@ -223,7 +210,7 @@ export const useAddEvent = () => {
 
     return {
         form,
-        isLoading,
+        isLoading: false,
         isEventTypeModalVisible,
         disabled,
         onChangeTheme,

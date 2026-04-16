@@ -26,7 +26,6 @@ export const DropdownButton = ({ title, children, onExpand, onCollapse, onLongPr
                 <Typography variant="h6" text={title} />
                 <ArrowDownIcon rotate={isOpened ? 180 : 0} />
             </TouchableOpacity>
-
             {isOpened && children}
         </View>
     );

@@ -1,4 +1,5 @@
 import { EventType } from '@/entities/events/enums/EventType';
+import { IAddEventDraft } from '@/modules/event/types/IAddEventDraft';
 
 export type EventStackParamList = {
     EventMapView: undefined;
@@ -13,6 +14,12 @@ export type EventStackParamList = {
             placeName?: string;
         };
     } | undefined;
+    AddWineSetView: {
+        draft: IAddEventDraft;
+    };
+    EditEventWineView: {
+        wineId: number;
+    };
     LocationPickerView: {
         initialLocation?: { latitude: number; longitude: number } | null;
         eventType?: EventType;
