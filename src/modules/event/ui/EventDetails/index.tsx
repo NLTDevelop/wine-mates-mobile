@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -35,48 +35,56 @@ export const EventDetails = observer(() => {
             headerComponent={<HeaderWithBackButton title={t('eventDetails.title')} />}
         >
             <View style={styles.container}>
-                {!eventDetail ? (
-                    <EmptyListView isLoading={isLoading} isNothingFound={isError} />
-                ) : (
-                    <View style={styles.content}>
-                        <View style={styles.card}>
-                            {detailsData.map(item => (
-                                <View key={item.key} style={styles.row}>
-                                    <View style={styles.labelContainer}>
-                                        <Typography text={`${item.label}:`} variant="h6" style={styles.label} />
-                                    </View>
-                                    <View style={styles.valueContainer}>
-                                        <Typography text={item.value} variant="h6" style={styles.value} />
-                                    </View>
-                                </View>
-                            ))}
-                        </View>
-
-                        {wineSetItems.length > 0 && (
-                            <DropdownButton title={t('eventDetails.wineSet')}>
-                                <View style={styles.wineSetListContainer}>
-                                    {wineSetItems.map((wine, index) => (
-                                        <Typography
-                                            key={index}
-                                            text={`🍷 ${wine}`}
-                                            variant="body_400"
-                                            style={styles.wineSetText}
-                                        />
-                                    ))}
-                                </View>
-                            </DropdownButton>
-                        )}
+                {isLoading ? (
+                    <View style={styles.stateContainer}>
+                        <ActivityIndicator size="large" color={colors.primary} />
                     </View>
+                ) : !eventDetail ? (
+                    <View style={styles.stateContainer}>
+                        <EmptyListView isNothingFound={isError} />
+                    </View>
+                ) : (
+                    <>
+                        <View style={styles.content}>
+                            <View style={styles.card}>
+                                {detailsData.map(item => (
+                                    <View key={item.key} style={styles.row}>
+                                        <View style={styles.labelContainer}>
+                                            <Typography text={`${item.label}:`} variant="h6" style={styles.label} />
+                                        </View>
+                                        <View style={styles.valueContainer}>
+                                            <Typography text={item.value} variant="h6" style={styles.value} />
+                                        </View>
+                                    </View>
+                                ))}
+                            </View>
+
+                            {wineSetItems.length > 0 && (
+                                <DropdownButton title={t('eventDetails.wineSet')}>
+                                    <View style={styles.wineSetListContainer}>
+                                        {wineSetItems.map((wine, index) => (
+                                            <Typography
+                                                key={index}
+                                                text={`🍷 ${wine}`}
+                                                variant="body_400"
+                                                style={styles.wineSetText}
+                                            />
+                                        ))}
+                                    </View>
+                                </DropdownButton>
+                            )}
+                        </View>
+                        <View style={styles.footer}>
+                            <Button
+                                type="main"
+                                containerStyle={styles.bookNowButton}
+                                text={t('eventDetails.bookNow')}
+                                onPress={onBookNowPress}
+                            />
+                            <FavoriteButton onPress={() => {}} size={52} />
+                        </View>
+                    </>
                 )}
-                <View style={styles.footer}>
-                    <Button
-                        type="main"
-                        containerStyle={styles.bookNowButton}
-                        text={t('eventDetails.bookNow')}
-                        onPress={onBookNowPress}
-                    />
-                    <FavoriteButton onPress={() => {}} size={52} />
-                </View>
 
                 <BottomModal
                     visible={isBookingModalVisible}

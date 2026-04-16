@@ -5,9 +5,10 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
-          marginHorizontal: scaleHorizontal(16),
+            flex: 1,
+            marginHorizontal: scaleHorizontal(16),
         },
-        loaderContainer: {
+        stateContainer: {
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',

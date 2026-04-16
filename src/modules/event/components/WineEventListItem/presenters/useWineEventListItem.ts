@@ -1,7 +1,4 @@
-import { useCallback, useState, useMemo } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { EventType } from '@/entities/events/enums/EventType';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -12,16 +9,39 @@ interface IUseWineEventListItemProps {
     onFavoritePress?: (eventId: number) => void;
 }
 
-type NavigationProp = NativeStackNavigationProp<EventStackParamList>;
+const NAVIGATION_DEBOUNCE_MS = 260;
 
 export const useWineEventListItem = ({
     event,
     onReadMorePress,
     onFavoritePress
 }: IUseWineEventListItemProps) => {
-    const navigation = useNavigation<NavigationProp>();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isCardPressed, setIsCardPressed] = useState(false);
+    const navigationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (navigationTimeoutRef.current) {
+                clearTimeout(navigationTimeoutRef.current);
+            }
+        };
+    }, []);
+
+    const scheduleNavigation = useCallback(() => {
+        if (navigationTimeoutRef.current) {
+            clearTimeout(navigationTimeoutRef.current);
+        }
+
+        navigationTimeoutRef.current = setTimeout(() => {
+            onReadMorePress?.(event.id);
+            navigationTimeoutRef.current = null;
+        }, NAVIGATION_DEBOUNCE_MS);
+    }, [event.id, onReadMorePress]);
+
+    const navigateImmediately = useCallback(() => {
+        onReadMorePress?.(event.id);
+    }, [event.id, onReadMorePress]);
 
     const parsedDate = useMemo(() => {
         if (!event.eventDate) {
@@ -121,10 +141,14 @@ export const useWineEventListItem = ({
     }, []);
 
     const onBookingPress = useCallback(() => {
-        setIsModalVisible(false);
-        navigation.navigate('EventDetails', { eventId: event.id });
-        onReadMorePress?.(event.id);
-    }, [event.id, navigation, onReadMorePress]);
+        if (isModalVisible) {
+            setIsModalVisible(false);
+            scheduleNavigation();
+            return;
+        }
+
+        navigateImmediately();
+    }, [isModalVisible, navigateImmediately, scheduleNavigation]);
 
     const onCloseModal = useCallback(() => {
         setIsModalVisible(false);
@@ -143,8 +167,19 @@ export const useWineEventListItem = ({
     }, [event.id, onFavoritePress]);
 
     const onReadMorePressHandler = useCallback(() => {
-        onReadMorePress?.(event.id);
-    }, [event.id, onReadMorePress]);
+        if (isModalVisible) {
+            setIsModalVisible(false);
+            scheduleNavigation();
+            return;
+        }
+
+        navigateImmediately();
+    }, [isModalVisible, navigateImmediately, scheduleNavigation]);
+
+    const onReadMoreFromModalContent = useCallback(() => {
+        setIsModalVisible(false);
+        scheduleNavigation();
+    }, [scheduleNavigation]);
 
     return {
         month,
@@ -160,6 +195,7 @@ export const useWineEventListItem = ({
         onBookingPress,
         onCloseModal,
         onReadMorePress: onReadMorePressHandler,
+        onReadMoreFromModalContent,
         onFavoritePress: onFavoritePressHandler,
     };
 };

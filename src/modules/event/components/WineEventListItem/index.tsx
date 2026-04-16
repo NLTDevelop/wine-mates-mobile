@@ -42,6 +42,7 @@ export const WineEventListItem = ({
         onPressOut,
         onCloseModal,
         onReadMorePress: onReadMorePressHandler,
+        onReadMoreFromModalContent,
         onFavoritePress: onFavoritePressHandler
     } = useWineEventListItem({
         event,
@@ -126,7 +127,7 @@ export const WineEventListItem = ({
                     <WineEventListItem
                         event={event}
                         isSelected={false}
-                        onReadMorePress={onReadMorePress}
+                        onReadMorePress={onReadMoreFromModalContent}
                         onFavoritePress={onFavoritePress}
                         isModalContent
                     />
