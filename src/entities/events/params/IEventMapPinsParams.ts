@@ -1,11 +1,11 @@
 import { Sex } from '../enums/Sex';
-import { TastingType } from '../enums/TastingType';
+import { EventType } from '../enums/EventType';
 
 export interface IEventMapPinsParams {
     latitude: number;
     longitude: number;
     radiusKm?: number;
-    tastingType?: TastingType;
+    eventType?: EventType;
     eventDate?: string;
     language?: string;
     minPrice?: number;

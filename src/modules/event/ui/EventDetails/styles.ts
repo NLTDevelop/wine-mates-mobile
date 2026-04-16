@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors, maxLabelWidth: number) => {
+export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
           marginHorizontal: scaleHorizontal(16),
@@ -25,13 +25,12 @@ export const getStyles = (colors: IColors, maxLabelWidth: number) => {
             alignItems: 'flex-start',
         },
         labelContainer: {
-            minWidth: maxLabelWidth > 0 ? maxLabelWidth : undefined,
+            width: scaleHorizontal(103),
             marginRight: scaleHorizontal(8),
             flexShrink: 0,
         },
         label: {
             color: colors.text_light,
-            flexShrink: 0,
         },
         valueContainer: {
             flex: 1,
@@ -43,7 +42,12 @@ export const getStyles = (colors: IColors, maxLabelWidth: number) => {
             color: colors.text,
             marginBottom: scaleVertical(8),
         },
-        wineSetContainer: {
+        wineSetListContainer: {
+            marginTop: scaleVertical(8),
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 12,
+            padding: scaleHorizontal(16),
             gap: scaleVertical(8),
         },
         wineSetText: {

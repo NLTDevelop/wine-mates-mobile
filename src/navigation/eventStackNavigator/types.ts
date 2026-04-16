@@ -1,4 +1,4 @@
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 
 export type EventStackParamList = {
     EventMapView: undefined;
@@ -15,6 +15,6 @@ export type EventStackParamList = {
     } | undefined;
     LocationPickerView: {
         initialLocation?: { latitude: number; longitude: number } | null;
-        tastingType?: TastingType;
+        eventType?: EventType;
     };
 };

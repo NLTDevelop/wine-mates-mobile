@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IEvent } from '@/entities/events/types/IEvent';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 import { localization } from '@/UIProvider/localization/Localization';
 
 interface IUseWineEventListItemProps {
@@ -21,6 +21,7 @@ export const useWineEventListItem = ({
 }: IUseWineEventListItemProps) => {
     const navigation = useNavigation<NavigationProp>();
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isCardPressed, setIsCardPressed] = useState(false);
 
     const parsedDate = useMemo(() => {
         if (!event.eventDate) {
@@ -108,12 +109,12 @@ export const useWineEventListItem = ({
     }, [event.currency, event.price]);
 
     const eventTypeLabel = useMemo(() => {
-        if (event.tastingType === TastingType.Parties) {
+        if (event.eventType === EventType.Parties) {
             return localization.t('event.parties');
         }
 
         return localization.t('event.tastings');
-    }, [event.tastingType]);
+    }, [event.eventType]);
 
     const onCardPress = useCallback(() => {
         setIsModalVisible(true);
@@ -127,6 +128,14 @@ export const useWineEventListItem = ({
 
     const onCloseModal = useCallback(() => {
         setIsModalVisible(false);
+    }, []);
+
+    const onPressIn = useCallback(() => {
+        setIsCardPressed(true);
+    }, []);
+
+    const onPressOut = useCallback(() => {
+        setIsCardPressed(false);
     }, []);
 
     const onFavoritePressHandler = useCallback(() => {
@@ -144,7 +153,10 @@ export const useWineEventListItem = ({
         priceLabel,
         eventTypeLabel,
         isModalVisible,
+        isCardPressed,
         onCardPress,
+        onPressIn,
+        onPressOut,
         onBookingPress,
         onCloseModal,
         onReadMorePress: onReadMorePressHandler,

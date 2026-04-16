@@ -16,6 +16,9 @@ export const getStyles = (colors: IColors) => {
             borderColor: colors.primary,
             borderWidth: 2,
         },
+        pressedContainer: {
+            transform: [{ scale: 0.985 }],
+        },
         header: {
             flexDirection: 'row',
             alignItems: 'center',
@@ -67,6 +70,9 @@ export const getStyles = (colors: IColors) => {
         readMoreButton: {
             flex: 1,
             borderRadius: 16,
+        },
+        modalContentContainer: {
+            paddingTop: scaleVertical(8),
         },
     });
     return styles;

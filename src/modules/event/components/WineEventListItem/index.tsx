@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, Pressable } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -8,7 +8,6 @@ import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { DateBadge } from '@/UIKit/DateBadge';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { MapMarker } from '@/UIKit/MapMarker';
-import { EventModalCard } from '@/modules/event/components/EventModalCard';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { useWineEventListItem } from './presenters/useWineEventListItem';
 import { getStyles } from './styles';
@@ -18,12 +17,15 @@ interface IProps {
     isSelected: boolean;
     onReadMorePress: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
+    isModalContent?: boolean;
 }
 
 export const WineEventListItem = ({
     event,
+    isSelected,
     onReadMorePress,
-    onFavoritePress
+    onFavoritePress,
+    isModalContent = false,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -34,8 +36,10 @@ export const WineEventListItem = ({
         priceLabel,
         eventTypeLabel,
         isModalVisible,
+        isCardPressed,
         onCardPress,
-        onBookingPress,
+        onPressIn,
+        onPressOut,
         onCloseModal,
         onReadMorePress: onReadMorePressHandler,
         onFavoritePress: onFavoritePressHandler
@@ -47,7 +51,13 @@ export const WineEventListItem = ({
 
 
     return (
-        <TouchableOpacity style={styles.container} onPress={onCardPress} activeOpacity={0.7}>
+        <Pressable
+            style={[styles.container, isSelected && styles.selectedContainer, isCardPressed && styles.pressedContainer]}
+            onPress={isModalContent ? undefined : onCardPress}
+            onPressIn={isModalContent ? undefined : onPressIn}
+            onPressOut={isModalContent ? undefined : onPressOut}
+            disabled={isModalContent}
+        >
             <View style={styles.metaRow}>
                 <View style={styles.metaBadge}>
                     <Typography text="🍷" variant="h5" />
@@ -68,7 +78,12 @@ export const WineEventListItem = ({
                 </View>
             </View>
 
-            <Typography text={event.description} variant="body_400" numberOfLines={2} style={styles.descriptionText} />
+            <Typography
+                text={event.description}
+                variant="body_400"
+                numberOfLines={isModalContent ? undefined : 2}
+                style={styles.descriptionText}
+            />
 
             <View style={styles.mapContainer}>
                 <MapView
@@ -91,7 +106,7 @@ export const WineEventListItem = ({
                             coordinate: { latitude: event.latitude, longitude: event.longitude }
                         }}
                         eventId={event.id}
-                        tastingType={event.tastingType}
+                        eventType={event.eventType}
                     />
                 </MapView>
             </View>
@@ -101,16 +116,22 @@ export const WineEventListItem = ({
                 <FavoriteButton onPress={onFavoritePressHandler} size={56} />
             </View>
 
-            <BottomModal
-                visible={isModalVisible}
-                onClose={onCloseModal}
-            >
-                <EventModalCard
-                    event={event}
-                    onBookingPress={onBookingPress}
-                    onFavoritePress={onFavoritePressHandler}
-                />
-            </BottomModal>
-        </TouchableOpacity>
+            {!isModalContent && (
+                <BottomModal
+                    visible={isModalVisible}
+                    onClose={onCloseModal}
+                    title={t('eventDetails.title')}
+                    contentContainerStyle={styles.modalContentContainer}
+                >
+                    <WineEventListItem
+                        event={event}
+                        isSelected={false}
+                        onReadMorePress={onReadMorePress}
+                        onFavoritePress={onFavoritePress}
+                        isModalContent
+                    />
+                </BottomModal>
+            )}
+        </Pressable>
     );
 };

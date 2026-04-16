@@ -1,6 +1,8 @@
 import { Sex } from '../enums/Sex';
 import { Currency } from '../enums/Currency';
+import { EventType } from '../enums/EventType';
 import { TastingType } from '../enums/TastingType';
+import { ParticipationCondition } from '../enums/ParticipationCondition';
 
 export interface IEvent {
     id: number;
@@ -14,31 +16,57 @@ export interface IEvent {
     latitude: number;
     longitude: number;
     distanceKm: string;
+    eventType?: EventType;
     tastingType?: TastingType;
+    participationCondition?: ParticipationCondition;
 }
 
 export interface IEventDetail {
     id: number;
     latitude: number;
     longitude: number;
-    title: string;
+    title?: string;
     description: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    attendees: string[];
-    attendeesCount: number;
+    date?: string;
+    eventDate?: string;
+    startTime?: string;
+    endTime?: string;
+    eventTime?: string;
+    attendees?: string[];
+    attendeesCount?: number;
     price: number;
-    eventType: 'online' | 'offline';
-    isSaved: boolean;
+    eventType?: EventType;
+    isSaved?: boolean;
     theme: string;
-    restaurant: string;
-    location: string;
-    speaker: string;
-    distance: number;
+    restaurant?: string;
+    restaurantName?: string;
+    location?: string;
+    locationLabel?: string;
+    speaker?: string;
+    speakerName?: string;
+    distance?: number | string;
+    distanceKm?: number | string | null;
     language: string;
     seats: number;
-    wineSet?: string[];
+    currency?: Currency;
+    tastingType?: TastingType;
+    participationCondition?: ParticipationCondition;
+    requiresConfirmation?: boolean;
+    wineSet?: Array<
+        string | {
+            id?: number;
+            wineId?: number;
+            name?: string;
+            title?: string;
+            wineName?: string;
+            wine?: {
+                id?: number;
+                name?: string;
+                title?: string;
+                wineName?: string;
+            };
+        }
+    >;
     minAge?: number;
     maxAge?: number;
     sex?: Sex;

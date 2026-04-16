@@ -1,18 +1,18 @@
 import { useCallback } from 'react';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 
 interface IUseMapMarkerProps {
     eventId: number;
-    tastingType: TastingType;
+    eventType: EventType;
     onPress?: (id: number) => void;
 }
 
-export const useMapMarker = ({ eventId, tastingType, onPress }: IUseMapMarkerProps) => {
+export const useMapMarker = ({ eventId, eventType, onPress }: IUseMapMarkerProps) => {
     const onPressHandler = useCallback(() => {
         onPress?.(eventId);
     }, [eventId, onPress]);
 
-    const emoji = tastingType === TastingType.Parties ? '🥂' : '🍷';
+    const emoji = eventType === EventType.Parties ? '🥂' : '🍷';
 
     return {
         onPressHandler,

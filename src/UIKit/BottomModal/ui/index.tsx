@@ -1,5 +1,5 @@
 import { useMemo, ReactNode } from 'react';
-import { View, Modal, TouchableWithoutFeedback, Animated, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Modal, TouchableWithoutFeedback, Animated, ScrollView, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { TitleVariant, Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
@@ -13,6 +13,7 @@ interface IProps {
     title?: string;
     titleVariant?: TitleVariant;
     customHeader?: ReactNode;
+    contentContainerStyle?: StyleProp<ViewStyle>;
     children: ReactNode;
 }
 
@@ -23,6 +24,7 @@ export const BottomModal = ({
     title,
     titleVariant = 'h4',
     customHeader,
+    contentContainerStyle,
     children
 }: IProps) => {
     const { colors } = useUiContext();
@@ -86,7 +88,7 @@ export const BottomModal = ({
                     {renderHeader()}
                     <ScrollView
                         style={styles.scrollView}
-                        contentContainerStyle={styles.scrollContent}
+                        contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
                         showsVerticalScrollIndicator={false}
                         bounces={false}
                     >

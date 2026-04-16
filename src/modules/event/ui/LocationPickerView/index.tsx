@@ -8,7 +8,7 @@ import { Button } from '@/UIKit/Button';
 import { useLocationPicker } from './presenters/useLocationPicker';
 import { LocationSearchInput } from './components/LocationSearchInput/ui';
 import { MapMarker } from '@/UIKit/MapMarker';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 import { RouteProp, StackActions, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
@@ -29,7 +29,7 @@ export const LocationPickerView = () => {
     const navigation = useNavigation<NavigationProps>();
     const route = useRoute<RouteProps>();
     const initialLocation = route.params?.initialLocation;
-    const tastingType = route.params?.tastingType || TastingType.Tastings;
+    const eventType = route.params?.eventType || EventType.Tastings;
 
     const {
         selectedLocation,
@@ -105,7 +105,7 @@ export const LocationPickerView = () => {
                                 },
                             }}
                             eventId={0}
-                            tastingType={tastingType}
+                            eventType={eventType}
                         />
                     )}
                 </MapView>

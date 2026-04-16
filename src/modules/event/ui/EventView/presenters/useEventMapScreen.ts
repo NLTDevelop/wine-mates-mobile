@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 import { useEventMap } from '@/modules/event/presenters/useEventMap';
 import { useEventsList } from '@/modules/event/presenters/useEventsList';
 import { useEventMapView } from '@/modules/event/presenters/useEventMapView';
@@ -43,11 +43,11 @@ export const useEventMapScreen = () => {
             return events;
         }
 
-        const tastingType = selectedTab === 'tastings'
-            ? TastingType.Tastings
-            : TastingType.Parties;
+        const eventType = selectedTab === 'tastings'
+            ? EventType.Tastings
+            : EventType.Parties;
 
-        return events.filter(event => event.tastingType === tastingType);
+        return events.filter(event => event.eventType === eventType);
     }, [events, selectedTab]);
 
     const onUpdateEvent = useCallback(async () => {

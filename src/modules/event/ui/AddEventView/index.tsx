@@ -56,7 +56,7 @@ export const AddEventView = () => {
         eventDate: form.eventDate,
         eventTime: form.eventTime,
     });
-    const eventTypeLabel = useEventTypeLabel({ tastingType: form.tastingType, t });
+    const eventTypeLabel = useEventTypeLabel({ eventType: form.eventType, t });
 
     return (
         <>
@@ -166,7 +166,7 @@ export const AddEventView = () => {
             />
             <EventTypePickerModal
                 visible={isEventTypeModalVisible}
-                selectedType={form.tastingType}
+                selectedType={form.eventType}
                 onClose={onCloseEventTypeModal}
                 onSelectType={onSelectEventType}
             />

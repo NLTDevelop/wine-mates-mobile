@@ -1,6 +1,6 @@
 export enum TastingType {
-    Tastings = 'tastings',
-    Parties = 'parties',
+    Blind = 'blind',
+    Regular = 'regular',
 }
 
-export const TASTING_TYPES = ['parties', 'tastings'] as const;
+export const TASTING_TYPES = [TastingType.Blind, TastingType.Regular] as const;

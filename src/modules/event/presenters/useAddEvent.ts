@@ -5,7 +5,9 @@ import { useValidator } from '@/hooks/useValidator';
 import { eventService } from '@/entities/events/EventService';
 import { Currency } from '@/entities/events/enums/Currency';
 import { RepeatRule } from '@/entities/events/enums/RepeatRule';
+import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
+import { ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
 import { Sex } from '@/entities/events/enums/Sex';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 
@@ -25,7 +27,9 @@ interface IEventForm {
     seats: string;
     age: string;
     sex: Sex;
+    eventType: EventType;
     tastingType: TastingType;
+    participationCondition: ParticipationCondition;
     requiresConfirmation: boolean;
     repeatRule: RepeatRule;
 }
@@ -52,7 +56,9 @@ export const useAddEvent = () => {
         seats: '',
         age: '18',
         sex: Sex.All,
-        tastingType: TastingType.Tastings,
+        eventType: EventType.Tastings,
+        tastingType: TastingType.Regular,
+        participationCondition: ParticipationCondition.FixedPrice,
         requiresConfirmation: false,
         repeatRule: RepeatRule.Never,
     });
@@ -120,8 +126,8 @@ export const useAddEvent = () => {
         setForm(prev => ({ ...prev, seats: numericValue }));
     }, []);
 
-    const onChangeTastingType = useCallback((value: TastingType) => {
-        setForm(prev => ({ ...prev, tastingType: value }));
+    const onChangeEventType = useCallback((value: EventType) => {
+        setForm(prev => ({ ...prev, eventType: value }));
     }, []);
 
     const onOpenEventTypeModal = useCallback(() => {
@@ -132,17 +138,17 @@ export const useAddEvent = () => {
         setIsEventTypeModalVisible(false);
     }, []);
 
-    const onSelectEventType = useCallback((value: TastingType) => {
-        onChangeTastingType(value);
+    const onSelectEventType = useCallback((value: EventType) => {
+        onChangeEventType(value);
         setIsEventTypeModalVisible(false);
-    }, [onChangeTastingType]);
+    }, [onChangeEventType]);
 
     const onLocationPress = useCallback(() => {
         navigation.navigate('LocationPickerView', {
             initialLocation: form.location,
-            tastingType: form.tastingType,
+            eventType: form.eventType,
         });
-    }, [form.location, form.tastingType, navigation]);
+    }, [form.eventType, form.location, navigation]);
 
     useEffect(() => {
         const pickedLocation = route.params?.pickedLocation;
@@ -183,7 +189,9 @@ export const useAddEvent = () => {
                 phoneNumber: form.phoneNumber,
                 age: Number(form.age),
                 sex: form.sex,
+                eventType: form.eventType,
                 tastingType: form.tastingType,
+                participationCondition: form.participationCondition,
                 requiresConfirmation: form.requiresConfirmation,
                 repeatRule: form.repeatRule,
                 wineSet: [
@@ -230,7 +238,7 @@ export const useAddEvent = () => {
         onChangeSpeakerName,
         onChangeLanguage,
         onChangeSeats,
-        onChangeTastingType,
+        onChangeEventType,
         onOpenEventTypeModal,
         onCloseEventTypeModal,
         onSelectEventType,

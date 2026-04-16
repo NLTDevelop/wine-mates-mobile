@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 
 interface IProps {
-    tastingType: TastingType;
+    eventType: EventType;
     t: ILocalization['t'];
 }
 
-export const useEventTypeLabel = ({ tastingType, t }: IProps) => {
+export const useEventTypeLabel = ({ eventType, t }: IProps) => {
     const labelByType = useMemo(() => ({
-        [TastingType.Tastings]: t('event.tastings'),
-        [TastingType.Parties]: t('event.parties'),
+        [EventType.Tastings]: t('event.tastings'),
+        [EventType.Parties]: t('event.parties'),
     }), [t]);
 
-    return labelByType[tastingType];
+    return labelByType[eventType];
 };

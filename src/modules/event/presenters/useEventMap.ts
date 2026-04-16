@@ -4,7 +4,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { eventService } from '@/entities/events/EventService';
 import { useLocationPermission } from '@/hooks/useLocationPermission.ts';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 
 const KYIV_COORDINATES = {
     latitude: 50.4501,
@@ -27,18 +27,18 @@ export const useEventMap = () => {
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
     const [filterCount] = useState(0);
     const hasAutoLoadedOnFocusRef = useRef(false);
-    const lastLoadedTastingTypeRef = useRef<TastingType | undefined>(undefined);
+    const lastLoadedEventTypeRef = useRef<EventType | undefined>(undefined);
 
-    const selectedTastingType = useMemo(() => {
+    const selectedEventType = useMemo(() => {
         if (selectedTab === 'all') {
             return undefined;
         }
 
         if (selectedTab === 'tastings') {
-            return TastingType.Tastings;
+            return EventType.Tastings;
         }
 
-        return TastingType.Parties;
+        return EventType.Parties;
     }, [selectedTab]);
 
     const loadEvents = useCallback(async () => {
@@ -50,19 +50,19 @@ export const useEventMap = () => {
                 latitude: location.latitude,
                 longitude: location.longitude,
                 radiusKm: DEFAULT_RADIUS_KM,
-                tastingType: selectedTastingType,
+                eventType: selectedEventType,
             });
         } catch (error) {
             console.warn('useEventMap -> loadEvents: ', error);
         } finally {
             setIsLoadingEvents(false);
         }
-    }, [selectedTastingType, userLocation]);
+    }, [selectedEventType, userLocation]);
 
     useEffect(() => {
         if (!isFocused) {
             hasAutoLoadedOnFocusRef.current = false;
-            lastLoadedTastingTypeRef.current = undefined;
+            lastLoadedEventTypeRef.current = undefined;
             return;
         }
 
@@ -70,15 +70,15 @@ export const useEventMap = () => {
             return;
         }
 
-        const isSameTastingType = lastLoadedTastingTypeRef.current === selectedTastingType;
-        if (hasAutoLoadedOnFocusRef.current && isSameTastingType) {
+        const isSameEventType = lastLoadedEventTypeRef.current === selectedEventType;
+        if (hasAutoLoadedOnFocusRef.current && isSameEventType) {
             return;
         }
 
         hasAutoLoadedOnFocusRef.current = true;
-        lastLoadedTastingTypeRef.current = selectedTastingType;
+        lastLoadedEventTypeRef.current = selectedEventType;
         loadEvents();
-    }, [isFocused, isLocationLoading, loadEvents, selectedTastingType]);
+    }, [isFocused, isLocationLoading, loadEvents, selectedEventType]);
 
     const initialRegion: Region = useMemo(() => {
         if (userLocation) {
@@ -132,8 +132,8 @@ export const useEventMap = () => {
         if (selectedTab === 'all') {
             return pins;
         }
-        const tastingType = selectedTab === 'tastings' ? TastingType.Tastings : TastingType.Parties;
-        return pins.filter(pin => pin.tastingType === tastingType);
+        const eventType = selectedTab === 'tastings' ? EventType.Tastings : EventType.Parties;
+        return pins.filter(pin => pin.eventType === eventType);
     }, [selectedTab]);
 
     const refetch = useCallback(() => {

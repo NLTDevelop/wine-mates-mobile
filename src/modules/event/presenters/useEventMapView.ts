@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IEvent } from '@/entities/events/types/IEvent';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 
 interface IUseEventMapViewProps {
     events: IEvent[];
@@ -21,7 +21,7 @@ export const useEventMapView = ({ events }: IUseEventMapViewProps) => {
             id: event.id,
             latitude: event.latitude,
             longitude: event.longitude,
-            tastingType: event.tastingType || TastingType.Parties,
+            eventType: event.eventType || EventType.Parties,
         }));
     }, [events]);
 

@@ -4,14 +4,14 @@ import { useUiContext } from '@/UIProvider';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 import { useEventTypePickerModal } from './presenters/useEventTypePickerModal';
 
 interface IProps {
     visible: boolean;
-    selectedType: TastingType;
+    selectedType: EventType;
     onClose: () => void;
-    onSelectType: (type: TastingType) => void;
+    onSelectType: (type: EventType) => void;
 }
 
 export const EventTypePickerModal = ({ visible, selectedType, onClose, onSelectType }: IProps) => {
@@ -29,24 +29,24 @@ export const EventTypePickerModal = ({ visible, selectedType, onClose, onSelectT
         <BottomModal visible={visible} onClose={onClose} title={t('event.eventType')}>
             <View style={styles.container}>
                 <TouchableOpacity
-                    style={[styles.option, selectedType === TastingType.Tastings && styles.selectedOption]}
+                    style={[styles.option, selectedType === EventType.Tastings && styles.selectedOption]}
                     onPress={onSelectTastings}
                 >
                     <Typography
                         variant="h6"
                         text={tastingsLabel}
-                        style={[styles.optionText, selectedType === TastingType.Tastings && styles.selectedOptionText]}
+                        style={[styles.optionText, selectedType === EventType.Tastings && styles.selectedOptionText]}
                     />
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={[styles.option, selectedType === TastingType.Parties && styles.selectedOption]}
+                    style={[styles.option, selectedType === EventType.Parties && styles.selectedOption]}
                     onPress={onSelectParties}
                 >
                     <Typography
                         variant="h6"
                         text={partiesLabel}
-                        style={[styles.optionText, selectedType === TastingType.Parties && styles.selectedOptionText]}
+                        style={[styles.optionText, selectedType === EventType.Parties && styles.selectedOptionText]}
                     />
                 </TouchableOpacity>
             </View>
