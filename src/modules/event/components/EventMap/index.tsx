@@ -12,6 +12,7 @@ import { observer } from 'mobx-react-lite';
 interface IEventMapProps {
     mapPins: IEventMapPin[];
     initialRegion: Region;
+    mapRegionKey: string;
     onMarkerPress: (markerId: number) => void;
     userLocation?: IUserLocation | null;
 }
@@ -19,6 +20,7 @@ interface IEventMapProps {
 export const EventMap = observer(({
                                       mapPins,
                                       initialRegion,
+                                      mapRegionKey,
                                       onMarkerPress,
                                       userLocation,
                                   }: IEventMapProps) => {
@@ -28,6 +30,7 @@ export const EventMap = observer(({
     return (
         <View style={styles.mapContainer}>
             <MapView
+                key={mapRegionKey}
                 initialRegion={initialRegion}
                 showsUserLocation={!!userLocation}
                 showsMyLocationButton={!!userLocation}

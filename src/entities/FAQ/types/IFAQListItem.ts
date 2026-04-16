@@ -2,6 +2,7 @@ import { IFAQQuestion } from './IFAQQuestion';
 
 export interface IFAQListItem {
     id: number;
-    topicName: string;
+    name: string;
     questions: IFAQQuestion[];
+    sortNumber: number | null;
 }

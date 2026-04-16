@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 import { eventService } from '@/entities/events/EventService';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { IEventsListParams } from '@/entities/events/params/IEventsListParams';
@@ -12,6 +13,7 @@ const KYIV_COORDINATES = {
 
 const DEFAULT_RADIUS_KM = 100;
 const DEFAULT_LIMIT = 10;
+const OFFSET = 0;
 
 interface IFilters {
     eventDate?: string;
@@ -24,20 +26,26 @@ interface IFilters {
 }
 
 export const useEventsList = () => {
-    const { userLocation } = useLocationPermission();
+    const isFocused = useIsFocused();
+    const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
-    const [offset, setOffset] = useState(0);
     const [filters, setFilters] = useState<IFilters>({});
+    const hasAutoLoadedOnFocusRef = useRef(false);
+    const list = eventsModel.list;
+    const hasMore = useMemo(() => {
+        if (!list) {
+            return true;
+        }
 
-    const loadEvents = useCallback(async (isRefresh = false) => {
+        return list.count > list.rows.length;
+    }, [list]);
+
+    const loadEvents = useCallback(async (offset: number) => {
         const location = userLocation || KYIV_COORDINATES;
-        const currentOffset = isRefresh ? 0 : offset;
 
-        if (isRefresh) {
+        if (offset === OFFSET) {
             setIsRefreshing(true);
-            setOffset(0);
         } else {
             setIsLoading(true);
         }
@@ -47,20 +55,15 @@ export const useEventsList = () => {
                 latitude: location.latitude,
                 longitude: location.longitude,
                 radiusKm: DEFAULT_RADIUS_KM,
-                offset: currentOffset,
+                offset,
                 limit: DEFAULT_LIMIT,
                 ...filters,
             };
 
             const response = await eventService.getList(params);
 
-            if (!response.isError && response.data) {
-                setHasMore(response.data.rows.length === DEFAULT_LIMIT);
-                if (!isRefresh) {
-                    setOffset(currentOffset + DEFAULT_LIMIT);
-                } else {
-                    setOffset(DEFAULT_LIMIT);
-                }
+            if (response.isError || !response.data) {
+                return;
             }
         } catch (error) {
             console.warn('useEventsList -> loadEvents: ', error);
@@ -68,33 +71,45 @@ export const useEventsList = () => {
             setIsLoading(false);
             setIsRefreshing(false);
         }
-    }, [userLocation, offset, filters]);
+    }, [filters, userLocation]);
 
-    const onRefresh = useCallback(() => {
-        loadEvents(true);
+    const onRefresh = useCallback((offset: number = OFFSET) => {
+        loadEvents(offset);
     }, [loadEvents]);
 
     const onLoadMore = useCallback(() => {
-        if (!isLoading && hasMore) {
-            loadEvents(false);
+        if (!isLoading && list && list.count > list.rows.length) {
+            loadEvents(list.rows.length);
         }
-    }, [isLoading, hasMore, loadEvents]);
+    }, [isLoading, list, loadEvents]);
 
     const onApplyFilters = useCallback((newFilters: IFilters) => {
         setFilters(newFilters);
-        setOffset(0);
-        setHasMore(true);
     }, []);
 
     const onClearFilters = useCallback(() => {
         setFilters({});
-        setOffset(0);
-        setHasMore(true);
     }, []);
 
     const refetch = useCallback(() => {
-        loadEvents(true);
-    }, [loadEvents]);
+        onRefresh();
+    }, [onRefresh]);
+
+    useEffect(() => {
+        if (!isFocused) {
+            hasAutoLoadedOnFocusRef.current = false;
+            return;
+        }
+
+        if (isLocationLoading || hasAutoLoadedOnFocusRef.current) {
+            return;
+        }
+
+        hasAutoLoadedOnFocusRef.current = true;
+        if (isFocused) {
+            onRefresh();
+        }
+    }, [isFocused, isLocationLoading, onRefresh]);
 
     return {
         events: eventsModel.events,

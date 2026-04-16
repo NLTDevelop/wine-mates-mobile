@@ -333,7 +333,7 @@
     },
     "event": {
         "addEvent": "Додати винну подію",
-        "updateEvent": "Оновити подію",
+        "updateEvent": "Оновити події",
         "tastingTheme": "Тема дегустації",
         "restaurant": "Ресторан",
         "location": "Локація",

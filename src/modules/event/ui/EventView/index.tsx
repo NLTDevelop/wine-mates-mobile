@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo } from 'react';
 import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useUiContext } from '@/UIProvider';
@@ -10,21 +10,18 @@ import { WineEventList } from '@/modules/event/components/WineEventList';
 import { EventModalCard } from '@/modules/event/components/EventModalCard';
 import { EventMapHeader } from '@/modules/event/ui/components/EventMapHeader/ui';
 import { EventFiltersModal } from '@/modules/event/ui/components/EventFiltersModal/ui';
-import { useEventMap } from '@/modules/event/presenters/useEventMap';
-import { useEventsList } from '@/modules/event/presenters/useEventsList';
-import { useEventMapView } from '@/modules/event/presenters/useEventMapView';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { useEventMapScreen } from './presenters/useEventMapScreen';
 import { getStyles } from './styles';
 
 export const EventMapView = observer(() => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    
-    const [isRefetching, setIsRefetching] = useState(false);
 
     const {
+        isRefetching,
         mapPins,
         initialRegion,
+        mapRegionKey,
         userLocation,
         selectedTab,
         onTabChange,
@@ -32,15 +29,7 @@ export const EventMapView = observer(() => {
         isFilterModalVisible,
         onCloseFilterModal,
         filterCount,
-        refetch: refetchMapPins,
-    } = useEventMap();
-
-    const {
-        events,
-        refetch: refetchEvents,
-    } = useEventsList();
-
-    const {
+        filteredEvents,
         selectedEvent,
         isModalVisible,
         onAddEvent,
@@ -50,27 +39,8 @@ export const EventMapView = observer(() => {
         onModalFavoritePress,
         onReadMorePress,
         onFavoritePress,
-    } = useEventMapView({ events });
-
-    const filteredEvents = useMemo(() => {
-        if (selectedTab === 'all') {
-            return events;
-        }
-        const tastingType = selectedTab === 'tastings' ? TastingType.Tastings : TastingType.Parties;
-        return events.filter(event => event.tastingType === tastingType);
-    }, [events, selectedTab]);
-
-    const onUpdateEvent = useCallback(async () => {
-        setIsRefetching(true);
-        try {
-            await Promise.all([
-                refetchMapPins(),
-                refetchEvents(),
-            ]);
-        } finally {
-            setIsRefetching(false);
-        }
-    }, [refetchMapPins, refetchEvents]);
+        onUpdateEvent,
+    } = useEventMapScreen();
 
     return (
         <>
@@ -93,6 +63,7 @@ export const EventMapView = observer(() => {
                     <EventMap
                         mapPins={mapPins}
                         initialRegion={initialRegion}
+                        mapRegionKey={mapRegionKey}
                         onMarkerPress={onMarkerPress}
                         userLocation={userLocation}
                     />

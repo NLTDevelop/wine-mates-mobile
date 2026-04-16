@@ -487,17 +487,33 @@ export const getStyles = (colors: IColors) => {
 
 ---
 
-## 18. `switch/case` usage is forbidden
+## 18. Rules for models
 
 **Required:**
-- do not use `switch/case` in new code
-- for 1-2 branches, use `if` / `if else`
-- for many branches, use object mapping (`Record`, plain object lookup, or function map)
+- models must not contain business logic, calculations, handlers, or data transformation logic
+- models must be used for data structure only
+- the only allowed method in a model is pagination append method with exact name `appened`
 
 **Forbidden:**
-- introducing new `switch/case` blocks in presenters, hooks, components, and utils
-- replacing simple `if` chains with `switch/case`
+- placing logic in models
+- creating custom methods in models for business scenarios
+- naming pagination append method as anything except `appened` (for example `appenedMediaList`)
 
 **Principle:**
-- keep control flow explicit and predictable
-- reduce bulky branching blocks and prevent accidental fallthrough
+- Presenter = logic
+- Model = data container
+
+---
+
+## 19. `switch case` is forbidden
+
+**Required:**
+- use `if / else` for branching logic
+- keep branching explicit and linear
+
+**Forbidden:**
+- using `switch case` in any layer (`UI`, `presenters`, `hooks`, `models`, `services`, and other project files)
+
+**Principle:**
+- one consistent branching style across the project
+- simpler readability and less boilerplate

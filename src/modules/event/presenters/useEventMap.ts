@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { Region } from 'react-native-maps';
+import { useIsFocused } from '@react-navigation/native';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { eventService } from '@/entities/events/EventService';
 import { useLocationPermission } from '@/hooks/useLocationPermission.ts';
@@ -16,15 +17,29 @@ const MAP_DELTA = {
 };
 
 const DEFAULT_RADIUS_KM = 100;
-const DEFAULT_LIMIT = 50;
 
 export const useEventMap = () => {
+    const isFocused = useIsFocused();
     const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoadingEvents, setIsLoadingEvents] = useState(false);
     const [selectedTab, setSelectedTab] = useState<'all' | 'tastings' | 'parties'>('all');
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
-    const [filterCount, setFilterCount] = useState(0);
+    const [filterCount] = useState(0);
+    const hasAutoLoadedOnFocusRef = useRef(false);
+    const lastLoadedTastingTypeRef = useRef<TastingType | undefined>(undefined);
+
+    const selectedTastingType = useMemo(() => {
+        if (selectedTab === 'all') {
+            return undefined;
+        }
+
+        if (selectedTab === 'tastings') {
+            return TastingType.Tastings;
+        }
+
+        return TastingType.Parties;
+    }, [selectedTab]);
 
     const loadEvents = useCallback(async () => {
         const location = userLocation || KYIV_COORDINATES;
@@ -35,19 +50,35 @@ export const useEventMap = () => {
                 latitude: location.latitude,
                 longitude: location.longitude,
                 radiusKm: DEFAULT_RADIUS_KM,
+                tastingType: selectedTastingType,
             });
         } catch (error) {
             console.warn('useEventMap -> loadEvents: ', error);
         } finally {
             setIsLoadingEvents(false);
         }
-    }, [userLocation]);
+    }, [selectedTastingType, userLocation]);
 
     useEffect(() => {
-        if (!isLocationLoading) {
-            loadEvents();
+        if (!isFocused) {
+            hasAutoLoadedOnFocusRef.current = false;
+            lastLoadedTastingTypeRef.current = undefined;
+            return;
         }
-    }, [isLocationLoading, loadEvents]);
+
+        if (isLocationLoading) {
+            return;
+        }
+
+        const isSameTastingType = lastLoadedTastingTypeRef.current === selectedTastingType;
+        if (hasAutoLoadedOnFocusRef.current && isSameTastingType) {
+            return;
+        }
+
+        hasAutoLoadedOnFocusRef.current = true;
+        lastLoadedTastingTypeRef.current = selectedTastingType;
+        loadEvents();
+    }, [isFocused, isLocationLoading, loadEvents, selectedTastingType]);
 
     const initialRegion: Region = useMemo(() => {
         if (userLocation) {
@@ -62,6 +93,10 @@ export const useEventMap = () => {
             ...MAP_DELTA,
         };
     }, [userLocation]);
+
+    const mapRegionKey = useMemo(() => {
+        return `${initialRegion.latitude}:${initialRegion.longitude}`;
+    }, [initialRegion.latitude, initialRegion.longitude]);
 
     const onMarkerPress = useCallback((markerId: number) => {
         eventsModel.setSelectedEventId(markerId);
@@ -108,6 +143,7 @@ export const useEventMap = () => {
     return {
         mapPins: filteredMapPins,
         initialRegion,
+        mapRegionKey,
         selectedMarkerId: eventsModel.selectedEventId,
         onMarkerPress,
         userLocation,

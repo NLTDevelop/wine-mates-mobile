@@ -25,7 +25,7 @@ export const FAQView = () => {
             edges={['top']}
             withGradient
             scrollEnabled={false}
-            headerComponent={<HeaderWithBackButton title={t('faq.faq')} isCentered={false} />}
+            headerComponent={<HeaderWithBackButton title={t('faq.faq')} isCentered />}
         >
             {isLoading ? (
                 <Loader />

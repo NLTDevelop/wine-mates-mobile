@@ -7,26 +7,72 @@ import { IEventMapPin } from './types/IEventMapPin';
 import { IEventMapPinsParams } from './params/IEventMapPinsParams';
 import { CreateEventDto } from './dto/CreateEvent.dto';
 import { eventsModel } from './EventsModel';
+import { userModel } from '../users/UserModel';
+import countries from 'world-countries';
 
 class EventService {
-    constructor(private _requester: IRequester, private _links: ILinks) {}
+    constructor(
+        private _requester: IRequester,
+        private _links: ILinks,
+    ) {}
+
+    private getCountryHeaderValue = () => {
+        const rawCountry = userModel.user?.country?.trim();
+        if (!rawCountry) {
+            return '';
+        }
+
+        const normalizedCountryCode = rawCountry.toUpperCase();
+        const country = countries.find(
+            item =>
+                item.cca2?.toUpperCase() === normalizedCountryCode ||
+                item.cca3?.toUpperCase() === normalizedCountryCode,
+        );
+
+        if (country?.name?.common) {
+            return country.name.common;
+        }
+
+        try {
+            const regionName = new Intl.DisplayNames(['en'], { type: 'region' }).of(normalizedCountryCode);
+            if (regionName && regionName !== normalizedCountryCode) {
+                return regionName;
+            }
+        } catch {
+            return rawCountry;
+        }
+
+        return rawCountry;
+    };
 
     getList = async (params: IEventsListParams): Promise<IResponse<IList<IEvent>>> => {
         try {
+            const countryHeaderValue = this.getCountryHeaderValue();
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.events}`,
                 params,
+                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             if (!response.isError && response.data) {
-                const items = response.data.items || response.data.rows || [];
+                const rows = response.data.rows || response.data.items || [];
+                const normalizedList: IList<IEvent> = {
+                    rows: Array.isArray(rows) ? rows : [],
+                    count: typeof response.data.count === 'number' ? response.data.count : rows.length,
+                    totalPages: typeof response.data.totalPages === 'number' ? response.data.totalPages : 1,
+                };
+
                 if (params.offset === 0) {
-                    eventsModel.setEvents(items);
+                    eventsModel.setList(normalizedList);
                 } else {
-                    const currentEvents = eventsModel.events;
-                    eventsModel.setEvents([...currentEvents, ...items]);
+                    eventsModel.append(normalizedList);
                 }
+
+                return {
+                    ...response,
+                    data: normalizedList,
+                };
             }
 
             return response;
@@ -38,9 +84,12 @@ class EventService {
 
     getById = async (id: number): Promise<IResponse<IEventDetail>> => {
         try {
+            const countryHeaderValue = this.getCountryHeaderValue();
+
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.events}/${id}`,
+                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             if (!response.isError) {
@@ -56,14 +105,17 @@ class EventService {
 
     toggleSave = async (id: number): Promise<IResponse<{ isSaved: boolean }>> => {
         try {
+            const countryHeaderValue = this.getCountryHeaderValue();
+
             const response = await this._requester.request({
                 method: 'POST',
                 url: `${this._links.events}/${id}/toggle-save`,
+                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             if (!response.isError) {
                 const updatedEvents = eventsModel.events.map(event =>
-                    event.id === id ? { ...event, isSaved: response.data.isSaved } : event
+                    event.id === id ? { ...event, isSaved: response.data.isSaved } : event,
                 );
                 eventsModel.setEvents(updatedEvents);
 
@@ -84,9 +136,12 @@ class EventService {
 
     registerForEvent = async (id: number): Promise<IResponse<{ success: boolean }>> => {
         try {
+            const countryHeaderValue = this.getCountryHeaderValue();
+
             const response = await this._requester.request({
                 method: 'POST',
                 url: `${this._links.events}/${id}/register`,
+                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             return response;
@@ -98,10 +153,13 @@ class EventService {
 
     getMapPins = async (params: IEventMapPinsParams): Promise<IResponse<IEventMapPin[]>> => {
         try {
+            const countryHeaderValue = this.getCountryHeaderValue();
+
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.eventMapPins}`,
                 params,
+                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             if (!response.isError && response.data) {
@@ -117,10 +175,13 @@ class EventService {
 
     createEvent = async (data: CreateEventDto): Promise<IResponse<IEventDetail>> => {
         try {
+            const countryHeaderValue = this.getCountryHeaderValue();
+
             const response = await this._requester.request({
                 method: 'POST',
                 url: `${this._links.events}`,
                 data,
+                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             return response;
