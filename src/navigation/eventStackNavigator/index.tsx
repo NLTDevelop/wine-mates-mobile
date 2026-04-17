@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { EventMapView } from '@/modules/event/ui/EventView';
-import { EventDetails } from '@/modules/event/ui/EventDetails';
+import { EventMapView } from '@/modules/event/ui/EventMapView';
+import { EventDetailsView } from '@/modules/event/ui/EventDetailsView';
 import { AddEventView } from '@/modules/event/ui/AddEventView';
 import { AddWineSetView } from '@/modules/event/ui/AddWineSetView';
 import { EditEventWineView } from '@/modules/event/ui/EditEventWineView';
@@ -14,7 +14,7 @@ export const EventStack = () => (
   <StackWrapper>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="EventMapView" component={EventMapView} />
-      <Stack.Screen name="EventDetails" component={EventDetails} />
+      <Stack.Screen name="EventDetailsView" component={EventDetailsView} />
       <Stack.Screen name="AddEventView" component={AddEventView} />
       <Stack.Screen name="AddWineSetView" component={AddWineSetView} />
       <Stack.Screen name="EditEventWineView" component={EditEventWineView} />

@@ -9,17 +9,17 @@ import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { getStyles } from './styles';
-import { useEventDetails } from '@/modules/event/ui/EventDetails/presenters/useEventDetails';
-import { useEventDetailsData } from '@/modules/event/ui/EventDetails/presenters/useEventDetailsData';
-import { useEventDetailsView } from '@/modules/event/ui/EventDetails/presenters/useEventDetailsView';
+import { useEventDetails } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetails';
+import { useEventDetailsData } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetailsData';
+import { useEventDetailsView } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetailsView';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { observer } from 'mobx-react';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { DropdownButton } from '@/UIKit/DropdownButton';
 
-export const EventDetails = observer(() => {
+export const EventDetailsView = observer(() => {
     const { colors, t } = useUiContext();
-    const route = useRoute<RouteProp<EventStackParamList, 'EventDetails'>>();
+    const route = useRoute<RouteProp<EventStackParamList, 'EventDetailsView'>>();
 
     const { eventId } = route.params;
     const { eventDetail, isError, isLoading } = useEventDetails(eventId);

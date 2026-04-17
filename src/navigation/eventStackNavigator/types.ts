@@ -3,7 +3,7 @@ import { IAddEventDraft } from '@/modules/event/types/IAddEventDraft';
 
 export type EventStackParamList = {
     EventMapView: undefined;
-    EventDetails: {
+    EventDetailsView: {
         eventId: number;
     };
     AddEventView: {

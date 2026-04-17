@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { FlatList, ListRenderItem } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { WineEventListItem } from '@/modules/event/components/WineEventListItem';
+import { WineEventListItem } from '@/modules/event/ui/EventMapView/components/WineEventListItem';
 import { IEvent } from '@/entities/events/types/IEvent';
 
 interface IWineEventListProps {

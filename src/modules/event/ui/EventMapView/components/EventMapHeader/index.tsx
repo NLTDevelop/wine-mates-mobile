@@ -3,8 +3,8 @@ import { View, TouchableOpacity } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { FilterIcon } from '@assets/icons/FilterIcon';
+import { useEventMapHeader } from './presenters/useEventMapHeader';
 import { getStyles } from './styles';
-import { useEventMapHeader } from '../presenters/useEventMapHeader';
 
 interface IProps {
     selectedTab: 'all' | 'tastings' | 'parties';

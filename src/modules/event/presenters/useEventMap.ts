@@ -127,14 +127,16 @@ export const useEventMap = () => {
         setIsFilterModalVisible(false);
     }, []);
 
+    const mapPins = eventsModel.mapPins;
+
     const filteredMapPins = useMemo(() => {
-        const pins = eventsModel.mapPins;
         if (selectedTab === 'all') {
-            return pins;
+            return mapPins;
         }
+
         const eventType = selectedTab === 'tastings' ? EventType.Tastings : EventType.Parties;
-        return pins.filter(pin => pin.eventType === eventType);
-    }, [selectedTab]);
+        return mapPins.filter(pin => pin.eventType === eventType);
+    }, [mapPins, selectedTab]);
 
     const refetch = useCallback(() => {
         loadEvents();

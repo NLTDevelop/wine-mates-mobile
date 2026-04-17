@@ -11,11 +11,11 @@ import { useAddEvent } from '../../presenters/useAddEvent';
 import { MapLocationIcon } from '@assets/icons/MapLocationIcon';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
-import { DateTimePickerModal } from '../components/DateTimePickerModal';
-import { useDateTimePicker } from '../components/DateTimePickerModal/presenters/useDateTimePicker';
+import { DateTimePickerModal } from './components/DateTimePickerModal';
+import { useDateTimePicker } from './components/DateTimePickerModal/presenters/useDateTimePicker';
 import { useEventDateTimeFormatter } from '../../presenters/useEventDateTimeFormatter';
 import { useEventTypeLabel } from '../../presenters/useEventTypeLabel';
-import { EventTypePickerModal } from '../components/EventTypePickerModal';
+import { EventTypePickerModal } from './components/EventTypePickerModal';
 
 export const AddEventView = () => {
     const { colors, t } = useUiContext();

@@ -46,7 +46,7 @@ export const useEventMapView = ({ events }: IUseEventMapViewProps) => {
     const onBookingPress = useCallback(() => {
         if (selectedEventId) {
             setIsModalVisible(false);
-            navigation.navigate('EventDetails', { eventId: selectedEventId });
+            navigation.navigate('EventDetailsView', { eventId: selectedEventId });
         }
     }, [selectedEventId, navigation]);
 
@@ -58,7 +58,7 @@ export const useEventMapView = ({ events }: IUseEventMapViewProps) => {
     }, [selectedEventId]);
 
     const onReadMorePress = useCallback((eventId: number) => {
-        navigation.navigate('EventDetails', { eventId });
+        navigation.navigate('EventDetailsView', { eventId });
     }, [navigation]);
 
     const onFavoritePress = useCallback((eventId: number) => {

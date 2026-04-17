@@ -181,7 +181,7 @@ export const useAddWineSetView = () => {
                     index: 1,
                     routes: [
                         { name: 'EventMapView' },
-                        { name: 'EventDetails', params: { eventId: createdEventId } },
+                        { name: 'EventDetailsView', params: { eventId: createdEventId } },
                     ],
                 }),
             );
