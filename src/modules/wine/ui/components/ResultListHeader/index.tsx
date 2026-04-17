@@ -3,63 +3,98 @@ import { View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { declOfWord, getContrastColor } from '@/utils';
+import { declOfWord } from '@/utils';
 import { ResultHeader } from '../ResultHeader';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
-import { TasteCharacteristicItem } from '../../../../scanner/ui/components/TasteCharacteristicItem';
-import { IStatistic, IWineDetails } from '@/entities/wine/types/IWineDetails';
+import { TasteCharacteristicItem } from '@/modules/scanner/ui/components/TasteCharacteristicItem';
+import { IStatistic, IWineDetails, IVintagesItem } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 import { userModel } from '@/entities/users/UserModel';
+import { useColorShades } from '@/modules/wine/presenters/useColorShades';
+import { StatisticCard } from '../StatisticCard';
+import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
+import { FoodPairing } from '@/UIKit/FoodPairing';
+import { TastingNote } from '../TastingNote';
 
 interface IProps {
     data: IWineDetails;
+    vintages: IVintagesItem[];
     onVintageChange: (item: IDropdownItem) => void;
     onFavoritePress: () => void;
+    hasCurrentVintageData: boolean;
+    isAllVintagesSelected: boolean;
+    fromScanner?: boolean;
+    hasReviews?: boolean;
 }
 
-export const ResultListHeader = ({ data, onVintageChange, onFavoritePress }: IProps) => {
+export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, hasReviews }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const isPremiumUser = userModel.user?.hasPremium || false;
+    const { colorShadeItems } = useColorShades(data.statistics.topColors);
 
+    const isPremiumUser = userModel.user?.hasPremium || false;
     const tasteCharacteristics = useMemo(
         () => data?.statistics?.tasteCharacteristics?.filter(item => item?.levels && item?.selectedIndex != null) ?? [],
         [data.statistics.tasteCharacteristics],
     );
-    const selectedColorTextColor = useMemo(
-        () => getContrastColor(data.statistics.topColor?.colorHex || colors.background_grey),
-    [data, colors]);
+    const isVintageTasted = useMemo(() => {
+        if (!data.isTasted) return false;
+        if (data.vintage === null) return true;
+
+        const isInVintages = vintages.some(v => {
+            if (typeof v === 'number') return v === data.vintage;
+            if (typeof v === 'string') {
+                const parsedValue = Number(v);
+                return !Number.isNaN(parsedValue) && parsedValue === data.vintage;
+            }
+
+            return v.vintage === data.vintage;
+        });
+        const isCurrentVintage = typeof data.currentVintage === 'object'
+            && data.currentVintage !== null
+            && data.currentVintage.vintage === data.vintage;
+
+        return isInVintages || isCurrentVintage;
+    }, [data.isTasted, data.vintage, data.currentVintage, vintages]);
 
     return (
         <View>
-            <ResultHeader item={data} onVintageChange={onVintageChange} onFavoritePress={onFavoritePress}/>
+            <ResultHeader
+                item={data}
+                vintages={vintages}
+                onVintageChange={onVintageChange}
+                onFavoritePress={onFavoritePress}
+                hasCurrentVintageData={hasCurrentVintageData}
+                isAllVintagesSelected={isAllVintagesSelected}
+                fromScanner={fromScanner}
+            />
 
-            {data.isTasted && (
-                <View style={styles.tasted}>
-                    <Typography text={t('wine.tasted')} style={styles.tastedText} />
-                    <GlassWithWineIcon />
-                </View>
+            {isVintageTasted && (
+                <>
+                    <View style={styles.tasted}>
+                        <Typography text={t('wine.tasted')} style={styles.tastedText} />
+                        <GlassWithWineIcon />
+                    </View>
+                </>
             )}
 
-            {data.statistics.topColor && (
+            {colorShadeItems.length > 0 && (
                 <>
                     <View style={styles.titleContainer}>
-                        <Typography text={t('wine.color')} variant="h4" />
+                        <Typography text={t('wine.colors')} variant="h4" />
                         <Typography text={t('wine.mostSelectedColor')} variant="body_400" style={styles.text} />
                     </View>
-                    <View
-                        style={[
-                            styles.selectedColor,
-                            { backgroundColor: data.statistics.topColor?.colorHex || colors.background_grey },
-                        ]}
-                    >
-                        <Typography
-                            text={data.statistics.topColor?.name || '-'}
-                            variant="h5"
-                            style={{ color: selectedColorTextColor }}
-                        />
+                    <View style={styles.mapListContainer}>
+                        {colorShadeItems.map(item => (
+                            <StatisticCard
+                                key={item.id}
+                                backgroundColor={item.colorHex}
+                                label={item.label}
+                                count={item.count}
+                            />
+                        ))}
                     </View>
                 </>
             )}
@@ -71,25 +106,17 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress }: IPr
                         <Typography text={t('wine.mostSelected')} variant="body_400" style={styles.text} />
                     </View>
                     <View style={styles.mapListContainer}>
-                        {data.statistics.topAromas.map((item: IStatistic) => {
-                            const textColor = getContrastColor(item.colorHex || colors.background_grey);
-                            return (
-                                <View
-                                    key={item.id}
-                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.background_grey }]}
-                                >
-                                    <Typography text={item.name} style={{ color: textColor }} />
-                                    <Typography
-                                        text={`(${declOfWord(
-                                            Number(item.userCount),
-                                            t('scanner.reviewCount') as unknown as Array<string>,
-                                        )})`}
-                                        variant="subtitle_12_500"
-                                        style={[styles.countText, { color: `${textColor}B3` }]}
-                                    />
-                                </View>
-                            );
-                        })}
+                        {data.statistics.topAromas.map((item: IStatistic) => (
+                            <StatisticCard
+                                key={item.id}
+                                backgroundColor={item.colorHex || colors.background_grey}
+                                label={item.name}
+                                count={`(${declOfWord(
+                                    Number(item.userCount),
+                                    t('scanner.reviewCount') as unknown as Array<string>,
+                                )})`}
+                            />
+                        ))}
                     </View>
                 </>
             )}
@@ -101,28 +128,23 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress }: IPr
                         <Typography text={t('wine.mostSelected')} variant="body_400" style={styles.text} />
                     </View>
                     <View style={styles.mapListContainer}>
-                        {data.statistics.topFlavors.map((item: IStatistic) => {
-                            const textColor = getContrastColor(item.colorHex || colors.background_grey);
-
-                            return (
-                                <View
-                                    key={item.id}
-                                    style={[styles.mapListItem, { backgroundColor: item.colorHex || colors.background_grey }]}
-                                >
-                                    <Typography text={item.name} style={{ color: textColor }} />
-                                    <Typography
-                                        text={`(${declOfWord(
-                                            Number(item.userCount),
-                                            t('scanner.reviewCount') as unknown as Array<string>,
-                                        )})`}
-                                        variant="subtitle_12_500"
-                                        style={[styles.countText, { color: `${textColor}B3` }]}
-                                    />
-                                </View>
-                            );
-                        })}
+                        {data.statistics.topFlavors.map((item: IStatistic) => (
+                            <StatisticCard
+                                key={item.id}
+                                backgroundColor={item.colorHex || colors.background_grey}
+                                label={item.name}
+                                count={`(${declOfWord(
+                                    Number(item.userCount),
+                                    t('scanner.reviewCount') as unknown as Array<string>,
+                                )})`}
+                            />
+                        ))}
                     </View>
                 </>
+            )}
+
+            {data.statistics.topWinePeaks && data.statistics.topWinePeaks.length > 0 && (
+                <WinePeaksGrid peaks={data.statistics.topWinePeaks} />
             )}
 
             {tasteCharacteristics.length > 0 && (
@@ -134,7 +156,7 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress }: IPr
                     <View style={styles.slidersListContainer}>
                         {tasteCharacteristics.map((item: IWineTasteCharacteristic) => (
                             <TasteCharacteristicItem
-                                key={item.id}
+                                key={`${item.id}-${item.selectedIndex ?? 0}-${data.vintage ?? 'none'}`}
                                 item={item}
                                 value={item.selectedIndex || 0}
                                 isPremiumUser={isPremiumUser}
@@ -145,8 +167,14 @@ export const ResultListHeader = ({ data, onVintageChange, onFavoritePress }: IPr
                 </>
             )}
 
-            {wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0 && (
-                <Typography text={t('wine.reviews')} variant="h4" style={styles.title} />
+            {data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
+
+            {data.aiSnacks?.length ? (
+                <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton isLocked={!isPremiumUser} />
+            ) : null}
+
+            {(hasReviews || (wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0)) && (
+                <Typography text={t('wine.reviews')} variant="h3" style={styles.title} />
             )}
         </View>
     );

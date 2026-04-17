@@ -56,7 +56,6 @@ export const WineReviewView = observer(() => {
                     onPress={handleNextPress}
                     containerStyle={styles.button}
                     RightAccessory={<NextLongArrowIcon />}
-                    disabled={!review.length}
                 />
             </View>
         </ScreenContainer>

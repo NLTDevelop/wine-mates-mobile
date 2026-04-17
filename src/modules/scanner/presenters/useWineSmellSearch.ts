@@ -6,7 +6,8 @@ import { wineService } from '@/entities/wine/WineService';
 import { useDebounce } from '@/hooks/useDebounce';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { Keyboard, TextInput } from 'react-native';
 
 interface IProps {
     data: IWineSmell[],
@@ -16,13 +17,14 @@ interface IProps {
 }
 
 export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItemPress }: IProps) => {
+    const searchInputRef = useRef<TextInput>(null);
     const [search, setSearch] = useState('');
     const [isSearching, setIsSearching] = useState(false);
     const [isDebouncing, setIsDebouncing] = useState(false);
 
     const getSearchedAromas = useCallback(async (query: string) => {
         try {
-            if (!query || !wineModel.base?.colorOfWine.id) {
+            if (!query || !wineModel.base?.colorOfWine.id || !wineModel.base?.typeOfWine?.id) {
                 wineModel.searchedAroma = null;
                 return;
             }
@@ -33,6 +35,7 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
             const params = {
                 search: query,
                 colorId: wineModel.base?.colorOfWine.id,
+                typeId: wineModel.base?.typeOfWine.id,
             }
 
             const response = await wineService.getAromas(params);
@@ -57,6 +60,7 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
 
         if (selectedSmell) {
             onSelectedItemPress(selectedSmell);
+            Keyboard.dismiss();
             return;
         }
 
@@ -71,6 +75,7 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
             };
 
         onItemPress(aromaToAdd, subgroup?.id ?? item.subgroupId, group?.id ?? null);
+        Keyboard.dismiss();
     }, [data, onItemPress, onSelectedItemPress, selected]);
 
     const onSearchTextChange = useCallback((value: string) => {
@@ -87,5 +92,5 @@ export const useWineSmellSearch = ({ data, selected, onItemPress, onSelectedItem
 
     const searchedAromas = wineModel.searchedAroma;
         
-    return { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress };
+    return { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress, searchInputRef };
 };

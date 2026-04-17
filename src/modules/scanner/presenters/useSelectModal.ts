@@ -1,5 +1,6 @@
 import { IAroma, ISmellSubgroup } from '@/entities/wine/types/IWineSmell';
 import { useCallback, useState } from 'react';
+import { Keyboard } from 'react-native';
 
 export const useSelectModal = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -12,6 +13,7 @@ export const useSelectModal = () => {
         setSelectedSubgroup(subgroup);
         setGroupId(currentGroupId);
         setIsVisible(true);
+        Keyboard.dismiss();
     }, []);
 
     const onHide = useCallback(() => {

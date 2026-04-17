@@ -5,18 +5,33 @@ interface IProps {
     width?: number;
     height?: number;
     text: string;
+    titleFontSize?: number;
+    mainFontSize?: number;
+    nameFontSize?: number;
+    hideText?: boolean;
 }
 
-export const GoldMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
+export const GoldMedalIcon = ({
+    width = 32,
+    height = 32,
+    text,
+    titleFontSize,
+    mainFontSize,
+    nameFontSize,
+    hideText = false,
+}: IProps) => {
+    return (
     <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 235 230" fill='none'>
        <Path
       fill="url(#a)"
       d="M0 115C0 51.487 51.487 0 115 0h5c63.513 0 115 51.487 115 115s-51.487 115-115 115h-5C51.487 230 0 178.513 0 115Z"
     />
-    <Text
+    {!hideText && (
+        <>
+            <Text
                 x="117"
-                y="60"
-                fontSize={scaleFontSize(24)}
+                y="50"
+                fontSize={scaleFontSize(titleFontSize || 24)}
                 fill="#53430F"
                 fontFamily="VisueltPro"
                 fontWeight="700"
@@ -24,11 +39,11 @@ export const GoldMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
             >
                 WineMates
             </Text>
-    
+
             <Text
                 x="117"
-                y="150"
-                fontSize={scaleFontSize(96)}
+                y="145"
+                fontSize={scaleFontSize(mainFontSize || 90)}
                 fill="#53430F"
                 fontFamily="VisueltPro"
                 fontWeight="500"
@@ -36,11 +51,11 @@ export const GoldMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
             >
                 {text}
             </Text>
-    
+
             <Text
                 x="117"
-                y="195"
-                fontSize={scaleFontSize(32)}
+                y="190"
+                fontSize={scaleFontSize(nameFontSize || 26)}
                 fill="#53430F"
                 fontFamily="VisueltPro"
                 fontWeight="700"
@@ -48,6 +63,8 @@ export const GoldMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
             >
                 Gold
             </Text>
+        </>
+    )}
     <Defs>
       <Pattern
         id="a"
@@ -67,3 +84,4 @@ export const GoldMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
     </Defs>
     </Svg>
 );
+};

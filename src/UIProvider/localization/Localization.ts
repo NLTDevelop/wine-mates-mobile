@@ -76,6 +76,10 @@ class Localization implements ILocalization {
         return this.localizationStore.data || 'en';
     }
 
+    get language() {
+        return this.localizationStore.data || 'en';
+    }
+
     setTranslation = (translations: any) => {
         if (typeof translations === 'object' && translations) {
             this.i18n.translations = translations;

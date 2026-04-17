@@ -7,7 +7,6 @@ import { wineModel } from './WineModel';
 import { IWineType } from './types/IWineType';
 import { IWineColor } from './types/IWineColors';
 import { IWineSmell } from './types/IWineSmell';
-import { IWineTaste } from './types/IWineTaste';
 import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
 import { IWineAroma } from './types/IWineAroma';
 import { IWine } from './types/IWine';
@@ -21,11 +20,14 @@ import { IWineSmellSearchParams } from './params/IWIneSmellSearchParams';
 import { GenerateNoteDto } from './dto/GenerateNote.dto';
 import { IRateContext } from './types/IRateContext';
 import { IAIData } from './types/IAIData';
+import { IWineTasteGroup } from './types/IWineTatseGroup';
+import { ITasteProfile } from './types/ITasteProfile';
+import { IRecommendationWineListParams } from './params/IRecommendationWineListParams';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
 
-    list = async ( data: FormData): Promise<IResponse<{raws: IWineListItem[]} | { aiData: IAIData }>> => {
+    list = async ( data: FormData): Promise<IResponse<{raws: IWineListItem[], aiData: IAIData }>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -43,15 +45,30 @@ class WineService {
         }
     };
 
-    getById = async (id: number): Promise<IResponse<IWineDetails>> => {
+    getById = async (id: number, params?: { vintages?: 'All' }): Promise<IResponse<IWineDetails>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.wines}/${id}`,
+                params,
             });
             return response;
         } catch (error) {
             console.warn('WineService -> getById: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getMyWineDetails = async (id: number, rateId: number): Promise<IResponse<IWineDetails>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wines}/${id}/my-details`,
+                params: { rateId },
+            });
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getMyWineDetails: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
@@ -143,12 +160,11 @@ class WineService {
         }
     };
 
-    getColors = async (params: { wineTypeId: number }): Promise<IResponse<IWineColor[]>> => {
+    getColors = async (): Promise<IResponse<IWineColor[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.wineColors}`,
-                params,
             });
 
             if (!response.isError) {
@@ -162,7 +178,7 @@ class WineService {
         }
     };
 
-    getSmells = async (params: { colorId: number }): Promise<IResponse<IWineSmell[]>> => {
+    getSmells = async (params: { colorId: number; typeId: number }): Promise<IResponse<IWineSmell[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -200,11 +216,11 @@ class WineService {
         }
     };
 
-    getTastes = async (params: { colorId: number }): Promise<IResponse<IWineTaste[]>> => {
+    getTasteGroups = async (params: { colorId: number; typeId: number }): Promise<IResponse<IWineTasteGroup[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
-                url: `${this._links.wineTaste}`,
+                url: `${this._links.wineTasteGroups}`,
                 params,
             });
 
@@ -214,12 +230,12 @@ class WineService {
 
             return response;
         } catch (error) {
-            console.warn('WineService -> getTastes: ', error);
+            console.warn('WineService -> getTasteGroups: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
 
-    getTastesCharacteristics = async (params: { colorId: number }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
+    getTastesCharacteristics = async (params: { colorId: number; typeId: number }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -227,13 +243,15 @@ class WineService {
                 params,
             });
 
+            console.log('WineService -> getTastesCharacteristics: ', response.data);
+
             if (!response.isError) {
                 wineModel.tasteCharacteristics = response.data;
             }
 
             return response;
         } catch (error) {
-            console.warn('WineService -> getTastes: ', error);
+            console.warn('WineService -> getTastesCharacteristics: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
@@ -302,6 +320,35 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getLimits: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getTasteProfile = async (): Promise<IResponse<ITasteProfile[]>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.tasteProfile}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getTasteProfile: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getRecommendations = async (params: IRecommendationWineListParams): Promise<IResponse<IList<IWineListItem>>>  => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineRecommendations}`,
+                params,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getRecommendations: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

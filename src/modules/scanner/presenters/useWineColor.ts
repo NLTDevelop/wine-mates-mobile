@@ -12,13 +12,8 @@ export const useWineColor = (typeId: number | null | undefined) => {
         let isMounted = true;
 
         const fetchColors = async () => {
-            if (!typeId) {
-                if (isMounted) setColorsData([]);
-                return;
-            }
-
             try {
-                const response = await wineService.getColors({ wineTypeId: typeId });
+                const response = await wineService.getColors();
 
                 if (response.isError || !response.data) {
                     toastService.showError(

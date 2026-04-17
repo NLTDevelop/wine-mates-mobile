@@ -1,4 +1,5 @@
 import type { IWineImage } from '../types/IWineImage';
+import type { ISnack } from '@/entities/snacks/types/ISnack';
 
 interface ITasteCharacteristic {
     characteristicId: number;
@@ -26,4 +27,7 @@ export interface AddRateDto {
         flavors?: string[];
     };
     image?: IWineImage;
+    winePeak?: number;
+    aiTastingNote?: string;
+    aiSnacks?: ISnack[];
 }

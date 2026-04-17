@@ -12,12 +12,13 @@ interface IProps extends TextInputProps {
     LeftAccessory?: React.ReactNode;
     label?: string;
     error?: boolean;
+    errorText?: string;
     containerStyle?: ViewStyle;
     inputContainerStyle?: ViewStyle;
 }
 
 export const CustomInput = memo(forwardRef<TextInput, IProps>(
-    ({ label, error, RightAccessory, LeftAccessory, containerStyle, secureTextEntry, inputContainerStyle, ...props }, ref) => {
+    ({ label, error, errorText, RightAccessory, LeftAccessory, containerStyle, secureTextEntry, inputContainerStyle, ...props }, ref) => {
         const { colors } = useUiContext();
         const { isFocused, isPasswordVisible, setPasswordVisible, handleFocus, handleBlur, inputRef }
             = useCustomInput({ secureTextEntry, ...props }, ref);
@@ -52,8 +53,7 @@ export const CustomInput = memo(forwardRef<TextInput, IProps>(
                         </TouchableOpacity>
                     )}
                 </View>
-                {/* Check if is need */}
-                {/* {!!error && <Text style={styles.errorText}>{error}</Text>} */}
+                {!!error && !!errorText && <Typography variant="body_400" text={errorText} style={styles.errorText} />}
             </View>
         );
     }),

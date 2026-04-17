@@ -9,7 +9,12 @@ export interface IWineReviewsListItem {
         firstName: string;
         lastName: string;
         wineExperienceLevel: string;
-        avatar: {
+        avatar?: {
+            smallUrl: string;
+            mediumUrl: string;
+            originalUrl: string;
+        } | null;
+        image?: {
             smallUrl: string;
             mediumUrl: string;
             originalUrl: string;

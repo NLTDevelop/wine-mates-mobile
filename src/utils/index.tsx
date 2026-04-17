@@ -4,6 +4,7 @@ import { enUS, uk } from 'date-fns/locale';
 import { colorTheme } from '@/UIProvider/theme/ColorTheme';
 
 export const isIOS = Platform.OS === 'ios';
+export const isAndroid = Platform.OS === 'android';
 
 const idealWidth: number = 375;
 const idealHeight: number = 812;
@@ -46,6 +47,14 @@ export const declOfWord = (num: number, word: Array<string>): string => {
         }`;
     }
     return '';
+};
+
+export const hexToRgba = (hex: string, alpha: number): string => {
+    const cleanHex = hex.replace('#', '');
+    const r = parseInt(cleanHex.substring(0, 2), 16);
+    const g = parseInt(cleanHex.substring(2, 4), 16);
+    const b = parseInt(cleanHex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
 const parseDate = (raw: string | number | Date) => {
@@ -101,4 +110,49 @@ export const getContrastColor = (hexColor: string) => {
 
     return brightness > 128 ? colorTheme.colors.text : colorTheme.colors.text_inverted;
 };
+
+export const colorOpacity = (
+    hex: string,
+    opacityPercent: number
+): string => {
+
+    let cleanHex = hex.replace('#', '');
+
+    if (cleanHex.length === 3) {
+        cleanHex = cleanHex
+            .split('')
+            .map(c => c + c)
+            .join('');
+    }
+
+    if (!/^[0-9A-Fa-f]{6}$/.test(cleanHex)) {
+        throw new Error(`Invalid hex color: ${hex}`);
+    }
+
+    const r = parseInt(cleanHex.substring(0, 2), 16);
+    const g = parseInt(cleanHex.substring(2, 4), 16);
+    const b = parseInt(cleanHex.substring(4, 6), 16);
+
+    const alpha = Math.min(100, Math.max(0, opacityPercent)) / 100;
+
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+export const formatEventDate = (date: string): { month: string; day: string } => {
+    if (!date) {
+        return { month: 'DEC', day: '16' };
+    }
+
+    try {
+        const dateObj = new Date(date);
+        const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+        const month = monthNames[dateObj.getMonth()];
+        const day = dateObj.getDate().toString();
+
+        return { month, day };
+    } catch (error) {
+        return { month: 'DEC', day: '16' };
+    }
+};
+
 

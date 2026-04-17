@@ -10,35 +10,48 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
+import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
 
 export const useWineReviewResult = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoadingLimits, setIsLoadingLimits] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const [note, setNote] = useState<string | null>(null);
+    const [isNoteEditing, setIsNoteEditing] = useState(false);
+    const [noteValidationError, setNoteValidationError] = useState<string | null>(null);
+    const [note, setNote] = useState<string | null>(wineModel.review?.aiTastingNote || null);
     const [limits, setLimits] = useState<IRateContext | null>(null);
     const isPremiumUser = userModel.user?.hasPremium || false;
 
+    const patchReview = useCallback((payload: Partial<NonNullable<typeof wineModel.review>>) => {
+        wineModel.review = {
+            ...(wineModel.review || { review: '' }),
+            ...payload,
+        };
+    }, []);
+
     const getLimits = useCallback(async () => {
         try {
-            if (!wineModel.wine?.id) return;
+            if (!wineModel.wine?.id) return null;
 
             setIsLoadingLimits(true);
 
             const params = { wineId: wineModel.wine?.id };
-            
+
             const response = await wineService.getLimits(params);
 
             if (response.isError || !response.data) {
                 if (response.message) {
                     toastService.showError(localization.t('common.errorHappened'), response.message);
                 }
+                return null;
             } else {
                 setLimits(response.data);
+                return response.data;
             }
         } catch (error) {
             console.error(JSON.stringify(error, null, 2));
+            return null;
         } finally {
             setIsLoadingLimits(false);
         }
@@ -47,6 +60,8 @@ export const useWineReviewResult = () => {
     const getNote = useCallback(async () => {
         try {
             setIsLoading(true);
+            setIsNoteEditing(false);
+            setNoteValidationError(null);
 
             if (!wineModel.look) {
                 toastService.showError(
@@ -55,6 +70,13 @@ export const useWineReviewResult = () => {
                 );
                 return;
             }
+
+            const suggestedAromas = (wineModel.selectedSmells || [])
+                .filter(item => !item.colorHex && item.name?.trim())
+                .map(item => item.name.trim());
+            const suggestedFlavors = (wineModel.selectedTastes || [])
+                .filter(item => !item.colorHex && item.name?.trim())
+                .map(item => item.name.trim());
 
             const payload: GenerateNoteDto = {
                 wineId: wineModel.wine?.id || 0,
@@ -68,7 +90,8 @@ export const useWineReviewResult = () => {
                     .map(item => item.id),
                 tasteCharacteristics: (wineModel.tasteCharacteristics || [])
                     .map(item => {
-                        const level = item.levels[item.selectedIndex ?? 0];
+                        const selectedIndex = item.selectedIndex ?? 0;
+                        const level = item.levels[selectedIndex];
 
                         if (!level) {
                             return null;
@@ -83,9 +106,14 @@ export const useWineReviewResult = () => {
             };
 
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
-                payload.userRating = wineModel.review?.starRate;
+                const starRate = wineModel.review?.starRate ?? 0;
+                if (typeof starRate === 'number' && !Number.isNaN(starRate)) {
+                    payload.userRating = Number(starRate.toFixed(1));
+                }
             } else {
-                payload.expertRating = wineModel.review?.rate;
+                if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
+                    payload.expertRating = wineModel.review.rate;
+                }
             }
 
             if (wineModel.base?.typeOfWine.isSparkling) {
@@ -95,6 +123,21 @@ export const useWineReviewResult = () => {
                     perlage: wineModel.look.perlage,
                     appearance: wineModel.look.appearance,
                 };
+            }
+
+            const hasSuggestedAromas = suggestedAromas.length > 0;
+            const hasSuggestedFlavors = suggestedFlavors.length > 0;
+
+            if (hasSuggestedAromas || hasSuggestedFlavors) {
+                payload.suggestions = {};
+
+                if (hasSuggestedAromas) {
+                    payload.suggestions.aromas = suggestedAromas;
+                }
+
+                if (hasSuggestedFlavors) {
+                    payload.suggestions.flavors = suggestedFlavors;
+                }
             }
 
             const response = await wineService.generateNote(payload);
@@ -116,20 +159,39 @@ export const useWineReviewResult = () => {
                         },
                     };
                 });
-                setNote(response.data.note);
+                const generatedNote = response.data.note || null;
+                setNote(generatedNote);
+                patchReview({
+                    aiTastingNote: generatedNote,
+                    initialAiTastingNote: generatedNote,
+                    hasEditedAiTastingNote: false,
+                });
             }
         } catch (error) {
             console.error(JSON.stringify(error, null, 2));
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [patchReview]);
 
     const load = useCallback(async (isActiveRef: { current: boolean }) => {
-        await getLimits();
+        const limitsData = await getLimits();
         if (!isActiveRef.current) {
             return;
         }
+
+        const cachedNote = wineModel.review?.aiTastingNote || null;
+        if (cachedNote) {
+            setNote(cachedNote);
+            setIsLoading(false);
+            return;
+        }
+
+        if (limitsData?.aiUsage.left === 0) {
+            setIsLoading(false);
+            return;
+        }
+
         await getNote();
     }, [getLimits, getNote]);
 
@@ -143,7 +205,31 @@ export const useWineReviewResult = () => {
         };
     }, [load]);
 
-    const handleSavePress = useCallback(async () => {
+    const updateNote = useCallback((updatedNote: string) => {
+        const trimmedNote = updatedNote.trim();
+        const initialNote = (wineModel.review?.initialAiTastingNote || '').trim();
+        const hasEdited = Boolean(trimmedNote) && trimmedNote !== initialNote;
+
+        if (trimmedNote) {
+            setNoteValidationError(null);
+        }
+
+        setNote(updatedNote);
+        patchReview({
+            aiTastingNote: updatedNote,
+            hasEditedAiTastingNote: hasEdited,
+        });
+    }, [patchReview]);
+
+    const onSavePress = useCallback(async () => {
+        const editedAiNote = wineModel.review?.aiTastingNote?.trim() || '';
+        if (isNoteEditing && !editedAiNote) {
+            setNoteValidationError(localization.t('wine.emptyTastingNoteError'));
+            return;
+        }
+
+        setNoteValidationError(null);
+
         try {
             setIsSaving(true);
 
@@ -152,11 +238,11 @@ export const useWineReviewResult = () => {
                 : wineModel.tasteCharacteristics?.filter(item => !item.isPremium);
 
             const aromas = wineModel.selectedSmells
-                ?.filter(item => item.aroma?.colorHex)
-                ?.map(item => item.aroma?.id || 0);
+                ?.filter(item => item.colorHex)
+                ?.map(item => item.id);
             const suggestedAromas = wineModel.selectedSmells
-                ?.filter(item => !item.aroma?.colorHex)
-                ?.map(item => item.aroma?.name || '');
+                ?.filter(item => !item.colorHex)
+                ?.map(item => item.name || '');
 
             const flavors = wineModel.selectedTastes?.filter(item => item.colorHex)?.map(item => item.id);
             const suggestedFlavors = wineModel.selectedTastes
@@ -174,20 +260,32 @@ export const useWineReviewResult = () => {
                 aromas: aromas || [],
                 flavors: flavors || [],
                 tasteCharacteristics:
-                    available?.map(item => ({
-                        characteristicId: item.id,
-                        levelId: item.levels[item.selectedIndex ?? 0]?.id || 0,
-                    })) || [],
+                    available?.map(item => {
+                        const selectedIndex = item.selectedIndex ?? 0;
+                        return {
+                            characteristicId: item.id,
+                            levelId: item.levels[selectedIndex]?.id || 0,
+                        };
+                    }) || [],
             };
 
             if (wineModel.image) {
                 payload.image = wineModel.image;
             }
 
+            if (wineModel.winePeak !== null) {
+                payload.winePeak = wineModel.winePeak;
+            }
+
             if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
-                payload.userRating = wineModel.review?.starRate;
+                const starRate = wineModel.review?.starRate ?? 0;
+                if (typeof starRate === 'number' && !Number.isNaN(starRate)) {
+                    payload.userRating = Number(starRate.toFixed(1));
+                }
             } else {
-                payload.expertRating = wineModel.review?.rate;
+                if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
+                    payload.expertRating = wineModel.review.rate;
+                }
             }
 
             if (wineModel.base?.typeOfWine.isSparkling) {
@@ -212,6 +310,14 @@ export const useWineReviewResult = () => {
                 if (hasSuggestedFlavors) {
                     payload.suggestions.flavors = suggestedFlavors;
                 }
+            }
+
+            if (wineModel.review?.aiTastingNote) {
+                payload.aiTastingNote = wineModel.review.aiTastingNote;
+            }
+
+            if (wineModel.review?.aiSnacks) {
+                payload.aiSnacks = wineModel.review.aiSnacks;
             }
 
             const response = await wineService.addToRate(payload);
@@ -266,7 +372,24 @@ export const useWineReviewResult = () => {
                 };
 
                 if (hasDetailsScreen) {
-                    navigation.popTo('WineDetailsView', wineDetailsParams);
+                    const detailsRoute = state.routes.find(route => route.name === 'WineDetailsView');
+                    if (detailsRoute) {
+                        const updatedRoutes = state.routes.map(route =>
+                            route.name === 'WineDetailsView'
+                                ? { ...route, params: wineDetailsParams }
+                                : route
+                        );
+                        const detailsIndex = updatedRoutes.findIndex(r => r.name === 'WineDetailsView');
+                        const filteredRoutes = updatedRoutes.slice(0, detailsIndex + 1);
+
+                        navigation.dispatch(
+                            CommonActions.reset({
+                                ...state,
+                                routes: filteredRoutes,
+                                index: filteredRoutes.length - 1,
+                            }),
+                        );
+                    }
                 } else {
                     const filteredRoutes = state.routes.filter(route => !routesToDrop.has(route.name));
                     const normalizedRoutes = filteredRoutes.map(normalizeScannerStack);
@@ -284,6 +407,7 @@ export const useWineReviewResult = () => {
                     );
                 }
 
+                clearTasteCharacteristicsCache();
                 wineModel.clear();
             }
         } catch (error) {
@@ -291,7 +415,33 @@ export const useWineReviewResult = () => {
         } finally {
             setIsSaving(false);
         }
-    }, [navigation, isPremiumUser]);
+    }, [navigation, isPremiumUser, patchReview, isNoteEditing]);
 
-    return { handleSavePress, note, isLoading, isSaving, limits, isLoadingLimits, getNote, setLimits };
+    const onNoteEditingChange = useCallback((isEditing: boolean) => {
+        setIsNoteEditing(isEditing);
+
+        if (!isEditing) {
+            setNoteValidationError(null);
+        }
+    }, []);
+
+    const onInvalidNoteEditingComplete = useCallback(() => {
+        setIsNoteEditing(true);
+        setNoteValidationError(localization.t('wine.emptyTastingNoteError'));
+    }, []);
+
+    return {
+        onSavePress,
+        note,
+        isLoading,
+        isSaving,
+        limits,
+        isLoadingLimits,
+        getNote,
+        setLimits,
+        updateNote,
+        noteValidationError,
+        onNoteEditingChange,
+        onInvalidNoteEditingComplete,
+    };
 };

@@ -1,5 +1,15 @@
 import { WineExperienceLevelEnum } from "../enums/WineExperienceLevelEnum";
 
+export interface IAvatar {
+    name: string;
+    originalName: string;
+    mimetype: string;
+    size: number;
+    smallUrl: string;
+    mediumUrl: string;
+    originalUrl: string;
+}
+
 export interface IUser {
     id: number;
     email: string;
@@ -14,6 +24,9 @@ export interface IUser {
     phoneNumber: string;
     city: string;
     avatarUrl: string;
+    avatar?: IAvatar;
+    instagramLink: string;
+    website: string;
     wineExperienceLevel: WineExperienceLevelEnum;
     isConfirmed: true;
     hasPremium: boolean;

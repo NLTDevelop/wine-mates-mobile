@@ -7,24 +7,32 @@ import { userModel } from '@/entities/users/UserModel';
 
 
 class AxiosRequester implements IRequester {
-    private getHeaders = (headers?: object) => {
+    private getHeaders = (headers?: object, isFormData: boolean = false) => {
+        const skipAuth = Boolean((headers as any)?.['X-Skip-Auth']);
         const result: any = {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
+            'Content-Type': isFormData ? 'multipart/form-data' : 'application/json',
             'Accept-Language': localization.locale,
         };
-        if (userModel.token) {
-            result['Authorization'] = `Bearer ${userModel.token}`;
+        if (userModel.token && !skipAuth) {
+            result.Authorization = `Bearer ${userModel.token}`;
         }
         if (headers) {
             Object.assign(result, headers);
         }
+        delete result['X-Skip-Auth'];
         return result;
     };
 
     request: IRequester['request'] = async (config: AxiosRequestConfig<object>): Promise<IResponse<any>> => {
         try {
-            config.headers = this.getHeaders(config.headers);
+            const maybeData: any = (config as any)?.data;
+            const isFormData =
+                !!maybeData &&
+                (typeof (global as any)?.FormData !== 'undefined'
+                    ? maybeData instanceof (global as any).FormData || !!maybeData?._parts
+                    : !!maybeData?._parts);
+            config.headers = this.getHeaders(config.headers, isFormData);
             console.log('AxiosRequester -> request: ', config);
             const response = await axios(config);
             console.log('AxiosRequester -> request response: ', response);

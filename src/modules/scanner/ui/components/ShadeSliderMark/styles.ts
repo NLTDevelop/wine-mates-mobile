@@ -1,9 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 
-export const getStyles = (  colors: IColors,  MARKER: number, MARKER_INNER: number, selectedColor: string,
-    TRACK_HEIGHT: number,
-) =>
+export const getStyles = (colors: IColors, MARKER: number, MARKER_INNER: number, TRACK_HEIGHT: number) =>
     StyleSheet.create({
         marker: {
             position: 'absolute',
@@ -26,6 +24,5 @@ export const getStyles = (  colors: IColors,  MARKER: number, MARKER_INNER: numb
             width: MARKER_INNER,
             height: MARKER_INNER,
             borderRadius: MARKER_INNER / 2,
-            backgroundColor: selectedColor,
         },
     });

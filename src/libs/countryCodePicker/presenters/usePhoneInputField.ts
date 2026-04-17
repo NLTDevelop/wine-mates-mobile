@@ -9,10 +9,11 @@ import { ICountry } from '../types/ICountry';
 interface IProps  {
     onChangeText: (value: string) => void,
     clearPhone?: () => void,
-    onChangeCountryCode?: (code: string) => void
+    onChangeCountryCode?: (code: string) => void,
+    initialCca2?: CountryCode | null,
 }
 
-export const usePhoneInputField = ({onChangeText, clearPhone, onChangeCountryCode} : IProps) => {
+export const usePhoneInputField = ({ onChangeText, clearPhone, onChangeCountryCode, initialCca2 = null }: IProps) => {
     const lang = RNLocalize.getLocales()[0]?.languageCode || 'en';
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
     const [visible, setVisible] = useState(false);
@@ -23,7 +24,7 @@ export const usePhoneInputField = ({onChangeText, clearPhone, onChangeCountryCod
     useEffect(() => {
         const detectCountry = async () => {
             try {
-                const localeCountry = RNLocalize.getCountry() || 'US';
+                const localeCountry = initialCca2 || RNLocalize.getCountry() || 'US';
                 const matched = countries.find(c => c.cca2.toLowerCase() === localeCountry.toLowerCase());
 
                 const fallback = { name: 'Ukraine', cca2: 'UA' as CountryCode, callingCode: '+380' };
@@ -49,7 +50,7 @@ export const usePhoneInputField = ({onChangeText, clearPhone, onChangeCountryCod
             }
         };
         detectCountry();
-    }, [lang]);
+    }, [lang, initialCca2]);
 
     useEffect(() => {
         if (selectedCountry?.callingCode && onChangeCountryCode) {

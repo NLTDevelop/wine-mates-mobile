@@ -2,7 +2,7 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (colors: IColors, hasIndicatorOffset: boolean) => {
     const styles = StyleSheet.create({
         modal: {
             justifyContent: 'center',
@@ -19,11 +19,16 @@ export const getStyles = (colors: IColors) => {
             backgroundColor: colors.background,
         },
         list: {
-            maxHeight: scaleVertical(322),
+            maxHeight: scaleVertical(300),
+            marginRight: hasIndicatorOffset ? scaleHorizontal(12) : 0,
         },
         contentContainer: {
             flexGrow: 1,
             rowGap: scaleVertical(7),
+        },
+        indicator: {
+            width: scaleHorizontal(6),
+            backgroundColor: colors.primary,
         },
     });
 

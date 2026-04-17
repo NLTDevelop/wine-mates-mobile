@@ -68,6 +68,7 @@ export const TabNavigator = observer(() => {
                     tabBarInactiveTintColor: colors.text_light,
                     tabBarLabel: t('tabNavigator.feed'),
                     tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} Icon={FeedIcon} />,
+                    tabBarAccessibilityLabel: 'disabled',
                 }}
             />
             <Tab.Screen

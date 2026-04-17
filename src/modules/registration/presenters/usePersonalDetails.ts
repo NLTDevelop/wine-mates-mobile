@@ -91,8 +91,8 @@ export const usePersonalDetails = () => {
 
         registerUserModel.user = {
             ...registerUserModel.user,
-            firstName: form.firstName,
-            lastName: form.lastName,
+            firstName: form.firstName.trim(),
+            lastName: form.lastName.trim(),
             birthday: form.birthday,
             gender: form.gender,
         }
@@ -100,18 +100,18 @@ export const usePersonalDetails = () => {
         if (registerUserModel.user.wineExperienceLevel === WineExperienceLevelEnum.EXPERT) {
             registerUserModel.user = {
                 ...registerUserModel.user,
-                occupation: form.occupation,
-                placeOfWork: form.placeOfWork,
-                instagramLink: form.instagramLink,
+                occupation: form.occupation.trim(),
+                placeOfWork: form.placeOfWork.trim(),
+                instagramLink: form.instagramLink.trim(),
             }
         }
 
         if (registerUserModel.user.wineExperienceLevel === WineExperienceLevelEnum.CREATOR) {
             registerUserModel.user = {
                 ...registerUserModel.user,
-                wineryName: form.wineryName,
-                placeOfWork: form.placeOfWork,
-                instagramLink: form.instagramLink,
+                wineryName: form.wineryName.trim(),
+                placeOfWork: form.placeOfWork.trim(),
+                instagramLink: form.instagramLink.trim(),
             }
         }
 

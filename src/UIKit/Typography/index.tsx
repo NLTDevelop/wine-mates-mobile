@@ -3,9 +3,11 @@ import { Text, TextProps } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyle } from './styles';
 
+export type TitleVariant = 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body_400' | 'body_500' | 'subtitle_12_400' | 'subtitle_12_500' |
+    'subtitle_20_500' | 'subtitle_20_700' | 'subtitle_10_400';
+
 interface IProps extends TextProps {
-  variant?: 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body_400' | 'body_500' | 'subtitle_12_400' | 'subtitle_12_500' |
-  'subtitle_20_500' | 'subtitle_20_700';
+  variant?: TitleVariant;
   text?: string | number;
 }
 
