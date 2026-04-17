@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
-import { eventService } from '@/entities/events/EventService';
+import { eventsService } from '@/entities/events/EventsService';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { IEventsListParams } from '@/entities/events/params/IEventsListParams';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
@@ -60,7 +60,7 @@ export const useEventsList = () => {
                 ...filters,
             };
 
-            const response = await eventService.getList(params);
+            const response = await eventsService.getList(params);
 
             if (response.isError || !response.data) {
                 return;

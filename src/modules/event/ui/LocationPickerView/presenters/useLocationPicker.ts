@@ -7,7 +7,7 @@ import { useLocationPermission } from '@/hooks/useLocationPermission';
 
 interface IUseLocationPickerProps {
     initialLocation?: { latitude: number; longitude: number } | null;
-    onSelectLocation: (latitude: number, longitude: number, label: string, placeName?: string) => void;
+    onSelectLocation: (latitude: number, longitude: number, label: string, placeName?: string, countryName?: string) => void;
     onClose: () => void;
 }
 
@@ -24,7 +24,7 @@ const createSessionToken = () => {
 export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }: IUseLocationPickerProps) => {
     const { language } = useUiContext();
     const { userLocation } = useLocationPermission();
-    const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number; label?: string; placeName?: string } | null>(
+    const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number; label?: string; placeName?: string; countryName?: string } | null>(
         initialLocation || null
     );
     const [searchQuery, setSearchQuery] = useState('');
@@ -34,6 +34,19 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
     const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const sessionTokenRef = useRef<string>(createSessionToken());
     const mapRef = useRef<MapView>(null);
+
+    const getCountryFromAddress = useCallback((address?: string) => {
+        if (!address) {
+            return '';
+        }
+
+        const parts = address
+            .split(',')
+            .map(part => part.trim())
+            .filter(Boolean);
+
+        return parts[parts.length - 1] || '';
+    }, []);
 
     useEffect(() => {
         if (selectedLocation) {
@@ -98,11 +111,12 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
             setSelectedLocation({
                 latitude,
                 longitude,
-                label: address
+                label: address,
+                countryName: getCountryFromAddress(address),
             });
             setSearchQuery(address);
         }
-    }, [isSuggestionSelectionInProgress, language, showSuggestions]);
+    }, [getCountryFromAddress, isSuggestionSelectionInProgress, language, showSuggestions]);
 
     const onSearchChange = useCallback((text: string) => {
         setSearchQuery(text);
@@ -153,6 +167,7 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
                     longitude: details.longitude,
                     label: address,
                     placeName: suggestion.mainText,
+                    countryName: details.country || getCountryFromAddress(address),
                 });
                 setSearchQuery(address);
 
@@ -168,7 +183,7 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
                 setIsSuggestionSelectionInProgress(false);
             }, 250);
         }
-    }, [language]);
+    }, [getCountryFromAddress, language]);
 
     const onPoiClick = useCallback(async (event: any) => {
         const poi = event.nativeEvent;
@@ -201,21 +216,28 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
                 longitude: poi.coordinate.longitude,
                 label: address,
                 placeName: poi.name,
+                countryName: getCountryFromAddress(address),
             });
             setSearchQuery(address);
         }
-    }, [language]);
+    }, [getCountryFromAddress, language]);
 
     const onConfirm = useCallback(() => {
         const locationToConfirm = selectedLocation || initialLocation || userLocation;
 
         if (locationToConfirm) {
             const label = selectedLocation?.label || `${locationToConfirm.latitude.toFixed(4)}, ${locationToConfirm.longitude.toFixed(4)}`;
-            onSelectLocation(locationToConfirm.latitude, locationToConfirm.longitude, label, selectedLocation?.placeName);
+            onSelectLocation(
+                locationToConfirm.latitude,
+                locationToConfirm.longitude,
+                label,
+                selectedLocation?.placeName,
+                selectedLocation?.countryName || getCountryFromAddress(label),
+            );
             sessionTokenRef.current = createSessionToken();
             onClose();
         }
-    }, [initialLocation, onClose, onSelectLocation, selectedLocation, userLocation]);
+    }, [getCountryFromAddress, initialLocation, onClose, onSelectLocation, selectedLocation, userLocation]);
 
     return {
         selectedLocation,

@@ -71,6 +71,29 @@ class LocationService {
         return cityName.trim();
     };
 
+    private getCountryFromAddressComponents = (addressComponents: any[]) => {
+        if (!Array.isArray(addressComponents)) {
+            return '';
+        }
+
+        const countryComponent = addressComponents.find((component) => {
+            const types = component?.types;
+            return Array.isArray(types) && types.includes('country');
+        });
+
+        if (!countryComponent) {
+            return '';
+        }
+
+        return (
+            countryComponent.longText ||
+            countryComponent.long_name ||
+            countryComponent.shortText ||
+            countryComponent.short_name ||
+            ''
+        );
+    };
+
     private fetchAutocomplete = async ({
         input,
         language,
@@ -331,7 +354,7 @@ class LocationService {
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${GOOGLE_PLACES_DETAILS_URL}/${placeId}`,
-                headers: this.getAuthHeaders('id,location,formattedAddress'),
+                headers: this.getAuthHeaders('id,location,formattedAddress,addressComponents.longText,addressComponents.shortText,addressComponents.types'),
                 params: {
                     languageCode: normalizedLanguage,
                     sessionToken,
@@ -347,6 +370,7 @@ class LocationService {
                 latitude: place.location.latitude,
                 longitude: place.location.longitude,
                 address: place.formattedAddress || '',
+                country: this.getCountryFromAddressComponents(place.addressComponents),
             };
         } catch {
             return null;

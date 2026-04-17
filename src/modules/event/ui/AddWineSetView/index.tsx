@@ -8,7 +8,7 @@ import { DropdownButton } from '@/UIKit/DropdownButton';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
-import { PlusIcon } from '@assets/icons/PlusIcon';
+// import { PlusIcon } from '@assets/icons/PlusIcon';
 import { useAddWineSetView } from './presenters/useAddWineSetView';
 import { getStyles } from './styles';
 import { WineSetItemRow } from './components/WineSetItemRow';
@@ -35,7 +35,7 @@ export const AddWineSetView = () => {
         onCloseEventCreatedAlert,
         onCheckEventPress,
         onShareQrPress,
-        onAddWinePress,
+        // onAddWinePress,
         onCreateEventPress,
     } = useAddWineSetView();
 
@@ -75,12 +75,12 @@ export const AddWineSetView = () => {
                             />
                         </View>
                     </DropdownButton>
-                    <Button
+                    {/* <Button
                         text={t('event.addWine')}
                         onPress={onAddWinePress}
                         type="secondary"
                         LeftAccessory={<PlusIcon color={colors.text} width={20} height={20} />}
-                    />
+                    /> */}
                     <View style={styles.divider}/>
                     <View style={styles.repeatRow}>
                         <Typography variant="h6" text={`${t('event.repeat')}:`} style={styles.repeatLabel} />

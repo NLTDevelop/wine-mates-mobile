@@ -9,6 +9,7 @@ export interface IAddEventDraft {
     description: string;
     restaurantName: string;
     locationLabel: string;
+    locationCountry?: string;
     location: {
         latitude: number;
         longitude: number;

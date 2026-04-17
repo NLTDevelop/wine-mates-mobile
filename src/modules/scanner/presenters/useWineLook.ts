@@ -106,11 +106,11 @@ export const useWineLook = ({t, styles}: IUseWineLookArgs) => {
 
         setSelectedColor(prev => prev ?? data[0]);
     }, [data]);
-
+    
     const getSparklingSliderData = useMemo(() => {
-        const mousseLabels = [t('muse.missing'), t('muse.creamy'), t('muse.moderate')];
-        const perlageLabels = [t('perlage.coarse'), t('perlage.thin'), t('perlage.small')];
-        const appearanceLabels = [t('wineView.cloudy'), t('wineView.sparklingClean'), t('wineView.translucent')];
+        const mousseLabels = [t('muse.none'), t('muse.moderate'), t('muse.creamy')];
+        const perlageLabels = [t('perlage.large'), t('perlage.medium'), t('perlage.delicate')];
+        const appearanceLabels = [t('wineView.cloudy'), t('wineView.translucent'), t('wineView.brilliant')];
 
         const generateSliderData = (labels: string[]) => labels.map((label, index) => ({ label, index: index * 2 }));
 

@@ -7,35 +7,40 @@ import { IEventMapPin } from './types/IEventMapPin';
 import { IEventMapPinsParams } from './params/IEventMapPinsParams';
 import { CreateEventDto } from './dto/CreateEvent.dto';
 import { eventsModel } from './EventsModel';
-import { userModel } from '../users/UserModel';
 import countries from 'world-countries';
 
-class EventService {
+class EventsService {
     constructor(
         private _requester: IRequester,
         private _links: ILinks,
     ) {}
 
-    private getCountryHeaderValue = () => {
-        const rawCountry = userModel.user?.country?.trim();
+    private getCountryHeaderValue = (countryName?: string) => {
+        const rawCountry = (countryName || '').trim();
         if (!rawCountry) {
             return '';
         }
 
-        const normalizedCountryCode = rawCountry.toUpperCase();
+        const normalizedCountry = rawCountry.toUpperCase();
         const country = countries.find(
             item =>
-                item.cca2?.toUpperCase() === normalizedCountryCode ||
-                item.cca3?.toUpperCase() === normalizedCountryCode,
+                item.cca2?.toUpperCase() === normalizedCountry ||
+                item.cca3?.toUpperCase() === normalizedCountry ||
+                item.name?.common?.toUpperCase() === normalizedCountry ||
+                item.name?.official?.toUpperCase() === normalizedCountry,
         );
 
         if (country?.name?.common) {
             return country.name.common;
         }
 
+        if (rawCountry.length !== 2 && rawCountry.length !== 3) {
+            return rawCountry;
+        }
+
         try {
-            const regionName = new Intl.DisplayNames(['en'], { type: 'region' }).of(normalizedCountryCode);
-            if (regionName && regionName !== normalizedCountryCode) {
+            const regionName = new Intl.DisplayNames(['en'], { type: 'region' }).of(normalizedCountry);
+            if (regionName && regionName !== normalizedCountry) {
                 return regionName;
             }
         } catch {
@@ -47,12 +52,10 @@ class EventService {
 
     getList = async (params: IEventsListParams): Promise<IResponse<IList<IEvent>>> => {
         try {
-            const countryHeaderValue = this.getCountryHeaderValue();
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.events}`,
                 params,
-                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             if (!response.isError && response.data) {
@@ -77,19 +80,16 @@ class EventService {
 
             return response;
         } catch (error) {
-            console.warn('EventService -> getList: ', error);
+            console.warn('EventsService -> getList: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
 
     getById = async (id: number): Promise<IResponse<IEventDetail>> => {
         try {
-            const countryHeaderValue = this.getCountryHeaderValue();
-
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.events}/${id}`,
-                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             if (!response.isError) {
@@ -98,19 +98,16 @@ class EventService {
 
             return response;
         } catch (error) {
-            console.warn('EventService -> getById: ', error);
+            console.warn('EventsService -> getById: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
 
     toggleSave = async (id: number): Promise<IResponse<{ isSaved: boolean }>> => {
         try {
-            const countryHeaderValue = this.getCountryHeaderValue();
-
             const response = await this._requester.request({
                 method: 'POST',
                 url: `${this._links.events}/${id}/toggle-save`,
-                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             if (!response.isError) {
@@ -129,37 +126,31 @@ class EventService {
 
             return response;
         } catch (error) {
-            console.warn('EventService -> toggleSave: ', error);
+            console.warn('EventsService -> toggleSave: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
 
     registerForEvent = async (id: number): Promise<IResponse<{ success: boolean }>> => {
         try {
-            const countryHeaderValue = this.getCountryHeaderValue();
-
             const response = await this._requester.request({
                 method: 'POST',
                 url: `${this._links.events}/${id}/register`,
-                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             return response;
         } catch (error) {
-            console.warn('EventService -> registerForEvent: ', error);
+            console.warn('EventsService -> registerForEvent: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
 
     getMapPins = async (params: IEventMapPinsParams): Promise<IResponse<IEventMapPin[]>> => {
         try {
-            const countryHeaderValue = this.getCountryHeaderValue();
-
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.eventMapPins}`,
                 params,
-                headers: countryHeaderValue ? { 'Location-Country': countryHeaderValue } : undefined,
             });
 
             if (!response.isError && response.data) {
@@ -168,14 +159,14 @@ class EventService {
 
             return response;
         } catch (error) {
-            console.warn('EventService -> getMapPins: ', error);
+            console.warn('EventsService -> getMapPins: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
 
-    createEvent = async (data: CreateEventDto): Promise<IResponse<IEventDetail>> => {
+    createEvent = async (data: CreateEventDto, countryName?: string): Promise<IResponse<IEventDetail>> => {
         try {
-            const countryHeaderValue = this.getCountryHeaderValue();
+            const countryHeaderValue = this.getCountryHeaderValue(countryName);
 
             const response = await this._requester.request({
                 method: 'POST',
@@ -186,10 +177,10 @@ class EventService {
 
             return response;
         } catch (error) {
-            console.warn('EventService -> createEvent: ', error);
+            console.warn('EventsService -> createEvent: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
 }
 
-export const eventService = new EventService(requester, links);
+export const eventsService = new EventsService(requester, links);

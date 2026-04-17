@@ -9,4 +9,5 @@ export interface IPlaceDetails {
     latitude: number;
     longitude: number;
     address: string;
+    country?: string;
 }

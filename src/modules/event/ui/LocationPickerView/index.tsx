@@ -46,13 +46,14 @@ export const LocationPickerView = () => {
         onConfirm,
     } = useLocationPicker({
         initialLocation,
-        onSelectLocation: (latitude, longitude, label, placeName) => {
+        onSelectLocation: (latitude, longitude, label, placeName, countryName) => {
             navigation.dispatch(StackActions.popTo('AddEventView', {
                 pickedLocation: {
                     latitude,
                     longitude,
                     label,
                     placeName,
+                    countryName,
                 },
             }));
         },

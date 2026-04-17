@@ -119,19 +119,19 @@
         "creator": "Winemaker"
     },
     "muse": {
-        "missing": "Missing",
+        "none": "None",
         "moderate": "Moderate",
         "creamy": "Creamy"
     },
     "perlage": {
-        "coarse": "Coarse",
-        "small": "Small",
-        "thin": "Thin"
+        "large": "Large",
+        "medium": "Medium",
+        "delicate": "Delicate"
     },
     "wineView": {
         "cloudy": "Cloudy",
         "translucent": "Translucent",
-        "sparklingClean": "Sparkling clean"
+        "brilliant": "Brilliant"
     },
     "scanner": {
         "results": "Results",

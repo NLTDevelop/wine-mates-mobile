@@ -119,19 +119,19 @@
         "creator": "Винороб"
     },
     "muse": {
-        "missing": "Відсутній",
+        "none": "Відсутній",
         "moderate": "Помірний",
         "creamy": "Кремовий"
     },
     "perlage": {
-        "coarse": "Крупний",
-        "small": "Дрібний",
-        "thin": "Тонкий"
+        "large": "Крупний",
+        "medium": "Середній",
+        "delicate": "Тонкий"
     },
     "wineView": {
         "cloudy": "Мутний",
         "translucent": "Напівпрозорий",
-        "sparklingClean": "Блискуче чистий"
+        "brilliant": "Чистий"
     },
     "scanner": {
         "results": "Результати",

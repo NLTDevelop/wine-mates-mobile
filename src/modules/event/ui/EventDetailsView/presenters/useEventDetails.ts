@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { IEventDetail } from '@/entities/events/types/IEvent';
-import { eventService } from '@/entities/events/EventService';
+import { eventsService } from '@/entities/events/EventsService';
 
 export const useEventDetails = (eventId: number) => {
     const [eventDetail, setEventDetail] = useState<IEventDetail | null>(null);
@@ -11,7 +11,7 @@ export const useEventDetails = (eventId: number) => {
         const loadEventDetails = async () => {
             setIsLoading(true);
             try {
-                const response = await eventService.getById(eventId);
+                const response = await eventsService.getById(eventId);
                 if (!response.isError && response.data) {
                     setEventDetail(response.data);
                     setIsError(false);

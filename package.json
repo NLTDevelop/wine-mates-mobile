@@ -8,7 +8,8 @@
         "lint": "eslint .",
         "start": "react-native start",
         "test": "jest",
-        "postinstall": "patch-package"
+        "postinstall": "patch-package",
+        "androidRelease": "cd android && ./gradlew clean && ./gradlew assembleRelease && ./gradlew bundleRelease"
     },
     "dependencies": {
         "@fanchenbao/react-native-scroll-indicator": "^0.4.0",

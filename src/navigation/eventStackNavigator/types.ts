@@ -12,6 +12,7 @@ export type EventStackParamList = {
             longitude: number;
             label: string;
             placeName?: string;
+            countryName?: string;
         };
     } | undefined;
     AddWineSetView: {

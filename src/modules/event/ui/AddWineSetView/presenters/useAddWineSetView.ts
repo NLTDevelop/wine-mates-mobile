@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { eventService } from '@/entities/events/EventService';
+import { eventsService } from '@/entities/events/EventsService';
 import { RepeatRule, REPEAT_RULES } from '@/entities/events/enums/RepeatRule';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IWineSetMockItem, IWineSetViewItem } from '@/modules/event/types/IWineSetMockItem';
@@ -90,9 +90,9 @@ export const useAddWineSetView = () => {
         return mockWineSetItems.filter((item) => item.title.toLowerCase().includes(normalizedQuery));
     }, [mockWineSetItems, searchQuery]);
 
-    const onAddWinePress = useCallback(() => {
-        // TODO: connect navigation to add wine flow when wine screen is finalized.
-    }, []);
+    // const onAddWinePress = useCallback(() => {
+    //     // TODO: connect navigation to add wine flow when wine screen is finalized.
+    // }, []);
 
     const createOnEditWinePress = useCallback((wineId: number) => {
         return () => {
@@ -106,6 +106,43 @@ export const useAddWineSetView = () => {
             onEditPress: createOnEditWinePress(item.id),
         }));
     }, [createOnEditWinePress, filteredMockWineSetItems]);
+
+    const onGetCreatedEventId = useCallback((data: unknown): number | null => {
+        if (!data || typeof data !== 'object') {
+            return null;
+        }
+
+        const source = data as { id?: unknown; data?: unknown };
+        const directId = source.id;
+        if (typeof directId === 'number') {
+            return directId;
+        }
+
+        if (typeof directId === 'string') {
+            const parsedId = Number(directId);
+            if (Number.isFinite(parsedId)) {
+                return parsedId;
+            }
+        }
+
+        if (!source.data || typeof source.data !== 'object') {
+            return null;
+        }
+
+        const nestedId = (source.data as { id?: unknown }).id;
+        if (typeof nestedId === 'number') {
+            return nestedId;
+        }
+
+        if (typeof nestedId === 'string') {
+            const parsedId = Number(nestedId);
+            if (Number.isFinite(parsedId)) {
+                return parsedId;
+            }
+        }
+
+        return null;
+    }, []);
 
     const onCreateEventPress = useCallback(async () => {
         if (isCreating) {
@@ -121,7 +158,7 @@ export const useAddWineSetView = () => {
                 sortOrder: index + 1,
             }));
 
-            const response = await eventService.createEvent({
+            const response = await eventsService.createEvent({
                 theme: draft.theme,
                 description: draft.description,
                 restaurantName: draft.restaurantName,
@@ -144,11 +181,11 @@ export const useAddWineSetView = () => {
                 requiresConfirmation: draft.requiresConfirmation,
                 repeatRule,
                 wineSet: mockWineSet,
-            });
+            }, draft.locationCountry);
 
             if (!response.isError) {
-                // TODO: backend should return created event id in response.data.id after create event.
-                setCreatedEventId(response.data?.id ?? null);
+                const eventId = onGetCreatedEventId(response.data);
+                setCreatedEventId(eventId);
                 setIsEventCreatedAlertVisible(true);
             }
         } catch (error) {
@@ -156,7 +193,7 @@ export const useAddWineSetView = () => {
         } finally {
             setIsCreating(false);
         }
-    }, [draft, isCreating, mockWineSetItems, repeatRule]);
+    }, [draft, isCreating, mockWineSetItems, onGetCreatedEventId, repeatRule]);
 
     const resetToEventList = useCallback(() => {
         navigation.dispatch(
@@ -213,7 +250,7 @@ export const useAddWineSetView = () => {
         onCloseEventCreatedAlert,
         onCheckEventPress,
         onShareQrPress,
-        onAddWinePress,
+        // onAddWinePress,
         onCreateEventPress,
     };
 };

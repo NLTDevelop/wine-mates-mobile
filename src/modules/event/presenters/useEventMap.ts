@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { Region } from 'react-native-maps';
 import { useIsFocused } from '@react-navigation/native';
 import { eventsModel } from '@/entities/events/EventsModel';
-import { eventService } from '@/entities/events/EventService';
+import { eventsService } from '@/entities/events/EventsService';
 import { useLocationPermission } from '@/hooks/useLocationPermission.ts';
 import { EventType } from '@/entities/events/enums/EventType';
 
@@ -46,7 +46,7 @@ export const useEventMap = () => {
 
         setIsLoadingEvents(true);
         try {
-            await eventService.getMapPins({
+            await eventsService.getMapPins({
                 latitude: location.latitude,
                 longitude: location.longitude,
                 radiusKm: DEFAULT_RADIUS_KM,
@@ -109,7 +109,7 @@ export const useEventMap = () => {
 
     const onFavoritePress = useCallback(async (eventId: number) => {
         try {
-            await eventService.toggleSave(eventId);
+            await eventsService.toggleSave(eventId);
         } catch (error) {
             console.warn('useEventMap -> onFavoritePress: ', error);
         }

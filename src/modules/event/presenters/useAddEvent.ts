@@ -15,6 +15,7 @@ interface IEventForm {
     description: string;
     restaurantName: string;
     locationLabel: string;
+    locationCountry: string;
     location: { latitude: number; longitude: number } | null;
     eventDate: string;
     eventTime: string;
@@ -42,6 +43,7 @@ export const useAddEvent = () => {
         description: '',
         restaurantName: '',
         locationLabel: '',
+        locationCountry: '',
         location: null,
         eventDate: '',
         eventTime: '',
@@ -79,11 +81,12 @@ export const useAddEvent = () => {
         setForm(prev => ({ ...prev, locationLabel: value }));
     }, []);
 
-    const onChangeLocation = useCallback((latitude: number, longitude: number, label: string, placeName?: string) => {
+    const onChangeLocation = useCallback((latitude: number, longitude: number, label: string, placeName?: string, countryName?: string) => {
         setForm(prev => ({ 
             ...prev, 
             location: { latitude, longitude }, 
             locationLabel: label,
+            locationCountry: countryName || '',
             restaurantName: placeName || prev.restaurantName,
         }));
     }, []);
@@ -158,6 +161,7 @@ export const useAddEvent = () => {
                 pickedLocation.longitude,
                 pickedLocation.label,
                 pickedLocation.placeName,
+                pickedLocation.countryName,
             );
 
             navigation.setParams({ pickedLocation: undefined });
@@ -178,6 +182,7 @@ export const useAddEvent = () => {
             description: form.description || 'Event description',
             restaurantName: form.restaurantName,
             locationLabel: form.locationLabel || `${form.location.latitude.toFixed(4)}, ${form.location.longitude.toFixed(4)}`,
+            locationCountry: form.locationCountry,
             location: form.location,
             eventDate: form.eventDate,
             eventTime: form.eventTime,
