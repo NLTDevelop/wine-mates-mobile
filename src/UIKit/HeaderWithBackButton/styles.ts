@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
-import { scaleHorizontal, scaleVertical } from "@/utils";
-import { IColors } from "@/UIProvider/theme/IColors";
+import { StyleSheet } from 'react-native';
+import { scaleHorizontal, scaleVertical } from '@/utils';
+import { IColors } from '@/UIProvider/theme/IColors';
 
 export const getStyles = (colors: IColors, isCentered: boolean, withRightComponent: boolean) => {
     const styles = StyleSheet.create({
@@ -19,11 +19,8 @@ export const getStyles = (colors: IColors, isCentered: boolean, withRightCompone
             backgroundColor: colors.background,
             justifyContent: 'center',
             alignItems: 'center',
-            shadowColor: colors.shadow,
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 3,
-            elevation: 3,
+            borderWidth: 1,
+            borderColor: colors.border,
         },
         titleContainer: {
             position: 'absolute',

@@ -39,5 +39,8 @@ export const COLORS: { light: IColors } = {
         warning: '#F59E0B',
         success: '#4CAF50',
         info: '#2563EB',
+
+        stars: '#ECC024',
+        lockBackground: '#E4E4E4',
     },
 };

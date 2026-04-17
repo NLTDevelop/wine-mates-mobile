@@ -18,8 +18,11 @@ export const getStyles = (colors: IColors) => {
             borderRadius: 12,
             borderWidth: 1,
             borderColor: colors.border_light,
-            maxHeight: scaleVertical(300),
+            maxHeight: scaleVertical(250),
             overflow: 'hidden',
+        },
+        footerContainer: {
+            marginTop: scaleVertical(4),
         },
         placeholder: {
             fontSize: scaleFontSize(16),
@@ -30,6 +33,18 @@ export const getStyles = (colors: IColors) => {
             fontSize: scaleFontSize(16),
             fontFamily: 'VisueltPro-Regular',
             color: colors.text,
+        },
+        selectedTextHidden: {
+            color: 'transparent',
+            opacity: 0,
+        },
+        selectedOverlay: {
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: scaleHorizontal(16),
+            right: scaleHorizontal(16),
+            justifyContent: 'center',
         },
         dropdownDisabled: {
             opacity: 0.5,

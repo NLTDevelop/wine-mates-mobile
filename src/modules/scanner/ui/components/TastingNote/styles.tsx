@@ -19,15 +19,15 @@ export const getStyles = (colors: IColors) => {
         },
         noteContainer: {
             borderRadius: 12,
-            paddingVertical: scaleVertical(14),
-            paddingHorizontal: scaleHorizontal(16),
+            paddingVertical: scaleVertical(12),
             minHeight: scaleVertical(212),
             backgroundColor: colors.background,
-            shadowColor: colors.shadow,
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 3,
-            elevation: 3,
+            borderWidth: 1,
+            borderColor: colors.border,
+            justifyContent: 'space-between',
+        },
+        noteContainerError: {
+            borderColor: colors.error,
         },
         text: {
             color: colors.primary,
@@ -47,9 +47,23 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(36),
             minWidth: scaleHorizontal(109),
         },
-        copyButton: {
-            marginTop: scaleVertical(8),
+        noteInputContainer: {
+            borderWidth: 0,
+        },
+        noteInput: {
+            color: colors.text,
+            flex: 1,
+            borderWidth: 0,
+            paddingVertical: 0,
+        },
+        buttonGroup: {
+            paddingHorizontal: scaleHorizontal(12),
+            flexDirection: 'row',
             alignSelf: 'flex-end',
+            gap: scaleHorizontal(8),
+        },
+        warning: {
+            marginTop: scaleVertical(8),
         },
     });
     return styles;

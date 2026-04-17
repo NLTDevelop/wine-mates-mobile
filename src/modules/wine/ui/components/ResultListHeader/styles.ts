@@ -26,7 +26,6 @@ export const getStyles = (colors: IColors) => {
             marginHorizontal: scaleHorizontal(16),
         },
         title: {
-            marginBottom: scaleVertical(8),
             marginHorizontal: scaleHorizontal(16),
         },
         text: {

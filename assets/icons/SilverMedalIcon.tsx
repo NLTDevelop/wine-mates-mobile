@@ -5,49 +5,66 @@ interface IProps {
     width?: number;
     height?: number;
     text: string;
+    titleFontSize?: number;
+    mainFontSize?: number;
+    nameFontSize?: number;
+    hideText?: boolean;
 }
 
-export const SilverMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
+export const SilverMedalIcon = ({
+    width = 32,
+    height = 32,
+    text,
+    titleFontSize,
+    mainFontSize,
+    nameFontSize,
+    hideText = false,
+}: IProps) => {
+    return (
     <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 234 230" fill="none">
         <Path
             fill="url(#a)"
             d="M0 115C0 51.487 51.487 0 115 0h4c63.513 0 115 51.487 115 115s-51.487 115-115 115h-4C51.487 230 0 178.513 0 115Z"
         />
-        <Text
-            x="117"
-            y="60"
-            fontSize={scaleFontSize(24)}
-            fill="#2F2F2F"
-            fontFamily="VisueltPro"
-            fontWeight="700"
-            textAnchor="middle"
-        >
-            WineMates
-        </Text>
+        {!hideText && (
+            <>
+                <Text
+                    x="117"
+                    y="50"
+                    fontSize={scaleFontSize(titleFontSize || 24)}
+                    fill="#2F2F2F"
+                    fontFamily="VisueltPro"
+                    fontWeight="700"
+                    textAnchor="middle"
+                >
+                    WineMates
+                </Text>
 
-        <Text
-            x="117"
-            y="150"
-            fontSize={scaleFontSize(96)}
-            fill="#2F2F2F"
-            fontFamily="VisueltPro"
-            fontWeight="500"
-            textAnchor="middle"
-        >
-            {text}
-        </Text>
+                <Text
+                    x="117"
+                    y="145"
+                    fontSize={scaleFontSize(mainFontSize || 90)}
+                    fill="#2F2F2F"
+                    fontFamily="VisueltPro"
+                    fontWeight="500"
+                    textAnchor="middle"
+                >
+                    {text}
+                </Text>
 
-        <Text
-            x="117"
-            y="195"
-            fontSize={scaleFontSize(32)}
-            fill="#2F2F2F"
-            fontFamily="VisueltPro"
-            fontWeight="700"
-            textAnchor="middle"
-        >
-            Silver
-        </Text>
+                <Text
+                    x="117"
+                    y="190"
+                    fontSize={scaleFontSize(nameFontSize || 26)}
+                    fill="#2F2F2F"
+                    fontFamily="VisueltPro"
+                    fontWeight="700"
+                    textAnchor="middle"
+                >
+                    Silver
+                </Text>
+            </>
+        )}
         <Defs>
             <Pattern id="a" width={1} height={1} patternContentUnits="objectBoundingBox">
                 <Use xlinkHref="#b" transform="matrix(.00098 0 0 .001 0 -.009)" />
@@ -63,3 +80,4 @@ export const SilverMedalIcon = ({ width = 32, height = 32, text }: IProps) => (
         </Defs>
     </Svg>
 );
+};

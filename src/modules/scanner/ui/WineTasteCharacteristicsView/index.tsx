@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { getStyles } from './styles';
-import { FlatList, View } from 'react-native';
+import { View } from 'react-native';
+import { FlatListIndicator } from '@fanchenbao/react-native-scroll-indicator';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
@@ -15,25 +16,55 @@ import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics';
 import { TasteCharacteristicItem } from '../components/TasteCharacteristicItem';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
+import { WinePeakPicker } from '../components/WinePeakPicker';
+
+type ListItemType =
+    | { type: 'characteristic'; data: IWineTasteCharacteristic }
+    | { type: 'winePeak' };
 
 export const WineTasteCharacteristicsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues,
-        isPremiumUser } = useWineTasteCharacteristics();
+        isPremiumUser, winePeak, handleWinePeakChange, isExpertOrWinemaker } = useWineTasteCharacteristics();
 
-    const keyExtractor = useCallback((item: IWineTasteCharacteristic, index: number) => `${item.id}-${index}`, []);
+    const listData = useMemo<ListItemType[]>(() => {
+        const items: ListItemType[] = [];
+        if (data) {
+            data.forEach(characteristic => {
+                items.push({ type: 'characteristic', data: characteristic });
+            });
+            if (isExpertOrWinemaker) {
+                items.push({ type: 'winePeak' });
+            }
+        }
+        return items;
+    }, [data, isExpertOrWinemaker]);
+
+
+    const keyExtractor = useCallback((item: ListItemType, index: number) => {
+        if (item.type === 'characteristic') {
+            return `characteristic-${item.data.id}-${index}`;
+        }
+        return 'winePeak';
+    }, []);
+
     const renderItem = useCallback(
-        ({ item }: { item: IWineTasteCharacteristic }) => (
-            <TasteCharacteristicItem
-                item={item}
-                value={sliderValues[item.id] ?? 0}
-                onChange={value => handleSliderChange(item.id, value)}
-                isPremiumUser={isPremiumUser}
-            />
-        ),
-        [handleSliderChange, sliderValues, isPremiumUser],
+        ({ item }: { item: ListItemType }) => {
+            if (item.type === 'characteristic') {
+                return (
+                    <TasteCharacteristicItem
+                        item={item.data}
+                        value={sliderValues[item.data.id] ?? 0}
+                        onChange={value => handleSliderChange(item.data.id, value)}
+                        isPremiumUser={isPremiumUser}
+                    />
+                );
+            }
+            return <WinePeakPicker value={winePeak} onChange={handleWinePeakChange} />;
+        },
+        [handleSliderChange, sliderValues, isPremiumUser, winePeak, handleWinePeakChange],
     );
 
     return (
@@ -42,31 +73,35 @@ export const WineTasteCharacteristicsView = observer(() => {
                 edges={['top', 'bottom']}
                 withGradient
                 headerComponent={<HeaderWithBackButton title={t('wine.tasteCharacteristics')} rightComponent={<CloseButton />} />}
-                scrollEnabled
             >
                 {!data || data.length === 0 || isLoading ? (
                     <Loader />
                 ) : (
                     <View style={styles.container}>
-                        <View>
-                            {data.length > 0 && (
-                                <FlatList
-                                    data={data}
-                                    keyExtractor={keyExtractor}
-                                    renderItem={renderItem}
-                                    style={styles.list}
-                                    contentContainerStyle={styles.contentContainer}
-                                    nestedScrollEnabled={true}
-                                />
-                            )}
-                            <SelectedParameters containerStyle={styles.selectedParameters}/>
+                        <View style={styles.content}>
+                            <FlatListIndicator
+                                containerStyle={styles.scrollArea}
+                                flatListProps={{
+                                    data: listData,
+                                    keyExtractor,
+                                    renderItem,
+                                    style: styles.list,
+                                    contentContainerStyle: styles.contentContainer,
+                                    nestedScrollEnabled: true,
+                                    keyboardShouldPersistTaps: 'handled',
+                                    ListFooterComponent: <SelectedParameters containerStyle={styles.selectedParameters} />,
+                                }}
+                                indStyle={styles.indicator}
+                            />
                         </View>
-                        <Button
-                            text={t('wine.letsRate')}
-                            onPress={handleNextPress}
-                            containerStyle={styles.button}
-                            RightAccessory={<NextLongArrowIcon />}
-                        />
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                text={t('wine.letsRate')}
+                                onPress={handleNextPress}
+                                containerStyle={styles.button}
+                                RightAccessory={<NextLongArrowIcon />}
+                            />
+                        </View>
                     </View>
                 )}
             </ScreenContainer>

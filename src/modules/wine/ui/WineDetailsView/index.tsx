@@ -22,10 +22,17 @@ export const WineDetailsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { details, isError, getDetails, id, onVintageChange } = useWineDetails();
-    const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(id, getDetails);
+    const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
+        selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, myReview } = useWineDetails();
+    const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
+        getDetails,
+        selectedWineId ?? wineId,
+        isAllVintagesSelected,
+        isPreloadedData,
+        myReview,
+    );
     const { refreshControl } = useRefresh(onRefresh);
-    const  { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave } = useAddToFavoriteBottomSheet();
+    const { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave, isLoading, isSaving } = useAddToFavoriteBottomSheet(details?.id, onUpdateIsSaved);
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
     const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);
@@ -50,8 +57,13 @@ export const WineDetailsView = observer(() => {
                         ListHeaderComponent={
                             <ResultListHeader
                                 data={details}
+                                vintages={vintages}
                                 onVintageChange={onVintageChange}
                                 onFavoritePress={onOpen}
+                                hasCurrentVintageData={hasCurrentVintageData}
+                                isAllVintagesSelected={isAllVintagesSelected}
+                                fromScanner={fromScanner}
+                                hasReviews={data.length > 0}
                             />
                         }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
@@ -63,6 +75,8 @@ export const WineDetailsView = observer(() => {
                     onItemPress={onItemPress}
                     onClose={onClose}
                     onSave={onSave}
+                    isLoading={isLoading}
+                    isSaving={isSaving}
                 />
             </ScreenContainer>
         </WithErrorHandler>

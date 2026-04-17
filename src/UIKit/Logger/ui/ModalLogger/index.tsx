@@ -11,7 +11,7 @@ export const ModalLogger = observer(() => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { onEnvironmentChange, onClose, isDevEnvironment } = useLoggerModal();
+    const { onEnvironmentChange, onClose, isDevEnvironment, onTogglePremium, isPremiumEnabled } = useLoggerModal();
 
     const renderItem = useCallback(({ item }: any) => <LoggerItem item={item} />, []);
     const keyExtractor = useCallback((item: ILog) => item.id, []);
@@ -22,6 +22,9 @@ export const ModalLogger = observer(() => {
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.button} onPress={onEnvironmentChange}>
                         <Text style={styles.buttonText}>{isDevEnvironment ? 'Dev' : 'Local'}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={onTogglePremium}>
+                        <Text style={styles.buttonText}>{isPremiumEnabled ? '👑 Premium' : 'No Premium'}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.button} onPress={onClose}>
                         <Text style={styles.buttonText}>Close</Text>

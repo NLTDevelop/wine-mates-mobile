@@ -29,9 +29,21 @@ const createInitialForm = (aiData?: IAIData | null): IWineBase => {
 
     return {
         ...baseForm,
+        typeOfWine: aiData.wineType
+            ? { ...baseForm.typeOfWine, id: aiData.wineType.id, value: aiData.wineType.name }
+            : baseForm.typeOfWine,
+        colorOfWine: aiData.wineColor
+            ? { ...baseForm.colorOfWine, id: aiData.wineColor.id, value: aiData.wineColor.name }
+            : baseForm.colorOfWine,
+        country: aiData.country
+            ? { ...baseForm.country, id: aiData.country.id, value: aiData.country.name }
+            : baseForm.country,
+        region: aiData.region
+            ? { ...baseForm.region, id: aiData.region.id, value: aiData.region.name }
+            : baseForm.region,
         producer: { ...baseForm.producer, value: aiData.producer ?? '' },
         grapeVariety: { ...baseForm.grapeVariety, value: aiData.grapeVariety ?? '' },
-        vintageYear: { ...baseForm.vintageYear, value: aiData.vintage ? String(aiData.vintage) : '' },
+        vintageYear: { ...baseForm.vintageYear, value: aiData.vintage != null ? String(aiData.vintage) : '' },
         wineName: { ...baseForm.wineName, value: aiData.name ?? '' },
     };
 };
@@ -50,7 +62,7 @@ const fromDropdown = (item?: IDropdownItem | null): IWineBaseValue => {
 
     return {
         id: parsedId,
-        value: item.value || '',
+        value: String(item.value) || '',
     };
 };
 
@@ -68,8 +80,6 @@ export const useAddWine = () => {
             form.country.value,
             form.producer.value,
             form.grapeVariety.value,
-            form.vintageYear.value,
-            form.wineName.value,
         ];
         const hasEmptyBase = baseRequired.some(field => !field?.trim());
 
@@ -121,10 +131,16 @@ export const useAddWine = () => {
             setInProgress(true);
 
             const formData = new FormData();
-            formData.append('name', form.wineName.value);
-            formData.append('vintage', Number(form.vintageYear.value));
+            if (form.wineName.value?.trim()) {
+                formData.append('name', form.wineName.value);
+            }
+            if (form.vintageYear.value?.trim()) {
+                formData.append('vintage', Number(form.vintageYear.value));
+            }
             formData.append('countryId', form.country.id);
-            formData.append('regionId', form.region.id);
+            if (form.region.id) {
+                formData.append('regionId', form.region.id);
+            }
             formData.append('producer', form.producer.value);
             formData.append('grapeVariety', form.grapeVariety.value);
             formData.append('typeId', form.typeOfWine.id);
@@ -139,8 +155,8 @@ export const useAddWine = () => {
             if (response.isError || !response.data) {
                 if (response.status === 409) {
                     const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
+                    wineModel.clear();
                     wineModel.wine = {
-                        ...wineModel.wine,
                         id: Number(response.errors.wineId || 0),
                         vintage: Number(form.vintageYear.value),
                         name: form.wineName.value || '',
@@ -153,7 +169,7 @@ export const useAddWine = () => {
                         },
                     };
 
-                    navigation.navigate('WineLookView');
+                    navigation.navigate('WineLookView', { source: 'scanner' });
                 } else if (response?.errors?.errors?.vintage) {
                     setIsVintageError({status: true, errorText: response.errors.errors.vintage[0]});
                 } else {
@@ -164,7 +180,7 @@ export const useAddWine = () => {
                 }
             } else {
                 const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
-
+                wineModel.clear();
                 wineModel.base = {
                     ...form,
                     typeOfWine: {
@@ -172,7 +188,12 @@ export const useAddWine = () => {
                         isSparkling: selectedType?.isSparkling,
                     },
                 };
-                navigation.navigate('WineLookView');
+                wineModel.wine = {
+                    id: response.data.id,
+                    name: response.data.name,
+                    vintage: response.data.vintage,
+                };
+                navigation.navigate('WineLookView', { source: 'scanner' });
             }
         } catch (error) {
             console.error('Add wine error: ', JSON.stringify(error, null, 2));
@@ -181,7 +202,7 @@ export const useAddWine = () => {
         }
     }, [navigation, form]);
 
-    return { 
+    return {
         form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress,
         isDisabled, onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress, isVintageError
     };

@@ -6,24 +6,45 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
+import { storage } from '@/libs/storage/MMKVStorage';
+import { TASTE_CHARACTERISTICS_CACHE_KEY } from '@/libs/storage/cacheUtils';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { Keyboard } from 'react-native';
+import { ITasteCharacteristicDetail } from '@/entities/wine/types/ITasteCharacteristicDetail';
+import { runInAction } from 'mobx';
 
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
     const [isError, setIsError] = useState(false);
-    const [sliderValues, setSliderValues] = useState<Record<number, number>>({});
+    const [sliderValues, setSliderValues] = useState<Record<number, number>>(() => {
+        const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY);
+        return cached || {};
+    });
+    const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
+
     const data = wineModel.tasteCharacteristics;
+
     const isPremiumUser = userModel.user?.hasPremium || false;
+    const isExpertOrWinemaker = userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT ||
+        userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR;
 
     const getTasteCharacteristics = useCallback(async () => {
         try {
-            if (!wineModel.base?.colorOfWine?.id) return;
+            if (!wineModel.base?.colorOfWine?.id || !wineModel.base?.typeOfWine?.id) return;
+
+            if (wineModel.tasteCharacteristics?.length) {
+                setIsError(false);
+                setIsLoading(false);
+                return;
+            }
 
             setIsLoading(true);
 
             const params = {
                 colorId: wineModel.base?.colorOfWine.id,
+                typeId: wineModel.base?.typeOfWine.id,
             };
 
             const response = await wineService.getTastesCharacteristics(params);
@@ -49,53 +70,107 @@ export const useWineTasteCharacteristics = () => {
 
     useEffect(() => {
         if (!data || data.length === 0) {
-            setSliderValues({});
+            setSliderValues(prev => Object.keys(prev).length === 0 ? prev : {});
             return;
         }
 
+        const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY) || {};
+        const next: Record<number, number> = {};
+
+        data.forEach(item => {
+            const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
+            const cachedValue = cached[item.id];
+            const baseValue =
+                cachedValue !== undefined
+                    ? cachedValue
+                    : typeof item.selectedIndex === 'number'
+                    ? item.selectedIndex
+                    : 0;
+            next[item.id] = Math.min(Math.max(baseValue, 0), maxIndex);
+        });
+
         setSliderValues(prev => {
-            const next: Record<number, number> = {};
-
-            data.forEach(item => {
-                const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
-                const baseValue =
-                    typeof item.selectedIndex === 'number' ? item.selectedIndex : prev[item.id] ?? 0;
-                next[item.id] = Math.min(Math.max(baseValue, 0), maxIndex);
-            });
-
-            return next;
+            const hasChanges = Object.keys(next).some(key => prev[Number(key)] !== next[Number(key)]) ||
+                               Object.keys(prev).length !== Object.keys(next).length;
+            return hasChanges ? next : prev;
         });
     }, [data]);
 
-    useEffect(() => {
-        return () => {
-            wineModel.tasteCharacteristics = null;
-        };
-    }, []);
+    const saveCharacteristicDetails = useCallback((sliderVals: Record<number, number>) => {
+        if (!data?.length) return;
+
+        const isPremiumUser = userModel.user?.hasPremium || false;
+        const available = isPremiumUser
+            ? data
+            : data.filter(c => !c.isPremium);
+
+        const details: ITasteCharacteristicDetail[] = available
+            .map(item => ({
+                id: item.id,
+                label: item.name,
+                value: item.levels[sliderVals[item.id] ?? 0]?.name || '',
+            }))
+            .filter(detail => detail.value);
+
+        runInAction(() => {
+            wineModel.tasteCharacteristicDetails = details;
+        });
+    }, [data]);
 
     const handleSliderChange = useCallback(
         (id: number, value: number) => {
             setSliderValues(prev => {
-                const levelsLength = data?.find(characteristic => characteristic.id === id)?.levels.length ?? 0;
+                const characteristic = data?.find(c => c.id === id);
+                const levelsLength = characteristic?.levels.length ?? 0;
                 const maxIndex = Math.max(levelsLength - 1, 0);
                 const nextValue = Math.min(Math.max(value, 0), maxIndex);
+                const next = { ...prev, [id]: nextValue };
 
-                return { ...prev, [id]: nextValue };
+                storage.set(TASTE_CHARACTERISTICS_CACHE_KEY, next);
+
+                if (data?.length) {
+                    runInAction(() => {
+                        wineModel.tasteCharacteristics = data.map(item => ({
+                            ...item,
+                            selectedIndex: next[item.id] ?? item.selectedIndex ?? 0,
+                        }));
+                    });
+                }
+
+                saveCharacteristicDetails(next);
+
+                return next;
             });
+            Keyboard.dismiss();
         },
-        [data],
+        [data, saveCharacteristicDetails],
     );
 
+    const handleWinePeakChange = useCallback((year: number | null) => {
+        setWinePeak(year);
+        runInAction(() => {
+            wineModel.winePeak = year;
+        });
+        Keyboard.dismiss();
+    }, []);
+
     const handleNextPress = useCallback(() => {
-        if (data) {
-            wineModel.tasteCharacteristics = data.map(item => ({
-                ...item,
-                selectedIndex: sliderValues[item.id] ?? 0,
-            }));
-        }
+        runInAction(() => {
+            if (data) {
+                wineModel.tasteCharacteristics = data.map(item => ({
+                    ...item,
+                    selectedIndex: sliderValues[item.id] ?? 0,
+                }));
+            }
+
+            if (winePeak) {
+                wineModel.winePeak = winePeak;
+            }
+        });
 
         navigation.navigate('WineReviewView');
-    }, [data, navigation, sliderValues]);
+        Keyboard.dismiss();
+    }, [data, navigation, sliderValues, winePeak]);
 
-    return { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues, isPremiumUser };
+    return { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues, isPremiumUser, winePeak, handleWinePeakChange, isExpertOrWinemaker };
 };

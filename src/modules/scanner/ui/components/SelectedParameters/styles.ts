@@ -2,7 +2,7 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (colors: IColors, maxLabelWidth: number) => {
     const styles = StyleSheet.create({
         container: {
             gap: scaleVertical(16),
@@ -13,20 +13,27 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'space-between',
         },
-        paramContainer: {
-            gap: scaleVertical(2),
+        rowsContainer: {
+            gap: scaleVertical(4),
         },
-        itemContainer: {
-            minHeight: scaleVertical(48),
-            paddingVertical: scaleVertical(14),
-            paddingHorizontal: scaleHorizontal(16),
-            borderWidth: 1,
-            borderColor: colors.border,
-            borderRadius: 12,
+        row: {
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+        },
+        labelContainer: {
+            minWidth: maxLabelWidth > 0 ? maxLabelWidth : undefined,
+            marginRight: scaleHorizontal(8),
+            flexShrink: 0,
         },
         label: {
             color: colors.text_light,
-            flexShrink: 1,
+            flexShrink: 0,
+        },
+        valueContainer: {
+            flex: 1,
+        },
+        value: {
+            color: colors.text,
         },
     });
     return styles;

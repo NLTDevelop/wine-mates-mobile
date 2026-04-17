@@ -1,8 +1,8 @@
 import { memo, useMemo, useState, useCallback } from 'react';
-import { DimensionValue, ViewStyle, View, LayoutChangeEvent } from 'react-native';
-import { getStyle } from './styles';
-import { useUiContext } from '../../UIProvider';
-import { scaleVertical } from '../../utils';
+import { DimensionValue, ViewStyle, View, LayoutChangeEvent, Image } from 'react-native';
+import { getStyle, getInitialsTextStyle } from './styles';
+import { useUiContext } from '@/UIProvider';
+import { scaleVertical } from '@/utils';
 import { FasterImageView } from '@rraut/react-native-faster-image';
 import { Typography } from '../Typography';
 
@@ -41,22 +41,22 @@ const AvatarComponent = ({ containerStyle = {}, avatarUrl, fullname, size = 40 }
 
     const textStyle = useMemo(() => {
         const actualSize = typeof size === 'number' ? size : measuredSize;
-        return actualSize ? { fontSize: actualSize / 2 } : {};
+        if (!actualSize) return {};
+        return getInitialsTextStyle(actualSize);
     }, [size, measuredSize]);
 
     return (
         <View
             onLayout={typeof size === 'string' ? onLayout : undefined}
             style={[styles.container, containerStyle, sizeStyle]}
-            key={avatarUrl}
         >
             {avatarUrl ? (
-                <FasterImageView
-                    source={{ uri: avatarUrl, resizeMode: 'cover' }}
+                <Image
+                    source={{ uri: avatarUrl }}
                     style={[styles.avatar, sizeStyle]}
                 />
             ) : (
-                <Typography variant="body_400" text={initials} style={textStyle} />
+                <Typography variant="body_400" text={initials} style={[styles.initials, textStyle]} />
             )}
         </View>
     );

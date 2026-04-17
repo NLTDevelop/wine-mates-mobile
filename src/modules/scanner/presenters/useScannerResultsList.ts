@@ -17,9 +17,9 @@ export const useScannerResultsList = () => {
 
     const getList = useCallback(async () => {
         setIsLoading(true);
-     
+
         const formData = new FormData();
-        
+
         if (wineModel.image) {
             formData.append('image', wineModel.image as any);
         }
@@ -31,14 +31,16 @@ export const useScannerResultsList = () => {
                 localization.t('common.errorHappened'),
                 response.message || localization.t('common.somethingWentWrong'),
             );
-        } else if (response.data && 'aiData' in response.data) {
-            setAiData(response.data.aiData);
         } else {
+            setAiData(response.data.aiData);
             setData(response.data.raws);
+            if (response.data.raws.length === 0) {
+                navigation.navigate('AddWineView', { aiData: response.data.aiData, hasResults: false });
+            }
         }
-     
+
         setIsLoading(false);
-    }, []);
+    }, [navigation]);
 
     const onRefresh = useCallback(async () => {
         await getList();
@@ -55,11 +57,11 @@ export const useScannerResultsList = () => {
     }, []);
 
     const handleItemPress = useCallback((item: IWineListItem) => {
-        navigation.navigate('WineDetailsView', {wineId: item.id});
+        navigation.navigate('WineDetailsView', {wineId: item.id, fromScanner: true});
     },[navigation]);
 
     const handleAddWinePress = useCallback(() => {
-        navigation.navigate('AddWineView', { aiData });
+        navigation.navigate('AddWineView', { aiData, hasResults: true });
     },[navigation, aiData]);
 
     return { data, isLoading, onRefresh, handleItemPress, handleAddWinePress };

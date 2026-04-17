@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
-import { getStyles } from './styles';
 import { View } from 'react-native';
-import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { Slider } from '@/UIKit/Slider';
+import { PartitionedSlider } from '@/UIKit/PartitionedSlider';
 import StarRating, { StarRatingDisplay } from 'react-native-star-rating-widget';
-import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
-import { EmptyStarIcon } from '@assets/icons/EmptyStarIcon';
-import { HalfStarIcon } from '@assets/icons/HalfStarIcon';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { RateMedal } from '../RateMedal/ui';
+import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
+import { useRateThisWine } from './presenters/useRateThisWine';
+import { useUiContext } from '@/UIProvider';
+import { getStyles } from './styles';
 
 interface IProps {
     sliderValue: number;
@@ -17,71 +17,101 @@ interface IProps {
     starRate: number;
     onStarRateChange?: (value: number) => void;
     disabled?: boolean;
+    hasChangedRating?: boolean;
 }
 
-interface StarIconProps {
-    type: "full" | "half" | "empty" | "quarter" | "three-quarter";
-    size: number;
-    color: string;
-}
+export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false, hasChangedRating = false }: IProps) => {
+    const { colors } = useUiContext();
+    const { styles } = useMemo(() => getStyles(colors), [colors]);
 
-const StarIcon = ({ type, size, color }: StarIconProps) => {
-    if (type === "full") {
-      return <FilledStarIcon width={size} height={size} color={color} />;
-    }
-  
-    if (type === "half") {
-      return <HalfStarIcon width={size} height={size} color={color} outlineColor={color} />;
-    }
-  
-    return <EmptyStarIcon width={size} height={size} color={color} />;
-  };
-
-export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false}: IProps) => {
-    const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const {
+        StarIconComponent,
+        decorators,
+        title,
+        currentRatingDescription,
+        debouncedSliderValue,
+    } = useRateThisWine(disabled, starRate, sliderValue, hasChangedRating);
 
     return (
         <View style={styles.container}>
-            <Typography text={t('wine.rateThisWine')} variant="subtitle_20_500" style={styles.title} />
-            {userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER ? (
-                <>
-                    <Slider
-                        min={0}
-                        max={100}
-                        value={sliderValue}
-                        onChange={handleSliderChange ?? (() => {})}
-                        selectedColor={colors.selectedSlider}
-                        containerStyle={styles.sliderContainer}
-                        disabled={disabled}
+            <View style={styles.headerRow}>
+                <Typography text={title} variant="subtitle_20_500" style={styles.title} />
+                {!disabled && userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
+                    <RateMedal
+                        sliderValue={debouncedSliderValue}
+                        titleFontSize={24}
+                        mainFontSize={90}
+                        nameFontSize={26}
                     />
-                    <View style={styles.row}>
-                        <Typography text={sliderValue.toString()} />
+                )}
+            </View>
+            {userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER && currentRatingDescription && (
+                <View style={styles.ratingDescriptionContainer}>
+                    <View style={styles.ratingDescriptionRow}>
+                        <FilledStarIcon width={16} height={16} color={colors.stars} />
+                        <Typography
+                            text={`${starRate.toFixed(1)} ${currentRatingDescription}`}
+                            variant="body_400"
+                            style={styles.ratingDescription}
+                        />
                     </View>
-                </>
-            ) : (
+                </View>
+            )}
+
+            {userModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER ? (
                 disabled ? (
-                    <View style={styles.starsContainer}>
-                        <StarRatingDisplay
-                            rating={starRate}
-                            StarIconComponent={StarIcon}
-                            starSize={36}
-                            starStyle={styles.star}
-                            emptyColor={colors.icon}
-                        />
-                    </View>
+                    <RateMedal
+                        sliderValue={debouncedSliderValue}
+                        titleFontSize={24}
+                        mainFontSize={90}
+                        nameFontSize={26}
+                    />
                 ) : (
-                    <View style={styles.starsContainer}>
-                        <StarRating
-                            rating={starRate}
-                            onChange={onStarRateChange ?? (() => {})}
-                            StarIconComponent={StarIcon}
-                            starSize={36}
-                            starStyle={styles.star}
-                            emptyColor={colors.icon}
+                    <>
+                        <PartitionedSlider
+                            parts={[
+                                [70, 76],
+                                [76, 81],
+                                [81, 86],
+                                [86, 91],
+                                [91, 97],
+                                [97, 100],
+                            ]}
+                            value={sliderValue}
+                            onChange={handleSliderChange}
+                            selectedStyle={{ backgroundColor: colors.selectedSlider }}
+                            containerStyle={styles.sliderContainer}
+                            disabled={false}
+                            decorator={decorators}
                         />
-                    </View>
+                        <View style={styles.row}>
+                            <Typography text={sliderValue.toString()} />
+                        </View>
+                    </>
                 )
+            ) : disabled ? (
+                <View style={styles.starsContainer}>
+                    <StarRatingDisplay
+                        rating={starRate}
+                        step={0.1}
+                        StarIconComponent={StarIconComponent}
+                        starSize={36}
+                        starStyle={styles.star}
+                        emptyColor={colors.icon}
+                    />
+                </View>
+            ) : (
+                <View style={styles.starsContainer}>
+                    <StarRating
+                        rating={starRate}
+                        onChange={onStarRateChange ?? (() => {})}
+                        step={0.1}
+                        StarIconComponent={StarIconComponent}
+                        starSize={36}
+                        starStyle={styles.star}
+                        emptyColor={colors.icon}
+                    />
+                </View>
             )}
         </View>
     );

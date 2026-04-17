@@ -1,14 +1,10 @@
-import { useMemo } from 'react';
-import { View } from 'react-native';
-import { getStyles } from './styles';
-import { useUiContext } from '@/UIProvider';
+import { View, ViewStyle } from 'react-native';
 import { Typography } from '@/UIKit/Typography';
-import { Slider } from '@/UIKit/Slider';
-import { useIsFocused } from '@react-navigation/native';
+import { SmoothSlider } from '@/UIKit/SmoothSlider';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { CrownIcon } from '@assets/icons/CrownIcon';
-import { BlurContainer } from '@/UIKit/BlurContainer';
-import { BottomValues } from '../BottomValues';
+import { LockContainer } from '@/UIKit/LockContainer/index.tsx';
+import { useTasteCharacteristicItem } from './useTasteCharacteristicItem.tsx';
 
 interface IProps {
     item: IWineTasteCharacteristic;
@@ -16,53 +12,46 @@ interface IProps {
     onChange?: (value: number) => void;
     isPremiumUser: boolean;
     disabled?: boolean;
+    hideDescription?: boolean;
+    containerStyle?: ViewStyle;
+    edgeAlignedLabels?: boolean;
 }
 
-export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, disabled = false }: IProps) => {
-    const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
-    const isFocused = useIsFocused();
-    const levels = item.levels ?? [
-        { id: 1, name: '' },
-        { id: 2, name: '' },
-    ];
-
-    const safeValue = useMemo(() => {
-        const max = Math.max(levels.length - 1, 0);
-        if (value > max) return max;
-        if (value < 0) return 0;
-        return value;
-    }, [levels.length, value]);
-
-    const maxIndex = Math.max(levels.length - 1, 0);
-    const middleIndex = Math.floor((levels.length - 1) / 2);
+export const TasteCharacteristicItem = ({ item, value, onChange, isPremiumUser, disabled = false, hideDescription = false, containerStyle, edgeAlignedLabels = false }: IProps) => {
+    const { styles, maxIndex, safeValue, sliderLabels, decorator, showBlur, trackColor } = useTasteCharacteristicItem({
+        item,
+        value,
+        isPremiumUser,
+    });
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, containerStyle]}>
             <View style={styles.infoContainer}>
                 <View style={styles.row}>
                     <Typography text={item.name} variant="h6" />
                     {item.isPremium && <CrownIcon />}
                 </View>
-                {item.description && (
+                {item.description && !hideDescription && (
                     <Typography text={item.description} variant="subtitle_12_400" style={styles.description} />
                 )}
             </View>
-            <Slider
+            <SmoothSlider
                 min={0}
                 max={maxIndex}
                 value={safeValue}
-                onChange={onChange ?? (() => {})}
-                selectedColor={item.colorHex}
+                onChange={onChange}
+                selectedStyle={{ backgroundColor: item.colorHex }}
+                unselectedStyle={{ backgroundColor: trackColor }}
                 disabled={disabled}
+                labels={sliderLabels}
+                decorator={decorator}
+                markerColor={item.colorHex}
+                snapped
+                edgeAlignedLabels={edgeAlignedLabels}
             />
-            <BottomValues
-                leftValue={levels[0].name}
-                rightValue={levels[levels.length - 1].name}
-                middleValue={levels[middleIndex]?.name}
-                isTriple={item.isTriple}
-            />
-            {item.isPremium && isFocused && !isPremiumUser && <BlurContainer />}
+            {showBlur && <LockContainer />}
         </View>
     );
 };
+
+TasteCharacteristicItem.displayName = 'TasteCharacteristicItem';

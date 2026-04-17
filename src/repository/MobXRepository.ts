@@ -15,6 +15,10 @@ export class MobXRepository<T> implements IRepository<T> {
         return toJS(this._data) ?? null;
     }
 
+    get rawData() {
+        return this._data;
+    }
+
     @action save = (data: T | null): void => {
         this._data = data;
     };

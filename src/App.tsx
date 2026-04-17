@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { UIProvider, useUiContext } from './UIProvider';
 import { RootNavigator } from './navigation/rootNavigator';
@@ -7,6 +8,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { StatusBar } from 'react-native';
 import { useGoogleConfig } from './hooks/useGoogleConfig';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { clearTasteCharacteristicsCache } from './libs/storage/cacheUtils';
 
 export const App = () => (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -19,6 +21,10 @@ export const App = () => (
 const ThemedApp = () => {
     const { colors, theme } = useUiContext();
     useGoogleConfig();
+
+    useEffect(() => {
+        clearTasteCharacteristicsCache();
+    }, []);
 
     return (
         <KeyboardProvider>

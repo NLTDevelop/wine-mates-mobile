@@ -19,6 +19,7 @@ export interface ILinks {
     resetPassword: string;
     features: string;
     wines: string;
+    wineFilters: string;
     scannedWines: string;
     wineTypes: string;
     wineColors: string;
@@ -26,12 +27,21 @@ export interface ILinks {
     wineSmells: string;
     wineAromas: string;
     wineTaste: string;
+    wineTasteGroups: string;
     wineTasteCharacteristic: string;
     countries: string;
     rates: string;
     generateSnacks: string;
     generateNote: string;
     getContext: string;
+    myWine: string;
+    tasteProfile: string;
+    wineRecommendations: string;
+    faq: string;
+    me: string;
+    favoriteWineLists: string;
+    events: string;
+    eventMapPins: string;
 }
 
 class Links implements ILinks {
@@ -42,6 +52,7 @@ class Links implements ILinks {
         resetPassword: 'auth/reset-password',
         features: 'features',
         wines: 'wines',
+        wineFilters: 'wines/filters',
         scannedWines: 'wines/scanner',
         wineTypes: 'wine-types',
         wineColors: 'wine-colors',
@@ -49,12 +60,21 @@ class Links implements ILinks {
         wineSmells: 'wine-aroma-groups',
         wineAromas: 'wine-aromas',
         wineTaste: 'wine-flavors',
+        wineTasteGroups: 'wine-flavor-groups',
         wineTasteCharacteristic: 'wine-taste-characteristics',
         countries: 'countries',
         rates: 'rates',
         generateSnacks: 'rates/generate-snacks',
         generateNote: 'rates/generate-note',
-        getContext: 'rates/context'
+        getContext: 'rates/context',
+        myWine: 'myWine',
+        tasteProfile: 'users/taste-profile',
+        wineRecommendations: 'users/taste-profile/wine-recommendations',
+        faq: 'faq/topics',
+        me: 'users/me',
+        favoriteWineLists: 'favorite/wine-lists',
+        events: 'events',
+        eventMapPins: 'events/map-pins',
     };
 
     private buildDomain() {
@@ -87,6 +107,9 @@ class Links implements ILinks {
     public get wines() {
         return `${this._domain}${this._links.wines}`;
     }
+    public get wineFilters() {
+        return `${this._domain}${this._links.wineFilters}`;
+    }
     public get scannedWines() {
         return `${this._domain}${this._links.scannedWines}`;
     }
@@ -108,6 +131,9 @@ class Links implements ILinks {
     public get wineTaste() {
         return `${this._domain}${this._links.wineTaste}`;
     }
+    public get wineTasteGroups() {
+        return `${this._domain}${this._links.wineTasteGroups}`;
+    }
     public get wineTasteCharacteristic() {
         return `${this._domain}${this._links.wineTasteCharacteristic}`;
     }
@@ -125,6 +151,30 @@ class Links implements ILinks {
     }
     public get getContext() {
         return `${this._domain}${this._links.getContext}`;
+    }
+    public get myWine() {
+        return `${this._domain}${this._links.myWine}`;
+    }
+    public get tasteProfile() {
+        return `${this._domain}${this._links.tasteProfile}`;
+    }
+    public get wineRecommendations() {
+        return `${this._domain}${this._links.wineRecommendations}`;
+    }
+    public get faq() {
+        return `${this._domain}${this._links.faq}`;
+    }
+    public get me() {
+        return `${this._domain}${this._links.me}`;
+    }
+    public get favoriteWineLists() {
+        return `${this._domain}${this._links.favoriteWineLists}`;
+    }
+    public get events() {
+        return `${this._domain}${this._links.events}`;
+    }
+    public get eventMapPins() {
+        return `${this._domain}${this._links.eventMapPins}`;
     }
 }
 

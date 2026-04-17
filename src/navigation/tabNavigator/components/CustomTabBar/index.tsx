@@ -36,7 +36,9 @@ export const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarPro
         activeRoute.name === 'ScannerStack' && focusedRouteName === 'ScannerStack'
             ? 'ScannerView'
             : focusedRouteName;
-    const shouldHideTabBar = activeRoute.name === 'ScannerStack' && normalizedRouteName === 'ScannerView';
+    const shouldHideTabBar =
+        (activeRoute.name === 'ScannerStack' && normalizedRouteName === 'ScannerView') ||
+        (activeRoute.name === 'EventStack' && normalizedRouteName === 'LocationPickerView');
 
     if (shouldHideTabBar) {
         return null;
@@ -51,7 +53,11 @@ export const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarPro
                 const inactiveColor = options.tabBarInactiveTintColor ?? colors.text_light;
                 const color = isFocused ? activeColor : inactiveColor;
 
+                const isDisabled = options.tabBarAccessibilityLabel === 'disabled';
+
                 const onPress = () => {
+                    if (isDisabled) return;
+
                     const event = navigation.emit({
                         type: 'tabPress',
                         target: route.key,
@@ -68,7 +74,12 @@ export const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarPro
                 const label = typeof options.tabBarLabel === 'string' ? options.tabBarLabel : route.name;
 
                 return (
-                    <TouchableOpacity key={route.key} style={styles.tabItem} onPress={onPress}>
+                    <TouchableOpacity 
+                        key={route.key} 
+                        style={[styles.tabItem, isDisabled && { opacity: 0.4 }]} 
+                        onPress={onPress}
+                        disabled={isDisabled}
+                    >
                         {icon}
                         <Typography variant="subtitle_12_400" text={String(label)} style={[styles.text, { color }]} />
                     </TouchableOpacity>
