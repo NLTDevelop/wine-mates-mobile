@@ -22,9 +22,20 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
         header: {
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
             paddingHorizontal: scaleHorizontal(16),
             paddingTop: scaleVertical(16),
+            minHeight: scaleVertical(56),
+            position: 'relative',
+        },
+        titleContainer: {
+            position: 'absolute',
+            left: scaleHorizontal(16),
+            right: scaleHorizontal(16),
+            top: scaleVertical(16),
+            height: scaleHorizontal(40),
+            alignItems: 'center',
+            justifyContent: 'center',
         },
         closeButton: {
             width: scaleHorizontal(40),
@@ -36,7 +47,6 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
             color: colors.text,
         },
         title: {
-            flex: 1,
             textAlign: 'center',
             color: colors.text,
         },

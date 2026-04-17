@@ -119,19 +119,19 @@
         "creator": "Винороб"
     },
     "muse": {
-        "missing": "Відсутній",
+        "none": "Відсутній",
         "moderate": "Помірний",
         "creamy": "Кремовий"
     },
     "perlage": {
-        "coarse": "Крупний",
-        "small": "Дрібний",
-        "thin": "Тонкий"
+        "large": "Крупний",
+        "medium": "Середній",
+        "delicate": "Тонкий"
     },
     "wineView": {
         "cloudy": "Мутний",
         "translucent": "Напівпрозорий",
-        "sparklingClean": "Блискуче чистий"
+        "brilliant": "Чистий"
     },
     "scanner": {
         "results": "Результати",
@@ -333,7 +333,7 @@
     },
     "event": {
         "addEvent": "Додати винну подію",
-        "updateEvent": "Оновити подію",
+        "updateEvent": "Оновити події",
         "tastingTheme": "Тема дегустації",
         "restaurant": "Ресторан",
         "location": "Локація",
@@ -345,8 +345,33 @@
         "numberOfSeats": "Кількість місць",
         "selectLocation": "Вибрати локацію",
         "searchLocation": "Пошук локації",
+        "confirmPlace": "Підтвердити місце",
         "createEvent": "Створити подію",
+        "listWineEvent": "Список винної події",
+        "wineSet": "Набір вин",
+        "addWine": "Додати вино",
+        "repeat": "Повторення",
+        "repeatNever": "Ніколи",
+        "repeatDaily": "Щодня",
+        "repeatWeekly": "Щотижня",
+        "repeatMonthly": "Щомісяця",
+        "editWine": "Редагування вина",
+        "editWineStubDescription": "Заглушка екрана редагування вина. TODO: реалізувати фінальний флоу редагування.",
+        "eventCreatedTitle": "Подію створено!",
+        "eventCreatedSubtitle": "Ваша подія вже активна і очікує на гостей",
+        "checkEvent": "Переглянути подію",
+        "shareQrCode": "Поділитися QR кодом",
         "eventType": "Тип події",
+        "tastingType": "Тип дегустації",
+        "tastingTypeBlind": "Сліпа",
+        "tastingTypeRegular": "Звичайна",
+        "participationCondition": "Умова участі",
+        "participationConditionFixedPrice": "Фіксована ціна",
+        "participationConditionSplitBill": "Розділення порівну",
+        "participationConditionFree": "Безкоштовна участь",
+        "participationConditionCharity": "Благодійність",
+        "participationConditionHost": "Пригощаю",
+        "participationConditionGuest": "Хочу, щоб мене пригостили",
         "tastings": "Дегустації",
         "parties": "Вечірки"
     },
@@ -356,6 +381,7 @@
     "eventDetails": {
         "title": "Деталі події",
         "theme": "Тема",
+        "description": "Опис",
         "restaurant": "Ресторан",
         "location": "Локація",
         "date": "Дата",
@@ -363,8 +389,13 @@
         "price": "Ціна",
         "speaker": "Спікер",
         "distance": "Відстань",
+        "kmFromYou": "{{distance}} км від вас",
+        "kmOnly": "{{distance}} км",
         "language": "Мова",
         "seats": "Місця",
+        "confirmationAvailability": "Наявність підтвердження",
+        "confirmationRequired": "Потрібне підтвердження",
+        "noConfirmation": "Без підтвердження",
         "wineSet": "Набір вин",
         "bookNow": "Забронювати",
         "contactForBooking": "Контакт для бронювання",

@@ -14,11 +14,12 @@ export const getStyles = (colors: IColors) => {
           marginBottom: 0,
         },
         locationButton: {
-            height: scaleVertical(48),
+            minHeight: scaleVertical(48),
             borderWidth: 1,
             borderColor: colors.border,
             borderRadius: 12,
             paddingHorizontal: scaleHorizontal(16),
+            paddingVertical: scaleVertical(13),
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',

@@ -119,19 +119,19 @@
         "creator": "Winemaker"
     },
     "muse": {
-        "missing": "Missing",
+        "none": "None",
         "moderate": "Moderate",
         "creamy": "Creamy"
     },
     "perlage": {
-        "coarse": "Coarse",
-        "small": "Small",
-        "thin": "Thin"
+        "large": "Large",
+        "medium": "Medium",
+        "delicate": "Delicate"
     },
     "wineView": {
         "cloudy": "Cloudy",
         "translucent": "Translucent",
-        "sparklingClean": "Sparkling clean"
+        "brilliant": "Brilliant"
     },
     "scanner": {
         "results": "Results",
@@ -341,8 +341,33 @@
         "numberOfSeats": "Number of seats",
         "selectLocation": "Select location",
         "searchLocation": "Search location",
+        "confirmPlace": "Confirm place",
         "createEvent": "Create event",
+        "listWineEvent": "List wine event",
+        "wineSet": "Wine set",
+        "addWine": "Add wine",
+        "repeat": "Repeat",
+        "repeatNever": "Never",
+        "repeatDaily": "Daily",
+        "repeatWeekly": "Weekly",
+        "repeatMonthly": "Monthly",
+        "editWine": "Edit wine",
+        "editWineStubDescription": "Wine editing screen placeholder. TODO: implement final editing flow.",
+        "eventCreatedTitle": "Event created!",
+        "eventCreatedSubtitle": "Your event is live and waiting for guests",
+        "checkEvent": "Check event",
+        "shareQrCode": "Share QR code",
         "eventType": "Event type",
+        "tastingType": "Tasting type",
+        "tastingTypeBlind": "Blind",
+        "tastingTypeRegular": "Regular",
+        "participationCondition": "Participation condition",
+        "participationConditionFixedPrice": "Fixed price",
+        "participationConditionSplitBill": "Split bill equally",
+        "participationConditionFree": "Free participation",
+        "participationConditionCharity": "Charity",
+        "participationConditionHost": "Host pays",
+        "participationConditionGuest": "Looking for a host",
         "tastings": "Tastings",
         "parties": "Parties"
     },
@@ -352,6 +377,7 @@
     "eventDetails": {
         "title": "Event Details",
         "theme": "Theme",
+        "description": "Description",
         "restaurant": "Restaurant",
         "location": "Location",
         "date": "Date",
@@ -359,8 +385,13 @@
         "price": "Price",
         "speaker": "Speaker",
         "distance": "Distance",
+        "kmFromYou": "{{distance}} km from you",
+        "kmOnly": "{{distance}} km",
         "language": "Language",
         "seats": "Seats",
+        "confirmationAvailability": "Availability of confirmation",
+        "confirmationRequired": "Confirmation required",
+        "noConfirmation": "No confirmation",
         "wineSet": "Wine Set",
         "bookNow": "Book now",
         "contactForBooking": "Contact for booking",

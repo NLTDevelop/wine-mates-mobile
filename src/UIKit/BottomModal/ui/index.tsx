@@ -1,10 +1,11 @@
 import { useMemo, ReactNode } from 'react';
-import { View, Modal, TouchableWithoutFeedback, Animated, ScrollView, Pressable } from 'react-native';
+import { View, Modal, TouchableWithoutFeedback, Animated, ScrollView, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { TitleVariant, Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { useBottomModalState } from '@/UIKit/BottomModal/presenters/useBottomModalState';
 import { useBottomModalInsets } from '@/UIKit/BottomModal/presenters/useBottomModalInsets';
+import { CrossIcon } from '@assets/icons/CrossIcon';
 
 interface IProps {
     visible: boolean;
@@ -12,6 +13,7 @@ interface IProps {
     title?: string;
     titleVariant?: TitleVariant;
     customHeader?: ReactNode;
+    contentContainerStyle?: StyleProp<ViewStyle>;
     children: ReactNode;
 }
 
@@ -22,6 +24,7 @@ export const BottomModal = ({
     title,
     titleVariant = 'h4',
     customHeader,
+    contentContainerStyle,
     children
 }: IProps) => {
     const { colors } = useUiContext();
@@ -36,13 +39,15 @@ export const BottomModal = ({
 
         return (
             <View style={styles.header}>
-                <Pressable onPress={onClose} style={styles.closeButton} hitSlop={8}>
-                    <Typography text="✕" variant="h4" style={styles.closeIcon} />
-                </Pressable>
-                {title && (
-                    <Typography text={title} variant={titleVariant} style={styles.title} />
-                )}
                 <View style={styles.closeButton} />
+                {title && (
+                    <View style={styles.titleContainer} pointerEvents="none">
+                        <Typography text={title} variant={titleVariant} style={styles.title} />
+                    </View>
+                )}
+                <TouchableOpacity onPress={onClose} style={styles.closeButton} hitSlop={8}>
+                    <CrossIcon/>
+                </TouchableOpacity>
             </View>
         );
     };
@@ -83,7 +88,7 @@ export const BottomModal = ({
                     {renderHeader()}
                     <ScrollView
                         style={styles.scrollView}
-                        contentContainerStyle={styles.scrollContent}
+                        contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
                         showsVerticalScrollIndicator={false}
                         bounces={false}
                     >

@@ -33,7 +33,7 @@ class LocationModel implements ILocationModel {
     }
 
     public get isLoading() {
-        return this.isLoadingRepository.data || true;
+        return this.isLoadingRepository.data ?? true;
     }
 
     public set isLoading(value: boolean) {

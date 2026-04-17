@@ -15,9 +15,11 @@ export const DateBadge = ({ month, day }: IDateBadgeProps) => {
 
     return (
         <View style={styles.dateBadge}>
-            <Typography text={month} variant="h6" style={styles.monthText} />
+            <View style={styles.monthContainer}>
+            <Typography text={month} variant="body_400" style={styles.monthText} />
+            </View>
             <View style={styles.dayContainer}>
-                <Typography text={day} variant="h3" style={styles.dayText} />
+                <Typography text={day} variant="h4" style={styles.dayText} />
             </View>
         </View>
     );

@@ -16,7 +16,7 @@ export const FAQListItem = ({ item }: IProps) => {
 
     return (
         <View style={styles.container}>
-            <Typography text={item.topicName} variant="subtitle_20_500" style={styles.title}/>
+            <Typography text={item.name} variant="subtitle_20_500" style={styles.title}/>
             {item.questions.map((question, index) => (
                 <Collapse title={question.question} key={`${question.question}-${index}`}>
                     <Typography text={question.answer} variant="body_400" style={styles.answer}/>

@@ -8,15 +8,14 @@ import { CustomInput } from '@/UIKit/CustomInput';
 import { Button } from '@/UIKit/Button';
 import { Typography } from '@/UIKit/Typography';
 import { useAddEvent } from '../../presenters/useAddEvent';
-import { LocationPickerModal } from '../components/LocationPickerModal';
 import { MapLocationIcon } from '@assets/icons/MapLocationIcon';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
-import { DateTimePickerModal } from '../components/DateTimePickerModal';
-import { useDateTimePicker } from '../components/DateTimePickerModal/presenters/useDateTimePicker';
+import { DateTimePickerModal } from './components/DateTimePickerModal';
+import { useDateTimePicker } from './components/DateTimePickerModal/presenters/useDateTimePicker';
 import { useEventDateTimeFormatter } from '../../presenters/useEventDateTimeFormatter';
-import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { useEventTypeLabel } from '../../presenters/useEventTypeLabel';
+import { EventTypePickerModal } from './components/EventTypePickerModal';
 
 export const AddEventView = () => {
     const { colors, t } = useUiContext();
@@ -25,23 +24,20 @@ export const AddEventView = () => {
     const {
         form,
         isLoading,
+        isEventTypeModalVisible,
         disabled,
-        isLocationModalVisible,
         onChangeTheme,
-        onChangeDescription,
         onChangeRestaurantName,
-        onChangeLocationLabel,
-        onChangeLocation,
         onDateSelect,
         onTimeSelect,
         onChangePhoneNumber,
         onChangePrice,
-        onChangeSpeakerName,
         onChangeLanguage,
         onChangeSeats,
-        onChangeTastingType,
+        onOpenEventTypeModal,
+        onCloseEventTypeModal,
+        onSelectEventType,
         onLocationPress,
-        onCloseLocationModal,
         onSubmit,
     } = useAddEvent();
 
@@ -60,11 +56,12 @@ export const AddEventView = () => {
         eventDate: form.eventDate,
         eventTime: form.eventTime,
     });
+    const eventTypeLabel = useEventTypeLabel({ eventType: form.eventType, t });
 
     return (
         <>
             <ScreenContainer
-                edges={[]}
+                edges={['top']}
                 scrollEnabled
                 headerComponent={<HeaderWithBackButton title={t('event.addEvent')} isCentered={false} />}
                 isKeyboardAvoiding
@@ -142,16 +139,10 @@ export const AddEventView = () => {
                     keyboardType="numeric"
                 />
 
-                <CustomDropdown
-                    placeholder={t('event.eventType')}
-                    data={[
-                        { label: t('event.tastings'), value: TastingType.Tastings },
-                        { label: t('event.parties'), value: TastingType.Parties },
-                    ]}
-                    selectedValue={form.tastingType}
-                    onPress={(item) => onChangeTastingType(item.value as TastingType)}
-                    containerStyle={styles.inputContainerStyle}
-                />
+                <TouchableOpacity onPress={onOpenEventTypeModal} onPressIn={Keyboard.dismiss} style={styles.pickerButton}>
+                    <Typography variant="h6" text={eventTypeLabel || t('event.eventType')} />
+                    <ArrowDownIcon />
+                </TouchableOpacity>
 
                 <Button
                     text={t('event.createEvent')}
@@ -165,14 +156,6 @@ export const AddEventView = () => {
 
             </ScreenContainer>
 
-            <LocationPickerModal
-                visible={isLocationModalVisible}
-                onClose={onCloseLocationModal}
-                onSelectLocation={onChangeLocation}
-                initialLocation={form.location}
-                tastingType={form.tastingType}
-            />
-
             <DateTimePickerModal
                 visible={isVisible}
                 mode={mode}
@@ -180,6 +163,12 @@ export const AddEventView = () => {
                 onClose={onClose}
                 onConfirm={onConfirm}
                 onDateChange={onDateChange}
+            />
+            <EventTypePickerModal
+                visible={isEventTypeModalVisible}
+                selectedType={form.eventType}
+                onClose={onCloseEventTypeModal}
+                onSelectType={onSelectEventType}
             />
         </>
     );

@@ -1,17 +1,21 @@
-import { useCallback, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from 'react';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useValidator } from '@/hooks/useValidator';
-import { eventService } from '@/entities/events/EventService';
 import { Currency } from '@/entities/events/enums/Currency';
-import { RepeatRule } from '@/entities/events/enums/RepeatRule';
+import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
+import { ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
 import { Sex } from '@/entities/events/enums/Sex';
+import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
+import { IAddEventDraft } from '../types/IAddEventDraft';
 
 interface IEventForm {
     theme: string;
     description: string;
     restaurantName: string;
     locationLabel: string;
+    locationCountry: string;
     location: { latitude: number; longitude: number } | null;
     eventDate: string;
     eventTime: string;
@@ -23,21 +27,23 @@ interface IEventForm {
     seats: string;
     age: string;
     sex: Sex;
+    eventType: EventType;
     tastingType: TastingType;
+    participationCondition: ParticipationCondition;
     requiresConfirmation: boolean;
-    repeatRule: RepeatRule;
 }
 
 export const useAddEvent = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
+    const route = useRoute<RouteProp<EventStackParamList, 'AddEventView'>>();
     const { validateEmptyString } = useValidator();
-    const [isLoading, setIsLoading] = useState(false);
-    const [isLocationModalVisible, setIsLocationModalVisible] = useState(false);
+    const [isEventTypeModalVisible, setIsEventTypeModalVisible] = useState(false);
     const [form, setForm] = useState<IEventForm>({
         theme: '',
         description: '',
         restaurantName: '',
         locationLabel: '',
+        locationCountry: '',
         location: null,
         eventDate: '',
         eventTime: '',
@@ -49,9 +55,10 @@ export const useAddEvent = () => {
         seats: '',
         age: '18',
         sex: Sex.All,
-        tastingType: TastingType.Tastings,
+        eventType: EventType.Tastings,
+        tastingType: TastingType.Regular,
+        participationCondition: ParticipationCondition.FixedPrice,
         requiresConfirmation: false,
-        repeatRule: RepeatRule.Never,
     });
 
     const onChangeTheme = useCallback((value: string) => {
@@ -74,11 +81,12 @@ export const useAddEvent = () => {
         setForm(prev => ({ ...prev, locationLabel: value }));
     }, []);
 
-    const onChangeLocation = useCallback((latitude: number, longitude: number, label: string, placeName?: string) => {
+    const onChangeLocation = useCallback((latitude: number, longitude: number, label: string, placeName?: string, countryName?: string) => {
         setForm(prev => ({ 
             ...prev, 
             location: { latitude, longitude }, 
             locationLabel: label,
+            locationCountry: countryName || '',
             restaurantName: placeName || prev.restaurantName,
         }));
     }, []);
@@ -117,59 +125,82 @@ export const useAddEvent = () => {
         setForm(prev => ({ ...prev, seats: numericValue }));
     }, []);
 
-    const onChangeTastingType = useCallback((value: TastingType) => {
-        setForm(prev => ({ ...prev, tastingType: value }));
+    const onChangeEventType = useCallback((value: EventType) => {
+        setForm(prev => ({ ...prev, eventType: value }));
     }, []);
+
+    const onOpenEventTypeModal = useCallback(() => {
+        setIsEventTypeModalVisible(true);
+    }, []);
+
+    const onCloseEventTypeModal = useCallback(() => {
+        setIsEventTypeModalVisible(false);
+    }, []);
+
+    const onSelectEventType = useCallback((value: EventType) => {
+        onChangeEventType(value);
+        setIsEventTypeModalVisible(false);
+    }, [onChangeEventType]);
 
     const onLocationPress = useCallback(() => {
-        setIsLocationModalVisible(true);
-    }, []);
+        navigation.navigate('LocationPickerView', {
+            initialLocation: form.location,
+            eventType: form.eventType,
+        });
+    }, [form.eventType, form.location, navigation]);
 
-    const onCloseLocationModal = useCallback(() => {
-        setIsLocationModalVisible(false);
-    }, []);
-
-    const onSubmit = useCallback(async () => {
-        if (!form.location) return;
-
-        try {
-            setIsLoading(true);
-            // TODO: Implement wine selection functionality
-            const response = await eventService.createEvent({
-                theme: form.theme,
-                description: form.description || 'Event description',
-                restaurantName: form.restaurantName,
-                locationLabel: form.locationLabel || `${form.location.latitude.toFixed(4)}, ${form.location.longitude.toFixed(4)}`,
-                latitude: form.location.latitude,
-                longitude: form.location.longitude,
-                eventDate: form.eventDate,
-                eventTime: form.eventTime,
-                price: Number(form.price),
-                currency: form.currency,
-                speakerName: form.speakerName || 'Speaker Name',
-                language: form.language,
-                seats: Number(form.seats),
-                phoneNumber: form.phoneNumber,
-                age: Number(form.age),
-                sex: form.sex,
-                tastingType: form.tastingType,
-                requiresConfirmation: form.requiresConfirmation,
-                repeatRule: form.repeatRule,
-                wineSet: [
-                    { wineId: 204, sortOrder: 1 },
-                    { wineId: 203, sortOrder: 2 },
-                    { wineId: 202, sortOrder: 3 },
-                ],
-            });
-
-            if (!response.isError) {
-                navigation.goBack();
-            }
-        } catch (error) {
-            console.warn('useAddEvent -> onSubmit: ', error);
-        } finally {
-            setIsLoading(false);
+    useEffect(() => {
+        const pickedLocation = route.params?.pickedLocation;
+        if (!pickedLocation) {
+            return;
         }
+
+        const frameId = requestAnimationFrame(() => {
+            onChangeLocation(
+                pickedLocation.latitude,
+                pickedLocation.longitude,
+                pickedLocation.label,
+                pickedLocation.placeName,
+                pickedLocation.countryName,
+            );
+
+            navigation.setParams({ pickedLocation: undefined });
+        });
+
+        return () => {
+            cancelAnimationFrame(frameId);
+        };
+    }, [navigation, onChangeLocation, route.params?.pickedLocation]);
+
+    const onSubmit = useCallback(() => {
+        if (!form.location) {
+            return;
+        }
+
+        const draft: IAddEventDraft = {
+            theme: form.theme,
+            description: form.description || 'Event description',
+            restaurantName: form.restaurantName,
+            locationLabel: form.locationLabel || `${form.location.latitude.toFixed(4)}, ${form.location.longitude.toFixed(4)}`,
+            locationCountry: form.locationCountry,
+            location: form.location,
+            eventDate: form.eventDate,
+            eventTime: form.eventTime,
+            phoneNumber: form.phoneNumber,
+            price: form.price,
+            currency: form.currency,
+            speakerName: form.speakerName || 'Speaker Name',
+            language: form.language,
+            seats: form.seats,
+            age: form.age,
+            sex: form.sex,
+            eventType: form.eventType,
+            tastingType: form.tastingType,
+            participationCondition: form.participationCondition,
+            requiresConfirmation: form.requiresConfirmation,
+        };
+
+        navigation.navigate('AddWineSetView', { draft });
     }, [form, navigation]);
 
     const disabled = 
@@ -184,9 +215,9 @@ export const useAddEvent = () => {
 
     return {
         form,
-        isLoading,
+        isLoading: false,
+        isEventTypeModalVisible,
         disabled,
-        isLocationModalVisible,
         onChangeTheme,
         onChangeDescription,
         onChangeRestaurantName,
@@ -199,9 +230,11 @@ export const useAddEvent = () => {
         onChangeSpeakerName,
         onChangeLanguage,
         onChangeSeats,
-        onChangeTastingType,
+        onChangeEventType,
+        onOpenEventTypeModal,
+        onCloseEventTypeModal,
+        onSelectEventType,
         onLocationPress,
-        onCloseLocationModal,
         onSubmit,
     };
 };

@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { Region } from 'react-native-maps';
+import { useIsFocused } from '@react-navigation/native';
 import { eventsModel } from '@/entities/events/EventsModel';
-import { eventService } from '@/entities/events/EventService';
+import { eventsService } from '@/entities/events/EventsService';
 import { useLocationPermission } from '@/hooks/useLocationPermission.ts';
-import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 
 const KYIV_COORDINATES = {
     latitude: 50.4501,
@@ -16,38 +17,68 @@ const MAP_DELTA = {
 };
 
 const DEFAULT_RADIUS_KM = 100;
-const DEFAULT_LIMIT = 50;
 
 export const useEventMap = () => {
+    const isFocused = useIsFocused();
     const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoadingEvents, setIsLoadingEvents] = useState(false);
     const [selectedTab, setSelectedTab] = useState<'all' | 'tastings' | 'parties'>('all');
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
-    const [filterCount, setFilterCount] = useState(0);
+    const [filterCount] = useState(0);
+    const hasAutoLoadedOnFocusRef = useRef(false);
+    const lastLoadedEventTypeRef = useRef<EventType | undefined>(undefined);
+
+    const selectedEventType = useMemo(() => {
+        if (selectedTab === 'all') {
+            return undefined;
+        }
+
+        if (selectedTab === 'tastings') {
+            return EventType.Tastings;
+        }
+
+        return EventType.Parties;
+    }, [selectedTab]);
 
     const loadEvents = useCallback(async () => {
         const location = userLocation || KYIV_COORDINATES;
 
         setIsLoadingEvents(true);
         try {
-            await eventService.getMapPins({
+            await eventsService.getMapPins({
                 latitude: location.latitude,
                 longitude: location.longitude,
                 radiusKm: DEFAULT_RADIUS_KM,
+                eventType: selectedEventType,
             });
         } catch (error) {
             console.warn('useEventMap -> loadEvents: ', error);
         } finally {
             setIsLoadingEvents(false);
         }
-    }, [userLocation]);
+    }, [selectedEventType, userLocation]);
 
     useEffect(() => {
-        if (!isLocationLoading) {
-            loadEvents();
+        if (!isFocused) {
+            hasAutoLoadedOnFocusRef.current = false;
+            lastLoadedEventTypeRef.current = undefined;
+            return;
         }
-    }, [isLocationLoading, loadEvents]);
+
+        if (isLocationLoading) {
+            return;
+        }
+
+        const isSameEventType = lastLoadedEventTypeRef.current === selectedEventType;
+        if (hasAutoLoadedOnFocusRef.current && isSameEventType) {
+            return;
+        }
+
+        hasAutoLoadedOnFocusRef.current = true;
+        lastLoadedEventTypeRef.current = selectedEventType;
+        loadEvents();
+    }, [isFocused, isLocationLoading, loadEvents, selectedEventType]);
 
     const initialRegion: Region = useMemo(() => {
         if (userLocation) {
@@ -63,6 +94,10 @@ export const useEventMap = () => {
         };
     }, [userLocation]);
 
+    const mapRegionKey = useMemo(() => {
+        return `${initialRegion.latitude}:${initialRegion.longitude}`;
+    }, [initialRegion.latitude, initialRegion.longitude]);
+
     const onMarkerPress = useCallback((markerId: number) => {
         eventsModel.setSelectedEventId(markerId);
         setIsModalVisible(true);
@@ -74,7 +109,7 @@ export const useEventMap = () => {
 
     const onFavoritePress = useCallback(async (eventId: number) => {
         try {
-            await eventService.toggleSave(eventId);
+            await eventsService.toggleSave(eventId);
         } catch (error) {
             console.warn('useEventMap -> onFavoritePress: ', error);
         }
@@ -92,14 +127,16 @@ export const useEventMap = () => {
         setIsFilterModalVisible(false);
     }, []);
 
+    const mapPins = eventsModel.mapPins;
+
     const filteredMapPins = useMemo(() => {
-        const pins = eventsModel.mapPins;
         if (selectedTab === 'all') {
-            return pins;
+            return mapPins;
         }
-        const tastingType = selectedTab === 'tastings' ? TastingType.Tastings : TastingType.Parties;
-        return pins.filter(pin => pin.tastingType === tastingType);
-    }, [selectedTab]);
+
+        const eventType = selectedTab === 'tastings' ? EventType.Tastings : EventType.Parties;
+        return mapPins.filter(pin => pin.eventType === eventType);
+    }, [mapPins, selectedTab]);
 
     const refetch = useCallback(() => {
         loadEvents();
@@ -108,6 +145,7 @@ export const useEventMap = () => {
     return {
         mapPins: filteredMapPins,
         initialRegion,
+        mapRegionKey,
         selectedMarkerId: eventsModel.selectedEventId,
         onMarkerPress,
         userLocation,

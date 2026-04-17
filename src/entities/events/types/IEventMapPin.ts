@@ -1,8 +1,8 @@
-import { TastingType } from '../enums/TastingType';
+import { EventType } from '../enums/EventType';
 
 export interface IEventMapPin {
     id: number;
     latitude: number;
     longitude: number;
-    tastingType: TastingType;
+    eventType: EventType;
 }
