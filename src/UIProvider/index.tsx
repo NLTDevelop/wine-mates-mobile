@@ -22,6 +22,7 @@ export const UIProvider = observer(({ children }: IProps) => {
         theme: colorTheme.theme,
         locales: localization.locales,
         locale: localization.locale,
+        language: localization.language,
         setLocale: localization.setLocale,
         setTranslation: localization.setTranslation,
         t: localization.t,

@@ -27,7 +27,9 @@ export const AddEventView = () => {
         isEventTypeModalVisible,
         disabled,
         onChangeTheme,
+        onChangeDescription,
         onChangeRestaurantName,
+        onChangeSpeakerName,
         onDateSelect,
         onTimeSelect,
         onChangePhoneNumber,
@@ -72,7 +74,7 @@ export const AddEventView = () => {
                     containerStyle={styles.inputContainerStyle}
                     onChangeText={onChangeTheme}
                     placeholder={t('event.tastingTheme')}
-                    maxLength={80}
+                    maxLength={300}
                 />
 
                 <CustomInput
@@ -80,7 +82,23 @@ export const AddEventView = () => {
                     containerStyle={styles.inputContainerStyle}
                     onChangeText={onChangeRestaurantName}
                     placeholder={t('event.restaurant')}
-                    maxLength={30}
+                />
+
+                <CustomInput
+                    value={form.speakerName}
+                    containerStyle={styles.inputContainerStyle}
+                    onChangeText={onChangeSpeakerName}
+                    placeholder={t('event.speakerName')}
+                />
+
+                <CustomInput
+                    value={form.description}
+                    containerStyle={styles.inputContainerStyle}
+                    inputContainerStyle={styles.descriptionInputContainerStyle}
+                    onChangeText={onChangeDescription}
+                    placeholder={t('event.shortDescription')}
+                    multiline
+                    maxLength={300}
                 />
 
                 <TouchableOpacity onPress={onLocationPress} style={styles.locationButton}>

@@ -16,6 +16,7 @@ export const useWineEventListItem = ({
     onReadMorePress,
     onFavoritePress
 }: IUseWineEventListItemProps) => {
+    const currentLocale = localization.locale || 'en';
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isCardPressed, setIsCardPressed] = useState(false);
     const navigationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -61,26 +62,26 @@ export const useWineEventListItem = ({
             return '';
         }
 
-        return new Intl.DateTimeFormat(localization.locale || 'en', { month: 'short' })
+        return new Intl.DateTimeFormat(currentLocale, { month: 'short' })
             .format(parsedDate)
             .replace('.', '')
             .toUpperCase();
-    }, [parsedDate]);
+    }, [currentLocale, parsedDate]);
 
     const day = useMemo(() => {
         if (!parsedDate) {
             return '';
         }
 
-        return new Intl.DateTimeFormat(localization.locale || 'en', { day: 'numeric' }).format(parsedDate);
-    }, [parsedDate]);
+        return new Intl.DateTimeFormat(currentLocale, { day: 'numeric' }).format(parsedDate);
+    }, [currentLocale, parsedDate]);
 
     const formattedDateTime = useMemo(() => {
         if (!parsedDate) {
             return event.eventTime || '';
         }
 
-        const dateLabel = new Intl.DateTimeFormat(localization.locale || 'en', {
+        const dateLabel = new Intl.DateTimeFormat(currentLocale, {
             weekday: 'short',
             month: 'short',
             day: 'numeric',
@@ -102,20 +103,18 @@ export const useWineEventListItem = ({
         const dateWithTime = new Date(parsedDate);
         dateWithTime.setHours(hours, minutes, 0, 0);
 
-        const timeLabel = new Intl.DateTimeFormat(localization.locale || 'en', {
+        const timeLabel = new Intl.DateTimeFormat(currentLocale, {
             hour: 'numeric',
             minute: '2-digit',
         }).format(dateWithTime);
 
         return `${dateLabel} · ${timeLabel}`;
-    }, [event.eventTime, parsedDate]);
+    }, [currentLocale, event.eventTime, parsedDate]);
 
     const priceLabel = useMemo(() => {
-        const locale = localization.locale || 'en';
-
         if (event.currency) {
             try {
-                return new Intl.NumberFormat(locale, {
+                return new Intl.NumberFormat(currentLocale, {
                     style: 'currency',
                     currency: event.currency,
                     maximumFractionDigits: 0,
@@ -126,14 +125,14 @@ export const useWineEventListItem = ({
         }
 
         return `${event.price}`;
-    }, [event.currency, event.price]);
+    }, [currentLocale, event.currency, event.price]);
 
-    const eventTypeLabel = useMemo(() => {
-        if (event.eventType === EventType.Parties) {
-            return localization.t('event.parties');
-        }
+    const eventTypeLabel = event.eventType === EventType.Parties
+        ? localization.t('event.parties')
+        : localization.t('event.tastings');
 
-        return localization.t('event.tastings');
+    const isPartyEvent = useMemo(() => {
+        return event.eventType === EventType.Parties;
     }, [event.eventType]);
 
     const onCardPress = useCallback(() => {
@@ -187,6 +186,7 @@ export const useWineEventListItem = ({
         formattedDateTime,
         priceLabel,
         eventTypeLabel,
+        isPartyEvent,
         isModalVisible,
         isCardPressed,
         onCardPress,

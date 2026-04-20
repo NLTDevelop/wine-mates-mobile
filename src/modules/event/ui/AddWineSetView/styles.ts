@@ -13,6 +13,21 @@ export const getStyles = (colors: IColors) => {
         searchBar: {
             marginBottom: 0,
         },
+        tastingTypeButton: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            height: scaleVertical(48),
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 12,
+            gap: scaleHorizontal(8),
+            paddingHorizontal: scaleHorizontal(12),
+            backgroundColor: colors.background,
+        },
+        tastingTypeButtonText: {
+            color: colors.text,
+        },
         dropdownContent: {
             marginTop: scaleVertical(10),
             backgroundColor: colors.background,
