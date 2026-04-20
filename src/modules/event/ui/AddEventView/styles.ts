@@ -13,6 +13,10 @@ export const getStyles = (colors: IColors) => {
         inputContainerStyle: {
           marginBottom: 0,
         },
+        descriptionInputContainerStyle: {
+            minHeight: scaleVertical(115),
+            alignItems: 'stretch',
+        },
         locationButton: {
             minHeight: scaleVertical(48),
             borderWidth: 1,

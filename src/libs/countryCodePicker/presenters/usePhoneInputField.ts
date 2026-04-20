@@ -5,6 +5,7 @@ import examples from 'libphonenumber-js/examples.mobile.json';
 import countries from 'world-countries';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { ICountry } from '../types/ICountry';
+import { useUiContext } from '@/UIProvider';
 
 interface IProps  {
     onChangeText: (value: string) => void,
@@ -14,7 +15,15 @@ interface IProps  {
 }
 
 export const usePhoneInputField = ({ onChangeText, clearPhone, onChangeCountryCode, initialCca2 = null }: IProps) => {
-    const lang = RNLocalize.getLocales()[0]?.languageCode || 'en';
+    const { locale } = useUiContext();
+    const normalizedLocale = (locale || 'en').toLowerCase().replace('_', '-');
+    const languageCode = normalizedLocale.split('-')[0] || 'en';
+    const regionByLanguage: Partial<Record<string, CountryCode>> = {
+        uk: 'UA',
+        en: 'US',
+    };
+    const defaultRegion = regionByLanguage[languageCode] || (RNLocalize.getCountry() as CountryCode) || 'US';
+
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -24,14 +33,14 @@ export const usePhoneInputField = ({ onChangeText, clearPhone, onChangeCountryCo
     useEffect(() => {
         const detectCountry = async () => {
             try {
-                const localeCountry = initialCca2 || RNLocalize.getCountry() || 'US';
+                const localeCountry = initialCca2 || defaultRegion;
                 const matched = countries.find(c => c.cca2.toLowerCase() === localeCountry.toLowerCase());
 
                 const fallback = { name: 'Ukraine', cca2: 'UA' as CountryCode, callingCode: '+380' };
                 const country = matched
                     ? {
                           name:
-                              matched.translations?.[lang]?.common ||
+                              matched.translations?.[languageCode]?.common ||
                               matched.translations?.eng?.common ||
                               matched.name.common,
                           cca2: matched.cca2 as CountryCode,
@@ -50,7 +59,7 @@ export const usePhoneInputField = ({ onChangeText, clearPhone, onChangeCountryCo
             }
         };
         detectCountry();
-    }, [lang, initialCca2]);
+    }, [defaultRegion, initialCca2, languageCode]);
 
     useEffect(() => {
         if (selectedCountry?.callingCode && onChangeCountryCode) {

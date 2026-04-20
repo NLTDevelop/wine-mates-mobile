@@ -87,7 +87,6 @@ export const useAddEvent = () => {
             location: { latitude, longitude }, 
             locationLabel: label,
             locationCountry: countryName || '',
-            restaurantName: placeName || prev.restaurantName,
         }));
     }, []);
 
@@ -178,20 +177,20 @@ export const useAddEvent = () => {
         }
 
         const draft: IAddEventDraft = {
-            theme: form.theme,
-            description: form.description || 'Event description',
-            restaurantName: form.restaurantName,
-            locationLabel: form.locationLabel || `${form.location.latitude.toFixed(4)}, ${form.location.longitude.toFixed(4)}`,
+            theme: form.theme.trim(),
+            description: form.description.trim() || 'Event description',
+            restaurantName: form.restaurantName.trim(),
+            locationLabel: form.locationLabel.trim() || `${form.location.latitude.toFixed(4)}, ${form.location.longitude.toFixed(4)}`,
             locationCountry: form.locationCountry,
             location: form.location,
             eventDate: form.eventDate,
             eventTime: form.eventTime,
-            phoneNumber: form.phoneNumber,
-            price: form.price,
+            phoneNumber: form.phoneNumber.trim(),
+            price: form.price.trim(),
             currency: form.currency,
-            speakerName: form.speakerName || 'Speaker Name',
-            language: form.language,
-            seats: form.seats,
+            speakerName: form.speakerName.trim() || 'Speaker Name',
+            language: form.language.trim(),
+            seats: form.seats.trim(),
             age: form.age,
             sex: form.sex,
             eventType: form.eventType,
@@ -204,14 +203,14 @@ export const useAddEvent = () => {
     }, [form, navigation]);
 
     const disabled = 
-        !validateEmptyString(form.theme).isValid ||
-        !validateEmptyString(form.restaurantName).isValid ||
+        !validateEmptyString(form.theme.trim()).isValid ||
+        !validateEmptyString(form.restaurantName.trim()).isValid ||
         !form.location ||
         !validateEmptyString(form.eventDate).isValid ||
         !validateEmptyString(form.eventTime).isValid ||
-        !validateEmptyString(form.phoneNumber).isValid ||
-        !validateEmptyString(form.price).isValid ||
-        !validateEmptyString(form.seats).isValid;
+        !validateEmptyString(form.phoneNumber.trim()).isValid ||
+        !validateEmptyString(form.price.trim()).isValid ||
+        !validateEmptyString(form.seats.trim()).isValid;
 
     return {
         form,
