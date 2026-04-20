@@ -16,8 +16,27 @@ interface IProps {
 }
 
 export const DateTimePickerModal = ({ visible, mode, date, onClose, onConfirm, onDateChange }: IProps) => {
-    const { colors, t } = useUiContext();
+    const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const normalizedLocale = useMemo(() => {
+        const preparedLocale = (locale || 'en').trim().replace('_', '-');
+
+        if (!preparedLocale) {
+            return 'en';
+        }
+
+        return preparedLocale;
+    }, [locale]);
+    const timePickerLocale = useMemo(() => {
+        const languageCode = normalizedLocale.split('-')[0];
+
+        if (!languageCode) {
+            return 'en-001';
+        }
+
+        return `${languageCode}-001`;
+    }, [normalizedLocale]);
+    const pickerLocale = mode === 'time' ? timePickerLocale : normalizedLocale;
 
     const title = mode === 'date' ? t('event.eventDate') : t('event.eventTime');
 
@@ -29,6 +48,8 @@ export const DateTimePickerModal = ({ visible, mode, date, onClose, onConfirm, o
                     date={date}
                     onDateChange={onDateChange}
                     theme={colors.background === '#FFFFFF' ? 'light' : 'dark'}
+                    locale={pickerLocale}
+                    is24hourSource="locale"
                 />
                 <Button
                     text={t('common.confirm')}

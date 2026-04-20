@@ -12,10 +12,10 @@ export const useMapMarker = ({ eventId, eventType, onPress }: IUseMapMarkerProps
         onPress?.(eventId);
     }, [eventId, onPress]);
 
-    const emoji = eventType === EventType.Parties ? '🥂' : '🍷';
+    const isPartyEvent = eventType === EventType.Parties;
 
     return {
         onPressHandler,
-        emoji,
+        isPartyEvent,
     };
 };

@@ -1,38 +1,26 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
+import { scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        markerContainer: {
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: colors.background,
-            borderRadius: 20,
-            padding: 8,
-            borderWidth: 2,
-            borderColor: colors.primary,
-            shadowColor: colors.shadow,
-            shadowOffset: {
-                width: 0,
-                height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
+        markerWrapper: {
+            width: scaleVertical(42),
+            height: scaleVertical(51),
+            position: 'relative',
+            borderWidth: 0,
+            borderColor: colors.background,
         },
-        markerSelected: {
-            backgroundColor: colors.primary,
-            borderColor: colors.border,
-            transform: [{ scale: 1.2 }],
-        },
-        iconWrapper: {
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        defaultMarker: {
+        centerIcon: {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: scaleVertical(8),
+            height: scaleVertical(24),
             alignItems: 'center',
             justifyContent: 'center',
         },
     });
+
     return styles;
 };

@@ -24,6 +24,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return new Intl.DateTimeFormat(locale || 'en', {
                 month: 'long',
                 day: 'numeric',
+                year: 'numeric',
             }).format(date);
         } catch {
             return value;

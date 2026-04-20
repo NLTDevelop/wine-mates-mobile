@@ -26,8 +26,8 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'flex-start',
         },
         labelContainer: {
-            width: scaleHorizontal(103),
-            marginRight: scaleHorizontal(8),
+            width: scaleHorizontal(116),
+            marginRight: scaleHorizontal(4),
             flexShrink: 0,
         },
         label: {
@@ -56,13 +56,8 @@ export const getStyles = (colors: IColors) => {
         },
         content: {
             gap: scaleVertical(16),
-            paddingBottom: scaleVertical(80),
         },
         footer: {
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
             flexDirection: 'row',
             gap: scaleHorizontal(12),
             paddingVertical: scaleVertical(16),
