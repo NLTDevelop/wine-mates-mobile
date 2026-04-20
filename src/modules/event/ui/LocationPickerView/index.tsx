@@ -126,7 +126,7 @@ export const LocationPickerView = () => {
                         text={t('event.confirmPlace')}
                         onPress={onConfirm}
                         type="main"
-                        disabled={!(selectedLocation || initialLocation || userLocation)}
+                        disabled={!(selectedLocation || initialLocation)}
                     />
                 </View>
             </View>

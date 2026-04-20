@@ -8,6 +8,9 @@ import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { DateBadge } from '@/UIKit/DateBadge';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { MapMarker } from '@/UIKit/MapMarker';
+import { PartyIcon } from '@assets/icons/PartyIcon';
+import { TastingIcon } from '@assets/icons/TastingIcon';
+import { MoneyIcon } from '@assets/icons/MoneyIcon';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { useWineEventListItem } from './presenters/useWineEventListItem';
 import { getStyles } from './styles';
@@ -35,6 +38,7 @@ export const WineEventListItem = ({
         formattedDateTime,
         priceLabel,
         eventTypeLabel,
+        isPartyEvent,
         isModalVisible,
         isCardPressed,
         onCardPress,
@@ -61,11 +65,11 @@ export const WineEventListItem = ({
         >
             <View style={styles.metaRow}>
                 <View style={styles.metaBadge}>
-                    <Typography text="🍷" variant="h5" />
+                    {isPartyEvent ? <PartyIcon width={20} height={20} /> : <TastingIcon width={20} height={20} />}
                     <Typography text={eventTypeLabel} variant="body_400" style={styles.metaText} />
                 </View>
                 <View style={styles.metaBadge}>
-                    <Typography text="💵" variant="h5" />
+                    <MoneyIcon width={20} height={20} />
                     <Typography text={priceLabel} variant="body_400" style={styles.metaText} />
                 </View>
             </View>

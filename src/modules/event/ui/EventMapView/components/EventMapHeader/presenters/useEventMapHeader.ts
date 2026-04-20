@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useUiContext } from '@/UIProvider';
 
 interface IUseEventMapHeaderProps {
@@ -9,7 +9,7 @@ interface IUseEventMapHeaderProps {
 export const useEventMapHeader = ({ selectedTab, onTabChange }: IUseEventMapHeaderProps) => {
     const { t } = useUiContext();
 
-    const tabs = useMemo(() => [
+    const tabs = [
         {
             value: 'all' as const,
             label: t('eventMap.all'),
@@ -25,7 +25,7 @@ export const useEventMapHeader = ({ selectedTab, onTabChange }: IUseEventMapHead
             label: t('event.parties'),
             isActive: selectedTab === 'parties',
         },
-    ], [selectedTab, t]);
+    ];
 
     const onTabPress = useCallback((tab: 'all' | 'tastings' | 'parties') => {
         onTabChange(tab);

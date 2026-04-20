@@ -4,15 +4,15 @@ import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { SearchBar } from '@/UIKit/SearchBar';
-import { DropdownButton } from '@/UIKit/DropdownButton';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
-// import { PlusIcon } from '@assets/icons/PlusIcon';
+import { PlusIcon } from '@assets/icons/PlusIcon';
 import { useAddWineSetView } from './presenters/useAddWineSetView';
 import { getStyles } from './styles';
 import { WineSetItemRow } from './components/WineSetItemRow';
 import { RepeatRuleModal } from './components/RepeatRuleModal';
+import { TastingTypeModal } from './components/TastingTypeModal';
 import { EventCreatedAlert } from './components/EventCreatedAlert';
 import { IWineSetViewItem } from '@/modules/event/types/IWineSetMockItem';
 
@@ -22,20 +22,27 @@ export const AddWineSetView = () => {
 
     const {
         searchQuery,
+        tastingType,
+        tastingTypeLabel,
+        tastingTypeItems,
         repeatRule,
         repeatRuleLabel,
         repeatRuleItems,
+        isTastingTypeModalVisible,
         wineSetViewItems,
         isRepeatModalVisible,
         isEventCreatedAlertVisible,
         isCreating,
+        searchInputRef,
         onChangeSearchQuery,
+        onOpenTastingTypeModal,
         onOpenRepeatModal,
+        onCloseTastingTypeModal,
         onCloseRepeatModal,
         onCloseEventCreatedAlert,
         onCheckEventPress,
         onShareQrPress,
-        // onAddWinePress,
+        onAddWinePress,
         onCreateEventPress,
     } = useAddWineSetView();
 
@@ -58,30 +65,34 @@ export const AddWineSetView = () => {
             >
                 <View style={styles.container}>
                     <SearchBar
+                        ref={searchInputRef}
                         value={searchQuery}
                         onChangeText={onChangeSearchQuery}
                         placeholder={t('common.search')}
                         containerStyle={styles.searchBar}
                     />
+                    <TouchableOpacity style={styles.tastingTypeButton} onPress={onOpenTastingTypeModal}>
+                        <Typography variant="h6" text={tastingTypeLabel} style={styles.tastingTypeButtonText} />
+                        <ArrowDownIcon />
+                    </TouchableOpacity>
 
-                    <DropdownButton title={t('event.wineSet')}>
-                        <View style={styles.dropdownContent}>
-                            <FlatList
-                                data={wineSetViewItems}
-                                keyExtractor={keyExtractor}
-                                renderItem={renderWineItem}
-                                scrollEnabled={false}
-                                ItemSeparatorComponent={renderListDivider}
-                            />
-                        </View>
-                    </DropdownButton>
-                    {/* <Button
+                    <View style={styles.dropdownContent}>
+                        <FlatList
+                            data={wineSetViewItems}
+                            keyExtractor={keyExtractor}
+                            renderItem={renderWineItem}
+                            scrollEnabled={false}
+                            ItemSeparatorComponent={renderListDivider}
+                        />
+                    </View>
+
+                    <Button
                         text={t('event.addWine')}
                         onPress={onAddWinePress}
                         type="secondary"
                         LeftAccessory={<PlusIcon color={colors.text} width={20} height={20} />}
-                    /> */}
-                    <View style={styles.divider}/>
+                    />
+                    <View style={styles.divider} />
                     <View style={styles.repeatRow}>
                         <Typography variant="h6" text={`${t('event.repeat')}:`} style={styles.repeatLabel} />
                         <TouchableOpacity style={styles.repeatButton} onPress={onOpenRepeatModal}>
@@ -105,6 +116,12 @@ export const AddWineSetView = () => {
                 onClose={onCloseRepeatModal}
                 items={repeatRuleItems}
                 selectedValue={repeatRule}
+            />
+            <TastingTypeModal
+                visible={isTastingTypeModalVisible}
+                onClose={onCloseTastingTypeModal}
+                items={tastingTypeItems}
+                selectedValue={tastingType}
             />
             <EventCreatedAlert
                 visible={isEventCreatedAlertVisible}

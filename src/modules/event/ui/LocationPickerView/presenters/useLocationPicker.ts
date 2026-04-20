@@ -223,7 +223,7 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
     }, [getCountryFromAddress, language]);
 
     const onConfirm = useCallback(() => {
-        const locationToConfirm = selectedLocation || initialLocation || userLocation;
+        const locationToConfirm = selectedLocation || initialLocation;
 
         if (locationToConfirm) {
             const label = selectedLocation?.label || `${locationToConfirm.latitude.toFixed(4)}, ${locationToConfirm.longitude.toFixed(4)}`;
@@ -237,7 +237,7 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
             sessionTokenRef.current = createSessionToken();
             onClose();
         }
-    }, [getCountryFromAddress, initialLocation, onClose, onSelectLocation, selectedLocation, userLocation]);
+    }, [getCountryFromAddress, initialLocation, onClose, onSelectLocation, selectedLocation]);
 
     return {
         selectedLocation,

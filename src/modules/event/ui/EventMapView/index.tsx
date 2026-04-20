@@ -7,7 +7,7 @@ import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { PlusIcon } from '@assets/icons/PlusIcon';
 import { EventMap } from '@/modules/event/ui/EventMapView/components/EventMap';
 import { WineEventList } from '@/modules/event/ui/EventMapView/components/WineEventList';
-import { EventModalCard } from '@/modules/event/ui/EventMapView/components/EventModalCard';
+import { WineEventListItem } from '@/modules/event/ui/EventMapView/components/WineEventListItem';
 import { EventMapHeader } from '@/modules/event/ui/EventMapView/components/EventMapHeader';
 import { EventFiltersModal } from '@/modules/event/ui/EventMapView/components/EventFiltersModal';
 import { useEventMapScreen } from './presenters/useEventMapScreen';
@@ -15,7 +15,7 @@ import { getStyles } from './styles';
 import { ScreenHeader } from '@/UIKit/ScreenHeader';
 
 export const EventMapView = observer(() => {
-    const { colors } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const {
@@ -36,7 +36,7 @@ export const EventMapView = observer(() => {
         onAddEvent,
         onMarkerPress,
         onCloseModal,
-        onBookingPress,
+        onModalReadMorePress,
         onModalFavoritePress,
         onReadMorePress,
         onFavoritePress,
@@ -86,10 +86,13 @@ export const EventMapView = observer(() => {
                 <BottomModal
                     visible={isModalVisible}
                     onClose={onCloseModal}
+                    title={t('eventDetails.title')}
                 >
-                    <EventModalCard
+                    <WineEventListItem
                         event={selectedEvent}
-                        onBookingPress={onBookingPress}
+                        isSelected={false}
+                        isModalContent
+                        onReadMorePress={onModalReadMorePress}
                         onFavoritePress={onModalFavoritePress}
                     />
                 </BottomModal>

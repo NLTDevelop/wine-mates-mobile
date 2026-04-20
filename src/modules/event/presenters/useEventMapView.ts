@@ -43,19 +43,15 @@ export const useEventMapView = ({ events }: IUseEventMapViewProps) => {
         setSelectedEventId(null);
     }, []);
 
-    const onBookingPress = useCallback(() => {
-        if (selectedEventId) {
-            setIsModalVisible(false);
-            navigation.navigate('EventDetailsView', { eventId: selectedEventId });
-        }
-    }, [selectedEventId, navigation]);
+    const onModalReadMorePress = useCallback((eventId: number) => {
+        setIsModalVisible(false);
+        navigation.navigate('EventDetailsView', { eventId });
+    }, [navigation]);
 
-    const onModalFavoritePress = useCallback(() => {
-        if (selectedEventId) {
-            console.log('Favorite pressed:', selectedEventId);
-            // TODO: Implement favorite functionality
-        }
-    }, [selectedEventId]);
+    const onModalFavoritePress = useCallback((eventId: number) => {
+        console.log('Favorite pressed:', eventId);
+        // TODO: Implement favorite functionality
+    }, []);
 
     const onReadMorePress = useCallback((eventId: number) => {
         navigation.navigate('EventDetailsView', { eventId });
@@ -72,7 +68,7 @@ export const useEventMapView = ({ events }: IUseEventMapViewProps) => {
         onAddEvent,
         onMarkerPress,
         onCloseModal,
-        onBookingPress,
+        onModalReadMorePress,
         onModalFavoritePress,
         onReadMorePress,
         onFavoritePress,
