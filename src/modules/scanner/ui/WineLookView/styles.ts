@@ -33,6 +33,13 @@ export const getStyles = (colors: IColors) => {
         label: {
             marginBottom: scaleVertical(12),
         },
+        sparklingLabel: {
+            marginBottom: scaleVertical(4),
+        },
+        sparklingDescription: {
+            color: colors.text_light,
+            marginBottom: scaleVertical(12),
+        },
         colorsContainer: {
             flexDirection: 'row',
             flexWrap: 'wrap',

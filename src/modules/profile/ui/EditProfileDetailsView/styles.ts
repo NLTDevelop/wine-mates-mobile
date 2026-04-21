@@ -7,11 +7,16 @@ export const getStyles = (colors: IColors) => {
         container: {
             flex: 1,
             marginHorizontal: scaleHorizontal(16),
-            justifyContent: 'space-between',
+        },
+        scroll: {
+            flex: 1,
+        },
+        contentContainer: {
+            paddingTop: scaleVertical(8),
+            paddingBottom: scaleVertical(0),
         },
         content: {
-            flex: 1,
-            paddingTop: scaleVertical(8),
+            flexGrow: 1,
         },
         roleContainer: {
             flexDirection: 'row',
@@ -65,7 +70,8 @@ export const getStyles = (colors: IColors) => {
             marginLeft: scaleHorizontal(16),
         },
         buttonContainer: {
-            paddingBottom: scaleVertical(24),
+            paddingBottom: scaleVertical(12),
+            paddingTop: scaleVertical(8),
         },
         editButton: {
             width: scaleVertical(40),
