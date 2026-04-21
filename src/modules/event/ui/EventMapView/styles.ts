@@ -18,10 +18,13 @@ export const getStyles = (colors: IColors) => {
             gap: scaleVertical(16),
             paddingBottom: scaleVertical(24),
         },
+        mapContainer: {
+            position: 'relative',
+        },
         addButton: {
             position: 'absolute',
             bottom: scaleVertical(16),
-            right: scaleHorizontal(16),
+            left: scaleHorizontal(16),
             width: scaleHorizontal(48),
             height: scaleHorizontal(48),
             borderRadius: scaleHorizontal(24),

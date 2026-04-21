@@ -121,17 +121,20 @@
     "muse": {
         "none": "Відсутній",
         "moderate": "Помірний",
-        "creamy": "Кремовий"
+        "creamy": "Кремовий",
+        "description": "Визначає об’єм та текстуру піни при наливанні"
     },
     "perlage": {
         "large": "Крупний",
         "medium": "Середній",
-        "delicate": "Тонкий"
+        "delicate": "Тонкий",
+        "description": "Описує розмір та поведінку бульбашок у келиху"
     },
     "wineView": {
         "cloudy": "Мутний",
         "translucent": "Напівпрозорий",
-        "brilliant": "Чистий"
+        "brilliant": "Чистий",
+        "description": "Визначає ступінь прозорості та блиску вина"
     },
     "scanner": {
         "results": "Результати",
@@ -148,12 +151,12 @@
         "letsSmell": "Давайте понюхаємо",
         "selectColor": "Оберіть колір",
         "selectShade": "Оберіть відтінок",
-        "selectAppearance": "Оберіть вигляд",
+        "selectAppearance": "Вигляд",
         "result": "Результат",
         "wineDetails": "Інформація про вино",
         "selectedParameters": "Обрані параметри",
-        "selectMousse": "Оберіть піну",
-        "selectPerlage": "Оберіть перляж",
+        "selectMousse": "Мус",
+        "selectPerlage": "Перляж",
         "typeOfWine": "Тип вина",
         "colorOfWine": "Колір вина",
         "country": "Країна",

@@ -102,7 +102,8 @@ export const WineLookView = observer(() => {
                             {wineModel.base?.typeOfWine.isSparkling && (
                                 <View style={styles.sliderContainer}>
                                     <View>
-                                        <Typography text={t('wine.selectMousse')} variant="h4" style={styles.label} />
+                                        <Typography text={t('wine.selectMousse')} variant="h4" style={styles.sparklingLabel} />
+                                        <Typography text={t('muse.description')} variant="subtitle_12_400" style={styles.sparklingDescription} />
                                         <SmoothSlider
                                             value={mousse}
                                             onChange={setMousse}
@@ -117,7 +118,8 @@ export const WineLookView = observer(() => {
                                         />
                                     </View>
                                     <View>
-                                        <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
+                                        <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.sparklingLabel} />
+                                        <Typography text={t('perlage.description')} variant="subtitle_12_400" style={styles.sparklingDescription} />
                                         <SmoothSlider
                                             value={perlage}
                                             onChange={setPerlage}
@@ -132,7 +134,8 @@ export const WineLookView = observer(() => {
                                         />
                                     </View>
                                     <View>
-                                        <Typography text={t('wine.selectAppearance')} variant="h4" style={styles.label} />
+                                        <Typography text={t('wine.selectAppearance')} variant="h4" style={styles.sparklingLabel} />
+                                        <Typography text={t('wineView.description')} variant="subtitle_12_400" style={styles.sparklingDescription} />
                                         <SmoothSlider
                                             value={appearance}
                                             onChange={setAppearance}

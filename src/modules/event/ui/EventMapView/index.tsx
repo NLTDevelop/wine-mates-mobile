@@ -61,13 +61,18 @@ export const EventMapView = observer(() => {
                 )}
 
                 <View style={styles.content}>
-                    <EventMap
-                        mapPins={mapPins}
-                        initialRegion={initialRegion}
-                        mapRegionKey={mapRegionKey}
-                        onMarkerPress={onMarkerPress}
-                        userLocation={userLocation}
-                    />
+                    <View style={styles.mapContainer}>
+                        <EventMap
+                            mapPins={mapPins}
+                            initialRegion={initialRegion}
+                            mapRegionKey={mapRegionKey}
+                            onMarkerPress={onMarkerPress}
+                            userLocation={userLocation}
+                        />
+                        <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onAddEvent}>
+                            <PlusIcon width={32} height={32} color="white" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 <WineEventList
@@ -76,11 +81,7 @@ export const EventMapView = observer(() => {
                     onReadMorePress={onReadMorePress}
                     onFavoritePress={onFavoritePress}
                 />
-
             </ScreenContainer>
-            <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onAddEvent}>
-                <PlusIcon width={32} height={32} color="white" />
-            </TouchableOpacity>
 
             {selectedEvent && (
                 <BottomModal
