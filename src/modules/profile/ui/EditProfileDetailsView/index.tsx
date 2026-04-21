@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Pressable, View } from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -24,7 +25,7 @@ import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLe
 import { WineLoverIcon } from '@assets/icons/WineLoverIcon.tsx';
 import { WineExpertIcon } from '@assets/icons/WineExpertIcon.tsx';
 import { WinemakerIcon } from '@assets/icons/WinemakerIcon.tsx';
-import { scaleHorizontal } from '@/utils';
+import { isIOS, scaleHorizontal, scaleVertical } from '@/utils';
 
 const EXPERTISE_SIZE = scaleHorizontal(16);
 
@@ -83,154 +84,176 @@ export const EditProfileDetailsView = () => {
         <ScreenContainer
             edges={['top', 'bottom']}
             withGradient
-            scrollEnabled
-            headerComponent={(
-                <HeaderWithBackButton
-                    title={t('settings.profileSettings')}
-                    onPressBack={onEditModeBackHandler}
-                />
-            )}
-            isKeyboardAvoiding
+            headerComponent={
+                <HeaderWithBackButton title={t('settings.profileSettings')} onPressBack={onEditModeBackHandler} />
+            }
         >
             <View style={styles.container}>
-                <View style={styles.content}>
-                    <View style={styles.avatarContainer}>
-                        <AvatarPicker
-                            size={72}
-                            avatarUrl={avatarUrl}
-                            fullname={form.fullName}
-                            isEditing
-                            selectedImageUri={selectedAvatarUri}
-                            hasAvatar={hasAvatar}
-                            isMarkedForDeletion={isMarkedForDeletion}
-                            onPress={onOpenCamera}
-                            onRemove={onRemoveAvatar}
-                            onCancelDeletion={onCancelDeletion}
-                        />
-                        <View style={styles.roleContainer}>
-                            <Typography
-                                text={expertiseLevel === 'lover' ? t('registration.wineLover') : expertiseLevel === 'expert' ? t('registration.wineExpert') : t('registration.winemaker')}
-                                variant="subtitle_12_500"
-                                style={styles.roleText}
+                <KeyboardAwareScrollView
+                    style={styles.scroll}
+                    contentContainerStyle={styles.contentContainer}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                    bottomOffset={scaleVertical(82)}
+                >
+                    <View style={styles.content}>
+                        <View style={styles.avatarContainer}>
+                            <AvatarPicker
+                                size={72}
+                                avatarUrl={avatarUrl}
+                                fullname={form.fullName}
+                                isEditing
+                                selectedImageUri={selectedAvatarUri}
+                                hasAvatar={hasAvatar}
+                                isMarkedForDeletion={isMarkedForDeletion}
+                                onPress={onOpenCamera}
+                                onRemove={onRemoveAvatar}
+                                onCancelDeletion={onCancelDeletion}
                             />
-                            {expertiseLevel === WineExperienceLevelEnum.LOVER && <WineLoverIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />}
-                            {expertiseLevel === WineExperienceLevelEnum.EXPERT && <WineExpertIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />}
-                            {expertiseLevel === WineExperienceLevelEnum.CREATOR && <WinemakerIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />}
-                        </View>
-                    </View>
-
-                    <ExpertiseSelectorRow expertiseLevel={expertiseLevel} onPress={onOpenExpertiseModal} />
-
-                    <CustomInput
-                        value={form.fullName}
-                        onChangeText={(value) => onChangeField('fullName', value)}
-                        editable
-                        placeholder={t('settings.fullName')}
-                        containerStyle={styles.input}
-                    />
-                    <CustomInput
-                        value={form.email}
-                        onChangeText={(value) => onChangeField('email', value)}
-                        editable
-                        placeholder={t('settings.email')}
-                        containerStyle={styles.input}
-                    />
-                    <View style={styles.input}>
-                        <PhoneInputField
-                            value={form.phoneNumber}
-                            onChangeText={(value) => onChangeField('phoneNumber', value)}
-                            onChangeCountryCode={onChangeCountryCode}
-                            editable
-                            initialCca2={phoneInitialCca2}
-                        />
-                    </View>
-                    <CustomDropdown
-                        data={countryOptions}
-                        placeholder={t('settings.country')}
-                        onPress={onChangeCountry}
-                        withSearch
-                        selectedValue={form.country}
-                        disabled={false}
-                        containerStyle={styles.input}
-                    />
-                    <CitySelectorRow
-                        value={form.city}
-                        placeholder={t('settings.city')}
-                        disabled={isCitySelectorDisabled}
-                        onPress={onOpenCitySelector}
-                    />
-                    <View style={styles.input}>
-                        <BirthdaySelector
-                            date={form.birthday}
-                            handlePress={onOpenBirthdayModal}
-                            isOpened={isBirthdayModalVisible}
-                            isError={false}
-                            displayText={birthdayDisplayText}
-                            disabled={false}
-                        />
-                    </View>
-                    <CustomDropdown
-                        data={genderOptions}
-                        placeholder={t('settings.gender')}
-                        onPress={item => onChangeField('gender', String(item.value))}
-                        selectedValue={form.gender}
-                        disabled={false}
-                        containerStyle={styles.input}
-                    />
-                    <CustomInput
-                        value={form.occupation}
-                        onChangeText={(value) => onChangeField('occupation', value)}
-                        editable
-                        placeholder={t('settings.occupation')}
-                        containerStyle={styles.input}
-                    />
-                    <CustomInput
-                        value={form.placeOfWork}
-                        onChangeText={(value) => onChangeField('placeOfWork', value)}
-                        editable
-                        placeholder={t('settings.placeOfWork')}
-                        containerStyle={styles.input}
-                    />
-                    <CustomInput
-                        value={form.instagramLink}
-                        onChangeText={(value) => onChangeField('instagramLink', value)}
-                        editable
-                        placeholder={t('settings.instagram')}
-                        error={!!instagramLinkError}
-                        errorText={instagramLinkError || undefined}
-                        LeftAccessory={(
-                            <View style={styles.instagramAccessory}>
-                                <InstagramIcon color={colors.text} />
+                            <View style={styles.roleContainer}>
+                                <Typography
+                                    text={
+                                        expertiseLevel === 'lover'
+                                            ? t('registration.wineLover')
+                                            : expertiseLevel === 'expert'
+                                              ? t('registration.wineExpert')
+                                              : t('registration.winemaker')
+                                    }
+                                    variant="subtitle_12_500"
+                                    style={styles.roleText}
+                                />
+                                {expertiseLevel === WineExperienceLevelEnum.LOVER && (
+                                    <WineLoverIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />
+                                )}
+                                {expertiseLevel === WineExperienceLevelEnum.EXPERT && (
+                                    <WineExpertIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />
+                                )}
+                                {expertiseLevel === WineExperienceLevelEnum.CREATOR && (
+                                    <WinemakerIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />
+                                )}
                             </View>
-                        )}
-                        containerStyle={styles.input}
-                    />
-                    <CustomInput
-                        value={form.website}
-                        onChangeText={(value) => onChangeField('website', value)}
-                        editable
-                        placeholder={t('settings.website')}
-                        containerStyle={styles.input}
-                    />
-                    <CustomInput
-                        value={form.bio}
-                        onChangeText={(value) => onChangeField('bio', value)}
-                        editable
-                        placeholder={t('settings.bio')}
-                        multiline
-                        inputContainerStyle={styles.bigInput}
-                    />
-                </View>
+                        </View>
 
-                <View style={styles.buttonContainer}>
-                    <Button
-                        text={t('common.save')}
-                        onPress={onSave}
-                        type="main"
-                        disabled={isDisabled}
-                        inProgress={isInProgress}
-                    />
-                </View>
+                        <ExpertiseSelectorRow expertiseLevel={expertiseLevel} onPress={onOpenExpertiseModal} />
+
+                        <CustomInput
+                            value={form.fullName}
+                            onChangeText={value => onChangeField('fullName', value)}
+                            editable
+                            placeholder={t('settings.fullName')}
+                            containerStyle={styles.input}
+                        />
+                        <CustomInput
+                            value={form.email}
+                            onChangeText={value => onChangeField('email', value)}
+                            editable
+                            placeholder={t('settings.email')}
+                            containerStyle={styles.input}
+                        />
+                        <View style={styles.input}>
+                            <PhoneInputField
+                                value={form.phoneNumber}
+                                onChangeText={value => onChangeField('phoneNumber', value)}
+                                onChangeCountryCode={onChangeCountryCode}
+                                editable
+                                initialCca2={phoneInitialCca2}
+                            />
+                        </View>
+                        <CustomDropdown
+                            data={countryOptions}
+                            placeholder={t('settings.country')}
+                            onPress={onChangeCountry}
+                            withSearch
+                            selectedValue={form.country}
+                            disabled={false}
+                            containerStyle={styles.input}
+                        />
+                        <CitySelectorRow
+                            value={form.city}
+                            placeholder={t('settings.city')}
+                            disabled={isCitySelectorDisabled}
+                            onPress={onOpenCitySelector}
+                        />
+                        <View style={styles.input}>
+                            <BirthdaySelector
+                                date={form.birthday}
+                                handlePress={onOpenBirthdayModal}
+                                isOpened={isBirthdayModalVisible}
+                                isError={false}
+                                displayText={birthdayDisplayText}
+                                disabled={false}
+                            />
+                        </View>
+                        <CustomDropdown
+                            data={genderOptions}
+                            placeholder={t('settings.gender')}
+                            onPress={item => onChangeField('gender', String(item.value))}
+                            selectedValue={form.gender}
+                            disabled={false}
+                            containerStyle={styles.input}
+                        />
+                        <CustomInput
+                            value={form.occupation}
+                            onChangeText={value => onChangeField('occupation', value)}
+                            editable
+                            placeholder={t('settings.occupation')}
+                            containerStyle={styles.input}
+                        />
+                        <CustomInput
+                            value={form.placeOfWork}
+                            onChangeText={value => onChangeField('placeOfWork', value)}
+                            editable
+                            placeholder={t('settings.placeOfWork')}
+                            containerStyle={styles.input}
+                        />
+                        <CustomInput
+                            value={form.instagramLink}
+                            onChangeText={value => onChangeField('instagramLink', value)}
+                            editable
+                            placeholder={t('settings.instagram')}
+                            error={!!instagramLinkError}
+                            errorText={instagramLinkError || undefined}
+                            LeftAccessory={
+                                <View style={styles.instagramAccessory}>
+                                    <InstagramIcon color={colors.text} />
+                                </View>
+                            }
+                            containerStyle={styles.input}
+                        />
+                        <CustomInput
+                            value={form.website}
+                            onChangeText={value => onChangeField('website', value)}
+                            editable
+                            placeholder={t('settings.website')}
+                            containerStyle={styles.input}
+                        />
+                        <CustomInput
+                            value={form.bio}
+                            onChangeText={value => onChangeField('bio', value)}
+                            editable
+                            placeholder={t('settings.bio')}
+                            multiline
+                            inputContainerStyle={styles.bigInput}
+                        />
+                    </View>
+                </KeyboardAwareScrollView>
+
+                <KeyboardStickyView
+                    offset={{
+                        closed: 0,
+                        opened: isIOS ? scaleVertical(32) : 0,
+                    }}
+                >
+                    <View style={styles.buttonContainer}>
+                        <Button
+                            text={t('common.save')}
+                            onPress={onSave}
+                            type="main"
+                            disabled={isDisabled}
+                            inProgress={isInProgress}
+                        />
+                    </View>
+                </KeyboardStickyView>
             </View>
 
             <SelectExpertiseBottomSheet
@@ -252,7 +275,7 @@ export const EditProfileDetailsView = () => {
             <BottomModal
                 visible={isBirthdayModalVisible}
                 onClose={onCloseBirthdayModal}
-                customHeader={(
+                customHeader={
                     <View style={styles.birthdayModalHeader}>
                         <Pressable onPress={onCloseBirthdayModal} style={styles.birthdayModalButton}>
                             <Typography text="✕" variant="h4" />
@@ -262,7 +285,7 @@ export const EditProfileDetailsView = () => {
                             <Typography text="OK" variant="h6" />
                         </Pressable>
                     </View>
-                )}
+                }
             >
                 <View style={styles.calendarContainer}>
                     <DatePicker
@@ -279,10 +302,14 @@ export const EditProfileDetailsView = () => {
                 visible={isDeleteAvatarAlertVisible}
                 onClose={onCloseDeleteAvatarAlert}
                 header={t('settings.deleteProfilePhotoTitle')}
-                content={(
-                    <Typography text={t('settings.deleteProfilePhotoMessage')} variant="subtitle_12_400" style={styles.alertMessage} />
-                )}
-                footer={(
+                content={
+                    <Typography
+                        text={t('settings.deleteProfilePhotoMessage')}
+                        variant="subtitle_12_400"
+                        style={styles.alertMessage}
+                    />
+                }
+                footer={
                     <View style={styles.alertFooter}>
                         <Button
                             text={t('settings.delete')}
@@ -297,7 +324,7 @@ export const EditProfileDetailsView = () => {
                             containerStyle={styles.alertButton}
                         />
                     </View>
-                )}
+                }
             />
         </ScreenContainer>
     );

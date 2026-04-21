@@ -121,17 +121,20 @@
     "muse": {
         "none": "None",
         "moderate": "Moderate",
-        "creamy": "Creamy"
+        "creamy": "Creamy",
+        "description": "Defines the volume and texture of the foam when pouring"
     },
     "perlage": {
         "large": "Large",
         "medium": "Medium",
-        "delicate": "Delicate"
+        "delicate": "Delicate",
+        "description": "Describes the size and behavior of the bubbles in the glass"
     },
     "wineView": {
         "cloudy": "Cloudy",
         "translucent": "Translucent",
-        "brilliant": "Brilliant"
+        "brilliant": "Brilliant",
+        "description": "Defines the degree of clarity and brilliance of the wine"
     },
     "scanner": {
         "results": "Results",
