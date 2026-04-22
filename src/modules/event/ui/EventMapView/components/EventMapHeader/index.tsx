@@ -11,20 +11,32 @@ interface IProps {
     onTabChange: (tab: 'all' | 'tastings' | 'parties') => void;
     onFilterPress: () => void;
     onAddEventPress: () => void;
+    isUpdateEventDisabled: boolean;
     filterCount: number;
 }
 
-export const EventMapHeader = ({ selectedTab, onTabChange, onFilterPress, onAddEventPress, filterCount }: IProps) => {
+export const EventMapHeader = ({
+    selectedTab,
+    onTabChange,
+    onFilterPress,
+    onAddEventPress,
+    isUpdateEventDisabled,
+    filterCount,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { tabs, onTabPress } = useEventMapHeader({ selectedTab, onTabChange });
+    const { tabs } = useEventMapHeader({ selectedTab, onTabChange });
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <Typography text={t('eventMap.wineEvents')} variant="h3" />
-                <TouchableOpacity onPress={onAddEventPress}>
+                <TouchableOpacity
+                    onPress={onAddEventPress}
+                    disabled={isUpdateEventDisabled}
+                    style={isUpdateEventDisabled ? styles.updateButtonDisabled : undefined}
+                >
                     <Typography
                         text={t('event.updateEvent')}
                         variant="h6"
@@ -38,7 +50,7 @@ export const EventMapHeader = ({ selectedTab, onTabChange, onFilterPress, onAddE
                     {tabs.map((tab) => (
                         <TouchableOpacity
                             key={tab.value}
-                            onPress={() => onTabPress(tab.value)}
+                            onPress={tab.onPress}
                             style={styles.tab}
                         >
                             <Typography
