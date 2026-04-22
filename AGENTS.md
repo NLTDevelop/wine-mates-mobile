@@ -517,3 +517,97 @@ export const getStyles = (colors: IColors) => {
 **Principle:**
 - one consistent branching style across the project
 - simpler readability and less boilerplate
+
+---
+
+## 20. Scale is required for size and spacing style values
+
+**Required:**
+- in styles, all non-zero values for size and spacing properties must be passed through a function whose name starts with `scale`
+- this applies to paddings, margins, width/height, top/left/right/bottom and related size-position properties
+- any `scale*` function is allowed (`scaleHorizontal`, `scaleVertical`, and others with `scale` prefix)
+
+**Allowed:**
+- value `0` without scaling
+- using any scale function regardless of axis naming (strict binding to vertical/horizontal is not required)
+
+**Forbidden:**
+- raw non-zero numeric values in size and spacing style properties without `scale*`
+
+**Principle:**
+- avoid unscaled hardcoded dimensions in UI styles
+- keep scaling approach consistent across the project
+
+---
+
+## 21. `getStyles` template is mandatory in `styles.ts`
+
+**Required:**
+- in `styles.ts`, `getStyles` must follow the template:
+  - `const styles = StyleSheet.create(...)`
+  - `return styles`
+
+**Forbidden:**
+- `return StyleSheet.create(...)` directly
+- any other `getStyles` structure that skips `const styles` variable
+
+---
+
+## 22. `keyExtractor` is forbidden in presenters
+
+**Required:**
+- keep `keyExtractor` inside UI component
+
+**Forbidden:**
+- declaring or returning `keyExtractor` in any presenter
+
+---
+
+## 23. Data preparation in UI components is forbidden
+
+**Required:**
+- data preparation must be moved to presenters/hooks
+- inside UI component, only `useMemo(() => getStyles(...), [...])` is allowed for styles
+
+**Forbidden:**
+- `map`, `filter`, `reduce` for data preparation inside UI component
+- `useCallback` inside UI component
+- `useMemo` inside UI component for anything except style creation through `getStyles`
+
+---
+
+## 24. Business logic is forbidden in models
+
+**Required:**
+- models are data containers only
+- only one model method is allowed: `appened`
+
+**Forbidden:**
+- any additional methods in models
+- handlers in models
+- transformation logic in models
+
+---
+
+## 25. Exported shared types in UI files are forbidden
+
+**Required:**
+- move shared exported `type/interface/enum` from UI files to `types/` and `enums/`
+
+**Allowed:**
+- local non-exported types that are used only inside the same UI file
+
+---
+
+## 26. Render function abuse is forbidden
+
+**Required:**
+- use render functions only when required by library API
+
+**Allowed:**
+- `renderItem`
+- `renderLeftActions`
+- `renderRightActions`
+
+**Forbidden:**
+- arbitrary render helpers like `renderHeader`, `renderContent`, `renderFooter` and similar without strict API need
