@@ -51,7 +51,7 @@ export const getStyles = (colors: IColors) => {
         tabsContainer: {
             flex: 1,
             flexDirection: 'row',
-            borderBottomWidth: 1,
+            borderBottomWidth: scaleHorizontal(1),
             borderBottomColor: colors.border,
         },
         tab: {
@@ -68,7 +68,7 @@ export const getStyles = (colors: IColors) => {
         },
         activeTabIndicator: {
             position: 'absolute',
-            bottom: -1,
+            bottom: -scaleVertical(1),
             left: 0,
             right: 0,
             height: scaleVertical(2),

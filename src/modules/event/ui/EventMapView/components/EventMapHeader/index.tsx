@@ -26,7 +26,7 @@ export const EventMapHeader = ({
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { tabs, onTabPress } = useEventMapHeader({ selectedTab, onTabChange });
+    const { tabs } = useEventMapHeader({ selectedTab, onTabChange });
 
     return (
         <View style={styles.container}>
@@ -50,7 +50,7 @@ export const EventMapHeader = ({
                     {tabs.map((tab) => (
                         <TouchableOpacity
                             key={tab.value}
-                            onPress={() => onTabPress(tab.value)}
+                            onPress={tab.onPress}
                             style={styles.tab}
                         >
                             <Typography
