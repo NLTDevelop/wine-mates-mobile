@@ -19,6 +19,9 @@ export const getStyles = (colors: IColors) => {
         updateButton: {
             color: colors.error,
         },
+        updateButtonDisabled: {
+            opacity: 0.4,
+        },
         filterButton: {
             position: 'relative',
             marginLeft: 'auto',

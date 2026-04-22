@@ -10,7 +10,6 @@ export const useEventMapScreen = () => {
     const {
         mapPins,
         initialRegion,
-        mapRegionKey,
         userLocation,
         selectedTab,
         onTabChange,
@@ -51,6 +50,10 @@ export const useEventMapScreen = () => {
     }, [events, selectedTab]);
 
     const onUpdateEvent = useCallback(async () => {
+        if (isRefetching) {
+            return;
+        }
+
         setIsRefetching(true);
         try {
             await Promise.all([
@@ -60,7 +63,7 @@ export const useEventMapScreen = () => {
         } finally {
             setIsRefetching(false);
         }
-    }, [onRefetchEvents, onRefetchMapPins]);
+    }, [isRefetching, onRefetchEvents, onRefetchMapPins]);
 
     return {
         isRefetching,
@@ -71,7 +74,6 @@ export const useEventMapScreen = () => {
         onUpdateEvent,
         mapPins,
         initialRegion,
-        mapRegionKey,
         onMarkerPress,
         userLocation,
         filteredEvents,

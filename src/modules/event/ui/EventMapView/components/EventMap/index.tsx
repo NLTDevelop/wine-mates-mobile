@@ -12,20 +12,18 @@ import { observer } from 'mobx-react-lite';
 interface IEventMapProps {
     mapPins: IEventMapPin[];
     initialRegion: Region;
-    mapRegionKey: string;
     onMarkerPress: (markerId: number) => void;
     userLocation?: IUserLocation | null;
 }
 
 export const EventMap = observer(
-    ({ mapPins, initialRegion, mapRegionKey, onMarkerPress, userLocation }: IEventMapProps) => {
+    ({ mapPins, initialRegion, onMarkerPress, userLocation }: IEventMapProps) => {
         const { colors } = useUiContext();
         const styles = useMemo(() => getStyles(colors), [colors]);
 
         return (
             <View style={styles.mapContainer}>
                 <MapView
-                    key={mapRegionKey}
                     initialRegion={initialRegion}
                     showsUserLocation={!!userLocation}
                     showsMyLocationButton={!!userLocation}

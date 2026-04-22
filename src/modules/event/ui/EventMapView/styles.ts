@@ -33,11 +33,6 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             ...shadows.medium,
         },
-        loaderContainer: {
-            paddingVertical: scaleVertical(16),
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
     });
     return styles;
 };

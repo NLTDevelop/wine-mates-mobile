@@ -94,10 +94,6 @@ export const useEventMap = () => {
         };
     }, [userLocation]);
 
-    const mapRegionKey = useMemo(() => {
-        return `${initialRegion.latitude}:${initialRegion.longitude}`;
-    }, [initialRegion.latitude, initialRegion.longitude]);
-
     const onMarkerPress = useCallback((markerId: number) => {
         eventsModel.setSelectedEventId(markerId);
         setIsModalVisible(true);
@@ -145,7 +141,6 @@ export const useEventMap = () => {
     return {
         mapPins: filteredMapPins,
         initialRegion,
-        mapRegionKey,
         selectedMarkerId: eventsModel.selectedEventId,
         onMarkerPress,
         userLocation,
