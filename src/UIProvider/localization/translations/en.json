@@ -330,6 +330,13 @@
         "showList": "Show list",
         "all": "All"
     },
+    "eventFilters": {
+        "radius": "Radius",
+        "date": "Date",
+        "selectDate": "Select date",
+        "kmSuffix": "km",
+        "close": "Close"
+    },
     "event": {
         "addEvent": "Add wine event",
         "updateEvent": "Update event",

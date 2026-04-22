@@ -4,8 +4,8 @@ import { eventsService } from '@/entities/events/EventsService';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { IEventsListParams } from '@/entities/events/params/IEventsListParams';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
-import { Sex } from '@/entities/events/enums/Sex';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
+import { IEventFilters } from '@/modules/event/types/IEventFilters';
 
 const KYIV_COORDINATES = {
     latitude: 50.4501,
@@ -16,28 +16,22 @@ const DEFAULT_RADIUS_KM = 100;
 const DEFAULT_LIMIT = 10;
 const OFFSET = 0;
 
-interface IFilters {
-    eventDate?: string;
-    language?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    sex?: Sex;
-    minAge?: number;
-    maxAge?: number;
-}
-
 interface IProps {
     searchLocation?: IUserLocation | null;
+    filters?: IEventFilters;
 }
 
-export const useEventsList = ({ searchLocation }: IProps = {}) => {
+export const useEventsList = ({ searchLocation, filters }: IProps = {}) => {
     const isFocused = useIsFocused();
     const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [filters, setFilters] = useState<IFilters>({});
     const hasAutoLoadedOnFocusRef = useRef(false);
     const lastLoadedLocationKeyRef = useRef('');
+    const lastLoadedFiltersKeyRef = useRef('');
+    const filtersKey = useMemo(() => {
+        return `${filters?.radiusKm ?? ''}:${filters?.eventDate ?? ''}`;
+    }, [filters?.eventDate, filters?.radiusKm]);
     const list = eventsModel.list;
     const hasMore = useMemo(() => {
         if (!list) {
@@ -64,10 +58,10 @@ export const useEventsList = ({ searchLocation }: IProps = {}) => {
             const params: IEventsListParams = {
                 latitude: targetLocation.latitude,
                 longitude: targetLocation.longitude,
-                radiusKm: DEFAULT_RADIUS_KM,
+                radiusKm: filters?.radiusKm ?? DEFAULT_RADIUS_KM,
                 offset,
                 limit: DEFAULT_LIMIT,
-                ...filters,
+                eventDate: filters?.eventDate,
             };
 
             const response = await eventsService.getList(params);
@@ -81,7 +75,7 @@ export const useEventsList = ({ searchLocation }: IProps = {}) => {
             setIsLoading(false);
             setIsRefreshing(false);
         }
-    }, [filters, getTargetLocation]);
+    }, [filters?.eventDate, filters?.radiusKm, getTargetLocation]);
 
     const onRefresh = useCallback((offset: number = OFFSET, location?: IUserLocation | null) => {
         return loadEvents(offset, location);
@@ -93,24 +87,18 @@ export const useEventsList = ({ searchLocation }: IProps = {}) => {
         }
     }, [isLoading, list, loadEvents]);
 
-    const onApplyFilters = useCallback((newFilters: IFilters) => {
-        setFilters(newFilters);
-    }, []);
-
-    const onClearFilters = useCallback(() => {
-        setFilters({});
-    }, []);
-
     const refetch = useCallback((location?: IUserLocation | null) => {
         const targetLocation = getTargetLocation(location);
         hasAutoLoadedOnFocusRef.current = true;
         lastLoadedLocationKeyRef.current = `${targetLocation.latitude}:${targetLocation.longitude}`;
+        lastLoadedFiltersKeyRef.current = filtersKey;
         return onRefresh(OFFSET, targetLocation);
-    }, [getTargetLocation, onRefresh]);
+    }, [filtersKey, getTargetLocation, onRefresh]);
 
     useEffect(() => {
         if (!isFocused) {
             hasAutoLoadedOnFocusRef.current = false;
+            lastLoadedFiltersKeyRef.current = '';
             return;
         }
 
@@ -121,28 +109,27 @@ export const useEventsList = ({ searchLocation }: IProps = {}) => {
         const targetLocation = getTargetLocation();
         const currentLocationKey = `${targetLocation.latitude}:${targetLocation.longitude}`;
         const isSameLocation = lastLoadedLocationKeyRef.current === currentLocationKey;
-        if (hasAutoLoadedOnFocusRef.current && isSameLocation) {
+        const isSameFilters = lastLoadedFiltersKeyRef.current === filtersKey;
+        if (hasAutoLoadedOnFocusRef.current && isSameLocation && isSameFilters) {
             return;
         }
 
         hasAutoLoadedOnFocusRef.current = true;
         lastLoadedLocationKeyRef.current = currentLocationKey;
+        lastLoadedFiltersKeyRef.current = filtersKey;
         if (isFocused) {
             onRefresh(OFFSET, targetLocation);
         }
-    }, [getTargetLocation, isFocused, isLocationLoading, onRefresh]);
+    }, [filtersKey, getTargetLocation, isFocused, isLocationLoading, onRefresh]);
 
     return {
         events: eventsModel.events,
         isLoading,
         isRefreshing,
         hasMore,
-        filters,
         loadEvents,
         onRefresh,
         onLoadMore,
-        onApplyFilters,
-        onClearFilters,
         refetch,
     };
 };

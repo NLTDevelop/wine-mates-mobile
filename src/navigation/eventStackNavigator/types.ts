@@ -25,4 +25,5 @@ export type EventStackParamList = {
         initialLocation?: { latitude: number; longitude: number } | null;
         eventType?: EventType;
     };
+    EventFiltersView: undefined;
 };

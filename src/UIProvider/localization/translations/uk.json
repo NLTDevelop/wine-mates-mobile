@@ -334,6 +334,13 @@
         "showList": "Показати список",
         "all": "Всі"
     },
+    "eventFilters": {
+        "radius": "Радіус",
+        "date": "Дата",
+        "selectDate": "Оберіть дату",
+        "kmSuffix": "км",
+        "close": "Закрити"
+    },
     "event": {
         "addEvent": "Додати винну подію",
         "updateEvent": "Оновити події",

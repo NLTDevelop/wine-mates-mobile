@@ -63,12 +63,12 @@ export const EventMapHeader = ({
                     ))}
                 </View>
                 <TouchableOpacity onPress={onFilterPress} style={styles.filterButton}>
-                    <FilterIcon />
+                    <FilterIcon width={44} height={44}/>
                     {filterCount > 0 && (
                         <View style={styles.badge}>
                             <Typography
                                 text={filterCount.toString()}
-                                variant="subtitle_12_400"
+                                variant="subtitle_8_400"
                                 style={styles.badgeText}
                             />
                         </View>

@@ -2,6 +2,7 @@ import { MobXRepository } from '@/repository/MobXRepository';
 import { IEvent, IEventDetail } from './types/IEvent';
 import { IEventMapPin } from './types/IEventMapPin';
 import { IList } from '../IList';
+import { IEventFilters } from '@/modules/event/types/IEventFilters';
 
 export interface IEventsModel {
     list: IList<IEvent> | null;
@@ -9,12 +10,15 @@ export interface IEventsModel {
     selectedEventId: number | null;
     eventDetail: IEventDetail | null;
     mapPins: IEventMapPin[];
+    eventFilters: IEventFilters;
     setEvents: (events: IEvent[]) => void;
     setList: (list: IList<IEvent>) => void;
     append: (value: IList<IEvent>) => void;
     setSelectedEventId: (id: number | null) => void;
     setEventDetail: (eventDetail: IEventDetail | null) => void;
     setMapPins: (pins: IEventMapPin[]) => void;
+    setEventFilters: (filters: IEventFilters) => void;
+    clearEventFilters: () => void;
     clear: () => void;
 }
 
@@ -23,6 +27,7 @@ class EventsModel implements IEventsModel {
     private selectedEventIdRepository = new MobXRepository<number | null>(null);
     private eventDetailRepository = new MobXRepository<IEventDetail | null>(null);
     private mapPinsRepository = new MobXRepository<IEventMapPin[]>([]);
+    private eventFiltersRepository = new MobXRepository<IEventFilters>({});
 
     public get list() {
         return this.listRepository.data;
@@ -58,6 +63,14 @@ class EventsModel implements IEventsModel {
 
     public set mapPins(value: IEventMapPin[]) {
         this.mapPinsRepository.save(value);
+    }
+
+    public get eventFilters() {
+        return this.eventFiltersRepository.data || {};
+    }
+
+    public set eventFilters(value: IEventFilters) {
+        this.eventFiltersRepository.save(value);
     }
 
     public setEvents(events: IEvent[]) {
@@ -106,11 +119,20 @@ class EventsModel implements IEventsModel {
         this.mapPins = pins;
     }
 
+    public setEventFilters(filters: IEventFilters) {
+        this.eventFilters = filters;
+    }
+
+    public clearEventFilters() {
+        this.eventFilters = {};
+    }
+
     public clear() {
         this.list = null;
         this.selectedEventId = null;
         this.eventDetail = null;
         this.mapPins = [];
+        this.eventFilters = {};
     }
 }
 

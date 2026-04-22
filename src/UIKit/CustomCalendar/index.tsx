@@ -6,7 +6,8 @@ import { scaleFontSize } from '@/utils';
 import { CustomDay } from './components/CustomDay';
 import { ActivityIndicator, View, ViewStyle } from 'react-native';
 import { MarkedDates } from 'react-native-calendars/src/types';
-import { ArrowRightIcon } from '@assets/icons/ArrowRightIcon';
+import { NextArrowIcon } from '@assets/icons/NextArrowIcon';
+import { useCalendarLocale } from '@/hooks/useCalendarLocale';
 
 interface IProps {
     currentMonth: string;
@@ -23,6 +24,7 @@ interface IProps {
 export const CustomCalendar = ({ currentMonth, markedDates, onDayPress, handleMonthChange,
     isLoading = false, calendarStyle, minDate, maxDate, enableSwipeMonths = true
 }: IProps) => {
+    const calendarLocale = useCalendarLocale();
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -37,12 +39,13 @@ export const CustomCalendar = ({ currentMonth, markedDates, onDayPress, handleMo
     ), [colors, maxDate, minDate, onDayPress ]);
 
     const renderArrow = useCallback((direction: string) => (
-        <ArrowRightIcon rotate={direction === 'left' ? 180 : 0} />
-    ), []);
+        <NextArrowIcon rotate={direction === 'left' ? 180 : 0} color={colors.icon} strokeWidth={1.9} />
+    ), [colors.icon]);
 
     return (
         <View style={styles.wrapper}>
             <Calendar
+                key={calendarLocale}
                 initialDate={currentMonth}
                 firstDay={1}
                 enableSwipeMonths={enableSwipeMonths}
@@ -60,7 +63,7 @@ export const CustomCalendar = ({ currentMonth, markedDates, onDayPress, handleMo
 
                     // Header
                     monthTextColor: colors.text,
-                    textMonthFontFamily: 'VisueltPro-Medium',
+                    textMonthFontFamily: 'VisueltPro-Regular',
                     textMonthFontSize: scaleFontSize(14),
 
                     // Week Days

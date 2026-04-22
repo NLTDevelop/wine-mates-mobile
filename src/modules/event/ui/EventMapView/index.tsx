@@ -9,7 +9,6 @@ import { EventMap } from '@/modules/event/ui/EventMapView/components/EventMap';
 import { WineEventList } from '@/modules/event/ui/EventMapView/components/WineEventList';
 import { WineEventListItem } from '@/modules/event/ui/EventMapView/components/WineEventListItem';
 import { EventMapHeader } from '@/modules/event/ui/EventMapView/components/EventMapHeader';
-import { EventFiltersModal } from '@/modules/event/ui/EventMapView/components/EventFiltersModal';
 import { useEventMapScreen } from './presenters/useEventMapScreen';
 import { getStyles } from './styles';
 import { ScreenHeader } from '@/UIKit/ScreenHeader';
@@ -26,8 +25,6 @@ export const EventMapView = observer(() => {
         selectedTab,
         onTabChange,
         onFilterPress,
-        isFilterModalVisible,
-        onCloseFilterModal,
         filterCount,
         filteredEvents,
         selectedEvent,
@@ -97,10 +94,6 @@ export const EventMapView = observer(() => {
                 </BottomModal>
             )}
 
-            <EventFiltersModal
-                visible={isFilterModalVisible}
-                onClose={onCloseFilterModal}
-            />
         </>
     );
 });

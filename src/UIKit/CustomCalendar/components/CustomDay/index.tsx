@@ -11,7 +11,12 @@ export const CustomDay = ({ date, state, marking, colors, onPress, minDate, maxD
     const styles = useMemo(() => getStyles(colors, styleDetails), [colors, styleDetails]);
 
     return (
-        <TouchableOpacity onPress={onDayPress} style={styles.wrapper} disabled={styleDetails.isDisabled}>
+        <TouchableOpacity
+            onPress={onDayPress}
+            style={styles.wrapper}
+            disabled={styleDetails.isDisabled}
+            activeOpacity={styleDetails.isSelected ? 1 : 0.7}
+        >
             {shouldRenderFillers && (
                 <View style={styles.fillers} pointerEvents="none">
                     <View style={[styles.filler, leftFillerStyle]} />

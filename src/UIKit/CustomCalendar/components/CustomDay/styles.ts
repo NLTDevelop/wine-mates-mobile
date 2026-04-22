@@ -36,10 +36,12 @@ export const getStyles = (colors: IColors, styleDetails: ICustomDayStyleDetails)
             borderBottomRightRadius: styleDetails.isRangeEnd ? 8 : 0,
         },
         text: {
-            color: styleDetails.isToday && !styleDetails.isSelected
+            color: styleDetails.isSelected
+                ? colors.text_inverted
+                : styleDetails.isToday
                 ? colors.primary
                 : styleDetails.isOutsideMonth || styleDetails.isDisabled
-                  ? colors.text_light
+                  ? `${colors.text_light}66`
                   : colors.text,
         },
     });
