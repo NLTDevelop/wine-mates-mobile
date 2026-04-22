@@ -7,7 +7,7 @@ import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { PlusIcon } from '@assets/icons/PlusIcon';
 import { EventMap } from '@/modules/event/ui/EventMapView/components/EventMap';
 import { WineEventList } from '@/modules/event/ui/EventMapView/components/WineEventList';
-import { WineEventListItem } from '@/modules/event/ui/EventMapView/components/WineEventListItem';
+import { EventCard } from '@/UIKit/EventCard';
 import { EventMapHeader } from '@/modules/event/ui/EventMapView/components/EventMapHeader';
 import { useEventMapScreen } from './presenters/useEventMapScreen';
 import { getStyles } from './styles';
@@ -84,7 +84,7 @@ export const EventMapView = observer(() => {
                     onClose={onCloseModal}
                     title={t('eventDetails.title')}
                 >
-                    <WineEventListItem
+                    <EventCard
                         event={selectedEvent}
                         isSelected={false}
                         isModalContent
