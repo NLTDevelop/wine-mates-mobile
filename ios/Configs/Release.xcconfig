@@ -1,0 +1,2 @@
+#include? "../Pods/Target Support Files/Pods-WineMates/Pods-WineMates.release.xcconfig"
+#include? "Secrets.xcconfig"

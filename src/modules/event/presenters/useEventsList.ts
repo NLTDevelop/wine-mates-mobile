@@ -5,6 +5,7 @@ import { eventsModel } from '@/entities/events/EventsModel';
 import { IEventsListParams } from '@/entities/events/params/IEventsListParams';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 import { Sex } from '@/entities/events/enums/Sex';
+import { IUserLocation } from '@/entities/location/types/IUserLocation';
 
 const KYIV_COORDINATES = {
     latitude: 50.4501,
@@ -25,13 +26,18 @@ interface IFilters {
     maxAge?: number;
 }
 
-export const useEventsList = () => {
+interface IProps {
+    searchLocation?: IUserLocation | null;
+}
+
+export const useEventsList = ({ searchLocation }: IProps = {}) => {
     const isFocused = useIsFocused();
     const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [filters, setFilters] = useState<IFilters>({});
     const hasAutoLoadedOnFocusRef = useRef(false);
+    const lastLoadedLocationKeyRef = useRef('');
     const list = eventsModel.list;
     const hasMore = useMemo(() => {
         if (!list) {
@@ -41,8 +47,12 @@ export const useEventsList = () => {
         return list.count > list.rows.length;
     }, [list]);
 
-    const loadEvents = useCallback(async (offset: number) => {
-        const location = userLocation || KYIV_COORDINATES;
+    const getTargetLocation = useCallback((location?: IUserLocation | null) => {
+        return location || searchLocation || userLocation || KYIV_COORDINATES;
+    }, [searchLocation, userLocation]);
+
+    const loadEvents = useCallback(async (offset: number, location?: IUserLocation | null) => {
+        const targetLocation = getTargetLocation(location);
 
         if (offset === OFFSET) {
             setIsRefreshing(true);
@@ -52,8 +62,8 @@ export const useEventsList = () => {
 
         try {
             const params: IEventsListParams = {
-                latitude: location.latitude,
-                longitude: location.longitude,
+                latitude: targetLocation.latitude,
+                longitude: targetLocation.longitude,
                 radiusKm: DEFAULT_RADIUS_KM,
                 offset,
                 limit: DEFAULT_LIMIT,
@@ -71,10 +81,10 @@ export const useEventsList = () => {
             setIsLoading(false);
             setIsRefreshing(false);
         }
-    }, [filters, userLocation]);
+    }, [filters, getTargetLocation]);
 
-    const onRefresh = useCallback((offset: number = OFFSET) => {
-        loadEvents(offset);
+    const onRefresh = useCallback((offset: number = OFFSET, location?: IUserLocation | null) => {
+        return loadEvents(offset, location);
     }, [loadEvents]);
 
     const onLoadMore = useCallback(() => {
@@ -91,9 +101,12 @@ export const useEventsList = () => {
         setFilters({});
     }, []);
 
-    const refetch = useCallback(() => {
-        onRefresh();
-    }, [onRefresh]);
+    const refetch = useCallback((location?: IUserLocation | null) => {
+        const targetLocation = getTargetLocation(location);
+        hasAutoLoadedOnFocusRef.current = true;
+        lastLoadedLocationKeyRef.current = `${targetLocation.latitude}:${targetLocation.longitude}`;
+        return onRefresh(OFFSET, targetLocation);
+    }, [getTargetLocation, onRefresh]);
 
     useEffect(() => {
         if (!isFocused) {
@@ -101,15 +114,23 @@ export const useEventsList = () => {
             return;
         }
 
-        if (isLocationLoading || hasAutoLoadedOnFocusRef.current) {
+        if (isLocationLoading) {
+            return;
+        }
+
+        const targetLocation = getTargetLocation();
+        const currentLocationKey = `${targetLocation.latitude}:${targetLocation.longitude}`;
+        const isSameLocation = lastLoadedLocationKeyRef.current === currentLocationKey;
+        if (hasAutoLoadedOnFocusRef.current && isSameLocation) {
             return;
         }
 
         hasAutoLoadedOnFocusRef.current = true;
+        lastLoadedLocationKeyRef.current = currentLocationKey;
         if (isFocused) {
-            onRefresh();
+            onRefresh(OFFSET, targetLocation);
         }
-    }, [isFocused, isLocationLoading, onRefresh]);
+    }, [getTargetLocation, isFocused, isLocationLoading, onRefresh]);
 
     return {
         events: eventsModel.events,

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -22,7 +22,6 @@ export const EventMapView = observer(() => {
         isRefetching,
         mapPins,
         initialRegion,
-        mapRegionKey,
         userLocation,
         selectedTab,
         onTabChange,
@@ -41,6 +40,9 @@ export const EventMapView = observer(() => {
         onReadMorePress,
         onFavoritePress,
         onUpdateEvent,
+        onMapPress,
+        onRegionChangeComplete,
+        searchLocation,
     } = useEventMapScreen();
 
     return (
@@ -51,23 +53,20 @@ export const EventMapView = observer(() => {
                     onTabChange={onTabChange}
                     onFilterPress={onFilterPress}
                     onAddEventPress={onUpdateEvent}
+                    isUpdateEventDisabled={isRefetching}
                     filterCount={filterCount}
                 />
-
-                {isRefetching && (
-                    <View style={styles.loaderContainer}>
-                        <ActivityIndicator size="large" color={colors.primary} />
-                    </View>
-                )}
 
                 <View style={styles.content}>
                     <View style={styles.mapContainer}>
                         <EventMap
                             mapPins={mapPins}
                             initialRegion={initialRegion}
-                            mapRegionKey={mapRegionKey}
                             onMarkerPress={onMarkerPress}
+                            onMapPress={onMapPress}
+                            onRegionChangeComplete={onRegionChangeComplete}
                             userLocation={userLocation}
+                            searchLocation={searchLocation}
                         />
                         <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onAddEvent}>
                             <PlusIcon width={32} height={32} color="white" />

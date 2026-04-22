@@ -55,6 +55,8 @@
 
         <key>NSPhotoLibraryUsageDescription</key>
         <string>Allow access to choose photos from your gallery.</string>
+        <key>GMSApiKey</key>
+        <string>$(GOOGLE_MAPS_API_KEY)</string>
         <key>RCTNewArchEnabled</key>
         <true/>
         <key>UILaunchStoryboardName</key>

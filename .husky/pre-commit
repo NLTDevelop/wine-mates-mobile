@@ -1,0 +1,2 @@
+npm run agents-check
+npm run lint:staged

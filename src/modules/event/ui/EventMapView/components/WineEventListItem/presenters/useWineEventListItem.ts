@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { EventType } from '@/entities/events/enums/EventType';
 import { localization } from '@/UIProvider/localization/Localization';
+import { config } from '@/config';
 
 interface IUseWineEventListItemProps {
     event: IEvent;
@@ -10,6 +11,8 @@ interface IUseWineEventListItemProps {
 }
 
 const NAVIGATION_DEBOUNCE_MS = 260;
+const STATIC_MAP_SIZE = '720x320';
+const STATIC_MAP_ZOOM = 13;
 
 export const useWineEventListItem = ({
     event,
@@ -180,6 +183,22 @@ export const useWineEventListItem = ({
         scheduleNavigation();
     }, [scheduleNavigation]);
 
+    const mapPreviewUri = useMemo(() => {
+        const params = [
+            `center=${event.latitude},${event.longitude}`,
+            `zoom=${STATIC_MAP_ZOOM}`,
+            `size=${STATIC_MAP_SIZE}`,
+            'maptype=roadmap',
+            `markers=color:red|${event.latitude},${event.longitude}`,
+        ];
+
+        if (config.googlePlacesApiKey) {
+            params.push(`key=${config.googlePlacesApiKey}`);
+        }
+
+        return `https://maps.googleapis.com/maps/api/staticmap?${params.join('&')}`;
+    }, [event.latitude, event.longitude]);
+
     return {
         month,
         day,
@@ -197,5 +216,6 @@ export const useWineEventListItem = ({
         onReadMorePress: onReadMorePressHandler,
         onReadMoreFromModalContent,
         onFavoritePress: onFavoritePressHandler,
+        mapPreviewUri,
     };
 };

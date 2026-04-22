@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
-import { View, Pressable } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { View, Pressable, Image } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { DateBadge } from '@/UIKit/DateBadge';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
-import { MapMarker } from '@/UIKit/MapMarker';
 import { PartyIcon } from '@assets/icons/PartyIcon';
 import { TastingIcon } from '@assets/icons/TastingIcon';
 import { MoneyIcon } from '@assets/icons/MoneyIcon';
@@ -47,7 +45,8 @@ export const WineEventListItem = ({
         onCloseModal,
         onReadMorePress: onReadMorePressHandler,
         onReadMoreFromModalContent,
-        onFavoritePress: onFavoritePressHandler
+        onFavoritePress: onFavoritePressHandler,
+        mapPreviewUri,
     } = useWineEventListItem({
         event,
         onReadMorePress,
@@ -91,29 +90,11 @@ export const WineEventListItem = ({
             />
 
             <View style={styles.mapContainer}>
-                <MapView
-                    provider={PROVIDER_GOOGLE}
+                <Image
+                    source={{ uri: mapPreviewUri }}
                     style={styles.map}
-                    initialRegion={{
-                        latitude: event.latitude,
-                        longitude: event.longitude,
-                        latitudeDelta: 0.01,
-                        longitudeDelta: 0.01,
-                    }}
-                    scrollEnabled={false}
-                    zoomEnabled={false}
-                    pitchEnabled={false}
-                    rotateEnabled={false}
-                    toolbarEnabled={false}
-                >
-                    <MapMarker
-                        markerProps={{
-                            coordinate: { latitude: event.latitude, longitude: event.longitude }
-                        }}
-                        eventId={event.id}
-                        eventType={event.eventType}
-                    />
-                </MapView>
+                    resizeMode="cover"
+                />
             </View>
 
             <View style={styles.footer}>
