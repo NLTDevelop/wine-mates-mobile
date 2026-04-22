@@ -530,6 +530,7 @@ export const getStyles = (colors: IColors) => {
 **Allowed:**
 - value `0` without scaling
 - using any scale function regardless of axis naming (strict binding to vertical/horizontal is not required)
+- raw numeric values for `borderRadius`, `borderTopLeftRadius`, `borderTopRightRadius`, `borderBottomLeftRadius`, `borderBottomRightRadius` without `scale*`
 
 **Forbidden:**
 - raw non-zero numeric values in size and spacing style properties without `scale*`
