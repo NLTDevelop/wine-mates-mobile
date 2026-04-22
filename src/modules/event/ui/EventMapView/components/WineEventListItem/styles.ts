@@ -6,15 +6,15 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             backgroundColor: colors.background,
-            borderRadius: 20,
+            borderRadius: scaleHorizontal(20),
             padding: scaleHorizontal(16),
             gap: scaleVertical(12),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
         },
         selectedContainer: {
             borderColor: colors.primary,
-            borderWidth: 2,
+            borderWidth: scaleHorizontal(2),
         },
         pressedContainer: {
             transform: [{ scale: 0.985 }],
@@ -31,7 +31,7 @@ export const getStyles = (colors: IColors) => {
         metaBadge: {
             flexDirection: 'row',
             alignItems: 'center',
-            borderRadius: 6,
+            borderRadius: scaleHorizontal(6),
             paddingHorizontal: scaleHorizontal(8),
             paddingVertical: scaleVertical(6),
             gap: scaleHorizontal(6),
@@ -45,6 +45,7 @@ export const getStyles = (colors: IColors) => {
         },
         title: {
             color: colors.text,
+            maxWidth: scaleHorizontal(255)
         },
         timeText: {
             color: colors.text_light,
@@ -57,7 +58,7 @@ export const getStyles = (colors: IColors) => {
         },
         mapContainer: {
             height: scaleVertical(140),
-            borderRadius: 14,
+            borderRadius: scaleHorizontal(14),
             overflow: 'hidden',
         },
         map: {
@@ -69,7 +70,7 @@ export const getStyles = (colors: IColors) => {
         },
         readMoreButton: {
             flex: 1,
-            borderRadius: 16,
+            borderRadius: scaleHorizontal(16),
         },
         modalContentContainer: {
             paddingTop: scaleVertical(8),

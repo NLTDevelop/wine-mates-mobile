@@ -47,7 +47,7 @@ export const EventMapView = observer(() => {
 
     return (
         <>
-            <ScreenContainer edges={['top']} scrollEnabled headerComponent={<ScreenHeader />}>
+            <ScreenContainer edges={['top']} scrollEnabled headerComponent={<ScreenHeader />} withGradient>
                 <EventMapHeader
                     selectedTab={selectedTab}
                     onTabChange={onTabChange}
@@ -56,7 +56,6 @@ export const EventMapView = observer(() => {
                     isUpdateEventDisabled={isRefetching}
                     filterCount={filterCount}
                 />
-
                 <View style={styles.content}>
                     <View style={styles.mapContainer}>
                         <EventMap
