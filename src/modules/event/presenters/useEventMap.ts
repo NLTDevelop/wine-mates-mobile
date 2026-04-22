@@ -5,6 +5,7 @@ import { eventsModel } from '@/entities/events/EventsModel';
 import { eventsService } from '@/entities/events/EventsService';
 import { useLocationPermission } from '@/hooks/useLocationPermission.ts';
 import { EventType } from '@/entities/events/enums/EventType';
+import { IUserLocation } from '@/entities/location/types/IUserLocation';
 
 const KYIV_COORDINATES = {
     latitude: 50.4501,
@@ -18,7 +19,11 @@ const MAP_DELTA = {
 
 const DEFAULT_RADIUS_KM = 100;
 
-export const useEventMap = () => {
+interface IProps {
+    searchLocation?: IUserLocation | null;
+}
+
+export const useEventMap = ({ searchLocation }: IProps = {}) => {
     const isFocused = useIsFocused();
     const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -28,6 +33,7 @@ export const useEventMap = () => {
     const [filterCount] = useState(0);
     const hasAutoLoadedOnFocusRef = useRef(false);
     const lastLoadedEventTypeRef = useRef<EventType | undefined>(undefined);
+    const lastLoadedLocationKeyRef = useRef('');
 
     const selectedEventType = useMemo(() => {
         if (selectedTab === 'all') {
@@ -41,14 +47,18 @@ export const useEventMap = () => {
         return EventType.Parties;
     }, [selectedTab]);
 
-    const loadEvents = useCallback(async () => {
-        const location = userLocation || KYIV_COORDINATES;
+    const getTargetLocation = useCallback((location?: IUserLocation | null) => {
+        return location || searchLocation || userLocation || KYIV_COORDINATES;
+    }, [searchLocation, userLocation]);
+
+    const loadEvents = useCallback(async (location?: IUserLocation | null) => {
+        const targetLocation = getTargetLocation(location);
 
         setIsLoadingEvents(true);
         try {
             await eventsService.getMapPins({
-                latitude: location.latitude,
-                longitude: location.longitude,
+                latitude: targetLocation.latitude,
+                longitude: targetLocation.longitude,
                 radiusKm: DEFAULT_RADIUS_KM,
                 eventType: selectedEventType,
             });
@@ -57,7 +67,7 @@ export const useEventMap = () => {
         } finally {
             setIsLoadingEvents(false);
         }
-    }, [selectedEventType, userLocation]);
+    }, [getTargetLocation, selectedEventType]);
 
     useEffect(() => {
         if (!isFocused) {
@@ -70,15 +80,19 @@ export const useEventMap = () => {
             return;
         }
 
+        const targetLocation = getTargetLocation();
+        const currentLocationKey = `${targetLocation.latitude}:${targetLocation.longitude}`;
         const isSameEventType = lastLoadedEventTypeRef.current === selectedEventType;
-        if (hasAutoLoadedOnFocusRef.current && isSameEventType) {
+        const isSameLocation = lastLoadedLocationKeyRef.current === currentLocationKey;
+        if (hasAutoLoadedOnFocusRef.current && isSameEventType && isSameLocation) {
             return;
         }
 
         hasAutoLoadedOnFocusRef.current = true;
         lastLoadedEventTypeRef.current = selectedEventType;
+        lastLoadedLocationKeyRef.current = currentLocationKey;
         loadEvents();
-    }, [isFocused, isLocationLoading, loadEvents, selectedEventType]);
+    }, [getTargetLocation, isFocused, isLocationLoading, loadEvents, selectedEventType]);
 
     const initialRegion: Region = useMemo(() => {
         if (userLocation) {
@@ -134,9 +148,13 @@ export const useEventMap = () => {
         return mapPins.filter(pin => pin.eventType === eventType);
     }, [mapPins, selectedTab]);
 
-    const refetch = useCallback(() => {
-        loadEvents();
-    }, [loadEvents]);
+    const refetch = useCallback((location?: IUserLocation | null) => {
+        const targetLocation = getTargetLocation(location);
+        hasAutoLoadedOnFocusRef.current = true;
+        lastLoadedEventTypeRef.current = selectedEventType;
+        lastLoadedLocationKeyRef.current = `${targetLocation.latitude}:${targetLocation.longitude}`;
+        return loadEvents(targetLocation);
+    }, [getTargetLocation, loadEvents, selectedEventType]);
 
     return {
         mapPins: filteredMapPins,

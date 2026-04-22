@@ -40,6 +40,9 @@ export const EventMapView = observer(() => {
         onReadMorePress,
         onFavoritePress,
         onUpdateEvent,
+        onMapPress,
+        onRegionChangeComplete,
+        searchLocation,
     } = useEventMapScreen();
 
     return (
@@ -60,7 +63,10 @@ export const EventMapView = observer(() => {
                             mapPins={mapPins}
                             initialRegion={initialRegion}
                             onMarkerPress={onMarkerPress}
+                            onMapPress={onMapPress}
+                            onRegionChangeComplete={onRegionChangeComplete}
                             userLocation={userLocation}
+                            searchLocation={searchLocation}
                         />
                         <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onAddEvent}>
                             <PlusIcon width={32} height={32} color="white" />
