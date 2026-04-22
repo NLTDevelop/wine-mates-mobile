@@ -1,0 +1,5 @@
+# Android SDK path
+sdk.dir=/path/to/Android/sdk
+
+# Local secret for Google Maps SDK
+GOOGLE_MAPS_API_KEY=PUT_YOUR_GOOGLE_MAPS_KEY_HERE

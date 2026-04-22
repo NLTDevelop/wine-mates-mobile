@@ -16,7 +16,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
-    GMSServices.provideAPIKey("AIzaSyAGQmFySSYCC9D7-RF9kUXyKUxlTybg8Ww")
+    let environmentApiKey = ProcessInfo.processInfo.environment["GOOGLE_MAPS_API_KEY"] ?? ""
+    let plistApiKey = Bundle.main.object(forInfoDictionaryKey: "GMSApiKey") as? String ?? ""
+    let googleMapsApiKey = environmentApiKey.isEmpty ? plistApiKey : environmentApiKey
+    if !googleMapsApiKey.isEmpty && !googleMapsApiKey.hasPrefix("$(") {
+      GMSServices.provideAPIKey(googleMapsApiKey)
+    }
 
     let delegate = ReactNativeDelegate()
     let factory = RCTReactNativeFactory(delegate: delegate)
