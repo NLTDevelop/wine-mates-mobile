@@ -1,73 +1,95 @@
-import { useMemo, forwardRef } from 'react';
+import { useMemo, forwardRef, useCallback } from 'react';
 import { View } from 'react-native';
-import RNMapView, { MapViewProps, Region, PROVIDER_GOOGLE } from 'react-native-maps';
+import RNMapView, { MapViewProps, Region, PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import ClusteredMapView from 'react-native-map-clustering';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { observer } from 'mobx-react-lite';
+import { Typography } from '../Typography';
 
 interface IMapViewProps extends Partial<MapViewProps> {
     initialRegion?: Region;
     children?: React.ReactNode;
+    clusteringEnabled?: boolean;
+    clusterColor?: string;
+    clusterTextColor?: string;
+    clusterRadius?: number;
 }
 
-export const MapView = observer(forwardRef<RNMapView, IMapViewProps>(({ initialRegion, children, ...props }, ref) => {
-    const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+interface IMapCluster {
+    id: string | number;
+    geometry: {
+        coordinates: number[];
+    };
+    properties: {
+        point_count: number;
+    };
+    onPress: () => void;
+}
 
-    const defaultRegion: Region = useMemo(() => ({
-        latitude: 50.4501,
-        longitude: 30.5234,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-    }), []);
+const MapViewComponent = forwardRef<RNMapView, IMapViewProps>(
+    (
+        { initialRegion, children, clusteringEnabled = false, clusterColor, clusterTextColor, clusterRadius, ...props },
+        ref,
+    ) => {
+        const { colors } = useUiContext();
+        const styles = useMemo(() => getStyles(colors), [colors]);
 
-    //TODO: will need at future
-    // const mapStyle = useMemo(() => [
-    //     {
-    //         elementType: 'geometry',
-    //         stylers: [{ color: colors.background }],
-    //     },
-    //     {
-    //         elementType: 'labels.text.fill',
-    //         stylers: [{ color: colors.text }],
-    //     },
-    //     {
-    //         elementType: 'labels.text.stroke',
-    //         stylers: [{ color: colors.background }],
-    //     },
-    //     {
-    //         featureType: 'poi',
-    //         elementType: 'labels',
-    //         stylers: [{ visibility: 'off' }],
-    //     },
-    //     {
-    //         featureType: 'road',
-    //         elementType: 'geometry',
-    //         stylers: [{ color: colors.border }],
-    //     },
-    //     {
-    //         featureType: 'water',
-    //         elementType: 'geometry',
-    //         stylers: [{ color: colors.primary }],
-    //     },
-    // ], [colors]);
+        const defaultRegion: Region = useMemo(
+            () => ({
+                latitude: 50.4501,
+                longitude: 30.5234,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+            }),
+            [],
+        );
 
-    return (
-        <View style={styles.container}>
-            <RNMapView
-                ref={ref}
-                provider={PROVIDER_GOOGLE}
-                style={styles.map}
-                initialRegion={initialRegion || defaultRegion}
-                zoomControlEnabled={false}
-                toolbarEnabled={false}
-                {...props}
-            >
-                {children}
-            </RNMapView>
-        </View>
-    );
-}));
+        const onRenderCluster = useCallback(
+            (cluster: IMapCluster) => {
+                return (
+                    <Marker
+                        key={`cluster-${cluster.id}`}
+                        coordinate={{
+                            latitude: cluster.geometry.coordinates[1],
+                            longitude: cluster.geometry.coordinates[0],
+                        }}
+                        onPress={cluster.onPress}
+                    >
+                        <View style={[styles.clusterContainer, { backgroundColor: clusterColor || colors.primary }]}>
+                            <Typography
+                                variant="h6"
+                                style={[{ color: clusterTextColor || colors.background }]}
+                                text={cluster.properties.point_count}
+                            />
+                        </View>
+                    </Marker>
+                );
+            },
+            [clusterColor, clusterTextColor, colors, styles],
+        );
 
-MapView.displayName = 'MapView';
+        return (
+            <View style={styles.container}>
+                <ClusteredMapView
+                    ref={ref}
+                    provider={PROVIDER_GOOGLE}
+                    style={styles.map}
+                    initialRegion={initialRegion || defaultRegion}
+                    clusteringEnabled={clusteringEnabled}
+                    radius={clusterRadius}
+                    renderCluster={onRenderCluster}
+                    zoomControlEnabled={false}
+                    toolbarEnabled={false}
+                    {...props}
+                >
+                    {children}
+                </ClusteredMapView>
+            </View>
+        );
+    },
+);
 
+MapViewComponent.displayName = 'MapViewComponent';
+
+export const MapView = observer(MapViewComponent);
