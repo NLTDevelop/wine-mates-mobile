@@ -5,83 +5,51 @@ import { getStyles } from './styles';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
-import { useLocationPicker } from './presenters/useLocationPicker';
+import { useLocationPickerView } from './presenters/useLocationPickerView';
 import { LocationSearchInput } from './components/LocationSearchInput/ui';
 import { MapMarker } from '@/UIKit/MapMarker';
-import { EventType } from '@/entities/events/enums/EventType';
-import { RouteProp, StackActions, useNavigation, useRoute } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
-
-type RouteProps = RouteProp<EventStackParamList, 'LocationPickerView'>;
-type NavigationProps = NativeStackNavigationProp<EventStackParamList>;
-
-const KYIV_COORDINATES = {
-    latitude: 50.4501,
-    longitude: 30.5234,
-};
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const LocationPickerView = () => {
     const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
-    const navigation = useNavigation<NavigationProps>();
-    const route = useRoute<RouteProps>();
-    const initialLocation = route.params?.initialLocation;
-    const eventType = route.params?.eventType || EventType.Tastings;
-
+    const { top } = useSafeAreaInsets();
+    const styles = useMemo(() => getStyles(colors, top), [colors, top]);
     const {
+        eventType,
         selectedLocation,
-        userLocation,
         searchQuery,
         suggestions,
         showSuggestions,
         isMapInteractionBlocked,
         mapRef,
+        initialRegion,
+        markerLocation,
+        isConfirmDisabled,
         onMapPress,
         onPoiClick,
         onSearchChange,
         onSelectSuggestion,
         onConfirm,
-    } = useLocationPicker({
-        initialLocation,
-        onSelectLocation: (latitude, longitude, label, placeName, countryName) => {
-            navigation.dispatch(StackActions.popTo('AddEventView', {
-                pickedLocation: {
-                    latitude,
-                    longitude,
-                    label,
-                    placeName,
-                    countryName,
-                },
-            }));
-        },
-        onClose: () => null,
-    });
-
-    const initialRegion = useMemo(() => {
-        const location = selectedLocation || initialLocation || userLocation || KYIV_COORDINATES;
-        return {
-            latitude: location.latitude,
-            longitude: location.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-        };
-    }, [initialLocation, selectedLocation, userLocation]);
-
-    const markerLocation = selectedLocation || initialLocation;
-    const headerRightComponent = <View style={styles.headerRightPlaceholder} />;
+        onPressBack,
+    } = useLocationPickerView();
 
     return (
-        <ScreenContainer edges={['top', 'bottom']} isKeyboardAvoiding scrollEnabled>
-            <View style={styles.container}>
+        <ScreenContainer
+            edges={['bottom']}
+            isKeyboardAvoiding
+            scrollEnabled
+            headerComponent={
                 <HeaderWithBackButton
-                    onPressBack={navigation.goBack}
+                    onPressBack={onPressBack}
                     title=""
-                    rightComponent={headerRightComponent}
+                    rightComponent={<View style={styles.headerRightPlaceholder} />}
                     containerStyle={styles.headerContainer}
                 />
+            }
+        >
+            <View style={styles.container}>
                 <MapView
                     provider={PROVIDER_GOOGLE}
                     showsPointsOfInterests
@@ -126,7 +94,7 @@ export const LocationPickerView = () => {
                         text={t('event.confirmPlace')}
                         onPress={onConfirm}
                         type="main"
-                        disabled={!(selectedLocation || initialLocation)}
+                        disabled={isConfirmDisabled}
                     />
                 </View>
             </View>

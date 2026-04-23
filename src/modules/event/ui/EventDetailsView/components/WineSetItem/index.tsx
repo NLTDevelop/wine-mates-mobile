@@ -17,7 +17,7 @@ export const WineSetItem = ({ item }: IProps) => {
     const { title, imageUrl, onPress } = useWineSetItem({ item });
 
     return (
-        <TouchableOpacity style={styles.row} onPress={onPress}>
+        <TouchableOpacity style={styles.row} onPress={onPress} disabled>
             <View style={styles.leftContent}>
                 {imageUrl ? (
                     <Image source={{ uri: imageUrl }} style={styles.image} />

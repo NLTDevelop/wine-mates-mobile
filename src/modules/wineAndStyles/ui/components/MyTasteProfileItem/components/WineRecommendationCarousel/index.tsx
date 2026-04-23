@@ -8,6 +8,7 @@ import { getStyles } from './styles';
 import { CarouselWineCard } from '@/UIKit/CarouselWineCard';
 import { scaleHorizontal } from '@/utils';
 import { ArrowRightIcon } from '@assets/icons/ArrowRightIcon';
+import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 
 interface IProps {
     typeId: number;
@@ -18,7 +19,7 @@ export const WineRecommendationCarousel = observer(({ typeId, colorId }: IProps)
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { width } = useWindowDimensions();
-    const { wines, carouselRef, onSnapToItem, onWinePress, onNext, onPrevious } = useWineRecommendationCarousel({
+    const { wines, carouselRef, onSnapToItem, onWinePress, onNext, onPrevious, onConfigurePanGesture } = useWineRecommendationCarousel({
         typeId,
         colorId,
     });
@@ -29,6 +30,14 @@ export const WineRecommendationCarousel = observer(({ typeId, colorId }: IProps)
 
     const carouselWidth = width - scaleHorizontal(48);
 
+    const renderCarouselItem = function renderCarouselItem({ item }: { item: IWineListItem }) {
+        return (
+            <View style={styles.cardContainer}>
+                <CarouselWineCard item={item} onPress={onWinePress} />
+            </View>
+        );
+    };
+
     return (
         <View style={styles.container}>
             <Carousel
@@ -38,11 +47,8 @@ export const WineRecommendationCarousel = observer(({ typeId, colorId }: IProps)
                 height={styles.carouselHeight.height}
                 data={wines}
                 onSnapToItem={onSnapToItem}
-                renderItem={({ item }) => (
-                    <View style={styles.cardContainer}>
-                        <CarouselWineCard item={item} onPress={onWinePress} />
-                    </View>
-                )}
+                onConfigurePanGesture={onConfigurePanGesture}
+                renderItem={renderCarouselItem}
                 mode="parallax"
                 modeConfig={{
                     parallaxScrollingScale: 0.9,
