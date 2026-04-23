@@ -4,7 +4,7 @@ import { EventType } from '@/entities/events/enums/EventType';
 import { localization } from '@/UIProvider/localization/Localization';
 import { config } from '@/config';
 
-interface IUseWineEventListItemProps {
+interface IUseEventCardProps {
     event: IEvent;
     onReadMorePress?: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
@@ -14,11 +14,11 @@ const NAVIGATION_DEBOUNCE_MS = 260;
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 13;
 
-export const useWineEventListItem = ({
+export const useEventCard = ({
     event,
     onReadMorePress,
     onFavoritePress
-}: IUseWineEventListItemProps) => {
+}: IUseEventCardProps) => {
     const currentLocale = localization.locale || 'en';
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isCardPressed, setIsCardPressed] = useState(false);

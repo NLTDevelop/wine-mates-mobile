@@ -10,7 +10,7 @@ import { PartyIcon } from '@assets/icons/PartyIcon';
 import { TastingIcon } from '@assets/icons/TastingIcon';
 import { MoneyIcon } from '@assets/icons/MoneyIcon';
 import { IEvent } from '@/entities/events/types/IEvent';
-import { useWineEventListItem } from './presenters/useWineEventListItem';
+import { useEventCard } from './presenters/useEventCard';
 import { getStyles } from './styles';
 
 interface IProps {
@@ -21,7 +21,7 @@ interface IProps {
     isModalContent?: boolean;
 }
 
-export const WineEventListItem = ({
+export const EventCard = ({
     event,
     isSelected,
     onReadMorePress,
@@ -47,7 +47,7 @@ export const WineEventListItem = ({
         onReadMoreFromModalContent,
         onFavoritePress: onFavoritePressHandler,
         mapPreviewUri,
-    } = useWineEventListItem({
+    } = useEventCard({
         event,
         onReadMorePress,
         onFavoritePress
@@ -109,7 +109,7 @@ export const WineEventListItem = ({
                     title={t('eventDetails.title')}
                     contentContainerStyle={styles.modalContentContainer}
                 >
-                    <WineEventListItem
+                    <EventCard
                         event={event}
                         isSelected={false}
                         onReadMorePress={onReadMoreFromModalContent}

@@ -5,7 +5,6 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
-            backgroundColor: colors.background,
             paddingHorizontal: scaleHorizontal(16),
             marginBottom: scaleVertical(16),
         },
@@ -24,24 +23,20 @@ export const getStyles = (colors: IColors) => {
         },
         filterButton: {
             position: 'relative',
-            marginLeft: 'auto',
         },
         badge: {
             position: 'absolute',
-            top: scaleVertical(4),
-            right: scaleHorizontal(4),
-            backgroundColor: colors.error,
-            borderRadius: scaleHorizontal(10),
-            minWidth: scaleHorizontal(20),
-            height: scaleVertical(20),
+            top: scaleVertical(6),
+            right: scaleHorizontal(6),
+            backgroundColor: colors.primary,
+            borderRadius: scaleVertical(12),
+            width: scaleVertical(12),
+            height: scaleVertical(12),
             justifyContent: 'center',
             alignItems: 'center',
-            paddingHorizontal: scaleHorizontal(4),
         },
         badgeText: {
-            color: colors.background,
-            fontSize: scaleVertical(12),
-            fontWeight: '600',
+            color: colors.text_inverted,
         },
         tabRow: {
             flexDirection: 'row',

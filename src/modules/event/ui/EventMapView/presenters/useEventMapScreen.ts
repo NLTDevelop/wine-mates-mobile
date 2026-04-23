@@ -1,16 +1,23 @@
 import { useCallback, useMemo, useState } from 'react';
 import { MapPressEvent, Region } from 'react-native-maps';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventType } from '@/entities/events/enums/EventType';
+import { eventsModel } from '@/entities/events/EventsModel';
 import { useEventMap } from '@/modules/event/presenters/useEventMap';
 import { useEventsList } from '@/modules/event/presenters/useEventsList';
 import { useEventMapView } from '@/modules/event/presenters/useEventMapView';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
+import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 
 const USER_LOCATION_REGION_THRESHOLD = 0.005;
+type Navigation = NativeStackNavigationProp<EventStackParamList>;
 
 export const useEventMapScreen = () => {
+    const navigation = useNavigation<Navigation>();
     const [isRefetching, setIsRefetching] = useState(false);
     const [searchLocation, setSearchLocation] = useState<IUserLocation | null>(null);
+    const filters = eventsModel.eventFilters;
 
     const {
         mapPins,
@@ -18,17 +25,13 @@ export const useEventMapScreen = () => {
         userLocation,
         selectedTab,
         onTabChange,
-        onFilterPress,
-        isFilterModalVisible,
-        onCloseFilterModal,
-        filterCount,
         refetch: onRefetchMapPins,
-    } = useEventMap({ searchLocation });
+    } = useEventMap({ searchLocation, filters });
 
     const {
         events,
         refetch: onRefetchEvents,
-    } = useEventsList({ searchLocation });
+    } = useEventsList({ searchLocation, filters });
 
     const {
         selectedEvent,
@@ -53,6 +56,24 @@ export const useEventMapScreen = () => {
 
         return events.filter(event => event.eventType === eventType);
     }, [events, selectedTab]);
+
+    const filterCount = useMemo(() => {
+        let nextCount = 0;
+
+        if (typeof filters.radiusKm === 'number') {
+            nextCount += 1;
+        }
+
+        if (filters.eventDate) {
+            nextCount += 1;
+        }
+
+        return nextCount;
+    }, [filters.eventDate, filters.radiusKm]);
+
+    const onFilterPress = useCallback(() => {
+        navigation.navigate('EventFiltersView');
+    }, [navigation]);
 
     const onUpdateEvent = useCallback(async () => {
         if (isRefetching) {
@@ -151,7 +172,5 @@ export const useEventMapScreen = () => {
         onCloseModal,
         onModalReadMorePress,
         onModalFavoritePress,
-        isFilterModalVisible,
-        onCloseFilterModal,
     };
 };

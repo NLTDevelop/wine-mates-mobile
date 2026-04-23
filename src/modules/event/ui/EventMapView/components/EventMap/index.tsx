@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { View } from 'react-native';
-import { Region, MapPressEvent } from 'react-native-maps';
+import { Region, MapPressEvent, Marker } from 'react-native-maps';
 import { MapView } from '@/UIKit/MapView';
 import { MapMarker } from '@/UIKit/MapMarker';
 import { getStyles } from './styles';
@@ -8,7 +8,6 @@ import { useUiContext } from '@/UIProvider';
 import { IEventMapPin } from '@/entities/events/types/IEventMapPin';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { observer } from 'mobx-react-lite';
-import { MapMarkerIcon } from '@assets/icons/MapMarkerIcon';
 
 interface IEventMapProps {
     mapPins: IEventMapPin[];
@@ -41,25 +40,26 @@ export const EventMap = observer(
                     showsMyLocationButton={!!userLocation}
                     onPress={onMapPress}
                     onRegionChangeComplete={onRegionChangeComplete}
+                    clusteringEnabled
+                    clusterColor={colors.primary}
+                    clusterTextColor={colors.background}
                 >
                     {searchLocation && (
-                        <MapMarker
+                        <Marker
                             key="search-location-marker"
-                            markerProps={{
-                                coordinate: {
-                                    latitude: searchLocation.latitude,
-                                    longitude: searchLocation.longitude,
-                                },
+                            coordinate={{
+                                latitude: searchLocation.latitude,
+                                longitude: searchLocation.longitude,
                             }}
-                            customIcon={<MapMarkerIcon bodyColor={colors.primary} emoji="" />}
-                            eventId={0}
+                            pinColor="#1A73E8"
                         />
                     )}
                     {mapPins.map(pin => (
                         <MapMarker
                             key={pin.id}
-                            markerProps={{
-                                coordinate: { latitude: pin.latitude, longitude: pin.longitude },
+                            coordinate={{
+                                latitude: pin.latitude,
+                                longitude: pin.longitude,
                             }}
                             eventId={pin.id}
                             eventType={pin.eventType}
