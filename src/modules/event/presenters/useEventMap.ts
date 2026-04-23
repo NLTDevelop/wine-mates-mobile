@@ -37,8 +37,8 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
     const lastLoadedFiltersKeyRef = useRef('');
 
     const filtersKey = useMemo(() => {
-        return `${filters?.radiusKm ?? ''}:${filters?.eventDate ?? ''}`;
-    }, [filters?.eventDate, filters?.radiusKm]);
+        return `${filters?.radiusKm ?? ''}:${filters?.eventDate ?? ''}:${filters?.sex ?? ''}`;
+    }, [filters?.eventDate, filters?.radiusKm, filters?.sex]);
 
     const selectedEventType = useMemo(() => {
         if (selectedTab === 'all') {
@@ -67,13 +67,14 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
                 radiusKm: filters?.radiusKm ?? DEFAULT_RADIUS_KM,
                 eventType: selectedEventType,
                 eventDate: filters?.eventDate,
+                sex: filters?.sex,
             });
         } catch (error) {
             console.warn('useEventMap -> loadEvents: ', error);
         } finally {
             setIsLoadingEvents(false);
         }
-    }, [filters?.eventDate, filters?.radiusKm, getTargetLocation, selectedEventType]);
+    }, [filters?.eventDate, filters?.radiusKm, filters?.sex, getTargetLocation, selectedEventType]);
 
     useEffect(() => {
         if (!isFocused) {

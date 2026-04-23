@@ -334,6 +334,11 @@
         "radius": "Radius",
         "date": "Date",
         "selectDate": "Select date",
+        "sex": "Sex",
+        "selectSex": "Select sex",
+        "men": "Men",
+        "women": "Women",
+        "all": "All",
         "kmSuffix": "km",
         "close": "Close"
     },

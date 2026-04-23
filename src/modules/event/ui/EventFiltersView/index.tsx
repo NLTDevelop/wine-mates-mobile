@@ -8,6 +8,9 @@ import { CalendarModal } from './components/CalendarModal';
 import { RadiusButtons } from './components/RadiusButtons';
 import { useEventFiltersView } from './presenters/useEventFiltersView';
 import { getStyles } from './styles';
+import { SexPickerModal } from './components/SexPickerModal';
+import { CalendarIcon } from '@assets/icons/CalendarIcon';
+import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 
 interface IProps {}
 
@@ -19,18 +22,24 @@ export const EventFiltersView = ({}: IProps) => {
         currentMonth,
         markedDates,
         selectedDateText,
+        selectedSexText,
+        selectedSex,
         radiusOption1,
         radiusOption5,
         radiusOption10,
         radiusOption50,
         isCalendarVisible,
+        isSexPickerVisible,
         isResetDisabled,
         onOpenCalendar,
         onCloseCalendar,
+        onOpenSexPicker,
+        onCloseSexPicker,
         onDayPress,
         onMonthChange,
+        onSelectSex,
         onReset,
-    } = useEventFiltersView();
+    } = useEventFiltersView({ t });
 
     return (
         <ScreenContainer
@@ -70,6 +79,19 @@ export const EventFiltersView = ({}: IProps) => {
                             variant="body_400"
                             style={styles.dateText}
                         />
+                        <CalendarIcon color={colors.text_light} />
+                    </TouchableOpacity>
+                </View>
+
+                <View>
+                    <Typography text={t('eventFilters.sex')} variant="h5" style={styles.sectionTitle} />
+                    <TouchableOpacity style={styles.sexButton} onPress={onOpenSexPicker}>
+                        <Typography
+                            text={selectedSexText || t('eventFilters.selectSex')}
+                            variant="body_400"
+                            style={styles.sexText}
+                        />
+                        <ArrowDownIcon color={colors.text_light} width={20} height={20} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -83,6 +105,13 @@ export const EventFiltersView = ({}: IProps) => {
                 onClose={onCloseCalendar}
                 onDayPress={onDayPress}
                 onMonthChange={onMonthChange}
+            />
+
+            <SexPickerModal
+                visible={isSexPickerVisible}
+                selectedSex={selectedSex}
+                onClose={onCloseSexPicker}
+                onSelectSex={onSelectSex}
             />
         </ScreenContainer>
     );

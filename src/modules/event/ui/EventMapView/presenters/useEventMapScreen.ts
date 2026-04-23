@@ -68,8 +68,12 @@ export const useEventMapScreen = () => {
             nextCount += 1;
         }
 
+        if (filters.sex) {
+            nextCount += 1;
+        }
+
         return nextCount;
-    }, [filters.eventDate, filters.radiusKm]);
+    }, [filters.eventDate, filters.radiusKm, filters.sex]);
 
     const onFilterPress = useCallback(() => {
         navigation.navigate('EventFiltersView');
