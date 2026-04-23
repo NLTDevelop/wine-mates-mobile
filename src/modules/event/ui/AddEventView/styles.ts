@@ -19,7 +19,7 @@ export const getStyles = (colors: IColors) => {
         },
         locationButton: {
             minHeight: scaleVertical(48),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: 12,
             paddingHorizontal: scaleHorizontal(16),
@@ -41,10 +41,13 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'space-between',
             backgroundColor: colors.background,
             borderRadius: 12,
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             height: scaleVertical(48),
             paddingHorizontal: scaleHorizontal(16),
+        },
+        disabledPickerButton: {
+            opacity: 0.5,
         },
         placeholderText: {
             color: colors.text_light,

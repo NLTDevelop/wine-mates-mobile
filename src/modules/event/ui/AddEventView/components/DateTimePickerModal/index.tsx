@@ -10,12 +10,13 @@ interface IProps {
     visible: boolean;
     mode: 'date' | 'time';
     date: Date;
+    minimumDate: Date;
     onClose: () => void;
     onConfirm: () => void;
     onDateChange: (date: Date) => void;
 }
 
-export const DateTimePickerModal = ({ visible, mode, date, onClose, onConfirm, onDateChange }: IProps) => {
+export const DateTimePickerModal = ({ visible, mode, date, minimumDate, onClose, onConfirm, onDateChange }: IProps) => {
     const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const normalizedLocale = useMemo(() => {
@@ -46,6 +47,7 @@ export const DateTimePickerModal = ({ visible, mode, date, onClose, onConfirm, o
                 <DatePicker
                     mode={mode}
                     date={date}
+                    minimumDate={minimumDate}
                     onDateChange={onDateChange}
                     theme={colors.background === '#FFFFFF' ? 'light' : 'dark'}
                     locale={pickerLocale}

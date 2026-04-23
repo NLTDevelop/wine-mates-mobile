@@ -15,7 +15,6 @@ import { useEventDetailsView } from '@/modules/event/ui/EventDetailsView/present
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { observer } from 'mobx-react';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
-import { DropdownButton } from '@/UIKit/DropdownButton';
 
 export const EventDetailsView = observer(() => {
     const { colors, t } = useUiContext();
@@ -24,7 +23,13 @@ export const EventDetailsView = observer(() => {
     const { eventId } = route.params;
     const { eventDetail, isError, isLoading } = useEventDetails(eventId);
     const { detailsData, wineSetItems } = useEventDetailsData(eventDetail);
-    const { isBookingModalVisible, onBookNowPress, onCloseModal } = useEventDetailsView();
+    const {
+        isBookingModalVisible,
+        onBookNowPress,
+        onCloseModal,
+        onFavoritePress,
+        onCallToReservePress,
+    } = useEventDetailsView();
 
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -60,7 +65,6 @@ export const EventDetailsView = observer(() => {
                             </View>
 
                             {wineSetItems.length > 0 && (
-                                <DropdownButton title={t('eventDetails.wineSet')}>
                                     <View style={styles.wineSetListContainer}>
                                         {wineSetItems.map((wine, index) => (
                                             <Typography
@@ -71,7 +75,6 @@ export const EventDetailsView = observer(() => {
                                             />
                                         ))}
                                     </View>
-                                </DropdownButton>
                             )}
                         </View>
                         <View style={styles.footer}>
@@ -81,7 +84,7 @@ export const EventDetailsView = observer(() => {
                                 text={t('eventDetails.bookNow')}
                                 onPress={onBookNowPress}
                             />
-                            <FavoriteButton onPress={() => {}} size={52} />
+                            <FavoriteButton onPress={onFavoritePress} size={52} />
                         </View>
                     </>
                 )}
@@ -92,7 +95,7 @@ export const EventDetailsView = observer(() => {
                     title={t('eventDetails.contactForBooking')}
                 >
                     <View>
-                        <Button type="main" text={t('eventDetails.callToReserve')} onPress={() => {}} />
+                        <Button type="main" text={t('eventDetails.callToReserve')} onPress={onCallToReservePress} />
                     </View>
                 </BottomModal>
             </View>

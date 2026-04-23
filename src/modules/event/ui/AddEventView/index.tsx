@@ -45,14 +45,21 @@ export const AddEventView = () => {
 
     const {
         isVisible,
+        isTimePickerDisabled,
         mode,
         pickerDate,
+        minimumDate,
         openDatePicker,
         openTimePicker,
         onClose,
         onConfirm,
         onDateChange,
-    } = useDateTimePicker({ onDateSelect, onTimeSelect });
+    } = useDateTimePicker({
+        onDateSelect,
+        onTimeSelect,
+        selectedEventDate: form.eventDate,
+        selectedEventTime: form.eventTime,
+    });
 
     const { formattedDate, formattedTime } = useEventDateTimeFormatter({
         eventDate: form.eventDate,
@@ -119,7 +126,12 @@ export const AddEventView = () => {
                     <ArrowDownIcon />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={openTimePicker} onPressIn={Keyboard.dismiss} style={styles.pickerButton}>
+                <TouchableOpacity
+                    onPress={openTimePicker}
+                    onPressIn={Keyboard.dismiss}
+                    disabled={isTimePickerDisabled}
+                    style={[styles.pickerButton, isTimePickerDisabled ? styles.disabledPickerButton : undefined]}
+                >
                     <Typography
                         variant="h6"
                         text={formattedTime || t('event.eventTime')}
@@ -178,6 +190,7 @@ export const AddEventView = () => {
                 visible={isVisible}
                 mode={mode}
                 date={pickerDate}
+                minimumDate={minimumDate}
                 onClose={onClose}
                 onConfirm={onConfirm}
                 onDateChange={onDateChange}

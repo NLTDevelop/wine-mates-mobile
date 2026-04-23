@@ -11,9 +11,15 @@ export const useEventDetailsView = () => {
         setIsBookingModalVisible(false);
     }, []);
 
+    const onFavoritePress = useCallback(() => {}, []);
+
+    const onCallToReservePress = useCallback(() => {}, []);
+
     return {
         isBookingModalVisible,
         onBookNowPress,
         onCloseModal,
+        onFavoritePress,
+        onCallToReservePress,
     };
 };

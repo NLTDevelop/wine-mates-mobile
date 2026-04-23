@@ -381,8 +381,8 @@
         "participationConditionCharity": "Charity",
         "participationConditionHost": "Host pays",
         "participationConditionGuest": "Looking for a host",
-        "tastings": "Tastings",
-        "parties": "Parties"
+        "tastings": "Tasting",
+        "parties": "Party"
     },
     "faq": {
         "faq": "FAQ"
