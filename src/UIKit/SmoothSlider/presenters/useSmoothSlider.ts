@@ -7,7 +7,7 @@ import {
     UseSmoothSliderProps,
     NormalizedLabel,
     DecoratorItem,
-} from '../types.ts';
+} from '../types/types.ts';
 
 interface UseSmoothSliderReturn extends UseSliderGestureReturn {
     styles: ReturnType<typeof getStyles>;
@@ -18,7 +18,8 @@ interface UseSmoothSliderReturn extends UseSliderGestureReturn {
     trackContainerRef: React.RefObject<View | null>;
     onTrackLayout: (event: LayoutChangeEvent) => void;
     onTrackPress: (event: GestureResponderEvent) => void;
-    handleLabelClick: (targetIndex: number) => void;
+    onLabelClick: (targetIndex: number) => void;
+    onGetLabelPress: (targetIndex: number) => () => void;
 }
 
 export const useSmoothSlider = ({
@@ -45,7 +46,7 @@ export const useSmoothSlider = ({
     const actualMax = max ?? (data ? data.length - 1 : 100);
     const actualValue = value ?? values?.[0] ?? initialValue ?? min;
 
-    const handleValueChange = (newValue: number) => {
+    const onValueChange = (newValue: number) => {
         onChange?.(newValue);
         onValuesChange?.([newValue]);
     };
@@ -61,15 +62,21 @@ export const useSmoothSlider = ({
         min,
         max: actualMax,
         initialValue: actualValue,
-        onChange: handleValueChange,
+        onChange: onValueChange,
         step,
         snapped,
     });
 
-    const handleLabelClick = (targetIndex: number) => {
+    const onLabelClick = useCallback((targetIndex: number) => {
         handleLabelPressInternal(targetIndex);
         onLabelPress?.(targetIndex);
-    };
+    }, [handleLabelPressInternal, onLabelPress]);
+
+    const onGetLabelPress = useCallback((targetIndex: number) => {
+        return () => {
+            onLabelClick(targetIndex);
+        };
+    }, [onLabelClick]);
 
     const onTrackLayout = useCallback((event: LayoutChangeEvent) => {
         handleLayout(event.nativeEvent.layout.width);
@@ -150,6 +157,7 @@ export const useSmoothSlider = ({
         trackContainerRef,
         onTrackLayout,
         onTrackPress,
-        handleLabelClick,
+        onLabelClick,
+        onGetLabelPress,
     };
 };

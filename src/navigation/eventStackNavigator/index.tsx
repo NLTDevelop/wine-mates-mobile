@@ -20,7 +20,7 @@ export const EventStack = () => (
       <Stack.Screen name="AddWineSetView" component={AddWineSetView} />
       <Stack.Screen name="EditEventWineView" component={EditEventWineView} />
       <Stack.Screen name="LocationPickerView" component={LocationPickerView} />
-      <Stack.Screen name="EventFiltersView" component={EventFiltersView} />
+      <Stack.Screen name="EventFiltersView" component={EventFiltersView}  options={{ gestureEnabled: false }}/>
     </Stack.Navigator>
   </StackWrapper>
 );

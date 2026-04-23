@@ -72,8 +72,12 @@ export const useEventMapScreen = () => {
             nextCount += 1;
         }
 
+        if (typeof filters.minAge === 'number' || typeof filters.maxAge === 'number') {
+            nextCount += 1;
+        }
+
         return nextCount;
-    }, [filters.eventDate, filters.radiusKm, filters.sex]);
+    }, [filters.eventDate, filters.maxAge, filters.minAge, filters.radiusKm, filters.sex]);
 
     const onFilterPress = useCallback(() => {
         navigation.navigate('EventFiltersView');

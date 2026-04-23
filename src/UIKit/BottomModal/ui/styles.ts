@@ -1,22 +1,15 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical, size } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors, bottomInset: number) => {
     const styles = StyleSheet.create({
-        modalContainer: {
-            flex: 1,
-            justifyContent: 'flex-end',
-        },
-        backdrop: {
-            ...StyleSheet.absoluteFill,
-            backgroundColor: colors.text,
-        },
-        contentContainer: {
+        bottomSheetContainer: {
             backgroundColor: colors.background,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            maxHeight: size.height * 0.9,
+        },
+        container: {
             overflow: 'hidden',
         },
         header: {
@@ -50,9 +43,7 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
             textAlign: 'center',
             color: colors.text,
         },
-        scrollView: {
-        },
-        scrollContent: {
+        contentContainer: {
             padding: scaleHorizontal(16),
             paddingBottom: bottomInset + scaleVertical(16),
         },

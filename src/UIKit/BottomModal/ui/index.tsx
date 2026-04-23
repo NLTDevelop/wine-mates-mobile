@@ -1,10 +1,11 @@
 import { useMemo, ReactNode } from 'react';
-import { View, Modal, TouchableWithoutFeedback, Animated, ScrollView, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
+import { View, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
+import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useUiContext } from '@/UIProvider';
 import { TitleVariant, Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { useBottomModalState } from '@/UIKit/BottomModal/presenters/useBottomModalState';
-import { useBottomModalInsets } from '@/UIKit/BottomModal/presenters/useBottomModalInsets';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 
 interface IProps {
@@ -17,7 +18,6 @@ interface IProps {
     children: ReactNode;
 }
 
-
 export const BottomModal = ({
     visible,
     onClose,
@@ -25,77 +25,45 @@ export const BottomModal = ({
     titleVariant = 'h4',
     customHeader,
     contentContainerStyle,
-    children
+    children,
 }: IProps) => {
     const { colors } = useUiContext();
-    const { bottomInset } = useBottomModalInsets();
-    const styles = useMemo(() => getStyles(colors, bottomInset), [colors, bottomInset]);
-    const { isVisible, backdropOpacity, slideAnim, handleClose } = useBottomModalState({ visible, onClose });
-
-    const renderHeader = () => {
-        if (customHeader) {
-            return customHeader;
-        }
-
-        return (
-            <View style={styles.header}>
-                <View style={styles.closeButton} />
-                {title && (
-                    <View style={styles.titleContainer} pointerEvents="none">
-                        <Typography text={title} variant={titleVariant} style={styles.title} />
-                    </View>
-                )}
-                <TouchableOpacity onPress={onClose} style={styles.closeButton} hitSlop={8}>
-                    <CrossIcon/>
-                </TouchableOpacity>
-            </View>
-        );
-    };
-
-    if (!isVisible) {
-        return null;
-    }
+    const { top, bottom } = useSafeAreaInsets();
+    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
+    const { modalRef, onRenderBackdrop, onRenderHandle, onDismiss, onClosePress } = useBottomModalState({
+        visible,
+        onClose,
+    });
 
     return (
-        <Modal
-            visible={isVisible}
-            transparent
-            animationType="none"
-            statusBarTranslucent
-            navigationBarTranslucent
-            onRequestClose={handleClose}
+        <BottomSheetModal
+            ref={modalRef}
+            topInset={top}
+            enablePanDownToClose
+            enableDynamicSizing
+            backdropComponent={onRenderBackdrop}
+            handleComponent={onRenderHandle}
+            onDismiss={onDismiss}
+            backgroundStyle={styles.bottomSheetContainer}
         >
-            <View style={styles.modalContainer}>
-                <TouchableWithoutFeedback onPress={onClose}>
-                    <Animated.View
-                        style={[
-                            styles.backdrop,
-                            {
-                                opacity: backdropOpacity,
-                            },
-                        ]}
-                    />
-                </TouchableWithoutFeedback>
-
-                <Animated.View
-                    style={[
-                        styles.contentContainer,
-                        {
-                            transform: [{ translateY: slideAnim }],
-                        },
-                    ]}
-                >
-                    {renderHeader()}
-                    <ScrollView
-                        style={styles.scrollView}
-                        contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
-                        showsVerticalScrollIndicator={false}
-                        bounces={false}
-                    >
-                        {children}
-                    </ScrollView>
-                </Animated.View>
-            </View>
-        </Modal>
+            <BottomSheetView style={styles.container}>
+                {customHeader ? (
+                    customHeader
+                ) : (
+                    <View style={styles.header}>
+                        <View style={styles.closeButton} />
+                        {title && (
+                            <View style={styles.titleContainer} pointerEvents="none">
+                                <Typography text={title} variant={titleVariant} style={styles.title} />
+                            </View>
+                        )}
+                        <TouchableOpacity onPress={onClosePress} style={styles.closeButton} hitSlop={8}>
+                            <CrossIcon />
+                        </TouchableOpacity>
+                    </View>
+                )}
+                <View style={[styles.contentContainer, contentContainerStyle]}>{children}</View>
+            </BottomSheetView>
+        </BottomSheetModal>
     );
 };

@@ -4,4 +4,6 @@ export interface IEventFilters {
     radiusKm?: number;
     eventDate?: string;
     sex?: Sex;
+    minAge?: number;
+    maxAge?: number;
 }

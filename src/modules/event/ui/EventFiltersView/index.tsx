@@ -11,6 +11,7 @@ import { getStyles } from './styles';
 import { SexPickerModal } from './components/SexPickerModal';
 import { CalendarIcon } from '@assets/icons/CalendarIcon';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
+import { RangeSlider } from '@/UIKit/RangeSlider';
 
 interface IProps {}
 
@@ -24,6 +25,10 @@ export const EventFiltersView = ({}: IProps) => {
         selectedDateText,
         selectedSexText,
         selectedSex,
+        selectedMinAge,
+        selectedMaxAge,
+        minAgeLimit,
+        maxAgeLimit,
         radiusOption1,
         radiusOption5,
         radiusOption10,
@@ -38,6 +43,7 @@ export const EventFiltersView = ({}: IProps) => {
         onDayPress,
         onMonthChange,
         onSelectSex,
+        onAgeRangeChange,
         onReset,
     } = useEventFiltersView({ t });
 
@@ -93,6 +99,17 @@ export const EventFiltersView = ({}: IProps) => {
                         />
                         <ArrowDownIcon color={colors.text_light} width={20} height={20} />
                     </TouchableOpacity>
+                </View>
+
+                <View>
+                    <Typography text={t('eventFilters.age')} variant="h5" style={styles.sectionTitle} />
+                    <RangeSlider
+                        min={minAgeLimit}
+                        max={maxAgeLimit}
+                        minValue={selectedMinAge}
+                        maxValue={selectedMaxAge}
+                        onChange={onAgeRangeChange}
+                    />
                 </View>
             </View>
 

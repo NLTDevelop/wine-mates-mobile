@@ -22,7 +22,8 @@ export interface IAddEventDraft {
     speakerName: string;
     language: string;
     seats: string;
-    age: string;
+    minAge: number;
+    maxAge: number;
     sex: Sex;
     eventType: EventType;
     tastingType: TastingType;
