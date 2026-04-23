@@ -59,6 +59,7 @@ export const AddEventView = () => {
         onTimeSelect,
         selectedEventDate: form.eventDate,
         selectedEventTime: form.eventTime,
+        t,
     });
 
     const { formattedDate, formattedTime } = useEventDateTimeFormatter({

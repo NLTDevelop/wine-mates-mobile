@@ -25,13 +25,19 @@ interface IEventForm {
     speakerName: string;
     language: string;
     seats: string;
-    age: string;
     sex: Sex;
     eventType: EventType;
     tastingType: TastingType;
     participationCondition: ParticipationCondition;
     requiresConfirmation: boolean;
 }
+
+const formatDateToLocalApi = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
 
 export const useAddEvent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
@@ -53,7 +59,6 @@ export const useAddEvent = () => {
         speakerName: '',
         language: 'ua',
         seats: '',
-        age: '18',
         sex: Sex.All,
         eventType: EventType.Tastings,
         tastingType: TastingType.Regular,
@@ -91,7 +96,7 @@ export const useAddEvent = () => {
     }, []);
 
     const onDateSelect = useCallback((date: Date) => {
-        const dateStr = date.toISOString().split('T')[0];
+        const dateStr = formatDateToLocalApi(date);
         setForm(prev => ({ ...prev, eventDate: dateStr }));
     }, []);
 

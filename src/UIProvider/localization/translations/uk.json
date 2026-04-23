@@ -392,7 +392,8 @@
         "participationConditionHost": "Пригощаю",
         "participationConditionGuest": "Хочу, щоб мене пригостили",
         "tastings": "Дегустація",
-        "parties": "Вечірка"
+        "parties": "Вечірка",
+        "pastDateError": "Не можна обрати дату в минулому"
     },
     "faq": {
         "faq": "FAQ"

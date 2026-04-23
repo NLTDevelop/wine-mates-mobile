@@ -388,7 +388,8 @@
         "participationConditionHost": "Host pays",
         "participationConditionGuest": "Looking for a host",
         "tastings": "Tasting",
-        "parties": "Party"
+        "parties": "Party",
+        "pastDateError": "You cannot select a past date"
     },
     "faq": {
         "faq": "FAQ"
