@@ -16,7 +16,7 @@ export const getStyles = (colors: IColors) => {
         card: {
             backgroundColor: colors.background,
             borderRadius: 12,
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             padding: scaleHorizontal(16),
             gap: scaleVertical(12),
@@ -44,15 +44,14 @@ export const getStyles = (colors: IColors) => {
             marginBottom: scaleVertical(8),
         },
         wineSetListContainer: {
-            marginTop: scaleVertical(8),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: 12,
-            padding: scaleHorizontal(16),
-            gap: scaleVertical(8),
+            paddingVertical: scaleVertical(12),
+            paddingHorizontal: scaleHorizontal(16),
         },
-        wineSetText: {
-            color: colors.text,
+        wineSetItemSeparator: {
+            height: scaleVertical(10),
         },
         content: {
             gap: scaleVertical(16),

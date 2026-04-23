@@ -75,7 +75,64 @@ export const MOCK_EVENT_DETAILS: IEventDetail[] = [
         currency: Currency.UAH,
         tastingType: TastingType.Regular,
         participationCondition: ParticipationCondition.FixedPrice,
-        wineSet: ['Cabernet Sauvignon', 'Merlot', 'Pinot Noir', 'Chardonnay'],
+        wineSet: [
+            {
+                id: 1,
+                wineId: 101,
+                sortOrder: 1,
+                wine: {
+                    id: 101,
+                    name: 'Cabernet Sauvignon',
+                    producer: 'My Wine',
+                    vintage: 2021,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-101/80/80',
+                    },
+                },
+            },
+            {
+                id: 2,
+                wineId: 102,
+                sortOrder: 2,
+                wine: {
+                    id: 102,
+                    name: 'Merlot',
+                    producer: 'Duckhorn Vineyards',
+                    vintage: 2019,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-102/80/80',
+                    },
+                },
+            },
+            {
+                id: 3,
+                wineId: 103,
+                sortOrder: 3,
+                wine: {
+                    id: 103,
+                    name: 'Pinot Noir',
+                    producer: 'Cloudy Bay',
+                    vintage: 2020,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-103/80/80',
+                    },
+                },
+            },
+            {
+                id: 4,
+                wineId: 104,
+                sortOrder: 4,
+                wine: {
+                    id: 104,
+                    name: 'Chardonnay',
+                    producer: 'Beringer',
+                    vintage: 2022,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-104/80/80',
+                    },
+                },
+            },
+        ],
     },
     {
         id: 2,
@@ -96,7 +153,50 @@ export const MOCK_EVENT_DETAILS: IEventDetail[] = [
         currency: Currency.UAH,
         tastingType: TastingType.Blind,
         participationCondition: ParticipationCondition.SplitBill,
-        wineSet: ['Sauvignon Blanc', 'Riesling', 'Syrah'],
+        wineSet: [
+            {
+                id: 5,
+                wineId: 105,
+                sortOrder: 1,
+                wine: {
+                    id: 105,
+                    name: 'Sauvignon Blanc',
+                    producer: 'Bisol',
+                    vintage: 2021,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-105/80/80',
+                    },
+                },
+            },
+            {
+                id: 6,
+                wineId: 106,
+                sortOrder: 2,
+                wine: {
+                    id: 106,
+                    name: 'Riesling',
+                    producer: 'Dr. Loosen',
+                    vintage: 2020,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-106/80/80',
+                    },
+                },
+            },
+            {
+                id: 7,
+                wineId: 107,
+                sortOrder: 3,
+                wine: {
+                    id: 107,
+                    name: 'Syrah',
+                    producer: 'Penfolds',
+                    vintage: 2018,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-107/80/80',
+                    },
+                },
+            },
+        ],
     },
     {
         id: 3,
@@ -117,7 +217,78 @@ export const MOCK_EVENT_DETAILS: IEventDetail[] = [
         currency: Currency.UAH,
         tastingType: TastingType.Regular,
         participationCondition: ParticipationCondition.Guest,
-        wineSet: ['Tempranillo', 'Sangiovese', 'Grenache', 'Malbec', 'Zinfandel'],
+        wineSet: [
+            {
+                id: 8,
+                wineId: 108,
+                sortOrder: 1,
+                wine: {
+                    id: 108,
+                    name: 'Tempranillo',
+                    producer: 'Rioja Alta',
+                    vintage: 2019,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-108/80/80',
+                    },
+                },
+            },
+            {
+                id: 9,
+                wineId: 109,
+                sortOrder: 2,
+                wine: {
+                    id: 109,
+                    name: 'Sangiovese',
+                    producer: 'Antinori',
+                    vintage: 2018,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-109/80/80',
+                    },
+                },
+            },
+            {
+                id: 10,
+                wineId: 110,
+                sortOrder: 3,
+                wine: {
+                    id: 110,
+                    name: 'Grenache',
+                    producer: 'Chapoutier',
+                    vintage: 2020,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-110/80/80',
+                    },
+                },
+            },
+            {
+                id: 11,
+                wineId: 111,
+                sortOrder: 4,
+                wine: {
+                    id: 111,
+                    name: 'Malbec',
+                    producer: 'Catena Zapata',
+                    vintage: 2021,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-111/80/80',
+                    },
+                },
+            },
+            {
+                id: 12,
+                wineId: 112,
+                sortOrder: 5,
+                wine: {
+                    id: 112,
+                    name: 'Zinfandel',
+                    producer: 'Ridge',
+                    vintage: 2017,
+                    image: {
+                        smallUrl: 'https://picsum.photos/seed/wine-112/80/80',
+                    },
+                },
+            },
+        ],
     },
 ];
 

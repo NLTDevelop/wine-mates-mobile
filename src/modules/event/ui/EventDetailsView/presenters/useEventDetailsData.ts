@@ -1,4 +1,5 @@
 import { IEventDetail } from '@/entities/events/types/IEvent';
+import { TastingType } from '@/entities/events/enums/TastingType';
 import { useUiContext } from '@/UIProvider';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 
@@ -136,27 +137,20 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         return formatDistanceFallback(distance, distanceKm);
     };
 
-    const normalizeWineSetItem = (item: NonNullable<IEventDetail['wineSet']>[number]) => {
-        if (typeof item === 'string') {
-            return item;
+    const formatTastingType = (value?: TastingType) => {
+        if (!value) {
+            return '-';
         }
 
-        const directLabel = item.name || item.title || item.wineName;
-        if (directLabel) {
-            return directLabel;
+        if (value === TastingType.Blind) {
+            return t('event.tastingTypeBlind');
         }
 
-        const nestedLabel = item.wine?.name || item.wine?.title || item.wine?.wineName;
-        if (nestedLabel) {
-            return nestedLabel;
+        if (value === TastingType.Regular) {
+            return t('event.tastingTypeRegular');
         }
 
-        const id = item.wineId || item.id || item.wine?.id;
-        if (id) {
-            return `Wine #${id}`;
-        }
-
-        return 'Wine';
+        return '-';
     };
 
     const detailsData = (() => {
@@ -184,6 +178,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             { key: 'location', label: t('eventDetails.location'), value: getValueOrDash(eventDetail.locationLabel || eventDetail.location) },
             { key: 'date', label: t('eventDetails.date'), value: formatLocalizedDate(dateValue) },
             { key: 'time', label: t('eventDetails.time'), value: formattedTime },
+            { key: 'tastingType', label: t('event.tastingType'), value: formatTastingType(eventDetail.tastingType) },
             { key: 'price', label: t('eventDetails.price'), value: formatPrice(eventDetail.price, eventDetail.currency) },
             { key: 'speaker', label: t('eventDetails.speaker'), value: getValueOrDash(eventDetail.speakerName || eventDetail.speaker) },
             {
@@ -207,7 +202,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return [];
         }
 
-        return eventDetail.wineSet.map(normalizeWineSetItem);
+        return eventDetail.wineSet;
     })();
 
     return { detailsData, wineSetItems };

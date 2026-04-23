@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, FlatList, ListRenderItem, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -15,6 +15,8 @@ import { useEventDetailsView } from '@/modules/event/ui/EventDetailsView/present
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { observer } from 'mobx-react';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
+import { IWineSetItem } from '@/entities/events/types/IWineSetItem';
+import { WineSetItem } from './components/WineSetItem';
 
 export const EventDetailsView = observer(() => {
     const { colors, t } = useUiContext();
@@ -32,6 +34,15 @@ export const EventDetailsView = observer(() => {
     } = useEventDetailsView();
 
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const keyExtractor = (item: IWineSetItem) => `${item.id}`;
+
+    const renderWineSetItem: ListRenderItem<IWineSetItem> = function renderWineSetItem({ item }) {
+        return <WineSetItem item={item} />;
+    };
+
+    const renderWineSetItemSeparator = function renderWineSetItemSeparator() {
+        return <View style={styles.wineSetItemSeparator} />;
+    };
 
     return (
         <ScreenContainer
@@ -65,16 +76,15 @@ export const EventDetailsView = observer(() => {
                             </View>
 
                             {wineSetItems.length > 0 && (
-                                    <View style={styles.wineSetListContainer}>
-                                        {wineSetItems.map((wine, index) => (
-                                            <Typography
-                                                key={index}
-                                                text={`🍷 ${wine}`}
-                                                variant="body_400"
-                                                style={styles.wineSetText}
-                                            />
-                                        ))}
-                                    </View>
+                                <View style={styles.wineSetListContainer}>
+                                    <FlatList
+                                        data={wineSetItems}
+                                        keyExtractor={keyExtractor}
+                                        renderItem={renderWineSetItem}
+                                        scrollEnabled={false}
+                                        ItemSeparatorComponent={renderWineSetItemSeparator}
+                                    />
+                                </View>
                             )}
                         </View>
                         <View style={styles.footer}>
