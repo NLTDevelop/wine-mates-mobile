@@ -1,0 +1,42 @@
+import { useMemo } from 'react';
+import { useUiContext } from '@/UIProvider';
+
+interface IUseDateTimePickerModalProps {
+    mode: 'date' | 'time';
+    title?: string;
+}
+
+export const useDateTimePickerModal = ({ mode, title }: IUseDateTimePickerModalProps) => {
+    const { colors, t, locale } = useUiContext();
+
+    const normalizedLocale = useMemo(() => {
+        const preparedLocale = (locale || 'en').trim().replace('_', '-');
+
+        if (!preparedLocale) {
+            return 'en';
+        }
+
+        return preparedLocale;
+    }, [locale]);
+
+    const timePickerLocale = useMemo(() => {
+        const languageCode = normalizedLocale.split('-')[0];
+
+        if (!languageCode) {
+            return 'en-001';
+        }
+
+        return `${languageCode}-001`;
+    }, [normalizedLocale]);
+
+    const pickerLocale = mode === 'time' ? timePickerLocale : normalizedLocale;
+    const modalTitle = title || (mode === 'date' ? t('event.eventDate') : t('event.eventTime'));
+    const pickerTheme = colors.background === '#FFFFFF' ? 'light' : 'dark';
+
+    return {
+        pickerLocale,
+        modalTitle,
+        pickerTheme,
+        t,
+    };
+};

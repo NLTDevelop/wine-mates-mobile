@@ -47,7 +47,7 @@ export const getStyles = (colors: IColors) => {
         expertiseRow: {
             minHeight: scaleVertical(48),
             borderRadius: scaleVertical(12),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             backgroundColor: colors.background,
             flexDirection: 'row',
@@ -77,14 +77,9 @@ export const getStyles = (colors: IColors) => {
             width: scaleVertical(40),
             height: scaleVertical(40),
             borderRadius: scaleVertical(22),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             backgroundColor: colors.background,
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        calendarContainer: {
-            flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
         },
@@ -97,16 +92,6 @@ export const getStyles = (colors: IColors) => {
         },
         alertButton: {
             width: '100%',
-        },
-        birthdayModalHeader: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: scaleHorizontal(16),
-            paddingTop: scaleVertical(16),
-        },
-        birthdayModalButton: {
-            padding: scaleVertical(8),
         },
     });
     return styles;
