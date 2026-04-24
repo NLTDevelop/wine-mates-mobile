@@ -30,8 +30,8 @@ export const useEventsList = ({ searchLocation, filters }: IProps = {}) => {
     const lastLoadedLocationKeyRef = useRef('');
     const lastLoadedFiltersKeyRef = useRef('');
     const filtersKey = useMemo(() => {
-        return `${filters?.radiusKm ?? ''}:${filters?.eventDate ?? ''}:${filters?.sex ?? ''}:${filters?.minAge ?? ''}:${filters?.maxAge ?? ''}:${filters?.minPrice ?? ''}:${filters?.maxPrice ?? ''}`;
-    }, [filters?.eventDate, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex]);
+        return `${filters?.radiusKm ?? ''}:${filters?.eventDate ?? ''}:${filters?.language ?? ''}:${filters?.sex ?? ''}:${filters?.minAge ?? ''}:${filters?.maxAge ?? ''}:${filters?.minPrice ?? ''}:${filters?.maxPrice ?? ''}`;
+    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex]);
     const list = eventsModel.list;
     const hasMore = useMemo(() => {
         if (!list) {
@@ -62,6 +62,7 @@ export const useEventsList = ({ searchLocation, filters }: IProps = {}) => {
                 offset,
                 limit: DEFAULT_LIMIT,
                 eventDate: filters?.eventDate,
+                language: filters?.language,
                 minPrice: filters?.minPrice,
                 maxPrice: filters?.maxPrice,
                 sex: filters?.sex,
@@ -80,7 +81,7 @@ export const useEventsList = ({ searchLocation, filters }: IProps = {}) => {
             setIsLoading(false);
             setIsRefreshing(false);
         }
-    }, [filters?.eventDate, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, getTargetLocation]);
+    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, getTargetLocation]);
 
     const onRefresh = useCallback((offset: number = OFFSET, location?: IUserLocation | null) => {
         return loadEvents(offset, location);

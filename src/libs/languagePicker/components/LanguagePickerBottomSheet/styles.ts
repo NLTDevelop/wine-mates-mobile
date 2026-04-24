@@ -33,6 +33,6 @@ export const getStyles = (colors: IColors, insetBottom: number) => {
             rowGap: scaleVertical(24),
         },
     });
-    
+
     return styles;
 };

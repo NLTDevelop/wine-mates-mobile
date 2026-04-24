@@ -37,8 +37,8 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
     const lastLoadedFiltersKeyRef = useRef('');
 
     const filtersKey = useMemo(() => {
-        return `${filters?.radiusKm ?? ''}:${filters?.eventDate ?? ''}:${filters?.sex ?? ''}:${filters?.minAge ?? ''}:${filters?.maxAge ?? ''}:${filters?.minPrice ?? ''}:${filters?.maxPrice ?? ''}`;
-    }, [filters?.eventDate, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex]);
+        return `${filters?.radiusKm ?? ''}:${filters?.eventDate ?? ''}:${filters?.language ?? ''}:${filters?.sex ?? ''}:${filters?.minAge ?? ''}:${filters?.maxAge ?? ''}:${filters?.minPrice ?? ''}:${filters?.maxPrice ?? ''}`;
+    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex]);
 
     const selectedEventType = useMemo(() => {
         if (selectedTab === 'all') {
@@ -67,6 +67,7 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
                 radiusKm: filters?.radiusKm ?? DEFAULT_RADIUS_KM,
                 eventType: selectedEventType,
                 eventDate: filters?.eventDate,
+                language: filters?.language,
                 minPrice: filters?.minPrice,
                 maxPrice: filters?.maxPrice,
                 sex: filters?.sex,
@@ -78,7 +79,7 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
         } finally {
             setIsLoadingEvents(false);
         }
-    }, [filters?.eventDate, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, getTargetLocation, selectedEventType]);
+    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, getTargetLocation, selectedEventType]);
 
     useEffect(() => {
         if (!isFocused) {

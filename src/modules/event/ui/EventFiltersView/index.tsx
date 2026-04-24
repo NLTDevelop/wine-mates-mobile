@@ -12,6 +12,7 @@ import { SexPickerModal } from './components/SexPickerModal';
 import { CalendarIcon } from '@assets/icons/CalendarIcon';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { RangeSlider } from '@/UIKit/RangeSlider';
+import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
 
 interface IProps {}
 
@@ -24,6 +25,7 @@ export const EventFiltersView = ({}: IProps) => {
         markedDates,
         selectedDateText,
         selectedSexText,
+        selectedLanguage,
         selectedSex,
         selectedMinAge,
         selectedMaxAge,
@@ -48,6 +50,7 @@ export const EventFiltersView = ({}: IProps) => {
         onMonthChange,
         onSelectSex,
         onConfirmSex,
+        onChangeLanguage,
         onAgeRangeChange,
         onPriceRangeChange,
         onReset,
@@ -94,17 +97,9 @@ export const EventFiltersView = ({}: IProps) => {
                         <CalendarIcon color={colors.text_light} />
                     </TouchableOpacity>
                 </View>
-
                 <View>
-                    <Typography text={t('eventFilters.sex')} variant="h5" style={styles.sectionTitle} />
-                    <TouchableOpacity style={styles.sexButton} onPress={onOpenSexPicker}>
-                        <Typography
-                            text={selectedSexText || t('eventFilters.selectSex')}
-                            variant="body_400"
-                            style={styles.sexText}
-                        />
-                        <ArrowDownIcon color={colors.text_light} width={20} height={20} />
-                    </TouchableOpacity>
+                    <Typography text={t('event.eventLanguage')} variant="h5" style={styles.sectionTitle} />
+                    <LanguageSelector value={selectedLanguage} onChange={onChangeLanguage} />
                 </View>
 
                 <View>
@@ -127,6 +122,17 @@ export const EventFiltersView = ({}: IProps) => {
                         onChange={onPriceRangeChange}
                         valueSuffix="$"
                     />
+                </View>
+                <View>
+                    <Typography text={t('eventFilters.sex')} variant="h5" style={styles.sectionTitle} />
+                    <TouchableOpacity style={styles.sexButton} onPress={onOpenSexPicker}>
+                        <Typography
+                            text={selectedSexText || t('eventFilters.selectSex')}
+                            variant="body_400"
+                            style={styles.sexText}
+                        />
+                        <ArrowDownIcon color={colors.text_light} width={20} height={20} />
+                    </TouchableOpacity>
                 </View>
             </View>
 

@@ -69,6 +69,10 @@ export const useEventMapScreen = () => {
             nextCount += 1;
         }
 
+        if (filters.language) {
+            nextCount += 1;
+        }
+
         if (filters.sex) {
             nextCount += 1;
         }
@@ -82,7 +86,7 @@ export const useEventMapScreen = () => {
         }
 
         return nextCount;
-    }, [filters.eventDate, filters.maxAge, filters.maxPrice, filters.minAge, filters.minPrice, filters.radiusKm, filters.sex]);
+    }, [filters.eventDate, filters.language, filters.maxAge, filters.maxPrice, filters.minAge, filters.minPrice, filters.radiusKm, filters.sex]);
 
     useFocusEffect(
         useCallback(() => {

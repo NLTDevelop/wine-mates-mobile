@@ -122,7 +122,12 @@ export const useAddEvent = () => {
     }, []);
 
     const onChangeLanguage = useCallback((value: string) => {
-        setForm(prev => ({ ...prev, language: value }));
+        const nextLanguage = value.trim().toLowerCase();
+        if (!nextLanguage) {
+            return;
+        }
+
+        setForm(prev => ({ ...prev, language: nextLanguage }));
     }, []);
 
     const onChangeSeats = useCallback((value: string) => {

@@ -17,6 +17,7 @@ import { useDateTimePicker } from './presenters/useDateTimePicker';
 import { useEventDateTimeFormatter } from '../../presenters/useEventDateTimeFormatter';
 import { useEventTypeLabel } from '../../presenters/useEventTypeLabel';
 import { EventTypePickerModal } from './components/EventTypePickerModal';
+import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
 import { isIOS, scaleVertical } from '@/utils';
 
 export const AddEventView = () => {
@@ -172,12 +173,7 @@ export const AddEventView = () => {
                                 keyboardType="numeric"
                             />
 
-                            <CustomInput
-                                value={form.language}
-                                containerStyle={styles.inputContainerStyle}
-                                onChangeText={onChangeLanguage}
-                                placeholder={t('event.eventLanguage')}
-                            />
+                            <LanguageSelector value={form.language} onChange={onChangeLanguage} />
 
                             <CustomInput
                                 value={form.seats}

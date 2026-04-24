@@ -40,6 +40,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
     const initialFilters: IEventFilters = {
         radiusKm: modelFilters.radiusKm,
         eventDate: modelFilters.eventDate,
+        language: modelFilters.language,
         sex: modelFilters.sex,
         minAge: modelFilters.minAge,
         maxAge: modelFilters.maxAge,
@@ -56,6 +57,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
 
     const [selectedRadiusKm, setSelectedRadiusKm] = useState<number | undefined>(initialFilters.radiusKm);
     const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
+    const [selectedLanguage, setSelectedLanguage] = useState<string>(initialFilters.language || '');
     const [selectedSex, setSelectedSex] = useState<Sex | undefined>(initialFilters.sex);
     const [selectedSexDraft, setSelectedSexDraft] = useState<Sex | undefined>(initialFilters.sex);
     const [selectedMinAge, setSelectedMinAge] = useState<number>(initialMinAge);
@@ -94,6 +96,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
     const getPreparedFilters = useCallback((
         radiusKm?: number,
         date?: Date | null,
+        language?: string,
         sex?: Sex,
         minAge?: number,
         maxAge?: number,
@@ -108,6 +111,10 @@ export const useEventFiltersView = ({ t }: IProps) => {
 
         if (date) {
             nextFilters.eventDate = format(date, DATE_API_FORMAT);
+        }
+
+        if (language) {
+            nextFilters.language = language;
         }
 
         if (sex) {
@@ -141,6 +148,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         const nextFilters = getPreparedFilters(
             nextRadiusKm,
             selectedDate,
+            selectedLanguage,
             selectedSex,
             selectedMinAge,
             selectedMaxAge,
@@ -148,7 +156,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
             selectedMaxPrice,
         );
         onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedLanguage, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
 
     const getRadiusOption = useCallback((value: number): IRadiusOption => {
         return {
@@ -189,6 +197,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
             const nextFilters = getPreparedFilters(
                 selectedRadiusKm,
                 null,
+                selectedLanguage,
                 selectedSex,
                 selectedMinAge,
                 selectedMaxAge,
@@ -204,6 +213,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         const nextFilters = getPreparedFilters(
             selectedRadiusKm,
             parsedDate,
+            selectedLanguage,
             selectedSex,
             selectedMinAge,
             selectedMaxAge,
@@ -211,7 +221,39 @@ export const useEventFiltersView = ({ t }: IProps) => {
             selectedMaxPrice,
         );
         onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedLanguage, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
+
+    const onChangeLanguage = useCallback((language: string) => {
+        const nextLanguage = language.trim().toLowerCase();
+
+        if (selectedLanguage === nextLanguage) {
+            return;
+        }
+
+        setSelectedLanguage(nextLanguage);
+        const nextFilters = getPreparedFilters(
+            selectedRadiusKm,
+            selectedDate,
+            nextLanguage,
+            selectedSex,
+            selectedMinAge,
+            selectedMaxAge,
+            selectedMinPrice,
+            selectedMaxPrice,
+        );
+        onSyncFilters(nextFilters);
+    }, [
+        getPreparedFilters,
+        onSyncFilters,
+        selectedDate,
+        selectedLanguage,
+        selectedMaxAge,
+        selectedMaxPrice,
+        selectedMinAge,
+        selectedMinPrice,
+        selectedRadiusKm,
+        selectedSex,
+    ]);
 
     const onSelectSex = useCallback((sex: Sex) => {
         setSelectedSexDraft(sex);
@@ -228,6 +270,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         const nextFilters = getPreparedFilters(
             selectedRadiusKm,
             selectedDate,
+            selectedLanguage,
             nextSex,
             selectedMinAge,
             selectedMaxAge,
@@ -236,7 +279,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         );
         onSyncFilters(nextFilters);
         setIsSexPickerVisible(false);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex, selectedSexDraft]);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedLanguage, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex, selectedSexDraft]);
 
     const onAgeRangeChange = useCallback((minAge: number, maxAge: number) => {
         if (selectedMinAge === minAge && selectedMaxAge === maxAge) {
@@ -248,6 +291,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         const nextFilters = getPreparedFilters(
             selectedRadiusKm,
             selectedDate,
+            selectedLanguage,
             selectedSex,
             minAge,
             maxAge,
@@ -255,7 +299,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
             selectedMaxPrice,
         );
         onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxPrice, selectedMinPrice, selectedRadiusKm, selectedSex, selectedMaxAge, selectedMinAge]);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedLanguage, selectedMaxPrice, selectedMinPrice, selectedRadiusKm, selectedSex, selectedMaxAge, selectedMinAge]);
 
     const onPriceRangeChange = useCallback((minPrice: number, maxPrice: number) => {
         if (selectedMinPrice === minPrice && selectedMaxPrice === maxPrice) {
@@ -267,6 +311,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         const nextFilters = getPreparedFilters(
             selectedRadiusKm,
             selectedDate,
+            selectedLanguage,
             selectedSex,
             selectedMinAge,
             selectedMaxAge,
@@ -274,7 +319,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
             maxPrice,
         );
         onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMinAge, selectedMaxPrice, selectedMinPrice, selectedRadiusKm, selectedSex]);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedLanguage, selectedMaxAge, selectedMinAge, selectedMaxPrice, selectedMinPrice, selectedRadiusKm, selectedSex]);
 
     const onMonthChange = useCallback((month: DateData) => {
         setCurrentMonth(month.dateString);
@@ -283,6 +328,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
     const onReset = useCallback(() => {
         setSelectedRadiusKm(undefined);
         setSelectedDate(null);
+        setSelectedLanguage('');
         setSelectedSex(undefined);
         setSelectedSexDraft(undefined);
         setSelectedMinAge(MIN_AGE_LIMIT);
@@ -321,8 +367,13 @@ export const useEventFiltersView = ({ t }: IProps) => {
     const isResetDisabled = useMemo(() => {
         const isAgeDefault = selectedMinAge === MIN_AGE_LIMIT && selectedMaxAge === MAX_AGE_LIMIT;
         const isPriceDefault = selectedMinPrice === minPriceLimit && selectedMaxPrice === maxPriceLimit;
-        return !selectedDate && typeof selectedRadiusKm !== 'number' && !selectedSex && isAgeDefault && isPriceDefault;
-    }, [maxPriceLimit, minPriceLimit, selectedDate, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
+        return !selectedDate
+            && !selectedLanguage
+            && typeof selectedRadiusKm !== 'number'
+            && !selectedSex
+            && isAgeDefault
+            && isPriceDefault;
+    }, [maxPriceLimit, minPriceLimit, selectedDate, selectedLanguage, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
 
     const selectedSexText = useMemo(() => {
         if (selectedSex === Sex.Men) {
@@ -345,6 +396,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         markedDates,
         selectedDateText,
         selectedSexText,
+        selectedLanguage,
         selectedSex: selectedSexDraft,
         selectedMinAge,
         selectedMaxAge,
@@ -369,6 +421,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         onMonthChange,
         onSelectSex,
         onConfirmSex,
+        onChangeLanguage,
         onAgeRangeChange,
         onPriceRangeChange,
         onReset,

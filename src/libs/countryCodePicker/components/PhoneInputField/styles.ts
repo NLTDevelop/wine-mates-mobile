@@ -13,12 +13,12 @@ export const getStyles = (colors: IColors) => {
         pickerButton: {
             flexDirection: 'row',
             alignItems: 'center',
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: 12,
             backgroundColor: colors.background,
             minHeight: scaleVertical(48),
-            padding: scaleVertical(12),
+            padding: scaleHorizontal(12),
         },
         input: {
             flex: 1,
@@ -38,7 +38,7 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(50),
             justifyContent: 'center',
             alignItems: 'center',
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: scaleHorizontal(12),
             backgroundColor: colors.background,
