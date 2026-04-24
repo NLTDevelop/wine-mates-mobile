@@ -61,7 +61,7 @@ export const AddWineSetView = () => {
     return (
         <>
             <ScreenContainer
-                edges={['top']}
+                edges={['top', 'bottom']}
                 scrollEnabled
                 headerComponent={<HeaderWithBackButton title={t('event.listWineEvent')} isCentered />}
             >

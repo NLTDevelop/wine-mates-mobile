@@ -4,11 +4,20 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        contentContainerStyle: {
-            paddingBottom: scaleVertical(16),
+        container: {
+            flex: 1,
             paddingHorizontal: scaleHorizontal(16),
-            flexGrow: 1,
+        },
+        scroll: {
+            flex: 1,
+        },
+        contentContainerStyle: {
+            paddingTop: scaleVertical(8),
+            paddingBottom: scaleVertical(16),
+        },
+        content: {
             gap: scaleVertical(16),
+            flexGrow: 1,
         },
         inputContainerStyle: {
           marginBottom: 0,
@@ -32,8 +41,9 @@ export const getStyles = (colors: IColors) => {
         locationText: {
             color: colors.text,
         },
-        submitButton: {
-            marginTop: scaleVertical(8),
+        buttonContainer: {
+            paddingBottom: scaleVertical(12),
+            paddingTop: scaleVertical(8),
         },
         pickerButton: {
             flexDirection: 'row',

@@ -276,7 +276,23 @@ export const useAddWineSetView = () => {
         navigation.dispatch(
             CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'EventMapView' }],
+                routes: [
+                    {
+                        name: 'TabNavigator',
+                        state: {
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'EventStack',
+                                    state: {
+                                        index: 0,
+                                        routes: [{ name: 'EventMapView' }],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
             }),
         );
     }, [navigation]);
@@ -292,10 +308,26 @@ export const useAddWineSetView = () => {
         if (createdEventId) {
             navigation.dispatch(
                 CommonActions.reset({
-                    index: 1,
+                    index: 0,
                     routes: [
-                        { name: 'EventMapView' },
-                        { name: 'EventDetailsView', params: { eventId: createdEventId } },
+                        {
+                            name: 'TabNavigator',
+                            state: {
+                                index: 0,
+                                routes: [
+                                    {
+                                        name: 'EventStack',
+                                        state: {
+                                            index: 1,
+                                            routes: [
+                                                { name: 'EventMapView' },
+                                                { name: 'EventDetailsView', params: { eventId: createdEventId } },
+                                            ],
+                                        },
+                                    },
+                                ],
+                            },
+                        },
                     ],
                 }),
             );
