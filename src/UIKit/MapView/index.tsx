@@ -50,11 +50,13 @@ const MapViewComponent = forwardRef<RNMapView, IMapViewProps>(
                 return (
                     <Marker
                         key={`cluster-${cluster.id}`}
+                        identifier={`cluster-${cluster.id}`}
                         coordinate={{
                             latitude: cluster.geometry.coordinates[1],
                             longitude: cluster.geometry.coordinates[0],
                         }}
                         onPress={cluster.onPress}
+                        tracksViewChanges={false}
                     >
                         <View style={[styles.clusterContainer, { backgroundColor: clusterColor || colors.primary }]}>
                             <Typography
@@ -79,6 +81,7 @@ const MapViewComponent = forwardRef<RNMapView, IMapViewProps>(
                     clusteringEnabled={clusteringEnabled}
                     radius={clusterRadius}
                     renderCluster={onRenderCluster}
+                    animationEnabled={false}
                     zoomControlEnabled={false}
                     toolbarEnabled={false}
                     {...props}

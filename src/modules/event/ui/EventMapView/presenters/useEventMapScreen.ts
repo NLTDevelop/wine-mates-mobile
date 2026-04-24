@@ -29,10 +29,22 @@ export const useEventMapScreen = () => {
         refetch: onRefetchMapPins,
     } = useEventMap({ searchLocation, filters });
 
+    const selectedEventType = useMemo(() => {
+        if (selectedTab === 'all') {
+            return undefined;
+        }
+
+        if (selectedTab === 'tastings') {
+            return EventType.Tastings;
+        }
+
+        return EventType.Parties;
+    }, [selectedTab]);
+
     const {
         events,
         refetch: onRefetchEvents,
-    } = useEventsList({ searchLocation, filters });
+    } = useEventsList({ searchLocation, filters, selectedEventType });
 
     const {
         selectedEvent,
@@ -45,18 +57,6 @@ export const useEventMapScreen = () => {
         onReadMorePress,
         onFavoritePress,
     } = useEventMapView({ events });
-
-    const filteredEvents = useMemo(() => {
-        if (selectedTab === 'all') {
-            return events;
-        }
-
-        const eventType = selectedTab === 'tastings'
-            ? EventType.Tastings
-            : EventType.Parties;
-
-        return events.filter(event => event.eventType === eventType);
-    }, [events, selectedTab]);
 
     const filterCount = useMemo(() => {
         let nextCount = 0;
@@ -108,6 +108,7 @@ export const useEventMapScreen = () => {
             await Promise.all([
                 onRefetchMapPins(searchLocation),
                 onRefetchEvents(searchLocation),
+                eventsService.getPriceRange(),
             ]);
         } finally {
             setIsRefetching(false);
@@ -186,7 +187,7 @@ export const useEventMapScreen = () => {
         initialRegion,
         onMarkerPress,
         userLocation,
-        filteredEvents,
+        filteredEvents: events,
         onReadMorePress,
         onFavoritePress,
         onAddEvent,

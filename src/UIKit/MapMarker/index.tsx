@@ -38,7 +38,13 @@ export const MapMarker = ({
     }
 
     return (
-        <Marker {...markerProps} coordinate={markerCoordinate} onPress={onPressHandler}>
+        <Marker
+            {...markerProps}
+            coordinate={markerCoordinate}
+            onPress={onPressHandler}
+            tracksViewChanges={false}
+            identifier={`event-marker-${eventId}`}
+        >
             {customIcon ? (
                 customIcon
             ) : (

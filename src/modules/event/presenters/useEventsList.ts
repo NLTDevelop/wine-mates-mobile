@@ -6,6 +6,7 @@ import { IEventsListParams } from '@/entities/events/params/IEventsListParams';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
+import { EventType } from '@/entities/events/enums/EventType';
 
 const KYIV_COORDINATES = {
     latitude: 50.4501,
@@ -19,9 +20,10 @@ const OFFSET = 0;
 interface IProps {
     searchLocation?: IUserLocation | null;
     filters?: IEventFilters;
+    selectedEventType?: EventType;
 }
 
-export const useEventsList = ({ searchLocation, filters }: IProps = {}) => {
+export const useEventsList = ({ searchLocation, filters, selectedEventType }: IProps = {}) => {
     const isFocused = useIsFocused();
     const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
     const [isLoading, setIsLoading] = useState(false);
@@ -30,8 +32,8 @@ export const useEventsList = ({ searchLocation, filters }: IProps = {}) => {
     const lastLoadedLocationKeyRef = useRef('');
     const lastLoadedFiltersKeyRef = useRef('');
     const filtersKey = useMemo(() => {
-        return `${filters?.radiusKm ?? ''}:${filters?.eventDate ?? ''}:${filters?.language ?? ''}:${filters?.sex ?? ''}:${filters?.minAge ?? ''}:${filters?.maxAge ?? ''}:${filters?.minPrice ?? ''}:${filters?.maxPrice ?? ''}`;
-    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex]);
+        return `${selectedEventType ?? ''}:${filters?.radiusKm ?? ''}:${filters?.eventDate ?? ''}:${filters?.language ?? ''}:${filters?.sex ?? ''}:${filters?.minAge ?? ''}:${filters?.maxAge ?? ''}:${filters?.minPrice ?? ''}:${filters?.maxPrice ?? ''}`;
+    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, selectedEventType]);
     const list = eventsModel.list;
     const hasMore = useMemo(() => {
         if (!list) {
@@ -62,6 +64,7 @@ export const useEventsList = ({ searchLocation, filters }: IProps = {}) => {
                 offset,
                 limit: DEFAULT_LIMIT,
                 eventDate: filters?.eventDate,
+                eventType: selectedEventType,
                 language: filters?.language,
                 minPrice: filters?.minPrice,
                 maxPrice: filters?.maxPrice,
@@ -81,7 +84,7 @@ export const useEventsList = ({ searchLocation, filters }: IProps = {}) => {
             setIsLoading(false);
             setIsRefreshing(false);
         }
-    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, getTargetLocation]);
+    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, getTargetLocation, selectedEventType]);
 
     const onRefresh = useCallback((offset: number = OFFSET, location?: IUserLocation | null) => {
         return loadEvents(offset, location);

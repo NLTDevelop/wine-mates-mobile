@@ -57,6 +57,7 @@ export const EventMapView = observer(() => {
                     <View style={styles.mapContainer}>
                         <EventMap
                             mapPins={mapPins}
+                            selectedTab={selectedTab}
                             initialRegion={initialRegion}
                             onMarkerPress={onMarkerPress}
                             onMapPress={onMapPress}

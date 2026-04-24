@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { View } from 'react-native';
 import { Region, MapPressEvent, Marker } from 'react-native-maps';
 import { MapView } from '@/UIKit/MapView';
@@ -7,10 +7,10 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { IEventMapPin } from '@/entities/events/types/IEventMapPin';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
-import { observer } from 'mobx-react-lite';
 
 interface IEventMapProps {
     mapPins: IEventMapPin[];
+    selectedTab: 'all' | 'tastings' | 'parties';
     initialRegion: Region;
     onMarkerPress: (markerId: number) => void;
     onMapPress: (event: MapPressEvent) => void;
@@ -19,9 +19,15 @@ interface IEventMapProps {
     searchLocation?: IUserLocation | null;
 }
 
-export const EventMap = observer(
+const HIDDEN_PIN_COORDINATE = {
+    latitude: -85,
+    longitude: 0,
+};
+
+export const EventMap = memo(
     ({
         mapPins,
+        selectedTab,
         initialRegion,
         onMarkerPress,
         onMapPress,
@@ -31,6 +37,14 @@ export const EventMap = observer(
     }: IEventMapProps) => {
         const { colors } = useUiContext();
         const styles = useMemo(() => getStyles(colors), [colors]);
+        const isTastingsTab = selectedTab === 'tastings';
+        const isPartiesTab = selectedTab === 'parties';
+
+        const isPinVisible = (pin: IEventMapPin) => {
+            return selectedTab === 'all'
+                || (isTastingsTab && pin.eventType === 'tastings')
+                || (isPartiesTab && pin.eventType === 'parties');
+        };
 
         return (
             <View style={styles.mapContainer}>
@@ -52,19 +66,18 @@ export const EventMap = observer(
                                 latitude: searchLocation.latitude,
                                 longitude: searchLocation.longitude,
                             }}
+                            cluster={false}
                             pinColor="#1A73E8"
                         />
                     )}
                     {mapPins.map(pin => (
                         <MapMarker
                             key={pin.id}
-                            coordinate={{
-                                latitude: pin.latitude,
-                                longitude: pin.longitude,
-                            }}
+                            coordinate={isPinVisible(pin) ? { latitude: pin.latitude, longitude: pin.longitude } : HIDDEN_PIN_COORDINATE}
                             eventId={pin.id}
                             eventType={pin.eventType}
-                            onPress={onMarkerPress}
+                            markerProps={{ opacity: isPinVisible(pin) ? 1 : 0 }}
+                            onPress={isPinVisible(pin) ? onMarkerPress : undefined}
                         />
                     ))}
                 </MapView>

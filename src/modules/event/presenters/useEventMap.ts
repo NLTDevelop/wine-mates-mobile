@@ -4,7 +4,6 @@ import { useIsFocused } from '@react-navigation/native';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { eventsService } from '@/entities/events/EventsService';
 import { useLocationPermission } from '@/hooks/useLocationPermission.ts';
-import { EventType } from '@/entities/events/enums/EventType';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
 
@@ -32,25 +31,12 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
     const [isLoadingEvents, setIsLoadingEvents] = useState(false);
     const [selectedTab, setSelectedTab] = useState<'all' | 'tastings' | 'parties'>('all');
     const hasAutoLoadedOnFocusRef = useRef(false);
-    const lastLoadedEventTypeRef = useRef<EventType | undefined>(undefined);
     const lastLoadedLocationKeyRef = useRef('');
     const lastLoadedFiltersKeyRef = useRef('');
 
     const filtersKey = useMemo(() => {
         return `${filters?.radiusKm ?? ''}:${filters?.eventDate ?? ''}:${filters?.language ?? ''}:${filters?.sex ?? ''}:${filters?.minAge ?? ''}:${filters?.maxAge ?? ''}:${filters?.minPrice ?? ''}:${filters?.maxPrice ?? ''}`;
     }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex]);
-
-    const selectedEventType = useMemo(() => {
-        if (selectedTab === 'all') {
-            return undefined;
-        }
-
-        if (selectedTab === 'tastings') {
-            return EventType.Tastings;
-        }
-
-        return EventType.Parties;
-    }, [selectedTab]);
 
     const getTargetLocation = useCallback((location?: IUserLocation | null) => {
         return location || searchLocation || userLocation || KYIV_COORDINATES;
@@ -65,7 +51,6 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
                 latitude: targetLocation.latitude,
                 longitude: targetLocation.longitude,
                 radiusKm: filters?.radiusKm ?? DEFAULT_RADIUS_KM,
-                eventType: selectedEventType,
                 eventDate: filters?.eventDate,
                 language: filters?.language,
                 minPrice: filters?.minPrice,
@@ -79,12 +64,11 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
         } finally {
             setIsLoadingEvents(false);
         }
-    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, getTargetLocation, selectedEventType]);
+    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, getTargetLocation]);
 
     useEffect(() => {
         if (!isFocused) {
             hasAutoLoadedOnFocusRef.current = false;
-            lastLoadedEventTypeRef.current = undefined;
             lastLoadedFiltersKeyRef.current = '';
             return;
         }
@@ -95,19 +79,17 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
 
         const targetLocation = getTargetLocation();
         const currentLocationKey = `${targetLocation.latitude}:${targetLocation.longitude}`;
-        const isSameEventType = lastLoadedEventTypeRef.current === selectedEventType;
         const isSameLocation = lastLoadedLocationKeyRef.current === currentLocationKey;
         const isSameFilters = lastLoadedFiltersKeyRef.current === filtersKey;
-        if (hasAutoLoadedOnFocusRef.current && isSameEventType && isSameLocation && isSameFilters) {
+        if (hasAutoLoadedOnFocusRef.current && isSameLocation && isSameFilters) {
             return;
         }
 
         hasAutoLoadedOnFocusRef.current = true;
-        lastLoadedEventTypeRef.current = selectedEventType;
         lastLoadedLocationKeyRef.current = currentLocationKey;
         lastLoadedFiltersKeyRef.current = filtersKey;
         loadEvents();
-    }, [filtersKey, getTargetLocation, isFocused, isLocationLoading, loadEvents, selectedEventType]);
+    }, [filtersKey, getTargetLocation, isFocused, isLocationLoading, loadEvents]);
 
     const initialRegion: Region = useMemo(() => {
         if (userLocation) {
@@ -146,26 +128,16 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
 
     const mapPins = eventsModel.mapPins;
 
-    const filteredMapPins = useMemo(() => {
-        if (selectedTab === 'all') {
-            return mapPins;
-        }
-
-        const eventType = selectedTab === 'tastings' ? EventType.Tastings : EventType.Parties;
-        return mapPins.filter(pin => pin.eventType === eventType);
-    }, [mapPins, selectedTab]);
-
     const refetch = useCallback((location?: IUserLocation | null) => {
         const targetLocation = getTargetLocation(location);
         hasAutoLoadedOnFocusRef.current = true;
-        lastLoadedEventTypeRef.current = selectedEventType;
         lastLoadedLocationKeyRef.current = `${targetLocation.latitude}:${targetLocation.longitude}`;
         lastLoadedFiltersKeyRef.current = filtersKey;
         return loadEvents(targetLocation);
-    }, [filtersKey, getTargetLocation, loadEvents, selectedEventType]);
+    }, [filtersKey, getTargetLocation, loadEvents]);
 
     return {
-        mapPins: filteredMapPins,
+        mapPins,
         initialRegion,
         selectedMarkerId: eventsModel.selectedEventId,
         onMarkerPress,
