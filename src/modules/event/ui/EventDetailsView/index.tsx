@@ -17,6 +17,7 @@ import { observer } from 'mobx-react';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { IWineSetItem } from '@/entities/events/types/IWineSetItem';
 import { WineSetItem } from './components/WineSetItem';
+import { EventDetailsPreview } from './components/EventDetailsPreview';
 
 export const EventDetailsView = observer(() => {
     const { colors, t } = useUiContext();
@@ -24,7 +25,7 @@ export const EventDetailsView = observer(() => {
 
     const { eventId } = route.params;
     const { eventDetail, isError, isLoading } = useEventDetails(eventId);
-    const { detailsData, wineSetItems } = useEventDetailsData(eventDetail);
+    const { detailsData, wineSetItems, cardPreviewData } = useEventDetailsData(eventDetail);
     const {
         isBookingModalVisible,
         onBookNowPress,
@@ -48,6 +49,7 @@ export const EventDetailsView = observer(() => {
         <ScreenContainer
             edges={['top']}
             scrollEnabled
+            withGradient
             headerComponent={<HeaderWithBackButton title={t('eventDetails.title')} />}
         >
             <View style={styles.container}>
@@ -62,6 +64,10 @@ export const EventDetailsView = observer(() => {
                 ) : (
                     <>
                         <View style={styles.content}>
+                            {cardPreviewData && (
+                                <EventDetailsPreview data={cardPreviewData} />
+                            )}
+
                             <View style={styles.card}>
                                 {detailsData.map(item => (
                                     <View key={item.key} style={styles.row}>

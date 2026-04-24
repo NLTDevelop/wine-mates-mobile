@@ -19,6 +19,8 @@ interface IProps {
     onReadMorePress: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
     isModalContent?: boolean;
+    showDescription?: boolean;
+    showFooter?: boolean;
 }
 
 export const EventCard = ({
@@ -27,6 +29,8 @@ export const EventCard = ({
     onReadMorePress,
     onFavoritePress,
     isModalContent = false,
+    showDescription = true,
+    showFooter = true,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -82,12 +86,14 @@ export const EventCard = ({
                 </View>
             </View>
 
-            <Typography
-                text={event.description}
-                variant="body_400"
-                numberOfLines={isModalContent ? undefined : 2}
-                style={styles.descriptionText}
-            />
+            {showDescription && (
+                <Typography
+                    text={event.description}
+                    variant="body_400"
+                    numberOfLines={isModalContent ? undefined : 2}
+                    style={styles.descriptionText}
+                />
+            )}
 
             <View style={styles.mapContainer}>
                 <Image
@@ -97,10 +103,12 @@ export const EventCard = ({
                 />
             </View>
 
-            <View style={styles.footer}>
-                <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
-                <FavoriteButton onPress={onFavoritePressHandler} size={56} />
-            </View>
+            {showFooter && (
+                <View style={styles.footer}>
+                    <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
+                    <FavoriteButton onPress={onFavoritePressHandler} size={56} />
+                </View>
+            )}
 
             {!isModalContent && (
                 <BottomModal

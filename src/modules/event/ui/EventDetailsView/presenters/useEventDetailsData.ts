@@ -1,7 +1,22 @@
 import { IEventDetail } from '@/entities/events/types/IEvent';
 import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 import { useUiContext } from '@/UIProvider';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
+import { config } from '@/config';
+import { IEventDetailsPreviewData } from '../types/IEventDetailsPreviewData';
+
+const STATIC_MAP_SIZE = '720x320';
+const STATIC_MAP_ZOOM = 14;
+const STATIC_MAP_LIGHT_STYLE_PARAMS = [
+    'style=element:geometry|color:0xf5f5f5',
+    'style=element:labels.icon|visibility:off',
+    'style=feature:road|element:geometry|color:0xffffff',
+    'style=feature:road.arterial|element:geometry|color:0xffffff',
+    'style=feature:water|element:geometry|color:0xc9e6ff',
+    'style=feature:poi|element:geometry|color:0xeeeeee',
+    'style=feature:landscape|element:geometry|color:0xf5f5f5',
+];
 
 export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
     const { t, locale } = useUiContext();
@@ -205,5 +220,107 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         return eventDetail.wineSet;
     })();
 
-    return { detailsData, wineSetItems };
+    const cardPreviewData = (() => {
+        if (!eventDetail) {
+            return null;
+        }
+
+        const parsedDate = eventDetail.eventDate ? new Date(eventDetail.eventDate) : null;
+        const isDateValid = parsedDate && !Number.isNaN(parsedDate.getTime());
+        const month = isDateValid
+            ? new Intl.DateTimeFormat(locale || 'en', { month: 'short' }).format(parsedDate).replace('.', '').toUpperCase()
+            : '';
+        const day = isDateValid
+            ? new Intl.DateTimeFormat(locale || 'en', { day: 'numeric' }).format(parsedDate)
+            : '';
+
+        const formattedDateTime = (() => {
+            if (!isDateValid) {
+                return eventDetail.eventTime || eventDetail.startTime || '';
+            }
+
+            const dateLabel = new Intl.DateTimeFormat(locale || 'en', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+            })
+                .format(parsedDate)
+                .replace('.', '');
+
+            const rawTime = eventDetail.eventTime || eventDetail.startTime;
+            if (!rawTime) {
+                return dateLabel;
+            }
+
+            const [hoursPart, minutesPart] = rawTime.split(':');
+            const hours = Number(hoursPart);
+            const minutes = Number(minutesPart);
+            if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+                return `${dateLabel} · ${rawTime}`;
+            }
+
+            const dateWithTime = new Date(parsedDate);
+            dateWithTime.setHours(hours, minutes, 0, 0);
+            const timeLabel = new Intl.DateTimeFormat(locale || 'en', {
+                hour: 'numeric',
+                minute: '2-digit',
+            }).format(dateWithTime);
+
+            return `${dateLabel} · ${timeLabel}`;
+        })();
+
+        const priceLabel = (() => {
+            const currency = eventDetail.currency;
+            if (currency) {
+                try {
+                    return new Intl.NumberFormat(locale || 'en', {
+                        style: 'currency',
+                        currency,
+                        maximumFractionDigits: 0,
+                    }).format(eventDetail.price || 0);
+                } catch {
+                    return `${currency} ${eventDetail.price || 0}`;
+                }
+            }
+
+            return `${eventDetail.price || 0}`;
+        })();
+
+        const eventTypeLabel = eventDetail.eventType === EventType.Parties
+            ? t('event.parties')
+            : t('event.tastings');
+        const isPartyEvent = eventDetail.eventType === EventType.Parties;
+
+        const mapPreviewUri = (() => {
+            const params = [
+                `center=${eventDetail.latitude},${eventDetail.longitude}`,
+                `zoom=${STATIC_MAP_ZOOM}`,
+                `size=${STATIC_MAP_SIZE}`,
+                'maptype=roadmap',
+                `markers=color:red|${eventDetail.latitude},${eventDetail.longitude}`,
+                ...STATIC_MAP_LIGHT_STYLE_PARAMS,
+            ];
+
+            if (config.googlePlacesApiKey) {
+                params.push(`key=${config.googlePlacesApiKey}`);
+            }
+
+            return `https://maps.googleapis.com/maps/api/staticmap?${params.join('&')}`;
+        })();
+
+        const previewData: IEventDetailsPreviewData = {
+            month,
+            day,
+            formattedDateTime,
+            priceLabel,
+            eventTypeLabel,
+            isPartyEvent,
+            mapPreviewUri,
+            title: eventDetail.theme || '-',
+        };
+
+        return previewData;
+    })();
+
+    return { detailsData, wineSetItems, cardPreviewData };
 };
