@@ -38,6 +38,7 @@ export const EventMap = observer(
                     initialRegion={initialRegion}
                     showsUserLocation={!!userLocation}
                     showsMyLocationButton={!!userLocation}
+                    userInterfaceStyle="light"
                     onPress={onMapPress}
                     onRegionChangeComplete={onRegionChangeComplete}
                     clusteringEnabled

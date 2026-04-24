@@ -55,6 +55,7 @@ export const LocationPickerView = () => {
                     showsPointsOfInterests
                     showsUserLocation
                     showsMyLocationButton
+                    userInterfaceStyle="light"
                     zoomControlEnabled
                     toolbarEnabled
                     ref={mapRef}
