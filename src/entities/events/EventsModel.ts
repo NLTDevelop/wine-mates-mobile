@@ -3,6 +3,7 @@ import { IEvent, IEventDetail } from './types/IEvent';
 import { IEventMapPin } from './types/IEventMapPin';
 import { IList } from '../IList';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
+import { IEventPriceRange } from './types/IEventPriceRange';
 
 export interface IEventsModel {
     list: IList<IEvent> | null;
@@ -10,6 +11,7 @@ export interface IEventsModel {
     selectedEventId: number | null;
     eventDetail: IEventDetail | null;
     mapPins: IEventMapPin[];
+    eventPriceRange: IEventPriceRange | null;
     eventFilters: IEventFilters;
     setEvents: (events: IEvent[]) => void;
     setList: (list: IList<IEvent>) => void;
@@ -17,6 +19,7 @@ export interface IEventsModel {
     setSelectedEventId: (id: number | null) => void;
     setEventDetail: (eventDetail: IEventDetail | null) => void;
     setMapPins: (pins: IEventMapPin[]) => void;
+    setEventPriceRange: (priceRange: IEventPriceRange | null) => void;
     setEventFilters: (filters: IEventFilters) => void;
     clearEventFilters: () => void;
     clear: () => void;
@@ -27,6 +30,7 @@ class EventsModel implements IEventsModel {
     private selectedEventIdRepository = new MobXRepository<number | null>(null);
     private eventDetailRepository = new MobXRepository<IEventDetail | null>(null);
     private mapPinsRepository = new MobXRepository<IEventMapPin[]>([]);
+    private eventPriceRangeRepository = new MobXRepository<IEventPriceRange | null>(null);
     private eventFiltersRepository = new MobXRepository<IEventFilters>({});
 
     public get list() {
@@ -63,6 +67,14 @@ class EventsModel implements IEventsModel {
 
     public set mapPins(value: IEventMapPin[]) {
         this.mapPinsRepository.save(value);
+    }
+
+    public get eventPriceRange() {
+        return this.eventPriceRangeRepository.data;
+    }
+
+    public set eventPriceRange(value: IEventPriceRange | null) {
+        this.eventPriceRangeRepository.save(value);
     }
 
     public get eventFilters() {
@@ -119,6 +131,10 @@ class EventsModel implements IEventsModel {
         this.mapPins = pins;
     }
 
+    public setEventPriceRange(priceRange: IEventPriceRange | null) {
+        this.eventPriceRange = priceRange;
+    }
+
     public setEventFilters(filters: IEventFilters) {
         this.eventFilters = filters;
     }
@@ -132,6 +148,7 @@ class EventsModel implements IEventsModel {
         this.selectedEventId = null;
         this.eventDetail = null;
         this.mapPins = [];
+        this.eventPriceRange = null;
         this.eventFilters = {};
     }
 }

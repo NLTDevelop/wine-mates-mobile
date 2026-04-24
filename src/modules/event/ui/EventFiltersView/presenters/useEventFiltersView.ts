@@ -13,6 +13,8 @@ const DATE_DISPLAY_FORMAT = 'dd.MM.yyyy';
 const RADIUS_OPTIONS = [1, 5, 10, 50];
 const MIN_AGE_LIMIT = 18;
 const MAX_AGE_LIMIT = 80;
+const DEFAULT_MIN_PRICE_LIMIT = 0;
+const DEFAULT_MAX_PRICE_LIMIT = 500;
 
 const parseDate = (value?: string) => {
     if (!value) {
@@ -34,6 +36,7 @@ interface IProps {
 
 export const useEventFiltersView = ({ t }: IProps) => {
     const modelFilters = eventsModel.eventFilters;
+    const modelPriceRange = eventsModel.eventPriceRange;
     const initialFilters: IEventFilters = {
         radiusKm: modelFilters.radiusKm,
         eventDate: modelFilters.eventDate,
@@ -44,6 +47,12 @@ export const useEventFiltersView = ({ t }: IProps) => {
     const initialDate = parseDate(initialFilters.eventDate);
     const initialMinAge = initialFilters.minAge ?? MIN_AGE_LIMIT;
     const initialMaxAge = initialFilters.maxAge ?? MAX_AGE_LIMIT;
+    const initialMinPriceLimit = modelPriceRange?.minPrice ?? DEFAULT_MIN_PRICE_LIMIT;
+    const initialMaxPriceLimit = Math.max(initialMinPriceLimit, modelPriceRange?.maxPrice ?? DEFAULT_MAX_PRICE_LIMIT);
+    const initialMinPriceRaw = modelFilters.minPrice ?? initialMinPriceLimit;
+    const initialMaxPriceRaw = modelFilters.maxPrice ?? initialMaxPriceLimit;
+    const initialMinPrice = Math.min(initialMaxPriceLimit, Math.max(initialMinPriceLimit, initialMinPriceRaw));
+    const initialMaxPrice = Math.min(initialMaxPriceLimit, Math.max(initialMinPriceLimit, initialMaxPriceRaw));
 
     const [selectedRadiusKm, setSelectedRadiusKm] = useState<number | undefined>(initialFilters.radiusKm);
     const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
@@ -51,6 +60,10 @@ export const useEventFiltersView = ({ t }: IProps) => {
     const [selectedSexDraft, setSelectedSexDraft] = useState<Sex | undefined>(initialFilters.sex);
     const [selectedMinAge, setSelectedMinAge] = useState<number>(initialMinAge);
     const [selectedMaxAge, setSelectedMaxAge] = useState<number>(initialMaxAge);
+    const [minPriceLimit] = useState<number>(initialMinPriceLimit);
+    const [maxPriceLimit] = useState<number>(initialMaxPriceLimit);
+    const [selectedMinPrice, setSelectedMinPrice] = useState<number>(initialMinPrice);
+    const [selectedMaxPrice, setSelectedMaxPrice] = useState<number>(initialMaxPrice);
     const [isCalendarVisible, setIsCalendarVisible] = useState(false);
     const [isSexPickerVisible, setIsSexPickerVisible] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(
@@ -84,6 +97,8 @@ export const useEventFiltersView = ({ t }: IProps) => {
         sex?: Sex,
         minAge?: number,
         maxAge?: number,
+        minPrice?: number,
+        maxPrice?: number,
     ) => {
         const nextFilters: IEventFilters = {};
 
@@ -108,15 +123,32 @@ export const useEventFiltersView = ({ t }: IProps) => {
             nextFilters.maxAge = maxAge;
         }
 
+        const hasPriceFilter = typeof minPrice === 'number'
+            && typeof maxPrice === 'number'
+            && (minPrice !== minPriceLimit || maxPrice !== maxPriceLimit);
+
+        if (hasPriceFilter) {
+            nextFilters.minPrice = minPrice;
+            nextFilters.maxPrice = maxPrice;
+        }
+
         return nextFilters;
-    }, []);
+    }, [maxPriceLimit, minPriceLimit]);
 
     const onSelectRadius = useCallback((value: number) => {
         const nextRadiusKm = selectedRadiusKm === value ? undefined : value;
         setSelectedRadiusKm(nextRadiusKm);
-        const nextFilters = getPreparedFilters(nextRadiusKm, selectedDate, selectedSex, selectedMinAge, selectedMaxAge);
+        const nextFilters = getPreparedFilters(
+            nextRadiusKm,
+            selectedDate,
+            selectedSex,
+            selectedMinAge,
+            selectedMaxAge,
+            selectedMinPrice,
+            selectedMaxPrice,
+        );
         onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMinAge, selectedRadiusKm, selectedSex]);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
 
     const getRadiusOption = useCallback((value: number): IRadiusOption => {
         return {
@@ -154,16 +186,32 @@ export const useEventFiltersView = ({ t }: IProps) => {
 
         if (isSameDateSelected) {
             setSelectedDate(null);
-            const nextFilters = getPreparedFilters(selectedRadiusKm, null, selectedSex, selectedMinAge, selectedMaxAge);
+            const nextFilters = getPreparedFilters(
+                selectedRadiusKm,
+                null,
+                selectedSex,
+                selectedMinAge,
+                selectedMaxAge,
+                selectedMinPrice,
+                selectedMaxPrice,
+            );
             onSyncFilters(nextFilters);
             return;
         }
 
         setCurrentMonth(item.dateString);
         setSelectedDate(parsedDate);
-        const nextFilters = getPreparedFilters(selectedRadiusKm, parsedDate, selectedSex, selectedMinAge, selectedMaxAge);
+        const nextFilters = getPreparedFilters(
+            selectedRadiusKm,
+            parsedDate,
+            selectedSex,
+            selectedMinAge,
+            selectedMaxAge,
+            selectedMinPrice,
+            selectedMaxPrice,
+        );
         onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMinAge, selectedRadiusKm, selectedSex]);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
 
     const onSelectSex = useCallback((sex: Sex) => {
         setSelectedSexDraft(sex);
@@ -177,10 +225,18 @@ export const useEventFiltersView = ({ t }: IProps) => {
 
         const nextSex = selectedSex === selectedSexDraft ? undefined : selectedSexDraft;
         setSelectedSex(nextSex);
-        const nextFilters = getPreparedFilters(selectedRadiusKm, selectedDate, nextSex, selectedMinAge, selectedMaxAge);
+        const nextFilters = getPreparedFilters(
+            selectedRadiusKm,
+            selectedDate,
+            nextSex,
+            selectedMinAge,
+            selectedMaxAge,
+            selectedMinPrice,
+            selectedMaxPrice,
+        );
         onSyncFilters(nextFilters);
         setIsSexPickerVisible(false);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMinAge, selectedRadiusKm, selectedSex, selectedSexDraft]);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex, selectedSexDraft]);
 
     const onAgeRangeChange = useCallback((minAge: number, maxAge: number) => {
         if (selectedMinAge === minAge && selectedMaxAge === maxAge) {
@@ -189,9 +245,36 @@ export const useEventFiltersView = ({ t }: IProps) => {
 
         setSelectedMinAge(minAge);
         setSelectedMaxAge(maxAge);
-        const nextFilters = getPreparedFilters(selectedRadiusKm, selectedDate, selectedSex, minAge, maxAge);
+        const nextFilters = getPreparedFilters(
+            selectedRadiusKm,
+            selectedDate,
+            selectedSex,
+            minAge,
+            maxAge,
+            selectedMinPrice,
+            selectedMaxPrice,
+        );
         onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMinAge, selectedRadiusKm, selectedSex]);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxPrice, selectedMinPrice, selectedRadiusKm, selectedSex, selectedMaxAge, selectedMinAge]);
+
+    const onPriceRangeChange = useCallback((minPrice: number, maxPrice: number) => {
+        if (selectedMinPrice === minPrice && selectedMaxPrice === maxPrice) {
+            return;
+        }
+
+        setSelectedMinPrice(minPrice);
+        setSelectedMaxPrice(maxPrice);
+        const nextFilters = getPreparedFilters(
+            selectedRadiusKm,
+            selectedDate,
+            selectedSex,
+            selectedMinAge,
+            selectedMaxAge,
+            minPrice,
+            maxPrice,
+        );
+        onSyncFilters(nextFilters);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMinAge, selectedMaxPrice, selectedMinPrice, selectedRadiusKm, selectedSex]);
 
     const onMonthChange = useCallback((month: DateData) => {
         setCurrentMonth(month.dateString);
@@ -204,10 +287,12 @@ export const useEventFiltersView = ({ t }: IProps) => {
         setSelectedSexDraft(undefined);
         setSelectedMinAge(MIN_AGE_LIMIT);
         setSelectedMaxAge(MAX_AGE_LIMIT);
+        setSelectedMinPrice(minPriceLimit);
+        setSelectedMaxPrice(maxPriceLimit);
         setIsSexPickerVisible(false);
         setCurrentMonth(format(new Date(), DATE_API_FORMAT));
         onSyncFilters({});
-    }, [onSyncFilters]);
+    }, [maxPriceLimit, minPriceLimit, onSyncFilters]);
 
     const markedDates = useMemo<MarkedDates>(() => {
         if (!selectedDate) {
@@ -235,8 +320,9 @@ export const useEventFiltersView = ({ t }: IProps) => {
 
     const isResetDisabled = useMemo(() => {
         const isAgeDefault = selectedMinAge === MIN_AGE_LIMIT && selectedMaxAge === MAX_AGE_LIMIT;
-        return !selectedDate && typeof selectedRadiusKm !== 'number' && !selectedSex && isAgeDefault;
-    }, [selectedDate, selectedMaxAge, selectedMinAge, selectedRadiusKm, selectedSex]);
+        const isPriceDefault = selectedMinPrice === minPriceLimit && selectedMaxPrice === maxPriceLimit;
+        return !selectedDate && typeof selectedRadiusKm !== 'number' && !selectedSex && isAgeDefault && isPriceDefault;
+    }, [maxPriceLimit, minPriceLimit, selectedDate, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
 
     const selectedSexText = useMemo(() => {
         if (selectedSex === Sex.Men) {
@@ -262,8 +348,12 @@ export const useEventFiltersView = ({ t }: IProps) => {
         selectedSex: selectedSexDraft,
         selectedMinAge,
         selectedMaxAge,
+        selectedMinPrice,
+        selectedMaxPrice,
         minAgeLimit: MIN_AGE_LIMIT,
         maxAgeLimit: MAX_AGE_LIMIT,
+        minPriceLimit,
+        maxPriceLimit,
         radiusOption1,
         radiusOption5,
         radiusOption10,
@@ -280,6 +370,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         onSelectSex,
         onConfirmSex,
         onAgeRangeChange,
+        onPriceRangeChange,
         onReset,
     };
 };

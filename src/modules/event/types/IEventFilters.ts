@@ -6,4 +6,6 @@ export interface IEventFilters {
     sex?: Sex;
     minAge?: number;
     maxAge?: number;
+    minPrice?: number;
+    maxPrice?: number;
 }

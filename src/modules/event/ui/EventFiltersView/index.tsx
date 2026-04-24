@@ -27,8 +27,12 @@ export const EventFiltersView = ({}: IProps) => {
         selectedSex,
         selectedMinAge,
         selectedMaxAge,
+        selectedMinPrice,
+        selectedMaxPrice,
         minAgeLimit,
         maxAgeLimit,
+        minPriceLimit,
+        maxPriceLimit,
         radiusOption1,
         radiusOption5,
         radiusOption10,
@@ -45,6 +49,7 @@ export const EventFiltersView = ({}: IProps) => {
         onSelectSex,
         onConfirmSex,
         onAgeRangeChange,
+        onPriceRangeChange,
         onReset,
     } = useEventFiltersView({ t });
 
@@ -110,6 +115,17 @@ export const EventFiltersView = ({}: IProps) => {
                         minValue={selectedMinAge}
                         maxValue={selectedMaxAge}
                         onChange={onAgeRangeChange}
+                    />
+                </View>
+                <View>
+                    <Typography text={t('event.price')} variant="h5" style={styles.sectionTitle} />
+                    <RangeSlider
+                        min={minPriceLimit}
+                        max={maxPriceLimit}
+                        minValue={selectedMinPrice}
+                        maxValue={selectedMaxPrice}
+                        onChange={onPriceRangeChange}
+                        valueSuffix="$"
                     />
                 </View>
             </View>

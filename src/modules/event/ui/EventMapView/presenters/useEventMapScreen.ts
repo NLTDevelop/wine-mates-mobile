@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 import { MapPressEvent, Region } from 'react-native-maps';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventType } from '@/entities/events/enums/EventType';
 import { eventsModel } from '@/entities/events/EventsModel';
+import { eventsService } from '@/entities/events/EventsService';
 import { useEventMap } from '@/modules/event/presenters/useEventMap';
 import { useEventsList } from '@/modules/event/presenters/useEventsList';
 import { useEventMapView } from '@/modules/event/presenters/useEventMapView';
@@ -76,8 +77,18 @@ export const useEventMapScreen = () => {
             nextCount += 1;
         }
 
+        if (typeof filters.minPrice === 'number' || typeof filters.maxPrice === 'number') {
+            nextCount += 1;
+        }
+
         return nextCount;
-    }, [filters.eventDate, filters.maxAge, filters.minAge, filters.radiusKm, filters.sex]);
+    }, [filters.eventDate, filters.maxAge, filters.maxPrice, filters.minAge, filters.minPrice, filters.radiusKm, filters.sex]);
+
+    useFocusEffect(
+        useCallback(() => {
+            eventsService.getPriceRange();
+        }, []),
+    );
 
     const onFilterPress = useCallback(() => {
         navigation.navigate('EventFiltersView');

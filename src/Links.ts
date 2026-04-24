@@ -42,6 +42,7 @@ export interface ILinks {
     favoriteWineLists: string;
     events: string;
     eventMapPins: string;
+    eventPriceRange: string;
 }
 
 class Links implements ILinks {
@@ -75,6 +76,7 @@ class Links implements ILinks {
         favoriteWineLists: 'favorite/wine-lists',
         events: 'events',
         eventMapPins: 'events/map-pins',
+        eventPriceRange: 'events/price-range',
     };
 
     private buildDomain() {
@@ -175,6 +177,9 @@ class Links implements ILinks {
     }
     public get eventMapPins() {
         return `${this._domain}${this._links.eventMapPins}`;
+    }
+    public get eventPriceRange() {
+        return `${this._domain}${this._links.eventPriceRange}`;
     }
 }
 
