@@ -35,7 +35,7 @@ export const RangeSlider = ({
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const [liveValues, setLiveValues] = useState<{ min: number; max: number } | null>(null);
-    const actualSliderLength = sliderLength ?? (scaleHorizontal(343) - scaleHorizontal(40));
+    const actualSliderLength = sliderLength ?? scaleHorizontal(343) - scaleHorizontal(40);
     const onRangeChange = (nextMin: number, nextMax: number) => {
         setLiveValues(null);
         onChange(nextMin, nextMax);
@@ -46,6 +46,7 @@ export const RangeSlider = ({
         minThumbStyle,
         maxThumbStyle,
         activeTrackStyle,
+        trackRef,
         onTrackLayout,
         onTrackPress,
     } = useRangeSlider({
@@ -63,36 +64,44 @@ export const RangeSlider = ({
     const displayedMaxValue = liveValues ? liveValues.max : maxValue;
 
     return (
-        <View style={[styles.container, containerStyle]}>
-            <View style={styles.sliderWrapper}>
-                <Pressable
-                    style={[styles.trackContainer, { width: actualSliderLength }]}
-                    onLayout={onTrackLayout}
-                    onPress={onTrackPress}
-                >
-                    <View style={styles.track} />
-                    <Animated.View style={[styles.activeTrack, activeTrackStyle]} />
+        <>
+            <View style={[styles.container, containerStyle]}>
+                <View style={styles.sliderWrapper}>
+                    <Pressable
+                        ref={trackRef}
+                        style={[styles.trackContainer, { width: actualSliderLength }]}
+                        onLayout={onTrackLayout}
+                        onPress={onTrackPress}
+                    >
+                        <View style={styles.track} />
+                        <Animated.View style={[styles.activeTrack, activeTrackStyle]} />
 
-                    <GestureDetector gesture={minPanGesture}>
-                        <Animated.View style={[styles.thumbWrapper, minThumbStyle]}>
-                            <Marker size={scaleHorizontal(20)} color={colors.primary} style={styles.marker} />
-                        </Animated.View>
-                    </GestureDetector>
+                        <GestureDetector gesture={minPanGesture}>
+                            <Animated.View style={[styles.thumbWrapper, minThumbStyle]}>
+                                <Marker size={scaleHorizontal(20)} color={colors.primary} style={styles.marker} />
+                            </Animated.View>
+                        </GestureDetector>
 
-                    <GestureDetector gesture={maxPanGesture}>
-                        <Animated.View style={[styles.thumbWrapper, maxThumbStyle]}>
-                            <Marker size={scaleHorizontal(20)} color={colors.primary} style={styles.marker} />
-                        </Animated.View>
-                    </GestureDetector>
-                </Pressable>
-            </View>
-
-            <View style={styles.labelsContainer}>
-                <View style={[styles.labelsContent, { width: actualSliderLength }]}>
-                    <Typography text={`${displayedMinValue}${valueSuffix}`} variant="subtitle_12_400" style={styles.labelText} />
-                    <Typography text={`${displayedMaxValue}${valueSuffix}`} variant="subtitle_12_400" style={styles.labelText} />
+                        <GestureDetector gesture={maxPanGesture}>
+                            <Animated.View style={[styles.thumbWrapper, maxThumbStyle]}>
+                                <Marker size={scaleHorizontal(20)} color={colors.primary} style={styles.marker} />
+                            </Animated.View>
+                        </GestureDetector>
+                    </Pressable>
                 </View>
             </View>
-        </View>
+            <View style={styles.labelsContainer}>
+                    <Typography
+                        text={`${displayedMinValue}${valueSuffix}`}
+                        variant="subtitle_12_400"
+                        style={styles.labelText}
+                    />
+                    <Typography
+                        text={`${displayedMaxValue}${valueSuffix}`}
+                        variant="subtitle_12_400"
+                        style={styles.labelText}
+                    />
+            </View>
+        </>
     );
 };

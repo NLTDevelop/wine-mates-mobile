@@ -53,9 +53,6 @@ export const getStyles = (colors: IColors) => {
         labelsContainer: {
             marginTop: scaleVertical(8),
             width: '100%',
-            alignItems: 'center',
-        },
-        labelsContent: {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
