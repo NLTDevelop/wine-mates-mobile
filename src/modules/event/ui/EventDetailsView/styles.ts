@@ -13,6 +13,12 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'center',
             alignItems: 'center',
         },
+        tabViewContainer: {
+            flex: 1,
+        },
+        eventDetailsTabContentContainer: {
+            paddingBottom: scaleVertical(16),
+        },
         card: {
             backgroundColor: colors.background,
             borderRadius: 12,
@@ -39,10 +45,6 @@ export const getStyles = (colors: IColors) => {
         value: {
             color: colors.text,
         },
-        sectionTitle: {
-            color: colors.text,
-            marginBottom: scaleVertical(8),
-        },
         wineSetListContainer: {
             borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
@@ -55,6 +57,18 @@ export const getStyles = (colors: IColors) => {
         },
         content: {
             gap: scaleVertical(16),
+        },
+        guestsContainer: {
+            flex: 1,
+            borderRadius: 12,
+            borderWidth: scaleHorizontal(1),
+            borderColor: colors.border,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colors.background,
+        },
+        guestsText: {
+            color: colors.text_light,
         },
         footer: {
             flexDirection: 'row',

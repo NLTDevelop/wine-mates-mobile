@@ -417,6 +417,8 @@
         "confirmationRequired": "Потрібне підтвердження",
         "noConfirmation": "Без підтвердження",
         "wineSet": "Набір вин",
+        "eventDetailsTab": "Деталі події",
+        "guestsTab": "Гості",
         "bookNow": "Забронювати",
         "contactForBooking": "Контакт для бронювання",
         "callToReserve": "Зателефонувати для бронювання"

@@ -5,6 +5,7 @@ import { useUiContext } from '@/UIProvider';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 import { config } from '@/config';
 import { IEventDetailsPreviewData } from '../types/IEventDetailsPreviewData';
+import { useLocalizedLanguageOptions } from '@/libs/languagePicker/presenters/useLocalizedLanguageOptions';
 
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 14;
@@ -21,6 +22,7 @@ const STATIC_MAP_LIGHT_STYLE_PARAMS = [
 export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
     const { t, locale } = useUiContext();
     const { userLocation } = useLocationPermission();
+    const { languageOptions } = useLocalizedLanguageOptions();
 
     const getValueOrDash = (value?: string | number | null) => {
         if (value === null || value === undefined || value === '') {
@@ -168,6 +170,31 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         return '-';
     };
 
+    const formatLanguage = (value?: string) => {
+        if (!value) {
+            return '-';
+        }
+
+        const normalizedCode = value.trim().toLowerCase();
+        if (!normalizedCode) {
+            return '-';
+        }
+
+        const matchedLanguage = languageOptions.find((item) => item.code === normalizedCode);
+        if (matchedLanguage) {
+            return matchedLanguage.name;
+        }
+
+        if (normalizedCode === 'uk') {
+            const matchedUkrainianAlias = languageOptions.find((item) => item.code === 'ua');
+            if (matchedUkrainianAlias) {
+                return matchedUkrainianAlias.name;
+            }
+        }
+
+        return normalizedCode.toUpperCase();
+    };
+
     const detailsData = (() => {
         if (!eventDetail) {
             return [];
@@ -206,7 +233,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                     eventDetail.longitude,
                 ),
             },
-            { key: 'language', label: t('eventDetails.language'), value: getValueOrDash((eventDetail.language || '').toUpperCase()) },
+            { key: 'language', label: t('eventDetails.language'), value: formatLanguage(eventDetail.language) },
             { key: 'seats', label: t('eventDetails.seats'), value: getValueOrDash(eventDetail.seats) },
             { key: 'confirmation', label: t('eventDetails.confirmationAvailability'), value: confirmationValue },
         ];

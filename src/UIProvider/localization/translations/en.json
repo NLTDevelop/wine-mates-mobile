@@ -413,6 +413,8 @@
         "confirmationRequired": "Confirmation required",
         "noConfirmation": "No confirmation",
         "wineSet": "Wine Set",
+        "eventDetailsTab": "Event Details",
+        "guestsTab": "Guests",
         "bookNow": "Book now",
         "contactForBooking": "Contact for booking",
         "callToReserve": "Call to reserve"

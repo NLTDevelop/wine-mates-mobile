@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { ActivityIndicator, FlatList, ListRenderItem, View } from 'react-native';
+import { ActivityIndicator, FlatList, ListRenderItem, ScrollView, View } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { NavigationState, SceneRendererProps, TabView } from 'react-native-tab-view';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -18,6 +19,17 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { IWineSetItem } from '@/entities/events/types/IWineSetItem';
 import { WineSetItem } from './components/WineSetItem';
 import { EventDetailsPreview } from './components/EventDetailsPreview';
+import { TabsBar } from './components/TabsBar';
+import { size } from '@/utils';
+
+interface IRoute {
+    key: 'eventDetails' | 'guests';
+    title: string;
+}
+
+interface ISceneProps {
+    route: IRoute;
+}
 
 export const EventDetailsView = observer(() => {
     const { colors, t } = useUiContext();
@@ -27,12 +39,16 @@ export const EventDetailsView = observer(() => {
     const { eventDetail, isError, isLoading } = useEventDetails(eventId);
     const { detailsData, wineSetItems, cardPreviewData } = useEventDetailsData(eventDetail);
     const {
+        screenIndex,
+        routes,
+        isEventDetailsTab,
         isBookingModalVisible,
         onBookNowPress,
         onCloseModal,
         onFavoritePress,
         onCallToReservePress,
-    } = useEventDetailsView();
+        onIndexChange,
+    } = useEventDetailsView({ t });
 
     const styles = useMemo(() => getStyles(colors), [colors]);
     const keyExtractor = (item: IWineSetItem) => `${item.id}`;
@@ -45,10 +61,67 @@ export const EventDetailsView = observer(() => {
         return <View style={styles.wineSetItemSeparator} />;
     };
 
+    const renderEventDetailsTab = function renderEventDetailsTab() {
+        return (
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.eventDetailsTabContentContainer}
+            >
+                <View style={styles.content}>
+                    {cardPreviewData && <EventDetailsPreview data={cardPreviewData} />}
+
+                    <View style={styles.card}>
+                        {detailsData.map(item => (
+                            <View key={item.key} style={styles.row}>
+                                <View style={styles.labelContainer}>
+                                    <Typography text={`${item.label}:`} variant="h6" style={styles.label} />
+                                </View>
+                                <View style={styles.valueContainer}>
+                                    <Typography text={item.value} variant="h6" style={styles.value} />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+
+                    {wineSetItems.length > 0 && (
+                        <View style={styles.wineSetListContainer}>
+                            <FlatList
+                                data={wineSetItems}
+                                keyExtractor={keyExtractor}
+                                renderItem={renderWineSetItem}
+                                scrollEnabled={false}
+                                ItemSeparatorComponent={renderWineSetItemSeparator}
+                            />
+                        </View>
+                    )}
+                </View>
+            </ScrollView>
+        );
+    };
+
+    const renderGuestsTab = function renderGuestsTab() {
+        return (
+            <View style={styles.guestsContainer}>
+                <Typography text="-" variant="h5" style={styles.guestsText} />
+            </View>
+        );
+    };
+
+    const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
+        if (sceneRoute.key === 'eventDetails') {
+            return renderEventDetailsTab();
+        }
+
+        return renderGuestsTab();
+    };
+
+    const renderTabBar = function renderTabBar(props: SceneRendererProps & { navigationState: NavigationState<IRoute> }) {
+        return <TabsBar tabBarProps={props} onIndexChange={onIndexChange} />;
+    };
+
     return (
         <ScreenContainer
             edges={['top']}
-            scrollEnabled
             withGradient
             headerComponent={<HeaderWithBackButton title={t('eventDetails.title')} />}
         >
@@ -63,45 +136,29 @@ export const EventDetailsView = observer(() => {
                     </View>
                 ) : (
                     <>
-                        <View style={styles.content}>
-                            {cardPreviewData && (
-                                <EventDetailsPreview data={cardPreviewData} />
-                            )}
-
-                            <View style={styles.card}>
-                                {detailsData.map(item => (
-                                    <View key={item.key} style={styles.row}>
-                                        <View style={styles.labelContainer}>
-                                            <Typography text={`${item.label}:`} variant="h6" style={styles.label} />
-                                        </View>
-                                        <View style={styles.valueContainer}>
-                                            <Typography text={item.value} variant="h6" style={styles.value} />
-                                        </View>
-                                    </View>
-                                ))}
-                            </View>
-
-                            {wineSetItems.length > 0 && (
-                                <View style={styles.wineSetListContainer}>
-                                    <FlatList
-                                        data={wineSetItems}
-                                        keyExtractor={keyExtractor}
-                                        renderItem={renderWineSetItem}
-                                        scrollEnabled={false}
-                                        ItemSeparatorComponent={renderWineSetItemSeparator}
-                                    />
-                                </View>
-                            )}
-                        </View>
-                        <View style={styles.footer}>
-                            <Button
-                                type="main"
-                                containerStyle={styles.bookNowButton}
-                                text={t('eventDetails.bookNow')}
-                                onPress={onBookNowPress}
+                        <View style={styles.tabViewContainer}>
+                            <TabView
+                                lazy
+                                swipeEnabled
+                                renderTabBar={renderTabBar}
+                                navigationState={{ index: screenIndex, routes }}
+                                renderScene={renderScene}
+                                onIndexChange={onIndexChange}
+                                initialLayout={{ width: size.width }}
                             />
-                            <FavoriteButton onPress={onFavoritePress} size={52} />
                         </View>
+
+                        {isEventDetailsTab && (
+                            <View style={styles.footer}>
+                                <Button
+                                    type="main"
+                                    containerStyle={styles.bookNowButton}
+                                    text={t('eventDetails.bookNow')}
+                                    onPress={onBookNowPress}
+                                />
+                                <FavoriteButton onPress={onFavoritePress} size={52} />
+                            </View>
+                        )}
                     </>
                 )}
 
