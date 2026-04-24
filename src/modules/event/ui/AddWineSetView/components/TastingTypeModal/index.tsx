@@ -3,6 +3,7 @@ import { TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { Typography } from '@/UIKit/Typography';
+import { Button } from '@/UIKit/Button';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { getStyles } from './styles';
 
@@ -17,9 +18,10 @@ interface IProps {
     onClose: () => void;
     items: ITastingTypeItem[];
     selectedValue: TastingType;
+    onConfirm: () => void;
 }
 
-export const TastingTypeModal = ({ visible, onClose, items, selectedValue }: IProps) => {
+export const TastingTypeModal = ({ visible, onClose, items, selectedValue, onConfirm }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -39,6 +41,12 @@ export const TastingTypeModal = ({ visible, onClose, items, selectedValue }: IPr
                         />
                     </TouchableOpacity>
                 ))}
+                <Button
+                    text={t('common.confirm')}
+                    onPress={onConfirm}
+                    type="main"
+                    containerStyle={styles.confirmButton}
+                />
             </View>
         </BottomModal>
     );

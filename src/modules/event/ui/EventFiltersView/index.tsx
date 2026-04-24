@@ -43,6 +43,7 @@ export const EventFiltersView = ({}: IProps) => {
         onDayPress,
         onMonthChange,
         onSelectSex,
+        onConfirmSex,
         onAgeRangeChange,
         onReset,
     } = useEventFiltersView({ t });
@@ -129,6 +130,7 @@ export const EventFiltersView = ({}: IProps) => {
                 selectedSex={selectedSex}
                 onClose={onCloseSexPicker}
                 onSelectSex={onSelectSex}
+                onConfirm={onConfirmSex}
             />
         </ScreenContainer>
     );

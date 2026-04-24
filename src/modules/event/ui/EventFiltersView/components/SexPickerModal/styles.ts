@@ -18,13 +18,17 @@ export const getStyles = (colors: IColors) => {
         },
         selectedOption: {
             borderColor: colors.primary,
-            backgroundColor: colors.primary,
+            backgroundColor: colors.background,
         },
         optionText: {
             color: colors.text,
         },
         selectedOptionText: {
-            color: colors.text_inverted,
+            color: colors.text,
+        },
+        confirmButton: {
+            width: '100%',
+            marginTop: scaleVertical(12),
         },
     });
 

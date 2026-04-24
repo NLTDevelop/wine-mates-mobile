@@ -48,6 +48,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
     const [selectedRadiusKm, setSelectedRadiusKm] = useState<number | undefined>(initialFilters.radiusKm);
     const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
     const [selectedSex, setSelectedSex] = useState<Sex | undefined>(initialFilters.sex);
+    const [selectedSexDraft, setSelectedSexDraft] = useState<Sex | undefined>(initialFilters.sex);
     const [selectedMinAge, setSelectedMinAge] = useState<number>(initialMinAge);
     const [selectedMaxAge, setSelectedMaxAge] = useState<number>(initialMaxAge);
     const [isCalendarVisible, setIsCalendarVisible] = useState(false);
@@ -69,8 +70,9 @@ export const useEventFiltersView = ({ t }: IProps) => {
     }, []);
 
     const onOpenSexPicker = useCallback(() => {
+        setSelectedSexDraft(selectedSex);
         setIsSexPickerVisible(true);
-    }, []);
+    }, [selectedSex]);
 
     const onCloseSexPicker = useCallback(() => {
         setIsSexPickerVisible(false);
@@ -164,12 +166,21 @@ export const useEventFiltersView = ({ t }: IProps) => {
     }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMinAge, selectedRadiusKm, selectedSex]);
 
     const onSelectSex = useCallback((sex: Sex) => {
-        const nextSex = selectedSex === sex ? undefined : sex;
+        setSelectedSexDraft(sex);
+    }, []);
+
+    const onConfirmSex = useCallback(() => {
+        if (!selectedSexDraft) {
+            setIsSexPickerVisible(false);
+            return;
+        }
+
+        const nextSex = selectedSex === selectedSexDraft ? undefined : selectedSexDraft;
         setSelectedSex(nextSex);
         const nextFilters = getPreparedFilters(selectedRadiusKm, selectedDate, nextSex, selectedMinAge, selectedMaxAge);
         onSyncFilters(nextFilters);
         setIsSexPickerVisible(false);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMinAge, selectedRadiusKm, selectedSex]);
+    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedMaxAge, selectedMinAge, selectedRadiusKm, selectedSex, selectedSexDraft]);
 
     const onAgeRangeChange = useCallback((minAge: number, maxAge: number) => {
         if (selectedMinAge === minAge && selectedMaxAge === maxAge) {
@@ -190,6 +201,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         setSelectedRadiusKm(undefined);
         setSelectedDate(null);
         setSelectedSex(undefined);
+        setSelectedSexDraft(undefined);
         setSelectedMinAge(MIN_AGE_LIMIT);
         setSelectedMaxAge(MAX_AGE_LIMIT);
         setIsSexPickerVisible(false);
@@ -247,7 +259,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         markedDates,
         selectedDateText,
         selectedSexText,
-        selectedSex,
+        selectedSex: selectedSexDraft,
         selectedMinAge,
         selectedMaxAge,
         minAgeLimit: MIN_AGE_LIMIT,
@@ -266,6 +278,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         onDayPress,
         onMonthChange,
         onSelectSex,
+        onConfirmSex,
         onAgeRangeChange,
         onReset,
     };

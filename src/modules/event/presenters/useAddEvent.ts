@@ -44,6 +44,7 @@ export const useAddEvent = () => {
     const route = useRoute<RouteProp<EventStackParamList, 'AddEventView'>>();
     const { validateEmptyString } = useValidator();
     const [isEventTypeModalVisible, setIsEventTypeModalVisible] = useState(false);
+    const [eventTypeDraft, setEventTypeDraft] = useState<EventType>(EventType.Tastings);
     const [form, setForm] = useState<IEventForm>({
         theme: '',
         description: '',
@@ -134,17 +135,31 @@ export const useAddEvent = () => {
     }, []);
 
     const onOpenEventTypeModal = useCallback(() => {
+        setEventTypeDraft(form.eventType);
         setIsEventTypeModalVisible(true);
-    }, []);
+    }, [form.eventType]);
 
     const onCloseEventTypeModal = useCallback(() => {
         setIsEventTypeModalVisible(false);
     }, []);
 
     const onSelectEventType = useCallback((value: EventType) => {
-        onChangeEventType(value);
+        setEventTypeDraft(value);
+    }, []);
+
+    const onConfirmEventType = useCallback(() => {
         setIsEventTypeModalVisible(false);
-    }, [onChangeEventType]);
+
+        requestAnimationFrame(() => {
+            setForm((prev) => {
+                if (prev.eventType === eventTypeDraft) {
+                    return prev;
+                }
+
+                return { ...prev, eventType: eventTypeDraft };
+            });
+        });
+    }, [eventTypeDraft]);
 
     const onLocationPress = useCallback(() => {
         navigation.navigate('LocationPickerView', {
@@ -220,6 +235,7 @@ export const useAddEvent = () => {
 
     return {
         form,
+        eventTypeDraft,
         isLoading: false,
         isEventTypeModalVisible,
         disabled,
@@ -239,6 +255,7 @@ export const useAddEvent = () => {
         onOpenEventTypeModal,
         onCloseEventTypeModal,
         onSelectEventType,
+        onConfirmEventType,
         onLocationPress,
         onSubmit,
     };

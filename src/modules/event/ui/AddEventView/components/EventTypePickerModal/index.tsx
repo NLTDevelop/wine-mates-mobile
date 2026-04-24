@@ -3,6 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { Typography } from '@/UIKit/Typography';
+import { Button } from '@/UIKit/Button';
 import { getStyles } from './styles';
 import { EventType } from '@/entities/events/enums/EventType';
 import { useEventTypePickerModal } from './presenters/useEventTypePickerModal';
@@ -12,9 +13,10 @@ interface IProps {
     selectedType: EventType;
     onClose: () => void;
     onSelectType: (type: EventType) => void;
+    onConfirm: () => void;
 }
 
-export const EventTypePickerModal = ({ visible, selectedType, onClose, onSelectType }: IProps) => {
+export const EventTypePickerModal = ({ visible, selectedType, onClose, onSelectType, onConfirm }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -49,6 +51,12 @@ export const EventTypePickerModal = ({ visible, selectedType, onClose, onSelectT
                         style={[styles.optionText, selectedType === EventType.Parties && styles.selectedOptionText]}
                     />
                 </TouchableOpacity>
+                <Button
+                    text={t('common.confirm')}
+                    onPress={onConfirm}
+                    type="main"
+                    containerStyle={styles.confirmButton}
+                />
             </View>
         </BottomModal>
     );

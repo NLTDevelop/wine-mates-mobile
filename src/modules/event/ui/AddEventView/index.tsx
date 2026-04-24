@@ -23,6 +23,7 @@ export const AddEventView = () => {
 
     const {
         form,
+        eventTypeDraft,
         isLoading,
         isEventTypeModalVisible,
         disabled,
@@ -39,6 +40,7 @@ export const AddEventView = () => {
         onOpenEventTypeModal,
         onCloseEventTypeModal,
         onSelectEventType,
+        onConfirmEventType,
         onLocationPress,
         onSubmit,
     } = useAddEvent();
@@ -198,9 +200,10 @@ export const AddEventView = () => {
             />
             <EventTypePickerModal
                 visible={isEventTypeModalVisible}
-                selectedType={form.eventType}
+                selectedType={eventTypeDraft}
                 onClose={onCloseEventTypeModal}
                 onSelectType={onSelectEventType}
+                onConfirm={onConfirmEventType}
             />
         </>
     );

@@ -9,7 +9,7 @@ export const getStyles = (colors: IColors) => {
         },
         option: {
             minHeight: scaleVertical(48),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: 12,
             paddingHorizontal: scaleHorizontal(16),
@@ -18,13 +18,17 @@ export const getStyles = (colors: IColors) => {
         },
         selectedOption: {
             borderColor: colors.primary,
-            backgroundColor: colors.primary,
+            backgroundColor: colors.background,
         },
         optionText: {
             color: colors.text,
         },
         selectedOptionText: {
-            color: colors.text_inverted,
+            color: colors.text,
+        },
+        confirmButton: {
+            width: '100%',
+            marginTop: scaleVertical(12),
         },
     });
 

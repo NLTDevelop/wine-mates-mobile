@@ -3,6 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { Typography } from '@/UIKit/Typography';
+import { Button } from '@/UIKit/Button';
 import { getStyles } from './styles';
 import { Sex } from '@/entities/events/enums/Sex';
 import { useSexPickerModal } from './presenters/useSexPickerModal';
@@ -12,9 +13,10 @@ interface IProps {
     selectedSex?: Sex;
     onClose: () => void;
     onSelectSex: (sex: Sex) => void;
+    onConfirm: () => void;
 }
 
-export const SexPickerModal = ({ visible, selectedSex, onClose, onSelectSex }: IProps) => {
+export const SexPickerModal = ({ visible, selectedSex, onClose, onSelectSex, onConfirm }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -57,6 +59,12 @@ export const SexPickerModal = ({ visible, selectedSex, onClose, onSelectSex }: I
                         style={[styles.optionText, selectedSex === Sex.Women && styles.selectedOptionText]}
                     />
                 </TouchableOpacity>
+                <Button
+                    text={t('common.confirm')}
+                    onPress={onConfirm}
+                    type="main"
+                    containerStyle={styles.confirmButton}
+                />
             </View>
         </BottomModal>
     );
