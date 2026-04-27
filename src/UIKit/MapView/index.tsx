@@ -6,6 +6,7 @@ import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { observer } from 'mobx-react-lite';
 import { Typography } from '../Typography';
+import { isAndroid } from '@/utils';
 
 interface IMapViewProps extends Partial<MapViewProps> {
     initialRegion?: Region;
@@ -56,7 +57,7 @@ const MapViewComponent = forwardRef<RNMapView, IMapViewProps>(
                             longitude: cluster.geometry.coordinates[0],
                         }}
                         onPress={cluster.onPress}
-                        tracksViewChanges={false}
+                        tracksViewChanges={isAndroid}
                     >
                         <View style={[styles.clusterContainer, { backgroundColor: clusterColor || colors.primary }]}>
                             <Typography
