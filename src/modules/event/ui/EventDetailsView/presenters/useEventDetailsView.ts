@@ -1,19 +1,30 @@
 import { useCallback, useState } from 'react';
+import { ILocalization } from '@/UIProvider/localization/ILocalization';
 
-export const useEventDetailsView = () => {
-    const [isBookingModalVisible, setIsBookingModalVisible] = useState(false);
+interface IRoute {
+    key: 'eventDetails' | 'guests';
+    title: string;
+}
 
-    const onBookNowPress = useCallback(() => {
-        setIsBookingModalVisible(true);
-    }, []);
+interface IProps {
+    t: ILocalization['t'];
+}
 
-    const onCloseModal = useCallback(() => {
-        setIsBookingModalVisible(false);
+export const useEventDetailsView = ({ t }: IProps) => {
+    const [screenIndex, setScreenIndex] = useState(0);
+
+    const routes: IRoute[] = [
+        { key: 'eventDetails', title: t('eventDetails.eventDetailsTab') },
+        { key: 'guests', title: t('eventDetails.guestsTab') },
+    ];
+
+    const onIndexChange = useCallback((index: number) => {
+        setScreenIndex(index);
     }, []);
 
     return {
-        isBookingModalVisible,
-        onBookNowPress,
-        onCloseModal,
+        screenIndex,
+        routes,
+        onIndexChange,
     };
 };

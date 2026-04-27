@@ -334,6 +334,19 @@
         "showList": "Показати список",
         "all": "Всі"
     },
+    "eventFilters": {
+        "radius": "Радіус",
+        "date": "Дата",
+        "selectDate": "Оберіть дату",
+        "sex": "Стать",
+        "selectSex": "Оберіть стать",
+        "men": "Чоловіки",
+        "women": "Жінки",
+        "all": "Всі",
+        "age": "Вік",
+        "kmSuffix": "км",
+        "close": "Закрити"
+    },
     "event": {
         "addEvent": "Додати винну подію",
         "updateEvent": "Оновити події",
@@ -378,8 +391,9 @@
         "participationConditionCharity": "Благодійність",
         "participationConditionHost": "Пригощаю",
         "participationConditionGuest": "Хочу, щоб мене пригостили",
-        "tastings": "Дегустації",
-        "parties": "Вечірки"
+        "tastings": "Дегустація",
+        "parties": "Вечірка",
+        "pastDateError": "Не можна обрати дату в минулому"
     },
     "faq": {
         "faq": "FAQ"
@@ -403,6 +417,8 @@
         "confirmationRequired": "Потрібне підтвердження",
         "noConfirmation": "Без підтвердження",
         "wineSet": "Набір вин",
+        "eventDetailsTab": "Деталі події",
+        "guestsTab": "Гості",
         "bookNow": "Забронювати",
         "contactForBooking": "Контакт для бронювання",
         "callToReserve": "Зателефонувати для бронювання"

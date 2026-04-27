@@ -31,6 +31,50 @@ interface IProfileForm {
     bio: string;
 }
 
+const formatDateToLocalApi = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+};
+
+const getLocalDateFromApi = (value: string) => {
+    const parts = value.split('-');
+    if (parts.length !== 3) {
+        return null;
+    }
+
+    const [yearString, monthString, dayString] = parts;
+    const year = Number(yearString);
+    const month = Number(monthString);
+    const day = Number(dayString);
+
+    if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
+        return null;
+    }
+
+    return new Date(year, month - 1, day);
+};
+
+const getDateFromBirthday = (value: string) => {
+    if (!value) {
+        return null;
+    }
+
+    const localDate = getLocalDateFromApi(value);
+    if (localDate) {
+        return localDate;
+    }
+
+    const parsedDate = new Date(value);
+    if (Number.isNaN(parsedDate.getTime())) {
+        return null;
+    }
+
+    return parsedDate;
+};
+
 const getInitialCountryCode = (countryValue?: string) => {
     const rawValue = (countryValue || '').trim();
     if (!rawValue) {
@@ -168,12 +212,11 @@ export const useEditProfileDetails = () => {
 
     const [isBirthdayModalVisible, setIsBirthdayModalVisible] = useState(false);
     const [pickerDate, setPickerDate] = useState<Date>(() => {
-        if (userModel.user?.birthday) {
-            const parsed = new Date(userModel.user.birthday);
-            if (!Number.isNaN(parsed.getTime())) {
-                return parsed;
-            }
+        const birthdayDate = getDateFromBirthday(userModel.user?.birthday || '');
+        if (birthdayDate) {
+            return birthdayDate;
         }
+
         return new Date();
     });
     const [draftBirthday, setDraftBirthday] = useState<string | null>(null);
@@ -277,6 +320,42 @@ export const useEditProfileDetails = () => {
         }
     }, [validateInstagramLink]);
 
+    const onChangeFullName = useCallback((value: string) => {
+        onChangeField('fullName', value);
+    }, [onChangeField]);
+
+    const onChangeEmail = useCallback((value: string) => {
+        onChangeField('email', value);
+    }, [onChangeField]);
+
+    const onChangePhoneNumber = useCallback((value: string) => {
+        onChangeField('phoneNumber', value);
+    }, [onChangeField]);
+
+    const onChangeGender = useCallback((item: IDropdownItem) => {
+        onChangeField('gender', String(item.value));
+    }, [onChangeField]);
+
+    const onChangeOccupation = useCallback((value: string) => {
+        onChangeField('occupation', value);
+    }, [onChangeField]);
+
+    const onChangePlaceOfWork = useCallback((value: string) => {
+        onChangeField('placeOfWork', value);
+    }, [onChangeField]);
+
+    const onChangeInstagramLink = useCallback((value: string) => {
+        onChangeField('instagramLink', value);
+    }, [onChangeField]);
+
+    const onChangeWebsite = useCallback((value: string) => {
+        onChangeField('website', value);
+    }, [onChangeField]);
+
+    const onChangeBio = useCallback((value: string) => {
+        onChangeField('bio', value);
+    }, [onChangeField]);
+
     const onRefetchUser = useCallback(async () => {
         const response = await userService.me();
         if (!response.isError) {
@@ -292,16 +371,14 @@ export const useEditProfileDetails = () => {
     }, [getInitialForm, getCallingCodeFromUser]);
 
     const onOpenBirthdayModal = useCallback(() => {
-        if (form.birthday) {
-            const parsed = new Date(form.birthday);
-            if (!Number.isNaN(parsed.getTime())) {
-                setPickerDate(parsed);
-                setDraftBirthday(parsed.toISOString());
-            }
+        const birthdayDate = getDateFromBirthday(form.birthday);
+        if (birthdayDate) {
+            setPickerDate(birthdayDate);
+            setDraftBirthday(formatDateToLocalApi(birthdayDate));
         } else {
             const now = new Date();
             setPickerDate(now);
-            setDraftBirthday(now.toISOString());
+            setDraftBirthday(formatDateToLocalApi(now));
         }
 
         setIsBirthdayModalVisible(true);
@@ -313,7 +390,7 @@ export const useEditProfileDetails = () => {
 
     const onChangePickerDate = useCallback((date: Date) => {
         setPickerDate(date);
-        setDraftBirthday(date.toISOString());
+        setDraftBirthday(formatDateToLocalApi(date));
     }, []);
 
     const onConfirmBirthday = useCallback(() => {
@@ -463,8 +540,8 @@ export const useEditProfileDetails = () => {
             return '';
         }
 
-        const selectedDate = new Date(form.birthday);
-        if (Number.isNaN(selectedDate.getTime())) {
+        const selectedDate = getDateFromBirthday(form.birthday);
+        if (!selectedDate) {
             return '';
         }
 
@@ -587,6 +664,15 @@ export const useEditProfileDetails = () => {
         isCityLoading,
         isCitySelectorDisabled: !form.country,
         onChangeField,
+        onChangeFullName,
+        onChangeEmail,
+        onChangePhoneNumber,
+        onChangeGender,
+        onChangeOccupation,
+        onChangePlaceOfWork,
+        onChangeInstagramLink,
+        onChangeWebsite,
+        onChangeBio,
         onChangeCountry,
         cityModalRef: selectCityModalRef,
         onOpenCitySelector,

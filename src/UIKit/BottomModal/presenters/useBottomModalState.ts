@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useBottomModal } from './useBottomModal';
+import { createElement, useCallback, useEffect, useRef } from 'react';
+import { Keyboard } from 'react-native';
+import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal } from '@gorhom/bottom-sheet';
 
 interface IUseBottomModalStateProps {
     visible: boolean;
@@ -7,28 +8,44 @@ interface IUseBottomModalStateProps {
 }
 
 export const useBottomModalState = ({ visible, onClose }: IUseBottomModalStateProps) => {
-    const [isVisible, setIsVisible] = useState(visible);
+    const modalRef = useRef<BottomSheetModal | null>(null);
 
-    const { backdropOpacity, slideAnim, handleOpen, handleClose } = useBottomModal({
-        onClose: () => {
-            setIsVisible(false);
-            onClose();
-        }
-    });
+    const onRenderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
+        return createElement(BottomSheetBackdrop, {
+            ...props,
+            appearsOnIndex: 0,
+            disappearsOnIndex: -1,
+            pressBehavior: 'close',
+        });
+    }, []);
+
+    const onRenderHandle = useCallback(() => {
+        return null;
+    }, []);
+
+    const onClosePress = useCallback(() => {
+        modalRef.current?.dismiss();
+    }, []);
+
+    const onDismiss = useCallback(() => {
+        onClose();
+    }, [onClose]);
 
     useEffect(() => {
         if (visible) {
-            setIsVisible(true);
-            handleOpen();
-        } else if (isVisible) {
-            handleClose();
+            Keyboard.dismiss();
+            modalRef.current?.present();
+            return;
         }
-    }, [visible, isVisible, handleOpen, handleClose]);
+
+        modalRef.current?.dismiss();
+    }, [visible]);
 
     return {
-        isVisible,
-        backdropOpacity,
-        slideAnim,
-        handleClose
+        modalRef,
+        onRenderBackdrop,
+        onRenderHandle,
+        onDismiss,
+        onClosePress,
     };
 };

@@ -8,6 +8,7 @@ import { IEventMapPinsParams } from './params/IEventMapPinsParams';
 import { CreateEventDto } from './dto/CreateEvent.dto';
 import { eventsModel } from './EventsModel';
 import countries from 'world-countries';
+import { IEventPriceRange } from './types/IEventPriceRange';
 
 class EventsService {
     constructor(
@@ -178,6 +179,30 @@ class EventsService {
             return response;
         } catch (error) {
             console.warn('EventsService -> createEvent: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getPriceRange = async (): Promise<IResponse<IEventPriceRange>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.eventPriceRange}`,
+            });
+
+            if (!response.isError && response.data) {
+                const responseMinPrice = Math.floor(Number(response.data.minPrice));
+                const responseMaxPrice = Math.ceil(Number(response.data.maxPrice));
+                if (Number.isFinite(responseMinPrice) && Number.isFinite(responseMaxPrice)) {
+                    const minPrice = Math.max(0, responseMinPrice);
+                    const maxPrice = Math.max(minPrice, responseMaxPrice);
+                    eventsModel.setEventPriceRange({ minPrice, maxPrice });
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> getPriceRange: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

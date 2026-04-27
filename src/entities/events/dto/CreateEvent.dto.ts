@@ -25,7 +25,8 @@ export interface CreateEventDto {
     language: string;
     seats: number;
     phoneNumber: string;
-    age: number;
+    minAge: number;
+    maxAge: number;
     sex: Sex;
     eventType: EventType;
     tastingType: TastingType;

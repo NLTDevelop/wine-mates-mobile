@@ -3,6 +3,7 @@ import { Currency } from '../enums/Currency';
 import { EventType } from '../enums/EventType';
 import { TastingType } from '../enums/TastingType';
 import { ParticipationCondition } from '../enums/ParticipationCondition';
+import { IWineSetItem } from './IWineSetItem';
 
 export interface IEvent {
     id: number;
@@ -52,21 +53,7 @@ export interface IEventDetail {
     tastingType?: TastingType;
     participationCondition?: ParticipationCondition;
     requiresConfirmation?: boolean;
-    wineSet?: Array<
-        string | {
-            id?: number;
-            wineId?: number;
-            name?: string;
-            title?: string;
-            wineName?: string;
-            wine?: {
-                id?: number;
-                name?: string;
-                title?: string;
-                wineName?: string;
-            };
-        }
-    >;
+    wineSet?: IWineSetItem[];
     minAge?: number;
     maxAge?: number;
     sex?: Sex;

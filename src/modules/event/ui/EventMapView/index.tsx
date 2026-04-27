@@ -7,9 +7,8 @@ import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { PlusIcon } from '@assets/icons/PlusIcon';
 import { EventMap } from '@/modules/event/ui/EventMapView/components/EventMap';
 import { WineEventList } from '@/modules/event/ui/EventMapView/components/WineEventList';
-import { WineEventListItem } from '@/modules/event/ui/EventMapView/components/WineEventListItem';
+import { EventCard } from '@/UIKit/EventCard';
 import { EventMapHeader } from '@/modules/event/ui/EventMapView/components/EventMapHeader';
-import { EventFiltersModal } from '@/modules/event/ui/EventMapView/components/EventFiltersModal';
 import { useEventMapScreen } from './presenters/useEventMapScreen';
 import { getStyles } from './styles';
 import { ScreenHeader } from '@/UIKit/ScreenHeader';
@@ -26,8 +25,6 @@ export const EventMapView = observer(() => {
         selectedTab,
         onTabChange,
         onFilterPress,
-        isFilterModalVisible,
-        onCloseFilterModal,
         filterCount,
         filteredEvents,
         selectedEvent,
@@ -47,7 +44,7 @@ export const EventMapView = observer(() => {
 
     return (
         <>
-            <ScreenContainer edges={['top']} scrollEnabled headerComponent={<ScreenHeader />}>
+            <ScreenContainer edges={['top']} scrollEnabled headerComponent={<ScreenHeader />} withGradient>
                 <EventMapHeader
                     selectedTab={selectedTab}
                     onTabChange={onTabChange}
@@ -56,11 +53,11 @@ export const EventMapView = observer(() => {
                     isUpdateEventDisabled={isRefetching}
                     filterCount={filterCount}
                 />
-
                 <View style={styles.content}>
                     <View style={styles.mapContainer}>
                         <EventMap
                             mapPins={mapPins}
+                            selectedTab={selectedTab}
                             initialRegion={initialRegion}
                             onMarkerPress={onMarkerPress}
                             onMapPress={onMapPress}
@@ -88,7 +85,7 @@ export const EventMapView = observer(() => {
                     onClose={onCloseModal}
                     title={t('eventDetails.title')}
                 >
-                    <WineEventListItem
+                    <EventCard
                         event={selectedEvent}
                         isSelected={false}
                         isModalContent
@@ -98,10 +95,6 @@ export const EventMapView = observer(() => {
                 </BottomModal>
             )}
 
-            <EventFiltersModal
-                visible={isFilterModalVisible}
-                onClose={onCloseFilterModal}
-            />
         </>
     );
 });

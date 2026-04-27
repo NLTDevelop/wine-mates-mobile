@@ -5,9 +5,9 @@ import Animated from 'react-native-reanimated';
 import { Typography } from '@/UIKit/Typography';
 import { useSmoothSlider } from './presenters/useSmoothSlider.ts';
 import { Marker } from './components/Marker';
-import { SliderDataPoint, SmoothSliderLabelItem } from './types';
+import { SliderDataPoint, SmoothSliderLabelItem } from './types/types.ts';
 
-export type { SliderDataPoint } from './types';
+export type { SliderDataPoint } from './types/types.ts';
 
 interface IProps {
     min?: number;
@@ -88,7 +88,7 @@ export const SmoothSlider = memo(
             trackContainerRef,
             onTrackLayout,
             onTrackPress,
-            handleLabelClick,
+            onGetLabelPress,
         } = useSmoothSlider({
             min,
             max,
@@ -167,7 +167,7 @@ export const SmoothSlider = memo(
                                         isFirst && styles.leftLabelWrapper,
                                         isLast && styles.rightLabelWrapper,
                                     ]}
-                                    onPress={() => handleLabelClick(targetIndex)}
+                                    onPress={onGetLabelPress(targetIndex)}
                                 >
                                     {renderLabel ? (
                                         renderLabel(label, index)

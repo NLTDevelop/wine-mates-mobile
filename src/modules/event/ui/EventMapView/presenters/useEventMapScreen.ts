@@ -1,16 +1,24 @@
 import { useCallback, useMemo, useState } from 'react';
 import { MapPressEvent, Region } from 'react-native-maps';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventType } from '@/entities/events/enums/EventType';
+import { eventsModel } from '@/entities/events/EventsModel';
+import { eventsService } from '@/entities/events/EventsService';
 import { useEventMap } from '@/modules/event/presenters/useEventMap';
 import { useEventsList } from '@/modules/event/presenters/useEventsList';
 import { useEventMapView } from '@/modules/event/presenters/useEventMapView';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
+import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 
 const USER_LOCATION_REGION_THRESHOLD = 0.005;
+type Navigation = NativeStackNavigationProp<EventStackParamList>;
 
 export const useEventMapScreen = () => {
+    const navigation = useNavigation<Navigation>();
     const [isRefetching, setIsRefetching] = useState(false);
     const [searchLocation, setSearchLocation] = useState<IUserLocation | null>(null);
+    const filters = eventsModel.eventFilters;
 
     const {
         mapPins,
@@ -18,17 +26,25 @@ export const useEventMapScreen = () => {
         userLocation,
         selectedTab,
         onTabChange,
-        onFilterPress,
-        isFilterModalVisible,
-        onCloseFilterModal,
-        filterCount,
         refetch: onRefetchMapPins,
-    } = useEventMap({ searchLocation });
+    } = useEventMap({ searchLocation, filters });
+
+    const selectedEventType = useMemo(() => {
+        if (selectedTab === 'all') {
+            return undefined;
+        }
+
+        if (selectedTab === 'tastings') {
+            return EventType.Tastings;
+        }
+
+        return EventType.Parties;
+    }, [selectedTab]);
 
     const {
         events,
         refetch: onRefetchEvents,
-    } = useEventsList({ searchLocation });
+    } = useEventsList({ searchLocation, filters, selectedEventType });
 
     const {
         selectedEvent,
@@ -42,17 +58,45 @@ export const useEventMapScreen = () => {
         onFavoritePress,
     } = useEventMapView({ events });
 
-    const filteredEvents = useMemo(() => {
-        if (selectedTab === 'all') {
-            return events;
+    const filterCount = useMemo(() => {
+        let nextCount = 0;
+
+        if (typeof filters.radiusKm === 'number') {
+            nextCount += 1;
         }
 
-        const eventType = selectedTab === 'tastings'
-            ? EventType.Tastings
-            : EventType.Parties;
+        if (filters.eventDate) {
+            nextCount += 1;
+        }
 
-        return events.filter(event => event.eventType === eventType);
-    }, [events, selectedTab]);
+        if (filters.language) {
+            nextCount += 1;
+        }
+
+        if (filters.sex) {
+            nextCount += 1;
+        }
+
+        if (typeof filters.minAge === 'number' || typeof filters.maxAge === 'number') {
+            nextCount += 1;
+        }
+
+        if (typeof filters.minPrice === 'number' || typeof filters.maxPrice === 'number') {
+            nextCount += 1;
+        }
+
+        return nextCount;
+    }, [filters.eventDate, filters.language, filters.maxAge, filters.maxPrice, filters.minAge, filters.minPrice, filters.radiusKm, filters.sex]);
+
+    useFocusEffect(
+        useCallback(() => {
+            eventsService.getPriceRange();
+        }, []),
+    );
+
+    const onFilterPress = useCallback(() => {
+        navigation.navigate('EventFiltersView');
+    }, [navigation]);
 
     const onUpdateEvent = useCallback(async () => {
         if (isRefetching) {
@@ -64,6 +108,7 @@ export const useEventMapScreen = () => {
             await Promise.all([
                 onRefetchMapPins(searchLocation),
                 onRefetchEvents(searchLocation),
+                eventsService.getPriceRange(),
             ]);
         } finally {
             setIsRefetching(false);
@@ -142,7 +187,7 @@ export const useEventMapScreen = () => {
         initialRegion,
         onMarkerPress,
         userLocation,
-        filteredEvents,
+        filteredEvents: events,
         onReadMorePress,
         onFavoritePress,
         onAddEvent,
@@ -151,7 +196,5 @@ export const useEventMapScreen = () => {
         onCloseModal,
         onModalReadMorePress,
         onModalFavoritePress,
-        isFilterModalVisible,
-        onCloseFilterModal,
     };
 };

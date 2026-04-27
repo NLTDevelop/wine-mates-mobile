@@ -27,6 +27,7 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
     const renderBackdrop = useCallback((props: any) => (
         <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} onPress={handleClose} />
     ), [handleClose]);
+    const renderHandle = useCallback(() => null, []);
 
     const keyExtractor = useCallback((item: ICountry) => item.cca2, []);
     const renderItem = useCallback(({ item }: { item: ICountry }) => (
@@ -38,7 +39,7 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
             ref={modalRef}
             index={0}
             snapPoints={snapPoints}
-            handleComponent={() => null}
+            handleComponent={renderHandle}
             enableDynamicSizing={false}
             backdropComponent={renderBackdrop}
             backgroundStyle={styles.container}
@@ -47,10 +48,10 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
             onDismiss={handleClose}
         >
             <View style={styles.header}>
+                <Typography variant="h4" text={t('registration.countryCode')} style={styles.title} />
                 <TouchableOpacity onPress={handleClose} style={styles.closeContainer} hitSlop={20}>
                     <CrossIcon />
                 </TouchableOpacity>
-                <Typography variant="h4" text={t('registration.countryCode')} style={styles.title} />
             </View>
             <SearchBar
                 value={search}

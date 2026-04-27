@@ -25,7 +25,6 @@ interface IEventForm {
     speakerName: string;
     language: string;
     seats: string;
-    age: string;
     sex: Sex;
     eventType: EventType;
     tastingType: TastingType;
@@ -33,11 +32,19 @@ interface IEventForm {
     requiresConfirmation: boolean;
 }
 
+const formatDateToLocalApi = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 export const useAddEvent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
     const route = useRoute<RouteProp<EventStackParamList, 'AddEventView'>>();
     const { validateEmptyString } = useValidator();
     const [isEventTypeModalVisible, setIsEventTypeModalVisible] = useState(false);
+    const [eventTypeDraft, setEventTypeDraft] = useState<EventType>(EventType.Tastings);
     const [form, setForm] = useState<IEventForm>({
         theme: '',
         description: '',
@@ -53,7 +60,6 @@ export const useAddEvent = () => {
         speakerName: '',
         language: 'ua',
         seats: '',
-        age: '18',
         sex: Sex.All,
         eventType: EventType.Tastings,
         tastingType: TastingType.Regular,
@@ -91,7 +97,7 @@ export const useAddEvent = () => {
     }, []);
 
     const onDateSelect = useCallback((date: Date) => {
-        const dateStr = date.toISOString().split('T')[0];
+        const dateStr = formatDateToLocalApi(date);
         setForm(prev => ({ ...prev, eventDate: dateStr }));
     }, []);
 
@@ -116,7 +122,12 @@ export const useAddEvent = () => {
     }, []);
 
     const onChangeLanguage = useCallback((value: string) => {
-        setForm(prev => ({ ...prev, language: value }));
+        const nextLanguage = value.trim().toLowerCase();
+        if (!nextLanguage) {
+            return;
+        }
+
+        setForm(prev => ({ ...prev, language: nextLanguage }));
     }, []);
 
     const onChangeSeats = useCallback((value: string) => {
@@ -129,17 +140,31 @@ export const useAddEvent = () => {
     }, []);
 
     const onOpenEventTypeModal = useCallback(() => {
+        setEventTypeDraft(form.eventType);
         setIsEventTypeModalVisible(true);
-    }, []);
+    }, [form.eventType]);
 
     const onCloseEventTypeModal = useCallback(() => {
         setIsEventTypeModalVisible(false);
     }, []);
 
     const onSelectEventType = useCallback((value: EventType) => {
-        onChangeEventType(value);
+        setEventTypeDraft(value);
+    }, []);
+
+    const onConfirmEventType = useCallback(() => {
         setIsEventTypeModalVisible(false);
-    }, [onChangeEventType]);
+
+        requestAnimationFrame(() => {
+            setForm((prev) => {
+                if (prev.eventType === eventTypeDraft) {
+                    return prev;
+                }
+
+                return { ...prev, eventType: eventTypeDraft };
+            });
+        });
+    }, [eventTypeDraft]);
 
     const onLocationPress = useCallback(() => {
         navigation.navigate('LocationPickerView', {
@@ -191,7 +216,8 @@ export const useAddEvent = () => {
             speakerName: form.speakerName.trim() || 'Speaker Name',
             language: form.language.trim(),
             seats: form.seats.trim(),
-            age: form.age,
+            minAge: 18,
+            maxAge: 80,
             sex: form.sex,
             eventType: form.eventType,
             tastingType: form.tastingType,
@@ -214,6 +240,7 @@ export const useAddEvent = () => {
 
     return {
         form,
+        eventTypeDraft,
         isLoading: false,
         isEventTypeModalVisible,
         disabled,
@@ -233,6 +260,7 @@ export const useAddEvent = () => {
         onOpenEventTypeModal,
         onCloseEventTypeModal,
         onSelectEventType,
+        onConfirmEventType,
         onLocationPress,
         onSubmit,
     };

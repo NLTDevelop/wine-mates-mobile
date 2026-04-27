@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
-import { Pressable, View } from 'react-native';
-import DatePicker from 'react-native-date-picker';
+import { View } from 'react-native';
 import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -14,7 +13,7 @@ import { AvatarPicker } from '@/UIKit/AvatarPicker/ui';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
 import { BirthdaySelector } from '@/modules/registration/ui/components/BirthdaySelector';
-import { BottomModal } from '@/UIKit/BottomModal/ui';
+import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
 import { InstagramIcon } from '@assets/icons/InstagramIcon';
 import { SelectExpertiseBottomSheet } from './components/SelectExpertiseBottomSheet';
 import { ExpertiseSelectorRow } from './components/ExpertiseSelectorRow';
@@ -30,7 +29,7 @@ import { isIOS, scaleHorizontal, scaleVertical } from '@/utils';
 const EXPERTISE_SIZE = scaleHorizontal(16);
 
 export const EditProfileDetailsView = () => {
-    const { colors, t, locale, theme } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const {
@@ -52,7 +51,15 @@ export const EditProfileDetailsView = () => {
         cityEmptyStateText,
         isCitySelectorDisabled,
         isCityLoading,
-        onChangeField,
+        onChangeFullName,
+        onChangeEmail,
+        onChangePhoneNumber,
+        onChangeGender,
+        onChangeOccupation,
+        onChangePlaceOfWork,
+        onChangeInstagramLink,
+        onChangeWebsite,
+        onChangeBio,
         onChangeCountry,
         cityModalRef,
         onOpenCitySelector,
@@ -138,14 +145,14 @@ export const EditProfileDetailsView = () => {
 
                         <CustomInput
                             value={form.fullName}
-                            onChangeText={value => onChangeField('fullName', value)}
+                            onChangeText={onChangeFullName}
                             editable
                             placeholder={t('settings.fullName')}
                             containerStyle={styles.input}
                         />
                         <CustomInput
                             value={form.email}
-                            onChangeText={value => onChangeField('email', value)}
+                            onChangeText={onChangeEmail}
                             editable
                             placeholder={t('settings.email')}
                             containerStyle={styles.input}
@@ -153,7 +160,7 @@ export const EditProfileDetailsView = () => {
                         <View style={styles.input}>
                             <PhoneInputField
                                 value={form.phoneNumber}
-                                onChangeText={value => onChangeField('phoneNumber', value)}
+                                onChangeText={onChangePhoneNumber}
                                 onChangeCountryCode={onChangeCountryCode}
                                 editable
                                 initialCca2={phoneInitialCca2}
@@ -187,28 +194,28 @@ export const EditProfileDetailsView = () => {
                         <CustomDropdown
                             data={genderOptions}
                             placeholder={t('settings.gender')}
-                            onPress={item => onChangeField('gender', String(item.value))}
+                            onPress={onChangeGender}
                             selectedValue={form.gender}
                             disabled={false}
                             containerStyle={styles.input}
                         />
                         <CustomInput
                             value={form.occupation}
-                            onChangeText={value => onChangeField('occupation', value)}
+                            onChangeText={onChangeOccupation}
                             editable
                             placeholder={t('settings.occupation')}
                             containerStyle={styles.input}
                         />
                         <CustomInput
                             value={form.placeOfWork}
-                            onChangeText={value => onChangeField('placeOfWork', value)}
+                            onChangeText={onChangePlaceOfWork}
                             editable
                             placeholder={t('settings.placeOfWork')}
                             containerStyle={styles.input}
                         />
                         <CustomInput
                             value={form.instagramLink}
-                            onChangeText={value => onChangeField('instagramLink', value)}
+                            onChangeText={onChangeInstagramLink}
                             editable
                             placeholder={t('settings.instagram')}
                             error={!!instagramLinkError}
@@ -222,14 +229,14 @@ export const EditProfileDetailsView = () => {
                         />
                         <CustomInput
                             value={form.website}
-                            onChangeText={value => onChangeField('website', value)}
+                            onChangeText={onChangeWebsite}
                             editable
                             placeholder={t('settings.website')}
                             containerStyle={styles.input}
                         />
                         <CustomInput
                             value={form.bio}
-                            onChangeText={value => onChangeField('bio', value)}
+                            onChangeText={onChangeBio}
                             editable
                             placeholder={t('settings.bio')}
                             multiline
@@ -272,32 +279,15 @@ export const EditProfileDetailsView = () => {
                 onSelect={onSelectCityOption}
                 onClose={onCloseCitySelector}
             />
-            <BottomModal
+            <DateTimePickerModal
                 visible={isBirthdayModalVisible}
+                mode="date"
+                title={t('registration.birthday')}
+                date={pickerDate}
                 onClose={onCloseBirthdayModal}
-                customHeader={
-                    <View style={styles.birthdayModalHeader}>
-                        <Pressable onPress={onCloseBirthdayModal} style={styles.birthdayModalButton}>
-                            <Typography text="✕" variant="h4" />
-                        </Pressable>
-                        <Typography text={t('registration.birthday')} variant="h4" />
-                        <Pressable onPress={onConfirmBirthday} style={styles.birthdayModalButton}>
-                            <Typography text="OK" variant="h6" />
-                        </Pressable>
-                    </View>
-                }
-            >
-                <View style={styles.calendarContainer}>
-                    <DatePicker
-                        style={styles.calendarContainer}
-                        locale={locale}
-                        mode="date"
-                        date={pickerDate}
-                        onDateChange={onChangePickerDate}
-                        theme={theme}
-                    />
-                </View>
-            </BottomModal>
+                onConfirm={onConfirmBirthday}
+                onDateChange={onChangePickerDate}
+            />
             <CustomAlert
                 visible={isDeleteAvatarAlertVisible}
                 onClose={onCloseDeleteAvatarAlert}
