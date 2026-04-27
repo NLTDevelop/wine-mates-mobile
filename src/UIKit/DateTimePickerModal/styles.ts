@@ -12,5 +12,6 @@ export const getStyles = (_colors: IColors) => {
             width: '100%',
         },
     });
+
     return styles;
 };

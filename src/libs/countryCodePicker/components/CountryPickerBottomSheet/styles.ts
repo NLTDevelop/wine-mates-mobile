@@ -15,7 +15,7 @@ export const getStyles = (colors: IColors, insetBottom: number) => {
         },
         closeContainer: {
             position: 'absolute',
-            left: scaleHorizontal(16),
+            right: scaleHorizontal(16),
             top: scaleVertical(16),
             zIndex: 2,
         },

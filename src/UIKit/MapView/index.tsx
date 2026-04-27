@@ -6,6 +6,7 @@ import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { observer } from 'mobx-react-lite';
 import { Typography } from '../Typography';
+import { isAndroid } from '@/utils';
 
 interface IMapViewProps extends Partial<MapViewProps> {
     initialRegion?: Region;
@@ -50,11 +51,13 @@ const MapViewComponent = forwardRef<RNMapView, IMapViewProps>(
                 return (
                     <Marker
                         key={`cluster-${cluster.id}`}
+                        identifier={`cluster-${cluster.id}`}
                         coordinate={{
                             latitude: cluster.geometry.coordinates[1],
                             longitude: cluster.geometry.coordinates[0],
                         }}
                         onPress={cluster.onPress}
+                        tracksViewChanges={isAndroid}
                     >
                         <View style={[styles.clusterContainer, { backgroundColor: clusterColor || colors.primary }]}>
                             <Typography
@@ -79,6 +82,7 @@ const MapViewComponent = forwardRef<RNMapView, IMapViewProps>(
                     clusteringEnabled={clusteringEnabled}
                     radius={clusterRadius}
                     renderCluster={onRenderCluster}
+                    animationEnabled={false}
                     zoomControlEnabled={false}
                     toolbarEnabled={false}
                     {...props}

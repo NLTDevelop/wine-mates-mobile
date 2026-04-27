@@ -24,6 +24,10 @@ import { DeleteAccountView } from '@/modules/settings/ui/DeleteAccountView';
 import { ProfileDetailsView } from '@/modules/profile/ui/ProfileDetailsView';
 import { EditProfileDetailsView } from '@/modules/profile/ui/EditProfileDetailsView';
 import { AvatarCameraView } from '@/UIKit/AvatarPicker/ui/AvatarCameraView';
+import { AddEventView } from '@/modules/event/ui/AddEventView';
+import { AddWineSetView } from '@/modules/event/ui/AddWineSetView';
+import { EditEventWineView } from '@/modules/event/ui/EditEventWineView';
+import { LocationPickerView } from '@/modules/event/ui/LocationPickerView';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +44,10 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="RegistrationView" component={RegistrationView} />
             <Stack.Screen name="PersonalDetailsView" component={PersonalDetailsView} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            <Stack.Screen name="AddEventView" component={AddEventView} />
+            <Stack.Screen name="AddWineSetView" component={AddWineSetView} />
+            <Stack.Screen name="EditEventWineView" component={EditEventWineView} />
+            <Stack.Screen name="LocationPickerView" component={LocationPickerView} />
             <Stack.Screen name="CreatePasswordView" component={CreatePasswordView} />
             <Stack.Screen name="WineDetailsView" component={WineDetailsView} />
             <Stack.Screen name="WineLookView" component={WineLookView} options={{ gestureEnabled: false }} />

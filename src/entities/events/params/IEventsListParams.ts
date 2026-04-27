@@ -1,4 +1,5 @@
 import { Sex } from '../enums/Sex';
+import { EventType } from '../enums/EventType';
 
 export interface IEventsListParams {
     latitude: number;
@@ -7,6 +8,7 @@ export interface IEventsListParams {
     offset: number;
     limit: number;
     eventDate?: string;
+    eventType?: EventType;
     language?: string;
     minPrice?: number;
     maxPrice?: number;

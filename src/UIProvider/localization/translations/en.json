@@ -334,6 +334,12 @@
         "radius": "Radius",
         "date": "Date",
         "selectDate": "Select date",
+        "sex": "Sex",
+        "selectSex": "Select sex",
+        "men": "Men",
+        "women": "Women",
+        "all": "All",
+        "age": "Age",
         "kmSuffix": "km",
         "close": "Close"
     },
@@ -381,8 +387,9 @@
         "participationConditionCharity": "Charity",
         "participationConditionHost": "Host pays",
         "participationConditionGuest": "Looking for a host",
-        "tastings": "Tastings",
-        "parties": "Parties"
+        "tastings": "Tasting",
+        "parties": "Party",
+        "pastDateError": "You cannot select a past date"
     },
     "faq": {
         "faq": "FAQ"
@@ -406,6 +413,8 @@
         "confirmationRequired": "Confirmation required",
         "noConfirmation": "No confirmation",
         "wineSet": "Wine Set",
+        "eventDetailsTab": "Event Details",
+        "guestsTab": "Guests",
         "bookNow": "Book now",
         "contactForBooking": "Contact for booking",
         "callToReserve": "Call to reserve"

@@ -29,11 +29,27 @@ export const getStyles = (colors: IColors) => {
             borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: 8,
-            justifyContent: 'center',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row',
             paddingHorizontal: scaleHorizontal(16),
             backgroundColor: colors.background,
         },
         dateText: {
+            color: colors.text,
+        },
+        sexButton: {
+            height: scaleVertical(48),
+            borderWidth: scaleHorizontal(1),
+            borderColor: colors.border,
+            borderRadius: 8,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row',
+            paddingHorizontal: scaleHorizontal(16),
+            backgroundColor: colors.background,
+        },
+        sexText: {
             color: colors.text,
         },
     });

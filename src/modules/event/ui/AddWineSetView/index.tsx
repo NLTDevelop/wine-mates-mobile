@@ -39,6 +39,8 @@ export const AddWineSetView = () => {
         onOpenRepeatModal,
         onCloseTastingTypeModal,
         onCloseRepeatModal,
+        onConfirmRepeatRule,
+        onConfirmTastingType,
         onCloseEventCreatedAlert,
         onCheckEventPress,
         onShareQrPress,
@@ -59,7 +61,7 @@ export const AddWineSetView = () => {
     return (
         <>
             <ScreenContainer
-                edges={['top']}
+                edges={['top', 'bottom']}
                 scrollEnabled
                 headerComponent={<HeaderWithBackButton title={t('event.listWineEvent')} isCentered />}
             >
@@ -116,12 +118,14 @@ export const AddWineSetView = () => {
                 onClose={onCloseRepeatModal}
                 items={repeatRuleItems}
                 selectedValue={repeatRule}
+                onConfirm={onConfirmRepeatRule}
             />
             <TastingTypeModal
                 visible={isTastingTypeModalVisible}
                 onClose={onCloseTastingTypeModal}
                 items={tastingTypeItems}
                 selectedValue={tastingType}
+                onConfirm={onConfirmTastingType}
             />
             <EventCreatedAlert
                 visible={isEventCreatedAlertVisible}

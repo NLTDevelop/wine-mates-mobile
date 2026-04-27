@@ -31,7 +31,7 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
     const [suggestions, setSuggestions] = useState<IPlaceAutocomplete[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isSuggestionSelectionInProgress, setIsSuggestionSelectionInProgress] = useState(false);
-    const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const sessionTokenRef = useRef<string>(createSessionToken());
     const mapRef = useRef<MapView>(null);
 

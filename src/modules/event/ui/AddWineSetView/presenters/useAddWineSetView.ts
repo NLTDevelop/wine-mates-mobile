@@ -45,7 +45,9 @@ export const useAddWineSetView = () => {
 
     const [searchQuery, setSearchQuery] = useState('');
     const [repeatRule, setRepeatRule] = useState<RepeatRule>(RepeatRule.Never);
+    const [repeatRuleDraft, setRepeatRuleDraft] = useState<RepeatRule>(RepeatRule.Never);
     const [tastingType, setTastingType] = useState<TastingType>(draft?.tastingType || TastingType.Regular);
+    const [tastingTypeDraft, setTastingTypeDraft] = useState<TastingType>(draft?.tastingType || TastingType.Regular);
     const [isTastingTypeModalVisible, setIsTastingTypeModalVisible] = useState(false);
     const [isRepeatModalVisible, setIsRepeatModalVisible] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
@@ -66,12 +68,14 @@ export const useAddWineSetView = () => {
     }, []);
 
     const onOpenRepeatModal = useCallback(() => {
+        setRepeatRuleDraft(repeatRule);
         setIsRepeatModalVisible(true);
-    }, []);
+    }, [repeatRule]);
 
     const onOpenTastingTypeModal = useCallback(() => {
+        setTastingTypeDraft(tastingType);
         setIsTastingTypeModalVisible(true);
-    }, []);
+    }, [tastingType]);
 
     const onCloseRepeatModal = useCallback(() => {
         setIsRepeatModalVisible(false);
@@ -83,8 +87,7 @@ export const useAddWineSetView = () => {
 
     const createOnSelectRepeatRule = useCallback((value: RepeatRule) => {
         return () => {
-            setRepeatRule(value);
-            setIsRepeatModalVisible(false);
+            setRepeatRuleDraft(value);
         };
     }, []);
 
@@ -101,8 +104,7 @@ export const useAddWineSetView = () => {
 
     const createOnSelectTastingType = useCallback((value: TastingType) => {
         return () => {
-            setTastingType(value);
-            setIsTastingTypeModalVisible(false);
+            setTastingTypeDraft(value);
         };
     }, []);
 
@@ -125,6 +127,34 @@ export const useAddWineSetView = () => {
     const repeatRuleLabel = useMemo(() => {
         return t(REPEAT_RULE_LABEL_KEYS[repeatRule]);
     }, [repeatRule, t]);
+
+    const onConfirmRepeatRule = useCallback(() => {
+        setIsRepeatModalVisible(false);
+
+        requestAnimationFrame(() => {
+            setRepeatRule((prev) => {
+                if (prev === repeatRuleDraft) {
+                    return prev;
+                }
+
+                return repeatRuleDraft;
+            });
+        });
+    }, [repeatRuleDraft]);
+
+    const onConfirmTastingType = useCallback(() => {
+        setIsTastingTypeModalVisible(false);
+
+        requestAnimationFrame(() => {
+            setTastingType((prev) => {
+                if (prev === tastingTypeDraft) {
+                    return prev;
+                }
+
+                return tastingTypeDraft;
+            });
+        });
+    }, [tastingTypeDraft]);
 
     const filteredMockWineSetItems = useMemo(() => {
         const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -219,7 +249,8 @@ export const useAddWineSetView = () => {
                 language: draft.language,
                 seats: Number(draft.seats),
                 phoneNumber: draft.phoneNumber,
-                age: Number(draft.age),
+                minAge: draft.minAge,
+                maxAge: draft.maxAge,
                 sex: draft.sex,
                 eventType: draft.eventType,
                 tastingType,
@@ -245,7 +276,23 @@ export const useAddWineSetView = () => {
         navigation.dispatch(
             CommonActions.reset({
                 index: 0,
-                routes: [{ name: 'EventMapView' }],
+                routes: [
+                    {
+                        name: 'TabNavigator',
+                        state: {
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'EventStack',
+                                    state: {
+                                        index: 0,
+                                        routes: [{ name: 'EventMapView' }],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
             }),
         );
     }, [navigation]);
@@ -261,10 +308,26 @@ export const useAddWineSetView = () => {
         if (createdEventId) {
             navigation.dispatch(
                 CommonActions.reset({
-                    index: 1,
+                    index: 0,
                     routes: [
-                        { name: 'EventMapView' },
-                        { name: 'EventDetailsView', params: { eventId: createdEventId } },
+                        {
+                            name: 'TabNavigator',
+                            state: {
+                                index: 0,
+                                routes: [
+                                    {
+                                        name: 'EventStack',
+                                        state: {
+                                            index: 1,
+                                            routes: [
+                                                { name: 'EventMapView' },
+                                                { name: 'EventDetailsView', params: { eventId: createdEventId } },
+                                            ],
+                                        },
+                                    },
+                                ],
+                            },
+                        },
                     ],
                 }),
             );
@@ -283,10 +346,10 @@ export const useAddWineSetView = () => {
 
     return {
         searchQuery,
-        tastingType,
+        tastingType: tastingTypeDraft,
         tastingTypeLabel,
         tastingTypeItems,
-        repeatRule,
+        repeatRule: repeatRuleDraft,
         repeatRuleLabel,
         repeatRuleItems,
         isTastingTypeModalVisible,
@@ -300,6 +363,8 @@ export const useAddWineSetView = () => {
         onOpenTastingTypeModal,
         onCloseRepeatModal,
         onCloseTastingTypeModal,
+        onConfirmRepeatRule,
+        onConfirmTastingType,
         onCloseEventCreatedAlert,
         onCheckEventPress,
         onShareQrPress,

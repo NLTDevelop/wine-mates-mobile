@@ -5,6 +5,7 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import type { ICarouselInstance } from 'react-native-reanimated-carousel';
+import type { PanGesture } from 'react-native-gesture-handler';
 
 const LIMIT = 10;
 const PREFETCH_THRESHOLD = 8;
@@ -68,12 +69,18 @@ export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecom
         carouselRef.current?.prev();
     }, []);
 
+    const onConfigurePanGesture = useCallback((panGesture: PanGesture) => {
+        panGesture.activeOffsetX([-12, 12]);
+        panGesture.failOffsetY([-8, 8]);
+    }, []);
+
     return {
         wines,
         carouselRef,
         onSnapToItem,
         onWinePress,
         onNext,
-        onPrevious
+        onPrevious,
+        onConfigurePanGesture,
     };
 };

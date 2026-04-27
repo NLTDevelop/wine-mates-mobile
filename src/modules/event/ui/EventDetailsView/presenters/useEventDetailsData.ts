@@ -1,10 +1,28 @@
 import { IEventDetail } from '@/entities/events/types/IEvent';
+import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
 import { useUiContext } from '@/UIProvider';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
+import { config } from '@/config';
+import { IEventDetailsPreviewData } from '../types/IEventDetailsPreviewData';
+import { useLocalizedLanguageOptions } from '@/libs/languagePicker/presenters/useLocalizedLanguageOptions';
+
+const STATIC_MAP_SIZE = '720x320';
+const STATIC_MAP_ZOOM = 14;
+const STATIC_MAP_LIGHT_STYLE_PARAMS = [
+    'style=element:geometry|color:0xf5f5f5',
+    'style=element:labels.icon|visibility:off',
+    'style=feature:road|element:geometry|color:0xffffff',
+    'style=feature:road.arterial|element:geometry|color:0xffffff',
+    'style=feature:water|element:geometry|color:0xc9e6ff',
+    'style=feature:poi|element:geometry|color:0xeeeeee',
+    'style=feature:landscape|element:geometry|color:0xf5f5f5',
+];
 
 export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
     const { t, locale } = useUiContext();
     const { userLocation } = useLocationPermission();
+    const { languageOptions } = useLocalizedLanguageOptions();
 
     const getValueOrDash = (value?: string | number | null) => {
         if (value === null || value === undefined || value === '') {
@@ -136,27 +154,45 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         return formatDistanceFallback(distance, distanceKm);
     };
 
-    const normalizeWineSetItem = (item: NonNullable<IEventDetail['wineSet']>[number]) => {
-        if (typeof item === 'string') {
-            return item;
+    const formatTastingType = (value?: TastingType) => {
+        if (!value) {
+            return '-';
         }
 
-        const directLabel = item.name || item.title || item.wineName;
-        if (directLabel) {
-            return directLabel;
+        if (value === TastingType.Blind) {
+            return t('event.tastingTypeBlind');
         }
 
-        const nestedLabel = item.wine?.name || item.wine?.title || item.wine?.wineName;
-        if (nestedLabel) {
-            return nestedLabel;
+        if (value === TastingType.Regular) {
+            return t('event.tastingTypeRegular');
         }
 
-        const id = item.wineId || item.id || item.wine?.id;
-        if (id) {
-            return `Wine #${id}`;
+        return '-';
+    };
+
+    const formatLanguage = (value?: string) => {
+        if (!value) {
+            return '-';
         }
 
-        return 'Wine';
+        const normalizedCode = value.trim().toLowerCase();
+        if (!normalizedCode) {
+            return '-';
+        }
+
+        const matchedLanguage = languageOptions.find((item) => item.code === normalizedCode);
+        if (matchedLanguage) {
+            return matchedLanguage.name;
+        }
+
+        if (normalizedCode === 'uk') {
+            const matchedUkrainianAlias = languageOptions.find((item) => item.code === 'ua');
+            if (matchedUkrainianAlias) {
+                return matchedUkrainianAlias.name;
+            }
+        }
+
+        return normalizedCode.toUpperCase();
     };
 
     const detailsData = (() => {
@@ -184,6 +220,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             { key: 'location', label: t('eventDetails.location'), value: getValueOrDash(eventDetail.locationLabel || eventDetail.location) },
             { key: 'date', label: t('eventDetails.date'), value: formatLocalizedDate(dateValue) },
             { key: 'time', label: t('eventDetails.time'), value: formattedTime },
+            { key: 'tastingType', label: t('event.tastingType'), value: formatTastingType(eventDetail.tastingType) },
             { key: 'price', label: t('eventDetails.price'), value: formatPrice(eventDetail.price, eventDetail.currency) },
             { key: 'speaker', label: t('eventDetails.speaker'), value: getValueOrDash(eventDetail.speakerName || eventDetail.speaker) },
             {
@@ -196,7 +233,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                     eventDetail.longitude,
                 ),
             },
-            { key: 'language', label: t('eventDetails.language'), value: getValueOrDash((eventDetail.language || '').toUpperCase()) },
+            { key: 'language', label: t('eventDetails.language'), value: formatLanguage(eventDetail.language) },
             { key: 'seats', label: t('eventDetails.seats'), value: getValueOrDash(eventDetail.seats) },
             { key: 'confirmation', label: t('eventDetails.confirmationAvailability'), value: confirmationValue },
         ];
@@ -207,8 +244,110 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return [];
         }
 
-        return eventDetail.wineSet.map(normalizeWineSetItem);
+        return eventDetail.wineSet;
     })();
 
-    return { detailsData, wineSetItems };
+    const cardPreviewData = (() => {
+        if (!eventDetail) {
+            return null;
+        }
+
+        const parsedDate = eventDetail.eventDate ? new Date(eventDetail.eventDate) : null;
+        const isDateValid = parsedDate && !Number.isNaN(parsedDate.getTime());
+        const month = isDateValid
+            ? new Intl.DateTimeFormat(locale || 'en', { month: 'short' }).format(parsedDate).replace('.', '').toUpperCase()
+            : '';
+        const day = isDateValid
+            ? new Intl.DateTimeFormat(locale || 'en', { day: 'numeric' }).format(parsedDate)
+            : '';
+
+        const formattedDateTime = (() => {
+            if (!isDateValid) {
+                return eventDetail.eventTime || eventDetail.startTime || '';
+            }
+
+            const dateLabel = new Intl.DateTimeFormat(locale || 'en', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+            })
+                .format(parsedDate)
+                .replace('.', '');
+
+            const rawTime = eventDetail.eventTime || eventDetail.startTime;
+            if (!rawTime) {
+                return dateLabel;
+            }
+
+            const [hoursPart, minutesPart] = rawTime.split(':');
+            const hours = Number(hoursPart);
+            const minutes = Number(minutesPart);
+            if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+                return `${dateLabel} · ${rawTime}`;
+            }
+
+            const dateWithTime = new Date(parsedDate);
+            dateWithTime.setHours(hours, minutes, 0, 0);
+            const timeLabel = new Intl.DateTimeFormat(locale || 'en', {
+                hour: 'numeric',
+                minute: '2-digit',
+            }).format(dateWithTime);
+
+            return `${dateLabel} · ${timeLabel}`;
+        })();
+
+        const priceLabel = (() => {
+            const currency = eventDetail.currency;
+            if (currency) {
+                try {
+                    return new Intl.NumberFormat(locale || 'en', {
+                        style: 'currency',
+                        currency,
+                        maximumFractionDigits: 0,
+                    }).format(eventDetail.price || 0);
+                } catch {
+                    return `${currency} ${eventDetail.price || 0}`;
+                }
+            }
+
+            return `${eventDetail.price || 0}`;
+        })();
+
+        const eventTypeLabel = eventDetail.eventType === EventType.Parties
+            ? t('event.parties')
+            : t('event.tastings');
+        const isPartyEvent = eventDetail.eventType === EventType.Parties;
+
+        const mapPreviewUri = (() => {
+            const params = [
+                `center=${eventDetail.latitude},${eventDetail.longitude}`,
+                `zoom=${STATIC_MAP_ZOOM}`,
+                `size=${STATIC_MAP_SIZE}`,
+                'maptype=roadmap',
+                `markers=color:red|${eventDetail.latitude},${eventDetail.longitude}`,
+                ...STATIC_MAP_LIGHT_STYLE_PARAMS,
+            ];
+
+            if (config.googlePlacesApiKey) {
+                params.push(`key=${config.googlePlacesApiKey}`);
+            }
+
+            return `https://maps.googleapis.com/maps/api/staticmap?${params.join('&')}`;
+        })();
+
+        const previewData: IEventDetailsPreviewData = {
+            month,
+            day,
+            formattedDateTime,
+            priceLabel,
+            eventTypeLabel,
+            isPartyEvent,
+            mapPreviewUri,
+            title: eventDetail.theme || '-',
+        };
+
+        return previewData;
+    })();
+
+    return { detailsData, wineSetItems, cardPreviewData };
 };

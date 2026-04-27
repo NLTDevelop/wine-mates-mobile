@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 import { MapPressEvent, Region } from 'react-native-maps';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventType } from '@/entities/events/enums/EventType';
 import { eventsModel } from '@/entities/events/EventsModel';
+import { eventsService } from '@/entities/events/EventsService';
 import { useEventMap } from '@/modules/event/presenters/useEventMap';
 import { useEventsList } from '@/modules/event/presenters/useEventsList';
 import { useEventMapView } from '@/modules/event/presenters/useEventMapView';
@@ -28,10 +29,22 @@ export const useEventMapScreen = () => {
         refetch: onRefetchMapPins,
     } = useEventMap({ searchLocation, filters });
 
+    const selectedEventType = useMemo(() => {
+        if (selectedTab === 'all') {
+            return undefined;
+        }
+
+        if (selectedTab === 'tastings') {
+            return EventType.Tastings;
+        }
+
+        return EventType.Parties;
+    }, [selectedTab]);
+
     const {
         events,
         refetch: onRefetchEvents,
-    } = useEventsList({ searchLocation, filters });
+    } = useEventsList({ searchLocation, filters, selectedEventType });
 
     const {
         selectedEvent,
@@ -45,18 +58,6 @@ export const useEventMapScreen = () => {
         onFavoritePress,
     } = useEventMapView({ events });
 
-    const filteredEvents = useMemo(() => {
-        if (selectedTab === 'all') {
-            return events;
-        }
-
-        const eventType = selectedTab === 'tastings'
-            ? EventType.Tastings
-            : EventType.Parties;
-
-        return events.filter(event => event.eventType === eventType);
-    }, [events, selectedTab]);
-
     const filterCount = useMemo(() => {
         let nextCount = 0;
 
@@ -68,8 +69,30 @@ export const useEventMapScreen = () => {
             nextCount += 1;
         }
 
+        if (filters.language) {
+            nextCount += 1;
+        }
+
+        if (filters.sex) {
+            nextCount += 1;
+        }
+
+        if (typeof filters.minAge === 'number' || typeof filters.maxAge === 'number') {
+            nextCount += 1;
+        }
+
+        if (typeof filters.minPrice === 'number' || typeof filters.maxPrice === 'number') {
+            nextCount += 1;
+        }
+
         return nextCount;
-    }, [filters.eventDate, filters.radiusKm]);
+    }, [filters.eventDate, filters.language, filters.maxAge, filters.maxPrice, filters.minAge, filters.minPrice, filters.radiusKm, filters.sex]);
+
+    useFocusEffect(
+        useCallback(() => {
+            eventsService.getPriceRange();
+        }, []),
+    );
 
     const onFilterPress = useCallback(() => {
         navigation.navigate('EventFiltersView');
@@ -85,6 +108,7 @@ export const useEventMapScreen = () => {
             await Promise.all([
                 onRefetchMapPins(searchLocation),
                 onRefetchEvents(searchLocation),
+                eventsService.getPriceRange(),
             ]);
         } finally {
             setIsRefetching(false);
@@ -163,7 +187,7 @@ export const useEventMapScreen = () => {
         initialRegion,
         onMarkerPress,
         userLocation,
-        filteredEvents,
+        filteredEvents: events,
         onReadMorePress,
         onFavoritePress,
         onAddEvent,

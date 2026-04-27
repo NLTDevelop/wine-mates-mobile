@@ -12,7 +12,16 @@ interface IUseEventCardProps {
 
 const NAVIGATION_DEBOUNCE_MS = 260;
 const STATIC_MAP_SIZE = '720x320';
-const STATIC_MAP_ZOOM = 13;
+const STATIC_MAP_ZOOM = 14;
+const STATIC_MAP_LIGHT_STYLE_PARAMS = [
+    'style=element:geometry|color:0xf5f5f5',
+    'style=element:labels.icon|visibility:off',
+    'style=feature:road|element:geometry|color:0xffffff',
+    'style=feature:road.arterial|element:geometry|color:0xffffff',
+    'style=feature:water|element:geometry|color:0xc9e6ff',
+    'style=feature:poi|element:geometry|color:0xeeeeee',
+    'style=feature:landscape|element:geometry|color:0xf5f5f5',
+];
 
 export const useEventCard = ({
     event,
@@ -190,6 +199,7 @@ export const useEventCard = ({
             `size=${STATIC_MAP_SIZE}`,
             'maptype=roadmap',
             `markers=color:red|${event.latitude},${event.longitude}`,
+            ...STATIC_MAP_LIGHT_STYLE_PARAMS,
         ];
 
         if (config.googlePlacesApiKey) {
