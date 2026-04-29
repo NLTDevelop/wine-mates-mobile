@@ -18,6 +18,10 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
         navigation.navigate('');
     }, [navigation]);
 
+    const onPaymentsPress = useCallback(() => {
+        navigation.navigate('PaymentsView');
+    }, [navigation]);
+
     const onSubscriptionPress = useCallback(() => {
         navigation.navigate('');
     }, [navigation]);
@@ -58,6 +62,11 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
             id: 3,
             text: localization.t('settings.blockedUser'),
             onPress: onBlockUserPress,
+        },
+        {
+            id: 4,
+            text: localization.t('payments.paymentsMethods'),
+            onPress: onPaymentsPress,
         },
     ];
 

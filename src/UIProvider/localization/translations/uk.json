@@ -429,5 +429,14 @@
         "askLater": "Запитати пізніше",
         "cancel": "Скасувати",
         "ok": "OK"
+    },
+    "payments": {
+        "paymentsMethods": "Способи оплати",
+        "paymentsMethod": "Спосіб оплати",
+        "name": "Назва",
+        "paymentDetails": "Картка/IBAN/Email",
+        "description": "Опис",
+        "downloadFile": "Завантажити файл",
+        "downloadHint": "Ви можете завантажити QR-код для оплати."
     }
 }
