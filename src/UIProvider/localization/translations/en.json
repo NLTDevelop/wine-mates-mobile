@@ -425,5 +425,14 @@
         "askLater": "Ask later",
         "cancel": "Cancel",
         "ok": "OK"
+    },
+    "payments": {
+        "paymentsMethods": "Payment methods",
+        "paymentsMethod": "Payment method",
+        "name": "Name",
+        "paymentDetails": "Card/IBAN/Email",
+        "description": "Description",
+        "downloadFile": "Download file",
+        "downloadHint": "You can download the QR code for payment."
     }
 }
