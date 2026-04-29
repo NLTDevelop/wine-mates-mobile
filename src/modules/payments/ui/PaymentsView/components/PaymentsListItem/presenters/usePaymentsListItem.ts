@@ -35,14 +35,17 @@ export const usePaymentsListItem = (item: IPaymentsListItem) => {
             }
 
             const currentList = paymentsModel.list || [];
-            paymentsModel.list = currentList.map(payment =>
-                payment.id === item.id
-                    ? {
+            paymentsModel.list = currentList.map(payment => {
+                if (payment.id === item.id) {
+                    return {
                         ...payment,
                         isVisible: nextVisible,
-                    }
-                    : payment,
-            );
+                    };
+                }
+
+                return payment;
+            });
+
         } catch (error) {
             console.error(JSON.stringify(error, null, 4));
             toastService.showError(localization.t('common.errorHappened'));

@@ -2,7 +2,7 @@ import { paymentsModel } from '@/entities/payments/PaymentsModel';
 import { paymentsService } from '@/entities/payments/PaymentsService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -31,9 +31,11 @@ export const usePaymentsList = () => {
         }
     }, []);
 
-    useEffect(() => {
-        getList(true);
-    }, [getList]);
+    useFocusEffect(
+        useCallback(() => {
+            void getList(true);
+        }, [getList]),
+    );
 
     useEffect(() => {
         return () => paymentsModel.clear();

@@ -1,4 +1,3 @@
-import { paymentsModel } from '@/entities/payments/PaymentsModel';
 import { paymentsService } from '@/entities/payments/PaymentsService';
 import { IPaymentsListItem } from '@/entities/payments/types/IPaymentsListItem';
 import { toastService } from '@/libs/toast/toastService';
@@ -157,20 +156,6 @@ export const useCreatePayment = () => {
                     return;
                 }
 
-                const currentList = paymentsModel.list || [];
-                paymentsModel.list = currentList.map(item => {
-                    if (item.id !== payment.id) {
-                        return item;
-                    }
-
-                    return {
-                        ...item,
-                        name: changedFields.has('name') ? trimmedName : item.name,
-                        paymentDetails: changedFields.has('paymentDetails') ? trimmedPaymentDetails : item.paymentDetails,
-                        description: changedFields.has('description') ? trimmedDescription : item.description,
-                        qrCode: isImageChanged && !selectedImage ? null : item.qrCode,
-                    };
-                });
             } else {
                 const formData = new FormData();
                 formData.append('name', trimmedName);
@@ -189,7 +174,6 @@ export const useCreatePayment = () => {
                     return;
                 }
 
-                paymentsModel.appened(response.data);
             }
 
             navigation.goBack();
