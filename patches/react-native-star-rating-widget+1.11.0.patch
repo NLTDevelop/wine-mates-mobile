@@ -1,0 +1,280 @@
+diff --git a/node_modules/react-native-star-rating-widget/src/StarIcon.tsx b/node_modules/react-native-star-rating-widget/src/StarIcon.tsx
+index 070548b..419af11 100644
+--- a/node_modules/react-native-star-rating-widget/src/StarIcon.tsx
++++ b/node_modules/react-native-star-rating-widget/src/StarIcon.tsx
+@@ -6,7 +6,8 @@ export type StarIconProps = {
+   index: number;
+   size: number;
+   color: string;
+-  type: 'full' | 'half' | 'quarter' | 'three-quarter' | 'empty';
++  type: 'full' | 'half' | 'quarter' | 'three-quarter' | 'empty' | 'fraction';
++  fill?: number;
+ };
+ 
+ const RTL_TRANSFORM: ViewStyle = {
+@@ -107,6 +108,39 @@ const StarHalf = ({ size, color, index }: Omit<StarIconProps, 'type'>) => {
+   );
+ };
+ 
++const StarFraction = ({
++  size,
++  color,
++  index,
++  fill = 0,
++}: Omit<StarIconProps, 'type'>) => {
++  const clampedFill = Math.min(1, Math.max(0, fill));
++  const gradientId = `fraction-gradient-${index}`;
++  const offset = `${Math.round(clampedFill * 100)}%`;
++
++  return (
++    <Svg
++      height={size}
++      viewBox="0 0 24 24"
++      width={size}
++      style={I18nManager.isRTL ? RTL_TRANSFORM : undefined}
++    >
++      <Defs>
++        <LinearGradient id={gradientId} x1="0" y1="0" x2="1" y2="0">
++          <Stop offset={offset} stopColor={color} stopOpacity="1" />
++          <Stop offset={offset} stopColor={color} stopOpacity="0" />
++        </LinearGradient>
++      </Defs>
++      <Path
++        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
++        fill={`url(#${gradientId})`}
++        stroke={color}
++        strokeWidth="1.5"
++      />
++    </Svg>
++  );
++};
++
+ const getStarComponent = (type: StarIconProps['type']) => {
+   switch (type) {
+     case 'full':
+@@ -117,14 +151,16 @@ const getStarComponent = (type: StarIconProps['type']) => {
+       return StarQuarter;
+     case 'three-quarter':
+       return StarThreeQuarter;
++    case 'fraction':
++      return StarFraction;
+     default:
+       return StarBorder;
+   }
+ };
+ 
+-const StarIcon = ({ index, type, size, color }: StarIconProps) => {
++const StarIcon = ({ index, type, size, color, fill }: StarIconProps) => {
+   const Component = getStarComponent(type);
+-  return <Component index={index} size={size} color={color} />;
++  return <Component index={index} size={size} color={color} fill={fill} />;
+ };
+ 
+ export default StarIcon;
+diff --git a/node_modules/react-native-star-rating-widget/src/StarRating.tsx b/node_modules/react-native-star-rating-widget/src/StarRating.tsx
+index 22147c9..419494e 100644
+--- a/node_modules/react-native-star-rating-widget/src/StarRating.tsx
++++ b/node_modules/react-native-star-rating-widget/src/StarRating.tsx
+@@ -65,7 +65,7 @@ type StarRatingProps = {
+    *
+    * @default 'half'
+    */
+-  step?: 'half' | 'quarter' | 'full';
++  step?: 'half' | 'quarter' | 'full' | number;
+ 
+   /**
+    * Enable swiping to rate.
+@@ -171,6 +171,14 @@ const defaultAnimationConfig: Required<AnimationConfig> = {
+   delay: 300,
+ };
+ 
++const getStepValue = (step: StarRatingProps['step']) => {
++  if (typeof step === 'number') return step;
++  if (step === 'quarter') return 0.25;
++  if (step === 'half') return 0.5;
++
++  return 1;
++};
++
+ const StarRating = ({
+   rating,
+   maxStars = 5,
+@@ -194,7 +202,9 @@ const StarRating = ({
+   accessabilityActivateLabel = 'activate (default)',
+   accessibilityAdjustmentLabel = '%value% stars',
+ }: StarRatingProps) => {
+-  const multiplier = step === 'quarter' ? 4 : step === 'half' ? 2 : 1;
++  const stepValue = Math.max(0.01, getStepValue(step));
++  const multiplier = 1 / stepValue;
++  const activeThreshold = stepValue;
+   const width = React.useRef<number>(undefined);
+   const [isInteracting, setInteracting] = React.useState(false);
+   const [stagedRating, setStagedRating] = React.useState(rating);
+@@ -207,17 +217,12 @@ const StarRating = ({
+         return calculateRating(width.current - x, false);
+       }
+ 
+-      const newRating =
+-        step !== 'full'
+-          ? Math.max(
+-              0,
+-              Math.min(
+-                Math.round((x / width.current) * maxStars * multiplier + 0.2) /
+-                  multiplier,
+-                maxStars
+-              )
+-            )
+-          : Math.ceil((x / width.current) * maxStars);
++      const rawRating = (x / width.current) * maxStars;
++      const steppedRating =
++        stepValue >= 1
++          ? Math.ceil(rawRating)
++          : Math.round(rawRating * multiplier) / multiplier;
++      const newRating = Math.max(0, Math.min(steppedRating, maxStars));
+ 
+       return newRating;
+     };
+@@ -269,7 +274,7 @@ const StarRating = ({
+     onRatingStart,
+     onRatingEnd,
+     animationConfig.delay,
+-    step,
++    stepValue,
+     multiplier,
+   ]);
+ 
+@@ -299,8 +304,7 @@ const StarRating = ({
+           { name: 'activate', label: accessabilityActivateLabel },
+         ]}
+         onAccessibilityAction={(event: AccessibilityActionEvent) => {
+-          const incrementor =
+-            step === 'half' ? 0.5 : step === 'quarter' ? 0.25 : 1;
++          const incrementor = stepValue;
+           switch (event.nativeEvent.actionName) {
+             case 'increment':
+               if (stagedRating >= maxStars) {
+@@ -343,23 +347,26 @@ const StarRating = ({
+           }
+         }}
+       >
+-        {getStars(rating, maxStars, step).map((starType, i) => {
+-          return (
+-            <AnimatedIcon
+-              key={i}
+-              active={isInteracting && rating - i >= 0.5}
+-              animationConfig={animationConfig}
+-              style={starStyle}
+-            >
+-              <StarIconComponent
+-                index={i}
+-                type={starType}
+-                size={starSize}
+-                color={starType === 'empty' ? emptyColor : color}
+-              />
+-            </AnimatedIcon>
+-          );
+-        })}
++      {getStars(rating, maxStars, step).map((star, i) => {
++        const isEmpty = star.type === 'empty';
++
++        return (
++          <AnimatedIcon
++            key={i}
++            active={isInteracting && rating - i >= activeThreshold}
++            animationConfig={animationConfig}
++            style={starStyle}
++          >
++            <StarIconComponent
++              index={i}
++              type={star.type}
++              fill={star.fill}
++              size={starSize}
++              color={isEmpty ? emptyColor : color}
++            />
++          </AnimatedIcon>
++        );
++      })}
+       </View>
+     </View>
+   );
+diff --git a/node_modules/react-native-star-rating-widget/src/StarRatingDisplay.tsx b/node_modules/react-native-star-rating-widget/src/StarRatingDisplay.tsx
+index 6be1eb6..48a2d5a 100644
+--- a/node_modules/react-native-star-rating-widget/src/StarRatingDisplay.tsx
++++ b/node_modules/react-native-star-rating-widget/src/StarRatingDisplay.tsx
+@@ -59,7 +59,7 @@ type Props = {
+    *
+    * @default 'half'
+    */
+-  step?: 'half' | 'quarter' | 'full';
++  step?: 'half' | 'quarter' | 'full' | number;
+ 
+   /**
+    * The accessibility label used on the star component.
+@@ -91,14 +91,17 @@ const StarRatingDisplay = ({
+       accessibilityLabel={accessibilityLabel}
+       testID={testID}
+     >
+-      {getStars(rating, maxStars, step).map((starType, i) => {
++      {getStars(rating, maxStars, step).map((star, i) => {
++        const isEmpty = star.type === 'empty';
++
+         return (
+           <View key={i} style={[styles.star, starStyle]}>
+             <StarIconComponent
+               index={i}
+-              type={starType}
++              type={star.type}
++              fill={star.fill}
+               size={starSize}
+-              color={starType === 'empty' ? emptyColor : color}
++              color={isEmpty ? emptyColor : color}
+             />
+           </View>
+         );
+diff --git a/node_modules/react-native-star-rating-widget/src/utils.ts b/node_modules/react-native-star-rating-widget/src/utils.ts
+index 2b94662..685b936 100644
+--- a/node_modules/react-native-star-rating-widget/src/utils.ts
++++ b/node_modules/react-native-star-rating-widget/src/utils.ts
+@@ -1,21 +1,35 @@
+ export function getStars(
+   rating: number,
+   maxStars: number,
+-  step?: 'half' | 'quarter' | 'full'
++  step?: 'half' | 'quarter' | 'full' | number
+ ) {
++  const clamp = (value: number, min: number, max: number) =>
++    Math.min(max, Math.max(min, value));
++
+   return [...Array(maxStars)].map((_, i) => {
+     const remainder = rating - i;
+ 
+-    if (remainder >= 1) return 'full';
++    if (remainder >= 1) return { type: 'full' as const };
++
++    if (typeof step === 'number') {
++      if (remainder > 0) {
++        return {
++          type: 'fraction' as const,
++          fill: clamp(remainder, 0, 1),
++        };
++      }
++
++      return { type: 'empty' as const };
++    }
+ 
+     if (step === 'quarter') {
+-      if (remainder >= 0.75) return 'three-quarter';
+-      if (remainder >= 0.5) return 'half';
+-      if (remainder >= 0.25) return 'quarter';
++      if (remainder >= 0.75) return { type: 'three-quarter' as const };
++      if (remainder >= 0.5) return { type: 'half' as const };
++      if (remainder >= 0.25) return { type: 'quarter' as const };
+     } else if (step === 'half') {
+-      if (remainder >= 0.5) return 'half';
++      if (remainder >= 0.5) return { type: 'half' as const };
+     }
+ 
+-    return 'empty';
++    return { type: 'empty' as const };
+   });
+ }
