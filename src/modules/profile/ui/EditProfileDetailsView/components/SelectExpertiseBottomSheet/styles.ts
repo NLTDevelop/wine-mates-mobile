@@ -1,10 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
-import { WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
+
+const windowHeight = Dimensions.get('window').height;
 
 export const getStyles = (colors: IColors, bottomInset: number, topInset: number) => {
-    const maxHeight = WINDOW_HEIGHT - topInset;
+    const maxHeight = windowHeight - topInset;
 
     const styles = StyleSheet.create({
         bottomSheetContainer: {
@@ -50,4 +51,3 @@ export const getStyles = (colors: IColors, bottomInset: number, topInset: number
 
     return styles;
 };
-

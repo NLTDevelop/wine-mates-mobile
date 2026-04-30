@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { format } from 'date-fns';
 
 interface IUseEventDateTimeFormatterProps {
-    eventDate: string;
-    eventTime: string;
+    value: string;
+    mode: 'date' | 'time';
 }
 
 const getLocalDateFromApi = (value: string) => {
@@ -24,11 +24,16 @@ const getLocalDateFromApi = (value: string) => {
     return new Date(year, month - 1, day);
 };
 
-export const useEventDateTimeFormatter = ({ eventDate, eventTime }: IUseEventDateTimeFormatterProps) => {
-    const formattedDate = useMemo(() => {
-        if (!eventDate) return '';
+export const useEventDateTimeFormatter = ({ value, mode }: IUseEventDateTimeFormatterProps) => {
+    const formattedValue = useMemo(() => {
+        if (!value) return '';
+
+        if (mode === 'time') {
+            return value;
+        }
+
         try {
-            const localDate = getLocalDateFromApi(eventDate);
+            const localDate = getLocalDateFromApi(value);
             if (!localDate) {
                 return '';
             }
@@ -37,12 +42,7 @@ export const useEventDateTimeFormatter = ({ eventDate, eventTime }: IUseEventDat
         } catch {
             return '';
         }
-    }, [eventDate]);
+    }, [mode, value]);
 
-    const formattedTime = useMemo(() => {
-        if (!eventTime) return '';
-        return eventTime;
-    }, [eventTime]);
-
-    return { formattedDate, formattedTime };
+    return { formattedValue };
 };

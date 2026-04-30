@@ -113,20 +113,24 @@ export const AddWineSetView = () => {
                 </View>
             </ScreenContainer>
 
-            <RepeatRuleModal
-                visible={isRepeatModalVisible}
-                onClose={onCloseRepeatModal}
-                items={repeatRuleItems}
-                selectedValue={repeatRule}
-                onConfirm={onConfirmRepeatRule}
-            />
-            <TastingTypeModal
-                visible={isTastingTypeModalVisible}
-                onClose={onCloseTastingTypeModal}
-                items={tastingTypeItems}
-                selectedValue={tastingType}
-                onConfirm={onConfirmTastingType}
-            />
+            {isRepeatModalVisible && (
+                <RepeatRuleModal
+                    visible={isRepeatModalVisible}
+                    onClose={onCloseRepeatModal}
+                    items={repeatRuleItems}
+                    selectedValue={repeatRule}
+                    onConfirm={onConfirmRepeatRule}
+                />
+            )}
+            {isTastingTypeModalVisible && (
+                <TastingTypeModal
+                    visible={isTastingTypeModalVisible}
+                    onClose={onCloseTastingTypeModal}
+                    items={tastingTypeItems}
+                    selectedValue={tastingType}
+                    onConfirm={onConfirmTastingType}
+                />
+            )}
             <EventCreatedAlert
                 visible={isEventCreatedAlertVisible}
                 onClose={onCloseEventCreatedAlert}

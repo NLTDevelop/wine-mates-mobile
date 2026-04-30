@@ -350,16 +350,24 @@
     "event": {
         "addEvent": "Додати винну подію",
         "updateEvent": "Оновити події",
+        "basicInfo": "Основна інформація",
+        "locationAndSchedule": "Локація та розклад",
+        "bookingAndDetails": "Бронювання та деталі",
         "tastingTheme": "Тема дегустації",
         "restaurant": "Місце зустрічі",
         "location": "Локація",
         "eventDate": "Дата події",
         "eventTime": "Час події",
+        "eventStartDate": "Початкова дата",
+        "eventEndDate": "Кінцева дата",
+        "eventStartTime": "Початок",
+        "eventEndTime": "Кінець",
         "speakerName": "Ім'я спікера",
         "description": "Опис",
         "shortDescription": "Короткий опис",
         "phoneNumber": "Номер телефону",
         "price": "Ціна",
+        "currency": "Валюта",
         "eventLanguage": "Мова події",
         "numberOfSeats": "Кількість місць",
         "selectLocation": "Вибрати локацію",
@@ -393,7 +401,10 @@
         "participationConditionGuest": "Хочу, щоб мене пригостили",
         "tastings": "Дегустація",
         "parties": "Вечірка",
-        "pastDateError": "Не можна обрати дату в минулому"
+        "pastDateError": "Не можна обрати дату в минулому",
+        "invalidStartDateError": "Початкова дата не може бути пізніше кінцевої",
+        "invalidEndDateError": "Кінцева дата не може бути раніше початкової",
+        "invalidEndTimeError": "Час завершення не може бути раніше часу початку"
     },
     "faq": {
         "faq": "FAQ"
@@ -406,6 +417,10 @@
         "location": "Локація",
         "date": "Дата",
         "time": "Час",
+        "startDate": "Дата початку",
+        "endDate": "Дата завершення",
+        "startTime": "Час початку",
+        "endTime": "Час завершення",
         "price": "Ціна",
         "speaker": "Спікер",
         "distance": "Відстань",
@@ -437,6 +452,7 @@
         "paymentDetails": "Картка/IBAN/Email",
         "description": "Опис",
         "downloadFile": "Завантажити файл",
-        "downloadHint": "Ви можете завантажити QR-код для оплати."
+        "downloadHint": "Ви можете завантажити QR-код для оплати.",
+        "noVisiblePaymentMethods": "Немає видимих способів оплати"
     }
 }

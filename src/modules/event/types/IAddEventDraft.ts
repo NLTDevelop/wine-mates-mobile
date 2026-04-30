@@ -1,4 +1,3 @@
-import { Currency } from '@/entities/events/enums/Currency';
 import { EventType } from '@/entities/events/enums/EventType';
 import { ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
 import { Sex } from '@/entities/events/enums/Sex';
@@ -14,19 +13,22 @@ export interface IAddEventDraft {
         latitude: number;
         longitude: number;
     };
-    eventDate: string;
-    eventTime: string;
+    eventStartDate: string;
+    eventEndDate: string;
+    eventStartTime: string;
+    eventEndTime: string;
     phoneNumber: string;
+    paymentMethodIds: number[];
     price: string;
-    currency: Currency;
+    currency: string;
     speakerName: string;
     language: string;
     seats: string;
     minAge: number;
     maxAge: number;
-    sex: Sex;
+    sex?: Sex;
     eventType: EventType;
     tastingType: TastingType;
-    participationCondition: ParticipationCondition;
+    participationCondition?: ParticipationCondition;
     requiresConfirmation: boolean;
 }

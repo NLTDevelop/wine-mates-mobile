@@ -32,7 +32,16 @@ export const WineDetailsView = observer(() => {
         myReview,
     );
     const { refreshControl } = useRefresh(onRefresh);
-    const { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave, isLoading, isSaving } = useAddToFavoriteBottomSheet(details?.id, onUpdateIsSaved);
+    const {
+        favoriteData,
+        isVisible: isAddToFavoriteModalVisible,
+        onItemPress,
+        onClose,
+        onOpen,
+        onSave,
+        isLoading,
+        isSaving,
+    } = useAddToFavoriteBottomSheet(details?.id, onUpdateIsSaved);
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
     const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);
@@ -69,15 +78,17 @@ export const WineDetailsView = observer(() => {
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
                     />
                 )}
-                <AddToFavoriteBottomSheet
-                    modalRef={addToFavoriteModalRef}
-                    data={favoriteData}
-                    onItemPress={onItemPress}
-                    onClose={onClose}
-                    onSave={onSave}
-                    isLoading={isLoading}
-                    isSaving={isSaving}
-                />
+                {isAddToFavoriteModalVisible && (
+                    <AddToFavoriteBottomSheet
+                        isVisible={isAddToFavoriteModalVisible}
+                        data={favoriteData}
+                        onItemPress={onItemPress}
+                        onClose={onClose}
+                        onSave={onSave}
+                        isLoading={isLoading}
+                        isSaving={isSaving}
+                    />
+                )}
             </ScreenContainer>
         </WithErrorHandler>
     );

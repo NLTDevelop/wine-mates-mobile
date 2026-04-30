@@ -110,7 +110,7 @@ export const EventCard = ({
                 </View>
             )}
 
-            {!isModalContent && (
+            {!isModalContent && isModalVisible && (
                 <BottomModal
                     visible={isModalVisible}
                     onClose={onCloseModal}

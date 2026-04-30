@@ -206,6 +206,20 @@ class EventsService {
             return { isError: true, data: null, message: '' } as any;
         }
     };
+
+    getCurrencies = async (): Promise<IResponse<string[]>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.eventCurrencies}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> getCurrencies: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
 }
 
 export const eventsService = new EventsService(requester, links);

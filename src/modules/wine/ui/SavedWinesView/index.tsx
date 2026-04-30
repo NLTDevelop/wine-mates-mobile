@@ -24,7 +24,15 @@ export const SavedWinesView = observer(() => {
 
     const { isLoading, lists, isError, getSavedWines } = useSavedWines();
     const { refreshControl } = useRefresh(getSavedWines);
-    const { createListModalRef, listName, setListName, onClose, onOpen, onCreate, isCreating } = useCreateListBottomSheet();
+    const {
+        isVisible: isCreateListModalVisible,
+        listName,
+        setListName,
+        onClose,
+        onOpen,
+        onCreate,
+        isCreating,
+    } = useCreateListBottomSheet();
     const { onDeleteList, isDeleting, isAlertVisible, selectedList, onCloseAlert, onConfirmDelete } = useDeleteFavoriteList();
 
     useEffect(() => {
@@ -32,15 +40,21 @@ export const SavedWinesView = observer(() => {
     }, [getSavedWines]);
 
     const keyExtractor = useCallback((item: IFavoriteWineList, index: number) => `${item.id || index}`, []);
+    const createOnLongPress = useCallback((id: number, name: string) => {
+        return () => {
+            onDeleteList(id, name);
+        };
+    }, [onDeleteList]);
+
     const renderItem = useCallback(
         ({ item }: { item: IFavoriteWineList }) => (
             <SavedWineListItem
                 listId={item.id}
                 title={item.name}
-                onLongPress={() => onDeleteList(item.id, item.name)}
+                onLongPress={createOnLongPress(item.id, item.name)}
             />
         ),
-        [onDeleteList],
+        [createOnLongPress],
     );
 
     return (
@@ -74,14 +88,16 @@ export const SavedWinesView = observer(() => {
                         />
                     </View>
                 )}
-                <CreateListBottomSheet
-                    modalRef={createListModalRef}
-                    value={listName}
-                    onChangeValue={setListName}
-                    onCreate={onCreate}
-                    onClose={onClose}
-                    isCreating={isCreating}
-                />
+                {isCreateListModalVisible && (
+                    <CreateListBottomSheet
+                        isVisible={isCreateListModalVisible}
+                        value={listName}
+                        onChangeValue={setListName}
+                        onCreate={onCreate}
+                        onClose={onClose}
+                        isCreating={isCreating}
+                    />
+                )}
                 {selectedList && (
                     <DeleteListAlert
                         visible={isAlertVisible}

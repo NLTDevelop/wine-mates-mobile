@@ -1,23 +1,22 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useCallback, useRef } from 'react';
+import { useCallback, useState } from 'react';
 import { useUiContext } from '@/UIProvider';
 
 export const useSelectLanguageBottomSheet = () => {
     const { setLocale } = useUiContext();
-    const selectLanguageModalRef = useRef<BottomSheetModal | null>(null);
+    const [isVisible, setIsVisible] = useState(false);
 
     const onClose = useCallback(() => {
-        selectLanguageModalRef.current?.dismiss();
+        setIsVisible(false);
     }, []);
 
     const onOpen = useCallback(() => {
-        selectLanguageModalRef.current?.present();
+        setIsVisible(true);
     }, []);
 
     const onItemPress = useCallback((item: string) => {
         setLocale(item);
-        selectLanguageModalRef.current?.dismiss();
+        setIsVisible(false);
     }, [setLocale]);
 
-    return { selectLanguageModalRef, onItemPress, onClose, onOpen };
+    return { isVisible, onItemPress, onClose, onOpen };
 };
