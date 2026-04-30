@@ -8,18 +8,24 @@ import { IWineSetItem } from './IWineSetItem';
 export interface IEvent {
     id: number;
     theme: string;
-    eventDate: string;
-    eventTime: string;
+    eventDate?: string;
+    eventTime?: string;
+    eventStartDate?: string;
+    eventEndDate?: string;
+    eventStartTime?: string;
+    eventEndTime?: string;
     price: number;
     priceUsd: number;
-    currency: Currency;
+    currency: Currency | string;
     description: string;
     latitude: number;
     longitude: number;
-    distanceKm: string;
+    distanceKm: string | number | null;
+    acceptedCount?: number;
+    isSaved?: boolean;
     eventType?: EventType;
     tastingType?: TastingType;
-    seats: ISeat;
+    seats?: ISeat;
     participationCondition?: ParticipationCondition;
 }
 
@@ -36,11 +42,16 @@ export interface IEventDetail {
     description: string;
     date?: string;
     eventDate?: string;
+    eventStartDate?: string;
+    eventEndDate?: string;
     startTime?: string;
     endTime?: string;
     eventTime?: string;
+    eventStartTime?: string;
+    eventEndTime?: string;
     attendees?: string[];
     attendeesCount?: number;
+    acceptedCount?: number;
     price: number;
     eventType?: EventType;
     isSaved?: boolean;
@@ -54,7 +65,7 @@ export interface IEventDetail {
     distance?: number | string;
     distanceKm?: number | string | null;
     language: string;
-    seats: ISeat;
+    seats?: ISeat;
     currency?: Currency;
     tastingType?: TastingType;
     participationCondition?: ParticipationCondition;

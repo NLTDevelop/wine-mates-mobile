@@ -15,6 +15,8 @@ interface IProps {
     closeText: string;
     currentMonth: string;
     markedDates: MarkedDates;
+    minDate?: string;
+    maxDate?: string;
     onClose: () => void;
     onDayPress: (item: DateData) => void;
     onMonthChange: (month: DateData) => void;
@@ -26,6 +28,8 @@ export const CalendarModal = ({
     closeText,
     currentMonth,
     markedDates,
+    minDate,
+    maxDate,
     onClose,
     onDayPress,
     onMonthChange,
@@ -58,6 +62,8 @@ export const CalendarModal = ({
                         markedDates={markedDates}
                         onDayPress={onDayPress}
                         handleMonthChange={onMonthChange}
+                        minDate={minDate}
+                        maxDate={maxDate}
                         calendarStyle={styles.calendar}
                     />
 

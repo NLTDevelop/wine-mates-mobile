@@ -1,18 +1,15 @@
 import { useCallback, useMemo } from 'react';
 import { View, TouchableOpacity, FlatList } from 'react-native';
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetBackdropProps, WINDOW_HEIGHT,
-    BottomSheetView } from '@gorhom/bottom-sheet';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { CrossIcon } from '@assets/icons/CrossIcon';
 import { getStyles } from './styles';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IFavoriteItem } from '@/modules/wine/presenters/useAddToFavoriteBottomSheet';
+import { IFavoriteItem } from '@/modules/wine/types/IFavoriteItem';
 import { Checkbox } from '@/UIKit/Checkbox';
 import { Button } from '@/UIKit/Button';
+import { BottomModal } from '@/UIKit/BottomModal/ui';
 
 interface IProps {
-    modalRef: React.RefObject<BottomSheetModal | null>;
+    isVisible: boolean;
     onItemPress: (item: IFavoriteItem) => void;
     onClose: () => void;
     data: IFavoriteItem[];
@@ -21,46 +18,30 @@ interface IProps {
     isSaving?: boolean;
 }
 
-export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data, onSave, isLoading, isSaving }: IProps) => {
+export const AddToFavoriteBottomSheet = ({ isVisible, onItemPress, onClose, data, onSave, isLoading, isSaving }: IProps) => {
     const { colors, t } = useUiContext();
-    const { top, bottom } = useSafeAreaInsets();
-    const styles = useMemo(() => getStyles(colors, bottom, top), [colors, bottom, top]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
 
     const keyExtractor = useCallback((item: IFavoriteItem) => `${item.id}`, []);
 
-    const renderItem = useCallback(({ item }: { item: IFavoriteItem }) => (
-        <TouchableOpacity onPress={() => onItemPress(item)} style={styles.item}>
-            <Typography variant="h6" text={item.title} />
-            <Checkbox isChecked={item.isSelected} onPress={() => onItemPress(item)} />
-        </TouchableOpacity>
-    ), [onItemPress, styles]);
+    const createOnItemPress = useCallback((item: IFavoriteItem) => {
+        return () => {
+            onItemPress(item);
+        };
+    }, [onItemPress]);
 
-    const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
-        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
-    ), []);
+    const renderItem = useCallback(({ item }: { item: IFavoriteItem }) => (
+        <TouchableOpacity onPress={createOnItemPress(item)} style={styles.item}>
+            <Typography variant="h6" text={item.title} />
+            <Checkbox isChecked={item.isSelected} onPress={createOnItemPress(item)} />
+        </TouchableOpacity>
+    ), [createOnItemPress, styles]);
 
     const renderSeparator = useCallback(() => <View style={styles.itemSeparator} />, [styles]);
 
     return (
-        <BottomSheetModal
-            ref={modalRef}
-            topInset={top}
-            enablePanDownToClose
-            enableDynamicSizing
-            maxDynamicContentSize={WINDOW_HEIGHT}
-            handleComponent={() => null}
-            backdropComponent={renderBackdrop}
-            backgroundStyle={styles.bottomSheetContainer}
-            onDismiss={onClose}
-        >
-            <BottomSheetView style={styles.container}>
-                <View style={styles.header}>
-                    <View style={styles.headerSpacer} />
-                    <Typography variant="h4" text={t('common.save')} />
-                    <TouchableOpacity onPress={onClose} hitSlop={20}>
-                        <CrossIcon />
-                    </TouchableOpacity>
-                </View>
+        <BottomModal visible={isVisible} onClose={onClose} title={t('common.save')}>
+            <View style={styles.container}>
                 <FlatList
                     data={data}
                     keyExtractor={keyExtractor}
@@ -76,7 +57,7 @@ export const AddToFavoriteBottomSheet = ({ modalRef, onItemPress, onClose, data,
                     disabled={isSaving || isLoading}
                     inProgress={isSaving}
                 />
-            </BottomSheetView>
-        </BottomSheetModal>
+            </View>
+        </BottomModal>
     );
 };

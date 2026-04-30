@@ -4,7 +4,7 @@ import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Typography } from '@/UIKit/Typography';
-import { CalendarModal } from './components/CalendarModal';
+import { CalendarModal } from '@/UIKit/CalendarModal';
 import { RadiusButtons } from './components/RadiusButtons';
 import { useEventFiltersView } from './presenters/useEventFiltersView';
 import { getStyles } from './styles';

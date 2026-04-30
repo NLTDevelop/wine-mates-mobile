@@ -16,7 +16,7 @@ interface IUseMyWineSearchBarProps {
 export const useMyWineSearchBar = ({ onSearch, scrollToTop }: IUseMyWineSearchBarProps) => {
     const search = wineListsModel.search;
     const { 
-        filtersModalRef, 
+        isVisible,
         onOpen, 
         onClose, 
         hasFilters, 
@@ -124,7 +124,7 @@ export const useMyWineSearchBar = ({ onSearch, scrollToTop }: IUseMyWineSearchBa
         search, 
         onSearchChange, 
         onFilterPress, 
-        filtersModalRef, 
+        isFiltersModalVisible: isVisible,
         onCloseFilters: onClose, 
         hasFilters, 
         onClearFilters: onClear, 

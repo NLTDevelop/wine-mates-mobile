@@ -1,11 +1,10 @@
 import { useCallback, useMemo } from 'react';
-import { Pressable, View } from 'react-native';
+import { Dimensions, Pressable, View } from 'react-native';
 import {
     BottomSheetBackdrop,
     BottomSheetBackdropProps,
     BottomSheetModal,
     BottomSheetView,
-    WINDOW_HEIGHT,
 } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
@@ -17,6 +16,8 @@ import { LevelButton } from '@/modules/registration/ui/components/LevelButton';
 import { WineLoverIcon } from '@assets/icons/WineLoverIcon';
 import { WineExpertIcon } from '@assets/icons/WineExpertIcon';
 import { WinemakerIcon } from '@assets/icons/WinemakerIcon';
+
+const windowHeight = Dimensions.get('window').height;
 
 interface IProps {
     modalRef: React.RefObject<BottomSheetModal | null>;
@@ -36,6 +37,21 @@ export const SelectExpertiseBottomSheet = ({ modalRef, selectedValue, onSelect, 
         ),
         []
     );
+    const renderHandle = useCallback(() => {
+        return null;
+    }, []);
+
+    const onSelectLover = useCallback(() => {
+        onSelect(WineExperienceLevelEnum.LOVER);
+    }, [onSelect]);
+
+    const onSelectExpert = useCallback(() => {
+        onSelect(WineExperienceLevelEnum.EXPERT);
+    }, [onSelect]);
+
+    const onSelectCreator = useCallback(() => {
+        onSelect(WineExperienceLevelEnum.CREATOR);
+    }, [onSelect]);
 
     return (
         <BottomSheetModal
@@ -43,8 +59,8 @@ export const SelectExpertiseBottomSheet = ({ modalRef, selectedValue, onSelect, 
             topInset={top}
             enablePanDownToClose
             enableDynamicSizing
-            maxDynamicContentSize={WINDOW_HEIGHT}
-            handleComponent={() => null}
+            maxDynamicContentSize={windowHeight}
+            handleComponent={renderHandle}
             backdropComponent={renderBackdrop}
             backgroundStyle={styles.bottomSheetContainer}
             onDismiss={onClose}
@@ -71,21 +87,20 @@ export const SelectExpertiseBottomSheet = ({ modalRef, selectedValue, onSelect, 
                     <LevelButton
                         text={t('wineLevel.lover')}
                         typeIcon={<WineLoverIcon />}
-                        onPress={() => onSelect(WineExperienceLevelEnum.LOVER)}
+                        onPress={onSelectLover}
                     />
                     <LevelButton
                         text={t('wineLevel.expert')}
                         typeIcon={<WineExpertIcon />}
-                        onPress={() => onSelect(WineExperienceLevelEnum.EXPERT)}
+                        onPress={onSelectExpert}
                     />
                     <LevelButton
                         text={t('wineLevel.creator')}
                         typeIcon={<WinemakerIcon />}
-                        onPress={() => onSelect(WineExperienceLevelEnum.CREATOR)}
+                        onPress={onSelectCreator}
                     />
                 </View>
             </BottomSheetView>
         </BottomSheetModal>
     );
 };
-

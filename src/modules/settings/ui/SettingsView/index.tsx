@@ -15,7 +15,7 @@ import { SelectLanguageBottomSheet } from '../components/SelectLanguageBottomShe
 export const SettingsView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { selectLanguageModalRef, onItemPress, onClose, onOpen } = useSelectLanguageBottomSheet()
+    const { isVisible: isLanguageModalVisible, onItemPress, onClose, onOpen } = useSelectLanguageBottomSheet()
     const { isVisible, onShowLogoutModal, onHideLogoutModal, onLogout } = useLogoutModal();
     const { APP_BUTTONS, BUTTONS, ACCOUNT_BUTTONS } = useSettings(onShowLogoutModal, onOpen);
 
@@ -48,7 +48,13 @@ export const SettingsView = () => {
                 </View>
             </View>
             <LogoutModal isVisible={isVisible} onHide={onHideLogoutModal} onLogout={onLogout}/>
-            <SelectLanguageBottomSheet modalRef={selectLanguageModalRef} onClose={onClose} onItemPress={onItemPress}/>
+            {isLanguageModalVisible && (
+                <SelectLanguageBottomSheet
+                    isVisible={isLanguageModalVisible}
+                    onClose={onClose}
+                    onItemPress={onItemPress}
+                />
+            )}
         </ScreenContainer>
     );
 };

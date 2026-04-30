@@ -1,6 +1,6 @@
 import { RefObject, useCallback, useMemo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetFlatList, WINDOW_HEIGHT} from '@gorhom/bottom-sheet';
+import { Dimensions, View, TouchableOpacity } from 'react-native';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -10,6 +10,8 @@ import { CrossIcon } from '@assets/icons/CrossIcon';
 import { CountryListItem } from '../CountryListItem';
 import { SearchBar } from '@/UIKit/SearchBar';
 import { ICountry } from '../../types/ICountry';
+
+const windowHeight = Dimensions.get('window').height;
 
 interface IProps {
     modalRef: RefObject<BottomSheetModal | null>;
@@ -23,7 +25,7 @@ export const CountryPickerBottomSheet = ({ modalRef, handleCountryPress, handleC
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
     const { countriesData, search, setSearch } = useCountryPickerModal();
-    const snapPoints = useMemo(() => [WINDOW_HEIGHT], []);
+    const snapPoints = useMemo(() => [windowHeight], []);
     const renderBackdrop = useCallback((props: any) => (
         <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} onPress={handleClose} />
     ), [handleClose]);

@@ -51,7 +51,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
 
     const formatLocalizedTime = (value?: string) => {
         if (!value) {
-            return '';
+            return '-';
         }
 
         const [hours, minutes] = value.split(':');
@@ -72,15 +72,65 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         }
     };
 
+    const formatSeats = (seats: IEventDetail['seats'], acceptedCount?: number) => {
+        if (typeof seats === 'number') {
+            return String(seats);
+        }
+
+        if (!seats || typeof seats !== 'object') {
+            return '-';
+        }
+
+        const total = Number(seats.total);
+        const left = Number(seats.left);
+
+        if (!Number.isFinite(total)) {
+            return '-';
+        }
+
+        if (Number.isFinite(left)) {
+            const occupied = Math.max(0, total - left);
+            return `${occupied}/${total}`;
+        }
+
+        if (typeof acceptedCount === 'number') {
+            return `${acceptedCount}/${total}`;
+        }
+
+        return `0/${total}`;
+    };
+
     const formatPrice = (price: number, currency?: string) => {
         const symbolByCurrency: Record<string, string> = {
             UAH: '₴',
             USD: '$',
             EUR: '€',
+            GBP: '£',
+            PLN: 'zł',
+            JPY: '¥',
+            CNY: '¥',
+            INR: '₹',
+            KRW: '₩',
+            TRY: '₺',
+            RUB: '₽',
+            CHF: '₣',
+            SEK: 'kr',
+            NOK: 'kr',
+            DKK: 'kr',
+            CZK: 'Kč',
+            HUF: 'Ft',
+            RON: 'lei',
+            AMD: '֏',
         };
 
-        const symbol = symbolByCurrency[(currency || '').toUpperCase()] || '₴';
-        return `${symbol}${price}`;
+        const normalizedCurrency = (currency || '').trim().toUpperCase();
+        const symbol = symbolByCurrency[normalizedCurrency] || normalizedCurrency;
+
+        if (!symbol) {
+            return `${price}`;
+        }
+
+        return `${price} ${symbol}`;
     };
 
     const calculateDistanceKm = (
@@ -200,15 +250,6 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return [];
         }
 
-        const dateValue = eventDetail.eventDate || eventDetail.date;
-        const timeStartValue = eventDetail.eventTime || eventDetail.startTime;
-        const timeEndValue = eventDetail.endTime;
-        const formattedTimeStart = formatLocalizedTime(timeStartValue);
-        const formattedTimeEnd = formatLocalizedTime(timeEndValue);
-        const formattedTime = formattedTimeStart && formattedTimeEnd
-            ? `${formattedTimeStart} - ${formattedTimeEnd}`
-            : formattedTimeStart || '-';
-
         const confirmationValue = eventDetail.requiresConfirmation
             ? t('eventDetails.confirmationRequired')
             : t('eventDetails.noConfirmation');
@@ -218,8 +259,26 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             { key: 'description', label: t('eventDetails.description'), value: getValueOrDash(eventDetail.description) },
             { key: 'restaurant', label: t('eventDetails.restaurant'), value: getValueOrDash(eventDetail.restaurantName || eventDetail.restaurant) },
             { key: 'location', label: t('eventDetails.location'), value: getValueOrDash(eventDetail.locationLabel || eventDetail.location) },
-            { key: 'date', label: t('eventDetails.date'), value: formatLocalizedDate(dateValue) },
-            { key: 'time', label: t('eventDetails.time'), value: formattedTime },
+            {
+                key: 'eventStartDate',
+                label: t('eventDetails.startDate'),
+                value: formatLocalizedDate(eventDetail.eventStartDate || eventDetail.eventDate || eventDetail.date),
+            },
+            {
+                key: 'eventEndDate',
+                label: t('eventDetails.endDate'),
+                value: formatLocalizedDate(eventDetail.eventEndDate || eventDetail.eventDate || eventDetail.date),
+            },
+            {
+                key: 'eventStartTime',
+                label: t('eventDetails.startTime'),
+                value: formatLocalizedTime(eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime),
+            },
+            {
+                key: 'eventEndTime',
+                label: t('eventDetails.endTime'),
+                value: formatLocalizedTime(eventDetail.eventEndTime || eventDetail.endTime),
+            },
             { key: 'tastingType', label: t('event.tastingType'), value: formatTastingType(eventDetail.tastingType) },
             { key: 'price', label: t('eventDetails.price'), value: formatPrice(eventDetail.price, eventDetail.currency) },
             { key: 'speaker', label: t('eventDetails.speaker'), value: getValueOrDash(eventDetail.speakerName || eventDetail.speaker) },
@@ -234,7 +293,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                 ),
             },
             { key: 'language', label: t('eventDetails.language'), value: formatLanguage(eventDetail.language) },
-            { key: 'seats', label: t('eventDetails.seats'), value: getValueOrDash(eventDetail.seats) },
+            { key: 'seats', label: t('eventDetails.seats'), value: formatSeats(eventDetail.seats, eventDetail.acceptedCount) },
             { key: 'confirmation', label: t('eventDetails.confirmationAvailability'), value: confirmationValue },
         ];
     })();
@@ -252,7 +311,8 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return null;
         }
 
-        const parsedDate = eventDetail.eventDate ? new Date(eventDetail.eventDate) : null;
+        const previewDate = eventDetail.eventStartDate || eventDetail.eventDate;
+        const parsedDate = previewDate ? new Date(previewDate) : null;
         const isDateValid = parsedDate && !Number.isNaN(parsedDate.getTime());
         const month = isDateValid
             ? new Intl.DateTimeFormat(locale || 'en', { month: 'short' }).format(parsedDate).replace('.', '').toUpperCase()
@@ -263,7 +323,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
 
         const formattedDateTime = (() => {
             if (!isDateValid) {
-                return eventDetail.eventTime || eventDetail.startTime || '';
+                return eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '';
             }
 
             const dateLabel = new Intl.DateTimeFormat(locale || 'en', {
@@ -274,7 +334,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                 .format(parsedDate)
                 .replace('.', '');
 
-            const rawTime = eventDetail.eventTime || eventDetail.startTime;
+            const rawTime = eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime;
             if (!rawTime) {
                 return dateLabel;
             }
@@ -300,17 +360,13 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             const currency = eventDetail.currency;
             if (currency) {
                 try {
-                    return new Intl.NumberFormat(locale || 'en', {
-                        style: 'currency',
-                        currency,
-                        maximumFractionDigits: 0,
-                    }).format(eventDetail.price || 0);
+                    return formatPrice(eventDetail.price || 0, currency);
                 } catch {
-                    return `${currency} ${eventDetail.price || 0}`;
+                    return formatPrice(eventDetail.price || 0, currency);
                 }
             }
 
-            return `${eventDetail.price || 0}`;
+            return formatPrice(eventDetail.price || 0);
         })();
 
         const eventTypeLabel = eventDetail.eventType === EventType.Parties

@@ -1,16 +1,14 @@
-import { useCallback, useMemo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
-import { BottomSheetModal, BottomSheetView, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import { useMemo } from 'react';
+import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
-import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
-import { CrossIcon } from '@assets/icons/CrossIcon';
 import { getStyles } from './styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomSheetInput } from '@/UIKit/BottomSheetInput';
+import { BottomModal } from '@/UIKit/BottomModal/ui';
 
 interface IProps {
-    modalRef: React.RefObject<BottomSheetModal | null>;
+    isVisible: boolean;
     value: string;
     onChangeValue: (v: string) => void;
     onCreate: () => void;
@@ -18,37 +16,14 @@ interface IProps {
     isCreating?: boolean;
 }
 
-export const CreateListBottomSheet = ({ modalRef, value, onChangeValue, onCreate, onClose, isCreating }: IProps) => {
+export const CreateListBottomSheet = ({ isVisible, value, onChangeValue, onCreate, onClose, isCreating }: IProps) => {
     const { colors, t } = useUiContext();
     const { bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
 
-    const renderBackdrop = useCallback(
-        (props: BottomSheetBackdropProps) => (
-            <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
-        ),
-        [],
-    );
-
     return (
-        <BottomSheetModal
-            ref={modalRef}
-            enablePanDownToClose
-            keyboardBehavior="interactive"
-            keyboardBlurBehavior="restore"
-            handleComponent={() => null}
-            backdropComponent={renderBackdrop}
-            backgroundStyle={styles.bottomSheetContainer}
-            onDismiss={onClose}
-        >
-            <BottomSheetView style={styles.container}>
-                <View style={styles.header}>
-                    <View style={styles.headerSpacer} />
-                    <Typography variant="h4" text={t('savedWine.createList')} />
-                    <TouchableOpacity onPress={onClose} hitSlop={20}>
-                        <CrossIcon />
-                    </TouchableOpacity>
-                </View>
+        <BottomModal visible={isVisible} onClose={onClose} title={t('savedWine.createList')}>
+            <View style={styles.container}>
                 <BottomSheetInput
                     value={value}
                     onChangeText={onChangeValue}
@@ -63,7 +38,7 @@ export const CreateListBottomSheet = ({ modalRef, value, onChangeValue, onCreate
                     containerStyle={styles.button}
                     disabled={!value || isCreating}
                 />
-            </BottomSheetView>
-        </BottomSheetModal>
+            </View>
+        </BottomModal>
     );
 };
