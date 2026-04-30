@@ -393,7 +393,16 @@
         "participationConditionGuest": "Хочу, щоб мене пригостили",
         "tastings": "Дегустація",
         "parties": "Вечірка",
-        "pastDateError": "Не можна обрати дату в минулому"
+        "pastDateError": "Не можна обрати дату в минулому",
+        "listTitle": "Події",
+        "created": "Створені",
+        "saved": "Збережені",
+        "applied": "Заброньовані",
+        "cancelled": "Скасовано",
+        "finished": "Завершено",
+        "confirmed": "Підтверджено",
+        "pending": "В очікування",
+        "rejected": "Відхилено"
     },
     "faq": {
         "faq": "FAQ"

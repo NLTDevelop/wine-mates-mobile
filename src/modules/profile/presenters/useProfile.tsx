@@ -18,7 +18,7 @@ export const useProfile = () => {
     }, [navigation]);
 
     const onEventsPress = useCallback(() => {
-        navigation.navigate('');
+        navigation.navigate('EventListView');
     }, [navigation]);
 
     const onFollowersPress = useCallback(() => {

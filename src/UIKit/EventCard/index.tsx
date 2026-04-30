@@ -12,9 +12,10 @@ import { MoneyIcon } from '@assets/icons/MoneyIcon';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { useEventCard } from './presenters/useEventCard';
 import { getStyles } from './styles';
+import { ISavedEvent } from '@/entities/events/types/ISavedEvent';
 
 interface IProps {
-    event: IEvent;
+    event: IEvent | ISavedEvent;
     isSelected: boolean;
     onReadMorePress: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
@@ -75,6 +76,11 @@ export const EventCard = ({
                     <MoneyIcon width={20} height={20} />
                     <Typography text={priceLabel} variant="body_400" style={styles.metaText} />
                 </View>
+                { "status" in event && event.status !== null && (
+                    <View style={styles.eventStatus}>
+                        <Typography text={event.status} variant="body_400" style={styles.metaText} />
+                    </View>
+                )}
             </View>
 
             <View style={styles.header}>

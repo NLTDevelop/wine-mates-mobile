@@ -389,7 +389,16 @@
         "participationConditionGuest": "Looking for a host",
         "tastings": "Tasting",
         "parties": "Party",
-        "pastDateError": "You cannot select a past date"
+        "pastDateError": "You cannot select a past date",
+         "listTitle": "Events",
+        "created": "Created",
+        "saved": "Saved",
+        "applied": "Applied",
+        "cancelled": "Cancelled",
+        "finished": "Finished",
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "rejected": "Rejected"
     },
     "faq": {
         "faq": "FAQ"

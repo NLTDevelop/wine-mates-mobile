@@ -9,6 +9,9 @@ import { CreateEventDto } from './dto/CreateEvent.dto';
 import { eventsModel } from './EventsModel';
 import countries from 'world-countries';
 import { IEventPriceRange } from './types/IEventPriceRange';
+import { IGetEventsParams } from './params/IGetEventsParams';
+import { ISavedEvent } from './types/ISavedEvent';
+import { IAppliedEvent } from './types/IAppliedEvent';
 
 class EventsService {
     constructor(
@@ -206,6 +209,99 @@ class EventsService {
             return { isError: true, data: null, message: '' } as any;
         }
     };
+
+
+    getCreatedEvents = async (params: IGetEventsParams): Promise<IResponse<IList<IEvent>>> => {
+        try {            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.createdEvents}`,
+                params,
+            });
+
+            if (!response.isError && response.data) {
+                const rows = response.data.rows || response.data.items || [];
+                const normalizedList: IList<IEvent> = {
+                    rows: Array.isArray(rows) ? rows : [],
+                    count: typeof response.data.count === 'number' ? response.data.count : rows.length,
+                    totalPages: 0,
+                };
+
+                if(params.offset === 0) {
+                    eventsModel.createdEvents = normalizedList;
+                } else {
+                    eventsModel.appendCreatedEvents(normalizedList);
+                }
+                return {
+                    ...response,
+                    data: normalizedList,
+                };
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> getCreatedEvents: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    }
+
+
+    getSavedEvents = async (params: IGetEventsParams): Promise<IResponse<IList<ISavedEvent>>> => {
+        try {            
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.favoriteEvents}`,
+                params,
+            });
+
+            if (!response.isError && response.data) {
+                const rows = response.data.rows || response.data.items || [];
+                const normalizedList: IList<ISavedEvent> = {
+                    rows: Array.isArray(rows) ? rows : [],
+                    count: typeof response.data.count === 'number' ? response.data.count : rows.length,
+                    totalPages: 0,
+                };
+
+                if(params.offset === 0) {
+                    eventsModel.savedEvents = normalizedList;
+                } else {
+                    eventsModel.appendSavedEvents(normalizedList);
+                }
+                return {
+                    ...response,
+                    data: normalizedList,
+                };
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> getSavedEvents: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    }
+
+    getAppliedEvents = async (): Promise<IResponse<IAppliedEvent[]>> => {
+        try {            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.appliedEvents}`,
+            });
+
+            if (!response.isError && response.data) {
+                const normalizedList: IAppliedEvent[] = Array.isArray(response.data) ? response.data : [];
+                eventsModel.appliedEvents = normalizedList;
+                return {
+                    ...response,
+                    data: normalizedList,
+                };
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> getAppliedEvents: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    }
+
+
 }
 
 export const eventsService = new EventsService(requester, links);

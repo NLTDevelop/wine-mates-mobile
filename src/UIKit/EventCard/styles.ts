@@ -37,6 +37,13 @@ export const getStyles = (colors: IColors) => {
             gap: scaleHorizontal(6),
             backgroundColor: colors.background_middle
         },
+        eventStatus: {
+            color: colors.text,
+            paddingHorizontal: scaleHorizontal(8),
+            paddingVertical: scaleVertical(6),
+            backgroundColor: colors.text_light,
+            borderRadius: scaleHorizontal(6),
+        },
         metaText: {
             color: colors.text,
         },

@@ -19,7 +19,13 @@ export interface IEvent {
     distanceKm: string;
     eventType?: EventType;
     tastingType?: TastingType;
+    seats: ISeat;
     participationCondition?: ParticipationCondition;
+}
+
+export interface ISeat{
+    total: number;
+    left: number;
 }
 
 export interface IEventDetail {
@@ -48,7 +54,7 @@ export interface IEventDetail {
     distance?: number | string;
     distanceKm?: number | string | null;
     language: string;
-    seats: number;
+    seats: ISeat;
     currency?: Currency;
     tastingType?: TastingType;
     participationCondition?: ParticipationCondition;
