@@ -346,16 +346,24 @@
     "event": {
         "addEvent": "Add wine event",
         "updateEvent": "Update event",
+        "basicInfo": "Basic info",
+        "locationAndSchedule": "Location & Schedule",
+        "bookingAndDetails": "Booking & Details",
         "tastingTheme": "Tasting theme",
         "restaurant": "Meeting place",
         "location": "Location",
         "eventDate": "Event date",
         "eventTime": "Event time",
+        "eventStartDate": "Event start date",
+        "eventEndDate": "Event end date",
+        "eventStartTime": "Start",
+        "eventEndTime": "End",
         "speakerName": "Speaker name",
         "description": "Description",
         "shortDescription": "Short description",
         "phoneNumber": "Phone number",
         "price": "Price",
+        "currency": "Currency",
         "eventLanguage": "Event language",
         "numberOfSeats": "Number of seats",
         "selectLocation": "Select location",
@@ -389,7 +397,10 @@
         "participationConditionGuest": "Looking for a host",
         "tastings": "Tasting",
         "parties": "Party",
-        "pastDateError": "You cannot select a past date"
+        "pastDateError": "You cannot select a past date",
+        "invalidStartDateError": "Start date cannot be later than end date",
+        "invalidEndDateError": "End date cannot be earlier than start date",
+        "invalidEndTimeError": "End time cannot be earlier than start time"
     },
     "faq": {
         "faq": "FAQ"
@@ -402,6 +413,10 @@
         "location": "Location",
         "date": "Date",
         "time": "Time",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "startTime": "Start time",
+        "endTime": "End time",
         "price": "Price",
         "speaker": "Speaker",
         "distance": "Distance",
@@ -433,6 +448,7 @@
         "paymentDetails": "Card/IBAN/Email",
         "description": "Description",
         "downloadFile": "Download file",
-        "downloadHint": "You can download the QR code for payment."
+        "downloadHint": "You can download the QR code for payment.",
+        "noVisiblePaymentMethods": "No visible payment methods"
     }
 }

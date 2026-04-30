@@ -56,88 +56,170 @@ export const useEventCard = ({
         onReadMorePress?.(event.id);
     }, [event.id, onReadMorePress]);
 
-    const parsedDate = useMemo(() => {
-        if (!event.eventDate) {
+    const startDateValue = useMemo(() => {
+        return event.eventStartDate || event.eventDate;
+    }, [event.eventDate, event.eventStartDate]);
+
+    const endDateValue = useMemo(() => {
+        return event.eventEndDate || event.eventDate;
+    }, [event.eventDate, event.eventEndDate]);
+
+    const startTimeValue = useMemo(() => {
+        return event.eventStartTime || event.eventTime;
+    }, [event.eventStartTime, event.eventTime]);
+
+    const endTimeValue = useMemo(() => {
+        return event.eventEndTime;
+    }, [event.eventEndTime]);
+
+    const parsedStartDate = useMemo(() => {
+        if (!startDateValue) {
             return null;
         }
 
-        const date = new Date(event.eventDate);
+        const date = new Date(startDateValue);
         if (Number.isNaN(date.getTime())) {
             return null;
         }
 
         return date;
-    }, [event.eventDate]);
+    }, [startDateValue]);
+
+    const parsedEndDate = useMemo(() => {
+        if (!endDateValue) {
+            return null;
+        }
+
+        const date = new Date(endDateValue);
+        if (Number.isNaN(date.getTime())) {
+            return null;
+        }
+
+        return date;
+    }, [endDateValue]);
 
     const month = useMemo(() => {
-        if (!parsedDate) {
+        if (!parsedStartDate) {
             return '';
         }
 
         return new Intl.DateTimeFormat(currentLocale, { month: 'short' })
-            .format(parsedDate)
+            .format(parsedStartDate)
             .replace('.', '')
             .toUpperCase();
-    }, [currentLocale, parsedDate]);
+    }, [currentLocale, parsedStartDate]);
 
     const day = useMemo(() => {
-        if (!parsedDate) {
+        if (!parsedStartDate) {
             return '';
         }
 
-        return new Intl.DateTimeFormat(currentLocale, { day: 'numeric' }).format(parsedDate);
-    }, [currentLocale, parsedDate]);
+        return new Intl.DateTimeFormat(currentLocale, { day: 'numeric' }).format(parsedStartDate);
+    }, [currentLocale, parsedStartDate]);
 
     const formattedDateTime = useMemo(() => {
-        if (!parsedDate) {
-            return event.eventTime || '';
+        if (!parsedStartDate) {
+            return startTimeValue || '';
         }
 
-        const dateLabel = new Intl.DateTimeFormat(currentLocale, {
+        const startDateLabel = new Intl.DateTimeFormat(currentLocale, {
             weekday: 'short',
             month: 'short',
             day: 'numeric',
         })
-            .format(parsedDate)
+            .format(parsedStartDate)
             .replace('.', '');
 
-        if (!event.eventTime) {
+        const endDateLabel = parsedEndDate
+            ? new Intl.DateTimeFormat(currentLocale, {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+            })
+                .format(parsedEndDate)
+                .replace('.', '')
+            : startDateLabel;
+
+        const dateLabel = startDateLabel === endDateLabel
+            ? startDateLabel
+            : `${startDateLabel} - ${endDateLabel}`;
+
+        if (!startTimeValue && !endTimeValue) {
             return dateLabel;
         }
 
-        const [hoursPart, minutesPart] = event.eventTime.split(':');
-        const hours = Number(hoursPart);
-        const minutes = Number(minutesPart);
-        if (Number.isNaN(hours) || Number.isNaN(minutes)) {
-            return `${dateLabel} · ${event.eventTime}`;
+        const formatTime = (value?: string) => {
+            if (!value) {
+                return '';
+            }
+
+            const [hoursPart, minutesPart] = value.split(':');
+            const hours = Number(hoursPart);
+            const minutes = Number(minutesPart);
+            if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+                return value;
+            }
+
+            const dateWithTime = new Date(parsedStartDate);
+            dateWithTime.setHours(hours, minutes, 0, 0);
+
+            return new Intl.DateTimeFormat(currentLocale, {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+            }).format(dateWithTime);
+        };
+
+        const formattedStartTime = formatTime(startTimeValue);
+        const formattedEndTime = formatTime(endTimeValue);
+
+        if (formattedStartTime && formattedEndTime) {
+            return `${dateLabel} · ${formattedStartTime}-${formattedEndTime}`;
         }
 
-        const dateWithTime = new Date(parsedDate);
-        dateWithTime.setHours(hours, minutes, 0, 0);
+        if (formattedStartTime) {
+            return `${dateLabel} · ${formattedStartTime}`;
+        }
 
-        const timeLabel = new Intl.DateTimeFormat(currentLocale, {
-            hour: 'numeric',
-            minute: '2-digit',
-        }).format(dateWithTime);
+        if (formattedEndTime) {
+            return `${dateLabel} · ${formattedEndTime}`;
+        }
 
-        return `${dateLabel} · ${timeLabel}`;
-    }, [currentLocale, event.eventTime, parsedDate]);
+        return dateLabel;
+    }, [currentLocale, endTimeValue, parsedEndDate, parsedStartDate, startTimeValue]);
 
     const priceLabel = useMemo(() => {
-        if (event.currency) {
-            try {
-                return new Intl.NumberFormat(currentLocale, {
-                    style: 'currency',
-                    currency: event.currency,
-                    maximumFractionDigits: 0,
-                }).format(event.price || 0);
-            } catch {
-                return `${event.currency} ${event.price}`;
-            }
+        const symbolByCurrency: Record<string, string> = {
+            UAH: '₴',
+            USD: '$',
+            EUR: '€',
+            GBP: '£',
+            PLN: 'zł',
+            JPY: '¥',
+            CNY: '¥',
+            INR: '₹',
+            KRW: '₩',
+            TRY: '₺',
+            RUB: '₽',
+            CHF: '₣',
+            SEK: 'kr',
+            NOK: 'kr',
+            DKK: 'kr',
+            CZK: 'Kč',
+            HUF: 'Ft',
+            RON: 'lei',
+            AMD: '֏',
+        };
+
+        const normalizedCurrency = (event.currency || '').trim().toUpperCase();
+        const symbol = symbolByCurrency[normalizedCurrency] || normalizedCurrency;
+
+        if (!symbol) {
+            return `${event.price}`;
         }
 
-        return `${event.price}`;
-    }, [currentLocale, event.currency, event.price]);
+        return `${event.price} ${symbol}`;
+    }, [event.currency, event.price]);
 
     const eventTypeLabel = event.eventType === EventType.Parties
         ? localization.t('event.parties')

@@ -3,6 +3,7 @@ import { TextInput } from 'react-native';
 import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { eventsService } from '@/entities/events/EventsService';
+import { EventType } from '@/entities/events/enums/EventType';
 import { RepeatRule, REPEAT_RULES } from '@/entities/events/enums/RepeatRule';
 import { TastingType, TASTING_TYPES } from '@/entities/events/enums/TastingType';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
@@ -234,6 +235,15 @@ export const useAddWineSetView = () => {
                 sortOrder: index + 1,
             }));
 
+            const partyPayload = draft.eventType === EventType.Parties
+                ? {
+                    minAge: draft.minAge,
+                    maxAge: draft.maxAge,
+                    sex: draft.sex,
+                    participationCondition: draft.participationCondition,
+                }
+                : {};
+
             const response = await eventsService.createEvent({
                 theme: draft.theme,
                 description: draft.description,
@@ -241,23 +251,23 @@ export const useAddWineSetView = () => {
                 locationLabel: draft.locationLabel,
                 latitude: draft.location.latitude,
                 longitude: draft.location.longitude,
-                eventDate: draft.eventDate,
-                eventTime: draft.eventTime,
+                eventStartDate: draft.eventStartDate,
+                eventEndDate: draft.eventEndDate,
+                eventStartTime: draft.eventStartTime,
+                eventEndTime: draft.eventEndTime,
+                paymentMethodIds: draft.paymentMethodIds,
                 price: Number(draft.price),
                 currency: draft.currency,
                 speakerName: draft.speakerName,
                 language: draft.language,
                 seats: Number(draft.seats),
                 phoneNumber: draft.phoneNumber,
-                minAge: draft.minAge,
-                maxAge: draft.maxAge,
-                sex: draft.sex,
                 eventType: draft.eventType,
                 tastingType,
-                participationCondition: draft.participationCondition,
                 requiresConfirmation: draft.requiresConfirmation,
                 repeatRule,
                 wineSet: mockWineSet,
+                ...partyPayload,
             }, draft.locationCountry);
 
             if (!response.isError) {

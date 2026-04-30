@@ -40,9 +40,9 @@ export const useCustomDay = ({ date, state, marking, colors, onPress, minDate, m
 
     const fillColor = useMemo(() => {
         if (!isSelected) return undefined;
-        if (!isRangeStart && !isRangeEnd) return colors.card;
+        if (!isRangeStart && !isRangeEnd) return colors.primary_secondary;
         return colors.primary;
-    }, [colors.card, colors.primary, isRangeEnd, isRangeStart, isSelected]);
+    }, [colors.primary, colors.primary_secondary, isRangeEnd, isRangeStart, isSelected]);
 
     const leftFillerStyle = useMemo<ViewStyle | undefined>(() => {
         if (!isSelected || isRangeStart || !fillColor) return undefined;

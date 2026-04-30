@@ -79,7 +79,7 @@ export const EventMapView = observer(() => {
                 />
             </ScreenContainer>
 
-            {selectedEvent && (
+            {selectedEvent && isModalVisible && (
                 <BottomModal
                     visible={isModalVisible}
                     onClose={onCloseModal}
