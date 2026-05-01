@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Keyboard } from 'react-native';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { ILanguageOption } from '../../../types/ILanguageOption';
 import { useLocalizedLanguageOptions } from '../../../presenters/useLocalizedLanguageOptions';
@@ -10,6 +11,9 @@ interface IProps {
 
 export const useLanguageSelector = ({ value, onChange }: IProps) => {
     const modalRef = useRef<BottomSheetModal>(null);
+    const pendingLanguageCodeRef = useRef<string | null>(null);
+    const frameRef = useRef<number | null>(null);
+    const [isMounted, setIsMounted] = useState(false);
     const [isOpened, setIsOpened] = useState(false);
     const { languageOptions } = useLocalizedLanguageOptions();
 
@@ -18,30 +22,59 @@ export const useLanguageSelector = ({ value, onChange }: IProps) => {
     }, [languageOptions, value]);
 
     const onOpen = useCallback(() => {
+        Keyboard.dismiss();
+        setIsMounted(true);
         setIsOpened(true);
-        modalRef.current?.present();
     }, []);
 
     const onClose = useCallback(() => {
-        setIsOpened(false);
         modalRef.current?.dismiss();
     }, []);
 
+    const onDismiss = useCallback(() => {
+        setIsOpened(false);
+        setIsMounted(false);
+        const pendingLanguageCode = pendingLanguageCodeRef.current;
+
+        if (pendingLanguageCode) {
+            pendingLanguageCodeRef.current = null;
+            onChange(pendingLanguageCode);
+        }
+    }, [onChange]);
+
     const onSelect = useCallback(
         (item: ILanguageOption) => {
-            onChange(item.code);
-            setIsOpened(false);
+            pendingLanguageCodeRef.current = item.code;
             modalRef.current?.dismiss();
         },
-        [onChange],
+        [],
     );
+
+    useEffect(() => {
+        if (!isMounted || !isOpened) {
+            return undefined;
+        }
+
+        frameRef.current = requestAnimationFrame(() => {
+            modalRef.current?.present();
+        });
+
+        return () => {
+            if (frameRef.current) {
+                cancelAnimationFrame(frameRef.current);
+                frameRef.current = null;
+            }
+        };
+    }, [isMounted, isOpened]);
 
     return {
         modalRef,
         selectedLanguage,
+        isMounted,
         isOpened,
         onOpen,
         onClose,
+        onDismiss,
         onSelect,
     };
 };

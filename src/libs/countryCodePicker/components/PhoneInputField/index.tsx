@@ -22,8 +22,8 @@ interface IProps {
 export const PhoneInputField = ({ value, onChangeText, placeholder, editable = true, clearPhone, onChangeCountryCode, initialCca2 = null }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { loading, selectedCountry, visible, handleCountryPress, handlePhoneChange, countryModalRef, maxLength,
-        handleCountryCodePress, handleClose } = usePhoneInputField({ onChangeText, clearPhone, onChangeCountryCode, initialCca2: initialCca2 as any });
+    const { loading, selectedCountry, isPickerMounted, visible, onCountryPress, onPhoneChange, countryModalRef, maxLength,
+        onCountryCodePress, onClose, onDismiss } = usePhoneInputField({ onChangeText, clearPhone, onChangeCountryCode, initialCca2: initialCca2 as any });
 
     return (
         <>
@@ -37,7 +37,7 @@ export const PhoneInputField = ({ value, onChangeText, placeholder, editable = t
                         disabled={!editable}
                         style={styles.pickerButton}
                         onPressIn={Keyboard.dismiss}
-                        onPress={handleCountryCodePress}
+                        onPress={onCountryCodePress}
                     >
                         <Flag code={selectedCountry.cca2} style={styles.flag} />
                         <Typography variant="h6" style={styles.codeText}>
@@ -47,7 +47,7 @@ export const PhoneInputField = ({ value, onChangeText, placeholder, editable = t
                     </TouchableOpacity>
                     <CustomInput
                         value={value}
-                        onChangeText={handlePhoneChange}
+                        onChangeText={onPhoneChange}
                         placeholder={placeholder || ''}
                         keyboardType="phone-pad"
                         placeholderTextColor={colors.text_light}
@@ -57,12 +57,15 @@ export const PhoneInputField = ({ value, onChangeText, placeholder, editable = t
                     />
                 </View>
             )}
-            <CountryPickerBottomSheet
-                modalRef={countryModalRef}
-                handleCountryPress={handleCountryPress}
-                handleClose={handleClose}
-                showCountryCode
-            />
+            {isPickerMounted && (
+                <CountryPickerBottomSheet
+                    modalRef={countryModalRef}
+                    onCountryPress={onCountryPress}
+                    onClose={onClose}
+                    onDismiss={onDismiss}
+                    showCountryCode
+                />
+            )}
         </>
     );
 };

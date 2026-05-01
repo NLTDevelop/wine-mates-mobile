@@ -16,19 +16,22 @@ interface IProps {
 export const CountrySelector = ({ country, onChangeCountry }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { countryModalRef, handleClose, handlePress, isOpened, handleCountryPress } = useCountrySelector(onChangeCountry);
+    const { countryModalRef, onClose, onDismiss, onPress, isMounted, isOpened, onCountryPress } = useCountrySelector(onChangeCountry);
 
     return (
         <>
-            <TouchableOpacity style={styles.container} onPress={handlePress} onPressIn={Keyboard.dismiss}>
+            <TouchableOpacity style={styles.container} onPress={onPress} onPressIn={Keyboard.dismiss}>
                 <Typography variant="h6" text={country?.name || t('registration.country')} />
                 <ArrowDownIcon rotate={isOpened ? 180 : 0} />
             </TouchableOpacity>
-            <CountryPickerBottomSheet
-                modalRef={countryModalRef}
-                handleCountryPress={handleCountryPress}
-                handleClose={handleClose}
-            />
+            {isMounted && (
+                <CountryPickerBottomSheet
+                    modalRef={countryModalRef}
+                    onCountryPress={onCountryPress}
+                    onClose={onClose}
+                    onDismiss={onDismiss}
+                />
+            )}
         </>
     );
 };

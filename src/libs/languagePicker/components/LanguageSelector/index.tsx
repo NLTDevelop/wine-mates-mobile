@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Keyboard, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Flag from 'react-native-round-flags';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -16,7 +16,7 @@ interface IProps {
 export const LanguageSelector = ({ value, onChange }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { modalRef, selectedLanguage, isOpened, onOpen, onClose, onSelect } = useLanguageSelector({
+    const { modalRef, selectedLanguage, isMounted, isOpened, onOpen, onClose, onDismiss, onSelect } = useLanguageSelector({
         value,
         onChange,
     });
@@ -35,7 +35,7 @@ export const LanguageSelector = ({ value, onChange }: IProps) => {
 
     return (
         <>
-            <TouchableOpacity style={styles.container} onPress={onOpen} onPressIn={Keyboard.dismiss}>
+            <TouchableOpacity style={styles.container} onPress={onOpen}>
                 <View style={styles.leftContent}>
                     {renderFlag()}
                     <Typography
@@ -50,7 +50,14 @@ export const LanguageSelector = ({ value, onChange }: IProps) => {
                 </View>
             </TouchableOpacity>
 
-            <LanguagePickerBottomSheet modalRef={modalRef} onSelect={onSelect} onClose={onClose} />
+            {isMounted && (
+                <LanguagePickerBottomSheet
+                    modalRef={modalRef}
+                    onSelect={onSelect}
+                    onClose={onClose}
+                    onDismiss={onDismiss}
+                />
+            )}
         </>
     );
 };
