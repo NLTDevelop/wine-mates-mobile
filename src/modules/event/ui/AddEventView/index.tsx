@@ -380,7 +380,7 @@ export const AddEventView = () => {
                             <Button
                                 text={t('common.continue')}
                                 onPress={onSubmit}
-                                type="secondary"
+                                type="main"
                                 disabled={disabled}
                                 inProgress={isLoading}
                             />
