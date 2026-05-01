@@ -21,7 +21,7 @@ export const ScanResultsListView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, isLoading, onRefresh, handleItemPress, handleAddWinePress } = useScannerResultsList();
+    const { data, isLoading, onRefresh, onItemPress, onAddWinePress } = useScannerResultsList();
     const { refreshControl } = useRefresh(onRefresh);
     const { onPressBack } = useScanResultsListBackButton();
 
@@ -35,8 +35,8 @@ export const ScanResultsListView = observer(() => {
     }, []);
 
     const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
-        return <WineListItem item={item} onPress={handleItemPress} showSimilarity footer={renderFooter(item)} />;
-    }, [handleItemPress, renderFooter]);
+        return <WineListItem item={item} onPress={onItemPress} showSimilarity footer={renderFooter(item)} />;
+    }, [onItemPress, renderFooter]);
 
 
     return (
@@ -65,7 +65,7 @@ export const ScanResultsListView = observer(() => {
                         />
                     }
                 />
-                <Button text={t('scanner.addWine')} onPress={handleAddWinePress} containerStyle={styles.button} />
+                <Button text={t('scanner.addWine')} onPress={onAddWinePress} containerStyle={styles.button} />
             </View>
         </ScreenContainer>
         // </WithErrorHandler>

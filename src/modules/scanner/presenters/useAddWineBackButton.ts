@@ -1,7 +1,7 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CommonActions } from '@react-navigation/native';
 import { wineModel } from '@/entities/wine/WineModel';
+import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 
 export const useAddWineBackButton = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -10,7 +10,18 @@ export const useAddWineBackButton = () => {
     const hasResults = params?.hasResults ?? false;
 
     const onPressBack = () => {
+        const addWineSetScannerState = wineSetScannerModel.state;
+
         wineModel.clear();
+
+        if (addWineSetScannerState) {
+            wineSetScannerModel.clear();
+            navigation.navigate('AddWineSetView', {
+                draft: addWineSetScannerState.draft,
+                initialSelectedWines: addWineSetScannerState.selectedWines,
+            });
+            return;
+        }
 
         if (hasResults) {
             navigation.goBack();

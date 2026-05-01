@@ -12,7 +12,7 @@ export const getStyles = (colors: IColors) => {
         content: {
             flex: 1,
             minHeight: scaleVertical(48),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: 12,
             paddingHorizontal: scaleHorizontal(12),

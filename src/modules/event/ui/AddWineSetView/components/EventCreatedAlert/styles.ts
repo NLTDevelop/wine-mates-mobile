@@ -13,7 +13,7 @@ export const getStyles = (colors: IColors) => {
         },
         card: {
             width: '100%',
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: 12,
             backgroundColor: colors.background,

@@ -378,7 +378,7 @@ export const AddEventView = () => {
                     >
                         <View style={styles.buttonContainer}>
                             <Button
-                                text={t('event.createEvent')}
+                                text={t('common.continue')}
                                 onPress={onSubmit}
                                 type="secondary"
                                 disabled={disabled}

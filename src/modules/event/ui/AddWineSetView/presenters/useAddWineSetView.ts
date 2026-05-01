@@ -1,14 +1,17 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TextInput } from 'react-native';
 import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { eventsService } from '@/entities/events/EventsService';
+import { wineService } from '@/entities/wine/WineService';
+import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { EventType } from '@/entities/events/enums/EventType';
 import { RepeatRule, REPEAT_RULES } from '@/entities/events/enums/RepeatRule';
 import { TastingType, TASTING_TYPES } from '@/entities/events/enums/TastingType';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
-import { IWineSetMockItem, IWineSetViewItem } from '@/modules/event/types/IWineSetMockItem';
+import { IWineSearchResultViewItem, IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
 import { useUiContext } from '@/UIProvider';
+import { wineSetScannerModel } from '../../../../../entities/events/WineSetScannerModel';
 
 interface IRepeatRuleItem {
     value: RepeatRule;
@@ -22,7 +25,6 @@ interface ITastingTypeItem {
     onPress: () => void;
 }
 
-type Navigation = NativeStackNavigationProp<EventStackParamList>;
 type Route = RouteProp<EventStackParamList, 'AddWineSetView'>;
 
 const REPEAT_RULE_LABEL_KEYS: Record<RepeatRule, string> = {
@@ -37,8 +39,43 @@ const TASTING_TYPE_LABEL_KEYS: Record<TastingType, string> = {
     [TastingType.Regular]: 'event.tastingTypeRegular',
 };
 
+const SEARCH_LIMIT = 10;
+const MIN_SEARCH_LENGTH = 1;
+const MAX_VISIBLE_SEARCH_RESULTS = 3;
+
+const getWineTitle = (wine: IWineSetSearchItem) => {
+    const name = wine.name?.trim();
+    const vintage = wine.vintage ? ` ${wine.vintage}` : '';
+
+    if (name) {
+        return `${name}${vintage}`;
+    }
+
+    return `Wine #${wine.id}`;
+};
+
+const getSearchText = (value?: string | { name?: string | null } | null) => {
+    if (!value) {
+        return '';
+    }
+
+    if (typeof value === 'string') {
+        return value.trim();
+    }
+
+    return value.name?.trim() || '';
+};
+
+const getWineSubtitle = (wine: IWineSetSearchItem) => {
+    const parts = [wine.producer, wine.grapeVariety, wine.country, wine.region]
+        .map(getSearchText)
+        .filter(Boolean);
+
+    return parts.join(' / ');
+};
+
 export const useAddWineSetView = () => {
-    const navigation = useNavigation<Navigation>();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<Route>();
     const { t } = useUiContext();
     const draft = route.params?.draft;
@@ -52,21 +89,128 @@ export const useAddWineSetView = () => {
     const [isTastingTypeModalVisible, setIsTastingTypeModalVisible] = useState(false);
     const [isRepeatModalVisible, setIsRepeatModalVisible] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
+    const [isSearchingWines, setIsSearchingWines] = useState(false);
     const [isEventCreatedAlertVisible, setIsEventCreatedAlertVisible] = useState(false);
     const [createdEventId, setCreatedEventId] = useState<number | null>(null);
+    const [selectedWines, setSelectedWines] = useState<IWineSetSearchItem[]>(() => {
+        const initialWines = draft ? route.params?.initialSelectedWines || [] : [];
+        const selectedWine = route.params?.selectedWine;
 
-    const mockWineSetItems = useMemo<IWineSetMockItem[]>(() => {
-        // TODO: replace mock list with backend data when wine set API is connected.
-        return [
-            { id: 204, title: 'Chateau Palmer 2014' },
-            { id: 203, title: 'Chateau Palmer 2014' },
-            { id: 202, title: 'Chateau Palmer 2014' },
-        ];
-    }, []);
+        if (!selectedWine || initialWines.some(item => item.id === selectedWine.id)) {
+            return initialWines;
+        }
+
+        return [...initialWines, selectedWine];
+    });
+    const [wineSearchResults, setWineSearchResults] = useState<IWineSetSearchItem[]>([]);
 
     const onChangeSearchQuery = useCallback((value: string) => {
         setSearchQuery(value);
+
+        if (value.trim().length < MIN_SEARCH_LENGTH) {
+            setWineSearchResults([]);
+            setIsSearchingWines(false);
+        }
     }, []);
+
+    useEffect(() => {
+        const selectedWine = route.params?.selectedWine;
+
+        if (!selectedWine) {
+            return;
+        }
+
+        const frameId = requestAnimationFrame(() => {
+            setSelectedWines(prev => {
+                if (prev.some(item => item.id === selectedWine.id)) {
+                    return prev;
+                }
+
+                return [...prev, selectedWine];
+            });
+        });
+
+        return () => {
+            cancelAnimationFrame(frameId);
+        };
+    }, [route.params?.selectedWine]);
+
+    useEffect(() => {
+        const replacedWine = route.params?.replacedWine;
+
+        if (!replacedWine) {
+            return;
+        }
+
+        const frameId = requestAnimationFrame(() => {
+            setSelectedWines(prev => {
+                const nextWines = [...prev];
+                const wineIndex = nextWines.findIndex(item => item.id === replacedWine.previousWineId);
+
+                if (wineIndex === -1) {
+                    if (nextWines.some(item => item.id === replacedWine.newWine.id)) {
+                        return prev;
+                    }
+
+                    return [...nextWines, replacedWine.newWine];
+                }
+
+                nextWines[wineIndex] = replacedWine.newWine;
+                return nextWines;
+            });
+        });
+
+        return () => {
+            cancelAnimationFrame(frameId);
+        };
+    }, [route.params?.replacedWine]);
+
+    useEffect(() => {
+        const normalizedQuery = searchQuery.trim();
+
+        if (normalizedQuery.length < MIN_SEARCH_LENGTH) {
+            return undefined;
+        }
+
+        let isActive = true;
+
+        const timeoutId = setTimeout(async () => {
+            try {
+                setIsSearchingWines(true);
+                const response = await wineService.searchWineSet({
+                    query: normalizedQuery,
+                    limit: SEARCH_LIMIT,
+                    offset: 0,
+                });
+
+                if (!isActive) {
+                    return;
+                }
+
+                if (!response.isError && response.data?.rows) {
+                    setWineSearchResults(response.data.rows);
+                    return;
+                }
+
+                setWineSearchResults([]);
+            } catch (error) {
+                if (isActive) {
+                    setWineSearchResults([]);
+                }
+
+                console.warn('useAddWineSetView -> searchWineSet: ', error);
+            } finally {
+                if (isActive) {
+                    setIsSearchingWines(false);
+                }
+            }
+        }, 500);
+
+        return () => {
+            isActive = false;
+            clearTimeout(timeoutId);
+        };
+    }, [searchQuery]);
 
     const onOpenRepeatModal = useCallback(() => {
         setRepeatRuleDraft(repeatRule);
@@ -129,6 +273,8 @@ export const useAddWineSetView = () => {
         return t(REPEAT_RULE_LABEL_KEYS[repeatRule]);
     }, [repeatRule, t]);
 
+    const isCreateEventDisabled = selectedWines.length === 0;
+
     const onConfirmRepeatRule = useCallback(() => {
         setIsRepeatModalVisible(false);
 
@@ -157,32 +303,78 @@ export const useAddWineSetView = () => {
         });
     }, [tastingTypeDraft]);
 
-    const filteredMockWineSetItems = useMemo(() => {
-        const normalizedQuery = searchQuery.trim().toLowerCase();
-
-        if (!normalizedQuery) {
-            return mockWineSetItems;
-        }
-
-        return mockWineSetItems.filter((item) => item.title.toLowerCase().includes(normalizedQuery));
-    }, [mockWineSetItems, searchQuery]);
-
     const onAddWinePress = useCallback(() => {
         searchInputRef.current?.focus();
     }, []);
 
-    const createOnEditWinePress = useCallback((wineId: number) => {
+    const createOnSelectWinePress = useCallback((wine: IWineSetSearchItem) => {
         return () => {
-            navigation.navigate('EditEventWineView', { wineId });
+            setSelectedWines(prev => {
+                if (prev.some(item => item.id === wine.id)) {
+                    return prev;
+                }
+
+                return [...prev, wine];
+            });
+            setSearchQuery('');
+            setWineSearchResults([]);
         };
-    }, [navigation]);
+    }, []);
+
+    const createOnEditWinePress = useCallback((wine: IWineSetSearchItem) => {
+        return () => {
+            if (!draft) {
+                return;
+            }
+
+            navigation.navigate('EditEventWineView', {
+                wineId: wine.id,
+                wine,
+                draft,
+                selectedWines,
+            });
+        };
+    }, [draft, navigation, selectedWines]);
 
     const wineSetViewItems = useMemo<IWineSetViewItem[]>(() => {
-        return filteredMockWineSetItems.map((item) => ({
-            ...item,
-            onEditPress: createOnEditWinePress(item.id),
+        return selectedWines.map((item) => ({
+            id: item.id,
+            title: getWineTitle(item),
+            onEditPress: createOnEditWinePress(item),
         }));
-    }, [createOnEditWinePress, filteredMockWineSetItems]);
+    }, [createOnEditWinePress, selectedWines]);
+
+    const wineSearchResultItems = useMemo<IWineSearchResultViewItem[]>(() => {
+        return wineSearchResults
+            .filter(item => !selectedWines.some(wine => wine.id === item.id))
+            .map(item => ({
+                ...item,
+                title: getWineTitle(item),
+                subtitle: getWineSubtitle(item),
+                onPress: createOnSelectWinePress(item),
+            }));
+    }, [createOnSelectWinePress, selectedWines, wineSearchResults]);
+
+    const hasWineSearchQuery = searchQuery.trim().length >= MIN_SEARCH_LENGTH;
+    const shouldShowScannerButton = hasWineSearchQuery && !isSearchingWines && wineSearchResultItems.length === 0;
+
+    const onOpenScannerPress = useCallback(() => {
+        if (!draft) {
+            return;
+        }
+
+        wineSetScannerModel.setState({
+            draft,
+            selectedWines,
+        });
+
+        navigation.navigate('TabNavigator', {
+            screen: 'ScannerStack',
+            params: {
+                screen: 'ScannerView',
+            },
+        });
+    }, [draft, navigation, selectedWines]);
 
     const onGetCreatedEventId = useCallback((data: unknown): number | null => {
         if (!data || typeof data !== 'object') {
@@ -222,15 +414,14 @@ export const useAddWineSetView = () => {
     }, []);
 
     const onCreateEventPress = useCallback(async () => {
-        if (isCreating || !draft || !draft.location) {
+        if (isCreating || !draft || !draft.location || selectedWines.length === 0) {
             return;
         }
 
         try {
             setIsCreating(true);
 
-            // TODO: use selected wine set from backend when API is connected.
-            const mockWineSet = mockWineSetItems.map((item, index) => ({
+            const wineSet = selectedWines.map((item, index) => ({
                 wineId: item.id,
                 sortOrder: index + 1,
             }));
@@ -266,7 +457,7 @@ export const useAddWineSetView = () => {
                 tastingType,
                 requiresConfirmation: draft.requiresConfirmation,
                 repeatRule,
-                wineSet: mockWineSet,
+                wineSet,
                 ...partyPayload,
             }, draft.locationCountry);
 
@@ -280,7 +471,7 @@ export const useAddWineSetView = () => {
         } finally {
             setIsCreating(false);
         }
-    }, [draft, isCreating, mockWineSetItems, onGetCreatedEventId, repeatRule, tastingType]);
+    }, [draft, isCreating, onGetCreatedEventId, repeatRule, selectedWines, tastingType]);
 
     const resetToEventList = useCallback(() => {
         navigation.dispatch(
@@ -364,9 +555,14 @@ export const useAddWineSetView = () => {
         repeatRuleItems,
         isTastingTypeModalVisible,
         wineSetViewItems,
+        wineSearchResultItems,
+        isSearchingWines,
+        shouldShowScannerButton,
+        maxVisibleSearchResults: MAX_VISIBLE_SEARCH_RESULTS,
         isRepeatModalVisible,
         isEventCreatedAlertVisible,
         isCreating,
+        isCreateEventDisabled,
         searchInputRef,
         onChangeSearchQuery,
         onOpenRepeatModal,
@@ -379,6 +575,7 @@ export const useAddWineSetView = () => {
         onCheckEventPress,
         onShareQrPress,
         onAddWinePress,
+        onOpenScannerPress,
         onCreateEventPress,
     };
 };
