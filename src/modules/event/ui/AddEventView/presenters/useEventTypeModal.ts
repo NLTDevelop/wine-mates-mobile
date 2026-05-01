@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
+import { localization } from '@/UIProvider/localization/Localization';
 import { EventType } from '@/entities/events/enums/EventType';
+import { ISingleSelectModalItem } from '../types/ISingleSelectModalItem';
 
 interface IProps {
     value: EventType;
@@ -19,10 +21,6 @@ export const useEventTypeModal = ({ value, onChange }: IProps) => {
         setIsVisible(false);
     }, []);
 
-    const onSelect = useCallback((nextValue: EventType) => {
-        setDraft(nextValue);
-    }, []);
-
     const onConfirm = useCallback(() => {
         setIsVisible(false);
 
@@ -31,14 +29,42 @@ export const useEventTypeModal = ({ value, onChange }: IProps) => {
         });
     }, [draft, onChange]);
 
+    const onSelectTastings = useCallback(() => {
+        setDraft(EventType.Tastings);
+    }, []);
+
+    const onSelectParties = useCallback(() => {
+        setDraft(EventType.Parties);
+    }, []);
+
+    const items = useMemo<ISingleSelectModalItem[]>(() => {
+        return [
+            {
+                key: EventType.Tastings,
+                label: localization.t('event.tastings'),
+                isSelected: draft === EventType.Tastings,
+                onPress: onSelectTastings,
+            },
+            {
+                key: EventType.Parties,
+                label: localization.t('event.parties'),
+                isSelected: draft === EventType.Parties,
+                onPress: onSelectParties,
+            },
+        ];
+    }, [draft, onSelectParties, onSelectTastings]);
+
     return useMemo(() => {
         return {
+            title: localization.t('event.eventType'),
             isVisible,
-            draft,
+            selectedText: value === EventType.Parties
+                ? localization.t('event.parties')
+                : localization.t('event.tastings'),
+            items,
             onOpen,
             onClose,
-            onSelect,
             onConfirm,
         };
-    }, [draft, isVisible, onClose, onConfirm, onOpen, onSelect]);
+    }, [isVisible, items, onClose, onConfirm, onOpen, value]);
 };

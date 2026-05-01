@@ -1,12 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { PARTICIPATION_CONDITIONS, ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
-
-interface IItem {
-    value: ParticipationCondition;
-    label: string;
-    onPress: () => void;
-}
+import { ISingleSelectModalItem } from '../types/ISingleSelectModalItem';
 
 interface IProps {
     value?: ParticipationCondition;
@@ -50,10 +45,6 @@ export const useParticipationConditionModal = ({ value, onChange }: IProps) => {
         setIsVisible(false);
     }, []);
 
-    const onSelect = useCallback((nextValue: ParticipationCondition) => {
-        setDraft(nextValue);
-    }, []);
-
     const onConfirm = useCallback(() => {
         setIsVisible(false);
 
@@ -64,19 +55,20 @@ export const useParticipationConditionModal = ({ value, onChange }: IProps) => {
 
     const createOnSelect = useCallback((nextValue: ParticipationCondition) => {
         return () => {
-            onSelect(nextValue);
+            setDraft(nextValue);
         };
-    }, [onSelect]);
+    }, []);
 
-    const items = useMemo<IItem[]>(() => {
+    const items = useMemo<ISingleSelectModalItem[]>(() => {
         return PARTICIPATION_CONDITIONS.map((itemValue) => {
             return {
-                value: itemValue,
+                key: itemValue,
                 label: getParticipationConditionLabel(itemValue),
+                isSelected: draft === itemValue,
                 onPress: createOnSelect(itemValue),
             };
         });
-    }, [createOnSelect]);
+    }, [createOnSelect, draft]);
 
     const selectedText = useMemo(() => {
         if (!value) {
@@ -88,13 +80,13 @@ export const useParticipationConditionModal = ({ value, onChange }: IProps) => {
 
     return useMemo(() => {
         return {
+            title: localization.t('event.participationCondition'),
             isVisible,
-            draft,
             items,
             selectedText,
             onOpen,
             onClose,
             onConfirm,
         };
-    }, [draft, isVisible, items, onClose, onConfirm, onOpen, selectedText]);
+    }, [isVisible, items, onClose, onConfirm, onOpen, selectedText]);
 };

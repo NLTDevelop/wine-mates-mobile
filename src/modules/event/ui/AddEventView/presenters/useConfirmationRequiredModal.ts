@@ -1,11 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
-
-interface IItem {
-    value: boolean;
-    label: string;
-    onPress: () => void;
-}
+import { ISingleSelectModalItem } from '../types/ISingleSelectModalItem';
 
 interface IProps {
     value?: boolean;
@@ -25,10 +20,6 @@ export const useConfirmationRequiredModal = ({ value, onChange }: IProps) => {
         setIsVisible(false);
     }, []);
 
-    const onSelect = useCallback((nextValue: boolean) => {
-        setDraft(nextValue);
-    }, []);
-
     const onConfirm = useCallback(() => {
         setIsVisible(false);
 
@@ -37,26 +28,30 @@ export const useConfirmationRequiredModal = ({ value, onChange }: IProps) => {
         });
     }, [draft, onChange]);
 
-    const createOnSelect = useCallback((nextValue: boolean) => {
-        return () => {
-            onSelect(nextValue);
-        };
-    }, [onSelect]);
+    const onSelectConfirmationRequired = useCallback(() => {
+        setDraft(true);
+    }, []);
 
-    const items = useMemo<IItem[]>(() => {
+    const onSelectNoConfirmation = useCallback(() => {
+        setDraft(false);
+    }, []);
+
+    const items = useMemo<ISingleSelectModalItem[]>(() => {
         return [
             {
-                value: true,
+                key: 'confirmation-required',
                 label: localization.t('eventDetails.confirmationRequired'),
-                onPress: createOnSelect(true),
+                isSelected: draft === true,
+                onPress: onSelectConfirmationRequired,
             },
             {
-                value: false,
+                key: 'no-confirmation',
                 label: localization.t('eventDetails.noConfirmation'),
-                onPress: createOnSelect(false),
+                isSelected: draft === false,
+                onPress: onSelectNoConfirmation,
             },
         ];
-    }, [createOnSelect]);
+    }, [draft, onSelectConfirmationRequired, onSelectNoConfirmation]);
 
     const selectedText = useMemo(() => {
         if (typeof value === 'undefined') {
@@ -72,13 +67,13 @@ export const useConfirmationRequiredModal = ({ value, onChange }: IProps) => {
 
     return useMemo(() => {
         return {
+            title: localization.t('eventDetails.confirmationAvailability'),
             isVisible,
-            draft,
             items,
             selectedText,
             onOpen,
             onClose,
             onConfirm,
         };
-    }, [draft, isVisible, items, onClose, onConfirm, onOpen, selectedText]);
+    }, [isVisible, items, onClose, onConfirm, onOpen, selectedText]);
 };
