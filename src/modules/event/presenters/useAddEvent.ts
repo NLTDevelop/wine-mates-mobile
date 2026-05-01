@@ -38,8 +38,14 @@ interface IEventForm {
     eventType: EventType;
     tastingType: TastingType;
     participationCondition?: ParticipationCondition;
-    requiresConfirmation: boolean;
+    requiresConfirmation?: boolean;
     paymentMethodIds: number[];
+}
+
+interface IConfirmationOption {
+    value: boolean;
+    label: string;
+    onPress: () => void;
 }
 
 const formatDateToLocalApi = (date: Date) => {
@@ -58,12 +64,14 @@ export const useAddEvent = () => {
     const [isParticipationConditionModalVisible, setIsParticipationConditionModalVisible] = useState(false);
     const [isCurrencyModalVisible, setIsCurrencyModalVisible] = useState(false);
     const [isPaymentMethodsModalVisible, setIsPaymentMethodsModalVisible] = useState(false);
+    const [isConfirmationRequiredModalVisible, setIsConfirmationRequiredModalVisible] = useState(false);
     const [isPaymentMethodsLoading, setIsPaymentMethodsLoading] = useState(false);
     const [isCurrenciesLoading, setIsCurrenciesLoading] = useState(false);
     const [eventTypeDraft, setEventTypeDraft] = useState<EventType>(EventType.Tastings);
     const [sexDraft, setSexDraft] = useState<Sex | undefined>(undefined);
     const [participationConditionDraft, setParticipationConditionDraft] = useState<ParticipationCondition | undefined>(undefined);
     const [currencyDraft, setCurrencyDraft] = useState('');
+    const [confirmationRequiredDraft, setConfirmationRequiredDraft] = useState<boolean | undefined>(undefined);
     const [paymentMethods, setPaymentMethods] = useState<IPaymentsListItem[]>([]);
     const [currencies, setCurrencies] = useState<string[]>([]);
     const [paymentMethodDraftIds, setPaymentMethodDraftIds] = useState<number[]>([]);
@@ -88,7 +96,7 @@ export const useAddEvent = () => {
         eventType: EventType.Tastings,
         tastingType: TastingType.Regular,
         participationCondition: undefined,
-        requiresConfirmation: false,
+        requiresConfirmation: undefined,
         minAge: 18,
         maxAge: 80,
         paymentMethodIds: [],
@@ -250,6 +258,15 @@ export const useAddEvent = () => {
         setIsCurrencyModalVisible(false);
     }, []);
 
+    const onOpenConfirmationRequiredModal = useCallback(() => {
+        setConfirmationRequiredDraft(form.requiresConfirmation);
+        setIsConfirmationRequiredModalVisible(true);
+    }, [form.requiresConfirmation]);
+
+    const onCloseConfirmationRequiredModal = useCallback(() => {
+        setIsConfirmationRequiredModalVisible(false);
+    }, []);
+
     const onOpenPaymentMethodsModal = useCallback(() => {
         setPaymentMethodDraftIds(form.paymentMethodIds);
         setIsPaymentMethodsModalVisible(true);
@@ -273,6 +290,10 @@ export const useAddEvent = () => {
 
     const onSelectCurrency = useCallback((value: string) => {
         setCurrencyDraft(value);
+    }, []);
+
+    const onSelectConfirmationRequired = useCallback((value: boolean) => {
+        setConfirmationRequiredDraft(value);
     }, []);
 
     const onConfirmEventType = useCallback(() => {
@@ -355,6 +376,14 @@ export const useAddEvent = () => {
         });
     }, [currencyDraft]);
 
+    const onConfirmConfirmationRequired = useCallback(() => {
+        setIsConfirmationRequiredModalVisible(false);
+
+        requestAnimationFrame(() => {
+            setForm(prev => ({ ...prev, requiresConfirmation: confirmationRequiredDraft }));
+        });
+    }, [confirmationRequiredDraft]);
+
     const selectedSexText = useMemo(() => {
         if (!form.sex) {
             return localization.t('eventFilters.selectSex');
@@ -402,6 +431,39 @@ export const useAddEvent = () => {
     const selectedCurrencyText = useMemo(() => {
         return form.currency || '';
     }, [form.currency]);
+
+    const selectedConfirmationRequiredText = useMemo(() => {
+        if (typeof form.requiresConfirmation === 'undefined') {
+            return localization.t('eventDetails.confirmationAvailability');
+        }
+
+        if (form.requiresConfirmation) {
+            return localization.t('eventDetails.confirmationRequired');
+        }
+
+        return localization.t('eventDetails.noConfirmation');
+    }, [form.requiresConfirmation]);
+
+    const createOnSelectConfirmationRequired = useCallback((value: boolean) => {
+        return () => {
+            onSelectConfirmationRequired(value);
+        };
+    }, [onSelectConfirmationRequired]);
+
+    const confirmationRequiredItems = useMemo<IConfirmationOption[]>(() => {
+        return [
+            {
+                value: true,
+                label: localization.t('eventDetails.confirmationRequired'),
+                onPress: createOnSelectConfirmationRequired(true),
+            },
+            {
+                value: false,
+                label: localization.t('eventDetails.noConfirmation'),
+                onPress: createOnSelectConfirmationRequired(false),
+            },
+        ];
+    }, [createOnSelectConfirmationRequired]);
 
     const createOnTogglePaymentMethod = useCallback((id: number) => {
         return () => {
@@ -521,7 +583,7 @@ export const useAddEvent = () => {
             eventType: form.eventType,
             tastingType: form.tastingType,
             participationCondition: form.participationCondition,
-            requiresConfirmation: form.requiresConfirmation,
+            requiresConfirmation: !!form.requiresConfirmation,
         };
 
         navigation.navigate('AddWineSetView', { draft });
@@ -551,6 +613,7 @@ export const useAddEvent = () => {
         isSexModalVisible,
         isParticipationConditionModalVisible,
         isCurrencyModalVisible,
+        isConfirmationRequiredModalVisible,
         isPaymentMethodsModalVisible,
         isPaymentMethodsLoading,
         isCurrenciesLoading,
@@ -561,8 +624,10 @@ export const useAddEvent = () => {
         selectedSexText,
         selectedParticipationConditionText,
         selectedCurrencyText,
+        selectedConfirmationRequiredText,
         participationConditionItems,
         currencyItems,
+        confirmationRequiredItems,
         paymentMethodOptions,
         selectedPaymentMethodsText,
         disabled,
@@ -596,9 +661,13 @@ export const useAddEvent = () => {
         onOpenCurrencyModal,
         onCloseCurrencyModal,
         onConfirmCurrency,
+        onOpenConfirmationRequiredModal,
+        onCloseConfirmationRequiredModal,
+        onConfirmConfirmationRequired,
         onOpenPaymentMethodsModal,
         onClosePaymentMethodsModal,
         onConfirmPaymentMethods,
+        confirmationRequiredDraft,
         onLocationPress,
         onSubmit,
     };

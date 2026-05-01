@@ -21,6 +21,7 @@ import { EventTypePickerModal } from './components/EventTypePickerModal';
 import { PaymentMethodsPickerModal } from './components/PaymentMethodsPickerModal';
 import { CurrencyModal } from './components/CurrencyModal';
 import { ParticipationConditionModal } from './components/ParticipationConditionModal';
+import { ConfirmationRequiredModal } from './components/ConfirmationRequiredModal';
 import { CalendarModal } from '@/UIKit/CalendarModal';
 import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
 import { isIOS, scaleVertical } from '@/utils';
@@ -40,6 +41,7 @@ export const AddEventView = () => {
         isSexModalVisible,
         isParticipationConditionModalVisible,
         isCurrencyModalVisible,
+        isConfirmationRequiredModalVisible,
         isPaymentMethodsModalVisible,
         isPaymentMethodsLoading,
         isPartyEventType,
@@ -49,8 +51,10 @@ export const AddEventView = () => {
         selectedSexText,
         selectedParticipationConditionText,
         selectedCurrencyText,
+        selectedConfirmationRequiredText,
         participationConditionItems,
         currencyItems,
+        confirmationRequiredItems,
         paymentMethodOptions,
         selectedPaymentMethodsText,
         disabled,
@@ -81,6 +85,10 @@ export const AddEventView = () => {
         onOpenCurrencyModal,
         onCloseCurrencyModal,
         onConfirmCurrency,
+        confirmationRequiredDraft,
+        onOpenConfirmationRequiredModal,
+        onCloseConfirmationRequiredModal,
+        onConfirmConfirmationRequired,
         onOpenPaymentMethodsModal,
         onClosePaymentMethodsModal,
         onConfirmPaymentMethods,
@@ -160,6 +168,14 @@ export const AddEventView = () => {
                                 style={styles.pickerButton}
                             >
                                 <Typography variant="h6" text={eventTypeLabel || t('event.eventType')} />
+                                <ArrowDownIcon />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={onOpenConfirmationRequiredModal}
+                                onPressIn={Keyboard.dismiss}
+                                style={styles.pickerButton}
+                            >
+                                <Typography variant="h6" text={selectedConfirmationRequiredText} />
                                 <ArrowDownIcon />
                             </TouchableOpacity>
                             <CustomInput
@@ -420,6 +436,15 @@ export const AddEventView = () => {
                     isLoading={isPaymentMethodsLoading}
                     onClose={onClosePaymentMethodsModal}
                     onConfirm={onConfirmPaymentMethods}
+                />
+            )}
+            {isConfirmationRequiredModalVisible && (
+                <ConfirmationRequiredModal
+                    visible={isConfirmationRequiredModalVisible}
+                    onClose={onCloseConfirmationRequiredModal}
+                    items={confirmationRequiredItems}
+                    selectedValue={confirmationRequiredDraft}
+                    onConfirm={onConfirmConfirmationRequired}
                 />
             )}
             {isCurrencyModalVisible && (
