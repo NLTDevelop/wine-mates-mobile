@@ -8,13 +8,19 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { Button } from '@/UIKit/Button';
 import { Typography } from '@/UIKit/Typography';
-import { useAddEvent } from '../../presenters/useAddEvent';
+import { useAddEvent } from './presenters/useAddEvent';
 import { MapLocationIcon } from '@assets/icons/MapLocationIcon';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { CalendarIcon } from '@assets/icons/CalendarIcon';
 import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
 import { useDateTimePicker } from './presenters/useDateTimePicker';
+import { useEventTypeModal } from './presenters/useEventTypeModal';
+import { useSexModal } from './presenters/useSexModal';
+import { useParticipationConditionModal } from './presenters/useParticipationConditionModal';
+import { useConfirmationRequiredModal } from './presenters/useConfirmationRequiredModal';
+import { useCurrencyPickerModal } from './presenters/useCurrencyPickerModal';
+import { usePaymentMethodsModal } from './presenters/usePaymentMethodsModal';
 import { useEventDateTimeFormatter } from '../../presenters/useEventDateTimeFormatter';
 import { useEventTypeLabel } from '../../presenters/useEventTypeLabel';
 import { EventTypePickerModal } from './components/EventTypePickerModal';
@@ -35,28 +41,11 @@ export const AddEventView = () => {
 
     const {
         form,
-        eventTypeDraft,
         isLoading,
-        isEventTypeModalVisible,
-        isSexModalVisible,
-        isParticipationConditionModalVisible,
-        isCurrencyModalVisible,
-        isConfirmationRequiredModalVisible,
-        isPaymentMethodsModalVisible,
         isPaymentMethodsLoading,
         isPartyEventType,
-        sexDraft,
-        participationConditionDraft,
-        currencyDraft,
-        selectedSexText,
-        selectedParticipationConditionText,
-        selectedCurrencyText,
-        selectedConfirmationRequiredText,
-        participationConditionItems,
-        currencyItems,
-        confirmationRequiredItems,
-        paymentMethodOptions,
-        selectedPaymentMethodsText,
+        paymentMethods,
+        currencies,
         disabled,
         onChangeTheme,
         onChangeDescription,
@@ -71,27 +60,12 @@ export const AddEventView = () => {
         onChangeLanguage,
         onChangeSeats,
         onAgeRangeChange,
-        onOpenEventTypeModal,
-        onCloseEventTypeModal,
-        onSelectEventType,
-        onConfirmEventType,
-        onOpenSexModal,
-        onCloseSexModal,
-        onSelectSex,
-        onConfirmSex,
-        onOpenParticipationConditionModal,
-        onCloseParticipationConditionModal,
-        onConfirmParticipationCondition,
-        onOpenCurrencyModal,
-        onCloseCurrencyModal,
-        onConfirmCurrency,
-        confirmationRequiredDraft,
-        onOpenConfirmationRequiredModal,
-        onCloseConfirmationRequiredModal,
-        onConfirmConfirmationRequired,
-        onOpenPaymentMethodsModal,
-        onClosePaymentMethodsModal,
-        onConfirmPaymentMethods,
+        onChangeEventType,
+        onChangeSex,
+        onChangeParticipationCondition,
+        onChangeCurrency,
+        onChangeRequiresConfirmation,
+        onChangePaymentMethodIds,
         onLocationPress,
         onSubmit,
     } = useAddEvent();
@@ -143,6 +117,84 @@ export const AddEventView = () => {
     });
     const { formattedValue: formattedEndTime } = useEventDateTimeFormatter({ value: form.eventEndTime, mode: 'time' });
     const eventTypeLabel = useEventTypeLabel({ eventType: form.eventType, t });
+
+    const {
+        isVisible: isEventTypeModalVisible,
+        draft: eventTypeDraft,
+        onOpen: onOpenEventTypeModal,
+        onClose: onCloseEventTypeModal,
+        onSelect: onSelectEventType,
+        onConfirm: onConfirmEventType,
+    } = useEventTypeModal({
+        value: form.eventType,
+        onChange: onChangeEventType,
+    });
+
+    const {
+        isVisible: isSexModalVisible,
+        draft: sexDraft,
+        selectedText: selectedSexText,
+        onOpen: onOpenSexModal,
+        onClose: onCloseSexModal,
+        onSelect: onSelectSex,
+        onConfirm: onConfirmSex,
+    } = useSexModal({
+        value: form.sex,
+        onChange: onChangeSex,
+    });
+
+    const {
+        isVisible: isParticipationConditionModalVisible,
+        draft: participationConditionDraft,
+        items: participationConditionItems,
+        selectedText: selectedParticipationConditionText,
+        onOpen: onOpenParticipationConditionModal,
+        onClose: onCloseParticipationConditionModal,
+        onConfirm: onConfirmParticipationCondition,
+    } = useParticipationConditionModal({
+        value: form.participationCondition,
+        onChange: onChangeParticipationCondition,
+    });
+
+    const {
+        isVisible: isConfirmationRequiredModalVisible,
+        draft: confirmationRequiredDraft,
+        items: confirmationRequiredItems,
+        selectedText: selectedConfirmationRequiredText,
+        onOpen: onOpenConfirmationRequiredModal,
+        onClose: onCloseConfirmationRequiredModal,
+        onConfirm: onConfirmConfirmationRequired,
+    } = useConfirmationRequiredModal({
+        value: form.requiresConfirmation,
+        onChange: onChangeRequiresConfirmation,
+    });
+
+    const {
+        isVisible: isCurrencyModalVisible,
+        draft: currencyDraft,
+        items: currencyItems,
+        selectedText: selectedCurrencyText,
+        onOpen: onOpenCurrencyModal,
+        onClose: onCloseCurrencyModal,
+        onConfirm: onConfirmCurrency,
+    } = useCurrencyPickerModal({
+        value: form.currency,
+        currencies,
+        onChange: onChangeCurrency,
+    });
+
+    const {
+        isVisible: isPaymentMethodsModalVisible,
+        options: paymentMethodOptions,
+        selectedText: selectedPaymentMethodsText,
+        onOpen: onOpenPaymentMethodsModal,
+        onClose: onClosePaymentMethodsModal,
+        onConfirm: onConfirmPaymentMethods,
+    } = usePaymentMethodsModal({
+        value: form.paymentMethodIds,
+        paymentMethods,
+        onChange: onChangePaymentMethodIds,
+    });
 
     return (
         <>
@@ -261,10 +313,7 @@ export const AddEventView = () => {
                                     onPressIn={Keyboard.dismiss}
                                     style={styles.inlinePickerButton}
                                 >
-                                    <Typography
-                                        variant="h6"
-                                        text={formattedStartDate || t('event.eventStartDate')}
-                                    />
+                                    <Typography variant="h6" text={formattedStartDate || t('event.eventStartDate')} />
                                     <CalendarIcon color={colors.text_light} />
                                 </TouchableOpacity>
 
@@ -273,10 +322,7 @@ export const AddEventView = () => {
                                     onPressIn={Keyboard.dismiss}
                                     style={styles.inlinePickerButton}
                                 >
-                                    <Typography
-                                        variant="h6"
-                                        text={formattedEndDate || t('event.eventEndDate')}
-                                    />
+                                    <Typography variant="h6" text={formattedEndDate || t('event.eventEndDate')} />
                                     <CalendarIcon color={colors.text_light} />
                                 </TouchableOpacity>
                             </View>
@@ -290,10 +336,7 @@ export const AddEventView = () => {
                                         isStartTimePickerDisabled ? styles.disabledPickerButton : undefined,
                                     ]}
                                 >
-                                    <Typography
-                                        variant="h6"
-                                        text={formattedStartTime || t('event.eventStartTime')}
-                                    />
+                                    <Typography variant="h6" text={formattedStartTime || t('event.eventStartTime')} />
                                     <ClockIcon />
                                 </TouchableOpacity>
 
@@ -306,10 +349,7 @@ export const AddEventView = () => {
                                         isEndTimePickerDisabled ? styles.disabledPickerButton : undefined,
                                     ]}
                                 >
-                                    <Typography
-                                        variant="h6"
-                                        text={formattedEndTime || t('event.eventEndTime')}
-                                    />
+                                    <Typography variant="h6" text={formattedEndTime || t('event.eventEndTime')} />
                                     <ClockIcon />
                                 </TouchableOpacity>
                             </View>
@@ -332,10 +372,7 @@ export const AddEventView = () => {
                                 onPressIn={Keyboard.dismiss}
                                 style={styles.pickerButton}
                             >
-                                <Typography
-                                    variant="h6"
-                                    text={selectedCurrencyText || t('event.currency')}
-                                />
+                                <Typography variant="h6" text={selectedCurrencyText || t('event.currency')} />
                                 <ArrowDownIcon />
                             </TouchableOpacity>
 
