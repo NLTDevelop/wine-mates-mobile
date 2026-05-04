@@ -7,6 +7,7 @@ import { Sex } from '@/entities/events/enums/Sex';
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
 import { IRadiusOption } from '@/modules/event/ui/EventFiltersView/types/IRadiusOption';
+import { ISingleSelectModalItem } from '@/modules/event/ui/AddEventView/types/ISingleSelectModalItem';
 
 const DATE_API_FORMAT = 'yyyy-MM-dd';
 const DATE_DISPLAY_FORMAT = 'dd.MM.yyyy';
@@ -255,9 +256,40 @@ export const useEventFiltersView = ({ t }: IProps) => {
         selectedSex,
     ]);
 
-    const onSelectSex = useCallback((sex: Sex) => {
-        setSelectedSexDraft(sex);
+    const onSelectSexAll = useCallback(() => {
+        setSelectedSexDraft(Sex.All);
     }, []);
+
+    const onSelectSexMen = useCallback(() => {
+        setSelectedSexDraft(Sex.Men);
+    }, []);
+
+    const onSelectSexWomen = useCallback(() => {
+        setSelectedSexDraft(Sex.Women);
+    }, []);
+
+    const sexPickerItems = useMemo<ISingleSelectModalItem[]>(() => {
+        return [
+            {
+                key: Sex.All,
+                label: t('eventFilters.all'),
+                isSelected: selectedSexDraft === Sex.All,
+                onPress: onSelectSexAll,
+            },
+            {
+                key: Sex.Men,
+                label: t('eventFilters.men'),
+                isSelected: selectedSexDraft === Sex.Men,
+                onPress: onSelectSexMen,
+            },
+            {
+                key: Sex.Women,
+                label: t('eventFilters.women'),
+                isSelected: selectedSexDraft === Sex.Women,
+                onPress: onSelectSexWomen,
+            },
+        ];
+    }, [onSelectSexAll, onSelectSexMen, onSelectSexWomen, selectedSexDraft, t]);
 
     const onConfirmSex = useCallback(() => {
         if (!selectedSexDraft) {
@@ -396,6 +428,8 @@ export const useEventFiltersView = ({ t }: IProps) => {
         markedDates,
         selectedDateText,
         selectedSexText,
+        sexModalTitle: t('eventFilters.sex'),
+        sexPickerItems,
         selectedLanguage,
         selectedSex: selectedSexDraft,
         selectedMinAge,
@@ -419,7 +453,6 @@ export const useEventFiltersView = ({ t }: IProps) => {
         onCloseSexPicker,
         onDayPress,
         onMonthChange,
-        onSelectSex,
         onConfirmSex,
         onChangeLanguage,
         onAgeRangeChange,
