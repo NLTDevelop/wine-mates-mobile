@@ -1,5 +1,6 @@
 import { RefObject, useMemo } from 'react';
-import { FlatList, ListRenderItem, TextInput, TouchableOpacity, View } from 'react-native';
+import { ListRenderItem, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import { useUiContext } from '@/UIProvider';
 import { SearchBar } from '@/UIKit/SearchBar';
 import { Typography } from '@/UIKit/Typography';
@@ -19,7 +20,9 @@ interface IProps {
     maxVisibleSearchResults: number;
     tastingTypeLabel: string;
     onOpenScannerPress: () => void;
+    onFocusSearchInput: () => void;
     onOpenTastingTypeModal: () => void;
+    onCloseSearchList: () => void;
 }
 
 export const WineSetListHeader = ({
@@ -31,11 +34,17 @@ export const WineSetListHeader = ({
     maxVisibleSearchResults,
     tastingTypeLabel,
     onOpenScannerPress,
+    onFocusSearchInput,
     onOpenTastingTypeModal,
+    onCloseSearchList,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { isSearchSectionVisible, isSearchResultsVisible, isSearchResultsScrollable } = useWineSetListHeader({
+    const {
+        isSearchSectionVisible,
+        isSearchResultsVisible,
+        isSearchResultsScrollable,
+    } = useWineSetListHeader({
         wineSearchResultItems,
         shouldShowScannerButton,
         maxVisibleSearchResults,
@@ -57,6 +66,8 @@ export const WineSetListHeader = ({
                 ref={searchInputRef}
                 value={searchQuery}
                 onChangeText={onChangeSearchQuery}
+                onFocus={onFocusSearchInput}
+                onBlur={onCloseSearchList}
                 placeholder={t('common.search')}
                 containerStyle={styles.searchBar}
             />
@@ -69,6 +80,7 @@ export const WineSetListHeader = ({
                             renderItem={renderWineSearchResult}
                             scrollEnabled={isSearchResultsScrollable}
                             nestedScrollEnabled
+                            directionalLockEnabled
                             keyboardShouldPersistTaps="always"
                             ItemSeparatorComponent={renderSearchResultDivider}
                             style={styles.searchResultsList}

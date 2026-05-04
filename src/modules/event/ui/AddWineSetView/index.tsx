@@ -30,6 +30,8 @@ export const AddWineSetView = () => {
         wineSetViewItems,
         wineSearchResultItems,
         shouldShowScannerButton,
+        isSearchListVisible,
+        isSearchResultsScrollable,
         maxVisibleSearchResults,
         isRepeatModalVisible,
         isEventCreatedAlertVisible,
@@ -48,6 +50,8 @@ export const AddWineSetView = () => {
         onShareQrPress,
         onAddWinePress,
         onOpenScannerPress,
+        onFocusSearchInput,
+        onCloseSearchList,
         onReorderWineSet,
         onCreateEventPress,
     } = useAddWineSetView();
@@ -82,7 +86,9 @@ export const AddWineSetView = () => {
                             maxVisibleSearchResults={maxVisibleSearchResults}
                             tastingTypeLabel={tastingTypeLabel}
                             onOpenScannerPress={onOpenScannerPress}
+                            onFocusSearchInput={onFocusSearchInput}
                             onOpenTastingTypeModal={onOpenTastingTypeModal}
+                            onCloseSearchList={onCloseSearchList}
                         />
                     }
                     ListFooterComponent={
@@ -96,6 +102,8 @@ export const AddWineSetView = () => {
                         />
                     }
                     contentContainerStyle={styles.container}
+                    scrollEnabled={!isSearchListVisible || !isSearchResultsScrollable}
+                    nestedScrollEnabled
                     keyboardShouldPersistTaps="handled"
                     ItemSeparatorComponent={renderListDivider}
                     onDragEnd={onReorderWineSet}
