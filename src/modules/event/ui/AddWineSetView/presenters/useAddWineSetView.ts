@@ -530,6 +530,7 @@ export const useAddWineSetView = () => {
                 eventStartTime: draft.eventStartTime,
                 eventEndTime: draft.eventEndTime,
                 paymentMethodIds: draft.paymentMethodIds,
+                contactIds: draft.contactIds,
                 price: Number(draft.price),
                 currency: draft.currency,
                 speakerName: draft.speakerName,

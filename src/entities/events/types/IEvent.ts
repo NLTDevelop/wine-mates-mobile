@@ -32,6 +32,24 @@ export interface IEvent {
     participationCondition?: ParticipationCondition;
 }
 
+export interface IEventContact {
+    id: number;
+    contactId: number;
+    eventId: number;
+    name: string;
+    value: string;
+    isVisible: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+    EventContact?: {
+        id: number;
+        contactId: number;
+        eventId: number;
+        createdAt?: string;
+        updatedAt?: string;
+    };
+}
+
 export interface IEventDetail {
     id: number;
     latitude: number;
@@ -49,6 +67,7 @@ export interface IEventDetail {
     eventEndTime?: string;
     attendees?: string[];
     attendeesCount?: number;
+    contacts?: IEventContact[];
     acceptedCount?: number;
     price: number;
     eventType?: EventType;

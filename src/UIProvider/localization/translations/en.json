@@ -456,6 +456,8 @@
         "addContact": "Add contact",
         "editContact": "Edit contact",
         "contactValue": "Phone number or link",
-        "contacts": "Contacts"
+        "contacts": "Contacts",
+        "socialNetworks": "Social networks",
+        "noVisibleContacts": "No visible contacts"
     }
 }

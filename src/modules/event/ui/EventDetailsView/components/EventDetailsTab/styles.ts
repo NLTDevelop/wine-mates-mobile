@@ -44,6 +44,15 @@ export const getStyles = (colors: IColors) => {
         wineSetItemSeparator: {
             height: scaleVertical(10),
         },
+        contactsSection: {
+            gap: scaleVertical(12),
+        },
+        contactsTitle: {
+            color: colors.text,
+        },
+        contactItemSeparator: {
+            height: scaleVertical(12),
+        },
         footer: {
             flexDirection: 'row',
             gap: scaleHorizontal(12),

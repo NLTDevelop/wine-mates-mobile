@@ -460,6 +460,8 @@
         "addContact": "Додати контакт",
         "editContact": "Редагувати контакт",
         "contactValue": "Номер телефону або посилання",
-        "contacts": "Контакти"
+        "contacts": "Контакти",
+        "socialNetworks": "Соціальні мережі",
+        "noVisibleContacts": "Немає видимих контактів"
     }
 }

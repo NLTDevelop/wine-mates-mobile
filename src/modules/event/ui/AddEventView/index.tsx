@@ -20,9 +20,11 @@ import { useParticipationConditionModal } from './presenters/useParticipationCon
 import { useConfirmationRequiredModal } from './presenters/useConfirmationRequiredModal';
 import { useCurrencyPickerModal } from './presenters/useCurrencyPickerModal';
 import { usePaymentMethodsModal } from './presenters/usePaymentMethodsModal';
+import { useContactInfoModal } from './presenters/useContactInfoModal';
 import { useEventDateTimeFormatter } from '../../presenters/useEventDateTimeFormatter';
 import { useEventTypeLabel } from '../../presenters/useEventTypeLabel';
 import { PaymentMethodsPickerModal } from './components/PaymentMethodsPickerModal';
+import { ContactInfoPickerModal } from './components/ContactInfoPickerModal';
 import { CurrencyModal } from './components/CurrencyModal';
 import { SingleSelectModal } from './components/SingleSelectModal';
 import { PickerButton } from './components/PickerButton';
@@ -40,8 +42,10 @@ export const AddEventView = () => {
         form,
         isLoading,
         isPaymentMethodsLoading,
+        isContactInfoLoading,
         isPartyEventType,
         paymentMethods,
+        contacts,
         currencies,
         disabled,
         onChangeTheme,
@@ -63,6 +67,7 @@ export const AddEventView = () => {
         onChangeCurrency,
         onChangeRequiresConfirmation,
         onChangePaymentMethodIds,
+        onChangeContactInfoIds,
         onLocationPress,
         onSubmit,
     } = useAddEvent();
@@ -191,6 +196,19 @@ export const AddEventView = () => {
         value: form.paymentMethodIds,
         paymentMethods,
         onChange: onChangePaymentMethodIds,
+    });
+
+    const {
+        isVisible: isContactInfoModalVisible,
+        options: contactInfoOptions,
+        selectedText: selectedContactInfoText,
+        onOpen: onOpenContactInfoModal,
+        onClose: onCloseContactInfoModal,
+        onConfirm: onConfirmContactInfo,
+    } = useContactInfoModal({
+        value: form.contactIds,
+        contacts,
+        onChange: onChangeContactInfoIds,
     });
 
     return (
@@ -340,6 +358,13 @@ export const AddEventView = () => {
                             </View>
 
                             <Typography variant="h4" text={t('event.bookingAndDetails')} />
+
+                            <PickerButton
+                                onPress={onOpenContactInfoModal}
+                                text={selectedContactInfoText || t('contactInfo.contacts')}
+                                style={styles.pickerButton}
+                            />
+
                             <PickerButton
                                 onPress={onOpenPaymentMethodsModal}
                                 text={selectedPaymentMethodsText || t('payments.paymentsMethods')}
@@ -449,6 +474,15 @@ export const AddEventView = () => {
                     isLoading={isPaymentMethodsLoading}
                     onClose={onClosePaymentMethodsModal}
                     onConfirm={onConfirmPaymentMethods}
+                />
+            )}
+            {isContactInfoModalVisible && (
+                <ContactInfoPickerModal
+                    visible={isContactInfoModalVisible}
+                    options={contactInfoOptions}
+                    isLoading={isContactInfoLoading}
+                    onClose={onCloseContactInfoModal}
+                    onConfirm={onConfirmContactInfo}
                 />
             )}
             {isConfirmationRequiredModalVisible && (

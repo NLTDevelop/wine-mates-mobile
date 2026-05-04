@@ -7,7 +7,9 @@ import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { IWineSetItem } from '@/entities/events/types/IWineSetItem';
+import { IEventContactOption } from '@/modules/event/ui/EventDetailsView/types/IEventContactOption';
 import { WineSetItem } from '../WineSetItem';
+import { EventContactItem } from '../EventContactItem';
 import { EventDetailsPreview } from '../EventDetailsPreview';
 import { getStyles } from './styles';
 import { useEventDetailsTab } from './presenters/useEventDetailsTab';
@@ -25,6 +27,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
         eventDetail,
         detailsData,
         wineSetItems,
+        contactItems,
         cardPreviewData,
         isBookingModalVisible,
         onBookNowPress,
@@ -41,6 +44,18 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
 
     const renderWineSetItemSeparator = function renderWineSetItemSeparator() {
         return <View style={styles.wineSetItemSeparator} />;
+    };
+
+    function contactKeyExtractor(item: IEventContactOption) {
+        return `${item.id}`;
+    }
+
+    const renderContactItem: ListRenderItem<IEventContactOption> = function renderContactItem({ item }) {
+        return <EventContactItem item={item} />;
+    };
+
+    const renderContactItemSeparator = function renderContactItemSeparator() {
+        return <View style={styles.contactItemSeparator} />;
     };
 
     if (isLoading) {
@@ -84,6 +99,19 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                             renderItem={renderWineSetItem}
                             scrollEnabled={false}
                             ItemSeparatorComponent={renderWineSetItemSeparator}
+                        />
+                    </View>
+                )}
+
+                {contactItems.length > 0 && (
+                    <View style={styles.contactsSection}>
+                        <Typography text={t('contactInfo.socialNetworks')} variant="h5" style={styles.contactsTitle} />
+                        <FlatList
+                            data={contactItems}
+                            keyExtractor={contactKeyExtractor}
+                            renderItem={renderContactItem}
+                            scrollEnabled={false}
+                            ItemSeparatorComponent={renderContactItemSeparator}
                         />
                     </View>
                 )}
