@@ -8,6 +8,8 @@ import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { IAIData } from '@/entities/wine/types/IAIData';
+import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
+import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 
 const createValue = (): IWineBaseValue => ({ id: null, value: '' });
 
@@ -66,6 +68,19 @@ const fromDropdown = (item?: IDropdownItem | null): IWineBaseValue => {
     };
 };
 
+const getWineSetSearchItem = (id: number, form: IWineBase): IWineSetSearchItem => {
+    return {
+        id,
+        name: form.wineName.value || '',
+        producer: form.producer.value,
+        vintage: form.vintageYear.value ? Number(form.vintageYear.value) : null,
+        grapeVariety: form.grapeVariety.value,
+        country: form.country.value,
+        region: form.region.value,
+        image: null,
+    };
+};
+
 export const useAddWine = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
@@ -73,6 +88,7 @@ export const useAddWine = () => {
     const [form, setForm] = useState<IWineBase>(() => createInitialForm(aiData));
     const [inProgress, setInProgress] = useState(false);
     const [isVintageError, setIsVintageError] = useState({status: false, errorText: ''});
+    const isAddingWineToEvent = Boolean(wineSetScannerModel.state);
     const isDisabled = useMemo(() => {
         const baseRequired = [
             form.typeOfWine.value,
@@ -124,7 +140,7 @@ export const useAddWine = () => {
         setForm(prev => ({ ...prev, wineName: { ...prev.wineName, value } }));
     }, []);
 
-    const handleNextPress = useCallback(async () => {
+    const onNextPress = useCallback(async () => {
         try {
             if (!form.typeOfWine.id || !form.colorOfWine.id) return;
 
@@ -154,10 +170,27 @@ export const useAddWine = () => {
 
             if (response.isError || !response.data) {
                 if (response.status === 409) {
+                    const wineId = Number(response.errors.wineId || 0);
+
+                    if (isAddingWineToEvent && wineId) {
+                        const addWineSetScannerState = wineSetScannerModel.state;
+                        wineSetScannerModel.clear();
+                        wineModel.clear();
+
+                        if (addWineSetScannerState) {
+                            navigation.navigate('AddWineSetView', {
+                                draft: addWineSetScannerState.draft,
+                                initialSelectedWines: addWineSetScannerState.selectedWines,
+                                selectedWine: getWineSetSearchItem(wineId, form),
+                            });
+                        }
+                        return;
+                    }
+
                     const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
                     wineModel.clear();
                     wineModel.wine = {
-                        id: Number(response.errors.wineId || 0),
+                        id: wineId,
                         vintage: Number(form.vintageYear.value),
                         name: form.wineName.value || '',
                     };
@@ -179,6 +212,21 @@ export const useAddWine = () => {
                     );
                 }
             } else {
+                if (isAddingWineToEvent) {
+                    const addWineSetScannerState = wineSetScannerModel.state;
+                    wineSetScannerModel.clear();
+                    wineModel.clear();
+
+                    if (addWineSetScannerState) {
+                        navigation.navigate('AddWineSetView', {
+                            draft: addWineSetScannerState.draft,
+                            initialSelectedWines: addWineSetScannerState.selectedWines,
+                            selectedWine: getWineSetSearchItem(response.data.id, form),
+                        });
+                    }
+                    return;
+                }
+
                 const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
                 wineModel.clear();
                 wineModel.base = {
@@ -200,10 +248,22 @@ export const useAddWine = () => {
         } finally {
             setInProgress(false);
         }
-    }, [navigation, form]);
+    }, [navigation, form, isAddingWineToEvent]);
 
     return {
-        form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress,
-        isDisabled, onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress, isVintageError
+        form,
+        onChangeWinery,
+        onChangeGrapeVariety,
+        onChangeVintageYear,
+        onChangeWineName,
+        onNextPress,
+        isDisabled,
+        onChangeType,
+        onChangeColor,
+        onChangeCountry,
+        onChangeRegion,
+        inProgress,
+        isVintageError,
+        isAddingWineToEvent,
     };
 };

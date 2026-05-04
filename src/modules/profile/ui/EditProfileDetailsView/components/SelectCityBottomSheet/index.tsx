@@ -104,7 +104,6 @@ export const SelectCityBottomSheet = ({
                                 text={emptyText}
                                 isLoading={isLoading}
                             />}
-                            
                         />
                 </Animated.View>
                 <View style={styles.footer}/>

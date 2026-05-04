@@ -373,6 +373,7 @@
         "listWineEvent": "List wine event",
         "wineSet": "Wine set",
         "addWine": "Add wine",
+        "searchWineWithScanner": "Scan wine",
         "repeat": "Repeat",
         "repeatNever": "Never",
         "repeatDaily": "Daily",

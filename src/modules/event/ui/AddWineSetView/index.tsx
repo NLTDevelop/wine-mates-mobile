@@ -14,7 +14,8 @@ import { WineSetItemRow } from './components/WineSetItemRow';
 import { RepeatRuleModal } from './components/RepeatRuleModal';
 import { TastingTypeModal } from './components/TastingTypeModal';
 import { EventCreatedAlert } from './components/EventCreatedAlert';
-import { IWineSetViewItem } from '@/modules/event/types/IWineSetMockItem';
+import { WineSearchResultRow } from './components/WineSearchResultRow';
+import { IWineSearchResultViewItem, IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
 
 export const AddWineSetView = () => {
     const { colors, t } = useUiContext();
@@ -30,9 +31,13 @@ export const AddWineSetView = () => {
         repeatRuleItems,
         isTastingTypeModalVisible,
         wineSetViewItems,
+        wineSearchResultItems,
+        shouldShowScannerButton,
+        maxVisibleSearchResults,
         isRepeatModalVisible,
         isEventCreatedAlertVisible,
         isCreating,
+        isCreateEventDisabled,
         searchInputRef,
         onChangeSearchQuery,
         onOpenTastingTypeModal,
@@ -45,17 +50,27 @@ export const AddWineSetView = () => {
         onCheckEventPress,
         onShareQrPress,
         onAddWinePress,
+        onOpenScannerPress,
         onCreateEventPress,
     } = useAddWineSetView();
 
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
+    const searchResultKeyExtractor = (item: IWineSearchResultViewItem) => `${item.id}`;
 
     const renderWineItem: ListRenderItem<IWineSetViewItem> = function renderWineItem({ item }) {
         return <WineSetItemRow title={item.title} onEditPress={item.onEditPress} />;
     };
 
+    const renderWineSearchResult: ListRenderItem<IWineSearchResultViewItem> = function renderWineSearchResult({ item }) {
+        return <WineSearchResultRow title={item.title} subtitle={item.subtitle} onPress={item.onPress} />;
+    };
+
     const renderListDivider = function renderListDivider() {
         return <View style={styles.listDivider} />;
+    };
+
+    const renderSearchResultDivider = function renderSearchResultDivider() {
+        return <View style={styles.searchResultDivider} />;
     };
 
     return (
@@ -73,6 +88,35 @@ export const AddWineSetView = () => {
                         placeholder={t('common.search')}
                         containerStyle={styles.searchBar}
                     />
+                    {(wineSearchResultItems.length > 0 || shouldShowScannerButton) && (
+                        <View style={styles.searchResultsContainer}>
+                            {wineSearchResultItems.length > 0 ? (
+                                <FlatList
+                                    data={wineSearchResultItems}
+                                    keyExtractor={searchResultKeyExtractor}
+                                    renderItem={renderWineSearchResult}
+                                    scrollEnabled={wineSearchResultItems.length > maxVisibleSearchResults}
+                                    nestedScrollEnabled
+                                    keyboardShouldPersistTaps="always"
+                                    ItemSeparatorComponent={renderSearchResultDivider}
+                                    style={styles.searchResultsList}
+                                />
+                            ) : (
+                                <View style={styles.emptySearchContainer}>
+                                    <Typography
+                                        variant="body_400"
+                                        text={t('common.nothingFoundTitle')}
+                                        style={styles.emptySearchText}
+                                    />
+                                    <Button
+                                        text={t('event.searchWineWithScanner')}
+                                        onPress={onOpenScannerPress}
+                                        type="secondary"
+                                    />
+                                </View>
+                            )}
+                        </View>
+                    )}
                     <TouchableOpacity style={styles.tastingTypeButton} onPress={onOpenTastingTypeModal}>
                         <Typography variant="h6" text={tastingTypeLabel} style={styles.tastingTypeButtonText} />
                         <ArrowDownIcon />
@@ -108,6 +152,7 @@ export const AddWineSetView = () => {
                         type="main"
                         onPress={onCreateEventPress}
                         inProgress={isCreating}
+                        disabled={isCreateEventDisabled}
                         containerStyle={styles.createButton}
                     />
                 </View>

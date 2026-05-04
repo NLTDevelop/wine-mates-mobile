@@ -20,6 +20,7 @@ export interface ILinks {
     features: string;
     wines: string;
     wineFilters: string;
+    wineSetSearch: string;
     scannedWines: string;
     wineTypes: string;
     wineColors: string;
@@ -56,6 +57,7 @@ class Links implements ILinks {
         features: 'features',
         wines: 'wines',
         wineFilters: 'wines/filters',
+        wineSetSearch: 'wines/search/wine-set',
         scannedWines: 'wines/scanner',
         wineTypes: 'wine-types',
         wineColors: 'wine-colors',
@@ -115,6 +117,9 @@ class Links implements ILinks {
     }
     public get wineFilters() {
         return `${this._domain}${this._links.wineFilters}`;
+    }
+    public get wineSetSearch() {
+        return `${this._domain}${this._links.wineSetSearch}`;
     }
     public get scannedWines() {
         return `${this._domain}${this._links.scannedWines}`;

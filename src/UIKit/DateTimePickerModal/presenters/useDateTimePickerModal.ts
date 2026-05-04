@@ -1,18 +1,15 @@
-import { useEffect, useMemo, useReducer } from 'react';
+import { useMemo } from 'react';
 import { useUiContext } from '@/UIProvider';
 
 interface IUseDateTimePickerModalProps {
     mode: 'date' | 'time';
     title?: string;
-    visible: boolean;
 }
 
 type PickerTheme = 'auto' | 'light' | 'dark';
 
-export const useDateTimePickerModal = ({ mode, title, visible }: IUseDateTimePickerModalProps) => {
+export const useDateTimePickerModal = ({ mode, title }: IUseDateTimePickerModalProps) => {
     const { t, locale, theme } = useUiContext();
-    const [openCounter, increaseOpenCounter] = useReducer((previousValue: number) => previousValue + 1, 0);
-
     const normalizedLocale = useMemo(() => {
         const preparedLocale = (locale || 'en').trim().replace('_', '-');
 
@@ -37,18 +34,9 @@ export const useDateTimePickerModal = ({ mode, title, visible }: IUseDateTimePic
     const modalTitle = title || (mode === 'date' ? t('event.eventDate') : t('event.eventTime'));
     const pickerTheme: PickerTheme = theme === 'light' ? 'light' : 'dark';
 
-    useEffect(() => {
-        if (visible) {
-            increaseOpenCounter();
-        }
-    }, [visible]);
-
-    const pickerKey = useMemo(() => `${mode}-${openCounter}`, [mode, openCounter]);
-
     return {
         pickerLocale,
         modalTitle,
         pickerTheme,
-        pickerKey,
     };
 };

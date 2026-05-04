@@ -4,15 +4,26 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        title: {
-            marginTop: scaleVertical(16),
+        container: {
+            flex: 1,
+            justifyContent: 'space-between',
             paddingHorizontal: scaleHorizontal(16),
-            color: colors.text,
         },
-        description: {
-            marginTop: scaleVertical(8),
-            paddingHorizontal: scaleHorizontal(16),
+        title: {
+            textAlign: 'center',
             color: colors.text_light,
+            marginBottom: scaleVertical(24),
+        },
+        input: {
+            marginBottom: 0,
+            backgroundColor: colors.background,
+        },
+        mainContainer: {
+            gap: scaleVertical(12),
+            marginBottom: scaleVertical(16),
+        },
+        button: {
+            marginBottom: scaleVertical(16),
         },
     });
 

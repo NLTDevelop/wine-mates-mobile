@@ -22,8 +22,8 @@ import { Warning } from '@/modules/authentication/ui/components/Warning';
 export const AddWineView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress, isDisabled,
-        onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress, isVintageError } = useAddWine();
+    const { form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, onNextPress, isDisabled,
+        onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress, isVintageError, isAddingWineToEvent } = useAddWine();
     const { countries, typeData, getTypes, isLoading, isError } = useWineInitialData();
     const { colorsData } = useWineColor(form.typeOfWine.id);
     const { regions } = useWineRegion(form.country.id);
@@ -114,8 +114,8 @@ export const AddWineView = observer(() => {
                             </View>
                         </View>
                         <Button
-                            text={t('scanner.tasteWine')}
-                            onPress={handleNextPress}
+                            text={isAddingWineToEvent ? t('event.addWine') : t('scanner.tasteWine')}
+                            onPress={onNextPress}
                             containerStyle={styles.button}
                             disabled={isDisabled}
                             inProgress={inProgress}

@@ -25,10 +25,13 @@ export const usePhoneInputField = ({ onChangeText, clearPhone, onChangeCountryCo
     const defaultRegion = regionByLanguage[languageCode] || (RNLocalize.getCountry() as CountryCode) || 'US';
 
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
+    const [isPickerMounted, setIsPickerMounted] = useState(false);
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [maxLength, setMaxLength] = useState<number>(15);
     const countryModalRef = useRef<BottomSheetModal>(null);
+    const pendingCountryRef = useRef<ICountry | null>(null);
+    const frameRef = useRef<number | null>(null);
 
     useEffect(() => {
         const detectCountry = async () => {
@@ -67,7 +70,7 @@ export const usePhoneInputField = ({ onChangeText, clearPhone, onChangeCountryCo
         }
     }, [selectedCountry?.callingCode, onChangeCountryCode]);
 
-    const handlePhoneChange = useCallback(
+    const onPhoneChange = useCallback(
         (text: string) => {
             if (!selectedCountry) return;
             let cleaned = text.replace(/[^\d+]/g, '');
@@ -78,34 +81,62 @@ export const usePhoneInputField = ({ onChangeText, clearPhone, onChangeCountryCo
         [selectedCountry, onChangeText],
     );
 
-    const handleCountryCodePress = useCallback(() => {
+    const onCountryCodePress = useCallback(() => {
+        setIsPickerMounted(true);
         setVisible(true);
-        countryModalRef.current?.present();
     }, []);
 
-    const handleCountryPress = useCallback(
+    const onCountryPress = useCallback(
         (item: ICountry) => {
-            setSelectedCountry({
-                name: item.name,
-                cca2: item.cca2,
-                callingCode: `${item.callingCode}`,
-            });
-            const example = getExampleNumber(item.cca2, examples);
-            setMaxLength(example?.nationalNumber?.length || 15);
-            clearPhone?.();
-            setVisible(false);
+            pendingCountryRef.current = item;
             countryModalRef.current?.dismiss();
         },
-        [clearPhone],
+        [],
     );
 
-    const handleClose = useCallback(() => {
-        setVisible(false);
+    const onClose = useCallback(() => {
         countryModalRef.current?.dismiss();
     }, []);
 
+    const onDismiss = useCallback(() => {
+        setVisible(false);
+        setIsPickerMounted(false);
+        const pendingCountry = pendingCountryRef.current;
+
+        if (!pendingCountry) {
+            return;
+        }
+
+        pendingCountryRef.current = null;
+        setSelectedCountry({
+            name: pendingCountry.name,
+            cca2: pendingCountry.cca2,
+            callingCode: `${pendingCountry.callingCode}`,
+        });
+        const example = getExampleNumber(pendingCountry.cca2, examples);
+        setMaxLength(example?.nationalNumber?.length || 15);
+        clearPhone?.();
+    }, [clearPhone]);
+
+    useEffect(() => {
+        if (!isPickerMounted || !visible) {
+            return undefined;
+        }
+
+        frameRef.current = requestAnimationFrame(() => {
+            countryModalRef.current?.present();
+        });
+
+        return () => {
+            if (frameRef.current) {
+                cancelAnimationFrame(frameRef.current);
+                frameRef.current = null;
+            }
+        };
+    }, [isPickerMounted, visible]);
+
     return {
-        loading, selectedCountry, visible, handleCountryPress, handlePhoneChange, countryModalRef, handleCountryCodePress,
-        handleClose, maxLength,
+        loading, selectedCountry, isPickerMounted, visible, onCountryPress, onPhoneChange, countryModalRef, onCountryCodePress,
+        onClose, onDismiss, maxLength,
     };
 };
