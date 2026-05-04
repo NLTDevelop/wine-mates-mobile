@@ -30,6 +30,10 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(20),
             borderRadius: scaleVertical(20),
         },
+        placeholderText: {
+            textAlignVertical: 'center',
+            color: colors.text,
+        },
         codeText: {
             marginLeft: scaleHorizontal(8),
             marginRight: scaleHorizontal(2),

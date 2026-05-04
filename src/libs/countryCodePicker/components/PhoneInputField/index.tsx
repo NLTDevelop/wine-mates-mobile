@@ -19,11 +19,46 @@ interface IProps {
     initialCca2?: string | null;
 }
 
-export const PhoneInputField = ({ value, onChangeText, placeholder, editable = true, clearPhone, onChangeCountryCode, initialCca2 = null }: IProps) => {
+export const PhoneInputField = ({
+    value,
+    onChangeText,
+    placeholder,
+    editable = true,
+    clearPhone,
+    onChangeCountryCode,
+    initialCca2 = null,
+}: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { loading, selectedCountry, isPickerMounted, visible, onCountryPress, onPhoneChange, countryModalRef, maxLength,
-        onCountryCodePress, onClose, onDismiss } = usePhoneInputField({ onChangeText, clearPhone, onChangeCountryCode, initialCca2: initialCca2 as any });
+    const {
+        loading,
+        selectedCountry,
+        isPickerMounted,
+        visible,
+        onCountryPress,
+        onPhoneChange,
+        countryModalRef,
+        maxLength,
+        onCountryCodePress,
+        onClose,
+        onDismiss,
+    } = usePhoneInputField({ onChangeText, clearPhone, onChangeCountryCode, initialCca2: initialCca2 as any });
+
+    const renderFlag = () => {
+        if (!selectedCountry) {
+            return null;
+        }
+
+        if (selectedCountry.cca2 === 'BY') {
+            return <Typography variant="h6" text="🇧🇾" style={styles.placeholderText} />;
+        }
+
+        try {
+            return <Flag code={selectedCountry.cca2} style={styles.flag} />;
+        } catch {
+            return <Typography variant="h6" text={selectedCountry.cca2} style={styles.placeholderText} />;
+        }
+    };
 
     return (
         <>
@@ -39,7 +74,7 @@ export const PhoneInputField = ({ value, onChangeText, placeholder, editable = t
                         onPressIn={Keyboard.dismiss}
                         onPress={onCountryCodePress}
                     >
-                        <Flag code={selectedCountry.cca2} style={styles.flag} />
+                        {renderFlag()}
                         <Typography variant="h6" style={styles.codeText}>
                             {selectedCountry.callingCode}
                         </Typography>

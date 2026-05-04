@@ -19,7 +19,7 @@ export const getStyles = (colors: IColors) => {
             width: scaleVertical(24),
             height: scaleVertical(24),
             borderRadius: scaleVertical(20),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
         },
         name: {
@@ -29,14 +29,9 @@ export const getStyles = (colors: IColors) => {
         text: {
             color: colors.text_light,
         },
-        placeholderFlag: {
-            backgroundColor: colors.border,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 999,
-        },
         placeholderText: {
             color: colors.text,
+            textAlignVertical: 'center',
         },
     });
 

@@ -23,9 +23,6 @@ export const getStyles = (colors: IColors) => {
             padding: scaleHorizontal(16),
             gap: scaleVertical(12),
         },
-        row: {
-          
-        },
         rowDivider: {
             height: scaleVertical(1),
             backgroundColor: colors.border_light,
