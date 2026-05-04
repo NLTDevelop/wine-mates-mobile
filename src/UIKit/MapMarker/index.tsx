@@ -13,7 +13,7 @@ import { isAndroid } from '@/utils';
 interface IProps {
     onPress?: (id: number) => void;
     customIcon?: ReactNode;
-    markerProps?: MapMarkerProps;
+    markerProps?: Partial<MapMarkerProps>;
     coordinate?: LatLng;
     cluster?: boolean;
     eventId: number;

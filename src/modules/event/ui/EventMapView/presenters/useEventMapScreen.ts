@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { MapPressEvent, Region } from 'react-native-maps';
+import { MapPressEvent } from 'react-native-maps';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventType } from '@/entities/events/enums/EventType';
@@ -11,7 +11,6 @@ import { useEventMapView } from '@/modules/event/presenters/useEventMapView';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 
-const USER_LOCATION_REGION_THRESHOLD = 0.005;
 type Navigation = NativeStackNavigationProp<EventStackParamList>;
 
 export const useEventMapScreen = () => {
@@ -142,37 +141,6 @@ export const useEventMapScreen = () => {
         }
     }, [isRefetching, onRefetchEvents, onRefetchMapPins]);
 
-    const onResetToCurrentLocation = useCallback(async () => {
-        if (isRefetching) {
-            return;
-        }
-
-        setSearchLocation(null);
-        setIsRefetching(true);
-        try {
-            await Promise.all([
-                onRefetchMapPins(userLocation),
-                onRefetchEvents(userLocation),
-            ]);
-        } finally {
-            setIsRefetching(false);
-        }
-    }, [isRefetching, onRefetchEvents, onRefetchMapPins, userLocation]);
-
-    const onRegionChangeComplete = useCallback(async (region: Region) => {
-        if (!searchLocation || !userLocation) {
-            return;
-        }
-
-        const isNearUserLatitude = Math.abs(region.latitude - userLocation.latitude) <= USER_LOCATION_REGION_THRESHOLD;
-        const isNearUserLongitude = Math.abs(region.longitude - userLocation.longitude) <= USER_LOCATION_REGION_THRESHOLD;
-        if (!isNearUserLatitude || !isNearUserLongitude) {
-            return;
-        }
-
-        await onResetToCurrentLocation();
-    }, [onResetToCurrentLocation, searchLocation, userLocation]);
-
     return {
         isRefetching,
         selectedTab,
@@ -181,7 +149,6 @@ export const useEventMapScreen = () => {
         onFilterPress,
         onUpdateEvent,
         onMapPress,
-        onRegionChangeComplete,
         searchLocation,
         mapPins,
         initialRegion,

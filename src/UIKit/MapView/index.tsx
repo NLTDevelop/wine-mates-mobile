@@ -58,6 +58,7 @@ const MapViewComponent = forwardRef<RNMapView, IMapViewProps>(
                         }}
                         onPress={cluster.onPress}
                         tracksViewChanges={isAndroid}
+                        zIndex={4}
                     >
                         <View style={[styles.clusterContainer, { backgroundColor: clusterColor || colors.primary }]}>
                             <Typography
