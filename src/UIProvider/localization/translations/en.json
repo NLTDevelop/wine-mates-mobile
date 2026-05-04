@@ -450,5 +450,12 @@
         "downloadFile": "Download file",
         "downloadHint": "You can download the QR code for payment.",
         "noVisiblePaymentMethods": "No visible payment methods"
+    },
+    "contactInfo" : {
+        "contactInfo": "Contact information",
+        "addContact": "Add contact",
+        "editContact": "Edit contact",
+        "contactValue": "Phone number or link",
+        "contacts": "Contacts"
     }
 }

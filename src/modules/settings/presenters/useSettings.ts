@@ -22,6 +22,10 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
         navigation.navigate('PaymentsView');
     }, [navigation]);
 
+    const onContactInfoPress = useCallback(() => {
+        navigation.navigate('ContactInfoView');
+    }, [navigation]);
+
     const onSubscriptionPress = useCallback(() => {
         navigation.navigate('');
     }, [navigation]);
@@ -67,6 +71,11 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
             id: 4,
             text: localization.t('payments.paymentsMethods'),
             onPress: onPaymentsPress,
+        },
+        {
+            id: 5,
+            text: localization.t('contactInfo.contactInfo'),
+            onPress: onContactInfoPress,
         },
     ];
 
