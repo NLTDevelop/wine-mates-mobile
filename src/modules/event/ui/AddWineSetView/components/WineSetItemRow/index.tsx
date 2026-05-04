@@ -9,21 +9,28 @@ import { getStyles } from './styles';
 interface IProps {
     title: string;
     onEditPress: () => void;
+    onDragPress: () => void;
+    isActive: boolean;
 }
 
-export const WineSetItemRow = ({ title, onEditPress }: IProps) => {
+export const WineSetItemRow = ({ title, onEditPress, onDragPress, isActive }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const containerStyle = isActive ? styles.containerActive : styles.container;
+    const contentStyle = isActive ? styles.contentActive : styles.content;
+    const dragIconColor = isActive ? colors.primary : colors.text_light;
 
     return (
-        <View style={styles.container}>
-            <DragIcon color={colors.text_light} />
-            <View style={styles.content}>
+        <TouchableOpacity style={containerStyle} activeOpacity={1} onLongPress={onDragPress}>
+            <TouchableOpacity style={styles.dragButton} onLongPress={onDragPress}>
+                <DragIcon color={dragIconColor} />
+            </TouchableOpacity>
+            <View style={contentStyle}>
                 <Typography variant="h6" text={title} numberOfLines={1} style={styles.title} />
                 <TouchableOpacity onPress={onEditPress} style={styles.editButton}>
                     <EditIcon color={colors.text} />
                 </TouchableOpacity>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };

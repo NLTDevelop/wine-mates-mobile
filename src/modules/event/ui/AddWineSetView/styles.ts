@@ -5,10 +5,15 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
-            flex: 1,
             paddingHorizontal: scaleHorizontal(16),
             paddingBottom: scaleVertical(24),
+        },
+        listHeader: {
             gap: scaleVertical(16),
+        },
+        listFooter: {
+            gap: scaleVertical(16),
+            paddingTop: scaleVertical(16),
         },
         searchBar: {
             marginBottom: 0,
@@ -52,13 +57,10 @@ export const getStyles = (colors: IColors) => {
             gap: scaleHorizontal(8),
             paddingHorizontal: scaleHorizontal(12),
             backgroundColor: colors.background,
+            marginBottom: scaleVertical(16),
         },
         tastingTypeButtonText: {
             color: colors.text,
-        },
-        dropdownContent: {
-            marginTop: scaleVertical(10),
-            backgroundColor: colors.background,
         },
         listDivider: {
             height: scaleVertical(8),
@@ -91,7 +93,7 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
         },
         createButton: {
-            marginTop: 'auto',
+            marginTop: scaleVertical(8),
         },
     });
 

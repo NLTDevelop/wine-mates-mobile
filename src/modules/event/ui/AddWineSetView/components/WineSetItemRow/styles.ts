@@ -9,6 +9,18 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             gap: scaleHorizontal(8),
         },
+        containerActive: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(8),
+            opacity: 0.95,
+        },
+        dragButton: {
+            width: scaleHorizontal(40),
+            height: scaleHorizontal(40),
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
         content: {
             flex: 1,
             minHeight: scaleVertical(48),
@@ -20,6 +32,18 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             backgroundColor: colors.background,
+        },
+        contentActive: {
+            flex: 1,
+            minHeight: scaleVertical(48),
+            borderWidth: scaleHorizontal(2),
+            borderColor: colors.primary,
+            borderRadius: 12,
+            paddingHorizontal: scaleHorizontal(12),
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: colors.background_light,
         },
         title: {
             color: colors.text,

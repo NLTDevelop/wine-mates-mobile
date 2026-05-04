@@ -25,6 +25,10 @@ interface ITastingTypeItem {
     onPress: () => void;
 }
 
+interface IWineSetDragEndPayload {
+    data: IWineSetViewItem[];
+}
+
 type Route = RouteProp<EventStackParamList, 'AddWineSetView'>;
 
 const REPEAT_RULE_LABEL_KEYS: Record<RepeatRule, string> = {
@@ -344,6 +348,24 @@ export const useAddWineSetView = () => {
         }));
     }, [createOnEditWinePress, selectedWines]);
 
+    const onReorderWineSet = useCallback(({ data }: IWineSetDragEndPayload) => {
+        setSelectedWines((prev) => {
+            const orderMap = new Map(data.map((item, index) => [item.id, index]));
+            const ordered = [...prev].sort((a, b) => {
+                const leftOrder = orderMap.get(a.id);
+                const rightOrder = orderMap.get(b.id);
+
+                if (leftOrder === undefined || rightOrder === undefined) {
+                    return 0;
+                }
+
+                return leftOrder - rightOrder;
+            });
+
+            return ordered;
+        });
+    }, []);
+
     const wineSearchResultItems = useMemo<IWineSearchResultViewItem[]>(() => {
         return wineSearchResults
             .filter(item => !selectedWines.some(wine => wine.id === item.id))
@@ -576,6 +598,7 @@ export const useAddWineSetView = () => {
         onShareQrPress,
         onAddWinePress,
         onOpenScannerPress,
+        onReorderWineSet,
         onCreateEventPress,
     };
 };
