@@ -24,19 +24,15 @@ export const getStyles = (colors: IColors) => {
             gap: scaleVertical(12),
         },
         row: {
-            flexDirection: 'row',
-            alignItems: 'flex-start',
+          
         },
-        labelContainer: {
-            width: scaleHorizontal(116),
-            marginRight: scaleHorizontal(4),
-            flexShrink: 0,
+        rowDivider: {
+            height: scaleVertical(1),
+            backgroundColor: colors.border_light,
+            marginTop: scaleVertical(10),
         },
         label: {
             color: colors.text_light,
-        },
-        valueContainer: {
-            flex: 1,
         },
         value: {
             color: colors.text,

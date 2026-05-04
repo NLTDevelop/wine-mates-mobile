@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { View } from 'react-native';
-import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
+import DraggableFlatList, { RenderItemParams, ScaleDecorator } from 'react-native-draggable-flatlist';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
@@ -57,8 +57,13 @@ export const AddWineSetView = () => {
     } = useAddWineSetView();
 
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
+
     const renderWineItem = function renderWineItem({ item, drag, isActive }: RenderItemParams<IWineSetViewItem>) {
-        return <WineSetItemRow title={item.title} onEditPress={item.onEditPress} onDragPress={drag} isActive={isActive} />;
+        return (
+            <ScaleDecorator activeScale={1.02}>
+                <WineSetItemRow title={item.title} onEditPress={item.onEditPress} onDragPress={drag} isActive={isActive} />
+            </ScaleDecorator>
+        );
     };
 
     const renderListDivider = function renderListDivider() {
@@ -108,9 +113,10 @@ export const AddWineSetView = () => {
                     ItemSeparatorComponent={renderListDivider}
                     onDragEnd={onReorderWineSet}
                     autoscrollThreshold={180}
-                    autoscrollSpeed={260}
+                    autoscrollSpeed={200}
                     dragItemOverflow
                     activationDistance={20}
+                    animationConfig={{ damping: 20, mass: 0.2, stiffness: 220 }}
                 />
             </ScreenContainer>
 

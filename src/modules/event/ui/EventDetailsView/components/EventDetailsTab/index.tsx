@@ -65,14 +65,13 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                 {cardPreviewData && <EventDetailsPreview data={cardPreviewData} />}
 
                 <View style={styles.card}>
-                    {detailsData.map(item => (
-                        <View key={item.key} style={styles.row}>
-                            <View style={styles.labelContainer}>
+                    {detailsData.map((item, index) => (
+                        <View key={item.key}>
+                            <View>
                                 <Typography text={`${item.label}:`} variant="h6" style={styles.label} />
-                            </View>
-                            <View style={styles.valueContainer}>
                                 <Typography text={item.value} variant="h6" style={styles.value} />
                             </View>
+                            {index < detailsData.length - 1 && <View style={styles.rowDivider} />}
                         </View>
                     ))}
                 </View>
