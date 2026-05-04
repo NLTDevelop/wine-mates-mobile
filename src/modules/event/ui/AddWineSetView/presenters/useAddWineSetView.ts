@@ -46,6 +46,7 @@ const TASTING_TYPE_LABEL_KEYS: Record<TastingType, string> = {
 const SEARCH_LIMIT = 10;
 const MIN_SEARCH_LENGTH = 1;
 const MAX_VISIBLE_SEARCH_RESULTS = 3;
+const DEFAULT_TASTING_TYPE = TASTING_TYPES[0] as TastingType;
 
 const getWineTitle = (wine: IWineSetSearchItem) => {
     const name = wine.name?.trim();
@@ -88,8 +89,8 @@ export const useAddWineSetView = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [repeatRule, setRepeatRule] = useState<RepeatRule>(RepeatRule.Never);
     const [repeatRuleDraft, setRepeatRuleDraft] = useState<RepeatRule>(RepeatRule.Never);
-    const [tastingType, setTastingType] = useState<TastingType>(draft?.tastingType || TastingType.Regular);
-    const [tastingTypeDraft, setTastingTypeDraft] = useState<TastingType>(draft?.tastingType || TastingType.Regular);
+    const [tastingType, setTastingType] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
+    const [tastingTypeDraft, setTastingTypeDraft] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
     const [isTastingTypeModalVisible, setIsTastingTypeModalVisible] = useState(false);
     const [isRepeatModalVisible, setIsRepeatModalVisible] = useState(false);
     const [isCreating, setIsCreating] = useState(false);

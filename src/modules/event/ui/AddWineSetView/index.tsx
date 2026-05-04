@@ -1,22 +1,18 @@
 import { useMemo } from 'react';
-import { FlatList, ListRenderItem, TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
-import { SearchBar } from '@/UIKit/SearchBar';
-import { Typography } from '@/UIKit/Typography';
-import { Button } from '@/UIKit/Button';
-import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
-import { PlusIcon } from '@assets/icons/PlusIcon';
 import { useAddWineSetView } from './presenters/useAddWineSetView';
 import { getStyles } from './styles';
 import { WineSetItemRow } from './components/WineSetItemRow';
 import { RepeatRuleModal } from './components/RepeatRuleModal';
 import { TastingTypeModal } from './components/TastingTypeModal';
 import { EventCreatedAlert } from './components/EventCreatedAlert';
-import { WineSearchResultRow } from './components/WineSearchResultRow';
-import { IWineSearchResultViewItem, IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
+import { IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
+import { WineSetListHeader } from './components/WineSetListHeader';
+import { WineSetListFooter } from './components/WineSetListFooter';
 
 export const AddWineSetView = () => {
     const { colors, t } = useUiContext();
@@ -57,96 +53,13 @@ export const AddWineSetView = () => {
     } = useAddWineSetView();
 
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
-    const searchResultKeyExtractor = (item: IWineSearchResultViewItem) => `${item.id}`;
-
     const renderWineItem = function renderWineItem({ item, drag, isActive }: RenderItemParams<IWineSetViewItem>) {
         return <WineSetItemRow title={item.title} onEditPress={item.onEditPress} onDragPress={drag} isActive={isActive} />;
-    };
-
-    const renderWineSearchResult: ListRenderItem<IWineSearchResultViewItem> = function renderWineSearchResult({ item }) {
-        return <WineSearchResultRow title={item.title} subtitle={item.subtitle} onPress={item.onPress} />;
     };
 
     const renderListDivider = function renderListDivider() {
         return <View style={styles.listDivider} />;
     };
-
-    const renderSearchResultDivider = function renderSearchResultDivider() {
-        return <View style={styles.searchResultDivider} />;
-    };
-
-    const listHeaderComponent = (
-        <View style={styles.listHeader}>
-            <SearchBar
-                ref={searchInputRef}
-                value={searchQuery}
-                onChangeText={onChangeSearchQuery}
-                placeholder={t('common.search')}
-                containerStyle={styles.searchBar}
-            />
-            {(wineSearchResultItems.length > 0 || shouldShowScannerButton) && (
-                <View style={styles.searchResultsContainer}>
-                    {wineSearchResultItems.length > 0 ? (
-                        <FlatList
-                            data={wineSearchResultItems}
-                            keyExtractor={searchResultKeyExtractor}
-                            renderItem={renderWineSearchResult}
-                            scrollEnabled={wineSearchResultItems.length > maxVisibleSearchResults}
-                            nestedScrollEnabled
-                            keyboardShouldPersistTaps="always"
-                            ItemSeparatorComponent={renderSearchResultDivider}
-                            style={styles.searchResultsList}
-                        />
-                    ) : (
-                        <View style={styles.emptySearchContainer}>
-                            <Typography
-                                variant="body_400"
-                                text={t('common.nothingFoundTitle')}
-                                style={styles.emptySearchText}
-                            />
-                            <Button
-                                text={t('event.searchWineWithScanner')}
-                                onPress={onOpenScannerPress}
-                                type="secondary"
-                            />
-                        </View>
-                    )}
-                </View>
-            )}
-            <TouchableOpacity style={styles.tastingTypeButton} onPress={onOpenTastingTypeModal}>
-                <Typography variant="h6" text={tastingTypeLabel} style={styles.tastingTypeButtonText} />
-                <ArrowDownIcon />
-            </TouchableOpacity>
-        </View>
-    );
-
-    const listFooterComponent = (
-        <View style={styles.listFooter}>
-            <Button
-                text={t('event.addWine')}
-                onPress={onAddWinePress}
-                type="secondary"
-                LeftAccessory={<PlusIcon color={colors.text} width={20} height={20} />}
-            />
-            <View style={styles.divider} />
-            <View style={styles.repeatRow}>
-                <Typography variant="h6" text={`${t('event.repeat')}:`} style={styles.repeatLabel} />
-                <TouchableOpacity style={styles.repeatButton} onPress={onOpenRepeatModal}>
-                    <Typography variant="h6" text={repeatRuleLabel} style={styles.repeatButtonText} />
-                    <ArrowDownIcon />
-                </TouchableOpacity>
-            </View>
-
-            <Button
-                text={t('event.createEvent')}
-                type="main"
-                onPress={onCreateEventPress}
-                inProgress={isCreating}
-                disabled={isCreateEventDisabled}
-                containerStyle={styles.createButton}
-            />
-        </View>
-    );
 
     return (
         <>
@@ -159,8 +72,29 @@ export const AddWineSetView = () => {
                     data={wineSetViewItems}
                     keyExtractor={keyExtractor}
                     renderItem={renderWineItem}
-                    ListHeaderComponent={listHeaderComponent}
-                    ListFooterComponent={listFooterComponent}
+                    ListHeaderComponent={
+                        <WineSetListHeader
+                            searchInputRef={searchInputRef}
+                            searchQuery={searchQuery}
+                            onChangeSearchQuery={onChangeSearchQuery}
+                            wineSearchResultItems={wineSearchResultItems}
+                            shouldShowScannerButton={shouldShowScannerButton}
+                            maxVisibleSearchResults={maxVisibleSearchResults}
+                            tastingTypeLabel={tastingTypeLabel}
+                            onOpenScannerPress={onOpenScannerPress}
+                            onOpenTastingTypeModal={onOpenTastingTypeModal}
+                        />
+                    }
+                    ListFooterComponent={
+                        <WineSetListFooter
+                            repeatRuleLabel={repeatRuleLabel}
+                            isCreating={isCreating}
+                            isCreateEventDisabled={isCreateEventDisabled}
+                            onAddWinePress={onAddWinePress}
+                            onOpenRepeatModal={onOpenRepeatModal}
+                            onCreateEventPress={onCreateEventPress}
+                        />
+                    }
                     contentContainerStyle={styles.container}
                     keyboardShouldPersistTaps="handled"
                     ItemSeparatorComponent={renderListDivider}
