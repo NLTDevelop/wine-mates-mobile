@@ -270,7 +270,7 @@ export const AddEventView = () => {
                                 containerStyle={styles.inputContainerStyle}
                                 inputContainerStyle={styles.descriptionInputContainerStyle}
                                 onChangeText={onChangeDescription}
-                                placeholder={t('event.shortDescription')}
+                                placeholder={t('event.description')}
                                 multiline
                                 maxLength={300}
                             />
