@@ -19,6 +19,7 @@ export interface IAddEventDraft {
     eventEndTime: string;
     phoneNumber: string;
     paymentMethodIds: number[];
+    contactIds: number[];
     price: string;
     currency: string;
     speakerName: string;

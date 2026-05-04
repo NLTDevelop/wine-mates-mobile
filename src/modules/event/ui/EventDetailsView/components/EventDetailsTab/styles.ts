@@ -23,20 +23,13 @@ export const getStyles = (colors: IColors) => {
             padding: scaleHorizontal(16),
             gap: scaleVertical(12),
         },
-        row: {
-            flexDirection: 'row',
-            alignItems: 'flex-start',
-        },
-        labelContainer: {
-            width: scaleHorizontal(116),
-            marginRight: scaleHorizontal(4),
-            flexShrink: 0,
+        rowDivider: {
+            height: scaleVertical(1),
+            backgroundColor: colors.border_light,
+            marginTop: scaleVertical(10),
         },
         label: {
             color: colors.text_light,
-        },
-        valueContainer: {
-            flex: 1,
         },
         value: {
             color: colors.text,
@@ -50,6 +43,15 @@ export const getStyles = (colors: IColors) => {
         },
         wineSetItemSeparator: {
             height: scaleVertical(10),
+        },
+        contactsSection: {
+            gap: scaleVertical(12),
+        },
+        contactsTitle: {
+            color: colors.text,
+        },
+        contactItemSeparator: {
+            height: scaleVertical(12),
         },
         footer: {
             flexDirection: 'row',

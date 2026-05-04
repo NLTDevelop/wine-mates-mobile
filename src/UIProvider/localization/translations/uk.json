@@ -353,7 +353,7 @@
         "basicInfo": "Основна інформація",
         "locationAndSchedule": "Локація та розклад",
         "bookingAndDetails": "Бронювання та деталі",
-        "tastingTheme": "Тема дегустації",
+        "tastingTheme": "Тема вечора",
         "restaurant": "Місце зустрічі",
         "location": "Локація",
         "eventDate": "Дата події",
@@ -364,7 +364,6 @@
         "eventEndTime": "Кінець",
         "speakerName": "Ім'я спікера",
         "description": "Опис",
-        "shortDescription": "Короткий опис",
         "phoneNumber": "Номер телефону",
         "price": "Ціна",
         "currency": "Валюта",
@@ -455,5 +454,14 @@
         "downloadFile": "Завантажити файл",
         "downloadHint": "Ви можете завантажити QR-код для оплати.",
         "noVisiblePaymentMethods": "Немає видимих способів оплати"
+    },
+    "contactInfo" : {
+        "contactInfo": "Контактна інформація",
+        "addContact": "Додати контакт",
+        "editContact": "Редагувати контакт",
+        "contactValue": "Номер телефону або посилання",
+        "contacts": "Контакти",
+        "socialNetworks": "Соціальні мережі",
+        "noVisibleContacts": "Немає видимих контактів"
     }
 }

@@ -1,12 +1,13 @@
-import { memo, useMemo } from 'react';
+import { ComponentType, memo, useMemo } from 'react';
 import { View } from 'react-native';
-import { Region, MapPressEvent, Marker } from 'react-native-maps';
+import { Region, MapPressEvent, Marker, MapMarkerProps } from 'react-native-maps';
 import { MapView } from '@/UIKit/MapView';
 import { MapMarker } from '@/UIKit/MapMarker';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { IEventMapPin } from '@/entities/events/types/IEventMapPin';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
+import { SearchLocationMarkerIcon } from '@assets/icons/SearchLocationMarkerIcon';
 
 interface IEventMapProps {
     mapPins: IEventMapPin[];
@@ -14,10 +15,15 @@ interface IEventMapProps {
     initialRegion: Region;
     onMarkerPress: (markerId: number) => void;
     onMapPress: (event: MapPressEvent) => void;
-    onRegionChangeComplete: (region: Region) => void;
     userLocation?: IUserLocation | null;
     searchLocation?: IUserLocation | null;
 }
+
+type ClusterMarkerProps = MapMarkerProps & {
+    cluster?: boolean;
+};
+
+const ClusterMarker = Marker as ComponentType<ClusterMarkerProps>;
 
 const HIDDEN_PIN_COORDINATE = {
     latitude: -85,
@@ -31,7 +37,6 @@ export const EventMap = memo(
         initialRegion,
         onMarkerPress,
         onMapPress,
-        onRegionChangeComplete,
         userLocation,
         searchLocation,
     }: IEventMapProps) => {
@@ -54,21 +59,28 @@ export const EventMap = memo(
                     showsMyLocationButton={!!userLocation}
                     userInterfaceStyle="light"
                     onPress={onMapPress}
-                    onRegionChangeComplete={onRegionChangeComplete}
                     clusteringEnabled
                     clusterColor={colors.primary}
                     clusterTextColor={colors.background}
+                    clusterRadius={28}
                 >
                     {searchLocation && (
-                        <Marker
+                        <ClusterMarker
                             key="search-location-marker"
+                            identifier="search-location-marker"
                             coordinate={{
                                 latitude: searchLocation.latitude,
                                 longitude: searchLocation.longitude,
                             }}
                             cluster={false}
-                            pinColor="#1A73E8"
-                        />
+                            tappable={false}
+                            tracksViewChanges={false}
+                            zIndex={1}
+                            anchor={{ x: 0.5, y: 0.5 }}
+                            centerOffset={{ x: 0, y: 0 }}
+                        >
+                            <SearchLocationMarkerIcon color={colors.primary} borderColor={colors.background} />
+                        </ClusterMarker>
                     )}
                     {mapPins.map(pin => (
                         <MapMarker
@@ -76,7 +88,7 @@ export const EventMap = memo(
                             coordinate={isPinVisible(pin) ? { latitude: pin.latitude, longitude: pin.longitude } : HIDDEN_PIN_COORDINATE}
                             eventId={pin.id}
                             eventType={pin.eventType}
-                            markerProps={{ opacity: isPinVisible(pin) ? 1 : 0 }}
+                            markerProps={{ opacity: isPinVisible(pin) ? 1 : 0, zIndex: 2 }}
                             onPress={isPinVisible(pin) ? onMarkerPress : undefined}
                         />
                     ))}

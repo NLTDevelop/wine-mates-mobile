@@ -5,6 +5,7 @@ import { WineAndStylesView } from '@/modules/wineAndStyles/ui/WineAndStylesView'
 import { FAQView } from '@/modules/settings/ui/FAQView';
 import { PaymentsView } from '@/modules/payments/ui/PaymentsView';
 import { CreatePaymentView } from '@/modules/payments/ui/CreatePaymentView';
+import { ContactInfoView } from '@/modules/contactInfo/ui/ContactInfoView';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,5 +17,6 @@ export const ProfileStack = () => (
         <Stack.Screen name="WineAndStylesView" component={WineAndStylesView} />
         <Stack.Screen name="PaymentsView" component={PaymentsView} />
         <Stack.Screen name="CreatePaymentView" component={CreatePaymentView} />
+        <Stack.Screen name="ContactInfoView" component={ContactInfoView} />
     </Stack.Navigator>
 );

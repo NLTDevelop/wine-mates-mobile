@@ -16,14 +16,19 @@ interface IProps {
 export const LanguageSelector = ({ value, onChange }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { modalRef, selectedLanguage, isMounted, isOpened, onOpen, onClose, onDismiss, onSelect } = useLanguageSelector({
-        value,
-        onChange,
-    });
+    const { modalRef, selectedLanguage, isMounted, isOpened, onOpen, onClose, onDismiss, onSelect } =
+        useLanguageSelector({
+            value,
+            onChange,
+        });
 
     const renderFlag = () => {
         if (!selectedLanguage) {
             return null;
+        }
+
+        if (selectedLanguage.countryCode === 'BY') {
+            return <Typography variant="h6" text="🇧🇾" />;
         }
 
         try {
@@ -45,7 +50,9 @@ export const LanguageSelector = ({ value, onChange }: IProps) => {
                     />
                 </View>
                 <View style={styles.rightContent}>
-                    {selectedLanguage ? <Typography variant="h6" text={selectedLanguage.code} style={styles.code} /> : null}
+                    {selectedLanguage ? (
+                        <Typography variant="h6" text={selectedLanguage.code} style={styles.code} />
+                    ) : null}
                     <ArrowDownIcon rotate={isOpened ? 180 : 0} />
                 </View>
             </TouchableOpacity>

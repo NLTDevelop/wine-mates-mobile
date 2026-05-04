@@ -7,8 +7,10 @@ import { TastingType } from '@/entities/events/enums/TastingType';
 import { ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
 import { Sex } from '@/entities/events/enums/Sex';
 import { paymentsService } from '@/entities/payments/PaymentsService';
+import { contactsService } from '@/entities/contacts/ContactsService';
 import { eventsService } from '@/entities/events/EventsService';
 import { IPaymentsListItem } from '@/entities/payments/types/IPaymentsListItem';
+import { IContactsListItem } from '@/entities/contacts/types/IContactsListItem';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IAddEventDraft } from '../../../types/IAddEventDraft';
 
@@ -37,6 +39,7 @@ interface IEventForm {
     participationCondition?: ParticipationCondition;
     requiresConfirmation?: boolean;
     paymentMethodIds: number[];
+    contactIds: number[];
 }
 
 const formatDateToLocalApi = (date: Date) => {
@@ -53,8 +56,10 @@ export const useAddEvent = () => {
     const { validateEmptyString } = useValidator();
 
     const [isPaymentMethodsLoading, setIsPaymentMethodsLoading] = useState(false);
+    const [isContactInfoLoading, setIsContactInfoLoading] = useState(false);
     const [isCurrenciesLoading, setIsCurrenciesLoading] = useState(false);
     const [paymentMethods, setPaymentMethods] = useState<IPaymentsListItem[]>([]);
+    const [contacts, setContacts] = useState<IContactsListItem[]>([]);
     const [currencies, setCurrencies] = useState<string[]>([]);
     const [form, setForm] = useState<IEventForm>({
         theme: '',
@@ -81,6 +86,7 @@ export const useAddEvent = () => {
         minAge: 18,
         maxAge: 80,
         paymentMethodIds: [],
+        contactIds: [],
     });
 
     const isPartyEventType = form.eventType === EventType.Parties;
@@ -97,6 +103,21 @@ export const useAddEvent = () => {
             console.warn('useAddEvent -> onLoadPaymentMethods: ', error);
         } finally {
             setIsPaymentMethodsLoading(false);
+        }
+    }, []);
+
+    const onLoadContacts = useCallback(async () => {
+        try {
+            setIsContactInfoLoading(true);
+            const response = await contactsService.list({ isVisible: true });
+
+            if (!response.isError && Array.isArray(response.data)) {
+                setContacts(response.data);
+            }
+        } catch (error) {
+            console.warn('useAddEvent -> onLoadContacts: ', error);
+        } finally {
+            setIsContactInfoLoading(false);
         }
     }, []);
 
@@ -220,6 +241,10 @@ export const useAddEvent = () => {
         setForm(prev => ({ ...prev, paymentMethodIds: value }));
     }, []);
 
+    const onChangeContactInfoIds = useCallback((value: number[]) => {
+        setForm(prev => ({ ...prev, contactIds: value }));
+    }, []);
+
     const onLocationPress = useCallback(() => {
         navigation.navigate('LocationPickerView', {
             initialLocation: form.location,
@@ -230,13 +255,14 @@ export const useAddEvent = () => {
     useEffect(() => {
         const frameId = requestAnimationFrame(() => {
             onLoadPaymentMethods();
+            onLoadContacts();
             onLoadCurrencies();
         });
 
         return () => {
             cancelAnimationFrame(frameId);
         };
-    }, [onLoadCurrencies, onLoadPaymentMethods]);
+    }, [onLoadContacts, onLoadCurrencies, onLoadPaymentMethods]);
 
     useEffect(() => {
         const pickedLocation = route.params?.pickedLocation;
@@ -280,6 +306,7 @@ export const useAddEvent = () => {
             eventEndTime: form.eventEndTime,
             phoneNumber: form.phoneNumber.trim(),
             paymentMethodIds: form.paymentMethodIds,
+            contactIds: form.contactIds,
             price: form.price.trim(),
             currency: form.currency,
             speakerName: form.speakerName.trim() || 'Speaker Name',
@@ -307,6 +334,7 @@ export const useAddEvent = () => {
         !validateEmptyString(form.eventEndTime).isValid ||
         !validateEmptyString(form.phoneNumber.trim()).isValid ||
         form.paymentMethodIds.length === 0 ||
+        form.contactIds.length === 0 ||
         !validateEmptyString(form.price.trim()).isValid ||
         !validateEmptyString(form.currency.trim()).isValid ||
         (isPartyEventType && !form.sex) ||
@@ -318,8 +346,10 @@ export const useAddEvent = () => {
         isLoading: false,
         isPartyEventType,
         isPaymentMethodsLoading,
+        isContactInfoLoading,
         isCurrenciesLoading,
         paymentMethods,
+        contacts,
         currencies,
         disabled,
         onChangeTheme,
@@ -341,6 +371,7 @@ export const useAddEvent = () => {
         onChangeCurrency,
         onChangeRequiresConfirmation,
         onChangePaymentMethodIds,
+        onChangeContactInfoIds,
         onLocationPress,
         onSubmit,
     };
