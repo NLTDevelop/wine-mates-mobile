@@ -263,7 +263,7 @@ export const AddEventView = () => {
                                     <Typography variant="h6" text={t('eventFilters.age')} />
                                     <RangeSlider
                                         min={18}
-                                        max={80}
+                                        max={100}
                                         minValue={form.minAge}
                                         maxValue={form.maxAge}
                                         onChange={onAgeRangeChange}

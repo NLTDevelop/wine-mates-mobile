@@ -126,8 +126,25 @@ export const useAddEvent = () => {
             setIsCurrenciesLoading(true);
             const response = await eventsService.getCurrencies();
 
-            if (!response.isError && Array.isArray(response.data)) {
-                setCurrencies(response.data);
+            if (!response.isError && response.data && Array.isArray(response.data.list)) {
+                const availableCurrencies = response.data.list;
+                const selectedCurrency = response.data.selected;
+
+                setCurrencies(availableCurrencies);
+
+                setForm(prev => {
+                    const hasCurrentCurrency = availableCurrencies.includes(prev.currency);
+
+                    if (hasCurrentCurrency) {
+                        return prev;
+                    }
+
+                    if (selectedCurrency && availableCurrencies.includes(selectedCurrency)) {
+                        return { ...prev, currency: selectedCurrency };
+                    }
+
+                    return { ...prev, currency: availableCurrencies[0] || '' };
+                });
             }
         } catch (error) {
             console.warn('useAddEvent -> onLoadCurrencies: ', error);

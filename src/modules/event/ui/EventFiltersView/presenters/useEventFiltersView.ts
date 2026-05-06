@@ -13,7 +13,7 @@ const DATE_API_FORMAT = 'yyyy-MM-dd';
 const DATE_DISPLAY_FORMAT = 'dd.MM.yyyy';
 const RADIUS_OPTIONS = [1, 5, 10, 50];
 const MIN_AGE_LIMIT = 18;
-const MAX_AGE_LIMIT = 80;
+const MAX_AGE_LIMIT = 100;
 const DEFAULT_MIN_PRICE_LIMIT = 0;
 const DEFAULT_MAX_PRICE_LIMIT = 500;
 
