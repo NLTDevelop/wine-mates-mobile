@@ -82,7 +82,7 @@ class Links implements ILinks {
         events: 'events',
         eventMapPins: 'events/map-pins',
         eventPriceRange: 'events/price-range',
-        eventCurrencies: 'events/currencies',
+        eventCurrencies: 'users/currencies',
         paymentMethods: 'users/payment-methods',
         contacts: 'users/contacts',
     };

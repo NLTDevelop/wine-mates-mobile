@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useValidator } from '@/hooks/useValidator';
@@ -13,6 +13,8 @@ import { IPaymentsListItem } from '@/entities/payments/types/IPaymentsListItem';
 import { IContactsListItem } from '@/entities/contacts/types/IContactsListItem';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IAddEventDraft } from '../../../types/IAddEventDraft';
+import { toastService } from '@/libs/toast/toastService';
+import { localization } from '@/UIProvider/localization/Localization';
 
 interface IEventForm {
     theme: string;
@@ -61,6 +63,7 @@ export const useAddEvent = () => {
     const [paymentMethods, setPaymentMethods] = useState<IPaymentsListItem[]>([]);
     const [contacts, setContacts] = useState<IContactsListItem[]>([]);
     const [currencies, setCurrencies] = useState<string[]>([]);
+    const [isSeatsError, setIsSeatsError] = useState(false);
     const [form, setForm] = useState<IEventForm>({
         theme: '',
         description: '',
@@ -90,6 +93,16 @@ export const useAddEvent = () => {
     });
 
     const isPartyEventType = form.eventType === EventType.Parties;
+    const isPaymentMethodsDisabled = useMemo(() => {
+        const normalizedPrice = form.price.trim();
+
+        if (!normalizedPrice) {
+            return false;
+        }
+
+        return Number(normalizedPrice) === 0;
+    }, [form.price]);
+    const isCurrencyDisabled = isPaymentMethodsDisabled;
 
     const onLoadPaymentMethods = useCallback(async () => {
         try {
@@ -126,8 +139,25 @@ export const useAddEvent = () => {
             setIsCurrenciesLoading(true);
             const response = await eventsService.getCurrencies();
 
-            if (!response.isError && Array.isArray(response.data)) {
-                setCurrencies(response.data);
+            if (!response.isError && response.data && Array.isArray(response.data.list)) {
+                const availableCurrencies = response.data.list;
+                const selectedCurrency = response.data.selected;
+
+                setCurrencies(availableCurrencies);
+
+                setForm(prev => {
+                    const hasCurrentCurrency = availableCurrencies.includes(prev.currency);
+
+                    if (hasCurrentCurrency) {
+                        return prev;
+                    }
+
+                    if (selectedCurrency && availableCurrencies.includes(selectedCurrency)) {
+                        return { ...prev, currency: selectedCurrency };
+                    }
+
+                    return { ...prev, currency: availableCurrencies[0] || '' };
+                });
             }
         } catch (error) {
             console.warn('useAddEvent -> onLoadCurrencies: ', error);
@@ -168,7 +198,7 @@ export const useAddEvent = () => {
 
     const onEndDateSelect = useCallback((date: Date) => {
         const dateStr = formatDateToLocalApi(date);
-        setForm(prev => ({ ...prev, eventEndDate: dateStr }));
+        setForm(prev => ({ ...prev, eventEndDate: dateStr, eventEndTime: '' }));
     }, []);
 
     const onStartTimeSelect = useCallback((date: Date) => {
@@ -191,7 +221,13 @@ export const useAddEvent = () => {
 
     const onChangePrice = useCallback((value: string) => {
         const numericValue = value.replace(/[^0-9]/g, '');
-        setForm(prev => ({ ...prev, price: numericValue }));
+        const isZeroPrice = numericValue !== '' && Number(numericValue) === 0;
+
+        setForm(prev => ({
+            ...prev,
+            price: numericValue,
+            paymentMethodIds: isZeroPrice ? [] : prev.paymentMethodIds,
+        }));
     }, []);
 
     const onChangeSpeakerName = useCallback((value: string) => {
@@ -210,6 +246,9 @@ export const useAddEvent = () => {
 
     const onChangeSeats = useCallback((value: string) => {
         const numericValue = value.replace(/[^0-9]/g, '');
+        if (numericValue && Number(numericValue) > 0) {
+            setIsSeatsError(false);
+        }
         setForm(prev => ({ ...prev, seats: numericValue }));
     }, []);
 
@@ -293,6 +332,13 @@ export const useAddEvent = () => {
             return;
         }
 
+        const seatsValue = Number(form.seats.trim());
+        if (!Number.isFinite(seatsValue) || seatsValue < 1) {
+            setIsSeatsError(true);
+            toastService.showError(localization.t('event.invalidSeatsError'));
+            return;
+        }
+
         const draft: IAddEventDraft = {
             theme: form.theme.trim(),
             description: form.description.trim() || 'Event description',
@@ -333,7 +379,7 @@ export const useAddEvent = () => {
         !validateEmptyString(form.eventStartTime).isValid ||
         !validateEmptyString(form.eventEndTime).isValid ||
         !validateEmptyString(form.phoneNumber.trim()).isValid ||
-        form.paymentMethodIds.length === 0 ||
+        (!isPaymentMethodsDisabled && form.paymentMethodIds.length === 0) ||
         form.contactIds.length === 0 ||
         !validateEmptyString(form.price.trim()).isValid ||
         !validateEmptyString(form.currency.trim()).isValid ||
@@ -348,9 +394,12 @@ export const useAddEvent = () => {
         isPaymentMethodsLoading,
         isContactInfoLoading,
         isCurrenciesLoading,
+        isPaymentMethodsDisabled,
+        isCurrencyDisabled,
         paymentMethods,
         contacts,
         currencies,
+        isSeatsError,
         disabled,
         onChangeTheme,
         onChangeDescription,

@@ -1,5 +1,5 @@
 import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
-import { IAroma, IWineSmell } from '@/entities/wine/types/IWineSmell';
+import { IAroma, ISmellSubgroup, IWineSmell } from '@/entities/wine/types/IWineSmell';
 import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
@@ -16,30 +16,39 @@ export const useWineSmell = (onHide: () => void) => {
     const wineId = (route.params as { wineId?: number } | undefined)?.wineId;
 
     const initialSelected = wineModel.selectedSmells ?? [];
-    const [data, setData] = useState<IWineSmell[]>(() => {
-        if (!wineModel.smells?.length) return [];
-        return wineModel.smells.map(group => ({
-            ...group,
-            subgroups: group.subgroups.map(subgroup => ({
-                ...subgroup,
-                aromas: subgroup.aromas.filter(
-                    aroma => !initialSelected.some(selectedItem => selectedItem.id === aroma.id),
-                ),
-            })),
-        }));
-    });
     const [isLoading, setIsLoading] = useState(() => !wineModel.smells?.length);
     const [isOpened, setIsOpened] = useState(false);
     const [selectedIndex, setSelectedIndex] =  useState(0);
     const [selected, setSelected] = useState<IWineSelectedSmell[]>(initialSelected);
     const [isError, setIsError] = useState(false);
-    const initialData = wineModel.smells;
+    const data = useMemo<IWineSmell[]>(() => {
+        if (!wineModel.smells?.length) {
+            return [];
+        }
+
+        return wineModel.smells.map(group => ({
+            ...group,
+            subgroups: group.subgroups.map(subgroup => ({
+                ...subgroup,
+                aromas: subgroup.aromas.filter(
+                    aroma => !selected.some(selectedItem => selectedItem.id === aroma.id),
+                ),
+            })),
+        }));
+    }, [selected]);
 
     const visibleSubgroups = useMemo(() => {
         const currentGroup = data[selectedIndex];
         if (!currentGroup) return [];
-        return currentGroup.subgroups.filter(subgroup => subgroup.aromas.length > 0);
-    }, [data, selectedIndex]);
+        return currentGroup.subgroups.filter(subgroup => {
+            if (!subgroup.hiddenItemId) {
+                return true;
+            }
+
+            const isHiddenSelected = selected.some(item => item.id === subgroup.hiddenItemId);
+            return !isHiddenSelected;
+        });
+    }, [data, selected, selectedIndex]);
 
     const getSmells = useCallback(async () => {
         try {
@@ -66,7 +75,6 @@ export const useWineSmell = (onHide: () => void) => {
                     setIsError(true);
                 }
             } else {
-                setData(response.data);
                 setIsError(false);
             }
         } catch (error) {
@@ -77,26 +85,14 @@ export const useWineSmell = (onHide: () => void) => {
     }, []);
 
     useEffect(() => {
-        getSmells();
-    }, [getSmells]);
+        const timeoutId = setTimeout(() => {
+            getSmells();
+        }, 0);
 
-    useEffect(() => {
-        if (!initialData?.length) {
-            setData([]);
-            return;
-        }
-        setData(
-            initialData.map(group => ({
-                ...group,
-                subgroups: group.subgroups.map(subgroup => ({
-                    ...subgroup,
-                    aromas: subgroup.aromas.filter(
-                        aroma => !selected.some(selectedItem => selectedItem.id === aroma.id),
-                    ),
-                })),
-            })),
-        );
-    }, [initialData, selected]);
+        return () => {
+            clearTimeout(timeoutId);
+        };
+    }, [getSmells]);
 
     useEffect(() => {
         wineModel.selectedSmells = selected.map(item => item);
@@ -111,53 +107,57 @@ export const useWineSmell = (onHide: () => void) => {
             groupId,
             aroma: item,
         };
-        setSelected(prevState => [addedSmell, ...prevState]);
-        if (subgroupId && groupId) {
-            setData(prevState =>
-                prevState.map(group => {
-                    if (group.id !== groupId) return group;
-                    return {
-                        ...group,
-                        subgroups: group.subgroups.map(subgroup => {
-                            if (subgroup.id !== subgroupId) return subgroup;
-                            return {
-                                ...subgroup,
-                                aromas: subgroup.aromas.filter(aroma => aroma.id !== item.id),
-                            };
-                        }),
-                    };
-                }),
-            );
-        }
+        setSelected(prevState => {
+            if (prevState.some(selectedItem => selectedItem.id === item.id)) {
+                return prevState;
+            }
+
+            return [addedSmell, ...prevState];
+        });
         onHide();
         Keyboard.dismiss();
         return item.id;
     }, [onHide]);
 
-    const onSelectedItemPress = useCallback((item: IWineSelectedSmell) => {
-        if (item.subgroupId && item.groupId && item.aroma) {
-            setData(prevState =>
-                prevState.map(group => {
-                    if (group.id !== item.groupId) return group;
-                    return {
-                        ...group,
-                        subgroups: group.subgroups.map(subgroup => {
-                            if (subgroup.id !== item.subgroupId) return subgroup;
-                            const hasAroma = subgroup.aromas.some(aroma => aroma.id === item.id);
-                            const aromas = hasAroma
-                                ? subgroup.aromas
-                                : [...subgroup.aromas, item.aroma]
-                                      .filter((a): a is IAroma => !!a)
-                                      .sort((a, b) => a.sortNumber - b.sortNumber);
-                            return {
-                                ...subgroup,
-                                aromas,
-                            };
-                        }),
-                    };
-                }),
-            );
+    const onSubgroupPress = useCallback((subgroup: ISmellSubgroup, groupId: number) => {
+        if (subgroup.aromas.length > 0) {
+            return false;
         }
+
+        if (!subgroup.hiddenItemId) {
+            return true;
+        }
+
+        const hiddenAroma: IAroma = {
+            id: subgroup.hiddenItemId,
+            colorHex: subgroup.colorHex,
+            name: subgroup.name,
+            sortNumber: subgroup.sortNumber,
+        };
+
+        const addedSmell: IWineSelectedSmell = {
+            id: hiddenAroma.id,
+            colorHex: hiddenAroma.colorHex,
+            name: hiddenAroma.name,
+            subgroupId: subgroup.id,
+            groupId,
+            aroma: hiddenAroma,
+            isHiddenSubgroupItem: true,
+        };
+
+        setSelected(prevState => {
+            if (prevState.some(item => item.id === addedSmell.id)) {
+                return prevState;
+            }
+
+            return [addedSmell, ...prevState];
+        });
+
+        Keyboard.dismiss();
+        return true;
+    }, []);
+
+    const onSelectedItemPress = useCallback((item: IWineSelectedSmell) => {
         setSelected(prevState => prevState.filter(smell => smell.id !== item.id));
         Keyboard.dismiss();
     }, []);
@@ -167,7 +167,7 @@ export const useWineSmell = (onHide: () => void) => {
         Keyboard.dismiss();
     }, []);
 
-    const handleGroupPress = useCallback((groupId: number) => {
+    const onGroupPress = useCallback((groupId: number) => {
         const nextIndex = data.findIndex(group => group.id === groupId);
         if (nextIndex === -1) return;
         setSelectedIndex(nextIndex);
@@ -175,21 +175,21 @@ export const useWineSmell = (onHide: () => void) => {
         Keyboard.dismiss();
     }, [data]);
 
-    const handleLeftPress = useCallback(() => {
+    const onLeftPress = useCallback(() => {
         if (data?.length) {
             setSelectedIndex(prevState => prevState === 0 ? data.length - 1 : prevState - 1);
         }
         Keyboard.dismiss();
     }, [data]);
 
-    const handleRightPress = useCallback(() => {
+    const onRightPress = useCallback(() => {
         if (data?.length) {
             setSelectedIndex(prevState => prevState === data.length - 1 ? 0 : prevState + 1);
         }
         Keyboard.dismiss();
     }, [data]);
 
-    const handleAddCustomSmell = useCallback((text: string) => {
+    const onAddCustomSmell = useCallback((text: string) => {
         const newId = Date.now() + Math.floor(Math.random() * 10000);
         setSelected(prevState => [
             { 
@@ -203,14 +203,14 @@ export const useWineSmell = (onHide: () => void) => {
         return newId;
     }, []);
 
-    const handleNextPress = useCallback(() => {
+    const onNextPress = useCallback(() => {
         navigation.navigate('WineTasteView', { source, wineId });
         Keyboard.dismiss();
-    }, [navigation, selected, source, wineId]);
+    }, [navigation, source, wineId]);
 
     return { 
         data, selected, isError, getSmells, isLoading, isOpened, onItemPress, toggleList, selectedIndex,
-        handleLeftPress, handleRightPress, handleAddCustomSmell, onSelectedItemPress, handleNextPress, visibleSubgroups,
-        handleGroupPress,
+        onLeftPress, onRightPress, onAddCustomSmell, onSelectedItemPress, onNextPress, visibleSubgroups,
+        onGroupPress, onSubgroupPress,
     };
 };

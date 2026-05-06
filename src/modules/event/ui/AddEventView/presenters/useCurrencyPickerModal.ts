@@ -5,16 +5,21 @@ interface IProps {
     value: string;
     currencies: string[];
     onChange: (value: string) => void;
+    isDisabled?: boolean;
 }
 
-export const useCurrencyPickerModal = ({ value, currencies, onChange }: IProps) => {
+export const useCurrencyPickerModal = ({ value, currencies, onChange, isDisabled = false }: IProps) => {
     const [isVisible, setIsVisible] = useState(false);
     const [draft, setDraft] = useState(value);
 
     const onOpen = useCallback(() => {
+        if (isDisabled) {
+            return;
+        }
+
         setDraft(value);
         setIsVisible(true);
-    }, [value]);
+    }, [isDisabled, value]);
 
     const onClose = useCallback(() => {
         setIsVisible(false);

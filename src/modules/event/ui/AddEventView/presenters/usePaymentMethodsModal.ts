@@ -6,16 +6,21 @@ interface IProps {
     value: number[];
     paymentMethods: IPaymentsListItem[];
     onChange: (value: number[]) => void;
+    isDisabled?: boolean;
 }
 
-export const usePaymentMethodsModal = ({ value, paymentMethods, onChange }: IProps) => {
+export const usePaymentMethodsModal = ({ value, paymentMethods, onChange, isDisabled = false }: IProps) => {
     const [isVisible, setIsVisible] = useState(false);
     const [draftIds, setDraftIds] = useState<number[]>(value);
 
     const onOpen = useCallback(() => {
+        if (isDisabled) {
+            return;
+        }
+
         setDraftIds(value);
         setIsVisible(true);
-    }, [value]);
+    }, [isDisabled, value]);
 
     const onClose = useCallback(() => {
         setIsVisible(false);
