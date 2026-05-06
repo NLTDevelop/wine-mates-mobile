@@ -138,6 +138,11 @@ export const colorOpacity = (
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+export const setUppercaseFirstLetter = (str?: string): string => {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 export const formatEventDate = (date: string): { month: string; day: string } => {
     if (!date) {
         return { month: 'DEC', day: '16' };
@@ -150,7 +155,7 @@ export const formatEventDate = (date: string): { month: string; day: string } =>
         const day = dateObj.getDate().toString();
 
         return { month, day };
-    } catch (error) {
+    } catch  {
         return { month: 'DEC', day: '16' };
     }
 };

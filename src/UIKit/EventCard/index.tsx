@@ -13,6 +13,9 @@ import { IEvent } from '@/entities/events/types/IEvent';
 import { useEventCard } from './presenters/useEventCard';
 import { getStyles } from './styles';
 import { ISavedEvent } from '@/entities/events/types/ISavedEvent';
+import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
+import { setUppercaseFirstLetter } from '@/utils';
+import { EditButton } from '../EditButton';
 
 interface IProps {
     event: IEvent | ISavedEvent;
@@ -22,6 +25,7 @@ interface IProps {
     isModalContent?: boolean;
     showDescription?: boolean;
     showFooter?: boolean;
+    appliedEventStatus?: string | null;
 }
 
 export const EventCard = ({
@@ -32,6 +36,7 @@ export const EventCard = ({
     isModalContent = false,
     showDescription = true,
     showFooter = true,
+    appliedEventStatus = null,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -77,8 +82,13 @@ export const EventCard = ({
                     <Typography text={priceLabel} variant="body_400" style={styles.metaText} />
                 </View>
                 { "status" in event && event.status !== null && (
-                    <View style={styles.eventStatus}>
-                        <Typography text={event.status} variant="body_400" style={styles.metaText} />
+                    <View style={event.status === SavedEventStatus.FINISHED ? styles.eventStatusFinished : styles.eventStatusCanceled}>
+                        <Typography text={setUppercaseFirstLetter(event.status?.toString())} variant="body_400" style={styles.statusText} />
+                    </View>
+                )}
+                {appliedEventStatus && (
+                    <View style={[ styles.appliedStatusContainer, appliedEventStatus === 'pending' ? styles.appliedEventStatusPending : appliedEventStatus === 'rejected' ? styles.appliedEventStatusRejected :  appliedEventStatus === 'canceled' ?  styles.appliedEventStatusCanceled : styles.appliedEventStatusConfirmed ]}>
+                        <Typography text={setUppercaseFirstLetter(appliedEventStatus)} variant="body_400" style={styles.statusText} />
                     </View>
                 )}
             </View>
@@ -112,7 +122,7 @@ export const EventCard = ({
             {showFooter && (
                 <View style={styles.footer}>
                     <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
-                    <FavoriteButton onPress={onFavoritePressHandler} size={56} />
+                     {"status" in event ? <EditButton onPress={onFavoritePressHandler} size={56} /> : <FavoriteButton onPress={onFavoritePressHandler} size={56} />}
                 </View>
             )}
 

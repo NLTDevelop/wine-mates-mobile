@@ -18,6 +18,7 @@ import { IAppliedEvent } from '@/entities/events/types/IAppliedEvent';
 import { EventCard } from '@/UIKit/EventCard';
 import { useRefresh } from '@/hooks/useRefresh';
 import { EmptyListView } from '@/UIKit/EmptyListView';
+import { Loader } from '@/UIKit/Loader';
 
 interface IRoute {
     key: 'created' | 'saved' | 'applied';
@@ -38,12 +39,10 @@ export const EventListView = observer(() => {
         appliedEvents,
         isLoading,
         // isRefreshing,
-        // hasMoreSavedEvents,
-        // hasMoreCreatedEvents,
         //loadEvents,
         onRefresh,
-        // onLoadMoreSaved,
-        // onLoadMoreCreated,
+        onLoadMoreSaved,
+        onLoadMoreCreated,
         //refetch,
     } = useEventsList()
 
@@ -63,12 +62,17 @@ export const EventListView = observer(() => {
                 <EventCard 
                     event={('event' in item) ? item.event : item} 
                     isSelected={false} 
-                    onReadMorePress={onReadMorePress} />
+                    onReadMorePress={onReadMorePress}
+                    appliedEventStatus={('event' in item) ? item.status : null}
+                    />
             ),
             [onReadMorePress],
         );
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
+        if(isLoading){
+            return <Loader/>;
+        }
         if (sceneRoute.key === 'created') {
             return <FlatList
                                         data={createdEvents?.rows || []}
@@ -77,6 +81,8 @@ export const EventListView = observer(() => {
                                         refreshControl={refresh.refreshControl}
                                         contentContainerStyle={styles.containerStyle}
                                          ListEmptyComponent={emptyList}
+                                         onEndReached={onLoadMoreCreated}
+                                         
                                     />;
         }
         if (sceneRoute.key === 'saved') {
@@ -87,6 +93,7 @@ export const EventListView = observer(() => {
                                         refreshControl={refresh.refreshControl}
                                         contentContainerStyle={styles.containerStyle}
                                         ListEmptyComponent={emptyList}
+                                        onEndReached={onLoadMoreSaved}
                                 
                                     />;
         }

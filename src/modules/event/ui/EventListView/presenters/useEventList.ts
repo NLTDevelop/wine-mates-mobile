@@ -1,22 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIsFocused } from '@react-navigation/native';
-// import { eventsService } from '@/entities/events/EventsService';
 import { eventsModel } from '@/entities/events/EventsModel';
-// import { IEventsListParams } from '@/entities/events/params/IEventsListParams';
-// import { useLocationPermission } from '@/hooks/useLocationPermission';
-// import { IEventFilters } from '@/modules/event/types/IEventFilters';
-// import { EventType } from '@/entities/events/enums/EventType';
+import { eventsService } from '@/entities/events/EventsService';
+import { IGetEventsParams } from '@/entities/events/params/IGetEventsParams';
 
 const OFFSET = 0;
-
-
-
+const LIMIT = 10;
 
 
 export const useEventsList = () => {
     const isFocused = useIsFocused();
 
-    const [isLoading, setIsLoading] = useState(false, );
+    const [isLoading, setIsLoading] = useState(true, );
     const [isRefreshing, setIsRefreshing] = useState(false);
     const hasAutoLoadedOnFocusRef = useRef(false);
     const lastLoadedFiltersKeyRef = useRef('');
@@ -41,39 +36,37 @@ export const useEventsList = () => {
 
         return createdEvents.count > createdEvents.rows.length;
     }, [createdEvents]);
-    // const getTargetLocation = useCallback((location?: IUserLocation | null) => {
-    //     return location || searchLocation || userLocation || KYIV_COORDINATES;
-    // }, [searchLocation, userLocation]);
 
     const loadEvents = useCallback(async (offset: number, _type: 'saved' | 'created' | 'none') => {
         
 
         if (offset === OFFSET) {
-            setIsRefreshing(true);
-        } else {
             setIsLoading(true);
+        } else {
+             setIsRefreshing(true);
         }
 
         try {
-            // switch (type) {
-            //     case 'saved':
-            //         await eventsService.getSavedEvents(params);
-            //         break;
-            //     case 'created':
-            //         await eventsService.getCreatedEvents(params);
-            //         break;
-            //     default:
-            //         const [createdResult, savedResult, appliedResult] =await Promise.all([
-            //             eventsService.getCreatedEvents(params),
-            //             eventsService.getSavedEvents(params),
-            //             eventsService.getAppliedEvents(),
-            //         ]);
 
-            //         if (createdResult.isError || !createdResult.data || savedResult.isError || !savedResult.data || appliedResult.isError || !appliedResult.data) {
-            //             return;
-            //         }
-            // }
+            const params:IGetEventsParams = {
+                offset,
+                limit: LIMIT,
+            };
+            if(_type === 'saved') {
+                await eventsService.getSavedEvents(params);
+            } else if (_type === 'created') {
+                await eventsService.getCreatedEvents(params);
+            } else {
+                const [createdResult, savedResult, appliedResult] =await Promise.all([
+                        eventsService.getCreatedEvents(params),
+                        eventsService.getSavedEvents(params),
+                        eventsService.getAppliedEvents(),
+                    ]);
 
+                    if (createdResult.isError || !createdResult.data || savedResult.isError || !savedResult.data || appliedResult.isError || !appliedResult.data) {
+                        return;
+                    }
+            }
             
         } catch (error) {
             console.warn('useEventsList -> loadEvents: ', error);
@@ -99,13 +92,6 @@ export const useEventsList = () => {
         }
     }, [isLoading, createdEvents, loadEvents]); 
 
-    // const refetch = useCallback((location?: IUserLocation | null) => {
-    //     const targetLocation = getTargetLocation(location);
-    //     hasAutoLoadedOnFocusRef.current = true;
-    //     lastLoadedLocationKeyRef.current = `${targetLocation.latitude}:${targetLocation.longitude}`;
-    //     lastLoadedFiltersKeyRef.current = filtersKey;
-    //     return onRefresh(OFFSET);
-    // }, [ onRefresh]);
 
     useEffect(() => {
 
@@ -118,14 +104,7 @@ export const useEventsList = () => {
             onRefresh(OFFSET);
         }, 150);
 
-        // const targetLocation = getTargetLocation();
-        // const currentLocationKey = `${targetLocation.latitude}:${targetLocation.longitude}`;
-        // const isSameLocation = lastLoadedLocationKeyRef.current === currentLocationKey;
-        // const isSameFilters = lastLoadedFiltersKeyRef.current === filtersKey;
 
-        // hasAutoLoadedOnFocusRef.current = true;
-        // lastLoadedLocationKeyRef.current = currentLocationKey;
-        // lastLoadedFiltersKeyRef.current = filtersKey;
        return () => clearTimeout(timer);
        
     }, [ isFocused, onRefresh]);
@@ -142,6 +121,5 @@ export const useEventsList = () => {
         onRefresh,
         onLoadMoreSaved,
         onLoadMoreCreated,
-        //refetch,
     };
 };

@@ -37,15 +37,43 @@ export const getStyles = (colors: IColors) => {
             gap: scaleHorizontal(6),
             backgroundColor: colors.background_middle
         },
-        eventStatus: {
-            color: colors.text,
+        eventStatusFinished: {
+            paddingHorizontal: scaleHorizontal(8),
+            paddingVertical: scaleVertical(6),
+            backgroundColor: colors.finishStatus,
+            borderRadius: scaleHorizontal(6),
+            justifyContent: 'center',
+        },
+        eventStatusCanceled: {
             paddingHorizontal: scaleHorizontal(8),
             paddingVertical: scaleVertical(6),
             backgroundColor: colors.text_light,
             borderRadius: scaleHorizontal(6),
+            justifyContent: 'center',
+        },
+        appliedStatusContainer: {
+            borderRadius: scaleHorizontal(6),
+            paddingHorizontal: scaleHorizontal(8),
+            paddingVertical: scaleVertical(6),
+            justifyContent: 'center',
+        },
+        appliedEventStatusCanceled: {
+            backgroundColor: colors.background_grey,
+        },
+        appliedEventStatusRejected:{
+            backgroundColor: colors.error,
+        },
+        appliedEventStatusPending:{
+            backgroundColor:colors.stars,
+        },
+        appliedEventStatusConfirmed:{
+            backgroundColor: colors.success,
         },
         metaText: {
             color: colors.text,
+        },
+        statusText: {
+            color: colors.background,
         },
         headerContent: {
             gap: scaleVertical(2),
