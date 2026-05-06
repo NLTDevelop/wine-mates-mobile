@@ -14,11 +14,11 @@ interface IProps {
     isOpened: boolean;
     selectedIndex: number;
     onPress: () => void;
-    handleLeftPress: () => void;
-    handleRightPress: () => void;
+    onLeftPress: () => void;
+    onRightPress: () => void;
 }
 
-export const SmellGroupSelector = ({ data, selectedIndex, isOpened, onPress, handleLeftPress, handleRightPress }: IProps) => {
+export const SmellGroupSelector = ({ data, selectedIndex, isOpened, onPress, onLeftPress, onRightPress }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const totalGroups = data.length;
@@ -34,14 +34,14 @@ export const SmellGroupSelector = ({ data, selectedIndex, isOpened, onPress, han
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={[styles.button, { backgroundColor: prevColor }]} onPress={handleLeftPress}>
+            <TouchableOpacity style={[styles.button, { backgroundColor: prevColor }]} onPress={onLeftPress}>
                 <ArrowIcon width={20} height={20} color={prevTextColor} />
             </TouchableOpacity>
             <TouchableOpacity style={[styles.mainContainer, { backgroundColor: currentColor }]} onPress={onPress}>
                 <Typography text={data[selectedIndex].name} variant="h6" style={{ color: currentTextColor }}/>
                 <ArrowDownIcon rotate={isOpened ? 180 : 0} color={currentTextColor} />
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, { backgroundColor: nextColor }]} onPress={handleRightPress}>
+            <TouchableOpacity style={[styles.button, { backgroundColor: nextColor }]} onPress={onRightPress}>
                 <NextLongArrowIcon width={20} height={20} color={nextTextColor} />
             </TouchableOpacity>
         </View>

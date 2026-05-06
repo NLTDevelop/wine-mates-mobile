@@ -7,4 +7,5 @@ export interface IWineSelectedSmell {
     subgroupId?: number | null;
     groupId?: number | null;
     aroma?: IAroma;
+    isHiddenSubgroupItem?: boolean;
 }
