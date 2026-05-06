@@ -47,6 +47,7 @@ export const AddEventView = () => {
         paymentMethods,
         contacts,
         currencies,
+        isSeatsError,
         disabled,
         onChangeTheme,
         onChangeDescription,
@@ -391,6 +392,7 @@ export const AddEventView = () => {
                                 onChangeText={onChangeSeats}
                                 placeholder={t('event.numberOfSeats')}
                                 keyboardType="numeric"
+                                error={isSeatsError}
                             />
                         </View>
                     </KeyboardAwareScrollView>

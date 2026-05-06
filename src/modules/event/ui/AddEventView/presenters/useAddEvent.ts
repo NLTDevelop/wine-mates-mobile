@@ -13,6 +13,8 @@ import { IPaymentsListItem } from '@/entities/payments/types/IPaymentsListItem';
 import { IContactsListItem } from '@/entities/contacts/types/IContactsListItem';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IAddEventDraft } from '../../../types/IAddEventDraft';
+import { toastService } from '@/libs/toast/toastService';
+import { localization } from '@/UIProvider/localization/Localization';
 
 interface IEventForm {
     theme: string;
@@ -61,6 +63,7 @@ export const useAddEvent = () => {
     const [paymentMethods, setPaymentMethods] = useState<IPaymentsListItem[]>([]);
     const [contacts, setContacts] = useState<IContactsListItem[]>([]);
     const [currencies, setCurrencies] = useState<string[]>([]);
+    const [isSeatsError, setIsSeatsError] = useState(false);
     const [form, setForm] = useState<IEventForm>({
         theme: '',
         description: '',
@@ -185,7 +188,7 @@ export const useAddEvent = () => {
 
     const onEndDateSelect = useCallback((date: Date) => {
         const dateStr = formatDateToLocalApi(date);
-        setForm(prev => ({ ...prev, eventEndDate: dateStr }));
+        setForm(prev => ({ ...prev, eventEndDate: dateStr, eventEndTime: '' }));
     }, []);
 
     const onStartTimeSelect = useCallback((date: Date) => {
@@ -227,6 +230,9 @@ export const useAddEvent = () => {
 
     const onChangeSeats = useCallback((value: string) => {
         const numericValue = value.replace(/[^0-9]/g, '');
+        if (numericValue && Number(numericValue) > 0) {
+            setIsSeatsError(false);
+        }
         setForm(prev => ({ ...prev, seats: numericValue }));
     }, []);
 
@@ -310,6 +316,13 @@ export const useAddEvent = () => {
             return;
         }
 
+        const seatsValue = Number(form.seats.trim());
+        if (!Number.isFinite(seatsValue) || seatsValue < 1) {
+            setIsSeatsError(true);
+            toastService.showError(localization.t('event.invalidSeatsError'));
+            return;
+        }
+
         const draft: IAddEventDraft = {
             theme: form.theme.trim(),
             description: form.description.trim() || 'Event description',
@@ -368,6 +381,7 @@ export const useAddEvent = () => {
         paymentMethods,
         contacts,
         currencies,
+        isSeatsError,
         disabled,
         onChangeTheme,
         onChangeDescription,

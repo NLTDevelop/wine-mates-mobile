@@ -13,6 +13,7 @@ import { IWineSearchResultViewItem, IWineSetViewItem } from '@/modules/event/typ
 import { useUiContext } from '@/UIProvider';
 import { useDebounce } from '@/hooks/useDebounce';
 import { wineSetScannerModel } from '../../../../../entities/events/WineSetScannerModel';
+import { toastService } from '@/libs/toast/toastService';
 
 interface IRepeatRuleItem {
     value: RepeatRule;
@@ -549,13 +550,17 @@ export const useAddWineSetView = () => {
                 const eventId = onGetCreatedEventId(response.data);
                 setCreatedEventId(eventId);
                 setIsEventCreatedAlertVisible(true);
+                return;
             }
+
+            toastService.showError(t('common.errorHappened'), response.message || t('common.somethingWentWrong'));
         } catch (error) {
             console.warn('useAddWineSetView -> onCreateEventPress: ', error);
+            toastService.showError(t('common.errorHappened'), t('common.somethingWentWrong'));
         } finally {
             setIsCreating(false);
         }
-    }, [draft, isCreating, onGetCreatedEventId, repeatRule, selectedWines, tastingType]);
+    }, [draft, isCreating, onGetCreatedEventId, repeatRule, selectedWines, t, tastingType]);
 
     const resetToEventList = useCallback(() => {
         navigation.dispatch(

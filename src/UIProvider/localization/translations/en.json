@@ -400,7 +400,8 @@
         "pastDateError": "You cannot select a past date",
         "invalidStartDateError": "Start date cannot be later than end date",
         "invalidEndDateError": "End date cannot be earlier than start date",
-        "invalidEndTimeError": "End time cannot be earlier than start time"
+        "invalidEndTimeError": "End time cannot be earlier than start time",
+        "invalidSeatsError": "Number of seats must be at least 1"
     },
     "faq": {
         "faq": "FAQ"
