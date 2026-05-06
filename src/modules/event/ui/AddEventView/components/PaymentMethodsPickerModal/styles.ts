@@ -31,7 +31,7 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'center',
         },
         emptyText: {
-            color: colors.text_light,
+            color: colors.text,
             textAlign: 'center',
         },
         confirmButton: {

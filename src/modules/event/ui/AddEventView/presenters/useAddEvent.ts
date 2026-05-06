@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useValidator } from '@/hooks/useValidator';
@@ -93,6 +93,16 @@ export const useAddEvent = () => {
     });
 
     const isPartyEventType = form.eventType === EventType.Parties;
+    const isPaymentMethodsDisabled = useMemo(() => {
+        const normalizedPrice = form.price.trim();
+
+        if (!normalizedPrice) {
+            return false;
+        }
+
+        return Number(normalizedPrice) === 0;
+    }, [form.price]);
+    const isCurrencyDisabled = isPaymentMethodsDisabled;
 
     const onLoadPaymentMethods = useCallback(async () => {
         try {
@@ -211,7 +221,13 @@ export const useAddEvent = () => {
 
     const onChangePrice = useCallback((value: string) => {
         const numericValue = value.replace(/[^0-9]/g, '');
-        setForm(prev => ({ ...prev, price: numericValue }));
+        const isZeroPrice = numericValue !== '' && Number(numericValue) === 0;
+
+        setForm(prev => ({
+            ...prev,
+            price: numericValue,
+            paymentMethodIds: isZeroPrice ? [] : prev.paymentMethodIds,
+        }));
     }, []);
 
     const onChangeSpeakerName = useCallback((value: string) => {
@@ -363,7 +379,7 @@ export const useAddEvent = () => {
         !validateEmptyString(form.eventStartTime).isValid ||
         !validateEmptyString(form.eventEndTime).isValid ||
         !validateEmptyString(form.phoneNumber.trim()).isValid ||
-        form.paymentMethodIds.length === 0 ||
+        (!isPaymentMethodsDisabled && form.paymentMethodIds.length === 0) ||
         form.contactIds.length === 0 ||
         !validateEmptyString(form.price.trim()).isValid ||
         !validateEmptyString(form.currency.trim()).isValid ||
@@ -378,6 +394,8 @@ export const useAddEvent = () => {
         isPaymentMethodsLoading,
         isContactInfoLoading,
         isCurrenciesLoading,
+        isPaymentMethodsDisabled,
+        isCurrencyDisabled,
         paymentMethods,
         contacts,
         currencies,

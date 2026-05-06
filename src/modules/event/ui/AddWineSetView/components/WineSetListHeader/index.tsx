@@ -14,6 +14,7 @@ import { useWineSetListHeader } from './presenters/useWineSetListHeader';
 interface IProps {
     searchInputRef: RefObject<TextInput | null>;
     searchQuery: string;
+    isSearchingWines: boolean;
     onChangeSearchQuery: (value: string) => void;
     wineSearchResultItems: IWineSearchResultViewItem[];
     shouldShowScannerButton: boolean;
@@ -23,11 +24,13 @@ interface IProps {
     onFocusSearchInput: () => void;
     onOpenTastingTypeModal: () => void;
     onCloseSearchList: () => void;
+    onLoadMoreSearchResults: () => void;
 }
 
 export const WineSetListHeader = ({
     searchInputRef,
     searchQuery,
+    isSearchingWines,
     onChangeSearchQuery,
     wineSearchResultItems,
     shouldShowScannerButton,
@@ -37,14 +40,18 @@ export const WineSetListHeader = ({
     onFocusSearchInput,
     onOpenTastingTypeModal,
     onCloseSearchList,
+    onLoadMoreSearchResults,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
+        searchResultsListRef,
         isSearchSectionVisible,
         isSearchResultsVisible,
         isSearchResultsScrollable,
     } = useWineSetListHeader({
+        searchQuery,
+        isSearchingWines,
         wineSearchResultItems,
         shouldShowScannerButton,
         maxVisibleSearchResults,
@@ -75,6 +82,7 @@ export const WineSetListHeader = ({
                 <View style={styles.searchResultsContainer}>
                     {isSearchResultsVisible ? (
                         <FlatList
+                            ref={searchResultsListRef}
                             data={wineSearchResultItems}
                             keyExtractor={searchResultKeyExtractor}
                             renderItem={renderWineSearchResult}
@@ -84,6 +92,8 @@ export const WineSetListHeader = ({
                             keyboardShouldPersistTaps="always"
                             ItemSeparatorComponent={renderSearchResultDivider}
                             style={styles.searchResultsList}
+                            onEndReached={onLoadMoreSearchResults}
+                            onEndReachedThreshold={0.4}
                         />
                     ) : (
                         <View style={styles.emptySearchContainer}>

@@ -47,6 +47,8 @@ export const AddEventView = () => {
         paymentMethods,
         contacts,
         currencies,
+        isPaymentMethodsDisabled,
+        isCurrencyDisabled,
         isSeatsError,
         disabled,
         onChangeTheme,
@@ -184,6 +186,7 @@ export const AddEventView = () => {
         value: form.currency,
         currencies,
         onChange: onChangeCurrency,
+        isDisabled: isCurrencyDisabled,
     });
 
     const {
@@ -197,6 +200,7 @@ export const AddEventView = () => {
         value: form.paymentMethodIds,
         paymentMethods,
         onChange: onChangePaymentMethodIds,
+        isDisabled: isPaymentMethodsDisabled,
     });
 
     const {
@@ -370,12 +374,14 @@ export const AddEventView = () => {
                                 onPress={onOpenPaymentMethodsModal}
                                 text={selectedPaymentMethodsText || t('payments.paymentsMethods')}
                                 style={styles.pickerButton}
+                                isDisabled={isPaymentMethodsDisabled}
                             />
 
                             <PickerButton
                                 onPress={onOpenCurrencyModal}
                                 text={selectedCurrencyText || t('event.currency')}
                                 style={styles.pickerButton}
+                                isDisabled={isCurrencyDisabled}
                             />
 
                             <CustomInput

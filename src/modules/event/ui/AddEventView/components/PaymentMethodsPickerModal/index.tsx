@@ -59,8 +59,8 @@ export const PaymentMethodsPickerModal = ({
                         ListEmptyComponent={
                             <View style={styles.stateContainer}>
                                 <Typography
-                                    variant="body_400"
-                                    text={t('payments.noVisiblePaymentMethods')}
+                                    variant="h5"
+                                    text={t('payments.addPaymentMethodsInProfile')}
                                     style={styles.emptyText}
                                 />
                             </View>

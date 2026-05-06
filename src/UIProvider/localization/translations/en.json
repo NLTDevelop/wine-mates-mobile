@@ -450,7 +450,8 @@
         "description": "Description",
         "downloadFile": "Download file",
         "downloadHint": "You can download the QR code for payment.",
-        "noVisiblePaymentMethods": "No visible payment methods"
+        "noVisiblePaymentMethods": "No visible payment methods",
+        "addPaymentMethodsInProfile": "Add payment methods to your profile."
     },
     "contactInfo" : {
         "contactInfo": "Contact information",

@@ -112,13 +112,21 @@ export const useAddWineSetView = () => {
         return [...initialWines, selectedWine];
     });
     const [wineSearchResults, setWineSearchResults] = useState<IWineSetSearchItem[]>([]);
+    const [searchOffset, setSearchOffset] = useState(0);
+    const [isSearchListEndReached, setIsSearchListEndReached] = useState(false);
 
-    const onSearchWineSet = useCallback(async (query: string) => {
+    const onSearchWineSet = useCallback(async (query: string, offset = 0, append = false) => {
         const normalizedQuery = query.trim();
 
         if (normalizedQuery.length < MIN_SEARCH_LENGTH) {
             setWineSearchResults([]);
             setIsSearchingWines(false);
+            setSearchOffset(0);
+            setIsSearchListEndReached(false);
+            return;
+        }
+
+        if (append && isSearchListEndReached) {
             return;
         }
 
@@ -130,7 +138,7 @@ export const useAddWineSetView = () => {
             const response = await wineService.searchWineSet({
                 query: normalizedQuery,
                 limit: SEARCH_LIMIT,
-                offset: 0,
+                offset,
             });
 
             if (searchRequestIdRef.current !== requestId) {
@@ -138,14 +146,35 @@ export const useAddWineSetView = () => {
             }
 
             if (!response.isError && response.data?.rows) {
-                setWineSearchResults(response.data.rows);
+                const rows = response.data.rows;
+                const totalCount = typeof response.data.count === 'number' ? response.data.count : 0;
+
+                setWineSearchResults(prev => {
+                    if (!append) {
+                        return rows;
+                    }
+
+                    const prevIds = new Set(prev.map(item => item.id));
+                    const uniqueRows = rows.filter(item => !prevIds.has(item.id));
+                    return [...prev, ...uniqueRows];
+                });
+
+                setSearchOffset(offset);
+                setIsSearchListEndReached(offset + rows.length >= totalCount || rows.length < SEARCH_LIMIT);
                 return;
             }
 
-            setWineSearchResults([]);
+            if (!append) {
+                setWineSearchResults([]);
+                setSearchOffset(0);
+            }
+            setIsSearchListEndReached(true);
         } catch (error) {
             if (searchRequestIdRef.current === requestId) {
-                setWineSearchResults([]);
+                if (!append) {
+                    setWineSearchResults([]);
+                    setSearchOffset(0);
+                }
             }
 
             console.warn('useAddWineSetView -> searchWineSet: ', error);
@@ -154,7 +183,7 @@ export const useAddWineSetView = () => {
                 setIsSearchingWines(false);
             }
         }
-    }, []);
+    }, [isSearchListEndReached]);
 
     const { debouncedWrapper: onDebouncedSearchWineSet, cancelDebounce: onCancelDebouncedSearch } = useDebounce(
         onSearchWineSet,
@@ -168,8 +197,9 @@ export const useAddWineSetView = () => {
             setWineSearchResults([]);
             setIsSearchingWines(false);
             setIsSearchListVisible(false);
+            setSearchOffset(0);
+            setIsSearchListEndReached(false);
             onCancelDebouncedSearch();
-            Keyboard.dismiss();
             return;
         }
 
@@ -188,7 +218,7 @@ export const useAddWineSetView = () => {
         setIsSearchListVisible(true);
         onCancelDebouncedSearch();
         if (wineSearchResults.length === 0) {
-            onSearchWineSet(normalizedQuery);
+            onSearchWineSet(normalizedQuery, 0, false);
         }
     }, [onCancelDebouncedSearch, onSearchWineSet, searchQuery, wineSearchResults.length]);
 
@@ -207,6 +237,8 @@ export const useAddWineSetView = () => {
 
             setIsSearchListVisible(false);
             setIsSearchingWines(false);
+            setSearchOffset(0);
+            setIsSearchListEndReached(false);
             onCancelDebouncedSearch();
         });
 
@@ -374,10 +406,28 @@ export const useAddWineSetView = () => {
             setSearchQuery('');
             setWineSearchResults([]);
             setIsSearchListVisible(false);
+            setSearchOffset(0);
+            setIsSearchListEndReached(false);
             onCancelDebouncedSearch();
             Keyboard.dismiss();
         };
     }, [onCancelDebouncedSearch]);
+
+    const onLoadMoreSearchResults = useCallback(() => {
+        const normalizedQuery = searchQuery.trim();
+
+        if (
+            normalizedQuery.length < MIN_SEARCH_LENGTH
+            || isSearchingWines
+            || isSearchListEndReached
+            || wineSearchResults.length === 0
+        ) {
+            return;
+        }
+
+        const nextOffset = searchOffset + SEARCH_LIMIT;
+        onSearchWineSet(normalizedQuery, nextOffset, true);
+    }, [isSearchListEndReached, isSearchingWines, onSearchWineSet, searchOffset, searchQuery, wineSearchResults.length]);
 
     const createOnEditWinePress = useCallback((wine: IWineSetSearchItem) => {
         return () => {
@@ -669,6 +719,7 @@ export const useAddWineSetView = () => {
         onOpenScannerPress,
         onFocusSearchInput,
         onCloseSearchList,
+        onLoadMoreSearchResults,
         onReorderWineSet,
         onCreateEventPress,
     };

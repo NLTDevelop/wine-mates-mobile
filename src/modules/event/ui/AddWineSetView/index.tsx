@@ -29,6 +29,7 @@ export const AddWineSetView = () => {
         isTastingTypeModalVisible,
         wineSetViewItems,
         wineSearchResultItems,
+        isSearchingWines,
         shouldShowScannerButton,
         isSearchListVisible,
         isSearchResultsScrollable,
@@ -52,6 +53,7 @@ export const AddWineSetView = () => {
         onOpenScannerPress,
         onFocusSearchInput,
         onCloseSearchList,
+        onLoadMoreSearchResults,
         onReorderWineSet,
         onCreateEventPress,
     } = useAddWineSetView();
@@ -85,6 +87,7 @@ export const AddWineSetView = () => {
                         <WineSetListHeader
                             searchInputRef={searchInputRef}
                             searchQuery={searchQuery}
+                            isSearchingWines={isSearchingWines}
                             onChangeSearchQuery={onChangeSearchQuery}
                             wineSearchResultItems={wineSearchResultItems}
                             shouldShowScannerButton={shouldShowScannerButton}
@@ -94,6 +97,7 @@ export const AddWineSetView = () => {
                             onFocusSearchInput={onFocusSearchInput}
                             onOpenTastingTypeModal={onOpenTastingTypeModal}
                             onCloseSearchList={onCloseSearchList}
+                            onLoadMoreSearchResults={onLoadMoreSearchResults}
                         />
                     }
                     ListFooterComponent={

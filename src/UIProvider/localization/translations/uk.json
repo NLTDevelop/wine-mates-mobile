@@ -454,7 +454,8 @@
         "description": "Опис",
         "downloadFile": "Завантажити файл",
         "downloadHint": "Ви можете завантажити QR-код для оплати.",
-        "noVisiblePaymentMethods": "Немає видимих способів оплати"
+        "noVisiblePaymentMethods": "Немає видимих способів оплати",
+        "addPaymentMethodsInProfile": "Додайте способи оплати в профілі"
     },
     "contactInfo" : {
         "contactInfo": "Контактна інформація",
