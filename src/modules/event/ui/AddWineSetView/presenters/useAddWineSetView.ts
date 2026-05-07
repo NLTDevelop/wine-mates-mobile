@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { RefObject, useCallback, useEffect, useMemo, useState } from 'react';
 import { Keyboard, TextInput } from 'react-native';
 import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { eventsService } from '@/entities/events/EventsService';
-import { wineService } from '@/entities/wine/WineService';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { EventType } from '@/entities/events/enums/EventType';
 import { RepeatRule, REPEAT_RULES } from '@/entities/events/enums/RepeatRule';
@@ -11,7 +10,6 @@ import { TastingType, TASTING_TYPES } from '@/entities/events/enums/TastingType'
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IWineSearchResultViewItem, IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
 import { useUiContext } from '@/UIProvider';
-import { useDebounce } from '@/hooks/useDebounce';
 import { wineSetScannerModel } from '../../../../../entities/events/WineSetScannerModel';
 import { toastService } from '@/libs/toast/toastService';
 
@@ -45,8 +43,6 @@ const TASTING_TYPE_LABEL_KEYS: Record<TastingType, string> = {
     [TastingType.Regular]: 'event.tastingTypeRegular',
 };
 
-const SEARCH_LIMIT = 10;
-const MIN_SEARCH_LENGTH = 1;
 const MAX_VISIBLE_SEARCH_RESULTS = 3;
 const DEFAULT_TASTING_TYPE = TASTING_TYPES[0] as TastingType;
 
@@ -81,24 +77,36 @@ const getWineSubtitle = (wine: IWineSetSearchItem) => {
     return parts.join(' / ');
 };
 
-export const useAddWineSetView = () => {
+interface IProps {
+    searchInputRef: RefObject<TextInput | null>;
+    searchQuery: string;
+    isSearchListVisible: boolean;
+    isSearchingWines: boolean;
+    isInitialSearchFinished: boolean;
+    wineSearchResults: IWineSetSearchItem[];
+    onResetSearch: () => void;
+}
+
+export const useAddWineSetView = ({
+    searchInputRef,
+    searchQuery,
+    isSearchListVisible,
+    isSearchingWines,
+    isInitialSearchFinished,
+    wineSearchResults,
+    onResetSearch,
+}: IProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<Route>();
     const { t } = useUiContext();
     const draft = route.params?.draft;
-    const searchInputRef = useRef<TextInput>(null);
-    const searchRequestIdRef = useRef(0);
-
-    const [searchQuery, setSearchQuery] = useState('');
     const [repeatRule, setRepeatRule] = useState<RepeatRule>(RepeatRule.Never);
     const [repeatRuleDraft, setRepeatRuleDraft] = useState<RepeatRule>(RepeatRule.Never);
     const [tastingType, setTastingType] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
     const [tastingTypeDraft, setTastingTypeDraft] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
     const [isTastingTypeModalVisible, setIsTastingTypeModalVisible] = useState(false);
     const [isRepeatModalVisible, setIsRepeatModalVisible] = useState(false);
-    const [isSearchListVisible, setIsSearchListVisible] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
-    const [isSearchingWines, setIsSearchingWines] = useState(false);
     const [isEventCreatedAlertVisible, setIsEventCreatedAlertVisible] = useState(false);
     const [createdEventId, setCreatedEventId] = useState<number | null>(null);
     const [selectedWines, setSelectedWines] = useState<IWineSetSearchItem[]>(() => {
@@ -111,142 +119,6 @@ export const useAddWineSetView = () => {
 
         return [...initialWines, selectedWine];
     });
-    const [wineSearchResults, setWineSearchResults] = useState<IWineSetSearchItem[]>([]);
-    const [searchOffset, setSearchOffset] = useState(0);
-    const [isSearchListEndReached, setIsSearchListEndReached] = useState(false);
-
-    const onSearchWineSet = useCallback(async (query: string, offset = 0, append = false) => {
-        const normalizedQuery = query.trim();
-
-        if (normalizedQuery.length < MIN_SEARCH_LENGTH) {
-            setWineSearchResults([]);
-            setIsSearchingWines(false);
-            setSearchOffset(0);
-            setIsSearchListEndReached(false);
-            return;
-        }
-
-        if (append && isSearchListEndReached) {
-            return;
-        }
-
-        const requestId = searchRequestIdRef.current + 1;
-        searchRequestIdRef.current = requestId;
-
-        try {
-            setIsSearchingWines(true);
-            const response = await wineService.searchWineSet({
-                query: normalizedQuery,
-                limit: SEARCH_LIMIT,
-                offset,
-            });
-
-            if (searchRequestIdRef.current !== requestId) {
-                return;
-            }
-
-            if (!response.isError && response.data?.rows) {
-                const rows = response.data.rows;
-                const totalCount = typeof response.data.count === 'number' ? response.data.count : 0;
-
-                setWineSearchResults(prev => {
-                    if (!append) {
-                        return rows;
-                    }
-
-                    const prevIds = new Set(prev.map(item => item.id));
-                    const uniqueRows = rows.filter(item => !prevIds.has(item.id));
-                    return [...prev, ...uniqueRows];
-                });
-
-                setSearchOffset(offset);
-                setIsSearchListEndReached(offset + rows.length >= totalCount || rows.length < SEARCH_LIMIT);
-                return;
-            }
-
-            if (!append) {
-                setWineSearchResults([]);
-                setSearchOffset(0);
-            }
-            setIsSearchListEndReached(true);
-        } catch (error) {
-            if (searchRequestIdRef.current === requestId) {
-                if (!append) {
-                    setWineSearchResults([]);
-                    setSearchOffset(0);
-                }
-            }
-
-            console.warn('useAddWineSetView -> searchWineSet: ', error);
-        } finally {
-            if (searchRequestIdRef.current === requestId) {
-                setIsSearchingWines(false);
-            }
-        }
-    }, [isSearchListEndReached]);
-
-    const { debouncedWrapper: onDebouncedSearchWineSet, cancelDebounce: onCancelDebouncedSearch } = useDebounce(
-        onSearchWineSet,
-        300,
-    );
-
-    const onChangeSearchQuery = useCallback((value: string) => {
-        setSearchQuery(value);
-
-        if (value.trim().length < MIN_SEARCH_LENGTH) {
-            setWineSearchResults([]);
-            setIsSearchingWines(false);
-            setIsSearchListVisible(false);
-            setSearchOffset(0);
-            setIsSearchListEndReached(false);
-            onCancelDebouncedSearch();
-            return;
-        }
-
-        setIsSearchListVisible(true);
-        setIsSearchingWines(true);
-        onDebouncedSearchWineSet(value);
-    }, [onCancelDebouncedSearch, onDebouncedSearchWineSet]);
-
-    const onFocusSearchInput = useCallback(() => {
-        const normalizedQuery = searchQuery.trim();
-
-        if (normalizedQuery.length < MIN_SEARCH_LENGTH) {
-            return;
-        }
-
-        setIsSearchListVisible(true);
-        onCancelDebouncedSearch();
-        if (wineSearchResults.length === 0) {
-            onSearchWineSet(normalizedQuery, 0, false);
-        }
-    }, [onCancelDebouncedSearch, onSearchWineSet, searchQuery, wineSearchResults.length]);
-
-    const onCloseSearchList = useCallback(() => {
-        setIsSearchListVisible(false);
-        setIsSearchingWines(false);
-        onCancelDebouncedSearch();
-        Keyboard.dismiss();
-    }, [onCancelDebouncedSearch]);
-
-    useEffect(() => {
-        const keyboardDidHideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-            if (!isSearchListVisible) {
-                return;
-            }
-
-            setIsSearchListVisible(false);
-            setIsSearchingWines(false);
-            setSearchOffset(0);
-            setIsSearchListEndReached(false);
-            onCancelDebouncedSearch();
-        });
-
-        return () => {
-            keyboardDidHideSubscription.remove();
-        };
-    }, [isSearchListVisible, onCancelDebouncedSearch]);
-
     useEffect(() => {
         const selectedWine = route.params?.selectedWine;
 
@@ -392,7 +264,7 @@ export const useAddWineSetView = () => {
 
     const onAddWinePress = useCallback(() => {
         searchInputRef.current?.focus();
-    }, []);
+    }, [searchInputRef]);
 
     const createOnSelectWinePress = useCallback((wine: IWineSetSearchItem) => {
         return () => {
@@ -403,31 +275,10 @@ export const useAddWineSetView = () => {
 
                 return [...prev, wine];
             });
-            setSearchQuery('');
-            setWineSearchResults([]);
-            setIsSearchListVisible(false);
-            setSearchOffset(0);
-            setIsSearchListEndReached(false);
-            onCancelDebouncedSearch();
+            onResetSearch();
             Keyboard.dismiss();
         };
-    }, [onCancelDebouncedSearch]);
-
-    const onLoadMoreSearchResults = useCallback(() => {
-        const normalizedQuery = searchQuery.trim();
-
-        if (
-            normalizedQuery.length < MIN_SEARCH_LENGTH
-            || isSearchingWines
-            || isSearchListEndReached
-            || wineSearchResults.length === 0
-        ) {
-            return;
-        }
-
-        const nextOffset = searchOffset + SEARCH_LIMIT;
-        onSearchWineSet(normalizedQuery, nextOffset, true);
-    }, [isSearchListEndReached, isSearchingWines, onSearchWineSet, searchOffset, searchQuery, wineSearchResults.length]);
+    }, [onResetSearch]);
 
     const createOnEditWinePress = useCallback((wine: IWineSetSearchItem) => {
         return () => {
@@ -485,9 +336,10 @@ export const useAddWineSetView = () => {
             }));
     }, [createOnSelectWinePress, isSearchListVisible, selectedWines, wineSearchResults]);
 
-    const hasWineSearchQuery = searchQuery.trim().length >= MIN_SEARCH_LENGTH;
+    const hasWineSearchQuery = searchQuery.trim().length > 0;
     const shouldShowScannerButton = isSearchListVisible
         && hasWineSearchQuery
+        && isInitialSearchFinished
         && !isSearchingWines
         && wineSearchResultItems.length === 0;
     const isSearchResultsScrollable = wineSearchResultItems.length > MAX_VISIBLE_SEARCH_RESULTS;
@@ -705,7 +557,6 @@ export const useAddWineSetView = () => {
         isCreating,
         isCreateEventDisabled,
         searchInputRef,
-        onChangeSearchQuery,
         onOpenRepeatModal,
         onOpenTastingTypeModal,
         onCloseRepeatModal,
@@ -717,9 +568,6 @@ export const useAddWineSetView = () => {
         onShareQrPress,
         onAddWinePress,
         onOpenScannerPress,
-        onFocusSearchInput,
-        onCloseSearchList,
-        onLoadMoreSearchResults,
         onReorderWineSet,
         onCreateEventPress,
     };
