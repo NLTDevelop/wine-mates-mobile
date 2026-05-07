@@ -16,7 +16,7 @@ export const getStyles = (colors: IColors) => {
             borderRadius: 12,
             backgroundColor: colors.background,
             overflow: 'hidden',
-            marginTop: scaleVertical(-8),
+            marginTop: scaleVertical(2),
         },
         searchResultsList: {
             maxHeight: scaleVertical(158),

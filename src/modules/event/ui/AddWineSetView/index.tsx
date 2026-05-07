@@ -5,6 +5,7 @@ import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { useAddWineSetView } from './presenters/useAddWineSetView';
+import { useAddWineSetSearch } from './presenters/useAddWineSetSearch';
 import { getStyles } from './styles';
 import { WineSetItemRow } from './components/WineSetItemRow';
 import { RepeatRuleModal } from './components/RepeatRuleModal';
@@ -17,9 +18,22 @@ import { WineSetListFooter } from './components/WineSetListFooter';
 export const AddWineSetView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const {
+        searchInputRef,
+        searchTouchAreaRef,
+        searchQuery,
+        isSearchListVisible,
+        isSearchingWines,
+        isInitialSearchFinished,
+        wineSearchResults,
+        onChangeSearchQuery,
+        onFocusSearchInput,
+        onLoadMoreSearchResults,
+        onResetSearch,
+        onPressOutsideSearch,
+    } = useAddWineSetSearch();
 
     const {
-        searchQuery,
         tastingType,
         tastingTypeLabel,
         tastingTypeItems,
@@ -29,17 +43,13 @@ export const AddWineSetView = () => {
         isTastingTypeModalVisible,
         wineSetViewItems,
         wineSearchResultItems,
-        isSearchingWines,
         shouldShowScannerButton,
-        isSearchListVisible,
         isSearchResultsScrollable,
         maxVisibleSearchResults,
         isRepeatModalVisible,
         isEventCreatedAlertVisible,
         isCreating,
         isCreateEventDisabled,
-        searchInputRef,
-        onChangeSearchQuery,
         onOpenTastingTypeModal,
         onOpenRepeatModal,
         onCloseTastingTypeModal,
@@ -51,12 +61,17 @@ export const AddWineSetView = () => {
         onShareQrPress,
         onAddWinePress,
         onOpenScannerPress,
-        onFocusSearchInput,
-        onCloseSearchList,
-        onLoadMoreSearchResults,
         onReorderWineSet,
         onCreateEventPress,
-    } = useAddWineSetView();
+    } = useAddWineSetView({
+        searchInputRef,
+        searchQuery,
+        isSearchListVisible,
+        isSearchingWines,
+        isInitialSearchFinished,
+        wineSearchResults,
+        onResetSearch,
+    });
 
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
 
@@ -74,55 +89,57 @@ export const AddWineSetView = () => {
 
     return (
         <>
-            <ScreenContainer
-                edges={['top', 'bottom']}
-                scrollEnabled={false}
-                headerComponent={<HeaderWithBackButton title={t('event.listWineEvent')} isCentered />}
-            >
-                <DraggableFlatList
-                    data={wineSetViewItems}
-                    keyExtractor={keyExtractor}
-                    renderItem={renderWineItem}
-                    ListHeaderComponent={
-                        <WineSetListHeader
-                            searchInputRef={searchInputRef}
-                            searchQuery={searchQuery}
-                            isSearchingWines={isSearchingWines}
-                            onChangeSearchQuery={onChangeSearchQuery}
-                            wineSearchResultItems={wineSearchResultItems}
-                            shouldShowScannerButton={shouldShowScannerButton}
-                            maxVisibleSearchResults={maxVisibleSearchResults}
-                            tastingTypeLabel={tastingTypeLabel}
-                            onOpenScannerPress={onOpenScannerPress}
-                            onFocusSearchInput={onFocusSearchInput}
-                            onOpenTastingTypeModal={onOpenTastingTypeModal}
-                            onCloseSearchList={onCloseSearchList}
-                            onLoadMoreSearchResults={onLoadMoreSearchResults}
-                        />
-                    }
-                    ListFooterComponent={
-                        <WineSetListFooter
-                            repeatRuleLabel={repeatRuleLabel}
-                            isCreating={isCreating}
-                            isCreateEventDisabled={isCreateEventDisabled}
-                            onAddWinePress={onAddWinePress}
-                            onOpenRepeatModal={onOpenRepeatModal}
-                            onCreateEventPress={onCreateEventPress}
-                        />
-                    }
-                    contentContainerStyle={styles.container}
-                    scrollEnabled={!isSearchListVisible || !isSearchResultsScrollable}
-                    nestedScrollEnabled
-                    keyboardShouldPersistTaps="handled"
-                    ItemSeparatorComponent={renderListDivider}
-                    onDragEnd={onReorderWineSet}
-                    autoscrollThreshold={180}
-                    autoscrollSpeed={200}
-                    dragItemOverflow
-                    activationDistance={20}
-                    animationConfig={{ damping: 20, mass: 0.2, stiffness: 220 }}
-                />
-            </ScreenContainer>
+            <View style={styles.screen} onStartShouldSetResponderCapture={onPressOutsideSearch}>
+                <ScreenContainer
+                    edges={['top', 'bottom']}
+                    scrollEnabled={false}
+                    headerComponent={<HeaderWithBackButton title={t('event.listWineEvent')} isCentered />}
+                >
+                    <DraggableFlatList
+                        data={wineSetViewItems}
+                        keyExtractor={keyExtractor}
+                        renderItem={renderWineItem}
+                        ListHeaderComponent={
+                            <WineSetListHeader
+                                searchInputRef={searchInputRef}
+                                searchTouchAreaRef={searchTouchAreaRef}
+                                searchQuery={searchQuery}
+                                isSearchingWines={isSearchingWines}
+                                onChangeSearchQuery={onChangeSearchQuery}
+                                wineSearchResultItems={wineSearchResultItems}
+                                shouldShowScannerButton={shouldShowScannerButton}
+                                maxVisibleSearchResults={maxVisibleSearchResults}
+                                tastingTypeLabel={tastingTypeLabel}
+                                onOpenScannerPress={onOpenScannerPress}
+                                onFocusSearchInput={onFocusSearchInput}
+                                onOpenTastingTypeModal={onOpenTastingTypeModal}
+                                onLoadMoreSearchResults={onLoadMoreSearchResults}
+                            />
+                        }
+                        ListFooterComponent={
+                            <WineSetListFooter
+                                repeatRuleLabel={repeatRuleLabel}
+                                isCreating={isCreating}
+                                isCreateEventDisabled={isCreateEventDisabled}
+                                onAddWinePress={onAddWinePress}
+                                onOpenRepeatModal={onOpenRepeatModal}
+                                onCreateEventPress={onCreateEventPress}
+                            />
+                        }
+                        contentContainerStyle={styles.container}
+                        scrollEnabled={!isSearchListVisible || !isSearchResultsScrollable}
+                        nestedScrollEnabled
+                        keyboardShouldPersistTaps="handled"
+                        ItemSeparatorComponent={renderListDivider}
+                        onDragEnd={onReorderWineSet}
+                        autoscrollThreshold={180}
+                        autoscrollSpeed={200}
+                        dragItemOverflow
+                        activationDistance={20}
+                        animationConfig={{ damping: 20, mass: 0.2, stiffness: 220 }}
+                    />
+                </ScreenContainer>
+            </View>
 
             {isRepeatModalVisible && (
                 <RepeatRuleModal

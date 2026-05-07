@@ -13,6 +13,7 @@ import { useWineSetListHeader } from './presenters/useWineSetListHeader';
 
 interface IProps {
     searchInputRef: RefObject<TextInput | null>;
+    searchTouchAreaRef: RefObject<View | null>;
     searchQuery: string;
     isSearchingWines: boolean;
     onChangeSearchQuery: (value: string) => void;
@@ -23,12 +24,12 @@ interface IProps {
     onOpenScannerPress: () => void;
     onFocusSearchInput: () => void;
     onOpenTastingTypeModal: () => void;
-    onCloseSearchList: () => void;
     onLoadMoreSearchResults: () => void;
 }
 
 export const WineSetListHeader = ({
     searchInputRef,
+    searchTouchAreaRef,
     searchQuery,
     isSearchingWines,
     onChangeSearchQuery,
@@ -39,7 +40,6 @@ export const WineSetListHeader = ({
     onOpenScannerPress,
     onFocusSearchInput,
     onOpenTastingTypeModal,
-    onCloseSearchList,
     onLoadMoreSearchResults,
 }: IProps) => {
     const { colors, t } = useUiContext();
@@ -69,48 +69,49 @@ export const WineSetListHeader = ({
 
     return (
         <View style={styles.container}>
-            <SearchBar
-                ref={searchInputRef}
-                value={searchQuery}
-                onChangeText={onChangeSearchQuery}
-                onFocus={onFocusSearchInput}
-                onBlur={onCloseSearchList}
-                placeholder={t('common.search')}
-                containerStyle={styles.searchBar}
-            />
-            {isSearchSectionVisible && (
-                <View style={styles.searchResultsContainer}>
-                    {isSearchResultsVisible ? (
-                        <FlatList
-                            ref={searchResultsListRef}
-                            data={wineSearchResultItems}
-                            keyExtractor={searchResultKeyExtractor}
-                            renderItem={renderWineSearchResult}
-                            scrollEnabled={isSearchResultsScrollable}
-                            nestedScrollEnabled
-                            directionalLockEnabled
-                            keyboardShouldPersistTaps="always"
-                            ItemSeparatorComponent={renderSearchResultDivider}
-                            style={styles.searchResultsList}
-                            onEndReached={onLoadMoreSearchResults}
-                            onEndReachedThreshold={0.4}
-                        />
-                    ) : (
-                        <View style={styles.emptySearchContainer}>
-                            <Typography
-                                variant="body_400"
-                                text={t('common.nothingFoundTitle')}
-                                style={styles.emptySearchText}
+            <View ref={searchTouchAreaRef}>
+                <SearchBar
+                    ref={searchInputRef}
+                    value={searchQuery}
+                    onChangeText={onChangeSearchQuery}
+                    onFocus={onFocusSearchInput}
+                    placeholder={t('common.search')}
+                    containerStyle={styles.searchBar}
+                />
+                {isSearchSectionVisible && (
+                    <View style={styles.searchResultsContainer}>
+                        {isSearchResultsVisible ? (
+                            <FlatList
+                                ref={searchResultsListRef}
+                                data={wineSearchResultItems}
+                                keyExtractor={searchResultKeyExtractor}
+                                renderItem={renderWineSearchResult}
+                                scrollEnabled={isSearchResultsScrollable}
+                                nestedScrollEnabled
+                                directionalLockEnabled
+                                keyboardShouldPersistTaps="always"
+                                ItemSeparatorComponent={renderSearchResultDivider}
+                                style={styles.searchResultsList}
+                                onEndReached={isSearchResultsScrollable ? onLoadMoreSearchResults : undefined}
+                                onEndReachedThreshold={0.4}
                             />
-                            <Button
-                                text={t('event.searchWineWithScanner')}
-                                onPress={onOpenScannerPress}
-                                type="secondary"
-                            />
-                        </View>
-                    )}
-                </View>
-            )}
+                        ) : (
+                            <View style={styles.emptySearchContainer}>
+                                <Typography
+                                    variant="body_400"
+                                    text={t('common.nothingFoundTitle')}
+                                    style={styles.emptySearchText}
+                                />
+                                <Button
+                                    text={t('event.searchWineWithScanner')}
+                                    onPress={onOpenScannerPress}
+                                    type="secondary"
+                                />
+                            </View>
+                        )}
+                    </View>
+                )}
+            </View>
             <TouchableOpacity style={styles.tastingTypeButton} onPress={onOpenTastingTypeModal}>
                 <Typography variant="h6" text={tastingTypeLabel} style={styles.tastingTypeButtonText} />
                 <ArrowDownIcon />
