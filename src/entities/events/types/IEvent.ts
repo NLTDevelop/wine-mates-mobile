@@ -22,13 +22,10 @@ export interface IEvent {
     longitude: number;
     distanceKm: string | number | null;
     acceptedCount?: number;
-    seats?: {
-        total?: number;
-        left?: number;
-    };
     isSaved?: boolean;
     eventType?: EventType;
     tastingType?: TastingType;
+    seats?: ISeat;
     participationCondition?: ParticipationCondition;
 }
 
@@ -48,6 +45,11 @@ export interface IEventContact {
         createdAt?: string;
         updatedAt?: string;
     };
+}
+
+export interface ISeat{
+    total: number;
+    left: number;
 }
 
 export interface IEventDetail {
@@ -82,10 +84,7 @@ export interface IEventDetail {
     distance?: number | string;
     distanceKm?: number | string | null;
     language: string;
-    seats: number | {
-        total?: number;
-        left?: number;
-    };
+    seats?: ISeat;
     currency?: Currency;
     tastingType?: TastingType;
     participationCondition?: ParticipationCondition;

@@ -41,9 +41,12 @@ export interface ILinks {
     faq: string;
     me: string;
     favoriteWineLists: string;
+    favoriteEvents: string;
     events: string;
     eventMapPins: string;
     eventPriceRange: string;
+    createdEvents: string;
+    appliedEvents: string;
     eventCurrencies: string;
     paymentMethods: string;
     contacts: string;
@@ -79,9 +82,12 @@ class Links implements ILinks {
         faq: 'faq/topics',
         me: 'users/me',
         favoriteWineLists: 'favorite/wine-lists',
+        favoriteEvents: 'favorite/events',
         events: 'events',
         eventMapPins: 'events/map-pins',
         eventPriceRange: 'events/price-range',
+        createdEvents: 'events/my',
+        appliedEvents: 'event-bookings/my',
         eventCurrencies: 'users/currencies',
         paymentMethods: 'users/payment-methods',
         contacts: 'users/contacts',
@@ -183,6 +189,9 @@ class Links implements ILinks {
     public get favoriteWineLists() {
         return `${this._domain}${this._links.favoriteWineLists}`;
     }
+    public get favoriteEvents() {
+        return `${this._domain}${this._links.favoriteEvents}`;
+    }
     public get events() {
         return `${this._domain}${this._links.events}`;
     }
@@ -191,6 +200,12 @@ class Links implements ILinks {
     }
     public get eventPriceRange() {
         return `${this._domain}${this._links.eventPriceRange}`;
+    }
+    public get createdEvents() {
+        return `${this._domain}${this._links.createdEvents}`;
+    }
+    public get appliedEvents() {
+        return `${this._domain}${this._links.appliedEvents}`;
     }
     public get eventCurrencies() {
         return `${this._domain}${this._links.eventCurrencies}`;

@@ -28,6 +28,7 @@ import { AddEventView } from '@/modules/event/ui/AddEventView';
 import { AddWineSetView } from '@/modules/event/ui/AddWineSetView';
 import { EditEventWineView } from '@/modules/event/ui/EditEventWineView';
 import { LocationPickerView } from '@/modules/event/ui/LocationPickerView';
+import { EventListView } from '@/modules/event/ui/EventListView';
 
 const Stack = createNativeStackNavigator();
 
@@ -66,6 +67,7 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="ProfileDetailsView" component={ProfileDetailsView} />
             <Stack.Screen name="EditProfileDetailsView" component={EditProfileDetailsView} />
             <Stack.Screen name="AvatarCameraView" component={AvatarCameraView} />
+            <Stack.Screen name="EventListView" component={EventListView} />
         </Stack.Navigator>
     );
 });
