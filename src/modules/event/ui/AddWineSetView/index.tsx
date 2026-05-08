@@ -129,7 +129,7 @@ export const AddWineSetView = () => {
                         contentContainerStyle={styles.container}
                         scrollEnabled={!isSearchListVisible || !isSearchResultsScrollable}
                         nestedScrollEnabled
-                        keyboardShouldPersistTaps="handled"
+                        keyboardShouldPersistTaps="always"
                         ItemSeparatorComponent={renderListDivider}
                         onDragEnd={onReorderWineSet}
                         autoscrollThreshold={180}
