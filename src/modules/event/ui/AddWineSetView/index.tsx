@@ -14,6 +14,8 @@ import { EventCreatedAlert } from './components/EventCreatedAlert';
 import { IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
 import { WineSetListHeader } from './components/WineSetListHeader';
 import { WineSetListFooter } from './components/WineSetListFooter';
+import { useRepeatRuleModal } from './presenters/useRepeatRuleModal';
+import { useTastingTypeModal } from './presenters/useTastingTypeModal';
 
 export const AddWineSetView = () => {
     const { colors, t } = useUiContext();
@@ -35,27 +37,17 @@ export const AddWineSetView = () => {
 
     const {
         tastingType,
-        tastingTypeLabel,
-        tastingTypeItems,
         repeatRule,
-        repeatRuleLabel,
-        repeatRuleItems,
-        isTastingTypeModalVisible,
         wineSetViewItems,
         wineSearchResultItems,
         shouldShowScannerButton,
         isSearchResultsScrollable,
         maxVisibleSearchResults,
-        isRepeatModalVisible,
         isEventCreatedAlertVisible,
         isCreating,
         isCreateEventDisabled,
-        onOpenTastingTypeModal,
-        onOpenRepeatModal,
-        onCloseTastingTypeModal,
-        onCloseRepeatModal,
-        onConfirmRepeatRule,
-        onConfirmTastingType,
+        onChangeRepeatRule,
+        onChangeTastingType,
         onCloseEventCreatedAlert,
         onCheckEventPress,
         onShareQrPress,
@@ -71,6 +63,32 @@ export const AddWineSetView = () => {
         isInitialSearchFinished,
         wineSearchResults,
         onResetSearch,
+    });
+
+    const {
+        isVisible: isRepeatModalVisible,
+        draft: repeatRuleDraft,
+        selectedText: repeatRuleLabel,
+        items: repeatRuleItems,
+        onOpen: onOpenRepeatModal,
+        onClose: onCloseRepeatModal,
+        onConfirm: onConfirmRepeatRule,
+    } = useRepeatRuleModal({
+        value: repeatRule,
+        onChange: onChangeRepeatRule,
+    });
+
+    const {
+        isVisible: isTastingTypeModalVisible,
+        draft: tastingTypeDraft,
+        selectedText: tastingTypeLabel,
+        items: tastingTypeItems,
+        onOpen: onOpenTastingTypeModal,
+        onClose: onCloseTastingTypeModal,
+        onConfirm: onConfirmTastingType,
+    } = useTastingTypeModal({
+        value: tastingType,
+        onChange: onChangeTastingType,
     });
 
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
@@ -146,7 +164,7 @@ export const AddWineSetView = () => {
                     visible={isRepeatModalVisible}
                     onClose={onCloseRepeatModal}
                     items={repeatRuleItems}
-                    selectedValue={repeatRule}
+                    selectedValue={repeatRuleDraft}
                     onConfirm={onConfirmRepeatRule}
                 />
             )}
@@ -155,7 +173,7 @@ export const AddWineSetView = () => {
                     visible={isTastingTypeModalVisible}
                     onClose={onCloseTastingTypeModal}
                     items={tastingTypeItems}
-                    selectedValue={tastingType}
+                    selectedValue={tastingTypeDraft}
                     onConfirm={onConfirmTastingType}
                 />
             )}

@@ -5,7 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { eventsService } from '@/entities/events/EventsService';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { EventType } from '@/entities/events/enums/EventType';
-import { RepeatRule, REPEAT_RULES } from '@/entities/events/enums/RepeatRule';
+import { RepeatRule } from '@/entities/events/enums/RepeatRule';
 import { TastingType, TASTING_TYPES } from '@/entities/events/enums/TastingType';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IWineSearchResultViewItem, IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
@@ -13,35 +13,11 @@ import { useUiContext } from '@/UIProvider';
 import { wineSetScannerModel } from '../../../../../entities/events/WineSetScannerModel';
 import { toastService } from '@/libs/toast/toastService';
 
-interface IRepeatRuleItem {
-    value: RepeatRule;
-    label: string;
-    onPress: () => void;
-}
-
-interface ITastingTypeItem {
-    value: TastingType;
-    label: string;
-    onPress: () => void;
-}
-
 interface IWineSetDragEndPayload {
     data: IWineSetViewItem[];
 }
 
 type Route = RouteProp<EventStackParamList, 'AddWineSetView'>;
-
-const REPEAT_RULE_LABEL_KEYS: Record<RepeatRule, string> = {
-    [RepeatRule.Never]: 'event.repeatNever',
-    [RepeatRule.Daily]: 'event.repeatDaily',
-    [RepeatRule.Weekly]: 'event.repeatWeekly',
-    [RepeatRule.Monthly]: 'event.repeatMonthly',
-};
-
-const TASTING_TYPE_LABEL_KEYS: Record<TastingType, string> = {
-    [TastingType.Blind]: 'event.tastingTypeBlind',
-    [TastingType.Regular]: 'event.tastingTypeRegular',
-};
 
 const MAX_VISIBLE_SEARCH_RESULTS = 3;
 const DEFAULT_TASTING_TYPE = TASTING_TYPES[0] as TastingType;
@@ -101,11 +77,7 @@ export const useAddWineSetView = ({
     const { t } = useUiContext();
     const draft = route.params?.draft;
     const [repeatRule, setRepeatRule] = useState<RepeatRule>(RepeatRule.Never);
-    const [repeatRuleDraft, setRepeatRuleDraft] = useState<RepeatRule>(RepeatRule.Never);
     const [tastingType, setTastingType] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
-    const [tastingTypeDraft, setTastingTypeDraft] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
-    const [isTastingTypeModalVisible, setIsTastingTypeModalVisible] = useState(false);
-    const [isRepeatModalVisible, setIsRepeatModalVisible] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
     const [isEventCreatedAlertVisible, setIsEventCreatedAlertVisible] = useState(false);
     const [createdEventId, setCreatedEventId] = useState<number | null>(null);
@@ -171,96 +143,15 @@ export const useAddWineSetView = ({
         };
     }, [route.params?.replacedWine]);
 
-    const onOpenRepeatModal = useCallback(() => {
-        setRepeatRuleDraft(repeatRule);
-        setIsRepeatModalVisible(true);
-    }, [repeatRule]);
-
-    const onOpenTastingTypeModal = useCallback(() => {
-        setTastingTypeDraft(tastingType);
-        setIsTastingTypeModalVisible(true);
-    }, [tastingType]);
-
-    const onCloseRepeatModal = useCallback(() => {
-        setIsRepeatModalVisible(false);
-    }, []);
-
-    const onCloseTastingTypeModal = useCallback(() => {
-        setIsTastingTypeModalVisible(false);
-    }, []);
-
-    const createOnSelectRepeatRule = useCallback((value: RepeatRule) => {
-        return () => {
-            setRepeatRuleDraft(value);
-        };
-    }, []);
-
-    const repeatRuleItems = useMemo<IRepeatRuleItem[]>(() => {
-        return REPEAT_RULES.map((value) => {
-            const repeatValue = value as RepeatRule;
-            return {
-                value: repeatValue,
-                label: t(REPEAT_RULE_LABEL_KEYS[repeatValue]),
-                onPress: createOnSelectRepeatRule(repeatValue),
-            };
-        });
-    }, [createOnSelectRepeatRule, t]);
-
-    const createOnSelectTastingType = useCallback((value: TastingType) => {
-        return () => {
-            setTastingTypeDraft(value);
-        };
-    }, []);
-
-    const tastingTypeItems = useMemo<ITastingTypeItem[]>(() => {
-        return TASTING_TYPES.map((value) => {
-            const tastingValue = value as TastingType;
-
-            return {
-                value: tastingValue,
-                label: t(TASTING_TYPE_LABEL_KEYS[tastingValue]),
-                onPress: createOnSelectTastingType(tastingValue),
-            };
-        });
-    }, [createOnSelectTastingType, t]);
-
-    const tastingTypeLabel = useMemo(() => {
-        return t(TASTING_TYPE_LABEL_KEYS[tastingType]);
-    }, [t, tastingType]);
-
-    const repeatRuleLabel = useMemo(() => {
-        return t(REPEAT_RULE_LABEL_KEYS[repeatRule]);
-    }, [repeatRule, t]);
-
     const isCreateEventDisabled = selectedWines.length === 0;
 
-    const onConfirmRepeatRule = useCallback(() => {
-        setIsRepeatModalVisible(false);
+    const onChangeRepeatRule = useCallback((value: RepeatRule) => {
+        setRepeatRule(value);
+    }, []);
 
-        requestAnimationFrame(() => {
-            setRepeatRule((prev) => {
-                if (prev === repeatRuleDraft) {
-                    return prev;
-                }
-
-                return repeatRuleDraft;
-            });
-        });
-    }, [repeatRuleDraft]);
-
-    const onConfirmTastingType = useCallback(() => {
-        setIsTastingTypeModalVisible(false);
-
-        requestAnimationFrame(() => {
-            setTastingType((prev) => {
-                if (prev === tastingTypeDraft) {
-                    return prev;
-                }
-
-                return tastingTypeDraft;
-            });
-        });
-    }, [tastingTypeDraft]);
+    const onChangeTastingType = useCallback((value: TastingType) => {
+        setTastingType(value);
+    }, []);
 
     const onAddWinePress = useCallback(() => {
         searchInputRef.current?.focus();
@@ -538,13 +429,8 @@ export const useAddWineSetView = ({
 
     return {
         searchQuery,
-        tastingType: tastingTypeDraft,
-        tastingTypeLabel,
-        tastingTypeItems,
-        repeatRule: repeatRuleDraft,
-        repeatRuleLabel,
-        repeatRuleItems,
-        isTastingTypeModalVisible,
+        tastingType,
+        repeatRule,
         wineSetViewItems,
         wineSearchResultItems,
         isSearchingWines,
@@ -552,17 +438,12 @@ export const useAddWineSetView = ({
         isSearchListVisible,
         isSearchResultsScrollable,
         maxVisibleSearchResults: MAX_VISIBLE_SEARCH_RESULTS,
-        isRepeatModalVisible,
         isEventCreatedAlertVisible,
         isCreating,
         isCreateEventDisabled,
         searchInputRef,
-        onOpenRepeatModal,
-        onOpenTastingTypeModal,
-        onCloseRepeatModal,
-        onCloseTastingTypeModal,
-        onConfirmRepeatRule,
-        onConfirmTastingType,
+        onChangeRepeatRule,
+        onChangeTastingType,
         onCloseEventCreatedAlert,
         onCheckEventPress,
         onShareQrPress,
