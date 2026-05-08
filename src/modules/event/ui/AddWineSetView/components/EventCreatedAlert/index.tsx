@@ -1,27 +1,32 @@
 import { useMemo } from 'react';
 import { Modal, TouchableWithoutFeedback, View, TouchableOpacity } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { CrossIcon } from '@assets/icons/CrossIcon';
-import { DoneIcon } from '@assets/icons/DoneIcon';
+// import { DoneIcon } from '@assets/icons/DoneIcon';
 import { getStyles } from './styles';
+import { useEventCreatedAlertQrCode } from './presenters/useEventCreatedAlertQrCode';
 
 interface IProps {
     visible: boolean;
+    qrCodeValue: string | null;
     onClose: () => void;
     onCheckEventPress: () => void;
-    onShareQrPress: () => void;
+    onShareQrPress: (qrCodeImageUrl: string | null) => void;
 }
 
 export const EventCreatedAlert = ({
     visible,
+    qrCodeValue,
     onClose,
     onCheckEventPress,
     onShareQrPress,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const { onPressShareQrCode, onQrCodeRef } = useEventCreatedAlertQrCode({ onShareQrPress });
 
     return (
         <Modal
@@ -48,9 +53,20 @@ export const EventCreatedAlert = ({
                                 style={styles.subtitle}
                             />
 
-                            <View style={styles.iconContainer}>
+                            {/* <View style={styles.iconContainer}>
                                 <DoneIcon />
-                            </View>
+                            </View> */}
+                            {qrCodeValue && (
+                                <View style={styles.qrCodeContainer}>
+                                    <QRCode
+                                        getRef={onQrCodeRef}
+                                        value={qrCodeValue}
+                                        size={160}
+                                        color={colors.text}
+                                        backgroundColor={colors.background}
+                                    />
+                                </View>
+                            )}
 
                             <Button
                                 text={t('event.checkEvent')}
@@ -61,7 +77,7 @@ export const EventCreatedAlert = ({
                             <Button
                                 text={t('event.shareQrCode')}
                                 type="secondary"
-                                onPress={onShareQrPress}
+                                onPress={onPressShareQrCode}
                             />
                         </View>
                     </TouchableWithoutFeedback>

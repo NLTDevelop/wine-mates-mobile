@@ -1,5 +1,6 @@
 import { RefObject, useCallback, useEffect, useMemo, useState } from 'react';
 import { Keyboard, TextInput } from 'react-native';
+import Share from 'react-native-share';
 import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { eventsService } from '@/entities/events/EventsService';
@@ -12,6 +13,7 @@ import { IWineSearchResultViewItem, IWineSetViewItem } from '@/modules/event/typ
 import { useUiContext } from '@/UIProvider';
 import { wineSetScannerModel } from '../../../../../entities/events/WineSetScannerModel';
 import { toastService } from '@/libs/toast/toastService';
+import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 
 interface IWineSetDragEndPayload {
     data: IWineSetViewItem[];
@@ -146,6 +148,13 @@ export const useAddWineSetView = ({
     }, [route.params?.replacedWine]);
 
     const isCreateEventDisabled = selectedWines.length === 0;
+    const eventDeepLink = useMemo(() => {
+        if (!createdEventId) {
+            return null;
+        }
+
+        return createEventDeepLink(createdEventId);
+    }, [createdEventId]);
 
     const onChangeRepeatRule = useCallback((value: RepeatRule) => {
         setRepeatRule(value);
@@ -424,11 +433,28 @@ export const useAddWineSetView = ({
         resetToEventList();
     }, [createdEventId, navigation, resetToEventList]);
 
-    const onShareQrPress = useCallback(() => {
-        setIsEventCreatedAlertVisible(false);
-        // TODO: implement share QR code for created event when API contract for QR is ready.
-        resetToEventList();
-    }, [resetToEventList]);
+    const onShareQrPress = useCallback(async (qrCodeImageUrl: string | null) => {
+        if (!eventDeepLink || !qrCodeImageUrl) {
+            toastService.showError(t('common.errorHappened'), t('event.shareQrCodeUnavailable'));
+            return;
+        }
+
+        try {
+            await Share.open({
+                failOnCancel: false,
+                filenames: [`wine-event-${createdEventId}-qr.png`],
+                message: `${t('event.shareQrCodeMessage')}\n${eventDeepLink}`,
+                title: t('event.shareQrCodeTitle'),
+                type: 'image/png',
+                urls: [qrCodeImageUrl],
+                subject: t('event.shareQrCodeTitle'),
+                useInternalStorage: true,
+            });
+        } catch (error) {
+            console.warn('useAddWineSetView -> onShareQrPress: ', error);
+            toastService.showError(t('common.errorHappened'), t('common.somethingWentWrong'));
+        }
+    }, [createdEventId, eventDeepLink, t]);
 
     return {
         searchQuery,
@@ -443,6 +469,7 @@ export const useAddWineSetView = ({
         isSearchResultsScrollable,
         maxVisibleSearchResults: MAX_VISIBLE_SEARCH_RESULTS,
         isEventCreatedAlertVisible,
+        eventDeepLink,
         isCreating,
         isCreateEventDisabled,
         searchInputRef,

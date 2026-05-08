@@ -45,6 +45,16 @@ export const getStyles = (colors: IColors) => {
             marginTop: scaleVertical(16),
             alignItems: 'center',
         },
+        qrCodeContainer: {
+            marginTop: scaleVertical(16),
+            alignItems: 'center',
+            padding: scaleHorizontal(12),
+            borderWidth: scaleHorizontal(1),
+            borderColor: colors.border,
+            borderRadius: 12,
+            alignSelf: 'center',
+            backgroundColor: colors.background,
+        },
         checkButton: {
             marginTop: scaleVertical(16),
             marginBottom: scaleVertical(8),

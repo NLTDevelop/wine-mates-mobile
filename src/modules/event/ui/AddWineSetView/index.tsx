@@ -50,6 +50,7 @@ export const AddWineSetView = () => {
         isSearchResultsScrollable,
         maxVisibleSearchResults,
         isEventCreatedAlertVisible,
+        eventDeepLink,
         isCreating,
         isCreateEventDisabled,
         onChangeRepeatRule,
@@ -215,6 +216,7 @@ export const AddWineSetView = () => {
             )}
             <EventCreatedAlert
                 visible={isEventCreatedAlertVisible}
+                qrCodeValue={eventDeepLink}
                 onClose={onCloseEventCreatedAlert}
                 onCheckEventPress={onCheckEventPress}
                 onShareQrPress={onShareQrPress}

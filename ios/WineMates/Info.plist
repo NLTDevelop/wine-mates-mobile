@@ -27,6 +27,7 @@
             <dict>
                 <key>CFBundleURLSchemes</key>
                 <array>
+                    <string>winemates</string>
                     <string>com.googleusercontent.apps.96389565889-q3d53db8ep1de1tn2omj47d4csgmjfhg</string>
                     <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
                 </array>
