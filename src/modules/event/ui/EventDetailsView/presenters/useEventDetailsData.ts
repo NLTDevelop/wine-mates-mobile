@@ -1,4 +1,6 @@
 import { IEventDetail } from '@/entities/events/types/IEvent';
+import { Linking } from 'react-native';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { EventType } from '@/entities/events/enums/EventType';
 import { useUiContext } from '@/UIProvider';
@@ -6,6 +8,7 @@ import { useLocationPermission } from '@/hooks/useLocationPermission';
 import { config } from '@/config';
 import { IEventDetailsPreviewData } from '../types/IEventDetailsPreviewData';
 import { useLocalizedLanguageOptions } from '@/libs/languagePicker/presenters/useLocalizedLanguageOptions';
+import { EventContactType, IEventContactOption } from '../types/IEventContactOption';
 
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 14;
@@ -18,6 +21,70 @@ const STATIC_MAP_LIGHT_STYLE_PARAMS = [
     'style=feature:poi|element:geometry|color:0xeeeeee',
     'style=feature:landscape|element:geometry|color:0xf5f5f5',
 ];
+
+const getContactType = (name: string, value: string): EventContactType => {
+    const normalizedContact = `${name} ${value}`.toLowerCase();
+
+    if (normalizedContact.includes('instagram')) {
+        return 'instagram';
+    }
+
+    if (normalizedContact.includes('telegram') || normalizedContact.includes('t.me')) {
+        return 'telegram';
+    }
+
+    if (normalizedContact.includes('facebook') || normalizedContact.includes('fb.com')) {
+        return 'facebook';
+    }
+
+    return 'phone';
+};
+
+const getContactUrl = (value: string, contactType: EventContactType) => {
+    const trimmedValue = value.trim();
+
+    if (contactType === 'phone') {
+        return `tel:${trimmedValue.replace(/[^+0-9]/g, '')}`;
+    }
+
+    if (trimmedValue.startsWith('http://') || trimmedValue.startsWith('https://')) {
+        return trimmedValue;
+    }
+
+    if (trimmedValue.startsWith('@')) {
+        const username = trimmedValue.slice(1);
+
+        if (contactType === 'instagram') {
+            return `https://instagram.com/${username}`;
+        }
+
+        if (contactType === 'telegram') {
+            return `https://t.me/${username}`;
+        }
+
+        if (contactType === 'facebook') {
+            return `https://facebook.com/${username}`;
+        }
+    }
+
+    if (trimmedValue.includes('.')) {
+        return `https://${trimmedValue}`;
+    }
+
+    if (contactType === 'instagram') {
+        return `https://instagram.com/${trimmedValue}`;
+    }
+
+    if (contactType === 'telegram') {
+        return `https://t.me/${trimmedValue}`;
+    }
+
+    if (contactType === 'facebook') {
+        return `https://facebook.com/${trimmedValue}`;
+    }
+
+    return trimmedValue;
+};
 
 export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
     const { t, locale } = useUiContext();
@@ -306,6 +373,30 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         return eventDetail.wineSet;
     })();
 
+    const contactItems = (() => {
+        if (!eventDetail?.contacts?.length) {
+            return [];
+        }
+
+        return eventDetail.contacts.map<IEventContactOption>((item) => {
+            const contactType = getContactType(item.name, item.value);
+            const phoneNumber = contactType === 'phone'
+                ? parsePhoneNumberFromString(item.value)
+                : null;
+            const contactUrl = getContactUrl(item.value, contactType);
+
+            return {
+                id: item.id,
+                type: contactType,
+                title: item.name || item.value,
+                phoneCountryCode: phoneNumber?.country || '',
+                onPress: () => {
+                    Linking.openURL(contactUrl);
+                },
+            };
+        });
+    })();
+
     const cardPreviewData = (() => {
         if (!eventDetail) {
             return null;
@@ -405,5 +496,5 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         return previewData;
     })();
 
-    return { detailsData, wineSetItems, cardPreviewData };
+    return { detailsData, wineSetItems, contactItems, cardPreviewData };
 };

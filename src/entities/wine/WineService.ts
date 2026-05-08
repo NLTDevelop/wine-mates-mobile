@@ -23,6 +23,7 @@ import { IAIData } from './types/IAIData';
 import { IWineTasteGroup } from './types/IWineTatseGroup';
 import { ITasteProfile } from './types/ITasteProfile';
 import { IRecommendationWineListParams } from './params/IRecommendationWineListParams';
+import { IWineSetSearchItem } from './types/IWineSetSearchItem';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -55,6 +56,21 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getById: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    searchWineSet = async (params: { query: string; limit: number; offset: number }): Promise<IResponse<IList<IWineSetSearchItem>>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineSetSearch}`,
+                params,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> searchWineSet: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

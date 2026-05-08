@@ -349,7 +349,7 @@
         "basicInfo": "Basic info",
         "locationAndSchedule": "Location & Schedule",
         "bookingAndDetails": "Booking & Details",
-        "tastingTheme": "Tasting theme",
+        "tastingTheme": "Theme of the evening",
         "restaurant": "Meeting place",
         "location": "Location",
         "eventDate": "Event date",
@@ -360,7 +360,6 @@
         "eventEndTime": "End",
         "speakerName": "Speaker name",
         "description": "Description",
-        "shortDescription": "Short description",
         "phoneNumber": "Phone number",
         "price": "Price",
         "currency": "Currency",
@@ -373,6 +372,7 @@
         "listWineEvent": "List wine event",
         "wineSet": "Wine set",
         "addWine": "Add wine",
+        "searchWineWithScanner": "Scan wine",
         "repeat": "Repeat",
         "repeatNever": "Never",
         "repeatDaily": "Daily",
@@ -409,7 +409,8 @@
         "rejected": "Rejected",
         "invalidStartDateError": "Start date cannot be later than end date",
         "invalidEndDateError": "End date cannot be earlier than start date",
-        "invalidEndTimeError": "End time cannot be earlier than start time"
+        "invalidEndTimeError": "End time cannot be earlier than start time",
+        "invalidSeatsError": "Number of seats must be at least 1"
     },
     "faq": {
         "faq": "FAQ"
@@ -458,6 +459,16 @@
         "description": "Description",
         "downloadFile": "Download file",
         "downloadHint": "You can download the QR code for payment.",
-        "noVisiblePaymentMethods": "No visible payment methods"
+        "noVisiblePaymentMethods": "No visible payment methods",
+        "addPaymentMethodsInProfile": "Add payment methods to your profile."
+    },
+    "contactInfo" : {
+        "contactInfo": "Contact information",
+        "addContact": "Add contact",
+        "editContact": "Edit contact",
+        "contactValue": "Phone number or link",
+        "contacts": "Contacts",
+        "socialNetworks": "Social networks",
+        "noVisibleContacts": "No visible contacts"
     }
 }

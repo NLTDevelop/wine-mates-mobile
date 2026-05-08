@@ -9,6 +9,7 @@ import { CreateEventDto } from './dto/CreateEvent.dto';
 import { eventsModel } from './EventsModel';
 import countries from 'world-countries';
 import { IEventPriceRange } from './types/IEventPriceRange';
+import { IEventCurrencies } from './types/IEventCurrencies';
 import { IGetEventsParams } from './params/IGetEventsParams';
 import { ISavedEvent } from './types/ISavedEvent';
 import { IAppliedEvent } from './types/IAppliedEvent';
@@ -302,7 +303,7 @@ class EventsService {
     }
 
 
-    getCurrencies = async (): Promise<IResponse<string[]>> => {
+    getCurrencies = async (): Promise<IResponse<IEventCurrencies>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',

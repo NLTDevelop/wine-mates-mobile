@@ -8,7 +8,7 @@ interface IProps {
 
 export const useEventDetailsTab = ({ eventId }: IProps) => {
     const { eventDetail, isError, isLoading } = useEventDetails(eventId);
-    const { detailsData, wineSetItems, cardPreviewData } = useEventDetailsData(eventDetail);
+    const { detailsData, wineSetItems, contactItems, cardPreviewData } = useEventDetailsData(eventDetail);
     const [isBookingModalVisible, setIsBookingModalVisible] = useState(false);
 
     const onBookNowPress = useCallback(() => {
@@ -29,6 +29,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
         eventDetail,
         detailsData,
         wineSetItems,
+        contactItems,
         cardPreviewData,
         isBookingModalVisible,
         onBookNowPress,

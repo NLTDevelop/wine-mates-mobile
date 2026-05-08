@@ -64,7 +64,7 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
         } finally {
             setIsLoadingEvents(false);
         }
-    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, getTargetLocation]);
+    }, [filters, getTargetLocation]);
 
     useEffect(() => {
         if (!isFocused) {

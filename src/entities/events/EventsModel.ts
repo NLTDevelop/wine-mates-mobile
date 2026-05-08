@@ -26,9 +26,6 @@ export interface IEventsModel {
     setMapPins: (pins: IEventMapPin[]) => void;
     setEventPriceRange: (priceRange: IEventPriceRange | null) => void;
     setEventFilters: (filters: IEventFilters) => void;
-    // setSavedEvents: (value: IList<ISavedEvent> | null) => void;
-    // setCreatedEvents: (value: IList<IEvent> | null) => void;
-    //setAppliedEvents: (value: IAppliedEvent[]) => void;
     clearEventFilters: () => void;
     clear: () => void;
 }
@@ -207,6 +204,9 @@ class EventsModel implements IEventsModel {
 
     public clear() {
         this.list = null;
+        this.appliedEvents = [];
+        this.savedEvents = null;
+        this.createdEvents = null;
         this.selectedEventId = null;
         this.eventDetail = null;
         this.mapPins = [];

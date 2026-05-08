@@ -109,6 +109,11 @@ export const useEventsList = () => {
        
     }, [ isFocused, onRefresh]);
 
+
+    useEffect(() => {
+        return () => eventsModel.clear();
+    });
+
     return {
         savedEvents,
         createdEvents,

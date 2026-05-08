@@ -8,6 +8,21 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { wineModel } from '@/entities/wine/WineModel';
 import { IAIData } from '@/entities/wine/types/IAIData';
+import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
+import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
+
+const getWineSetSearchItem = (item: IWineListItem): IWineSetSearchItem => {
+    return {
+        id: item.id,
+        name: item.name || '',
+        producer: item.producer,
+        vintage: item.vintage,
+        grapeVariety: item.grapeVariety,
+        country: item.country,
+        region: item.region,
+        image: item.image || item.defaultImage,
+    };
+};
 
 export const useScannerResultsList = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -56,13 +71,25 @@ export const useScannerResultsList = () => {
         return () => wineListModel.clear();
     }, []);
 
-    const handleItemPress = useCallback((item: IWineListItem) => {
-        navigation.navigate('WineDetailsView', {wineId: item.id, fromScanner: true});
+    const onItemPress = useCallback((item: IWineListItem) => {
+        const addWineSetScannerState = wineSetScannerModel.state;
+
+        if (addWineSetScannerState) {
+            wineSetScannerModel.clear();
+            navigation.navigate('AddWineSetView', {
+                draft: addWineSetScannerState.draft,
+                initialSelectedWines: addWineSetScannerState.selectedWines,
+                selectedWine: getWineSetSearchItem(item),
+            });
+            return;
+        }
+
+        navigation.navigate('WineDetailsView', { wineId: item.id, fromScanner: true });
     },[navigation]);
 
-    const handleAddWinePress = useCallback(() => {
+    const onAddWinePress = useCallback(() => {
         navigation.navigate('AddWineView', { aiData, hasResults: true });
     },[navigation, aiData]);
 
-    return { data, isLoading, onRefresh, handleItemPress, handleAddWinePress };
+    return { data, isLoading, onRefresh, onItemPress, onAddWinePress };
 };

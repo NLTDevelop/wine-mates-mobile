@@ -1,10 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { FlatList, Image, View } from 'react-native';
-// import { RouteProp, useRoute } from '@react-navigation/native';
 import { NavigationState, SceneRendererProps, TabView } from 'react-native-tab-view';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
-// import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { observer } from 'mobx-react';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { TabsBar } from '../EventDetailsView/components/TabsBar';
@@ -38,12 +36,9 @@ export const EventListView = observer(() => {
         createdEvents,
         appliedEvents,
         isLoading,
-        // isRefreshing,
-        //loadEvents,
         onRefresh,
         onLoadMoreSaved,
         onLoadMoreCreated,
-        //refetch,
     } = useEventsList()
 
     const refresh = useRefresh(onRefresh);    

@@ -1,5 +1,5 @@
 import { View, TextInput, TextInputProps, ViewStyle, TouchableOpacity } from 'react-native';
-import { forwardRef } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { useUiContext } from '../../UIProvider';
 import { getStyles } from './styles';
 import { CrossIcon } from '@assets/icons/CrossIcon';
@@ -11,26 +11,29 @@ interface IProps extends TextInputProps {
 }
 
 export const SearchBar = forwardRef<TextInput, IProps>((props, ref) => {
-    const { onChangeText, containerStyle, value } = props;
+    const { onChangeText, containerStyle, value, onBlur, onFocus, ...restProps } = props;
     const { colors } = useUiContext();
-    const styles = getStyles(colors);
-    const { isFocused, handleFocus, handleBlur, onClearText } = useSearchBar(onChangeText);
+    const styles = useMemo(() => getStyles(colors), [colors]);
+    const { isFocused, onFocusInput, onBlurInput, onClearText } = useSearchBar(onChangeText, onFocus, onBlur);
 
     return (
         <View style={[styles.container, containerStyle, isFocused && { borderColor: colors.border_strong }]}>
             <SearchIcon />
             <TextInput
                 ref={ref}
+                value={value}
                 onChangeText={onChangeText}
                 placeholderTextColor={colors.text_light}
                 style={styles.input}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                {...props}
+                onFocus={onFocusInput}
+                onBlur={onBlurInput}
+                {...restProps}
             />
-            {!!value ? <TouchableOpacity style={styles.button} onPress={onClearText} >
-                <CrossIcon width={12} height={12} color={colors.icon}/>
-            </TouchableOpacity> : null}
+            {value ? (
+                <TouchableOpacity style={styles.button} onPress={onClearText}>
+                    <CrossIcon width={12} height={12} color={colors.icon} />
+                </TouchableOpacity>
+            ) : null}
         </View>
     );
 });

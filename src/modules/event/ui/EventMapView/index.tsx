@@ -38,7 +38,6 @@ export const EventMapView = observer(() => {
         onFavoritePress,
         onUpdateEvent,
         onMapPress,
-        onRegionChangeComplete,
         searchLocation,
     } = useEventMapScreen();
 
@@ -61,7 +60,6 @@ export const EventMapView = observer(() => {
                             initialRegion={initialRegion}
                             onMarkerPress={onMarkerPress}
                             onMapPress={onMapPress}
-                            onRegionChangeComplete={onRegionChangeComplete}
                             userLocation={userLocation}
                             searchLocation={searchLocation}
                         />

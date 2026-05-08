@@ -21,6 +21,7 @@ export interface CreateEventDto {
     eventStartTime: string;
     eventEndTime: string;
     paymentMethodIds: number[];
+    contactIds: number[];
     price: number;
     currency: string;
     speakerName: string;

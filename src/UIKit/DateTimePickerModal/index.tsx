@@ -32,10 +32,10 @@ export const DateTimePickerModal = ({
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { pickerLocale, modalTitle, pickerTheme, pickerKey } = useDateTimePickerModal({ mode, title, visible });
+    const { pickerLocale, modalTitle, pickerTheme } = useDateTimePickerModal({ mode, title });
 
     return (
-        <BottomModal visible={visible} onClose={onClose} title={modalTitle} key={pickerKey}>
+        <BottomModal visible={visible} onClose={onClose} title={modalTitle}>
             <View style={styles.container}>
                 <DatePicker
                     mode={mode}

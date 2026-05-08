@@ -353,7 +353,7 @@
         "basicInfo": "Основна інформація",
         "locationAndSchedule": "Локація та розклад",
         "bookingAndDetails": "Бронювання та деталі",
-        "tastingTheme": "Тема дегустації",
+        "tastingTheme": "Тема вечора",
         "restaurant": "Місце зустрічі",
         "location": "Локація",
         "eventDate": "Дата події",
@@ -364,7 +364,6 @@
         "eventEndTime": "Кінець",
         "speakerName": "Ім'я спікера",
         "description": "Опис",
-        "shortDescription": "Короткий опис",
         "phoneNumber": "Номер телефону",
         "price": "Ціна",
         "currency": "Валюта",
@@ -377,6 +376,7 @@
         "listWineEvent": "Список винної події",
         "wineSet": "Набір вин",
         "addWine": "Додати вино",
+        "searchWineWithScanner": "Сканувати вино",
         "repeat": "Повторення",
         "repeatNever": "Ніколи",
         "repeatDaily": "Щодня",
@@ -413,7 +413,8 @@
         "rejected": "Відхилено",
         "invalidStartDateError": "Початкова дата не може бути пізніше кінцевої",
         "invalidEndDateError": "Кінцева дата не може бути раніше початкової",
-        "invalidEndTimeError": "Час завершення не може бути раніше часу початку"
+        "invalidEndTimeError": "Час завершення не може бути раніше часу початку",
+        "invalidSeatsError": "Кількість місць має бути не менше 1"
     },
     "faq": {
         "faq": "FAQ"
@@ -462,6 +463,16 @@
         "description": "Опис",
         "downloadFile": "Завантажити файл",
         "downloadHint": "Ви можете завантажити QR-код для оплати.",
-        "noVisiblePaymentMethods": "Немає видимих способів оплати"
+        "noVisiblePaymentMethods": "Немає видимих способів оплати",
+        "addPaymentMethodsInProfile": "Додайте способи оплати в профілі"
+    },
+    "contactInfo" : {
+        "contactInfo": "Контактна інформація",
+        "addContact": "Додати контакт",
+        "editContact": "Редагувати контакт",
+        "contactValue": "Номер телефону або посилання",
+        "contacts": "Контакти",
+        "socialNetworks": "Соціальні мережі",
+        "noVisibleContacts": "Немає видимих контактів"
     }
 }

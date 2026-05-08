@@ -20,6 +20,7 @@ export interface ILinks {
     features: string;
     wines: string;
     wineFilters: string;
+    wineSetSearch: string;
     scannedWines: string;
     wineTypes: string;
     wineColors: string;
@@ -48,6 +49,7 @@ export interface ILinks {
     appliedEvents: string;
     eventCurrencies: string;
     paymentMethods: string;
+    contacts: string;
 }
 
 class Links implements ILinks {
@@ -59,6 +61,7 @@ class Links implements ILinks {
         features: 'features',
         wines: 'wines',
         wineFilters: 'wines/filters',
+        wineSetSearch: 'wines/search/wine-set',
         scannedWines: 'wines/scanner',
         wineTypes: 'wine-types',
         wineColors: 'wine-colors',
@@ -85,8 +88,9 @@ class Links implements ILinks {
         eventPriceRange: 'events/price-range',
         createdEvents: 'events/my',
         appliedEvents: 'event-bookings/my',
-        eventCurrencies: 'events/currencies',
+        eventCurrencies: 'users/currencies',
         paymentMethods: 'users/payment-methods',
+        contacts: 'users/contacts',
     };
 
     private buildDomain() {
@@ -121,6 +125,9 @@ class Links implements ILinks {
     }
     public get wineFilters() {
         return `${this._domain}${this._links.wineFilters}`;
+    }
+    public get wineSetSearch() {
+        return `${this._domain}${this._links.wineSetSearch}`;
     }
     public get scannedWines() {
         return `${this._domain}${this._links.scannedWines}`;
@@ -205,6 +212,9 @@ class Links implements ILinks {
     }
     public get paymentMethods() {
         return `${this._domain}${this._links.paymentMethods}`;
+    }
+    public get contacts() {
+        return `${this._domain}${this._links.contacts}`;
     }
 }
 

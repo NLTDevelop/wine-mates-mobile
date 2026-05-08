@@ -20,9 +20,10 @@ interface IProps {
     modalRef: RefObject<BottomSheetModal | null>;
     onSelect: (item: ILanguageOption) => void;
     onClose: () => void;
+    onDismiss: () => void;
 }
 
-export const LanguagePickerBottomSheet = ({ modalRef, onSelect, onClose }: IProps) => {
+export const LanguagePickerBottomSheet = ({ modalRef, onSelect, onClose, onDismiss }: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
@@ -56,7 +57,7 @@ export const LanguagePickerBottomSheet = ({ modalRef, onSelect, onClose }: IProp
             backgroundStyle={styles.container}
             topInset={top}
             enablePanDownToClose
-            onDismiss={onClose}
+            onDismiss={onDismiss}
         >
             <View style={styles.header}>
                 <TouchableOpacity onPress={onClose} style={styles.closeContainer} hitSlop={20}>

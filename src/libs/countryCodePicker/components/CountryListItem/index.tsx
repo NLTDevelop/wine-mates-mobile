@@ -5,6 +5,7 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { ICountry } from '../../types/ICountry';
+import { useCountryListItem } from './presenters/useCountryListItem';
 
 //TODO: Check after world-countries lib next updates
 const FLAG_ALIASES: Record<string, string> = {
@@ -30,15 +31,12 @@ export const CountryListItem = memo(({ item, handleCountryPress, showCountryCode
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const firstLetter = item.name?.[0]?.toUpperCase() || '?';
+    const { onPress } = useCountryListItem({ item, onCountryPress: handleCountryPress });
 
     //TODO: Check after world-countries lib next updates
     const renderFlag = () => {
         if (item.cca2 === 'BY') {
-            return (
-                <View style={[styles.flag, styles.placeholderFlag]}>
-                    <Typography variant="h6" text={firstLetter} style={styles.placeholderText} />
-                </View>
-            );
+            return <Typography variant="h6" text="🇧🇾" style={styles.placeholderText} />;
         }
 
         const code = FLAG_ALIASES[item.cca2] || item.cca2;
@@ -47,15 +45,13 @@ export const CountryListItem = memo(({ item, handleCountryPress, showCountryCode
             return <Flag code={code} style={styles.flag} />;
         } catch {
             return (
-                <View style={[styles.flag, styles.placeholderFlag]}>
-                    <Typography variant="h6" text={firstLetter} style={styles.placeholderText} />
-                </View>
+                <Typography variant="h6" text={firstLetter} style={styles.placeholderText} />
             );
         }
     };
 
     return (
-        <TouchableOpacity onPress={() => handleCountryPress(item)} style={styles.container}>
+        <TouchableOpacity onPress={onPress} style={styles.container}>
             <View style={styles.mainContainer}>
                 {renderFlag()}
                 <Typography variant="h5" text={item.name} style={styles.name} />
