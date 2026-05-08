@@ -18,6 +18,7 @@ import { WineSetListFooter } from './components/WineSetListFooter';
 import { useRepeatRuleModal } from './presenters/useRepeatRuleModal';
 import { useTastingTypeModal } from './presenters/useTastingTypeModal';
 import { useWineSetSortableList } from './presenters/useWineSetSortableList';
+import { useAddWineSetSearchBackfill } from './presenters/useAddWineSetSearchBackfill';
 
 export const AddWineSetView = () => {
     const { colors, t } = useUiContext();
@@ -29,7 +30,9 @@ export const AddWineSetView = () => {
         isSearchListVisible,
         isSearchingWines,
         isInitialSearchFinished,
+        hasMoreSearchResults,
         wineSearchResults,
+        wineSearchResultsCount,
         onChangeSearchQuery,
         onFocusSearchInput,
         onLoadMoreSearchResults,
@@ -42,6 +45,7 @@ export const AddWineSetView = () => {
         repeatRule,
         wineSetViewItems,
         wineSearchResultItems,
+        wineSearchResultItemsCount,
         shouldShowScannerButton,
         isSearchResultsScrollable,
         maxVisibleSearchResults,
@@ -63,6 +67,7 @@ export const AddWineSetView = () => {
         isSearchListVisible,
         isSearchingWines,
         isInitialSearchFinished,
+        hasMoreSearchResults,
         wineSearchResults,
         onResetSearch,
     });
@@ -100,6 +105,16 @@ export const AddWineSetView = () => {
         rowGap,
         scrollableRef,
     } = useWineSetSortableList();
+    useAddWineSetSearchBackfill({
+        hasMoreSearchResults,
+        isInitialSearchFinished,
+        isSearchListVisible,
+        isSearchingWines,
+        maxVisibleSearchResults,
+        searchResultItemsCount: wineSearchResultItemsCount,
+        wineSearchResultsCount,
+        onLoadMoreSearchResults,
+    });
 
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
 

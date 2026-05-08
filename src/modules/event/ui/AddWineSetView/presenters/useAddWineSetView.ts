@@ -59,6 +59,7 @@ interface IProps {
     isSearchListVisible: boolean;
     isSearchingWines: boolean;
     isInitialSearchFinished: boolean;
+    hasMoreSearchResults: boolean;
     wineSearchResults: IWineSetSearchItem[];
     onResetSearch: () => void;
 }
@@ -69,6 +70,7 @@ export const useAddWineSetView = ({
     isSearchListVisible,
     isSearchingWines,
     isInitialSearchFinished,
+    hasMoreSearchResults,
     wineSearchResults,
     onResetSearch,
 }: IProps) => {
@@ -232,6 +234,7 @@ export const useAddWineSetView = ({
         && hasWineSearchQuery
         && isInitialSearchFinished
         && !isSearchingWines
+        && !hasMoreSearchResults
         && wineSearchResultItems.length === 0;
     const isSearchResultsScrollable = wineSearchResultItems.length > MAX_VISIBLE_SEARCH_RESULTS;
 
@@ -433,6 +436,7 @@ export const useAddWineSetView = ({
         repeatRule,
         wineSetViewItems,
         wineSearchResultItems,
+        wineSearchResultItemsCount: wineSearchResultItems.length,
         isSearchingWines,
         shouldShowScannerButton,
         isSearchListVisible,
