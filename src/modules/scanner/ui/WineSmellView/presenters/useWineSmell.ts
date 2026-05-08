@@ -15,13 +15,17 @@ export const useWineSmell = (onHide: () => void) => {
     const source = (route.params as { source?: string } | undefined)?.source ?? 'scanner';
     const wineId = (route.params as { wineId?: number } | undefined)?.wineId;
 
+    const colorId = wineModel.base?.colorOfWine?.id ?? null;
+    const typeId = wineModel.base?.typeOfWine?.id ?? null;
+    const hasSmells = Boolean(wineModel.smells?.length);
+
     const initialSelected = wineModel.selectedSmells ?? [];
-    const [isLoading, setIsLoading] = useState(() => !wineModel.smells?.length);
+    const [isLoading, setIsLoading] = useState(() => !hasSmells || !colorId || !typeId);
     const [isOpened, setIsOpened] = useState(false);
     const [selectedIndex, setSelectedIndex] =  useState(0);
     const [selected, setSelected] = useState<IWineSelectedSmell[]>(initialSelected);
     const [isError, setIsError] = useState(false);
-    const data = useMemo<IWineSmell[]>(() => {
+    const data: IWineSmell[] = (() => {
         if (!wineModel.smells?.length) {
             return [];
         }
@@ -35,7 +39,7 @@ export const useWineSmell = (onHide: () => void) => {
                 ),
             })),
         }));
-    }, [selected]);
+    })();
 
     const visibleSubgroups = useMemo(() => {
         const currentGroup = data[selectedIndex];
@@ -52,7 +56,10 @@ export const useWineSmell = (onHide: () => void) => {
 
     const getSmells = useCallback(async () => {
         try {
-            if (!wineModel.base?.colorOfWine?.id || !wineModel.base?.typeOfWine?.id) return;
+            if (!colorId || !typeId) {
+                setIsLoading(true);
+                return;
+            }
 
             if (wineModel.smells?.length) {
                 setIsError(false);
@@ -63,8 +70,8 @@ export const useWineSmell = (onHide: () => void) => {
             setIsLoading(true);
 
             const params = {
-                colorId: wineModel.base?.colorOfWine.id,
-                typeId: wineModel.base?.typeOfWine.id,
+                colorId,
+                typeId,
             };
 
             const response = await wineService.getSmells(params);
@@ -82,7 +89,7 @@ export const useWineSmell = (onHide: () => void) => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [colorId, typeId]);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
