@@ -69,7 +69,7 @@ export const WineSetListHeader = ({
 
     return (
         <View style={styles.container}>
-            <View ref={searchTouchAreaRef}>
+            <View ref={searchTouchAreaRef} collapsable={false}>
                 <SearchBar
                     ref={searchInputRef}
                     value={searchQuery}
@@ -92,6 +92,7 @@ export const WineSetListHeader = ({
                                 keyboardShouldPersistTaps="always"
                                 ItemSeparatorComponent={renderSearchResultDivider}
                                 style={styles.searchResultsList}
+                                contentContainerStyle={styles.searchResultsListContent}
                                 onEndReached={isSearchResultsScrollable ? onLoadMoreSearchResults : undefined}
                                 onEndReachedThreshold={0.4}
                             />

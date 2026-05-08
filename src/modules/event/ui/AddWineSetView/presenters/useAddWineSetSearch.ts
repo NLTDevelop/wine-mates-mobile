@@ -6,6 +6,7 @@ import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 const SEARCH_LIMIT = 10;
 const MIN_SEARCH_LENGTH = 1;
 const SEARCH_DEBOUNCE_MS = 300;
+const SEARCH_TOUCH_AREA_OFFSET = 16;
 
 export const useAddWineSetSearch = () => {
     const searchInputRef = useRef<TextInput>(null);
@@ -184,7 +185,11 @@ export const useAddWineSetSearch = () => {
         const { pageX, pageY } = event.nativeEvent;
 
         searchTouchAreaRef.current?.measureInWindow((x, y, width, height) => {
-            const isInsideSearchArea = pageX >= x && pageX <= x + width && pageY >= y && pageY <= y + height;
+            const isInsideSearchArea =
+                pageX >= x - SEARCH_TOUCH_AREA_OFFSET
+                && pageX <= x + width + SEARCH_TOUCH_AREA_OFFSET
+                && pageY >= y - SEARCH_TOUCH_AREA_OFFSET
+                && pageY <= y + height + SEARCH_TOUCH_AREA_OFFSET;
 
             if (!isInsideSearchArea) {
                 onCloseSearchList();

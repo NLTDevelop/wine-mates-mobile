@@ -21,8 +21,8 @@ import { useConfirmationRequiredModal } from './presenters/useConfirmationRequir
 import { useCurrencyPickerModal } from './presenters/useCurrencyPickerModal';
 import { usePaymentMethodsModal } from './presenters/usePaymentMethodsModal';
 import { useContactInfoModal } from './presenters/useContactInfoModal';
-import { useEventDateTimeFormatter } from '../../presenters/useEventDateTimeFormatter';
-import { useEventTypeLabel } from '../../presenters/useEventTypeLabel';
+import { useEventDateTimeFormatter } from './presenters/useEventDateTimeFormatter';
+import { useEventTypeLabel } from './presenters/useEventTypeLabel';
 import { PaymentMethodsPickerModal } from './components/PaymentMethodsPickerModal';
 import { ContactInfoPickerModal } from './components/ContactInfoPickerModal';
 import { CurrencyModal } from './components/CurrencyModal';

@@ -5,9 +5,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventType } from '@/entities/events/enums/EventType';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { eventsService } from '@/entities/events/EventsService';
-import { useEventMap } from '@/modules/event/presenters/useEventMap';
-import { useEventsList } from '@/modules/event/presenters/useEventsList';
-import { useEventMapView } from '@/modules/event/presenters/useEventMapView';
+import { useEventMap } from '@/modules/event/ui/EventMapView/presenters/useEventMap';
+import { useEventsList } from '@/modules/event/ui/EventMapView/presenters/useEventsList';
+import { useEventMapView } from '@/modules/event/ui/EventMapView/presenters/useEventMapView';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 

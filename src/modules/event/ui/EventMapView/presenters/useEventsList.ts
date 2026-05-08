@@ -84,7 +84,7 @@ export const useEventsList = ({ searchLocation, filters, selectedEventType }: IP
             setIsLoading(false);
             setIsRefreshing(false);
         }
-    }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex, getTargetLocation, selectedEventType]);
+    }, [filters, getTargetLocation, selectedEventType]);
 
     const onRefresh = useCallback((offset: number = OFFSET, location?: IUserLocation | null) => {
         return loadEvents(offset, location);
@@ -126,9 +126,13 @@ export const useEventsList = ({ searchLocation, filters, selectedEventType }: IP
         hasAutoLoadedOnFocusRef.current = true;
         lastLoadedLocationKeyRef.current = currentLocationKey;
         lastLoadedFiltersKeyRef.current = filtersKey;
-        if (isFocused) {
+        const timeoutId = setTimeout(() => {
             onRefresh(OFFSET, targetLocation);
-        }
+        }, 0);
+
+        return () => {
+            clearTimeout(timeoutId);
+        };
     }, [filtersKey, getTargetLocation, isFocused, isLocationLoading, onRefresh]);
 
     return {

@@ -21,6 +21,9 @@ export const getStyles = (colors: IColors) => {
         searchResultsList: {
             maxHeight: scaleVertical(158),
         },
+        searchResultsListContent: {
+            flexGrow: 1,
+        },
         emptySearchContainer: {
             gap: scaleVertical(10),
             paddingHorizontal: scaleHorizontal(12),
