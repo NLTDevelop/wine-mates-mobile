@@ -1,13 +1,28 @@
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, StackActions, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useCallback } from 'react';
+import { BackHandler } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CommonActions } from '@react-navigation/native';
 import { wineModel } from '@/entities/wine/WineModel';
+import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 
 export const useScanResultsListBackButton = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const onPressBack = () => {
+    const onPressBack = useCallback(() => {
+        const addWineSetScannerState = wineSetScannerModel.state;
+
         wineModel.clear();
+
+        if (addWineSetScannerState) {
+            wineSetScannerModel.clear();
+            navigation.dispatch(
+                StackActions.popTo('AddWineSetView', {
+                    draft: addWineSetScannerState.draft,
+                    initialSelectedWines: addWineSetScannerState.selectedWines,
+                }),
+            );
+            return;
+        }
 
         navigation.dispatch(
             CommonActions.reset({
@@ -23,7 +38,22 @@ export const useScanResultsListBackButton = () => {
                 ],
             }),
         );
-    };
+    }, [navigation]);
+
+    useFocusEffect(
+        useCallback(() => {
+            const onHardwareBackPress = () => {
+                onPressBack();
+                return true;
+            };
+
+            const subscription = BackHandler.addEventListener('hardwareBackPress', onHardwareBackPress);
+
+            return () => {
+                subscription.remove();
+            };
+        }, [onPressBack]),
+    );
 
     return { onPressBack };
 };
