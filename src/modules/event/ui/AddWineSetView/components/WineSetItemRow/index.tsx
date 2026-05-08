@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { memo, useMemo } from 'react';
+import { View } from 'react-native';
+import Sortable from 'react-native-sortables';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { DragIcon } from '@assets/icons/DragIcon';
@@ -9,28 +10,25 @@ import { getStyles } from './styles';
 interface IProps {
     title: string;
     onEditPress: () => void;
-    onDragPress: () => void;
-    isActive: boolean;
 }
 
-export const WineSetItemRow = ({ title, onEditPress, onDragPress, isActive }: IProps) => {
+const WineSetItemRowComponent = ({ title, onEditPress }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const containerStyle = isActive ? styles.containerActive : styles.container;
-    const contentStyle = isActive ? styles.contentActive : styles.content;
-    const dragIconColor = isActive ? colors.primary : colors.text_light;
 
     return (
-        <TouchableOpacity style={containerStyle} activeOpacity={1} onLongPress={onDragPress}>
-            <TouchableOpacity style={styles.dragButton} onLongPress={onDragPress}>
-                <DragIcon color={dragIconColor} />
-            </TouchableOpacity>
-            <View style={contentStyle}>
-                <Typography variant="h6" text={title} numberOfLines={1} style={styles.title} />
-                <TouchableOpacity onPress={onEditPress} style={styles.editButton}>
-                    <EditIcon color={colors.text} />
-                </TouchableOpacity>
+            <View style={styles.container}>
+            <View style={styles.dragButton}>
+                <DragIcon color={colors.text_light} />
             </View>
-        </TouchableOpacity>
+            <View style={styles.content}>
+                <Typography variant="h6" text={title} numberOfLines={1} style={styles.title} />
+                <Sortable.Touchable onTap={onEditPress} style={styles.editButton}>
+                    <EditIcon color={colors.text} />
+                </Sortable.Touchable>
+            </View>
+        </View>
     );
 };
+
+export const WineSetItemRow = memo(WineSetItemRowComponent);
