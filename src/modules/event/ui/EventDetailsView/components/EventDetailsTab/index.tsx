@@ -118,19 +118,29 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                         />
                     </View>
                 )}
-            </ScrollView>
 
-            <View style={styles.footer}>
-                <Button
-                    type="main"
-                    containerStyle={styles.bookNowButton}
-                    text={t('eventDetails.bookNow')}
-                    onPress={onBookNowPress}
-                />
-                {isOwner
-                    ? <EditButton onPress={onEditPress} size={48} />
-                    : <FavoriteButton onPress={onFavoritePress} size={48} isSaved={Boolean(eventDetail.isSaved)} />}
-            </View>
+                <View style={styles.footer}>
+                    <View style={styles.footerRow}>
+                        <Button
+                            type="secondary"
+                            containerStyle={styles.bookNowButton}
+                            text={t('eventDetails.duplicate')}
+                            onPress={onBookNowPress}
+                        />
+                        {isOwner ? (
+                            <EditButton onPress={onEditPress} size={48} />
+                        ) : (
+                            <FavoriteButton onPress={onFavoritePress} size={48} isSaved={Boolean(eventDetail.isSaved)} />
+                        )}
+                    </View>
+                    <Button
+                        type="main"
+                        containerStyle={styles.bookNowButton}
+                        text={t('eventDetails.bookNow')}
+                        onPress={onBookNowPress}
+                    />
+                </View>
+            </ScrollView>
 
             <BottomModal
                 visible={isBookingModalVisible}

@@ -228,6 +228,22 @@ class EventsService {
         return null;
     };
 
+    private mapEventToSavedEvent = (eventSnapshot: IEvent | IEventDetail): ISavedEvent => {
+        const resolvedPriceUsd = 'priceUsd' in eventSnapshot
+            ? eventSnapshot.priceUsd
+            : eventSnapshot.price;
+        const resolvedDistanceKm = eventSnapshot.distanceKm ?? null;
+        const resolvedCurrency = eventSnapshot.currency || '';
+
+        return {
+            ...eventSnapshot,
+            priceUsd: resolvedPriceUsd,
+            distanceKm: resolvedDistanceKm,
+            currency: resolvedCurrency,
+            isSaved: true,
+        };
+    };
+
     private applyFavoriteState = (id: number, isSaved: boolean) => {
         this.updateEventInModels(id, { isSaved });
 
@@ -258,10 +274,7 @@ class EventsService {
             return;
         }
 
-        const nextSavedEvent: ISavedEvent = {
-            ...eventSnapshot,
-            isSaved: true,
-        };
+        const nextSavedEvent = this.mapEventToSavedEvent(eventSnapshot);
 
         eventsModel.savedEvents = {
             ...eventsModel.savedEvents,

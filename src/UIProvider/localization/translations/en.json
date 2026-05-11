@@ -445,7 +445,8 @@
         "guestsTab": "Guests",
         "bookNow": "Book now",
         "contactForBooking": "Contact for booking",
-        "callToReserve": "Call to reserve"
+        "callToReserve": "Call to reserve",
+        "duplicate": "Duplicate"
     },
     "permissions": {
         "locationTitle": "Location Permission",

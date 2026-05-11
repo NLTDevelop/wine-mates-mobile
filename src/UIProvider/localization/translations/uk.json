@@ -449,7 +449,8 @@
         "guestsTab": "Гості",
         "bookNow": "Забронювати",
         "contactForBooking": "Контакт для бронювання",
-        "callToReserve": "Зателефонувати для бронювання"
+        "callToReserve": "Зателефонувати для бронювання",
+        "duplicate": "Дублювати"
     },
     "permissions": {
         "locationTitle": "Дозвіл на геолокацію",
