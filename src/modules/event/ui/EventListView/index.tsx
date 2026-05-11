@@ -17,6 +17,7 @@ import { EventCard } from '@/UIKit/EventCard';
 import { useRefresh } from '@/hooks/useRefresh';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 import { Loader } from '@/UIKit/Loader';
+import { BottomModal } from '@/UIKit/BottomModal/ui';
 
 interface IRoute {
     key: 'created' | 'saved' | 'applied';
@@ -29,10 +30,8 @@ interface ISceneProps {
 
 export const EventListView = observer(() => {
     const { t, colors } = useUiContext();
-    const { screenIndex, routes, onIndexChange, onReadMorePress } = useEventListView({ t });
-    const styles = useMemo(() => getStyles(colors), [colors]);
-
-    const {savedEvents,
+    const {
+        savedEvents,
         createdEvents,
         appliedEvents,
         isLoading,
@@ -40,18 +39,32 @@ export const EventListView = observer(() => {
         onLoadMoreSaved,
         onLoadMoreCreated,
         onFavoritePress,
-    } = useEventsList()
+    } = useEventsList();
+    const {
+        screenIndex,
+        routes,
+        onIndexChange,
+        onReadMorePress,
+        selectedEvent,
+        isModalVisible,
+        onCardPress,
+        onCloseModal,
+        onModalReadMorePress,
+    } = useEventListView({ t, createdEvents, savedEvents, appliedEvents });
+    const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const refresh = useRefresh(onRefresh);    
+    const refresh = useRefresh(onRefresh);
     const keyCreatedExtractor = useCallback((item: IEvent, index: number) => `${item.id || index}`, []);
     const keySavedExtractor = useCallback((item: ISavedEvent, index: number) => `${item.id || index}`, []);
     const keyAppliedExtractor = useCallback((item: IAppliedEvent, index: number) => `${item.id || index}`, []);
 
-    const emptyList = (<EmptyListView
-                                image={<Image source={require('@assets/images/city_search.jpeg')} style={styles.emptyImage} />}
-                                text={'Empty event list'}
-                                isLoading={isLoading}
-                            />);
+    const emptyList = (
+        <EmptyListView
+            image={<Image source={require('@assets/images/city_search.jpeg')} style={styles.emptyImage} />}
+            text={'Empty event list'}
+            isLoading={isLoading}
+        />
+    );
 
     const onRenderCreatedItem = useCallback(
         ({ item }: { item: IEvent }) => (
@@ -60,9 +73,10 @@ export const EventListView = observer(() => {
                 isSelected={false}
                 onReadMorePress={onReadMorePress}
                 onFavoritePress={onFavoritePress}
+                onCardPress={onCardPress}
             />
         ),
-        [onFavoritePress, onReadMorePress],
+        [onCardPress, onFavoritePress, onReadMorePress],
     );
 
     const onRenderSavedItem = useCallback(
@@ -72,9 +86,10 @@ export const EventListView = observer(() => {
                 isSelected={false}
                 onReadMorePress={onReadMorePress}
                 onFavoritePress={onFavoritePress}
+                onCardPress={onCardPress}
             />
         ),
-        [onFavoritePress, onReadMorePress],
+        [onCardPress, onFavoritePress, onReadMorePress],
     );
 
     const onRenderAppliedItem = useCallback(
@@ -85,81 +100,112 @@ export const EventListView = observer(() => {
                 onReadMorePress={onReadMorePress}
                 appliedEventStatus={item.status}
                 onFavoritePress={onFavoritePress}
+                onCardPress={onCardPress}
             />
         ),
-        [onFavoritePress, onReadMorePress],
+        [onCardPress, onFavoritePress, onReadMorePress],
     );
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
-        if(isLoading){
-            return <Loader/>;
+        if (isLoading) {
+            return <Loader />;
         }
         if (sceneRoute.key === 'created') {
-            return <FlatList
-                                        data={createdEvents?.rows || []}
-                                        keyExtractor={keyCreatedExtractor}
-                                        renderItem={onRenderCreatedItem}
-                                        refreshControl={refresh.refreshControl}
-                                        contentContainerStyle={styles.containerStyle}
-                                         ListEmptyComponent={emptyList}
-                                         onEndReached={onLoadMoreCreated}
-                                         
-                                    />;
+            return (
+                <FlatList
+                    data={createdEvents?.rows || []}
+                    keyExtractor={keyCreatedExtractor}
+                    renderItem={onRenderCreatedItem}
+                    refreshControl={refresh.refreshControl}
+                    contentContainerStyle={styles.containerStyle}
+                    showsVerticalScrollIndicator={false}
+                    ListEmptyComponent={emptyList}
+                    onEndReached={onLoadMoreCreated}
+                />
+            );
         }
         if (sceneRoute.key === 'saved') {
-            return <FlatList
-                                        data={savedEvents?.rows || []}
-                                        keyExtractor={keySavedExtractor}
-                                        renderItem={onRenderSavedItem}
-                                        refreshControl={refresh.refreshControl}
-                                        contentContainerStyle={styles.containerStyle}
-                                        ListEmptyComponent={emptyList}
-                                        onEndReached={onLoadMoreSaved}
-                                
-                                    />;
+            return (
+                <FlatList
+                    data={savedEvents?.rows || []}
+                    keyExtractor={keySavedExtractor}
+                    renderItem={onRenderSavedItem}
+                    refreshControl={refresh.refreshControl}
+                    contentContainerStyle={styles.containerStyle}
+                    showsVerticalScrollIndicator={false}
+                    ListEmptyComponent={emptyList}
+                    onEndReached={onLoadMoreSaved}
+                />
+            );
         }
         if (sceneRoute.key === 'applied') {
-            return <FlatList
-                                        data={appliedEvents || []}
-                                        keyExtractor={keyAppliedExtractor}
-                                        renderItem={onRenderAppliedItem}
-                                        refreshControl={refresh.refreshControl}
-                                        contentContainerStyle={styles.containerStyle}
-                                         ListEmptyComponent={emptyList}
-                                    />;
+            return (
+                <FlatList
+                    data={appliedEvents || []}
+                    keyExtractor={keyAppliedExtractor}
+                    renderItem={onRenderAppliedItem}
+                    refreshControl={refresh.refreshControl}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.containerStyle}
+                    ListEmptyComponent={emptyList}
+                />
+            );
         }
 
-        return <FlatList
-                                        data={createdEvents?.rows || []}
-                                        keyExtractor={keyCreatedExtractor}
-                                        renderItem={onRenderCreatedItem}
-                                        refreshControl={refresh.refreshControl}
-                                        contentContainerStyle={styles.containerStyle}
-                                         ListEmptyComponent={emptyList}
-                                    />;
+        return (
+            <FlatList
+                data={createdEvents?.rows || []}
+                keyExtractor={keyCreatedExtractor}
+                renderItem={onRenderCreatedItem}
+                refreshControl={refresh.refreshControl}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.containerStyle}
+                ListEmptyComponent={emptyList}
+            />
+        );
     };
 
-    const renderTabBar = function renderTabBar(props: SceneRendererProps & { navigationState: NavigationState<IRoute> }) {
+    const renderTabBar = function renderTabBar(
+        props: SceneRendererProps & { navigationState: NavigationState<IRoute> },
+    ) {
         return <TabsBar tabBarProps={props} onIndexChange={onIndexChange} />;
     };
 
     return (
-        <ScreenContainer
-            edges={['top']}
-            withGradient
-            headerComponent={<HeaderWithBackButton title={t('event.listTitle')} />}
-        >
-            <View style={styles.container}>
-                <TabView
-                    lazy
-                    swipeEnabled
-                    renderTabBar={renderTabBar}
-                    navigationState={{ index: screenIndex, routes }}
-                    renderScene={renderScene}
-                    onIndexChange={onIndexChange}
-                    initialLayout={{ width: size.width }}
-                />
-            </View>
-        </ScreenContainer>
+        <>
+            <ScreenContainer
+                edges={['top']}
+                withGradient
+                headerComponent={<HeaderWithBackButton title={t('event.listTitle')} />}
+            >
+                <View style={styles.container}>
+                    <TabView
+                        lazy
+                        swipeEnabled
+                        renderTabBar={renderTabBar}
+                        navigationState={{ index: screenIndex, routes }}
+                        renderScene={renderScene}
+                        onIndexChange={onIndexChange}
+                        initialLayout={{ width: size.width }}
+                    />
+                </View>
+            </ScreenContainer>
+
+            {selectedEvent && isModalVisible && (
+                <BottomModal
+                    visible={isModalVisible}
+                    onClose={onCloseModal}
+                    title={t('eventDetails.title')}
+                >
+                    <EventCard
+                        event={selectedEvent}
+                        isSelected={false}
+                        isModalContent
+                        onReadMorePress={onModalReadMorePress}
+                        onFavoritePress={onFavoritePress}
+                    />
+                </BottomModal>
+            )}
+        </>
     );
 });

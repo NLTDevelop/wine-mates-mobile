@@ -5,7 +5,6 @@ import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { DateBadge } from '@/UIKit/DateBadge';
-import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { PartyIcon } from '@assets/icons/PartyIcon';
 import { TastingIcon } from '@assets/icons/TastingIcon';
 import { MoneyIcon } from '@assets/icons/MoneyIcon';
@@ -23,6 +22,7 @@ interface IProps {
     onReadMorePress: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
     onEditPress?: (eventId: number) => void;
+    onCardPress?: (eventId: number) => void;
     isModalContent?: boolean;
     showDescription?: boolean;
     showFooter?: boolean;
@@ -35,6 +35,7 @@ export const EventCard = ({
     onReadMorePress,
     onFavoritePress,
     onEditPress,
+    onCardPress,
     isModalContent = false,
     showDescription = true,
     showFooter = true,
@@ -49,14 +50,11 @@ export const EventCard = ({
         priceLabel,
         eventTypeLabel,
         isPartyEvent,
-        isModalVisible,
         isCardPressed,
-        onCardPress,
+        onCardPress: onCardPressHandler,
         onPressIn,
         onPressOut,
-        onCloseModal,
         onReadMorePress: onReadMorePressHandler,
-        onReadMoreFromModalContent,
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
         isOwner,
@@ -66,16 +64,19 @@ export const EventCard = ({
         onReadMorePress,
         onFavoritePress,
         onEditPress,
+        onCardPress,
     });
+
+    const canPressCard = !isModalContent && Boolean(onCardPress);
 
 
     return (
         <Pressable
             style={[styles.container, isSelected && styles.selectedContainer, isCardPressed && styles.pressedContainer]}
-            onPress={isModalContent ? undefined : onCardPress}
-            onPressIn={isModalContent ? undefined : onPressIn}
-            onPressOut={isModalContent ? undefined : onPressOut}
-            disabled={isModalContent}
+            onPress={canPressCard ? onCardPressHandler : undefined}
+            onPressIn={canPressCard ? onPressIn : undefined}
+            onPressOut={canPressCard ? onPressOut : undefined}
+            disabled={!canPressCard}
         >
             <View style={styles.metaRow}>
                 <View style={styles.metaBadge}>
@@ -131,24 +132,6 @@ export const EventCard = ({
                         ? <EditButton onPress={onEditPressHandler} size={48} />
                         : <FavoriteButton onPress={onFavoritePressHandler} size={48} isSaved={Boolean(event.isSaved)} />}
                 </View>
-            )}
-
-            {!isModalContent && isModalVisible && (
-                <BottomModal
-                    visible={isModalVisible}
-                    onClose={onCloseModal}
-                    title={t('eventDetails.title')}
-                    contentContainerStyle={styles.modalContentContainer}
-                >
-                    <EventCard
-                        event={event}
-                        isSelected={false}
-                        onReadMorePress={onReadMoreFromModalContent}
-                        onFavoritePress={onFavoritePress}
-                        onEditPress={onEditPress}
-                        isModalContent
-                    />
-                </BottomModal>
             )}
         </Pressable>
     );

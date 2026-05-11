@@ -38,6 +38,11 @@ export const useEventMapView = ({ events, onFavoritePress }: IUseEventMapViewPro
         setIsModalVisible(true);
     }, []);
 
+    const onCardPress = useCallback((eventId: number) => {
+        setSelectedEventId(eventId);
+        setIsModalVisible(true);
+    }, []);
+
     const onCloseModal = useCallback(() => {
         setIsModalVisible(false);
         setSelectedEventId(null);
@@ -62,6 +67,7 @@ export const useEventMapView = ({ events, onFavoritePress }: IUseEventMapViewPro
         isModalVisible,
         onAddEvent,
         onMarkerPress,
+        onCardPress,
         onCloseModal,
         onModalReadMorePress,
         onModalFavoritePress,

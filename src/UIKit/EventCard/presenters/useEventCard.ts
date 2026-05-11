@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { EventType } from '@/entities/events/enums/EventType';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -10,9 +10,9 @@ interface IUseEventCardProps {
     onReadMorePress?: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
     onEditPress?: (eventId: number) => void;
+    onCardPress?: (eventId: number) => void;
 }
 
-const NAVIGATION_DEBOUNCE_MS = 260;
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 14;
 const STATIC_MAP_LIGHT_STYLE_PARAMS = [
@@ -30,34 +30,10 @@ export const useEventCard = ({
     onReadMorePress,
     onFavoritePress,
     onEditPress,
+    onCardPress,
 }: IUseEventCardProps) => {
     const currentLocale = localization.locale || 'en';
-    const [isModalVisible, setIsModalVisible] = useState(false);
     const [isCardPressed, setIsCardPressed] = useState(false);
-    const navigationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    useEffect(() => {
-        return () => {
-            if (navigationTimeoutRef.current) {
-                clearTimeout(navigationTimeoutRef.current);
-            }
-        };
-    }, []);
-
-    const scheduleNavigation = useCallback(() => {
-        if (navigationTimeoutRef.current) {
-            clearTimeout(navigationTimeoutRef.current);
-        }
-
-        navigationTimeoutRef.current = setTimeout(() => {
-            onReadMorePress?.(event.id);
-            navigationTimeoutRef.current = null;
-        }, NAVIGATION_DEBOUNCE_MS);
-    }, [event.id, onReadMorePress]);
-
-    const navigateImmediately = useCallback(() => {
-        onReadMorePress?.(event.id);
-    }, [event.id, onReadMorePress]);
 
     const startDateValue = useMemo(() => {
         return event.eventStartDate || event.eventDate;
@@ -232,23 +208,9 @@ export const useEventCard = ({
         return event.eventType === EventType.Parties;
     }, [event.eventType]);
 
-    const onCardPress = useCallback(() => {
-        setIsModalVisible(true);
-    }, []);
-
-    const onBookingPress = useCallback(() => {
-        if (isModalVisible) {
-            setIsModalVisible(false);
-            scheduleNavigation();
-            return;
-        }
-
-        navigateImmediately();
-    }, [isModalVisible, navigateImmediately, scheduleNavigation]);
-
-    const onCloseModal = useCallback(() => {
-        setIsModalVisible(false);
-    }, []);
+    const onCardPressHandler = useCallback(() => {
+        onCardPress?.(event.id);
+    }, [event.id, onCardPress]);
 
     const onPressIn = useCallback(() => {
         setIsCardPressed(true);
@@ -275,19 +237,8 @@ export const useEventCard = ({
     }, [event.ownerId]);
 
     const onReadMorePressHandler = useCallback(() => {
-        if (isModalVisible) {
-            setIsModalVisible(false);
-            scheduleNavigation();
-            return;
-        }
-
-        navigateImmediately();
-    }, [isModalVisible, navigateImmediately, scheduleNavigation]);
-
-    const onReadMoreFromModalContent = useCallback(() => {
-        setIsModalVisible(false);
-        scheduleNavigation();
-    }, [scheduleNavigation]);
+        onReadMorePress?.(event.id);
+    }, [event.id, onReadMorePress]);
 
     const mapPreviewUri = useMemo(() => {
         const params = [
@@ -313,15 +264,11 @@ export const useEventCard = ({
         priceLabel,
         eventTypeLabel,
         isPartyEvent,
-        isModalVisible,
         isCardPressed,
-        onCardPress,
+        onCardPress: onCardPressHandler,
         onPressIn,
         onPressOut,
-        onBookingPress,
-        onCloseModal,
         onReadMorePress: onReadMorePressHandler,
-        onReadMoreFromModalContent,
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
         isOwner,
