@@ -7,6 +7,7 @@ import { IWineSetItem } from './IWineSetItem';
 
 export interface IEvent {
     id: number;
+    ownerId?: number;
     theme: string;
     eventDate?: string;
     eventTime?: string;
@@ -54,6 +55,7 @@ export interface ISeat{
 
 export interface IEventDetail {
     id: number;
+    ownerId?: number;
     latitude: number;
     longitude: number;
     title?: string;

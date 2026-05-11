@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { useEventDetails } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetails';
 import { useEventDetailsData } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetailsData';
 import { eventsService } from '@/entities/events/EventsService';
+import { userModel } from '@/entities/users/UserModel';
 
 interface IProps {
     eventId: number;
@@ -41,6 +42,8 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
     }, [eventDetail, eventId, setEventDetail]);
 
     const onCallToReservePress = useCallback(() => {}, []);
+    const onEditPress = useCallback(() => {}, []);
+    const isOwner = Boolean(eventDetail?.ownerId) && eventDetail?.ownerId === userModel.user?.id;
 
     return {
         isLoading,
@@ -55,5 +58,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
         onCloseModal,
         onFavoritePress,
         onCallToReservePress,
+        onEditPress,
+        isOwner,
     };
 };

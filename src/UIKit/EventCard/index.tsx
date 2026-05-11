@@ -22,11 +22,11 @@ interface IProps {
     isSelected: boolean;
     onReadMorePress: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
+    onEditPress?: (eventId: number) => void;
     isModalContent?: boolean;
     showDescription?: boolean;
     showFooter?: boolean;
     appliedEventStatus?: string | null;
-    showEditButton?: boolean;
 }
 
 export const EventCard = ({
@@ -34,11 +34,11 @@ export const EventCard = ({
     isSelected,
     onReadMorePress,
     onFavoritePress,
+    onEditPress,
     isModalContent = false,
     showDescription = true,
     showFooter = true,
     appliedEventStatus = null,
-    showEditButton = false,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -58,11 +58,14 @@ export const EventCard = ({
         onReadMorePress: onReadMorePressHandler,
         onReadMoreFromModalContent,
         onFavoritePress: onFavoritePressHandler,
+        onEditPress: onEditPressHandler,
+        isOwner,
         mapPreviewUri,
     } = useEventCard({
         event,
         onReadMorePress,
-        onFavoritePress
+        onFavoritePress,
+        onEditPress,
     });
 
 
@@ -124,8 +127,8 @@ export const EventCard = ({
             {showFooter && (
                 <View style={styles.footer}>
                     <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
-                    {showEditButton
-                        ? <EditButton onPress={onFavoritePressHandler} size={48} />
+                    {isOwner
+                        ? <EditButton onPress={onEditPressHandler} size={48} />
                         : <FavoriteButton onPress={onFavoritePressHandler} size={48} isSaved={Boolean(event.isSaved)} />}
                 </View>
             )}
@@ -142,6 +145,7 @@ export const EventCard = ({
                         isSelected={false}
                         onReadMorePress={onReadMoreFromModalContent}
                         onFavoritePress={onFavoritePress}
+                        onEditPress={onEditPress}
                         isModalContent
                     />
                 </BottomModal>

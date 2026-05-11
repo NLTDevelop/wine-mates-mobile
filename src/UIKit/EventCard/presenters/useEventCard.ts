@@ -3,11 +3,13 @@ import { IEvent } from '@/entities/events/types/IEvent';
 import { EventType } from '@/entities/events/enums/EventType';
 import { localization } from '@/UIProvider/localization/Localization';
 import { config } from '@/config';
+import { userModel } from '@/entities/users/UserModel';
 
 interface IUseEventCardProps {
     event: IEvent;
     onReadMorePress?: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
+    onEditPress?: (eventId: number) => void;
 }
 
 const NAVIGATION_DEBOUNCE_MS = 260;
@@ -26,7 +28,8 @@ const STATIC_MAP_LIGHT_STYLE_PARAMS = [
 export const useEventCard = ({
     event,
     onReadMorePress,
-    onFavoritePress
+    onFavoritePress,
+    onEditPress,
 }: IUseEventCardProps) => {
     const currentLocale = localization.locale || 'en';
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -259,6 +262,18 @@ export const useEventCard = ({
         onFavoritePress?.(event.id);
     }, [event.id, onFavoritePress]);
 
+    const onEditPressHandler = useCallback(() => {
+        onEditPress?.(event.id);
+    }, [event.id, onEditPress]);
+
+    const isOwner = useMemo(() => {
+        if (!event.ownerId || !userModel.user?.id) {
+            return false;
+        }
+
+        return event.ownerId === userModel.user.id;
+    }, [event.ownerId]);
+
     const onReadMorePressHandler = useCallback(() => {
         if (isModalVisible) {
             setIsModalVisible(false);
@@ -308,6 +323,8 @@ export const useEventCard = ({
         onReadMorePress: onReadMorePressHandler,
         onReadMoreFromModalContent,
         onFavoritePress: onFavoritePressHandler,
+        onEditPress: onEditPressHandler,
+        isOwner,
         mapPreviewUri,
     };
 };

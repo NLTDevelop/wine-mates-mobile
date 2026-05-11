@@ -59,7 +59,6 @@ export const EventListView = observer(() => {
                 event={item}
                 isSelected={false}
                 onReadMorePress={onReadMorePress}
-                showEditButton
                 onFavoritePress={onFavoritePress}
             />
         ),

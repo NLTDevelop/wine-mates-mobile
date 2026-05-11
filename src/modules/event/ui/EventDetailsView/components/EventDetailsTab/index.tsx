@@ -5,6 +5,7 @@ import { Typography } from '@/UIKit/Typography';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
+import { EditButton } from '@/UIKit/EditButton';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { IWineSetItem } from '@/entities/events/types/IWineSetItem';
 import { IEventContactOption } from '@/modules/event/ui/EventDetailsView/types/IEventContactOption';
@@ -34,6 +35,8 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
         onCloseModal,
         onFavoritePress,
         onCallToReservePress,
+        onEditPress,
+        isOwner,
     } = useEventDetailsTab({ eventId });
 
     const keyExtractor = (item: IWineSetItem) => `${item.id}`;
@@ -124,7 +127,9 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                     text={t('eventDetails.bookNow')}
                     onPress={onBookNowPress}
                 />
-                <FavoriteButton onPress={onFavoritePress} size={52} isSaved={Boolean(eventDetail.isSaved)} />
+                {isOwner
+                    ? <EditButton onPress={onEditPress} size={48} />
+                    : <FavoriteButton onPress={onFavoritePress} size={48} isSaved={Boolean(eventDetail.isSaved)} />}
             </View>
 
             <BottomModal
