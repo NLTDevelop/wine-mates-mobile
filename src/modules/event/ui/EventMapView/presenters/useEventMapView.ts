@@ -1,7 +1,6 @@
 import { useCallback, useState, useMemo } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { EventType } from '@/entities/events/enums/EventType';
 
@@ -9,7 +8,7 @@ interface IUseEventMapViewProps {
     events: IEvent[];
 }
 
-type NavigationProp = NativeStackNavigationProp<EventStackParamList>;
+type NavigationProp = NativeStackNavigationProp<Record<string, object | undefined>>;
 
 export const useEventMapView = ({ events }: IUseEventMapViewProps) => {
     const navigation = useNavigation<NavigationProp>();

@@ -4,7 +4,6 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { NavigationState, SceneRendererProps, TabView } from 'react-native-tab-view';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
-import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { observer } from 'mobx-react';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { TabsBar } from './components/TabsBar';
@@ -23,9 +22,16 @@ interface ISceneProps {
     route: IRoute;
 }
 
+interface IEventDetailsRouteParams {
+    [key: string]: object | undefined;
+    EventDetailsView: {
+        eventId: number;
+    };
+}
+
 export const EventDetailsView = observer(() => {
     const { t, colors } = useUiContext();
-    const route = useRoute<RouteProp<EventStackParamList, 'EventDetailsView'>>();
+    const route = useRoute<RouteProp<IEventDetailsRouteParams, 'EventDetailsView'>>();
     const { eventId } = route.params;
     const { screenIndex, routes, onIndexChange } = useEventDetailsView({ t });
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -44,7 +50,7 @@ export const EventDetailsView = observer(() => {
 
     return (
         <ScreenContainer
-            edges={['top']}
+            edges={['top', 'bottom']}
             withGradient
             headerComponent={<HeaderWithBackButton title={t('eventDetails.title')} />}
         >

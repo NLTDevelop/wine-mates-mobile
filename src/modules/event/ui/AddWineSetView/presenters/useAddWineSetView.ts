@@ -403,7 +403,7 @@ export const useAddWineSetView = ({
         if (createdEventId) {
             navigation.dispatch(
                 CommonActions.reset({
-                    index: 0,
+                    index: 1,
                     routes: [
                         {
                             name: 'TabNavigator',
@@ -413,16 +413,16 @@ export const useAddWineSetView = ({
                                     {
                                         name: 'EventStack',
                                         state: {
-                                            index: 1,
+                                            index: 0,
                                             routes: [
                                                 { name: 'EventMapView' },
-                                                { name: 'EventDetailsView', params: { eventId: createdEventId } },
                                             ],
                                         },
                                     },
                                 ],
                             },
                         },
+                        { name: 'EventDetailsView', params: { eventId: createdEventId } },
                     ],
                 }),
             );

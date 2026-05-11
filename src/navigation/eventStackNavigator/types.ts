@@ -4,9 +4,6 @@ import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 
 export type EventStackParamList = {
     EventMapView: undefined;
-    EventDetailsView: {
-        eventId: number;
-    };
     AddEventView: {
         pickedLocation?: {
             latitude: number;

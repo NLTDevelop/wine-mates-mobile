@@ -1,17 +1,14 @@
 import type { LinkingOptions, NavigatorScreenParams } from '@react-navigation/native';
 
-type EventDeepLinkStackParamList = {
-    EventDetailsView: {
-        eventId: number;
-    };
-};
-
 type TabDeepLinkParamList = {
-    EventStack: NavigatorScreenParams<EventDeepLinkStackParamList>;
+    EventStack: undefined;
 };
 
 export type RootDeepLinkParamList = {
     TabNavigator: NavigatorScreenParams<TabDeepLinkParamList>;
+    EventDetailsView: {
+        eventId: number;
+    };
 };
 
 const EVENT_ID_PARAM = 'eventId';
@@ -30,16 +27,13 @@ export const linking: LinkingOptions<RootDeepLinkParamList> = {
         screens: {
             TabNavigator: {
                 screens: {
-                    EventStack: {
-                        screens: {
-                            EventDetailsView: {
-                                path: `event/:${EVENT_ID_PARAM}`,
-                                parse: {
-                                    [EVENT_ID_PARAM]: Number,
-                                },
-                            },
-                        },
-                    },
+                    EventStack: '',
+                },
+            },
+            EventDetailsView: {
+                path: `event/:${EVENT_ID_PARAM}`,
+                parse: {
+                    [EVENT_ID_PARAM]: Number,
                 },
             },
         },
