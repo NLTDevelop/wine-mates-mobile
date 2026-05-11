@@ -39,6 +39,7 @@ export const EventListView = observer(() => {
         onRefresh,
         onLoadMoreSaved,
         onLoadMoreCreated,
+        onFavoritePress,
     } = useEventsList()
 
     const refresh = useRefresh(onRefresh);    
@@ -52,17 +53,43 @@ export const EventListView = observer(() => {
                                 isLoading={isLoading}
                             />);
 
-    const renderItem = useCallback(
-            ({ item }: { item: IEvent | ISavedEvent | IAppliedEvent }) => (
-                <EventCard 
-                    event={('event' in item) ? item.event : item} 
-                    isSelected={false} 
-                    onReadMorePress={onReadMorePress}
-                    appliedEventStatus={('event' in item) ? item.status : null}
-                    />
-            ),
-            [onReadMorePress],
-        );
+    const onRenderCreatedItem = useCallback(
+        ({ item }: { item: IEvent }) => (
+            <EventCard
+                event={item}
+                isSelected={false}
+                onReadMorePress={onReadMorePress}
+                showEditButton
+                onFavoritePress={onFavoritePress}
+            />
+        ),
+        [onFavoritePress, onReadMorePress],
+    );
+
+    const onRenderSavedItem = useCallback(
+        ({ item }: { item: ISavedEvent }) => (
+            <EventCard
+                event={item}
+                isSelected={false}
+                onReadMorePress={onReadMorePress}
+                onFavoritePress={onFavoritePress}
+            />
+        ),
+        [onFavoritePress, onReadMorePress],
+    );
+
+    const onRenderAppliedItem = useCallback(
+        ({ item }: { item: IAppliedEvent }) => (
+            <EventCard
+                event={item.event}
+                isSelected={false}
+                onReadMorePress={onReadMorePress}
+                appliedEventStatus={item.status}
+                onFavoritePress={onFavoritePress}
+            />
+        ),
+        [onFavoritePress, onReadMorePress],
+    );
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
         if(isLoading){
@@ -72,7 +99,7 @@ export const EventListView = observer(() => {
             return <FlatList
                                         data={createdEvents?.rows || []}
                                         keyExtractor={keyCreatedExtractor}
-                                        renderItem={renderItem}
+                                        renderItem={onRenderCreatedItem}
                                         refreshControl={refresh.refreshControl}
                                         contentContainerStyle={styles.containerStyle}
                                          ListEmptyComponent={emptyList}
@@ -84,7 +111,7 @@ export const EventListView = observer(() => {
             return <FlatList
                                         data={savedEvents?.rows || []}
                                         keyExtractor={keySavedExtractor}
-                                        renderItem={renderItem}
+                                        renderItem={onRenderSavedItem}
                                         refreshControl={refresh.refreshControl}
                                         contentContainerStyle={styles.containerStyle}
                                         ListEmptyComponent={emptyList}
@@ -96,7 +123,7 @@ export const EventListView = observer(() => {
             return <FlatList
                                         data={appliedEvents || []}
                                         keyExtractor={keyAppliedExtractor}
-                                        renderItem={renderItem}
+                                        renderItem={onRenderAppliedItem}
                                         refreshControl={refresh.refreshControl}
                                         contentContainerStyle={styles.containerStyle}
                                          ListEmptyComponent={emptyList}
@@ -106,7 +133,7 @@ export const EventListView = observer(() => {
         return <FlatList
                                         data={createdEvents?.rows || []}
                                         keyExtractor={keyCreatedExtractor}
-                                        renderItem={renderItem}
+                                        renderItem={onRenderCreatedItem}
                                         refreshControl={refresh.refreshControl}
                                         contentContainerStyle={styles.containerStyle}
                                          ListEmptyComponent={emptyList}

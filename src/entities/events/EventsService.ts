@@ -108,30 +108,238 @@ class EventsService {
         }
     };
 
-    toggleSave = async (id: number): Promise<IResponse<{ isSaved: boolean }>> => {
+    private getEventById = (id: number): IEvent | IEventDetail | null => {
+        const eventFromEvents = eventsModel.events.find(event => event.id === id);
+        if (eventFromEvents) {
+            return eventFromEvents;
+        }
+
+        const eventFromCreated = eventsModel.createdEvents?.rows.find(event => event.id === id);
+        if (eventFromCreated) {
+            return eventFromCreated;
+        }
+
+        const eventFromSaved = eventsModel.savedEvents?.rows.find(event => event.id === id);
+        if (eventFromSaved) {
+            return eventFromSaved;
+        }
+
+        const appliedEvent = eventsModel.appliedEvents.find(item => item.event.id === id);
+        if (appliedEvent) {
+            return appliedEvent.event;
+        }
+
+        if (eventsModel.eventDetail?.id === id) {
+            return eventsModel.eventDetail;
+        }
+
+        return null;
+    };
+
+    private updateEventInModels = (id: number, fields: Partial<IEventDetail>) => {
+        const updatedEvents = eventsModel.events.map(event => {
+            if (event.id !== id) {
+                return event;
+            }
+
+            return {
+                ...event,
+                ...fields,
+            };
+        });
+        eventsModel.setEvents(updatedEvents);
+
+        if (eventsModel.createdEvents) {
+            eventsModel.createdEvents = {
+                ...eventsModel.createdEvents,
+                rows: eventsModel.createdEvents.rows.map(event => {
+                    if (event.id !== id) {
+                        return event;
+                    }
+
+                    return {
+                        ...event,
+                        ...fields,
+                    };
+                }),
+            };
+        }
+
+        if (eventsModel.savedEvents) {
+            eventsModel.savedEvents = {
+                ...eventsModel.savedEvents,
+                rows: eventsModel.savedEvents.rows.map(event => {
+                    if (event.id !== id) {
+                        return event;
+                    }
+
+                    return {
+                        ...event,
+                        ...fields,
+                    };
+                }),
+            };
+        }
+
+        if (eventsModel.appliedEvents.length) {
+            eventsModel.appliedEvents = eventsModel.appliedEvents.map(item => {
+                if (item.event.id !== id) {
+                    return item;
+                }
+
+                return {
+                    ...item,
+                    event: {
+                        ...item.event,
+                        ...fields,
+                    },
+                };
+            });
+        }
+
+        if (eventsModel.eventDetail?.id === id) {
+            eventsModel.setEventDetail({
+                ...eventsModel.eventDetail,
+                ...fields,
+            });
+        }
+    };
+
+    private getEventSnapshotById = (id: number): IEvent | IEventDetail | null => {
+        const eventFromCreated = eventsModel.createdEvents?.rows.find(event => event.id === id);
+        if (eventFromCreated) {
+            return eventFromCreated;
+        }
+
+        const eventFromList = eventsModel.events.find(event => event.id === id);
+        if (eventFromList) {
+            return eventFromList;
+        }
+
+        const eventFromApplied = eventsModel.appliedEvents.find(item => item.event.id === id)?.event;
+        if (eventFromApplied) {
+            return eventFromApplied;
+        }
+
+        if (eventsModel.eventDetail?.id === id) {
+            return eventsModel.eventDetail;
+        }
+
+        return null;
+    };
+
+    private applyFavoriteState = (id: number, isSaved: boolean) => {
+        this.updateEventInModels(id, { isSaved });
+
+        if (!eventsModel.savedEvents) {
+            return;
+        }
+
+        if (!isSaved) {
+            const filteredRows = eventsModel.savedEvents.rows.filter(event => event.id !== id);
+            const wasInSaved = filteredRows.length !== eventsModel.savedEvents.rows.length;
+            eventsModel.savedEvents = {
+                ...eventsModel.savedEvents,
+                rows: filteredRows,
+                count: wasInSaved
+                    ? Math.max(0, eventsModel.savedEvents.count - 1)
+                    : eventsModel.savedEvents.count,
+            };
+            return;
+        }
+
+        const alreadySaved = eventsModel.savedEvents.rows.some(event => event.id === id);
+        if (alreadySaved) {
+            return;
+        }
+
+        const eventSnapshot = this.getEventSnapshotById(id);
+        if (!eventSnapshot) {
+            return;
+        }
+
+        const nextSavedEvent: ISavedEvent = {
+            ...eventSnapshot,
+            isSaved: true,
+        };
+
+        eventsModel.savedEvents = {
+            ...eventsModel.savedEvents,
+            rows: [nextSavedEvent, ...eventsModel.savedEvents.rows],
+            count: eventsModel.savedEvents.count + 1,
+        };
+    };
+
+    updateEvent = async (id: number, data: Partial<IEventDetail>): Promise<IResponse<IEventDetail>> => {
         try {
             const response = await this._requester.request({
-                method: 'POST',
-                url: `${this._links.events}/${id}/toggle-save`,
+                method: 'PATCH',
+                url: `${this._links.events}/${id}`,
+                data,
             });
 
             if (!response.isError) {
-                const updatedEvents = eventsModel.events.map(event =>
-                    event.id === id ? { ...event, isSaved: response.data.isSaved } : event,
-                );
-                eventsModel.setEvents(updatedEvents);
+                const responseFields = response.data && typeof response.data === 'object'
+                    ? response.data
+                    : {};
+                const updatedFields = {
+                    ...data,
+                    ...responseFields,
+                };
 
-                if (eventsModel.eventDetail?.id === id) {
-                    eventsModel.setEventDetail({
-                        ...eventsModel.eventDetail,
-                        isSaved: response.data.isSaved,
-                    });
-                }
+                this.updateEventInModels(id, updatedFields);
             }
 
             return response;
         } catch (error) {
-            console.warn('EventsService -> toggleSave: ', error);
+            console.warn('EventsService -> updateEvent: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    toggleSave = async (id: number): Promise<IResponse<IEventDetail>> => {
+        const currentEvent = this.getEventById(id);
+        const currentIsSaved = Boolean(currentEvent?.isSaved);
+        if (currentIsSaved) {
+            return this.removeFromFavorite(id);
+        }
+
+        return this.addToFavorite(id);
+    };
+
+    addToFavorite = async (eventId: number): Promise<IResponse<IEventDetail>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.favoriteEvents}`,
+                data: { eventId },
+            });
+
+            if (!response.isError) {
+                this.applyFavoriteState(eventId, true);
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> addToFavorite: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    removeFromFavorite = async (eventId: number): Promise<IResponse<IEventDetail>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'DELETE',
+                url: `${this._links.favoriteEvents}/${eventId}`,
+            });
+
+            if (!response.isError) {
+                this.applyFavoriteState(eventId, false);
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> removeFromFavorite: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

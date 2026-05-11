@@ -124,7 +124,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                     text={t('eventDetails.bookNow')}
                     onPress={onBookNowPress}
                 />
-                <FavoriteButton onPress={onFavoritePress} size={52} />
+                <FavoriteButton onPress={onFavoritePress} size={52} isSaved={Boolean(eventDetail.isSaved)} />
             </View>
 
             <BottomModal

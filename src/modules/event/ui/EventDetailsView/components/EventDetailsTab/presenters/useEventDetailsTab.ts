@@ -1,13 +1,14 @@
 import { useCallback, useState } from 'react';
 import { useEventDetails } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetails';
 import { useEventDetailsData } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetailsData';
+import { eventsService } from '@/entities/events/EventsService';
 
 interface IProps {
     eventId: number;
 }
 
 export const useEventDetailsTab = ({ eventId }: IProps) => {
-    const { eventDetail, isError, isLoading } = useEventDetails(eventId);
+    const { eventDetail, setEventDetail, isError, isLoading } = useEventDetails(eventId);
     const { detailsData, wineSetItems, contactItems, cardPreviewData } = useEventDetailsData(eventDetail);
     const [isBookingModalVisible, setIsBookingModalVisible] = useState(false);
 
@@ -19,7 +20,25 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
         setIsBookingModalVisible(false);
     }, []);
 
-    const onFavoritePress = useCallback(() => {}, []);
+    const onFavoritePress = useCallback(async () => {
+        try {
+            const response = await eventsService.toggleSave(eventId);
+            if (response.isError || !eventDetail) {
+                return;
+            }
+
+            const nextIsSaved = typeof response.data?.isSaved === 'boolean'
+                ? response.data.isSaved
+                : !Boolean(eventDetail.isSaved);
+
+            setEventDetail({
+                ...eventDetail,
+                isSaved: nextIsSaved,
+            });
+        } catch (error) {
+            console.warn('useEventDetailsTab -> onFavoritePress: ', error);
+        }
+    }, [eventDetail, eventId, setEventDetail]);
 
     const onCallToReservePress = useCallback(() => {}, []);
 

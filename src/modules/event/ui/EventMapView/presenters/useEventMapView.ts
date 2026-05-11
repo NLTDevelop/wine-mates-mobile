@@ -6,11 +6,12 @@ import { EventType } from '@/entities/events/enums/EventType';
 
 interface IUseEventMapViewProps {
     events: IEvent[];
+    onFavoritePress: (eventId: number) => void;
 }
 
 type NavigationProp = NativeStackNavigationProp<Record<string, object | undefined>>;
 
-export const useEventMapView = ({ events }: IUseEventMapViewProps) => {
+export const useEventMapView = ({ events, onFavoritePress }: IUseEventMapViewProps) => {
     const navigation = useNavigation<NavigationProp>();
     const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -48,17 +49,12 @@ export const useEventMapView = ({ events }: IUseEventMapViewProps) => {
     }, [navigation]);
 
     const onModalFavoritePress = useCallback((eventId: number) => {
-        console.log('Favorite pressed:', eventId);
-        // TODO: Implement favorite functionality
-    }, []);
+        onFavoritePress(eventId);
+    }, [onFavoritePress]);
 
     const onReadMorePress = useCallback((eventId: number) => {
         navigation.navigate('EventDetailsView', { eventId });
     }, [navigation]);
-
-    const onFavoritePress = useCallback((eventId: number) => {
-        console.log('Favorite pressed:', eventId);
-    }, []);
 
     return {
         mapPins,

@@ -26,6 +26,7 @@ interface IProps {
     showDescription?: boolean;
     showFooter?: boolean;
     appliedEventStatus?: string | null;
+    showEditButton?: boolean;
 }
 
 export const EventCard = ({
@@ -37,6 +38,7 @@ export const EventCard = ({
     showDescription = true,
     showFooter = true,
     appliedEventStatus = null,
+    showEditButton = false,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -122,7 +124,9 @@ export const EventCard = ({
             {showFooter && (
                 <View style={styles.footer}>
                     <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
-                     {"status" in event ? <EditButton onPress={onFavoritePressHandler} size={48} /> : <FavoriteButton onPress={onFavoritePressHandler} size={56} />}
+                    {showEditButton
+                        ? <EditButton onPress={onFavoritePressHandler} size={48} />
+                        : <FavoriteButton onPress={onFavoritePressHandler} size={48} isSaved={Boolean(event.isSaved)} />}
                 </View>
             )}
 
