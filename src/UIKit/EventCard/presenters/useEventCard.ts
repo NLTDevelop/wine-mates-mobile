@@ -1,12 +1,18 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { EventType } from '@/entities/events/enums/EventType';
 import { localization } from '@/UIProvider/localization/Localization';
 import { config } from '@/config';
 import { userModel } from '@/entities/users/UserModel';
+import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
+import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
+import Share from 'react-native-share';
+import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
+import { toastService } from '@/libs/toast/toastService';
 
 interface IUseEventCardProps {
     event: IEvent;
+    appliedEventStatus?: string | null;
     onReadMorePress?: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
     onEditPress?: (eventId: number) => void;
@@ -15,6 +21,11 @@ interface IUseEventCardProps {
 
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 14;
+const QR_CODE_IMAGE_PREFIX = 'data:image/png;base64,';
+
+type QrCodeRef = {
+    toDataURL: (callback: (data: string) => void) => void;
+};
 const STATIC_MAP_LIGHT_STYLE_PARAMS = [
     'style=element:geometry|color:0xf5f5f5',
     'style=element:labels.icon|visibility:off',
@@ -27,6 +38,7 @@ const STATIC_MAP_LIGHT_STYLE_PARAMS = [
 
 export const useEventCard = ({
     event,
+    appliedEventStatus = null,
     onReadMorePress,
     onFavoritePress,
     onEditPress,
@@ -34,6 +46,7 @@ export const useEventCard = ({
 }: IUseEventCardProps) => {
     const currentLocale = localization.locale || 'en';
     const [isCardPressed, setIsCardPressed] = useState(false);
+    const qrCodeRef = useRef<QrCodeRef | null>(null);
 
     const startDateValue = useMemo(() => {
         return event.eventStartDate || event.eventDate;
@@ -204,6 +217,50 @@ export const useEventCard = ({
         ? localization.t('event.parties')
         : localization.t('event.tastings');
 
+    const isAllSpotsFull = useMemo(() => {
+        return typeof event.seats?.left === 'number' && event.seats.left <= 0;
+    }, [event.seats?.left]);
+
+    const eventStatusLabel = useMemo(() => {
+        if (!('status' in event) || !event.status) {
+            return '';
+        }
+
+        if (event.status === SavedEventStatus.FINISHED) {
+            return localization.t('event.finished');
+        }
+
+        if (event.status === SavedEventStatus.CANCELED) {
+            return localization.t('event.cancelled');
+        }
+
+        return String(event.status);
+    }, [event]);
+
+    const appliedEventStatusLabel = useMemo(() => {
+        if (!appliedEventStatus) {
+            return '';
+        }
+
+        if (appliedEventStatus === AppliedEventStatus.ACCEPTED) {
+            return localization.t('event.confirmed');
+        }
+
+        if (appliedEventStatus === AppliedEventStatus.PENDING) {
+            return localization.t('event.pending');
+        }
+
+        if (appliedEventStatus === AppliedEventStatus.REJECTED) {
+            return localization.t('event.rejected');
+        }
+
+        if (appliedEventStatus === SavedEventStatus.CANCELED) {
+            return localization.t('event.cancelled');
+        }
+
+        return String(appliedEventStatus);
+    }, [appliedEventStatus]);
+
     const isPartyEvent = useMemo(() => {
         return event.eventType === EventType.Parties;
     }, [event.eventType]);
@@ -240,6 +297,53 @@ export const useEventCard = ({
         onReadMorePress?.(event.id);
     }, [event.id, onReadMorePress]);
 
+    const eventDeepLink = useMemo(() => {
+        return createEventDeepLink(event.id);
+    }, [event.id]);
+
+    const onSharePress = useCallback(async (qrCodeDataUrl: string | null) => {
+        if (!eventDeepLink || !qrCodeDataUrl) {
+            toastService.showError(localization.t('common.errorHappened'), localization.t('event.shareQrCodeUnavailable'));
+            return;
+        }
+
+        try {
+            await Share.open({
+                failOnCancel: false,
+                filenames: [`wine-event-${event.id}-qr.png`],
+                message: `${localization.t('event.shareQrCodeMessage')}\n${eventDeepLink}`,
+                title: localization.t('event.shareQrCodeTitle'),
+                type: 'image/png',
+                urls: [qrCodeDataUrl],
+                subject: localization.t('event.shareQrCodeTitle'),
+                useInternalStorage: true,
+            });
+        } catch (error) {
+            console.warn('useEventCard -> onSharePress: ', error);
+            toastService.showError(localization.t('common.errorHappened'), localization.t('common.somethingWentWrong'));
+        }
+    }, [event.id, eventDeepLink]);
+
+    const onQrCodeSharePress = useCallback((qrCodeData?: string) => {
+        if (!qrCodeData) {
+            onSharePress(null);
+            return;
+        }
+
+        onSharePress(`${QR_CODE_IMAGE_PREFIX}${qrCodeData}`);
+    }, [onSharePress]);
+
+    const onQrCodeRef = useCallback((ref: QrCodeRef | null) => {
+        qrCodeRef.current = ref;
+    }, []);
+
+    const onShareIconPress = useCallback(() => {
+        qrCodeRef.current?.toDataURL(onQrCodeSharePress);
+        if (!qrCodeRef.current) {
+            onQrCodeSharePress();
+        }
+    }, [onQrCodeSharePress]);
+
     const mapPreviewUri = useMemo(() => {
         const params = [
             `center=${event.latitude},${event.longitude}`,
@@ -263,12 +367,19 @@ export const useEventCard = ({
         formattedDateTime,
         priceLabel,
         eventTypeLabel,
+        isAllSpotsFull,
+        eventStatusLabel,
+        appliedEventStatusLabel,
         isPartyEvent,
         isCardPressed,
         onCardPress: onCardPressHandler,
         onPressIn,
         onPressOut,
         onReadMorePress: onReadMorePressHandler,
+        onQrCodeSharePress,
+        onQrCodeRef,
+        onShareIconPress,
+        eventDeepLink,
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
         isOwner,

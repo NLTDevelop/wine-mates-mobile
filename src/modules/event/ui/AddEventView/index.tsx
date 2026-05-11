@@ -60,6 +60,8 @@ export const AddEventView = () => {
         onStartTimeSelect,
         onEndTimeSelect,
         onChangePhoneNumber,
+        onChangePhoneCountryCode,
+        onClearPhoneNumber,
         onChangePrice,
         onChangeLanguage,
         onChangeSeats,
@@ -73,6 +75,7 @@ export const AddEventView = () => {
         onChangeContactInfoIds,
         onLocationPress,
         onSubmit,
+        phoneCountryCca2,
     } = useAddEvent();
 
     const {
@@ -220,7 +223,7 @@ export const AddEventView = () => {
         <>
             <ScreenContainer
                 edges={['top', 'bottom']}
-                headerComponent={<HeaderWithBackButton title={t('event.addEvent')} isCentered={false} />}
+                headerComponent={<HeaderWithBackButton title={t('event.addEvent')} isCentered={true} />}
                 withGradient
             >
                 <View style={styles.container}>
@@ -260,6 +263,9 @@ export const AddEventView = () => {
                             <PhoneInputField
                                 value={form.phoneNumber}
                                 onChangeText={onChangePhoneNumber}
+                                clearPhone={onClearPhoneNumber}
+                                onChangeCountryCode={onChangePhoneCountryCode}
+                                initialCca2={phoneCountryCca2}
                                 placeholder={t('event.phoneNumber')}
                             />
 

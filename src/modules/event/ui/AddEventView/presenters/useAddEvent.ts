@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { CountryCode, parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useValidator } from '@/hooks/useValidator';
 import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
@@ -28,6 +29,8 @@ interface IEventForm {
     eventStartTime: string;
     eventEndTime: string;
     phoneNumber: string;
+    phoneCountryCode: string;
+    phoneCountryCca2: CountryCode | null;
     price: string;
     currency: string;
     speakerName: string;
@@ -44,6 +47,34 @@ interface IEventForm {
     contactIds: number[];
 }
 
+const getParsedPhone = (value?: string) => {
+    const rawValue = (value || '').trim();
+
+    if (!rawValue) {
+        return {
+            phoneNumber: '',
+            phoneCountryCode: '',
+            phoneCountryCca2: null as CountryCode | null,
+        };
+    }
+
+    const parsed = parsePhoneNumberFromString(rawValue);
+
+    if (!parsed) {
+        return {
+            phoneNumber: rawValue.replace(/\D/g, ''),
+            phoneCountryCode: '',
+            phoneCountryCca2: null as CountryCode | null,
+        };
+    }
+
+    return {
+        phoneNumber: parsed.nationalNumber || '',
+        phoneCountryCode: `+${parsed.countryCallingCode}`,
+        phoneCountryCca2: parsed.country || null,
+    };
+};
+
 const formatDateToLocalApi = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -52,7 +83,20 @@ const formatDateToLocalApi = (date: Date) => {
     return `${year}-${month}-${day}`;
 };
 
-const getInitialForm = (draft?: IAddEventDraft): IEventForm => {
+const normalizeTimeToHoursMinutes = (value?: string) => {
+    if (!value) {
+        return '';
+    }
+
+    const [hours = '', minutes = ''] = value.split(':');
+    if (!hours || !minutes) {
+        return value;
+    }
+
+    return `${hours}:${minutes}`;
+};
+
+const getInitialForm = (draft?: IAddEventDraft, isEditMode = false): IEventForm => {
     if (!draft) {
         return {
             theme: '',
@@ -66,6 +110,8 @@ const getInitialForm = (draft?: IAddEventDraft): IEventForm => {
             eventStartTime: '',
             eventEndTime: '',
             phoneNumber: '',
+            phoneCountryCode: '',
+            phoneCountryCca2: null,
             price: '',
             currency: '',
             speakerName: '',
@@ -77,11 +123,13 @@ const getInitialForm = (draft?: IAddEventDraft): IEventForm => {
             participationCondition: undefined,
             requiresConfirmation: undefined,
             minAge: 18,
-            maxAge: 80,
+            maxAge: 100,
             paymentMethodIds: [],
             contactIds: [],
         };
     }
+
+    const parsedPhone = getParsedPhone(draft.phoneNumber);
 
     return {
         theme: draft.theme,
@@ -90,11 +138,13 @@ const getInitialForm = (draft?: IAddEventDraft): IEventForm => {
         locationLabel: draft.locationLabel,
         locationCountry: draft.locationCountry || '',
         location: draft.location,
-        eventStartDate: '',
-        eventEndDate: '',
-        eventStartTime: '',
-        eventEndTime: '',
-        phoneNumber: draft.phoneNumber,
+        eventStartDate: isEditMode ? draft.eventStartDate : '',
+        eventEndDate: isEditMode ? draft.eventEndDate : '',
+        eventStartTime: isEditMode ? normalizeTimeToHoursMinutes(draft.eventStartTime) : '',
+        eventEndTime: isEditMode ? normalizeTimeToHoursMinutes(draft.eventEndTime) : '',
+        phoneNumber: parsedPhone.phoneNumber,
+        phoneCountryCode: parsedPhone.phoneCountryCode,
+        phoneCountryCca2: parsedPhone.phoneCountryCca2,
         price: draft.price,
         currency: draft.currency,
         speakerName: draft.speakerName,
@@ -116,6 +166,7 @@ export const useAddEvent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
     const route = useRoute<RouteProp<EventStackParamList, 'AddEventView'>>();
     const { validateEmptyString } = useValidator();
+    const isEditMode = typeof route.params?.editEventId === 'number';
 
     const [isPaymentMethodsLoading, setIsPaymentMethodsLoading] = useState(false);
     const [isContactInfoLoading, setIsContactInfoLoading] = useState(false);
@@ -124,7 +175,7 @@ export const useAddEvent = () => {
     const [contacts, setContacts] = useState<IContactsListItem[]>([]);
     const [currencies, setCurrencies] = useState<string[]>([]);
     const [isSeatsError, setIsSeatsError] = useState(false);
-    const [form, setForm] = useState<IEventForm>(() => getInitialForm(route.params?.draft));
+    const [form, setForm] = useState<IEventForm>(() => getInitialForm(route.params?.draft, isEditMode));
 
     const isPartyEventType = form.eventType === EventType.Parties;
     const isPaymentMethodsDisabled = useMemo(() => {
@@ -253,6 +304,14 @@ export const useAddEvent = () => {
         setForm(prev => ({ ...prev, phoneNumber: value }));
     }, []);
 
+    const onChangePhoneCountryCode = useCallback((value: string) => {
+        setForm(prev => ({ ...prev, phoneCountryCode: value }));
+    }, []);
+
+    const onClearPhoneNumber = useCallback(() => {
+        setForm(prev => ({ ...prev, phoneNumber: '' }));
+    }, []);
+
     const onChangePrice = useCallback((value: string) => {
         const numericValue = value.replace(/[^0-9]/g, '');
         const isZeroPrice = numericValue !== '' && Number(numericValue) === 0;
@@ -361,6 +420,21 @@ export const useAddEvent = () => {
         };
     }, [navigation, onChangeLocation, route.params?.pickedLocation]);
 
+    const phoneValueToSubmit = useMemo(() => {
+        const normalizedPhone = form.phoneNumber.trim().replace(/\D/g, '');
+        const normalizedCountryCode = form.phoneCountryCode.trim();
+
+        if (!normalizedPhone) {
+            return '';
+        }
+
+        if (!normalizedCountryCode) {
+            return normalizedPhone;
+        }
+
+        return `${normalizedCountryCode}${normalizedPhone}`;
+    }, [form.phoneCountryCode, form.phoneNumber]);
+
     const onSubmit = useCallback(() => {
         if (!form.location) {
             return;
@@ -384,7 +458,7 @@ export const useAddEvent = () => {
             eventEndDate: form.eventEndDate,
             eventStartTime: form.eventStartTime,
             eventEndTime: form.eventEndTime,
-            phoneNumber: form.phoneNumber.trim(),
+            phoneNumber: phoneValueToSubmit,
             paymentMethodIds: form.paymentMethodIds,
             contactIds: form.contactIds,
             price: form.price.trim(),
@@ -404,8 +478,9 @@ export const useAddEvent = () => {
         navigation.navigate('AddWineSetView', {
             draft,
             initialSelectedWines: route.params?.initialSelectedWines,
+            editEventId: route.params?.editEventId,
         });
-    }, [form, navigation, route.params?.initialSelectedWines]);
+    }, [form, navigation, phoneValueToSubmit, route.params?.editEventId, route.params?.initialSelectedWines]);
 
     const disabled =
         !validateEmptyString(form.theme.trim()).isValid ||
@@ -415,7 +490,7 @@ export const useAddEvent = () => {
         !validateEmptyString(form.eventEndDate).isValid ||
         !validateEmptyString(form.eventStartTime).isValid ||
         !validateEmptyString(form.eventEndTime).isValid ||
-        !validateEmptyString(form.phoneNumber.trim()).isValid ||
+        !validateEmptyString(phoneValueToSubmit).isValid ||
         (!isPaymentMethodsDisabled && form.paymentMethodIds.length === 0) ||
         form.contactIds.length === 0 ||
         !validateEmptyString(form.price.trim()).isValid ||
@@ -446,6 +521,8 @@ export const useAddEvent = () => {
         onStartTimeSelect,
         onEndTimeSelect,
         onChangePhoneNumber,
+        onChangePhoneCountryCode,
+        onClearPhoneNumber,
         onChangePrice,
         onChangeSpeakerName,
         onChangeLanguage,
@@ -460,5 +537,6 @@ export const useAddEvent = () => {
         onChangeContactInfoIds,
         onLocationPress,
         onSubmit,
+        phoneCountryCca2: form.phoneCountryCca2,
     };
 };

@@ -56,6 +56,7 @@ export const useEventMapScreen = () => {
         onModalReadMorePress,
         onModalFavoritePress,
         onReadMorePress,
+        onEditPress,
         onFavoritePress,
     } = useEventMapView({
         events,
@@ -162,6 +163,7 @@ export const useEventMapScreen = () => {
         userLocation,
         filteredEvents: events,
         onReadMorePress,
+        onEditPress,
         onFavoritePress,
         onAddEvent,
         selectedEvent,

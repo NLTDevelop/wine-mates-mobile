@@ -18,6 +18,8 @@ import { useRefresh } from '@/hooks/useRefresh';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 import { Loader } from '@/UIKit/Loader';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
+import { Button } from '@/UIKit/Button';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface IRoute {
     key: 'created' | 'saved' | 'applied';
@@ -29,6 +31,7 @@ interface ISceneProps {
 }
 
 export const EventListView = observer(() => {
+    const { bottom } = useSafeAreaInsets();
     const { t, colors } = useUiContext();
     const {
         savedEvents,
@@ -45,13 +48,15 @@ export const EventListView = observer(() => {
         routes,
         onIndexChange,
         onReadMorePress,
+        onAddEventPress,
         selectedEvent,
         isModalVisible,
         onCardPress,
         onCloseModal,
         onModalReadMorePress,
+        onEditPress,
     } = useEventListView({ t, createdEvents, savedEvents, appliedEvents });
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
 
     const refresh = useRefresh(onRefresh);
     const keyCreatedExtractor = useCallback((item: IEvent, index: number) => `${item.id || index}`, []);
@@ -74,9 +79,10 @@ export const EventListView = observer(() => {
                 onReadMorePress={onReadMorePress}
                 onFavoritePress={onFavoritePress}
                 onCardPress={onCardPress}
+                onEditPress={onEditPress}
             />
         ),
-        [onCardPress, onFavoritePress, onReadMorePress],
+        [onCardPress, onEditPress, onFavoritePress, onReadMorePress],
     );
 
     const onRenderSavedItem = useCallback(
@@ -87,9 +93,10 @@ export const EventListView = observer(() => {
                 onReadMorePress={onReadMorePress}
                 onFavoritePress={onFavoritePress}
                 onCardPress={onCardPress}
+                onEditPress={onEditPress}
             />
         ),
-        [onCardPress, onFavoritePress, onReadMorePress],
+        [onCardPress, onEditPress, onFavoritePress, onReadMorePress],
     );
 
     const onRenderAppliedItem = useCallback(
@@ -101,9 +108,10 @@ export const EventListView = observer(() => {
                 appliedEventStatus={item.status}
                 onFavoritePress={onFavoritePress}
                 onCardPress={onCardPress}
+                onEditPress={onEditPress}
             />
         ),
-        [onCardPress, onFavoritePress, onReadMorePress],
+        [onCardPress, onEditPress, onFavoritePress, onReadMorePress],
     );
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
@@ -171,6 +179,8 @@ export const EventListView = observer(() => {
         return <TabsBar tabBarProps={props} onIndexChange={onIndexChange} />;
     };
 
+    const isCreatedTab = routes[screenIndex]?.key === 'created';
+
     return (
         <>
             <ScreenContainer
@@ -188,6 +198,9 @@ export const EventListView = observer(() => {
                         onIndexChange={onIndexChange}
                         initialLayout={{ width: size.width }}
                     />
+                    {isCreatedTab && (
+                        <Button text={t('event.addEvent')} onPress={onAddEventPress} containerStyle={styles.addButton} />
+                    )}
                 </View>
             </ScreenContainer>
 
@@ -203,6 +216,7 @@ export const EventListView = observer(() => {
                         isModalContent
                         onReadMorePress={onModalReadMorePress}
                         onFavoritePress={onFavoritePress}
+                        onEditPress={onEditPress}
                     />
                 </BottomModal>
             )}

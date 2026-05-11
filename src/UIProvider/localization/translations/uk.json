@@ -348,7 +348,7 @@
         "close": "Закрити"
     },
     "event": {
-        "addEvent": "Додати винну подію",
+        "addEvent": "Додати подію",
         "updateEvent": "Оновити події",
         "basicInfo": "Основна інформація",
         "locationAndSchedule": "Локація та розклад",
@@ -414,6 +414,7 @@
         "confirmed": "Підтверджено",
         "pending": "В очікування",
         "rejected": "Відхилено",
+        "allSpotsFullMessage": "Усі місця зайняті. Ви можете надіслати запит — ми повідомимо вас, якщо місце стане доступним.",
         "invalidStartDateError": "Початкова дата не може бути пізніше кінцевої",
         "invalidEndDateError": "Кінцева дата не може бути раніше початкової",
         "invalidEndTimeError": "Час завершення не може бути раніше часу початку",
@@ -440,6 +441,9 @@
         "kmFromYou": "{{distance}} км від вас",
         "kmOnly": "{{distance}} км",
         "language": "Мова",
+        "sex": "Стать",
+        "age": "Вік",
+        "participationCondition": "Умова участі",
         "seats": "Місця",
         "confirmationAvailability": "Наявність підтвердження",
         "confirmationRequired": "Потрібне підтвердження",

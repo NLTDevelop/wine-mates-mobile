@@ -344,7 +344,7 @@
         "close": "Close"
     },
     "event": {
-        "addEvent": "Add wine event",
+        "addEvent": "Add event",
         "updateEvent": "Update event",
         "basicInfo": "Basic info",
         "locationAndSchedule": "Location & Schedule",
@@ -410,6 +410,7 @@
         "confirmed": "Confirmed",
         "pending": "Pending",
         "rejected": "Rejected",
+        "allSpotsFullMessage": "All spots are full. You can send a request — you will be notified if a spot becomes available.",
         "invalidStartDateError": "Start date cannot be later than end date",
         "invalidEndDateError": "End date cannot be earlier than start date",
         "invalidEndTimeError": "End time cannot be earlier than start time",
@@ -436,6 +437,9 @@
         "kmFromYou": "{{distance}} km from you",
         "kmOnly": "{{distance}} km",
         "language": "Language",
+        "sex": "Sex",
+        "age": "Age",
+        "participationCondition": "Participation condition",
         "seats": "Seats",
         "confirmationAvailability": "Availability of confirmation",
         "confirmationRequired": "Confirmation required",

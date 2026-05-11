@@ -12,10 +12,27 @@ import { IAddEventDraft } from '@/modules/event/types/IAddEventDraft';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { EventType } from '@/entities/events/enums/EventType';
+import { IMedia } from '@/entities/media/types/IMedia';
 
 interface IProps {
     eventId: number;
 }
+
+const mapWineImageToMedia = (image?: { smallUrl?: string; mediumUrl?: string; originalUrl?: string } | null): IMedia | null => {
+    if (!image) {
+        return null;
+    }
+
+    return {
+        name: '',
+        originalName: '',
+        mimetype: '',
+        size: 0,
+        smallUrl: image.smallUrl || '',
+        mediumUrl: image.mediumUrl || '',
+        originalUrl: image.originalUrl || '',
+    };
+};
 
 export const useEventDetailsTab = ({ eventId }: IProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
@@ -168,7 +185,59 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
         }
     }, [eventDetail, eventId, isBookNowInProgress, isCancelEventDisabled, setEventDetail]);
 
-    const onEditPress = useCallback(() => {}, []);
+    const onEditPress = useCallback(() => {
+        if (!eventDetail) {
+            return;
+        }
+
+        const draft: IAddEventDraft = {
+            theme: eventDetail.theme || '',
+            description: eventDetail.description || '',
+            restaurantName: eventDetail.restaurantName || eventDetail.restaurant || '',
+            locationLabel: eventDetail.locationLabel || eventDetail.location || '',
+            locationCountry: '',
+            location: {
+                latitude: eventDetail.latitude,
+                longitude: eventDetail.longitude,
+            },
+            eventStartDate: eventDetail.eventStartDate || eventDetail.eventDate || '',
+            eventEndDate: eventDetail.eventEndDate || eventDetail.eventDate || '',
+            eventStartTime: eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '',
+            eventEndTime: eventDetail.eventEndTime || eventDetail.endTime || '',
+            phoneNumber: eventDetail.phoneNumber || '',
+            paymentMethodIds: [],
+            contactIds: [],
+            price: String(eventDetail.price || ''),
+            currency: eventDetail.currency ? String(eventDetail.currency) : '',
+            speakerName: eventDetail.speakerName || eventDetail.speaker || '',
+            language: eventDetail.language || 'ua',
+            seats: String(eventDetail.seats?.total || ''),
+            minAge: typeof eventDetail.minAge === 'number' ? eventDetail.minAge : 18,
+            maxAge: typeof eventDetail.maxAge === 'number' ? eventDetail.maxAge : 100,
+            sex: eventDetail.sex,
+            eventType: eventDetail.eventType || EventType.Tastings,
+            tastingType: eventDetail.tastingType || TastingType.Regular,
+            participationCondition: eventDetail.participationCondition,
+            requiresConfirmation: !!eventDetail.requiresConfirmation,
+        };
+
+        const initialSelectedWines: IWineSetSearchItem[] = (eventDetail.wineSet || []).map(item => ({
+            id: item.wineId || item.wine.id,
+            name: item.wine.name,
+            producer: item.wine.producer || '',
+            vintage: item.wine.vintage || null,
+            image: mapWineImageToMedia(item.wine.image),
+            grapeVariety: null,
+            country: null,
+            region: null,
+        }));
+
+        navigation.navigate('AddEventView', {
+            draft,
+            initialSelectedWines,
+            editEventId: eventDetail.id,
+        });
+    }, [eventDetail, navigation]);
     const onDuplicatePress = useCallback(() => {
         if (!eventDetail) {
             return;
@@ -188,7 +257,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
             eventEndDate: '',
             eventStartTime: '',
             eventEndTime: '',
-            phoneNumber: '',
+            phoneNumber: eventDetail.phoneNumber || '',
             paymentMethodIds: [],
             contactIds: [],
             price: String(eventDetail.price || ''),
@@ -197,7 +266,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
             language: eventDetail.language || 'ua',
             seats: String(eventDetail.seats?.total || ''),
             minAge: typeof eventDetail.minAge === 'number' ? eventDetail.minAge : 18,
-            maxAge: typeof eventDetail.maxAge === 'number' ? eventDetail.maxAge : 80,
+            maxAge: typeof eventDetail.maxAge === 'number' ? eventDetail.maxAge : 100,
             sex: eventDetail.sex,
             eventType: eventDetail.eventType || EventType.Tastings,
             tastingType: eventDetail.tastingType || TastingType.Regular,
@@ -210,7 +279,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
             name: item.wine.name,
             producer: item.wine.producer || '',
             vintage: item.wine.vintage || null,
-            image: item.wine.image || null,
+            image: mapWineImageToMedia(item.wine.image),
             grapeVariety: null,
             country: null,
             region: null,

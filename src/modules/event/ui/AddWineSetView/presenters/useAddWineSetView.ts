@@ -80,6 +80,8 @@ export const useAddWineSetView = ({
     const route = useRoute<Route>();
     const { t } = useUiContext();
     const draft = route.params?.draft;
+    const editEventId = route.params?.editEventId;
+    const isEditMode = typeof editEventId === 'number';
     const [repeatRule, setRepeatRule] = useState<RepeatRule>(RepeatRule.Never);
     const [tastingType, setTastingType] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
     const [isCreating, setIsCreating] = useState(false);
@@ -324,7 +326,7 @@ export const useAddWineSetView = ({
                 }
                 : {};
 
-            const response = await eventsService.createEvent({
+            const payload = {
                 theme: draft.theme,
                 description: draft.description,
                 restaurantName: draft.restaurantName,
@@ -349,7 +351,42 @@ export const useAddWineSetView = ({
                 repeatRule,
                 wineSet,
                 ...partyPayload,
-            }, draft.locationCountry);
+            };
+
+            if (isEditMode && editEventId) {
+                const response = await eventsService.updateEvent(editEventId, payload as any);
+                if (!response.isError) {
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            index: 1,
+                            routes: [
+                                {
+                                    name: 'TabNavigator',
+                                    state: {
+                                        index: 0,
+                                        routes: [
+                                            {
+                                                name: 'EventStack',
+                                                state: {
+                                                    index: 0,
+                                                    routes: [{ name: 'EventMapView' }],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                                { name: 'EventDetailsView', params: { eventId: editEventId } },
+                            ],
+                        }),
+                    );
+                    return;
+                }
+
+                toastService.showError(t('common.errorHappened'), response.message || t('common.somethingWentWrong'));
+                return;
+            }
+
+            const response = await eventsService.createEvent(payload, draft.locationCountry);
 
             if (!response.isError) {
                 const eventId = onGetCreatedEventId(response.data);
@@ -365,7 +402,7 @@ export const useAddWineSetView = ({
         } finally {
             setIsCreating(false);
         }
-    }, [draft, isCreating, onGetCreatedEventId, repeatRule, selectedWines, t, tastingType]);
+    }, [draft, editEventId, isCreating, isEditMode, navigation, onGetCreatedEventId, repeatRule, selectedWines, t, tastingType]);
 
     const resetToEventList = useCallback(() => {
         navigation.dispatch(
@@ -472,6 +509,7 @@ export const useAddWineSetView = ({
         eventDeepLink,
         isCreating,
         isCreateEventDisabled,
+        isEditMode,
         searchInputRef,
         onChangeRepeatRule,
         onChangeTastingType,
