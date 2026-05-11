@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppState } from '@react-native-community/hooks';
-import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
+import { StackActions, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
+import { BackHandler } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Camera, PhotoFile, TakePhotoOptions, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
@@ -8,6 +9,7 @@ import ImageResizer from 'react-native-image-resizer';
 import { IWineImage } from '@/entities/wine/types/IWineImage';
 import { wineModel } from '@/entities/wine/WineModel';
 import { isAndroid } from '@/utils';
+import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 
 export const useScanner = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -76,7 +78,7 @@ export const useScanner = () => {
         return () => setTorch('off');
     }, []);
 
-    const handleGalleryPress = () => {
+    const onGalleryPress = () => {
         launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, quality: 1 }, async response => {
             if (response.didCancel || response.errorCode) return;
 
@@ -92,7 +94,7 @@ export const useScanner = () => {
         });
     };
 
-    const handleTakePhotoPress = async () => {
+    const onTakePhotoPress = async () => {
         try {
             const options: TakePhotoOptions & { qualityPrioritization?: 'speed' | 'balanced' | 'quality' } = {
                 flash: torch === 'on' ? 'on' : 'off',
@@ -117,17 +119,49 @@ export const useScanner = () => {
         }
     };
 
-    const handleCrossPress = () => {
+    const onCrossPress = useCallback(() => {
         setTorch('off');
-        navigation.goBack();
-    };
+        const addWineSetScannerState = wineSetScannerModel.state;
 
-    const handleCreatePress = () => {
+        if (addWineSetScannerState) {
+            wineSetScannerModel.clear();
+            navigation.dispatch(
+                StackActions.popTo('AddWineSetView', {
+                    draft: addWineSetScannerState.draft,
+                    initialSelectedWines: addWineSetScannerState.selectedWines,
+                }),
+            );
+            return;
+        }
+
+        navigation.goBack();
+    }, [navigation]);
+
+    useFocusEffect(
+        useCallback(() => {
+            const onHardwareBackPress = () => {
+                onCrossPress();
+                return true;
+            };
+
+            const subscription = BackHandler.addEventListener('hardwareBackPress', onHardwareBackPress);
+
+            return () => {
+                subscription.remove();
+            };
+        }, [onCrossPress]),
+    );
+
+    const onCreatePress = () => {
         navigation.navigate('AddWineView');
     };
 
+    const onTorchPress = useCallback(() => {
+        setTorch(prev => (prev === 'on' ? 'off' : 'on'));
+    }, []);
+
     return {
-        appState, torch, setTorch, handleGalleryPress, handleTakePhotoPress, handleCrossPress, handleCreatePress, cameraRef,
+        appState, torch, setTorch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress, cameraRef,
         device, hasPermission, 
     };
 };

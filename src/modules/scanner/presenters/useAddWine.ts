@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { StackActions, useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { wineModel } from '@/entities/wine/WineModel';
@@ -178,11 +178,13 @@ export const useAddWine = () => {
                         wineModel.clear();
 
                         if (addWineSetScannerState) {
-                            navigation.navigate('AddWineSetView', {
-                                draft: addWineSetScannerState.draft,
-                                initialSelectedWines: addWineSetScannerState.selectedWines,
-                                selectedWine: getWineSetSearchItem(wineId, form),
-                            });
+                            navigation.dispatch(
+                                StackActions.popTo('AddWineSetView', {
+                                    draft: addWineSetScannerState.draft,
+                                    initialSelectedWines: addWineSetScannerState.selectedWines,
+                                    selectedWine: getWineSetSearchItem(wineId, form),
+                                }),
+                            );
                         }
                         return;
                     }
@@ -218,11 +220,13 @@ export const useAddWine = () => {
                     wineModel.clear();
 
                     if (addWineSetScannerState) {
-                        navigation.navigate('AddWineSetView', {
-                            draft: addWineSetScannerState.draft,
-                            initialSelectedWines: addWineSetScannerState.selectedWines,
-                            selectedWine: getWineSetSearchItem(response.data.id, form),
-                        });
+                        navigation.dispatch(
+                            StackActions.popTo('AddWineSetView', {
+                                draft: addWineSetScannerState.draft,
+                                initialSelectedWines: addWineSetScannerState.selectedWines,
+                                selectedWine: getWineSetSearchItem(response.data.id, form),
+                            }),
+                        );
                     }
                     return;
                 }

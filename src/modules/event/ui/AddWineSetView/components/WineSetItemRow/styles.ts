@@ -2,18 +2,15 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
+export const WINE_SET_ITEM_ROW_HEIGHT = 48;
+
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flexDirection: 'row',
             alignItems: 'center',
             gap: scaleHorizontal(8),
-        },
-        containerActive: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: scaleHorizontal(8),
-            opacity: 0.95,
+            height: scaleVertical(WINE_SET_ITEM_ROW_HEIGHT),
         },
         dragButton: {
             width: scaleHorizontal(40),
@@ -23,7 +20,7 @@ export const getStyles = (colors: IColors) => {
         },
         content: {
             flex: 1,
-            minHeight: scaleVertical(48),
+            height: scaleVertical(WINE_SET_ITEM_ROW_HEIGHT),
             borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: 12,
@@ -32,18 +29,6 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             backgroundColor: colors.background,
-        },
-        contentActive: {
-            flex: 1,
-            minHeight: scaleVertical(48),
-            borderWidth: scaleHorizontal(2),
-            borderColor: colors.primary,
-            borderRadius: 12,
-            paddingHorizontal: scaleHorizontal(12),
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: colors.background_light,
         },
         title: {
             color: colors.text,

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { View } from 'react-native';
-import DraggableFlatList, { RenderItemParams, ScaleDecorator } from 'react-native-draggable-flatlist';
+import Animated from 'react-native-reanimated';
+import Sortable, { SortableGridRenderItem } from 'react-native-sortables';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
@@ -16,6 +17,8 @@ import { WineSetListHeader } from './components/WineSetListHeader';
 import { WineSetListFooter } from './components/WineSetListFooter';
 import { useRepeatRuleModal } from './presenters/useRepeatRuleModal';
 import { useTastingTypeModal } from './presenters/useTastingTypeModal';
+import { useWineSetSortableList } from './presenters/useWineSetSortableList';
+import { useAddWineSetSearchBackfill } from './presenters/useAddWineSetSearchBackfill';
 
 export const AddWineSetView = () => {
     const { colors, t } = useUiContext();
@@ -27,7 +30,9 @@ export const AddWineSetView = () => {
         isSearchListVisible,
         isSearchingWines,
         isInitialSearchFinished,
+        hasMoreSearchResults,
         wineSearchResults,
+        wineSearchResultsCount,
         onChangeSearchQuery,
         onFocusSearchInput,
         onLoadMoreSearchResults,
@@ -40,10 +45,12 @@ export const AddWineSetView = () => {
         repeatRule,
         wineSetViewItems,
         wineSearchResultItems,
+        wineSearchResultItemsCount,
         shouldShowScannerButton,
         isSearchResultsScrollable,
         maxVisibleSearchResults,
         isEventCreatedAlertVisible,
+        eventDeepLink,
         isCreating,
         isCreateEventDisabled,
         onChangeRepeatRule,
@@ -61,6 +68,7 @@ export const AddWineSetView = () => {
         isSearchListVisible,
         isSearchingWines,
         isInitialSearchFinished,
+        hasMoreSearchResults,
         wineSearchResults,
         onResetSearch,
     });
@@ -90,19 +98,29 @@ export const AddWineSetView = () => {
         value: tastingType,
         onChange: onChangeTastingType,
     });
+    const {
+        autoScrollActivationOffset,
+        autoScrollMaxVelocity,
+        dragActivationDelay,
+        onDismissKeyboard,
+        rowGap,
+        scrollableRef,
+    } = useWineSetSortableList();
+    useAddWineSetSearchBackfill({
+        hasMoreSearchResults,
+        isInitialSearchFinished,
+        isSearchListVisible,
+        isSearchingWines,
+        maxVisibleSearchResults,
+        searchResultItemsCount: wineSearchResultItemsCount,
+        wineSearchResultsCount,
+        onLoadMoreSearchResults,
+    });
 
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
 
-    const renderWineItem = function renderWineItem({ item, drag, isActive }: RenderItemParams<IWineSetViewItem>) {
-        return (
-            <ScaleDecorator activeScale={1.02}>
-                <WineSetItemRow title={item.title} onEditPress={item.onEditPress} onDragPress={drag} isActive={isActive} />
-            </ScaleDecorator>
-        );
-    };
-
-    const renderListDivider = function renderListDivider() {
-        return <View style={styles.listDivider} />;
+    const renderWineItem: SortableGridRenderItem<IWineSetViewItem> = function renderWineItem({ item }) {
+        return <WineSetItemRow title={item.title} onEditPress={item.onEditPress} />;
     };
 
     return (
@@ -113,11 +131,17 @@ export const AddWineSetView = () => {
                     scrollEnabled={false}
                     headerComponent={<HeaderWithBackButton title={t('event.listWineEvent')} isCentered />}
                 >
-                    <DraggableFlatList
-                        data={wineSetViewItems}
-                        keyExtractor={keyExtractor}
-                        renderItem={renderWineItem}
-                        ListHeaderComponent={
+                    <Sortable.PortalProvider>
+                        <Animated.ScrollView
+                            ref={scrollableRef}
+                            contentContainerStyle={styles.container}
+                            keyboardShouldPersistTaps="always"
+                            nestedScrollEnabled
+                            scrollEnabled={!isSearchListVisible || !isSearchResultsScrollable}
+                            showsVerticalScrollIndicator={false}
+                            style={styles.scroll}
+                            onScrollBeginDrag={onDismissKeyboard}
+                        >
                             <WineSetListHeader
                                 searchInputRef={searchInputRef}
                                 searchTouchAreaRef={searchTouchAreaRef}
@@ -133,8 +157,32 @@ export const AddWineSetView = () => {
                                 onOpenTastingTypeModal={onOpenTastingTypeModal}
                                 onLoadMoreSearchResults={onLoadMoreSearchResults}
                             />
-                        }
-                        ListFooterComponent={
+                            <View onTouchStart={onDismissKeyboard}>
+                                <Sortable.Grid
+                                    activeItemOpacity={0.96}
+                                    activeItemScale={1.02}
+                                    activeItemShadowOpacity={0.28}
+                                    autoScrollActivationOffset={autoScrollActivationOffset}
+                                    autoScrollMaxVelocity={autoScrollMaxVelocity}
+                                    columns={1}
+                                    data={wineSetViewItems}
+                                    dimensionsAnimationType="none"
+                                    dragActivationDelay={dragActivationDelay}
+                                    inactiveItemOpacity={0.78}
+                                    inactiveItemScale={1}
+                                    itemEntering={null}
+                                    itemExiting={null}
+                                    itemsLayoutTransitionMode="reorder"
+                                    keyExtractor={keyExtractor}
+                                    overDrag="vertical"
+                                    renderItem={renderWineItem}
+                                    reorderTriggerOrigin="touch"
+                                    rowGap={rowGap}
+                                    scrollableRef={scrollableRef}
+                                    onDragStart={onDismissKeyboard}
+                                    onDragEnd={onReorderWineSet}
+                                />
+                            </View>
                             <WineSetListFooter
                                 repeatRuleLabel={repeatRuleLabel}
                                 isCreating={isCreating}
@@ -143,19 +191,8 @@ export const AddWineSetView = () => {
                                 onOpenRepeatModal={onOpenRepeatModal}
                                 onCreateEventPress={onCreateEventPress}
                             />
-                        }
-                        contentContainerStyle={styles.container}
-                        scrollEnabled={!isSearchListVisible || !isSearchResultsScrollable}
-                        nestedScrollEnabled
-                        keyboardShouldPersistTaps="always"
-                        ItemSeparatorComponent={renderListDivider}
-                        onDragEnd={onReorderWineSet}
-                        autoscrollThreshold={180}
-                        autoscrollSpeed={200}
-                        dragItemOverflow
-                        activationDistance={20}
-                        animationConfig={{ damping: 20, mass: 0.2, stiffness: 220 }}
-                    />
+                        </Animated.ScrollView>
+                    </Sortable.PortalProvider>
                 </ScreenContainer>
             </View>
 
@@ -179,6 +216,7 @@ export const AddWineSetView = () => {
             )}
             <EventCreatedAlert
                 visible={isEventCreatedAlertVisible}
+                qrCodeValue={eventDeepLink}
                 onClose={onCloseEventCreatedAlert}
                 onCheckEventPress={onCheckEventPress}
                 onShareQrPress={onShareQrPress}

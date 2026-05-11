@@ -7,12 +7,12 @@ export const getStyles = (_colors: IColors) => {
         screen: {
             flex: 1,
         },
+        scroll: {
+            flex: 1,
+        },
         container: {
             paddingHorizontal: scaleHorizontal(16),
             paddingBottom: scaleVertical(24),
-        },
-        listDivider: {
-            height: scaleVertical(8),
         },
     });
 

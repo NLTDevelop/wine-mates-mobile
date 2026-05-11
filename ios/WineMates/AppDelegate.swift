@@ -51,13 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       return true
     }
 
-    // Apple Sign-In не требует отдельного SDK-обработчика — просто возвращаем true
-    if url.scheme?.starts(with: Bundle.main.bundleIdentifier ?? "") == true {
-      return true
-    }
-
-    // На всякий случай возвращаем true для любых собственных URL
-    return true
+    return RCTLinkingManager.application(app, open: url, options: options)
   }
 }
 

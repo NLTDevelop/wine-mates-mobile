@@ -59,7 +59,7 @@ export const ContactInfoPickerModal = ({
                         ListEmptyComponent={
                             <View style={styles.stateContainer}>
                                 <Typography
-                                    variant="body_400"
+                                    variant="h5"
                                     text={t('contactInfo.noVisibleContacts')}
                                     style={styles.emptyText}
                                 />

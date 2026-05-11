@@ -3,7 +3,7 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { wineService } from '@/entities/wine/WineService';
 import { wineListModel } from '@/entities/wine/WineListModel';
-import { useNavigation } from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { wineModel } from '@/entities/wine/WineModel';
@@ -76,11 +76,13 @@ export const useScannerResultsList = () => {
 
         if (addWineSetScannerState) {
             wineSetScannerModel.clear();
-            navigation.navigate('AddWineSetView', {
-                draft: addWineSetScannerState.draft,
-                initialSelectedWines: addWineSetScannerState.selectedWines,
-                selectedWine: getWineSetSearchItem(item),
-            });
+            navigation.dispatch(
+                StackActions.popTo('AddWineSetView', {
+                    draft: addWineSetScannerState.draft,
+                    initialSelectedWines: addWineSetScannerState.selectedWines,
+                    selectedWine: getWineSetSearchItem(item),
+                }),
+            );
             return;
         }
 
