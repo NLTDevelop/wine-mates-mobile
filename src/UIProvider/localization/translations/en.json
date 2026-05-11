@@ -444,6 +444,8 @@
         "eventDetailsTab": "Event Details",
         "guestsTab": "Guests",
         "bookNow": "Book now",
+        "booked": "Booked",
+        "cancel": "Cancel Event",
         "contactForBooking": "Contact for booking",
         "callToReserve": "Call to reserve",
         "duplicate": "Duplicate"

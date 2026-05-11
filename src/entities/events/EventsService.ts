@@ -283,6 +283,30 @@ class EventsService {
         };
     };
 
+    private applyBookingState = (id: number, isApplied: boolean) => {
+        const currentEvent = this.getEventById(id);
+        const currentSeatsLeft = currentEvent?.seats?.left;
+
+        if (typeof currentSeatsLeft === 'number' && currentEvent?.seats) {
+            const seatsDelta = isApplied ? -1 : 1;
+            const nextSeatsLeft = Math.max(0, currentSeatsLeft + seatsDelta);
+
+            this.updateEventInModels(id, {
+                isApplied,
+                seats: {
+                    ...currentEvent.seats,
+                    left: nextSeatsLeft,
+                },
+            });
+        } else {
+            this.updateEventInModels(id, { isApplied });
+        }
+
+        if (!isApplied) {
+            eventsModel.appliedEvents = eventsModel.appliedEvents.filter(item => item.event.id !== id);
+        }
+    };
+
     updateEvent = async (id: number, data: Partial<IEventDetail>): Promise<IResponse<IEventDetail>> => {
         try {
             const response = await this._requester.request({
@@ -357,16 +381,35 @@ class EventsService {
         }
     };
 
-    registerForEvent = async (id: number): Promise<IResponse<{ success: boolean }>> => {
+    applyForEvent = async (eventId: number): Promise<IResponse<{ success: boolean }>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
-                url: `${this._links.events}/${id}/register`,
+                url: `${this._links.eventBookings}`,
+                data: { eventId },
             });
+
+            if (!response.isError) {
+                this.applyBookingState(eventId, true);
+            }
 
             return response;
         } catch (error) {
-            console.warn('EventsService -> registerForEvent: ', error);
+            console.warn('EventsService -> applyForEvent: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    cancelApplyForEvent = async (eventId: number): Promise<IResponse<IEventDetail>> => {
+        try {
+            const response = await this.updateEvent(eventId, { isApplied: false });
+            if (!response.isError) {
+                this.applyBookingState(eventId, false);
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> cancelApplyForEvent: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

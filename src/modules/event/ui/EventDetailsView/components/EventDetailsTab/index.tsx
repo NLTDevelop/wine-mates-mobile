@@ -6,7 +6,6 @@ import { EmptyListView } from '@/UIKit/EmptyListView';
 import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
 import { EditButton } from '@/UIKit/EditButton';
-import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { IWineSetItem } from '@/entities/events/types/IWineSetItem';
 import { IEventContactOption } from '@/modules/event/ui/EventDetailsView/types/IEventContactOption';
 import { WineSetItem } from '../WineSetItem';
@@ -30,13 +29,16 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
         wineSetItems,
         contactItems,
         cardPreviewData,
-        isBookingModalVisible,
         onBookNowPress,
-        onCloseModal,
+        onCancelEventPress,
         onFavoritePress,
-        onCallToReservePress,
         onEditPress,
+        onDuplicatePress,
         isOwner,
+        isBookNowDisabled,
+        isCancelEventDisabled,
+        isBookNowInProgress,
+        isEventApplied,
     } = useEventDetailsTab({ eventId });
 
     const keyExtractor = (item: IWineSetItem) => `${item.id}`;
@@ -108,7 +110,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
 
                 {contactItems.length > 0 && (
                     <View style={styles.contactsSection}>
-                        <Typography text={t('contactInfo.socialNetworks')} variant="h5" style={styles.contactsTitle} />
+                        <Typography text={t('contactInfo.contacts')} variant="h5" style={styles.contactsTitle} />
                         <FlatList
                             data={contactItems}
                             keyExtractor={contactKeyExtractor}
@@ -120,37 +122,41 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                 )}
 
                 <View style={styles.footer}>
-                    <View style={styles.footerRow}>
-                        <Button
-                            type="secondary"
-                            containerStyle={styles.bookNowButton}
-                            text={t('eventDetails.duplicate')}
-                            onPress={onBookNowPress}
-                        />
-                        {isOwner ? (
-                            <EditButton onPress={onEditPress} size={48} />
-                        ) : (
+                    {isOwner ? (
+                        <>
+                            <View style={styles.footerRow}>
+                                <Button
+                                    type="secondary"
+                                    containerStyle={styles.bookNowButton}
+                                    text={t('eventDetails.duplicate')}
+                                    onPress={onDuplicatePress}
+                                />
+                                <EditButton onPress={onEditPress} size={48} disabled={isCancelEventDisabled}/>
+                            </View>
+                            <Button
+                                type="main"
+                                containerStyle={styles.bookNowButton}
+                                text={t('eventDetails.cancel')}
+                                onPress={onCancelEventPress}
+                                disabled={isCancelEventDisabled}
+                                inProgress={isBookNowInProgress}
+                            />
+                        </>
+                    ) : (
+                        <View style={styles.footerRow}>
+                            <Button
+                                type="main"
+                                containerStyle={styles.bookNowButton}
+                                text={isEventApplied ? t('eventDetails.booked') : t('eventDetails.bookNow')}
+                                onPress={onBookNowPress}
+                                disabled={isEventApplied || isBookNowDisabled}
+                                inProgress={isBookNowInProgress}
+                            />
                             <FavoriteButton onPress={onFavoritePress} size={48} isSaved={Boolean(eventDetail.isSaved)} />
-                        )}
-                    </View>
-                    <Button
-                        type="main"
-                        containerStyle={styles.bookNowButton}
-                        text={t('eventDetails.bookNow')}
-                        onPress={onBookNowPress}
-                    />
+                        </View>
+                    )}
                 </View>
             </ScrollView>
-
-            <BottomModal
-                visible={isBookingModalVisible}
-                onClose={onCloseModal}
-                title={t('eventDetails.contactForBooking')}
-            >
-                <View>
-                    <Button type="main" text={t('eventDetails.callToReserve')} onPress={onCallToReservePress} />
-                </View>
-            </BottomModal>
         </View>
     );
 };
