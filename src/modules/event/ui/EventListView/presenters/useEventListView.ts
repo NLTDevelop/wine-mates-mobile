@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
-import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 
 interface IRoute {
     key: 'created' | 'saved' | 'applied';
@@ -13,7 +12,7 @@ interface IProps {
     t: ILocalization['t'];
 }
 
-type Navigation = NativeStackNavigationProp<EventStackParamList>;
+type Navigation = NativeStackNavigationProp<Record<string, object | undefined>>;
 
 export const useEventListView = ({ t }: IProps) => {
     const navigation = useNavigation<Navigation>();

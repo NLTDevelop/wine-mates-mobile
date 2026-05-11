@@ -5,7 +5,7 @@ import { scaleVertical } from '@/utils';
 const DEFAULT_BUTTON_SIZE = scaleVertical(40);
 
 export const getStyles = (colors: IColors, size?: number) => {
-    const buttonSize = size || DEFAULT_BUTTON_SIZE;
+    const buttonSize = scaleVertical(size) || DEFAULT_BUTTON_SIZE;
 
     const styles = StyleSheet.create({
         favoriteButton: {

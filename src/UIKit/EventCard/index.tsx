@@ -122,7 +122,7 @@ export const EventCard = ({
             {showFooter && (
                 <View style={styles.footer}>
                     <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
-                     {"status" in event ? <EditButton onPress={onFavoritePressHandler} size={56} /> : <FavoriteButton onPress={onFavoritePressHandler} size={56} />}
+                     {"status" in event ? <EditButton onPress={onFavoritePressHandler} size={48} /> : <FavoriteButton onPress={onFavoritePressHandler} size={56} />}
                 </View>
             )}
 

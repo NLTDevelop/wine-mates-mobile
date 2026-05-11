@@ -112,7 +112,7 @@ export const useEventsList = () => {
 
     useEffect(() => {
         return () => eventsModel.clear();
-    });
+    }, []);
 
     return {
         savedEvents,
