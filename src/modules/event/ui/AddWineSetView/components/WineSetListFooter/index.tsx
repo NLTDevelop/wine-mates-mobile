@@ -12,6 +12,7 @@ interface IProps {
     repeatRuleLabel: string;
     isCreating: boolean;
     isCreateEventDisabled: boolean;
+    isEditMode: boolean;
     onAddWinePress: () => void;
     onOpenRepeatModal: () => void;
     onCreateEventPress: () => void;
@@ -21,6 +22,7 @@ export const WineSetListFooter = ({
     repeatRuleLabel,
     isCreating,
     isCreateEventDisabled,
+    isEditMode,
     onAddWinePress,
     onOpenRepeatModal,
     onCreateEventPress,
@@ -50,7 +52,7 @@ export const WineSetListFooter = ({
             </View>
 
             <Button
-                text={t('event.createEvent')}
+                text={isEditMode ? t('event.updateEvent') : t('event.createEvent')}
                 type="main"
                 onPress={onCreateEventPress}
                 inProgress={isCreating}

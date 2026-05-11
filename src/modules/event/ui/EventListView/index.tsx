@@ -50,6 +50,7 @@ export const EventListView = observer(() => {
         onCardPress,
         onCloseModal,
         onModalReadMorePress,
+        onEditPress,
     } = useEventListView({ t, createdEvents, savedEvents, appliedEvents });
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -74,9 +75,10 @@ export const EventListView = observer(() => {
                 onReadMorePress={onReadMorePress}
                 onFavoritePress={onFavoritePress}
                 onCardPress={onCardPress}
+                onEditPress={onEditPress}
             />
         ),
-        [onCardPress, onFavoritePress, onReadMorePress],
+        [onCardPress, onEditPress, onFavoritePress, onReadMorePress],
     );
 
     const onRenderSavedItem = useCallback(
@@ -87,9 +89,10 @@ export const EventListView = observer(() => {
                 onReadMorePress={onReadMorePress}
                 onFavoritePress={onFavoritePress}
                 onCardPress={onCardPress}
+                onEditPress={onEditPress}
             />
         ),
-        [onCardPress, onFavoritePress, onReadMorePress],
+        [onCardPress, onEditPress, onFavoritePress, onReadMorePress],
     );
 
     const onRenderAppliedItem = useCallback(
@@ -101,9 +104,10 @@ export const EventListView = observer(() => {
                 appliedEventStatus={item.status}
                 onFavoritePress={onFavoritePress}
                 onCardPress={onCardPress}
+                onEditPress={onEditPress}
             />
         ),
-        [onCardPress, onFavoritePress, onReadMorePress],
+        [onCardPress, onEditPress, onFavoritePress, onReadMorePress],
     );
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
@@ -203,6 +207,7 @@ export const EventListView = observer(() => {
                         isModalContent
                         onReadMorePress={onModalReadMorePress}
                         onFavoritePress={onFavoritePress}
+                        onEditPress={onEditPress}
                     />
                 </BottomModal>
             )}

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
   const styles = StyleSheet.create({
@@ -21,7 +21,7 @@ export const getStyles = (colors: IColors) => {
     inputContainer: {
       height: scaleVertical(56),
       width: scaleHorizontal(80),
-      borderWidth: 1,
+      borderWidth: scaleHorizontal(1),
       borderColor: colors.border,
       padding: 0,
       borderRadius: 10,

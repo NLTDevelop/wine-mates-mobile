@@ -17,6 +17,7 @@ export interface IEvent {
     eventEndDate?: string;
     eventStartTime?: string;
     eventEndTime?: string;
+    phoneNumber?: string;
     price: number;
     priceUsd: number;
     currency: Currency | string;
@@ -73,6 +74,7 @@ export interface IEventDetail {
     eventTime?: string;
     eventStartTime?: string;
     eventEndTime?: string;
+    phoneNumber?: string;
     attendees?: string[];
     attendeesCount?: number;
     contacts?: IEventContact[];
