@@ -7,6 +7,9 @@ import { IWineSetItem } from './IWineSetItem';
 
 export interface IEvent {
     id: number;
+    ownerId?: number;
+    isActive?: boolean;
+    isApplied?: boolean;
     theme: string;
     eventDate?: string;
     eventTime?: string;
@@ -54,6 +57,9 @@ export interface ISeat{
 
 export interface IEventDetail {
     id: number;
+    ownerId?: number;
+    isActive?: boolean;
+    isApplied?: boolean;
     latitude: number;
     longitude: number;
     title?: string;

@@ -92,6 +92,14 @@ export const useEventsList = () => {
         }
     }, [isLoading, createdEvents, loadEvents]); 
 
+    const onFavoritePress = useCallback(async (eventId: number) => {
+        try {
+            await eventsService.toggleSave(eventId);
+        } catch (error) {
+            console.warn('useEventsList -> onFavoritePress: ', error);
+        }
+    }, []);
+
 
     useEffect(() => {
 
@@ -126,5 +134,6 @@ export const useEventsList = () => {
         onRefresh,
         onLoadMoreSaved,
         onLoadMoreCreated,
+        onFavoritePress,
     };
 };

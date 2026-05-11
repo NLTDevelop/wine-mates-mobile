@@ -10,13 +10,15 @@ interface IProps {
     selectedEventId: number | null;
     onReadMorePress: (eventId: number) => void;
     onFavoritePress: (eventId: number) => void;
+    onCardPress: (eventId: number) => void;
 }
 
 export const WineEventList = ({
     events,
     selectedEventId,
     onReadMorePress,
-    onFavoritePress
+    onFavoritePress,
+    onCardPress,
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -27,6 +29,7 @@ export const WineEventList = ({
             isSelected={selectedEventId === item.id}
             onReadMorePress={onReadMorePress}
             onFavoritePress={onFavoritePress}
+            onCardPress={onCardPress}
         />
     );
 

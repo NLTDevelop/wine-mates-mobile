@@ -25,6 +25,7 @@ export const useEventMapScreen = () => {
         userLocation,
         selectedTab,
         onTabChange,
+        onFavoritePress: onMapFavoritePress,
         refetch: onRefetchMapPins,
     } = useEventMap({ searchLocation, filters });
 
@@ -50,12 +51,16 @@ export const useEventMapScreen = () => {
         isModalVisible,
         onAddEvent,
         onMarkerPress,
+        onCardPress,
         onCloseModal,
         onModalReadMorePress,
         onModalFavoritePress,
         onReadMorePress,
         onFavoritePress,
-    } = useEventMapView({ events });
+    } = useEventMapView({
+        events,
+        onFavoritePress: onMapFavoritePress,
+    });
 
     const filterCount = useMemo(() => {
         let nextCount = 0;
@@ -153,6 +158,7 @@ export const useEventMapScreen = () => {
         mapPins,
         initialRegion,
         onMarkerPress,
+        onCardPress,
         userLocation,
         filteredEvents: events,
         onReadMorePress,

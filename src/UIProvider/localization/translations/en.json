@@ -444,8 +444,11 @@
         "eventDetailsTab": "Event Details",
         "guestsTab": "Guests",
         "bookNow": "Book now",
+        "booked": "Booked",
+        "cancel": "Cancel Event",
         "contactForBooking": "Contact for booking",
-        "callToReserve": "Call to reserve"
+        "callToReserve": "Call to reserve",
+        "duplicate": "Duplicate"
     },
     "permissions": {
         "locationTitle": "Location Permission",

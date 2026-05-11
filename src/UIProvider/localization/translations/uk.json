@@ -448,8 +448,11 @@
         "eventDetailsTab": "Деталі події",
         "guestsTab": "Гості",
         "bookNow": "Забронювати",
+        "booked": "Заброньовано",
+        "cancel": "Скасувати подію",
         "contactForBooking": "Контакт для бронювання",
-        "callToReserve": "Зателефонувати для бронювання"
+        "callToReserve": "Зателефонувати для бронювання",
+        "duplicate": "Дублювати"
     },
     "permissions": {
         "locationTitle": "Дозвіл на геолокацію",

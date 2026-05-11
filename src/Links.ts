@@ -47,6 +47,7 @@ export interface ILinks {
     eventPriceRange: string;
     createdEvents: string;
     appliedEvents: string;
+    eventBookings: string;
     eventCurrencies: string;
     paymentMethods: string;
     contacts: string;
@@ -88,6 +89,7 @@ class Links implements ILinks {
         eventPriceRange: 'events/price-range',
         createdEvents: 'events/my',
         appliedEvents: 'event-bookings/my',
+        eventBookings: 'event-bookings',
         eventCurrencies: 'users/currencies',
         paymentMethods: 'users/payment-methods',
         contacts: 'users/contacts',
@@ -206,6 +208,9 @@ class Links implements ILinks {
     }
     public get appliedEvents() {
         return `${this._domain}${this._links.appliedEvents}`;
+    }
+    public get eventBookings() {
+        return `${this._domain}${this._links.eventBookings}`;
     }
     public get eventCurrencies() {
         return `${this._domain}${this._links.eventCurrencies}`;
