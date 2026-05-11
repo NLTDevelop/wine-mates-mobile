@@ -52,6 +52,66 @@ const formatDateToLocalApi = (date: Date) => {
     return `${year}-${month}-${day}`;
 };
 
+const getInitialForm = (draft?: IAddEventDraft): IEventForm => {
+    if (!draft) {
+        return {
+            theme: '',
+            description: '',
+            restaurantName: '',
+            locationLabel: '',
+            locationCountry: '',
+            location: null,
+            eventStartDate: '',
+            eventEndDate: '',
+            eventStartTime: '',
+            eventEndTime: '',
+            phoneNumber: '',
+            price: '',
+            currency: '',
+            speakerName: '',
+            language: 'ua',
+            seats: '',
+            sex: undefined,
+            eventType: EventType.Tastings,
+            tastingType: TastingType.Regular,
+            participationCondition: undefined,
+            requiresConfirmation: undefined,
+            minAge: 18,
+            maxAge: 80,
+            paymentMethodIds: [],
+            contactIds: [],
+        };
+    }
+
+    return {
+        theme: draft.theme,
+        description: draft.description,
+        restaurantName: draft.restaurantName,
+        locationLabel: draft.locationLabel,
+        locationCountry: draft.locationCountry || '',
+        location: draft.location,
+        eventStartDate: '',
+        eventEndDate: '',
+        eventStartTime: '',
+        eventEndTime: '',
+        phoneNumber: draft.phoneNumber,
+        price: draft.price,
+        currency: draft.currency,
+        speakerName: draft.speakerName,
+        language: draft.language || 'ua',
+        seats: draft.seats,
+        minAge: draft.minAge,
+        maxAge: draft.maxAge,
+        sex: draft.sex,
+        eventType: draft.eventType,
+        tastingType: draft.tastingType,
+        participationCondition: draft.participationCondition,
+        requiresConfirmation: draft.requiresConfirmation,
+        paymentMethodIds: draft.paymentMethodIds,
+        contactIds: draft.contactIds,
+    };
+};
+
 export const useAddEvent = () => {
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
     const route = useRoute<RouteProp<EventStackParamList, 'AddEventView'>>();
@@ -64,33 +124,7 @@ export const useAddEvent = () => {
     const [contacts, setContacts] = useState<IContactsListItem[]>([]);
     const [currencies, setCurrencies] = useState<string[]>([]);
     const [isSeatsError, setIsSeatsError] = useState(false);
-    const [form, setForm] = useState<IEventForm>({
-        theme: '',
-        description: '',
-        restaurantName: '',
-        locationLabel: '',
-        locationCountry: '',
-        location: null,
-        eventStartDate: '',
-        eventEndDate: '',
-        eventStartTime: '',
-        eventEndTime: '',
-        phoneNumber: '',
-        price: '',
-        currency: '',
-        speakerName: '',
-        language: 'ua',
-        seats: '',
-        sex: undefined,
-        eventType: EventType.Tastings,
-        tastingType: TastingType.Regular,
-        participationCondition: undefined,
-        requiresConfirmation: undefined,
-        minAge: 18,
-        maxAge: 80,
-        paymentMethodIds: [],
-        contactIds: [],
-    });
+    const [form, setForm] = useState<IEventForm>(() => getInitialForm(route.params?.draft));
 
     const isPartyEventType = form.eventType === EventType.Parties;
     const isPaymentMethodsDisabled = useMemo(() => {
@@ -367,8 +401,11 @@ export const useAddEvent = () => {
             requiresConfirmation: !!form.requiresConfirmation,
         };
 
-        navigation.navigate('AddWineSetView', { draft });
-    }, [form, navigation]);
+        navigation.navigate('AddWineSetView', {
+            draft,
+            initialSelectedWines: route.params?.initialSelectedWines,
+        });
+    }, [form, navigation, route.params?.initialSelectedWines]);
 
     const disabled =
         !validateEmptyString(form.theme.trim()).isValid ||

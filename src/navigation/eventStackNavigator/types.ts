@@ -12,6 +12,8 @@ export type EventStackParamList = {
             placeName?: string;
             countryName?: string;
         };
+        draft?: IAddEventDraft;
+        initialSelectedWines?: IWineSetSearchItem[];
     } | undefined;
     AddWineSetView: {
         draft: IAddEventDraft;
