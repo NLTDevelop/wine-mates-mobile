@@ -82,7 +82,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
     return (
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-                {cardPreviewData && <EventDetailsPreview data={cardPreviewData} />}
+                {cardPreviewData && <EventDetailsPreview data={cardPreviewData} eventId={eventId} />}
 
                 <View style={styles.card}>
                     {detailsData.map((item, index) => (

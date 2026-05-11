@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { View, Pressable, Image } from 'react-native';
+import { View, Pressable, Image, TouchableOpacity } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
@@ -13,8 +14,8 @@ import { useEventCard } from './presenters/useEventCard';
 import { getStyles } from './styles';
 import { ISavedEvent } from '@/entities/events/types/ISavedEvent';
 import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
-import { setUppercaseFirstLetter } from '@/utils';
 import { EditButton } from '../EditButton';
+import { ShareIcon } from '@assets/icons/ShareIcon';
 
 interface IProps {
     event: IEvent | ISavedEvent;
@@ -49,18 +50,25 @@ export const EventCard = ({
         formattedDateTime,
         priceLabel,
         eventTypeLabel,
+        isAllSpotsFull,
+        eventStatusLabel,
+        appliedEventStatusLabel,
         isPartyEvent,
         isCardPressed,
         onCardPress: onCardPressHandler,
         onPressIn,
         onPressOut,
         onReadMorePress: onReadMorePressHandler,
+        eventDeepLink,
+        onQrCodeRef,
+        onShareIconPress,
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
         isOwner,
         mapPreviewUri,
     } = useEventCard({
         event,
+        appliedEventStatus,
         onReadMorePress,
         onFavoritePress,
         onEditPress,
@@ -78,25 +86,60 @@ export const EventCard = ({
             onPressOut={canPressCard ? onPressOut : undefined}
             disabled={!canPressCard}
         >
+            {isAllSpotsFull && (
+                <Typography text={t('event.allSpotsFullMessage')} variant="body_400" style={styles.fullSpotsText} />
+            )}
+
             <View style={styles.metaRow}>
-                <View style={styles.metaBadge}>
-                    {isPartyEvent ? <PartyIcon width={20} height={20} /> : <TastingIcon width={20} height={20} />}
-                    <Typography text={eventTypeLabel} variant="body_400" style={styles.metaText} />
-                </View>
-                <View style={styles.metaBadge}>
-                    <MoneyIcon width={20} height={20} />
-                    <Typography text={priceLabel} variant="body_400" style={styles.metaText} />
-                </View>
-                { "status" in event && event.status !== null && (
-                    <View style={event.status === SavedEventStatus.FINISHED ? styles.eventStatusFinished : styles.eventStatusCanceled}>
-                        <Typography text={setUppercaseFirstLetter(event.status?.toString())} variant="body_400" style={styles.statusText} />
+                <View style={styles.metaBadgesRow}>
+                    <View style={styles.metaBadge}>
+                        {isPartyEvent ? <PartyIcon width={20} height={20} /> : <TastingIcon width={20} height={20} />}
+                        <Typography text={eventTypeLabel} variant="body_400" style={styles.metaText} />
                     </View>
-                )}
-                {appliedEventStatus && (
-                    <View style={[ styles.appliedStatusContainer, appliedEventStatus === 'pending' ? styles.appliedEventStatusPending : appliedEventStatus === 'rejected' ? styles.appliedEventStatusRejected :  appliedEventStatus === 'canceled' ?  styles.appliedEventStatusCanceled : styles.appliedEventStatusConfirmed ]}>
-                        <Typography text={setUppercaseFirstLetter(appliedEventStatus)} variant="body_400" style={styles.statusText} />
+                    <View style={styles.metaBadge}>
+                        <MoneyIcon width={20} height={20} />
+                        <Typography text={priceLabel} variant="body_400" style={styles.metaText} />
                     </View>
-                )}
+                </View>
+                <TouchableOpacity style={styles.shareButton} onPress={onShareIconPress}>
+                    <ShareIcon />
+                </TouchableOpacity>
+            </View>
+
+            {('status' in event && event.status !== null) || appliedEventStatus ? (
+                <View style={styles.statusRow}>
+                    {'status' in event && event.status !== null && (
+                        <View
+                            style={
+                                event.status === SavedEventStatus.FINISHED
+                                    ? styles.eventStatusFinished
+                                    : styles.eventStatusCanceled
+                            }
+                        >
+                            <Typography text={eventStatusLabel} variant="body_400" style={styles.statusText} />
+                        </View>
+                    )}
+                    {appliedEventStatus && (
+                        <View
+                            style={[
+                                styles.appliedStatusContainer,
+                                appliedEventStatus === 'pending'
+                                    ? styles.appliedEventStatusPending
+                                    : appliedEventStatus === 'rejected'
+                                      ? styles.appliedEventStatusRejected
+                                      : appliedEventStatus === 'canceled'
+                                        ? styles.appliedEventStatusCanceled
+                                        : styles.appliedEventStatusConfirmed,
+                            ]}
+                        >
+                            <Typography text={appliedEventStatusLabel} variant="body_400" style={styles.statusText} />
+                        </View>
+                    )}
+                </View>
+            ) : null}
+
+            <View style={styles.hiddenQrCodeContainer}>
+                <QRCode value={eventDeepLink} getRef={onQrCodeRef} size={1} />
             </View>
 
             <View style={styles.header}>
@@ -118,19 +161,22 @@ export const EventCard = ({
             )}
 
             <View style={styles.mapContainer}>
-                <Image
-                    source={{ uri: mapPreviewUri }}
-                    style={styles.map}
-                    resizeMode="cover"
-                />
+                <Image source={{ uri: mapPreviewUri }} style={styles.map} resizeMode="cover" />
             </View>
 
             {showFooter && (
                 <View style={styles.footer}>
-                    <Button type="main" containerStyle={styles.readMoreButton} text={t('eventMap.readMore')} onPress={onReadMorePressHandler} />
-                    {isOwner
-                        ? <EditButton onPress={onEditPressHandler} size={48} />
-                        : <FavoriteButton onPress={onFavoritePressHandler} size={48} isSaved={Boolean(event.isSaved)} />}
+                    <Button
+                        type="main"
+                        containerStyle={styles.readMoreButton}
+                        text={t('eventMap.readMore')}
+                        onPress={onReadMorePressHandler}
+                    />
+                    {isOwner ? (
+                        <EditButton onPress={onEditPressHandler} size={48} />
+                    ) : (
+                        <FavoriteButton onPress={onFavoritePressHandler} size={48} isSaved={Boolean(event.isSaved)} />
+                    )}
                 </View>
             )}
         </Pressable>
