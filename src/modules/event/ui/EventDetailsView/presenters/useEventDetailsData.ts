@@ -3,6 +3,8 @@ import { Linking } from 'react-native';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { EventType } from '@/entities/events/enums/EventType';
+import { Sex } from '@/entities/events/enums/Sex';
+import { ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
 import { useUiContext } from '@/UIProvider';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 import { config } from '@/config';
@@ -312,6 +314,58 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         return normalizedCode.toUpperCase();
     };
 
+    const formatSex = (value?: Sex) => {
+        if (!value) {
+            return '-';
+        }
+
+        if (value === Sex.Men) {
+            return t('eventFilters.men');
+        }
+
+        if (value === Sex.Women) {
+            return t('eventFilters.women');
+        }
+
+        return t('eventFilters.all');
+    };
+
+    const formatAge = (minAge?: number, maxAge?: number) => {
+        if (typeof minAge !== 'number' || typeof maxAge !== 'number') {
+            return '-';
+        }
+
+        return `${minAge}-${maxAge}`;
+    };
+
+    const formatParticipationCondition = (value?: ParticipationCondition) => {
+        if (!value) {
+            return '-';
+        }
+
+        if (value === ParticipationCondition.FixedPrice) {
+            return t('event.participationConditionFixedPrice');
+        }
+
+        if (value === ParticipationCondition.SplitBill) {
+            return t('event.participationConditionSplitBill');
+        }
+
+        if (value === ParticipationCondition.Free) {
+            return t('event.participationConditionFree');
+        }
+
+        if (value === ParticipationCondition.Charity) {
+            return t('event.participationConditionCharity');
+        }
+
+        if (value === ParticipationCondition.Host) {
+            return t('event.participationConditionHost');
+        }
+
+        return t('event.participationConditionGuest');
+    };
+
     const detailsData = (() => {
         if (!eventDetail) {
             return [];
@@ -320,6 +374,18 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         const confirmationValue = eventDetail.requiresConfirmation
             ? t('eventDetails.confirmationRequired')
             : t('eventDetails.noConfirmation');
+
+        const partyDetails = eventDetail.eventType === EventType.Parties
+            ? [
+                { key: 'sex', label: t('eventDetails.sex'), value: formatSex(eventDetail.sex) },
+                { key: 'age', label: t('eventDetails.age'), value: formatAge(eventDetail.minAge, eventDetail.maxAge) },
+                {
+                    key: 'participationCondition',
+                    label: t('eventDetails.participationCondition'),
+                    value: formatParticipationCondition(eventDetail.participationCondition),
+                },
+            ]
+            : [];
 
         return [
             { key: 'theme', label: t('eventDetails.theme'), value: getValueOrDash(eventDetail.theme) },
@@ -362,6 +428,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             { key: 'language', label: t('eventDetails.language'), value: formatLanguage(eventDetail.language) },
             { key: 'seats', label: t('eventDetails.seats'), value: formatSeats(eventDetail.seats, eventDetail.acceptedCount) },
             { key: 'confirmation', label: t('eventDetails.confirmationAvailability'), value: confirmationValue },
+            ...partyDetails,
         ];
     })();
 

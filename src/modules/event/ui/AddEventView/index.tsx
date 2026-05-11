@@ -223,7 +223,7 @@ export const AddEventView = () => {
         <>
             <ScreenContainer
                 edges={['top', 'bottom']}
-                headerComponent={<HeaderWithBackButton title={t('event.addEvent')} isCentered={false} />}
+                headerComponent={<HeaderWithBackButton title={t('event.addEvent')} isCentered={true} />}
                 withGradient
             >
                 <View style={styles.container}>

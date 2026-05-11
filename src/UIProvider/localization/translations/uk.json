@@ -348,7 +348,7 @@
         "close": "Закрити"
     },
     "event": {
-        "addEvent": "Додати винну подію",
+        "addEvent": "Додати подію",
         "updateEvent": "Оновити події",
         "basicInfo": "Основна інформація",
         "locationAndSchedule": "Локація та розклад",
@@ -441,6 +441,9 @@
         "kmFromYou": "{{distance}} км від вас",
         "kmOnly": "{{distance}} км",
         "language": "Мова",
+        "sex": "Стать",
+        "age": "Вік",
+        "participationCondition": "Умова участі",
         "seats": "Місця",
         "confirmationAvailability": "Наявність підтвердження",
         "confirmationRequired": "Потрібне підтвердження",

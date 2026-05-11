@@ -344,7 +344,7 @@
         "close": "Close"
     },
     "event": {
-        "addEvent": "Add wine event",
+        "addEvent": "Add event",
         "updateEvent": "Update event",
         "basicInfo": "Basic info",
         "locationAndSchedule": "Location & Schedule",
@@ -437,6 +437,9 @@
         "kmFromYou": "{{distance}} km from you",
         "kmOnly": "{{distance}} km",
         "language": "Language",
+        "sex": "Sex",
+        "age": "Age",
+        "participationCondition": "Participation condition",
         "seats": "Seats",
         "confirmationAvailability": "Availability of confirmation",
         "confirmationRequired": "Confirmation required",

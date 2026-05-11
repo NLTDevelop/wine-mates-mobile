@@ -63,6 +63,10 @@ export const useEventListView = ({ t, createdEvents, savedEvents, appliedEvents 
         navigation.navigate('EventDetailsView', { eventId });
     }, [navigation]);
 
+    const onAddEventPress = useCallback(() => {
+        navigation.navigate('AddEventView');
+    }, [navigation]);
+
     const onCardPress = useCallback((eventId: number) => {
         setSelectedEventId(eventId);
         setIsModalVisible(true);
@@ -143,6 +147,7 @@ export const useEventListView = ({ t, createdEvents, savedEvents, appliedEvents 
         screenIndex,
         routes,
         onIndexChange,
+        onAddEventPress,
         onReadMorePress,
         selectedEvent,
         isModalVisible,
