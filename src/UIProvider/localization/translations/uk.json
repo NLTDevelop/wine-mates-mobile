@@ -348,7 +348,7 @@
         "close": "Закрити"
     },
     "event": {
-        "addEvent": "Додати винну подію",
+        "addEvent": "Додати подію",
         "updateEvent": "Оновити події",
         "basicInfo": "Основна інформація",
         "locationAndSchedule": "Локація та розклад",
@@ -414,6 +414,7 @@
         "confirmed": "Підтверджено",
         "pending": "В очікування",
         "rejected": "Відхилено",
+        "allSpotsFullMessage": "Усі місця зайняті. Ви можете надіслати запит — ми повідомимо вас, якщо місце стане доступним.",
         "invalidStartDateError": "Початкова дата не може бути пізніше кінцевої",
         "invalidEndDateError": "Кінцева дата не може бути раніше початкової",
         "invalidEndTimeError": "Час завершення не може бути раніше часу початку",
@@ -440,6 +441,9 @@
         "kmFromYou": "{{distance}} км від вас",
         "kmOnly": "{{distance}} км",
         "language": "Мова",
+        "sex": "Стать",
+        "age": "Вік",
+        "participationCondition": "Умова участі",
         "seats": "Місця",
         "confirmationAvailability": "Наявність підтвердження",
         "confirmationRequired": "Потрібне підтвердження",
@@ -448,8 +452,11 @@
         "eventDetailsTab": "Деталі події",
         "guestsTab": "Гості",
         "bookNow": "Забронювати",
+        "booked": "Заброньовано",
+        "cancel": "Скасувати подію",
         "contactForBooking": "Контакт для бронювання",
-        "callToReserve": "Зателефонувати для бронювання"
+        "callToReserve": "Зателефонувати для бронювання",
+        "duplicate": "Дублювати"
     },
     "eventGuests": {
         "all": "Усі",
@@ -477,6 +484,8 @@
         "description": "Опис",
         "downloadFile": "Завантажити файл",
         "downloadHint": "Ви можете завантажити QR-код для оплати.",
+        "deletePaymentMethodTitle": "Видалити спосіб оплати?",
+        "deletePaymentMethodMessage": "Ви впевнені, що хочете видалити цей спосіб оплати?",
         "noVisiblePaymentMethods": "Немає видимих способів оплати",
         "addPaymentMethodsInProfile": "Додайте способи оплати в профілі"
     },
@@ -487,6 +496,10 @@
         "contactValue": "Номер телефону або посилання",
         "contacts": "Контакти",
         "socialNetworks": "Соціальні мережі",
+        "supportedSocialNetworksHint": "Підтримуються: Instagram, Telegram, Facebook, Discord, Reddit, Pinterest, WhatsApp, TikTok, Threads, X, LinkedIn, Snapchat",
+        "invalidContactValue": "Введіть коректний номер телефону або посилання на підтримувану соціальну мережу",
+        "deleteContactTitle": "Видалити контакт?",
+        "deleteContactMessage": "Ви впевнені, що хочете видалити цей контакт?",
         "noVisibleContacts": "Немає видимих контактів"
     }
 }

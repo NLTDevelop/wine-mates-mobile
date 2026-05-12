@@ -1,4 +1,6 @@
-export type EventContactType = 'instagram' | 'telegram' | 'facebook' | 'phone';
+import { ContactType } from '@/entities/contacts/types/ContactType';
+
+export type EventContactType = ContactType;
 
 export interface IEventContactOption {
     id: number;

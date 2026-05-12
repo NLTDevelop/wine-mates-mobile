@@ -53,6 +53,7 @@ export const AddWineSetView = () => {
         eventDeepLink,
         isCreating,
         isCreateEventDisabled,
+        isEditMode,
         onChangeRepeatRule,
         onChangeTastingType,
         onCloseEventCreatedAlert,
@@ -187,6 +188,7 @@ export const AddWineSetView = () => {
                                 repeatRuleLabel={repeatRuleLabel}
                                 isCreating={isCreating}
                                 isCreateEventDisabled={isCreateEventDisabled}
+                                isEditMode={isEditMode}
                                 onAddWinePress={onAddWinePress}
                                 onOpenRepeatModal={onOpenRepeatModal}
                                 onCreateEventPress={onCreateEventPress}

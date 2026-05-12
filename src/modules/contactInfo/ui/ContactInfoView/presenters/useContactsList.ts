@@ -4,26 +4,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import { contactsModel } from '@/entities/contacts/ContactsModel';
 import { contactsService } from '@/entities/contacts/ContactsService';
 import { IContactsListItem } from '@/entities/contacts/types/IContactsListItem';
+import { getContactName, isValidContactValue } from '@/entities/contacts/presenters/useContactType';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-
-const getContactName = (value: string) => {
-    const normalizedValue = value.trim().toLowerCase();
-
-    if (normalizedValue.includes('instagram.com') || normalizedValue.includes('@instagram')) {
-        return 'Instagram';
-    }
-
-    if (normalizedValue.includes('t.me') || normalizedValue.includes('telegram') || normalizedValue.includes('@')) {
-        return 'Telegram';
-    }
-
-    if (normalizedValue.includes('facebook.com') || normalizedValue.includes('fb.com')) {
-        return 'Facebook';
-    }
-
-    return value.trim();
-};
 
 export const useContactsList = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -86,6 +69,14 @@ export const useContactsList = () => {
         const trimmedValue = contactValue.trim();
 
         if (!trimmedValue || isSaving) {
+            return;
+        }
+
+        if (!isValidContactValue(trimmedValue)) {
+            toastService.showError(
+                localization.t('common.errorHappened'),
+                localization.t('contactInfo.invalidContactValue'),
+            );
             return;
         }
 

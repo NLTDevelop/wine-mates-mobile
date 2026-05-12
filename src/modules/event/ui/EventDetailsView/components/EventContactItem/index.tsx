@@ -7,12 +7,74 @@ import { IEventContactOption } from '@/modules/event/ui/EventDetailsView/types/I
 import { FacebookIcon } from '@assets/icons/socialNetworksIcons/FacebookIcon';
 import { InstagramIcon } from '@assets/icons/socialNetworksIcons/InstagramIcon';
 import { TelegramIcon } from '@assets/icons/socialNetworksIcons/TelegramIcon';
+import { DiscordIcon } from '@assets/icons/socialNetworksIcons/DiscordIcon';
+import { RedditIcon } from '@assets/icons/socialNetworksIcons/RedditIcon';
+import { PinterestIcon } from '@assets/icons/socialNetworksIcons/PinterestIcon';
+import { WhatsAppIcon } from '@assets/icons/socialNetworksIcons/WhatsAppIcon';
+import { TikTokIcon } from '@assets/icons/socialNetworksIcons/TikTokIcon';
+import { ThreadsIcon } from '@assets/icons/socialNetworksIcons/ThreadsIcon';
+import { XIcon } from '@assets/icons/socialNetworksIcons/XIcon';
+import { LinkedInIcon } from '@assets/icons/socialNetworksIcons/LinkedInIcon';
+import { SnapchatIcon } from '@assets/icons/socialNetworksIcons/SnapchatIcon';
+import { ContactType } from '@/entities/contacts/types/ContactType';
 import { NextArrowIcon } from '@assets/icons/NextArrowIcon';
 import { getStyles } from './styles';
 
 interface IProps {
     item: IEventContactOption;
 }
+
+const renderSocialIcon = (contactType: ContactType) => {
+    if (contactType === 'instagram') {
+        return <InstagramIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'telegram') {
+        return <TelegramIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'facebook') {
+        return <FacebookIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'discord') {
+        return <DiscordIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'reddit') {
+        return <RedditIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'pinterest') {
+        return <PinterestIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'whatsapp') {
+        return <WhatsAppIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'tiktok') {
+        return <TikTokIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'threads') {
+        return <ThreadsIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'x') {
+        return <XIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'linkedin') {
+        return <LinkedInIcon width={24} height={24} />;
+    }
+
+    if (contactType === 'snapchat') {
+        return <SnapchatIcon width={24} height={24} />;
+    }
+
+    return null;
+};
 
 export const EventContactItem = ({ item }: IProps) => {
     const { colors } = useUiContext();
@@ -21,9 +83,7 @@ export const EventContactItem = ({ item }: IProps) => {
     return (
         <TouchableOpacity style={styles.container} onPress={item.onPress} activeOpacity={0.8}>
             <View style={styles.leftContent}>
-                {item.type === 'instagram' && <InstagramIcon width={24} height={24} color={colors.primary} />}
-                {item.type === 'telegram' && <TelegramIcon width={24} height={24} color={colors.primary} />}
-                {item.type === 'facebook' && <FacebookIcon width={24} height={24} color={colors.primary} />}
+                {renderSocialIcon(item.type)}
                 {item.type === 'phone' && !!item.phoneCountryCode && (
                     <Flag code={item.phoneCountryCode} style={styles.flag} />
                 )}

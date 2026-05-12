@@ -1,6 +1,6 @@
 
 export enum AppliedEventStatus {
-    CONFIRMED = 'confirmed',
+    ACCEPTED = 'accepted',
     PENDING = 'pending',
     REJECTED = 'rejected',
 }

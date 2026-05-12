@@ -31,6 +31,7 @@ export const useEventDetails = (eventId: number) => {
 
     return {
         eventDetail,
+        setEventDetail,
         isError,
         isLoading,
     };

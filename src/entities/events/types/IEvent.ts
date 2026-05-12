@@ -7,6 +7,9 @@ import { IWineSetItem } from './IWineSetItem';
 
 export interface IEvent {
     id: number;
+    ownerId?: number;
+    isActive?: boolean;
+    isApplied?: boolean;
     theme: string;
     eventDate?: string;
     eventTime?: string;
@@ -14,6 +17,7 @@ export interface IEvent {
     eventEndDate?: string;
     eventStartTime?: string;
     eventEndTime?: string;
+    phoneNumber?: string;
     price: number;
     priceUsd: number;
     currency: Currency | string;
@@ -54,6 +58,9 @@ export interface ISeat{
 
 export interface IEventDetail {
     id: number;
+    ownerId?: number;
+    isActive?: boolean;
+    isApplied?: boolean;
     latitude: number;
     longitude: number;
     title?: string;
@@ -67,6 +74,7 @@ export interface IEventDetail {
     eventTime?: string;
     eventStartTime?: string;
     eventEndTime?: string;
+    phoneNumber?: string;
     attendees?: string[];
     attendeesCount?: number;
     contacts?: IEventContact[];

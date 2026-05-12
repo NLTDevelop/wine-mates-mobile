@@ -26,7 +26,19 @@ export const getStyles = (colors: IColors) => {
         },
         metaRow: {
             flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             gap: scaleHorizontal(8),
+        },
+        metaBadgesRow: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(8),
+            flexShrink: 1,
+        },
+        statusRow: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(8),
+            flexWrap: 'wrap',
         },
         metaBadge: {
             flexDirection: 'row',
@@ -72,6 +84,19 @@ export const getStyles = (colors: IColors) => {
         metaText: {
             color: colors.text,
         },
+        fullSpotsText: {
+            color: colors.primary,
+        },
+        shareButton: {
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        hiddenQrCodeContainer: {
+            width: 0,
+            height: 0,
+            opacity: 0,
+            overflow: 'hidden',
+        },
         statusText: {
             color: colors.background,
         },
@@ -84,7 +109,7 @@ export const getStyles = (colors: IColors) => {
         },
         timeText: {
             color: colors.text_light,
-            fontSize: scaleFontSize(16),
+            maxWidth: scaleHorizontal(255)
         },
         descriptionText: {
             color: colors.text_light,

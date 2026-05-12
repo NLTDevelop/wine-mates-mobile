@@ -12,10 +12,14 @@ export type EventStackParamList = {
             placeName?: string;
             countryName?: string;
         };
+        draft?: IAddEventDraft;
+        initialSelectedWines?: IWineSetSearchItem[];
+        editEventId?: number;
     } | undefined;
     AddWineSetView: {
         draft: IAddEventDraft;
         initialSelectedWines?: IWineSetSearchItem[];
+        editEventId?: number;
         selectedWine?: IWineSetSearchItem;
         replacedWine?: {
             previousWineId: number;

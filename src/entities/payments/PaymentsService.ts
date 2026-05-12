@@ -56,6 +56,20 @@ class PaymentsService {
             return { isError: true, data: null, message: '' } as any;
         }
     };
+
+    delete = async (id: number): Promise<IResponse<null>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'DELETE',
+                url: `${this._links.paymentMethods}/${id}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('PaymentsService -> delete: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
 }
 
 export const paymentsService = new PaymentsService(requester, links);

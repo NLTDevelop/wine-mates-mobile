@@ -31,10 +31,12 @@ export const EventMapView = observer(() => {
         isModalVisible,
         onAddEvent,
         onMarkerPress,
+        onCardPress,
         onCloseModal,
         onModalReadMorePress,
         onModalFavoritePress,
         onReadMorePress,
+        onEditPress,
         onFavoritePress,
         onUpdateEvent,
         onMapPress,
@@ -74,6 +76,8 @@ export const EventMapView = observer(() => {
                     selectedEventId={null}
                     onReadMorePress={onReadMorePress}
                     onFavoritePress={onFavoritePress}
+                    onEditPress={onEditPress}
+                    onCardPress={onCardPress}
                 />
             </ScreenContainer>
 
@@ -89,6 +93,7 @@ export const EventMapView = observer(() => {
                         isModalContent
                         onReadMorePress={onModalReadMorePress}
                         onFavoritePress={onModalFavoritePress}
+                        onEditPress={onEditPress}
                     />
                 </BottomModal>
             )}

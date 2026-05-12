@@ -9,7 +9,14 @@ export const getStyles = (colors: IColors) => {
         },
         metaRow: {
             flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             gap: scaleHorizontal(8),
+        },
+        metaBadgesRow: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(8),
+            flexShrink: 1,
         },
         metaBadge: {
             flexDirection: 'row',
@@ -22,6 +29,16 @@ export const getStyles = (colors: IColors) => {
         },
         metaText: {
             color: colors.text,
+        },
+        shareButton: {
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        hiddenQrCodeContainer: {
+            width: 0,
+            height: 0,
+            opacity: 0,
+            overflow: 'hidden',
         },
         header: {
             flexDirection: 'row',

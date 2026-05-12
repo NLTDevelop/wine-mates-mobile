@@ -10,6 +10,9 @@ export const getStyles = (_colors: IColors) => {
         inputContainer: {
             marginBottom: 0,
         },
+        hintText: {
+            color: _colors.text_light,
+        },
         button: {
             marginTop: scaleVertical(8),
         },

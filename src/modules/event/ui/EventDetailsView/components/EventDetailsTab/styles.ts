@@ -54,10 +54,13 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(12),
         },
         footer: {
-            flexDirection: 'row',
-            gap: scaleHorizontal(12),
             paddingVertical: scaleVertical(16),
             backgroundColor: colors.background,
+            gap: scaleVertical(16),
+        },
+        footerRow: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(12),
         },
         bookNowButton: {
             flex: 1,

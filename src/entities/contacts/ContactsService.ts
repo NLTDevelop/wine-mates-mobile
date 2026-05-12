@@ -60,6 +60,20 @@ class ContactsService {
             return { isError: true, data: null, message: '' } as any;
         }
     };
+
+    delete = async (id: number): Promise<IResponse<null>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'DELETE',
+                url: `${this._links.contacts}/${id}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('ContactsService -> delete: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
 }
 
 export const contactsService = new ContactsService(requester, links);

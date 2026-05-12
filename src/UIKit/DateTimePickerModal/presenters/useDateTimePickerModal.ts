@@ -20,15 +20,7 @@ export const useDateTimePickerModal = ({ mode, title }: IUseDateTimePickerModalP
         return preparedLocale;
     }, [locale]);
 
-    const timePickerLocale = useMemo(() => {
-        const languageCode = normalizedLocale.split('-')[0];
-
-        if (!languageCode) {
-            return 'en-001';
-        }
-
-        return `${languageCode}-001`;
-    }, [normalizedLocale]);
+    const timePickerLocale = 'en-GB';
 
     const pickerLocale = mode === 'time' ? timePickerLocale : normalizedLocale;
     const modalTitle = title || (mode === 'date' ? t('event.eventDate') : t('event.eventTime'));

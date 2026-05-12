@@ -12,7 +12,6 @@ import { useEventDetailsView } from '@/modules/event/ui/EventDetailsView/present
 import { EventDetailsTab } from './components/EventDetailsTab';
 import { GuestsTab } from './components/EventGuestsTab';
 import { getStyles } from './styles';
-import { useEventDetails } from './presenters/useEventDetails';
 
 interface IRoute {
     key: 'eventDetails' | 'guests';
@@ -36,14 +35,13 @@ export const EventDetailsView = observer(() => {
     const { eventId } = route.params;
     const { screenIndex, routes, onIndexChange } = useEventDetailsView({ t });
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { eventDetail, isError, isLoading } = useEventDetails(eventId);
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
         if (sceneRoute.key === 'eventDetails') {
-            return <EventDetailsTab eventDetail={eventDetail} isError={isError} isLoading={isLoading} />;
+            return <EventDetailsTab eventId={eventId} />;
         }
 
-        return <GuestsTab eventId={eventId} requiresConfirmation={eventDetail?.requiresConfirmation} />;
+        return <GuestsTab eventId={eventId} requiresConfirmation={true} />;
     };
 
     const renderTabBar = function renderTabBar(
