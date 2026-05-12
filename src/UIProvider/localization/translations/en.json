@@ -14,6 +14,7 @@
         "now": "Now",
         "nothingFoundTitle": "Nothing Found",
         "next": "Next",
+        "close": "Close",
         "nothingFoundDescription": "We couldn't find any results for your query. Please check your spelling or try different keywords.",
         "confirm": "Confirm",
         "cancel": "Cancel",
@@ -474,6 +475,10 @@
     },
     "payments": {
         "paymentsMethods": "Payment methods",
+        "paymentMethod": "Payment Method",
+        "selectPaymentMethodHint": "Choose a payment method for future payments.",
+        "selectedPaymentMethodQrDescription": "You have selected this payment method. Please use the QR code below to complete your payment. Scan the QR code to pay.",
+        "selectedPaymentMethodIbanDescription": "You have selected {{name}} payment. Please use the bank details below to complete your payment. Use the IBAN details to make the payment.",
         "paymentsMethod": "Payment method",
         "name": "Name",
         "paymentDetails": "Card/IBAN/Email",
