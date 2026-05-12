@@ -8,10 +8,13 @@ interface IProps {
 }
 
 export const DeleteForeverIcon = ({ width = 24, height = 24, color }: IProps) => (
-    <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 -960 960 960">
+    <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 20 20" fill="none">
         <Path
-            fill={color || '#e3e3e3'}
-            d="m376-300 104-104 104 104 56-56-104-104 104-104-56-56-104 104-104-104-56 56 104 104-104 104 56 56Zm-96 180q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520Zm-400 0v520-520Z"
+            stroke={color || '#910D0D'}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.2}
+            d="M8.334 9.166v5M11.666 9.166v5M15.833 5v11.667a1.667 1.667 0 0 1-1.667 1.666H5.833a1.667 1.667 0 0 1-1.667-1.666V5M2.5 5h15M6.666 5V3.332a1.667 1.667 0 0 1 1.667-1.667h3.333a1.667 1.667 0 0 1 1.667 1.667v1.666"
         />
     </Svg>
 );

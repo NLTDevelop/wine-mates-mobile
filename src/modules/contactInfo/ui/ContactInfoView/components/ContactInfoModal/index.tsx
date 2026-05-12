@@ -4,6 +4,7 @@ import { useUiContext } from '@/UIProvider';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { BottomSheetInput } from '@/UIKit/BottomSheetInput';
 import { Button } from '@/UIKit/Button';
+import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 
 interface IProps {
@@ -40,6 +41,11 @@ export const ContactInfoModal = ({
                     containerStyle={styles.inputContainer}
                     onSubmitEditing={onSave}
                     returnKeyType="done"
+                />
+                <Typography
+                    text={t('contactInfo.supportedSocialNetworksHint')}
+                    variant="body_400"
+                    style={styles.hintText}
                 />
                 <Button
                     text={t('common.save')}

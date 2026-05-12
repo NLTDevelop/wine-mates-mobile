@@ -45,9 +45,15 @@ export const getStyles = (colors: IColors) => {
         actionsContainer: {
             flexDirection: 'row',
             alignItems: 'center',
-            gap: scaleHorizontal(16),
+            gap: scaleHorizontal(12),
         },
         editButton: {
+            width: scaleHorizontal(28),
+            height: scaleHorizontal(28),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        deleteButton: {
             width: scaleHorizontal(28),
             height: scaleHorizontal(28),
             alignItems: 'center',

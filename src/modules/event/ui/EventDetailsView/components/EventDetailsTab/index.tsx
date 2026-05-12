@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ActivityIndicator, FlatList, ListRenderItem, ScrollView, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -41,27 +41,25 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
         isEventApplied,
     } = useEventDetailsTab({ eventId });
 
-    const keyExtractor = (item: IWineSetItem) => `${item.id}`;
+    const keyExtractor = useCallback((item: IWineSetItem) => `${item.id}`, []);
 
-    const renderWineSetItem: ListRenderItem<IWineSetItem> = function renderWineSetItem({ item }) {
+    const renderWineSetItem: ListRenderItem<IWineSetItem> = useCallback(({ item }) => {
         return <WineSetItem item={item} />;
-    };
+    }, []);
 
-    const renderWineSetItemSeparator = function renderWineSetItemSeparator() {
+    const renderWineSetItemSeparator = useCallback(() => {
         return <View style={styles.wineSetItemSeparator} />;
-    };
+    }, [styles.wineSetItemSeparator]);
 
-    function contactKeyExtractor(item: IEventContactOption) {
-        return `${item.id}`;
-    }
+    const contactKeyExtractor = useCallback((item: IEventContactOption) => `${item.id}`, []);
 
-    const renderContactItem: ListRenderItem<IEventContactOption> = function renderContactItem({ item }) {
+    const renderContactItem: ListRenderItem<IEventContactOption> = useCallback(({ item }) => {
         return <EventContactItem item={item} />;
-    };
+    }, []);
 
-    const renderContactItemSeparator = function renderContactItemSeparator() {
+    const renderContactItemSeparator = useCallback(() => {
         return <View style={styles.contactItemSeparator} />;
-    };
+    }, [styles.contactItemSeparator]);
 
     if (isLoading) {
         return (

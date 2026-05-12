@@ -4,17 +4,20 @@ import { scaleVertical } from '@/utils';
 
 export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
-        container: {
-            gap: scaleVertical(16),
+        title: {
+            textAlign: 'center',
+            marginBottom: scaleVertical(8),
         },
-        inputContainer: {
-            marginBottom: 0,
+        message: {
+            textAlign: 'center',
+            marginBottom: scaleVertical(16),
         },
-        hintText: {
-            color: _colors.text_light,
+        buttonsContainer: {
+            flexDirection: 'row',
+            gap: scaleVertical(12),
         },
         button: {
-            marginTop: scaleVertical(8),
+            flex: 1,
         },
     });
 

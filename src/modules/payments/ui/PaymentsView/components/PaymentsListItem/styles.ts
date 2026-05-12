@@ -18,7 +18,13 @@ export const getStyles = (colors: IColors) => {
         row: {
             flexDirection: 'row',
             alignItems: 'center',
-            gap: scaleHorizontal(16),
+            gap: scaleHorizontal(12),
+        },
+        actionButton: {
+            width: scaleHorizontal(28),
+            height: scaleHorizontal(28),
+            alignItems: 'center',
+            justifyContent: 'center',
         },
     });
     return styles;
