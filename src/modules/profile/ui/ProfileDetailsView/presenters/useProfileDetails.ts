@@ -73,6 +73,12 @@ const getPhoneParts = (phoneNumber: string) => {
     };
 };
 
+const getProfileField = (value: string | undefined | null, placeholder: string) => {
+    const text = value || placeholder;
+
+    return { text, isPlaceholder: !value };
+};
+
 export const useProfileDetails = () => {
     const navigation = useNavigation<any>();
 
@@ -88,13 +94,44 @@ export const useProfileDetails = () => {
 
     const fullName = `${userModel.user?.firstName || ''} ${userModel.user?.lastName || ''}`.trim();
     const expertiseLevel = userModel.user?.wineExperienceLevel || WineExperienceLevelEnum.LOVER;
-    const expertiseLabel = expertiseLevel === WineExperienceLevelEnum.EXPERT
-        ? localization.t('registration.wineExpert')
-        : expertiseLevel === WineExperienceLevelEnum.CREATOR
-            ? localization.t('registration.winemaker')
-            : localization.t('registration.wineLover');
+    const expertiseLabel =
+        expertiseLevel === WineExperienceLevelEnum.EXPERT
+            ? localization.t('registration.wineExpert')
+            : expertiseLevel === WineExperienceLevelEnum.CREATOR
+              ? localization.t('registration.winemaker')
+              : localization.t('registration.wineLover');
     const birthdayDisplayText = getBirthdayDisplayText(userModel.user?.birthday || '');
     const { phoneCca2, phoneNationalNumber } = getPhoneParts(userModel.user?.phoneNumber || '');
+    const email = userModel.user?.email || '';
+    const country = getCountryName(userModel.user?.country || '');
+    const city = userModel.user?.city || '';
+    const gender =
+        userModel.user?.gender === 'male'
+            ? localization.t('registration.genderMale')
+            : userModel.user?.gender === 'female'
+              ? localization.t('registration.genderFemale')
+              : '';
+    const occupation = userModel.user?.occupation || '';
+    const placeOfWork = userModel.user?.wineryName || '';
+    const instagramLink = userModel.user?.instagramLink || '';
+    const website = userModel.user?.website || '';
+    const bio = userModel.user?.bio || '';
+    const selectedCurrency = userModel.user?.selectedCurrency || '';
+
+    const fields = {
+        fullName: getProfileField(fullName, localization.t('settings.fullName')),
+        email: getProfileField(email, localization.t('settings.email')),
+        country: getProfileField(country, localization.t('settings.country')),
+        city: getProfileField(city, localization.t('settings.city')),
+        birthday: getProfileField(birthdayDisplayText, localization.t('registration.birthday')),
+        gender: getProfileField(gender, localization.t('settings.gender')),
+        occupation: getProfileField(occupation, localization.t('settings.occupation')),
+        placeOfWork: getProfileField(placeOfWork, localization.t('settings.placeOfWork')),
+        selectedCurrency: getProfileField(selectedCurrency, localization.t('settings.selectedCurrency')),
+        instagram: getProfileField(instagramLink, localization.t('settings.instagram')),
+        website: getProfileField(website, localization.t('settings.website')),
+        bio: getProfileField(bio, localization.t('settings.bio')),
+    };
 
     const onPressBack = useCallback(() => {
         navigation.goBack();
@@ -118,21 +155,8 @@ export const useProfileDetails = () => {
         expertiseLevel,
         expertiseLabel,
         phoneCca2,
-        phoneNationalNumber,
-        email: userModel.user?.email || '',
-        country: getCountryName(userModel.user?.country || ''),
-        city: userModel.user?.city || '',
-        birthdayDisplayText,
-        gender: userModel.user?.gender === 'male'
-            ? localization.t('registration.genderMale')
-            : userModel.user?.gender === 'female'
-                ? localization.t('registration.genderFemale')
-                : '',
-        occupation: userModel.user?.occupation || '',
-        placeOfWork: userModel.user?.wineryName || '',
-        instagramLink: userModel.user?.instagramLink || '',
-        website: userModel.user?.website || '',
-        bio: userModel.user?.bio || '',
+        phoneText: phoneNationalNumber || '',
+        fields,
         onPressBack,
         onPressEdit,
         onPhoneChange,

@@ -1,5 +1,5 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleVertical } from '@/utils';
+import { scaleFontSize, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors, isActive: boolean) => {
@@ -14,6 +14,8 @@ export const getStyles = (colors: IColors, isActive: boolean) => {
         },
         tabName: {
             color: colors.text,
+            lineHeight: scaleFontSize(16),
+            textAlign: 'center',
         },
     });
 
