@@ -479,6 +479,7 @@
         "contactValue": "Phone number or link",
         "contacts": "Contacts",
         "socialNetworks": "Social networks",
+        "invalidContactValue": "Please enter a valid phone number or a supported social network link",
         "noVisibleContacts": "No visible contacts"
     }
 }

@@ -9,6 +9,16 @@ import { Checkbox } from '@/UIKit/Checkbox';
 import { FacebookIcon } from '@assets/icons/socialNetworksIcons/FacebookIcon';
 import { InstagramIcon } from '@assets/icons/socialNetworksIcons/InstagramIcon';
 import { TelegramIcon } from '@assets/icons/socialNetworksIcons/TelegramIcon';
+import { DiscordIcon } from '@assets/icons/socialNetworksIcons/DiscordIcon';
+import { RedditIcon } from '@assets/icons/socialNetworksIcons/RedditIcon';
+import { PinterestIcon } from '@assets/icons/socialNetworksIcons/PinterestIcon';
+import { WhatsAppIcon } from '@assets/icons/socialNetworksIcons/WhatsAppIcon';
+import { TikTokIcon } from '@assets/icons/socialNetworksIcons/TikTokIcon';
+import { ThreadsIcon } from '@assets/icons/socialNetworksIcons/ThreadsIcon';
+import { XIcon } from '@assets/icons/socialNetworksIcons/XIcon';
+import { LinkedInIcon } from '@assets/icons/socialNetworksIcons/LinkedInIcon';
+import { SnapchatIcon } from '@assets/icons/socialNetworksIcons/SnapchatIcon';
+import { ContactType } from '@/entities/contacts/types/ContactType';
 import { useContactsListItem } from './presenters/useContactsListItem';
 import { getStyles } from './styles';
 
@@ -16,6 +26,58 @@ interface IProps {
     item: IContactsListItem;
     onEditContact: (item: IContactsListItem) => void;
 }
+
+const renderSocialIcon = (contactType: ContactType) => {
+    if (contactType === 'instagram') {
+        return <InstagramIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'telegram') {
+        return <TelegramIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'facebook') {
+        return <FacebookIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'discord') {
+        return <DiscordIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'reddit') {
+        return <RedditIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'pinterest') {
+        return <PinterestIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'whatsapp') {
+        return <WhatsAppIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'tiktok') {
+        return <TikTokIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'threads') {
+        return <ThreadsIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'x') {
+        return <XIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'linkedin') {
+        return <LinkedInIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'snapchat') {
+        return <SnapchatIcon width={20} height={20} />;
+    }
+
+    return null;
+};
 
 export const ContactsListItem = ({ item, onEditContact }: IProps) => {
     const { colors } = useUiContext();
@@ -32,9 +94,7 @@ export const ContactsListItem = ({ item, onEditContact }: IProps) => {
     return (
         <TouchableOpacity style={styles.container} onPress={onToggleVisiblePress} activeOpacity={0.8}>
             <View style={styles.infoContainer}>
-                {contactType === 'instagram' && <InstagramIcon width={20} height={20} color={colors.text} />}
-                {contactType === 'telegram' && <TelegramIcon width={20} height={20} color={colors.text} />}
-                {contactType === 'facebook' && <FacebookIcon width={20} height={20} color={colors.text} />}
+                {renderSocialIcon(contactType)}
                 {contactType === 'phone' && !!phoneCountryCode && (
                     <Flag code={phoneCountryCode} style={styles.flag} />
                 )}

@@ -10,7 +10,12 @@ import { useLocationPermission } from '@/hooks/useLocationPermission';
 import { config } from '@/config';
 import { IEventDetailsPreviewData } from '../types/IEventDetailsPreviewData';
 import { useLocalizedLanguageOptions } from '@/libs/languagePicker/presenters/useLocalizedLanguageOptions';
-import { EventContactType, IEventContactOption } from '../types/IEventContactOption';
+import { IEventContactOption } from '../types/IEventContactOption';
+import {
+    getContactTitle,
+    getContactType,
+    getContactUrl,
+} from '@/entities/contacts/presenters/useContactType';
 
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 14;
@@ -24,69 +29,6 @@ const STATIC_MAP_LIGHT_STYLE_PARAMS = [
     'style=feature:landscape|element:geometry|color:0xf5f5f5',
 ];
 
-const getContactType = (name: string, value: string): EventContactType => {
-    const normalizedContact = `${name} ${value}`.toLowerCase();
-
-    if (normalizedContact.includes('instagram')) {
-        return 'instagram';
-    }
-
-    if (normalizedContact.includes('telegram') || normalizedContact.includes('t.me')) {
-        return 'telegram';
-    }
-
-    if (normalizedContact.includes('facebook') || normalizedContact.includes('fb.com')) {
-        return 'facebook';
-    }
-
-    return 'phone';
-};
-
-const getContactUrl = (value: string, contactType: EventContactType) => {
-    const trimmedValue = value.trim();
-
-    if (contactType === 'phone') {
-        return `tel:${trimmedValue.replace(/[^+0-9]/g, '')}`;
-    }
-
-    if (trimmedValue.startsWith('http://') || trimmedValue.startsWith('https://')) {
-        return trimmedValue;
-    }
-
-    if (trimmedValue.startsWith('@')) {
-        const username = trimmedValue.slice(1);
-
-        if (contactType === 'instagram') {
-            return `https://instagram.com/${username}`;
-        }
-
-        if (contactType === 'telegram') {
-            return `https://t.me/${username}`;
-        }
-
-        if (contactType === 'facebook') {
-            return `https://facebook.com/${username}`;
-        }
-    }
-
-    if (trimmedValue.includes('.')) {
-        return `https://${trimmedValue}`;
-    }
-
-    if (contactType === 'instagram') {
-        return `https://instagram.com/${trimmedValue}`;
-    }
-
-    if (contactType === 'telegram') {
-        return `https://t.me/${trimmedValue}`;
-    }
-
-    if (contactType === 'facebook') {
-        return `https://facebook.com/${trimmedValue}`;
-    }
-
-    return trimmedValue;
-};
 
 export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
     const { t, locale } = useUiContext();
@@ -455,7 +397,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return {
                 id: item.id,
                 type: contactType,
-                title: item.name || item.value,
+                title: getContactTitle(item.name, item.value, contactType),
                 phoneCountryCode: phoneNumber?.country || '',
                 onPress: () => {
                     Linking.openURL(contactUrl);

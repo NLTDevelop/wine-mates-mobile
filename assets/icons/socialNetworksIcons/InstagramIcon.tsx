@@ -7,7 +7,7 @@ interface IProps {
 }
 
 export const InstagramIcon = ({ width = 20, height = 20 }: IProps) => (
-    <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 20 20" fill="none">
+    <Svg width={scaleVertical(width)} height={scaleVertical(height)} viewBox="0 0 21 20" fill="none">
         <Path
             fill="url(#a)"
             d="M15.656 0H5.226A5.232 5.232 0 0 0 0 5.227v9.546A5.232 5.232 0 0 0 5.226 20h10.43a5.232 5.232 0 0 0 5.226-5.227V5.227A5.233 5.233 0 0 0 15.656 0ZM1.844 5.227a3.387 3.387 0 0 1 3.382-3.383h10.43a3.387 3.387 0 0 1 3.383 3.383v9.546a3.387 3.387 0 0 1-3.383 3.383H5.226a3.387 3.387 0 0 1-3.382-3.383V5.227Z"
