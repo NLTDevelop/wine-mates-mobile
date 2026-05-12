@@ -15,6 +15,7 @@ interface IProps {
 
 export const useContactsListItem = ({ item, onEditContact }: IProps) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isDeleteAlertVisible, setIsDeleteAlertVisible] = useState(false);
 
     const contactType = useMemo(() => {
         return getContactType(item.name, item.value);
@@ -75,10 +76,51 @@ export const useContactsListItem = ({ item, onEditContact }: IProps) => {
         }
     }, [isLoading, item.id, item.isVisible]);
 
+    const onOpenDeleteAlert = useCallback(() => {
+        setIsDeleteAlertVisible(true);
+    }, []);
+
+    const onCloseDeleteAlert = useCallback(() => {
+        setIsDeleteAlertVisible(false);
+    }, []);
+
+    const onDeletePress = useCallback(async () => {
+        if (isLoading) {
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            const response = await contactsService.delete(item.id);
+
+            if (response.isError) {
+                toastService.showError(localization.t('common.errorHappened'), response.message);
+                return;
+            }
+
+            const listResponse = await contactsService.list();
+
+            if (listResponse.isError) {
+                contactsModel.list = (contactsModel.list || []).filter((contact) => contact.id !== item.id);
+            }
+
+            onCloseDeleteAlert();
+        } catch (error) {
+            console.error(JSON.stringify(error, null, 4));
+            toastService.showError(localization.t('common.errorHappened'));
+        } finally {
+            setIsLoading(false);
+        }
+    }, [isLoading, item.id, onCloseDeleteAlert]);
+
     return {
         onEditPress,
         onToggleVisiblePress,
+        onOpenDeleteAlert,
+        onCloseDeleteAlert,
+        onDeletePress,
         isLoading,
+        isDeleteAlertVisible,
         contactType,
         title,
         phoneCountryCode,

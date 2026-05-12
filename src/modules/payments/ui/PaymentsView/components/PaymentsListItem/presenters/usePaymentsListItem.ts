@@ -10,6 +10,7 @@ import { useCallback, useState } from 'react';
 export const usePaymentsListItem = (item: IPaymentsListItem) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(false);
+    const [isDeleteAlertVisible, setIsDeleteAlertVisible] = useState(false);
 
     const onEditPress = useCallback(() => {
         navigation.navigate('CreatePaymentView', { payment: item });
@@ -54,5 +55,50 @@ export const usePaymentsListItem = (item: IPaymentsListItem) => {
         }
     }, [isLoading, item.id, item.isVisible]);
 
-    return { onEditPress, onToggleVisiblePress, isLoading };
+    const onOpenDeleteAlert = useCallback(() => {
+        setIsDeleteAlertVisible(true);
+    }, []);
+
+    const onCloseDeleteAlert = useCallback(() => {
+        setIsDeleteAlertVisible(false);
+    }, []);
+
+    const onDeletePress = useCallback(async () => {
+        if (isLoading) {
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            const response = await paymentsService.delete(item.id);
+
+            if (response.isError) {
+                toastService.showError(localization.t('common.errorHappened'), response.message);
+                return;
+            }
+
+            const listResponse = await paymentsService.list();
+
+            if (listResponse.isError) {
+                paymentsModel.list = (paymentsModel.list || []).filter((payment) => payment.id !== item.id);
+            }
+
+            onCloseDeleteAlert();
+        } catch (error) {
+            console.error(JSON.stringify(error, null, 4));
+            toastService.showError(localization.t('common.errorHappened'));
+        } finally {
+            setIsLoading(false);
+        }
+    }, [isLoading, item.id, onCloseDeleteAlert]);
+
+    return {
+        onEditPress,
+        onToggleVisiblePress,
+        onOpenDeleteAlert,
+        onCloseDeleteAlert,
+        onDeletePress,
+        isLoading,
+        isDeleteAlertVisible,
+    };
 };

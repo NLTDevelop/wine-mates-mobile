@@ -473,6 +473,8 @@
         "description": "Опис",
         "downloadFile": "Завантажити файл",
         "downloadHint": "Ви можете завантажити QR-код для оплати.",
+        "deletePaymentMethodTitle": "Видалити спосіб оплати?",
+        "deletePaymentMethodMessage": "Ви впевнені, що хочете видалити цей спосіб оплати?",
         "noVisiblePaymentMethods": "Немає видимих способів оплати",
         "addPaymentMethodsInProfile": "Додайте способи оплати в профілі"
     },
@@ -483,7 +485,10 @@
         "contactValue": "Номер телефону або посилання",
         "contacts": "Контакти",
         "socialNetworks": "Соціальні мережі",
+        "supportedSocialNetworksHint": "Підтримуються: Instagram, Telegram, Facebook, Discord, Reddit, Pinterest, WhatsApp, TikTok, Threads, X, LinkedIn, Snapchat",
         "invalidContactValue": "Введіть коректний номер телефону або посилання на підтримувану соціальну мережу",
+        "deleteContactTitle": "Видалити контакт?",
+        "deleteContactMessage": "Ви впевнені, що хочете видалити цей контакт?",
         "noVisibleContacts": "Немає видимих контактів"
     }
 }
