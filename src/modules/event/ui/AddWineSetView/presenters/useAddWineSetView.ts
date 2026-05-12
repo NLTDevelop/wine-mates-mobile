@@ -199,13 +199,20 @@ export const useAddWineSetView = ({
         };
     }, [draft, navigation, selectedWines]);
 
+    const createOnDeleteWinePress = useCallback((wineId: number) => {
+        return () => {
+            setSelectedWines(prev => prev.filter(item => item.id !== wineId));
+        };
+    }, []);
+
     const wineSetViewItems = useMemo<IWineSetViewItem[]>(() => {
         return selectedWines.map((item) => ({
             id: item.id,
             title: getWineTitle(item),
             onEditPress: createOnEditWinePress(item),
+            onDeletePress: createOnDeleteWinePress(item.id),
         }));
-    }, [createOnEditWinePress, selectedWines]);
+    }, [createOnDeleteWinePress, createOnEditWinePress, selectedWines]);
 
     const onReorderWineSet = useCallback(({ data }: IWineSetDragEndPayload) => {
         setSelectedWines((prev) => {

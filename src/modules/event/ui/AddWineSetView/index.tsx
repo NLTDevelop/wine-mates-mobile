@@ -121,7 +121,13 @@ export const AddWineSetView = () => {
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
 
     const renderWineItem: SortableGridRenderItem<IWineSetViewItem> = function renderWineItem({ item }) {
-        return <WineSetItemRow title={item.title} onEditPress={item.onEditPress} />;
+        return (
+            <WineSetItemRow
+                title={item.title}
+                onEditPress={item.onEditPress}
+                onDeletePress={item.onDeletePress}
+            />
+        );
     };
 
     return (
