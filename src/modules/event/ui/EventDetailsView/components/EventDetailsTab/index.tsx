@@ -11,6 +11,8 @@ import { IEventContactOption } from '@/modules/event/ui/EventDetailsView/types/I
 import { WineSetItem } from '../WineSetItem';
 import { EventContactItem } from '../EventContactItem';
 import { EventDetailsPreview } from '../EventDetailsPreview';
+import { EventPaymentMethodsModal } from '../EventPaymentMethodsModal';
+import { EventSelectedPaymentMethodModal } from '../EventSelectedPaymentMethodModal';
 import { getStyles } from './styles';
 import { useEventDetailsTab } from './presenters/useEventDetailsTab';
 
@@ -39,6 +41,14 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
         isCancelEventDisabled,
         isBookNowInProgress,
         isEventApplied,
+        isPaymentMethodsModalVisible,
+        paymentMethodOptions,
+        isPaymentMethodNextDisabled,
+        onClosePaymentMethodsModal,
+        onNextPaymentMethodPress,
+        isSelectedPaymentMethodModalVisible,
+        selectedPaymentMethod,
+        onCloseSelectedPaymentMethodModal,
     } = useEventDetailsTab({ eventId });
 
     const keyExtractor = useCallback((item: IWineSetItem) => `${item.id}`, []);
@@ -147,7 +157,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                                 containerStyle={styles.bookNowButton}
                                 text={isEventApplied ? t('eventDetails.booked') : t('eventDetails.bookNow')}
                                 onPress={onBookNowPress}
-                                disabled={isEventApplied || isBookNowDisabled}
+                                disabled={isBookNowDisabled || isBookNowInProgress}
                                 inProgress={isBookNowInProgress}
                             />
                             <FavoriteButton
@@ -159,6 +169,22 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                     )}
                 </View>
             </ScrollView>
+            {isPaymentMethodsModalVisible && (
+                <EventPaymentMethodsModal
+                    visible={isPaymentMethodsModalVisible}
+                    options={paymentMethodOptions}
+                    isNextDisabled={isPaymentMethodNextDisabled}
+                    onClose={onClosePaymentMethodsModal}
+                    onNextPress={onNextPaymentMethodPress}
+                />
+            )}
+            {isSelectedPaymentMethodModalVisible && (
+                <EventSelectedPaymentMethodModal
+                    visible={isSelectedPaymentMethodModalVisible}
+                    paymentMethod={selectedPaymentMethod}
+                    onClose={onCloseSelectedPaymentMethodModal}
+                />
+            )}
         </View>
     );
 };

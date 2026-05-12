@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useEventDetails } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetails';
 import { useEventDetailsData } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetailsData';
 import { eventsService } from '@/entities/events/EventsService';
@@ -13,9 +13,25 @@ import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { EventType } from '@/entities/events/enums/EventType';
 import { IMedia } from '@/entities/media/types/IMedia';
+import { IEventPaymentMethod } from '@/modules/event/ui/EventDetailsView/types/IEventPaymentMethod';
+import { IEventPaymentMethodOption } from '@/modules/event/ui/EventDetailsView/types/IEventPaymentMethodOption';
+import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
 
 interface IProps {
     eventId: number;
+}
+
+interface IEventDetailWithPaymentMethods {
+    paymentMethods?: Array<{
+        id?: number;
+        name?: string;
+        paymentDetails?: string;
+        description?: string;
+        isVisible?: boolean;
+        qrCode?: {
+            originalUrl?: string;
+        } | null;
+    }>;
 }
 
 const mapWineImageToMedia = (
@@ -36,12 +52,34 @@ const mapWineImageToMedia = (
     };
 };
 
+const getEventPaymentMethods = (eventDetail: IEventDetailWithPaymentMethods | null): IEventPaymentMethod[] => {
+    if (!eventDetail?.paymentMethods?.length) {
+        return [];
+    }
+
+    return eventDetail.paymentMethods
+        .filter((item) => item.isVisible !== false)
+        .map((item) => {
+            return {
+                id: Number(item.id || 0),
+                name: item.name || '',
+                paymentDetails: item.paymentDetails || '',
+                description: item.description || '',
+                qrCodeOriginalUrl: item.qrCode?.originalUrl || '',
+            };
+        })
+        .filter((item) => item.id > 0 && !!item.name);
+};
+
 export const useEventDetailsTab = ({ eventId }: IProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
     const { eventDetail, setEventDetail, isError, isLoading } = useEventDetails(eventId);
     const { detailsData, wineSetItems, contactItems, cardPreviewData } = useEventDetailsData(eventDetail);
     const [isBookNowInProgress, setIsBookNowInProgress] = useState(false);
     const [currentTime, setCurrentTime] = useState(() => new Date());
+    const [isPaymentMethodsModalVisible, setIsPaymentMethodsModalVisible] = useState(false);
+    const [isSelectedPaymentMethodModalVisible, setIsSelectedPaymentMethodModalVisible] = useState(false);
+    const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<number | null>(null);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -54,53 +92,70 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
     }, []);
 
     const isEventApplied = Boolean(eventDetail?.isApplied);
+    const eventPaymentMethods = useMemo(() => {
+        return getEventPaymentMethods(eventDetail as IEventDetailWithPaymentMethods | null);
+    }, [eventDetail]);
+    const selectedPaymentMethod = useMemo(() => {
+        if (selectedPaymentMethodId === null) {
+            return null;
+        }
 
-    const eventStartDateRaw = eventDetail?.eventStartDate || eventDetail?.eventDate;
-    const eventStartTimeRaw = eventDetail?.eventStartTime || eventDetail?.eventTime || '00:00';
-    const eventStartDateTime = eventStartDateRaw ? new Date(`${eventStartDateRaw}T${eventStartTimeRaw}`) : null;
-    const hasEventStarted = eventStartDateTime ? eventStartDateTime.getTime() <= currentTime.getTime() : false;
+        return eventPaymentMethods.find((item) => item.id === selectedPaymentMethodId) || null;
+    }, [eventPaymentMethods, selectedPaymentMethodId]);
+
+    const onSelectPaymentMethod = useCallback((id: number) => {
+        setSelectedPaymentMethodId(id);
+    }, []);
+
+    const paymentMethodOptions = useMemo<IEventPaymentMethodOption[]>(() => {
+        return eventPaymentMethods.map((item) => {
+            return {
+                id: item.id,
+                name: item.name,
+                paymentDetails: item.paymentDetails,
+                isSelected: selectedPaymentMethodId === item.id,
+                onPress: () => onSelectPaymentMethod(item.id),
+            };
+        });
+    }, [eventPaymentMethods, onSelectPaymentMethod, selectedPaymentMethodId]);
+
+    const eventStartDateRaw = eventDetail?.eventStartDate || eventDetail?.eventDate || null;
+    const eventStartTimeRaw = eventDetail?.eventStartTime || eventDetail?.eventTime || null;
+    const eventStartDateTime = eventStartDateRaw && eventStartTimeRaw
+        ? new Date(`${eventStartDateRaw}T${eventStartTimeRaw}`)
+        : null;
+    const hasEventStarted = eventStartDateTime && !Number.isNaN(eventStartDateTime.getTime())
+        ? eventStartDateTime.getTime() <= currentTime.getTime()
+        : false;
     const seatsLeft = eventDetail?.seats?.left;
     const hasNoSeatsLeft = typeof seatsLeft === 'number' && seatsLeft <= 0;
     const isEventInactive = eventDetail?.isActive === false;
-    const isBookNowDisabled = isEventInactive || hasEventStarted || (!isEventApplied && hasNoSeatsLeft);
+    const eventStatus = String((eventDetail as { status?: string } | null)?.status || '').toLowerCase();
+    const isEventFinished = eventStatus === SavedEventStatus.FINISHED;
+    const isEventCanceled = eventStatus === SavedEventStatus.CANCELED || eventStatus === 'cancelled';
+    const isBookNowDisabled = isEventInactive || isEventFinished || isEventCanceled || isEventApplied || hasNoSeatsLeft;
     const isCancelEventDisabled = hasEventStarted || isEventInactive;
 
-    const onBookNowPress = useCallback(async () => {
-        if (!eventDetail || isBookNowDisabled || isBookNowInProgress) {
+    const onOpenPaymentMethodsModal = useCallback(() => {
+        setSelectedPaymentMethodId(null);
+        setIsPaymentMethodsModalVisible(true);
+    }, []);
+
+    const onClosePaymentMethodsModal = useCallback(() => {
+        setIsPaymentMethodsModalVisible(false);
+    }, []);
+
+    const onCloseSelectedPaymentMethodModal = useCallback(() => {
+        setIsSelectedPaymentMethodModalVisible(false);
+    }, []);
+
+    const onApplyForEvent = useCallback(async (showPaymentInfoModal: boolean) => {
+        if (!eventDetail) {
             return;
         }
 
         setIsBookNowInProgress(true);
         try {
-            if (isEventApplied) {
-                const response = await eventsService.cancelApplyForEvent(eventId);
-                if (response.isError) {
-                    toastService.showError(
-                        localization.t('common.errorHappened'),
-                        response.message || localization.t('common.somethingWentWrong'),
-                    );
-                    return;
-                }
-
-                if (!response.isError) {
-                    const nextSeatsLeft =
-                        typeof eventDetail.seats?.left === 'number' ? eventDetail.seats.left + 1 : undefined;
-                    setEventDetail({
-                        ...eventDetail,
-                        isApplied: false,
-                        seats:
-                            eventDetail.seats && typeof nextSeatsLeft === 'number'
-                                ? {
-                                      ...eventDetail.seats,
-                                      left: nextSeatsLeft,
-                                  }
-                                : eventDetail.seats,
-                    });
-                }
-
-                return;
-            }
-
             const response = await eventsService.applyForEvent(eventId);
             if (response.isError) {
                 toastService.showError(
@@ -110,28 +165,58 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
                 return;
             }
 
-            if (!response.isError) {
-                const nextSeatsLeft =
-                    typeof eventDetail.seats?.left === 'number' ? Math.max(0, eventDetail.seats.left - 1) : undefined;
-                setEventDetail({
-                    ...eventDetail,
-                    isApplied: true,
-                    seats:
-                        eventDetail.seats && typeof nextSeatsLeft === 'number'
-                            ? {
-                                  ...eventDetail.seats,
-                                  left: nextSeatsLeft,
-                              }
-                            : eventDetail.seats,
-                });
+            const nextSeatsLeft =
+                typeof eventDetail.seats?.left === 'number' ? Math.max(0, eventDetail.seats.left - 1) : undefined;
+            setEventDetail({
+                ...eventDetail,
+                isApplied: true,
+                seats:
+                    eventDetail.seats && typeof nextSeatsLeft === 'number'
+                        ? {
+                              ...eventDetail.seats,
+                              left: nextSeatsLeft,
+                          }
+                        : eventDetail.seats,
+            });
+            if (showPaymentInfoModal && selectedPaymentMethodId !== null) {
+                setIsSelectedPaymentMethodModalVisible(true);
             }
         } catch (error) {
-            console.warn('useEventDetailsTab -> onBookNowPress: ', error);
+            console.warn('useEventDetailsTab -> onApplyForEvent: ', error);
             toastService.showError(localization.t('common.errorHappened'), localization.t('common.somethingWentWrong'));
         } finally {
             setIsBookNowInProgress(false);
         }
-    }, [eventDetail, eventId, isBookNowDisabled, isBookNowInProgress, isEventApplied, setEventDetail]);
+    }, [eventDetail, eventId, selectedPaymentMethodId, setEventDetail]);
+
+    const onNextPaymentMethodPress = useCallback(async () => {
+        if (selectedPaymentMethodId === null) {
+            return;
+        }
+
+        setIsPaymentMethodsModalVisible(false);
+        await onApplyForEvent(true);
+    }, [onApplyForEvent, selectedPaymentMethodId]);
+
+    const onBookNowPress = useCallback(async () => {
+        if (!eventDetail || isBookNowDisabled || isBookNowInProgress) {
+            return;
+        }
+
+        if (eventPaymentMethods.length === 0) {
+            await onApplyForEvent(false);
+            return;
+        }
+
+        onOpenPaymentMethodsModal();
+    }, [
+        eventDetail,
+        eventPaymentMethods.length,
+        isBookNowDisabled,
+        isBookNowInProgress,
+        onApplyForEvent,
+        onOpenPaymentMethodsModal,
+    ]);
 
     const onFavoritePress = useCallback(async () => {
         try {
@@ -305,5 +390,13 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
         isCancelEventDisabled,
         isBookNowInProgress,
         isEventApplied,
+        isPaymentMethodsModalVisible,
+        paymentMethodOptions,
+        isPaymentMethodNextDisabled: selectedPaymentMethodId === null,
+        onClosePaymentMethodsModal,
+        onNextPaymentMethodPress,
+        isSelectedPaymentMethodModalVisible,
+        selectedPaymentMethod,
+        onCloseSelectedPaymentMethodModal,
     };
 };
