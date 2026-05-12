@@ -400,20 +400,6 @@ class EventsService {
         }
     };
 
-    cancelApplyForEvent = async (eventId: number): Promise<IResponse<IEventDetail>> => {
-        try {
-            const response = await this.updateEvent(eventId, { isApplied: false });
-            if (!response.isError) {
-                this.applyBookingState(eventId, false);
-            }
-
-            return response;
-        } catch (error) {
-            console.warn('EventsService -> cancelApplyForEvent: ', error);
-            return { isError: true, data: null, message: '' } as any;
-        }
-    };
-
     getMapPins = async (params: IEventMapPinsParams): Promise<IResponse<IEventMapPin[]>> => {
         try {
             const response = await this._requester.request({
