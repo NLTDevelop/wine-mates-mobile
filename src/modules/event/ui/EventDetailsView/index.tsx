@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { View } from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
 import { NavigationState, SceneRendererProps, TabView } from 'react-native-tab-view';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -22,18 +21,9 @@ interface ISceneProps {
     route: IRoute;
 }
 
-interface IEventDetailsRouteParams {
-    [key: string]: object | undefined;
-    EventDetailsView: {
-        eventId: number;
-    };
-}
-
 export const EventDetailsView = observer(() => {
     const { t, colors } = useUiContext();
-    const route = useRoute<RouteProp<IEventDetailsRouteParams, 'EventDetailsView'>>();
-    const { eventId } = route.params;
-    const { screenIndex, routes, onIndexChange } = useEventDetailsView({ t });
+    const { eventId, screenIndex, routes, onIndexChange, onPressBack } = useEventDetailsView({ t });
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
@@ -54,7 +44,7 @@ export const EventDetailsView = observer(() => {
         <ScreenContainer
             edges={['top', 'bottom']}
             withGradient
-            headerComponent={<HeaderWithBackButton title={t('eventDetails.title')} />}
+            headerComponent={<HeaderWithBackButton title={t('eventDetails.title')} onPressBack={onPressBack} />}
         >
             <View style={styles.container}>
                 <TabView
