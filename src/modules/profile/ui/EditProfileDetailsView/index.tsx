@@ -17,14 +17,15 @@ import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
 import { InstagramIcon } from '@assets/icons/InstagramIcon';
 import { SelectExpertiseBottomSheet } from './components/SelectExpertiseBottomSheet';
 import { ExpertiseSelectorRow } from './components/ExpertiseSelectorRow';
-import { CitySelectorRow } from './components/CitySelectorRow';
 import { SelectCityBottomSheet } from './components/SelectCityBottomSheet';
 import { CustomAlert } from '@/UIKit/CustomAlert/ui';
+import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum.ts';
 import { WineLoverIcon } from '@assets/icons/WineLoverIcon.tsx';
 import { WineExpertIcon } from '@assets/icons/WineExpertIcon.tsx';
 import { WinemakerIcon } from '@assets/icons/WinemakerIcon.tsx';
 import { isIOS, scaleHorizontal, scaleVertical } from '@/utils';
+import { ProfileSelectorRow } from './components/ProfileSelectorRow';
 
 const EXPERTISE_SIZE = scaleHorizontal(16);
 
@@ -56,6 +57,7 @@ export const EditProfileDetailsView = () => {
         onChangePhoneNumber,
         onChangeGender,
         onChangeOccupation,
+        currencyPicker,
         onChangePlaceOfWork,
         onChangeInstagramLink,
         onChangeWebsite,
@@ -175,7 +177,7 @@ export const EditProfileDetailsView = () => {
                             disabled={false}
                             containerStyle={styles.input}
                         />
-                        <CitySelectorRow
+                        <ProfileSelectorRow
                             value={form.city}
                             placeholder={t('settings.city')}
                             disabled={isCitySelectorDisabled}
@@ -205,6 +207,12 @@ export const EditProfileDetailsView = () => {
                             editable
                             placeholder={t('settings.occupation')}
                             containerStyle={styles.input}
+                        />
+                        <ProfileSelectorRow
+                            value={currencyPicker.selectedText}
+                            placeholder={t('settings.selectedCurrency')}
+                            disabled={!currencyPicker.items.length}
+                            onPress={currencyPicker.onOpen}
                         />
                         <CustomInput
                             value={form.placeOfWork}
@@ -279,6 +287,16 @@ export const EditProfileDetailsView = () => {
                 onSelect={onSelectCityOption}
                 onClose={onCloseCitySelector}
             />
+            {currencyPicker.isVisible && (
+                <CurrencyPickerBottomSheet
+                    visible={currencyPicker.isVisible}
+                    title={t('settings.selectedCurrency')}
+                    onClose={currencyPicker.onClose}
+                    items={currencyPicker.items}
+                    selectedValue={currencyPicker.draft}
+                    onConfirm={currencyPicker.onConfirm}
+                />
+            )}
             <DateTimePickerModal
                 visible={isBirthdayModalVisible}
                 mode="date"

@@ -16,13 +16,14 @@ const SNAP_POINTS = ['90%'];
 
 interface IProps {
     visible: boolean;
+    title: string;
     onClose: () => void;
     items: ICurrencyOption[];
     selectedValue: string;
     onConfirm: () => void;
 }
 
-const CurrencyPickerBottomSheetComponent = ({ visible, onClose, items, selectedValue, onConfirm }: IProps) => {
+const CurrencyPickerBottomSheetComponent = ({ visible, title, onClose, items, selectedValue, onConfirm }: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [bottom, colors]);
@@ -84,7 +85,7 @@ const CurrencyPickerBottomSheetComponent = ({ visible, onClose, items, selectedV
             <View style={styles.header}>
                 <View style={styles.closeButton} />
                 <View style={styles.titleContainer} pointerEvents="none">
-                    <Typography text={t('event.currency')} variant="h4" style={styles.title} />
+                    <Typography text={title} variant="h4" style={styles.title} />
                 </View>
                 <TouchableOpacity onPress={onClosePress} style={styles.closeButton} hitSlop={8}>
                     <CrossIcon />

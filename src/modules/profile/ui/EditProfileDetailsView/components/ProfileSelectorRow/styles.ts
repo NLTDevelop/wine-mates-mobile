@@ -8,7 +8,7 @@ export const getStyles = (colors: IColors) => {
             marginBottom: scaleVertical(16),
             minHeight: scaleVertical(48),
             borderRadius: 12,
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             backgroundColor: colors.background,
             paddingHorizontal: scaleHorizontal(16),
