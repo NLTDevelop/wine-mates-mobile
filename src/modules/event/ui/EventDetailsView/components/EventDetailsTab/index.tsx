@@ -129,7 +129,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                                     text={t('eventDetails.duplicate')}
                                     onPress={onDuplicatePress}
                                 />
-                                <EditButton onPress={onEditPress} size={48} disabled={isCancelEventDisabled}/>
+                                <EditButton onPress={onEditPress} size={48} disabled={isCancelEventDisabled} />
                             </View>
                             <Button
                                 type="main"
@@ -150,7 +150,11 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                                 disabled={isEventApplied || isBookNowDisabled}
                                 inProgress={isBookNowInProgress}
                             />
-                            <FavoriteButton onPress={onFavoritePress} size={48} isSaved={Boolean(eventDetail.isSaved)} />
+                            <FavoriteButton
+                                onPress={onFavoritePress}
+                                size={48}
+                                isSaved={Boolean(eventDetail.isSaved)}
+                            />
                         </View>
                     )}
                 </View>

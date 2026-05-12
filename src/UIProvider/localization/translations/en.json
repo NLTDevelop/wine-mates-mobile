@@ -401,7 +401,7 @@
         "tastings": "Tasting",
         "parties": "Party",
         "pastDateError": "You cannot select a past date",
-         "listTitle": "Events",
+        "listTitle": "Events",
         "created": "Created",
         "saved": "Saved",
         "applied": "Applied",
@@ -454,6 +454,17 @@
         "callToReserve": "Call to reserve",
         "duplicate": "Duplicate"
     },
+    "eventGuests": {
+        "all": "All",
+        "confirm": "Confirm",
+        "notConfirm": "Not confirm",
+        "confirmAction": "Confirm",
+        "notConfirmAction": "Not confirm",
+        "cancelConfirmation": "Cancel confirmation",
+        "provideConfirmation": "Provide confirmation",
+        "age": "Age",
+        "emptyList": "Guest list is empty"
+    },
     "permissions": {
         "locationTitle": "Location Permission",
         "locationMessage": "The app needs access to your location to show events near you",
@@ -474,7 +485,7 @@
         "noVisiblePaymentMethods": "No visible payment methods",
         "addPaymentMethodsInProfile": "Add payment methods to your profile."
     },
-    "contactInfo" : {
+    "contactInfo": {
         "contactInfo": "Contact information",
         "addContact": "Add contact",
         "editContact": "Edit contact",

@@ -10,7 +10,7 @@ import { TabsBar } from './components/TabsBar';
 import { size } from '@/utils';
 import { useEventDetailsView } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetailsView';
 import { EventDetailsTab } from './components/EventDetailsTab';
-import { GuestsTab } from './components/GuestsTab';
+import { GuestsTab } from './components/EventGuestsTab';
 import { getStyles } from './styles';
 
 interface IRoute {
@@ -41,10 +41,12 @@ export const EventDetailsView = observer(() => {
             return <EventDetailsTab eventId={eventId} />;
         }
 
-        return <GuestsTab />;
+        return <GuestsTab eventId={eventId} requiresConfirmation={true} />;
     };
 
-    const renderTabBar = function renderTabBar(props: SceneRendererProps & { navigationState: NavigationState<IRoute> }) {
+    const renderTabBar = function renderTabBar(
+        props: SceneRendererProps & { navigationState: NavigationState<IRoute> },
+    ) {
         return <TabsBar tabBarProps={props} onIndexChange={onIndexChange} />;
     };
 

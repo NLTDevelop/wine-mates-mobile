@@ -458,6 +458,17 @@
         "callToReserve": "Зателефонувати для бронювання",
         "duplicate": "Дублювати"
     },
+    "eventGuests": {
+        "all": "Усі",
+        "confirm": "Підтверджено",
+        "notConfirm": "Не підтверджено",
+        "confirmAction": "Підтвердити",
+        "notConfirmAction": "Не підтвердити",
+        "cancelConfirmation": "Скасувати підтвердження",
+        "provideConfirmation": "Підтвердити",
+        "age": "років",
+        "emptyList": "Список гостей порожній"
+    },
     "permissions": {
         "locationTitle": "Дозвіл на геолокацію",
         "locationMessage": "Додатку потрібен доступ до вашого місцезнаходження для відображення подій поруч з вами",
@@ -478,7 +489,7 @@
         "noVisiblePaymentMethods": "Немає видимих способів оплати",
         "addPaymentMethodsInProfile": "Додайте способи оплати в профілі"
     },
-    "contactInfo" : {
+    "contactInfo": {
         "contactInfo": "Контактна інформація",
         "addContact": "Додати контакт",
         "editContact": "Редагувати контакт",

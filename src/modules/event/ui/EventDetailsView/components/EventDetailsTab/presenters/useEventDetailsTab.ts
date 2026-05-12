@@ -18,7 +18,9 @@ interface IProps {
     eventId: number;
 }
 
-const mapWineImageToMedia = (image?: { smallUrl?: string; mediumUrl?: string; originalUrl?: string } | null): IMedia | null => {
+const mapWineImageToMedia = (
+    image?: { smallUrl?: string; mediumUrl?: string; originalUrl?: string } | null,
+): IMedia | null => {
     if (!image) {
         return null;
     }
@@ -81,18 +83,18 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
                 }
 
                 if (!response.isError) {
-                    const nextSeatsLeft = typeof eventDetail.seats?.left === 'number'
-                        ? eventDetail.seats.left + 1
-                        : undefined;
+                    const nextSeatsLeft =
+                        typeof eventDetail.seats?.left === 'number' ? eventDetail.seats.left + 1 : undefined;
                     setEventDetail({
                         ...eventDetail,
                         isApplied: false,
-                        seats: eventDetail.seats && typeof nextSeatsLeft === 'number'
-                            ? {
-                                ...eventDetail.seats,
-                                left: nextSeatsLeft,
-                            }
-                            : eventDetail.seats,
+                        seats:
+                            eventDetail.seats && typeof nextSeatsLeft === 'number'
+                                ? {
+                                      ...eventDetail.seats,
+                                      left: nextSeatsLeft,
+                                  }
+                                : eventDetail.seats,
                     });
                 }
 
@@ -109,26 +111,23 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
             }
 
             if (!response.isError) {
-                const nextSeatsLeft = typeof eventDetail.seats?.left === 'number'
-                    ? Math.max(0, eventDetail.seats.left - 1)
-                    : undefined;
+                const nextSeatsLeft =
+                    typeof eventDetail.seats?.left === 'number' ? Math.max(0, eventDetail.seats.left - 1) : undefined;
                 setEventDetail({
                     ...eventDetail,
                     isApplied: true,
-                    seats: eventDetail.seats && typeof nextSeatsLeft === 'number'
-                        ? {
-                            ...eventDetail.seats,
-                            left: nextSeatsLeft,
-                        }
-                        : eventDetail.seats,
+                    seats:
+                        eventDetail.seats && typeof nextSeatsLeft === 'number'
+                            ? {
+                                  ...eventDetail.seats,
+                                  left: nextSeatsLeft,
+                              }
+                            : eventDetail.seats,
                 });
             }
         } catch (error) {
             console.warn('useEventDetailsTab -> onBookNowPress: ', error);
-            toastService.showError(
-                localization.t('common.errorHappened'),
-                localization.t('common.somethingWentWrong'),
-            );
+            toastService.showError(localization.t('common.errorHappened'), localization.t('common.somethingWentWrong'));
         } finally {
             setIsBookNowInProgress(false);
         }
@@ -141,9 +140,8 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
                 return;
             }
 
-            const nextIsSaved = typeof response.data?.isSaved === 'boolean'
-                ? response.data.isSaved
-                : !eventDetail.isSaved;
+            const nextIsSaved =
+                typeof response.data?.isSaved === 'boolean' ? response.data.isSaved : !eventDetail.isSaved;
 
             setEventDetail({
                 ...eventDetail,
@@ -176,10 +174,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
             });
         } catch (error) {
             console.warn('useEventDetailsTab -> onCancelEventPress: ', error);
-            toastService.showError(
-                localization.t('common.errorHappened'),
-                localization.t('common.somethingWentWrong'),
-            );
+            toastService.showError(localization.t('common.errorHappened'), localization.t('common.somethingWentWrong'));
         } finally {
             setIsBookNowInProgress(false);
         }
