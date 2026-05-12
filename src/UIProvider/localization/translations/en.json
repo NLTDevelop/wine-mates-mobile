@@ -373,6 +373,7 @@
         "listWineEvent": "List wine event",
         "wineSet": "Wine set",
         "addWine": "Add wine",
+        "startTypingWineSearch": "Start typing a wine name, producer, grape, country or region",
         "searchWineWithScanner": "Scan wine",
         "repeat": "Repeat",
         "repeatNever": "Never",

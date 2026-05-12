@@ -15,6 +15,7 @@ import { EventType } from '@/entities/events/enums/EventType';
 import { IMedia } from '@/entities/media/types/IMedia';
 import { IEventPaymentMethod } from '@/modules/event/ui/EventDetailsView/types/IEventPaymentMethod';
 import { IEventPaymentMethodOption } from '@/modules/event/ui/EventDetailsView/types/IEventPaymentMethodOption';
+import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
 
 interface IProps {
     eventId: number;
@@ -129,7 +130,10 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
     const seatsLeft = eventDetail?.seats?.left;
     const hasNoSeatsLeft = typeof seatsLeft === 'number' && seatsLeft <= 0;
     const isEventInactive = eventDetail?.isActive === false;
-    const isBookNowDisabled = isEventInactive || hasEventStarted || (!isEventApplied && hasNoSeatsLeft);
+    const eventStatus = String((eventDetail as { status?: string } | null)?.status || '').toLowerCase();
+    const isEventFinished = eventStatus === SavedEventStatus.FINISHED;
+    const isEventCanceled = eventStatus === SavedEventStatus.CANCELED || eventStatus === 'cancelled';
+    const isBookNowDisabled = isEventInactive || isEventFinished || isEventCanceled || isEventApplied || hasNoSeatsLeft;
     const isCancelEventDisabled = hasEventStarted || isEventInactive;
 
     const onOpenPaymentMethodsModal = useCallback(() => {
@@ -195,7 +199,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
     }, [onApplyForEvent, selectedPaymentMethodId]);
 
     const onBookNowPress = useCallback(async () => {
-        if (!eventDetail || isEventApplied || isBookNowInProgress) {
+        if (!eventDetail || isBookNowDisabled || isBookNowInProgress) {
             return;
         }
 
@@ -208,8 +212,8 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
     }, [
         eventDetail,
         eventPaymentMethods.length,
+        isBookNowDisabled,
         isBookNowInProgress,
-        isEventApplied,
         onApplyForEvent,
         onOpenPaymentMethodsModal,
     ]);

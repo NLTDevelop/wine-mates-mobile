@@ -29,6 +29,37 @@ const createInitialForm = (wine: IWineSetSearchItem): IWineBase => {
     };
 };
 
+const normalizeText = (value?: string | null) => {
+    return value?.trim() || '';
+};
+
+const normalizeFormValue = (value: IWineBaseValue) => {
+    return {
+        id: value.id ?? null,
+        value: normalizeText(value.value),
+    };
+};
+
+const isFormEqual = (left: IWineBase, right: IWineBase) => {
+    const fields: Array<keyof IWineBase> = [
+        'typeOfWine',
+        'colorOfWine',
+        'country',
+        'region',
+        'producer',
+        'grapeVariety',
+        'vintageYear',
+        'wineName',
+    ];
+
+    return fields.every((field) => {
+        const leftValue = normalizeFormValue(left[field]);
+        const rightValue = normalizeFormValue(right[field]);
+
+        return leftValue.id === rightValue.id && leftValue.value === rightValue.value;
+    });
+};
+
 const fromDropdown = (item?: IDropdownItem | null): IWineBaseValue => {
     if (!item) {
         return createValue();
@@ -65,10 +96,15 @@ export const useEditEventWineView = () => {
     const route = useRoute<Route>();
     const { wineId, wine, draft, selectedWines } = route.params;
     const [form, setForm] = useState<IWineBase>(() => createInitialForm(wine));
+    const [initialForm, setInitialForm] = useState<IWineBase>(() => createInitialForm(wine));
     const [inProgress, setInProgress] = useState(false);
     const [isVintageError, setIsVintageError] = useState({ status: false, errorText: '' });
 
     const isDisabled = useMemo(() => {
+        if (inProgress) {
+            return true;
+        }
+
         const baseRequired = [
             form.typeOfWine.value,
             form.colorOfWine.value,
@@ -77,8 +113,12 @@ export const useEditEventWineView = () => {
             form.grapeVariety.value,
         ];
 
-        return baseRequired.some(field => !field?.trim());
-    }, [form]);
+        if (baseRequired.some(field => !field?.trim())) {
+            return true;
+        }
+
+        return isFormEqual(form, initialForm);
+    }, [form, inProgress, initialForm]);
 
     useEffect(() => {
         let isActive = true;
@@ -92,7 +132,7 @@ export const useEditEventWineView = () => {
                 }
 
                 const data = response.data;
-                setForm({
+                const nextForm = {
                     typeOfWine: { id: data.type.id, value: data.type.name },
                     colorOfWine: { id: data.color.id, value: data.color.name },
                     country: { id: data.country.id, value: data.country.name },
@@ -103,7 +143,10 @@ export const useEditEventWineView = () => {
                     grapeVariety: { id: null, value: data.grapeVariety || '' },
                     vintageYear: { id: null, value: data.vintage ? String(data.vintage) : '' },
                     wineName: { id: null, value: data.name || '' },
-                });
+                };
+
+                setForm(nextForm);
+                setInitialForm(nextForm);
             } catch (error) {
                 console.warn('useEditEventWineView -> onFillForm: ', error);
             }
@@ -151,7 +194,7 @@ export const useEditEventWineView = () => {
     }, []);
 
     const onSavePress = useCallback(async () => {
-        if (!form.typeOfWine.id || !form.colorOfWine.id) {
+        if (isDisabled || !form.typeOfWine.id || !form.colorOfWine.id) {
             return;
         }
 
@@ -202,7 +245,7 @@ export const useEditEventWineView = () => {
         } finally {
             setInProgress(false);
         }
-    }, [draft, form, navigation, selectedWines, wineId]);
+    }, [draft, form, isDisabled, navigation, selectedWines, wineId]);
 
     return {
         form,

@@ -1,4 +1,9 @@
-import type { LinkingOptions, NavigatorScreenParams } from '@react-navigation/native';
+import {
+    getStateFromPath,
+    type LinkingOptions,
+    type NavigatorScreenParams,
+    type PartialState,
+} from '@react-navigation/native';
 
 type TabDeepLinkParamList = {
     EventStack: undefined;
@@ -8,6 +13,7 @@ export type RootDeepLinkParamList = {
     TabNavigator: NavigatorScreenParams<TabDeepLinkParamList>;
     EventDetailsView: {
         eventId: number;
+        openedFromDeepLink?: boolean;
     };
 };
 
@@ -37,5 +43,18 @@ export const linking: LinkingOptions<RootDeepLinkParamList> = {
                 },
             },
         },
+    },
+    getStateFromPath: (path, options) => {
+        const state = getStateFromPath(path, options) as PartialState<any> | undefined;
+        const route = state?.routes?.find((item) => item.name === 'EventDetailsView');
+
+        if (route) {
+            route.params = {
+                ...(route.params || {}),
+                openedFromDeepLink: true,
+            };
+        }
+
+        return state;
     },
 };

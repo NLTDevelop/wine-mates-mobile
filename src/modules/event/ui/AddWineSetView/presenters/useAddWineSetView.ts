@@ -1,5 +1,5 @@
-import { RefObject, useCallback, useEffect, useMemo, useState } from 'react';
-import { Keyboard, TextInput } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Keyboard } from 'react-native';
 import Share from 'react-native-share';
 import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -21,7 +21,6 @@ interface IWineSetDragEndPayload {
 
 type Route = RouteProp<EventStackParamList, 'AddWineSetView'>;
 
-const MAX_VISIBLE_SEARCH_RESULTS = 3;
 const DEFAULT_TASTING_TYPE = TASTING_TYPES[0] as TastingType;
 
 const getWineTitle = (wine: IWineSetSearchItem) => {
@@ -56,7 +55,6 @@ const getWineSubtitle = (wine: IWineSetSearchItem) => {
 };
 
 interface IProps {
-    searchInputRef: RefObject<TextInput | null>;
     searchQuery: string;
     isSearchListVisible: boolean;
     isSearchingWines: boolean;
@@ -64,10 +62,11 @@ interface IProps {
     hasMoreSearchResults: boolean;
     wineSearchResults: IWineSetSearchItem[];
     onResetSearch: () => void;
+    onOpenSearchModal: () => void;
+    onLoadMoreSearchResults: () => void;
 }
 
 export const useAddWineSetView = ({
-    searchInputRef,
     searchQuery,
     isSearchListVisible,
     isSearchingWines,
@@ -75,6 +74,8 @@ export const useAddWineSetView = ({
     hasMoreSearchResults,
     wineSearchResults,
     onResetSearch,
+    onOpenSearchModal,
+    onLoadMoreSearchResults,
 }: IProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<Route>();
@@ -167,8 +168,8 @@ export const useAddWineSetView = ({
     }, []);
 
     const onAddWinePress = useCallback(() => {
-        searchInputRef.current?.focus();
-    }, [searchInputRef]);
+        onOpenSearchModal();
+    }, [onOpenSearchModal]);
 
     const createOnSelectWinePress = useCallback((wine: IWineSetSearchItem) => {
         return () => {
@@ -199,13 +200,20 @@ export const useAddWineSetView = ({
         };
     }, [draft, navigation, selectedWines]);
 
+    const createOnDeleteWinePress = useCallback((wineId: number) => {
+        return () => {
+            setSelectedWines(prev => prev.filter(item => item.id !== wineId));
+        };
+    }, []);
+
     const wineSetViewItems = useMemo<IWineSetViewItem[]>(() => {
         return selectedWines.map((item) => ({
             id: item.id,
             title: getWineTitle(item),
             onEditPress: createOnEditWinePress(item),
+            onDeletePress: createOnDeleteWinePress(item.id),
         }));
-    }, [createOnEditWinePress, selectedWines]);
+    }, [createOnDeleteWinePress, createOnEditWinePress, selectedWines]);
 
     const onReorderWineSet = useCallback(({ data }: IWineSetDragEndPayload) => {
         setSelectedWines((prev) => {
@@ -240,6 +248,29 @@ export const useAddWineSetView = ({
             }));
     }, [createOnSelectWinePress, isSearchListVisible, selectedWines, wineSearchResults]);
 
+    useEffect(() => {
+        const shouldLoadMoreFilteredResults = isSearchListVisible
+            && isInitialSearchFinished
+            && !isSearchingWines
+            && hasMoreSearchResults
+            && wineSearchResults.length > 0
+            && wineSearchResultItems.length === 0;
+
+        if (!shouldLoadMoreFilteredResults) {
+            return;
+        }
+
+        onLoadMoreSearchResults();
+    }, [
+        hasMoreSearchResults,
+        isInitialSearchFinished,
+        isSearchListVisible,
+        isSearchingWines,
+        onLoadMoreSearchResults,
+        wineSearchResultItems.length,
+        wineSearchResults.length,
+    ]);
+
     const hasWineSearchQuery = searchQuery.trim().length > 0;
     const shouldShowScannerButton = isSearchListVisible
         && hasWineSearchQuery
@@ -247,7 +278,13 @@ export const useAddWineSetView = ({
         && !isSearchingWines
         && !hasMoreSearchResults
         && wineSearchResultItems.length === 0;
-    const isSearchResultsScrollable = wineSearchResultItems.length > MAX_VISIBLE_SEARCH_RESULTS;
+    const wineSearchEmptyText = useMemo(() => {
+        if (!hasWineSearchQuery) {
+            return t('event.startTypingWineSearch');
+        }
+
+        return t('common.nothingFoundTitle');
+    }, [hasWineSearchQuery, t]);
 
     const onOpenScannerPress = useCallback(() => {
         if (!draft) {
@@ -258,6 +295,7 @@ export const useAddWineSetView = ({
             draft,
             selectedWines,
         });
+        onResetSearch();
 
         navigation.navigate('TabNavigator', {
             screen: 'ScannerStack',
@@ -265,7 +303,7 @@ export const useAddWineSetView = ({
                 screen: 'ScannerView',
             },
         });
-    }, [draft, navigation, selectedWines]);
+    }, [draft, navigation, onResetSearch, selectedWines]);
 
     const onGetCreatedEventId = useCallback((data: unknown): number | null => {
         if (!data || typeof data !== 'object') {
@@ -499,18 +537,15 @@ export const useAddWineSetView = ({
         repeatRule,
         wineSetViewItems,
         wineSearchResultItems,
-        wineSearchResultItemsCount: wineSearchResultItems.length,
         isSearchingWines,
         shouldShowScannerButton,
+        wineSearchEmptyText,
         isSearchListVisible,
-        isSearchResultsScrollable,
-        maxVisibleSearchResults: MAX_VISIBLE_SEARCH_RESULTS,
         isEventCreatedAlertVisible,
         eventDeepLink,
         isCreating,
         isCreateEventDisabled,
         isEditMode,
-        searchInputRef,
         onChangeRepeatRule,
         onChangeTastingType,
         onCloseEventCreatedAlert,

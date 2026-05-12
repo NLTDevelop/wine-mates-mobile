@@ -37,6 +37,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
         onEditPress,
         onDuplicatePress,
         isOwner,
+        isBookNowDisabled,
         isCancelEventDisabled,
         isBookNowInProgress,
         isEventApplied,
@@ -156,7 +157,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                                 containerStyle={styles.bookNowButton}
                                 text={isEventApplied ? t('eventDetails.booked') : t('eventDetails.bookNow')}
                                 onPress={onBookNowPress}
-                                disabled={isEventApplied || isBookNowInProgress}
+                                disabled={isBookNowDisabled || isBookNowInProgress}
                                 inProgress={isBookNowInProgress}
                             />
                             <FavoriteButton

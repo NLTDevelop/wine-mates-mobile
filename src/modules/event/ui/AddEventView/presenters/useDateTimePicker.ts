@@ -8,6 +8,8 @@ type ActiveModal = 'calendar' | 'time' | null;
 type CalendarField = 'startDate' | 'endDate';
 type TimeField = 'startTime' | 'endTime';
 
+const MIN_START_TIME_OFFSET_MINUTES = 30;
+
 interface IUseDateTimePickerProps {
     onStartDateSelect: (date: Date) => void;
     onEndDateSelect: (date: Date) => void;
@@ -24,6 +26,13 @@ const getStartOfToday = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return today;
+};
+
+const getMinimumEventTime = () => {
+    const date = new Date();
+    date.setSeconds(0, 0);
+    date.setMinutes(date.getMinutes() + MIN_START_TIME_OFFSET_MINUTES);
+    return date;
 };
 
 const formatDateToLocalApi = (date: Date) => {
@@ -87,11 +96,11 @@ const isSameLocalDate = (firstDate: Date, secondDate: Date) => {
 };
 
 const getNormalizedTime = (time: Date, eventDate: Date) => {
-    const now = new Date();
+    const minimumEventTime = getMinimumEventTime();
     const normalizedTime = new Date(time);
 
-    if (isSameLocalDate(eventDate, now) && normalizedTime < now) {
-        return now;
+    if (isSameLocalDate(eventDate, minimumEventTime) && normalizedTime < minimumEventTime) {
+        return minimumEventTime;
     }
 
     return normalizedTime;
@@ -359,12 +368,12 @@ export const useDateTimePicker = ({
     }, [t, timeField]);
 
     const minimumDate = useMemo(() => {
-        const now = new Date();
+        const minimumEventTime = getMinimumEventTime();
         const selectedDate = timeField === 'startTime' ? selectedEventStartDate : selectedEventEndDate;
         const savedEventDate = getDateFromSavedDate(selectedDate);
 
-        if (isSameLocalDate(savedEventDate, now)) {
-            return now;
+        if (isSameLocalDate(savedEventDate, minimumEventTime)) {
+            return minimumEventTime;
         }
 
         return getStartOfToday();

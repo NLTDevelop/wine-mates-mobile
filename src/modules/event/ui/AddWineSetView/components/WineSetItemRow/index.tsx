@@ -5,14 +5,16 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { DragIcon } from '@assets/icons/DragIcon';
 import { EditIcon } from '@assets/icons/EditIcon';
+import { DeleteForeverIcon } from '@assets/icons/DeleteForeverIcon';
 import { getStyles } from './styles';
 
 interface IProps {
     title: string;
     onEditPress: () => void;
+    onDeletePress: () => void;
 }
 
-const WineSetItemRowComponent = ({ title, onEditPress }: IProps) => {
+const WineSetItemRowComponent = ({ title, onEditPress, onDeletePress }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -23,9 +25,14 @@ const WineSetItemRowComponent = ({ title, onEditPress }: IProps) => {
             </View>
             <View style={styles.content}>
                 <Typography variant="h6" text={title} numberOfLines={1} style={styles.title} />
-                <Sortable.Touchable onTap={onEditPress} style={styles.editButton}>
-                    <EditIcon color={colors.text} />
-                </Sortable.Touchable>
+                <View style={styles.actions}>
+                    <Sortable.Touchable onTap={onEditPress} style={styles.actionButton}>
+                        <EditIcon color={colors.text} />
+                    </Sortable.Touchable>
+                    <Sortable.Touchable onTap={onDeletePress} style={styles.actionButton}>
+                        <DeleteForeverIcon width={20} height={20} color={colors.primary} />
+                    </Sortable.Touchable>
+                </View>
             </View>
         </View>
     );

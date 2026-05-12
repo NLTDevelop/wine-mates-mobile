@@ -35,7 +35,11 @@ export const getStyles = (colors: IColors) => {
             flex: 1,
             marginRight: scaleHorizontal(8),
         },
-        editButton: {
+        actions: {
+            flexDirection: 'row',
+            alignItems: 'center',
+        },
+        actionButton: {
             width: scaleHorizontal(28),
             height: scaleHorizontal(28),
             justifyContent: 'center',
