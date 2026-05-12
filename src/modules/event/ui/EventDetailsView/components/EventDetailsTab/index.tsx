@@ -13,18 +13,18 @@ import { EventContactItem } from '../EventContactItem';
 import { EventDetailsPreview } from '../EventDetailsPreview';
 import { getStyles } from './styles';
 import { useEventDetailsTab } from './presenters/useEventDetailsTab';
+import { IEventDetail } from '@/entities/events/types/IEvent';
 
 interface IProps {
-    eventId: number;
+    eventDetail: IEventDetail | null;
+    isLoading: boolean;
+    isError: boolean;
 }
 
-export const EventDetailsTab = ({ eventId }: IProps) => {
+export const EventDetailsTab = ({ eventDetail, isError, isLoading }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
-        isLoading,
-        isError,
-        eventDetail,
         detailsData,
         wineSetItems,
         contactItems,
@@ -34,7 +34,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
         onCloseModal,
         onFavoritePress,
         onCallToReservePress,
-    } = useEventDetailsTab({ eventId });
+    } = useEventDetailsTab({ eventDetail });
 
     const keyExtractor = (item: IWineSetItem) => `${item.id}`;
 

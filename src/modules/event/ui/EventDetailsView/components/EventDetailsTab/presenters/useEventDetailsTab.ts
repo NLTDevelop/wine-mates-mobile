@@ -1,13 +1,12 @@
 import { useCallback, useState } from 'react';
-import { useEventDetails } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetails';
 import { useEventDetailsData } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetailsData';
+import { IEventDetail } from '@/entities/events/types/IEvent';
 
 interface IProps {
-    eventId: number;
+    eventDetail: IEventDetail | null;
 }
 
-export const useEventDetailsTab = ({ eventId }: IProps) => {
-    const { eventDetail, isError, isLoading } = useEventDetails(eventId);
+export const useEventDetailsTab = ({ eventDetail }: IProps) => {
     const { detailsData, wineSetItems, contactItems, cardPreviewData } = useEventDetailsData(eventDetail);
     const [isBookingModalVisible, setIsBookingModalVisible] = useState(false);
 
@@ -24,9 +23,6 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
     const onCallToReservePress = useCallback(() => {}, []);
 
     return {
-        isLoading,
-        isError,
-        eventDetail,
         detailsData,
         wineSetItems,
         contactItems,

@@ -10,8 +10,9 @@ import { TabsBar } from './components/TabsBar';
 import { size } from '@/utils';
 import { useEventDetailsView } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetailsView';
 import { EventDetailsTab } from './components/EventDetailsTab';
-import { GuestsTab } from './components/GuestsTab';
+import { GuestsTab } from './components/EventGuestsTab';
 import { getStyles } from './styles';
+import { useEventDetails } from './presenters/useEventDetails';
 
 interface IRoute {
     key: 'eventDetails' | 'guests';
@@ -35,16 +36,19 @@ export const EventDetailsView = observer(() => {
     const { eventId } = route.params;
     const { screenIndex, routes, onIndexChange } = useEventDetailsView({ t });
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const { eventDetail, isError, isLoading } = useEventDetails(eventId);
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
         if (sceneRoute.key === 'eventDetails') {
-            return <EventDetailsTab eventId={eventId} />;
+            return <EventDetailsTab eventDetail={eventDetail} isError={isError} isLoading={isLoading} />;
         }
 
-        return <GuestsTab />;
+        return <GuestsTab eventId={eventId} requiresConfirmation={eventDetail?.requiresConfirmation} />;
     };
 
-    const renderTabBar = function renderTabBar(props: SceneRendererProps & { navigationState: NavigationState<IRoute> }) {
+    const renderTabBar = function renderTabBar(
+        props: SceneRendererProps & { navigationState: NavigationState<IRoute> },
+    ) {
         return <TabsBar tabBarProps={props} onIndexChange={onIndexChange} />;
     };
 
