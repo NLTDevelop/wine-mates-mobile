@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { GestureResponderEvent, Keyboard, TextInput, View } from 'react-native';
+import { Keyboard, TextInput } from 'react-native';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { wineService } from '@/entities/wine/WineService';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 
 const SEARCH_LIMIT = 10;
 const MIN_SEARCH_LENGTH = 1;
 const SEARCH_DEBOUNCE_MS = 300;
-const SEARCH_TOUCH_AREA_OFFSET = 16;
 
 export const useAddWineSetSearch = () => {
     const searchInputRef = useRef<TextInput>(null);
-    const searchTouchAreaRef = useRef<View>(null);
+    const searchModalRef = useRef<BottomSheetModal | null>(null);
     const activeRequestKeysRef = useRef(new Set<string>());
     const loadedPageKeysRef = useRef(new Set<string>());
     const latestSearchQueryRef = useRef('');
@@ -129,7 +129,6 @@ export const useAddWineSetSearch = () => {
 
         if (normalizedQuery.length < MIN_SEARCH_LENGTH) {
             clearSearchResults();
-            setIsSearchListVisible(false);
             setIsSearchingWines(false);
             return;
         }
@@ -142,19 +141,27 @@ export const useAddWineSetSearch = () => {
         setIsSearchListVisible(true);
     }, [clearSearchResults]);
 
-    const onFocusSearchInput = useCallback(() => {
-        const normalizedQuery = searchQuery.trim();
-
-        if (normalizedQuery.length < MIN_SEARCH_LENGTH) {
-            return;
-        }
-
+    const onOpenSearchModal = useCallback(() => {
+        clearSearchResults();
+        setSearchQuery('');
         setIsSearchListVisible(true);
+        searchModalRef.current?.present();
 
-        if (wineSearchResults.length === 0 && !isSearchingWines) {
-            getList(0, normalizedQuery);
-        }
-    }, [getList, isSearchingWines, searchQuery, wineSearchResults.length]);
+        setTimeout(() => {
+            searchInputRef.current?.focus();
+        }, 250);
+    }, [clearSearchResults]);
+
+    const onCloseSearchModal = useCallback(() => {
+        Keyboard.dismiss();
+        searchModalRef.current?.dismiss();
+    }, []);
+
+    const onDismissSearchModal = useCallback(() => {
+        Keyboard.dismiss();
+        setIsSearchListVisible(false);
+        setIsSearchingWines(false);
+    }, []);
 
     const onLoadMoreSearchResults = useCallback(() => {
         if (!hasWineSearchQuery || isSearchingWines || isSearchListEndReached || wineSearchResults.length === 0) {
@@ -169,35 +176,8 @@ export const useAddWineSetSearch = () => {
         setIsSearchListVisible(false);
         setIsSearchingWines(false);
         clearSearchResults();
+        searchModalRef.current?.dismiss();
     }, [clearSearchResults]);
-
-    const onCloseSearchList = useCallback(() => {
-        setIsSearchListVisible(false);
-        setIsSearchingWines(false);
-        Keyboard.dismiss();
-    }, []);
-
-    const onPressOutsideSearch = useCallback((event: GestureResponderEvent) => {
-        if (!isSearchListVisible) {
-            return false;
-        }
-
-        const { pageX, pageY } = event.nativeEvent;
-
-        searchTouchAreaRef.current?.measureInWindow((x, y, width, height) => {
-            const isInsideSearchArea =
-                pageX >= x - SEARCH_TOUCH_AREA_OFFSET
-                && pageX <= x + width + SEARCH_TOUCH_AREA_OFFSET
-                && pageY >= y - SEARCH_TOUCH_AREA_OFFSET
-                && pageY <= y + height + SEARCH_TOUCH_AREA_OFFSET;
-
-            if (!isInsideSearchArea) {
-                onCloseSearchList();
-            }
-        });
-
-        return false;
-    }, [isSearchListVisible, onCloseSearchList]);
 
     useEffect(() => {
         const normalizedQuery = searchQuery.trim();
@@ -217,28 +197,29 @@ export const useAddWineSetSearch = () => {
 
     return useMemo(() => ({
         searchInputRef,
-        searchTouchAreaRef,
+        searchModalRef,
         searchQuery,
         isSearchListVisible,
         isSearchingWines,
         isInitialSearchFinished,
         hasMoreSearchResults: !isSearchListEndReached,
         wineSearchResults,
-        wineSearchResultsCount: wineSearchResults.length,
         onChangeSearchQuery,
-        onFocusSearchInput,
+        onOpenSearchModal,
+        onCloseSearchModal,
+        onDismissSearchModal,
         onLoadMoreSearchResults,
         onResetSearch,
-        onPressOutsideSearch,
     }), [
         isInitialSearchFinished,
         isSearchListVisible,
         isSearchingWines,
         isSearchListEndReached,
         onChangeSearchQuery,
-        onFocusSearchInput,
+        onCloseSearchModal,
+        onDismissSearchModal,
         onLoadMoreSearchResults,
-        onPressOutsideSearch,
+        onOpenSearchModal,
         onResetSearch,
         searchQuery,
         wineSearchResults,

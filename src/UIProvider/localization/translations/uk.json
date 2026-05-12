@@ -377,6 +377,7 @@
         "listWineEvent": "Список винної події",
         "wineSet": "Набір вин",
         "addWine": "Додати вино",
+        "startTypingWineSearch": "Почніть вводити назву вина, виробника, сорт винограду, країну або регіон",
         "searchWineWithScanner": "Сканувати вино",
         "repeat": "Повторення",
         "repeatNever": "Ніколи",

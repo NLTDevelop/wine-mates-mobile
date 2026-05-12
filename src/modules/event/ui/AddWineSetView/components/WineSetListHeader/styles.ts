@@ -7,34 +7,19 @@ export const getStyles = (colors: IColors) => {
         container: {
             gap: scaleVertical(16),
         },
-        searchBar: {
-            marginBottom: 0,
-        },
-        searchResultsContainer: {
+        searchButton: {
+            height: scaleVertical(48),
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(10),
+            paddingHorizontal: scaleHorizontal(16),
             borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: 12,
             backgroundColor: colors.background,
-            overflow: 'hidden',
-            marginTop: scaleVertical(2),
         },
-        searchResultsList: {
-            maxHeight: scaleVertical(158),
-        },
-        searchResultsListContent: {
-            flexGrow: 1,
-        },
-        emptySearchContainer: {
-            gap: scaleVertical(10),
-            paddingHorizontal: scaleHorizontal(12),
-            paddingVertical: scaleVertical(12),
-        },
-        emptySearchText: {
+        searchButtonText: {
             color: colors.text_light,
-        },
-        searchResultDivider: {
-            height: scaleVertical(1),
-            backgroundColor: colors.border_light,
         },
         tastingTypeButton: {
             flexDirection: 'row',

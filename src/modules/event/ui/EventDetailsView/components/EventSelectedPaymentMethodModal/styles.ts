@@ -24,8 +24,8 @@ export const getStyles = (colors: IColors) => {
             gap: scaleVertical(16),
         },
         qrImage: {
-            width: scaleVertical(140),
-            height: scaleVertical(140),
+            width: scaleVertical(186),
+            height: scaleVertical(186),
         },
         paymentDetails: {
             color: colors.text,

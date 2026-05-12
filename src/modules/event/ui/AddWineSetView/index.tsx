@@ -15,29 +15,29 @@ import { EventCreatedAlert } from './components/EventCreatedAlert';
 import { IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
 import { WineSetListHeader } from './components/WineSetListHeader';
 import { WineSetListFooter } from './components/WineSetListFooter';
+import { WineSearchBottomSheet } from './components/WineSearchBottomSheet';
 import { useRepeatRuleModal } from './presenters/useRepeatRuleModal';
 import { useTastingTypeModal } from './presenters/useTastingTypeModal';
 import { useWineSetSortableList } from './presenters/useWineSetSortableList';
-import { useAddWineSetSearchBackfill } from './presenters/useAddWineSetSearchBackfill';
 
 export const AddWineSetView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
         searchInputRef,
-        searchTouchAreaRef,
+        searchModalRef,
         searchQuery,
         isSearchListVisible,
         isSearchingWines,
         isInitialSearchFinished,
         hasMoreSearchResults,
         wineSearchResults,
-        wineSearchResultsCount,
         onChangeSearchQuery,
-        onFocusSearchInput,
+        onOpenSearchModal,
+        onCloseSearchModal,
+        onDismissSearchModal,
         onLoadMoreSearchResults,
         onResetSearch,
-        onPressOutsideSearch,
     } = useAddWineSetSearch();
 
     const {
@@ -45,10 +45,8 @@ export const AddWineSetView = () => {
         repeatRule,
         wineSetViewItems,
         wineSearchResultItems,
-        wineSearchResultItemsCount,
         shouldShowScannerButton,
-        isSearchResultsScrollable,
-        maxVisibleSearchResults,
+        wineSearchEmptyText,
         isEventCreatedAlertVisible,
         eventDeepLink,
         isCreating,
@@ -64,7 +62,6 @@ export const AddWineSetView = () => {
         onReorderWineSet,
         onCreateEventPress,
     } = useAddWineSetView({
-        searchInputRef,
         searchQuery,
         isSearchListVisible,
         isSearchingWines,
@@ -72,6 +69,8 @@ export const AddWineSetView = () => {
         hasMoreSearchResults,
         wineSearchResults,
         onResetSearch,
+        onOpenSearchModal,
+        onLoadMoreSearchResults,
     });
 
     const {
@@ -107,17 +106,6 @@ export const AddWineSetView = () => {
         rowGap,
         scrollableRef,
     } = useWineSetSortableList();
-    useAddWineSetSearchBackfill({
-        hasMoreSearchResults,
-        isInitialSearchFinished,
-        isSearchListVisible,
-        isSearchingWines,
-        maxVisibleSearchResults,
-        searchResultItemsCount: wineSearchResultItemsCount,
-        wineSearchResultsCount,
-        onLoadMoreSearchResults,
-    });
-
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
 
     const renderWineItem: SortableGridRenderItem<IWineSetViewItem> = function renderWineItem({ item }) {
@@ -132,7 +120,7 @@ export const AddWineSetView = () => {
 
     return (
         <>
-            <View style={styles.screen} onStartShouldSetResponderCapture={onPressOutsideSearch}>
+            <View style={styles.screen}>
                 <ScreenContainer
                     edges={['top', 'bottom']}
                     scrollEnabled={false}
@@ -144,25 +132,14 @@ export const AddWineSetView = () => {
                             contentContainerStyle={styles.container}
                             keyboardShouldPersistTaps="always"
                             nestedScrollEnabled
-                            scrollEnabled={!isSearchListVisible || !isSearchResultsScrollable}
                             showsVerticalScrollIndicator={false}
                             style={styles.scroll}
                             onScrollBeginDrag={onDismissKeyboard}
                         >
                             <WineSetListHeader
-                                searchInputRef={searchInputRef}
-                                searchTouchAreaRef={searchTouchAreaRef}
-                                searchQuery={searchQuery}
-                                isSearchingWines={isSearchingWines}
-                                onChangeSearchQuery={onChangeSearchQuery}
-                                wineSearchResultItems={wineSearchResultItems}
-                                shouldShowScannerButton={shouldShowScannerButton}
-                                maxVisibleSearchResults={maxVisibleSearchResults}
                                 tastingTypeLabel={tastingTypeLabel}
-                                onOpenScannerPress={onOpenScannerPress}
-                                onFocusSearchInput={onFocusSearchInput}
+                                onOpenSearchModal={onOpenSearchModal}
                                 onOpenTastingTypeModal={onOpenTastingTypeModal}
-                                onLoadMoreSearchResults={onLoadMoreSearchResults}
                             />
                             <View onTouchStart={onDismissKeyboard}>
                                 <Sortable.Grid
@@ -222,6 +199,20 @@ export const AddWineSetView = () => {
                     onConfirm={onConfirmTastingType}
                 />
             )}
+            <WineSearchBottomSheet
+                modalRef={searchModalRef}
+                searchInputRef={searchInputRef}
+                value={searchQuery}
+                data={wineSearchResultItems}
+                isLoading={isSearchingWines}
+                emptyText={wineSearchEmptyText}
+                shouldShowScannerButton={shouldShowScannerButton}
+                onChangeText={onChangeSearchQuery}
+                onClose={onCloseSearchModal}
+                onDismiss={onDismissSearchModal}
+                onLoadMore={onLoadMoreSearchResults}
+                onOpenScannerPress={onOpenScannerPress}
+            />
             <EventCreatedAlert
                 visible={isEventCreatedAlertVisible}
                 qrCodeValue={eventDeepLink}
