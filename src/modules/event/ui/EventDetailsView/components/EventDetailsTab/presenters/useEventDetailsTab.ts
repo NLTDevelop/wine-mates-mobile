@@ -92,6 +92,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
     }, []);
 
     const isEventApplied = Boolean(eventDetail?.isApplied);
+    const isBlindTasting = eventDetail?.tastingType === TastingType.Blind;
     const eventPaymentMethods = useMemo(() => {
         return getEventPaymentMethods(eventDetail as IEventDetailWithPaymentMethods | null);
     }, [eventDetail]);
@@ -390,6 +391,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
         isCancelEventDisabled,
         isBookNowInProgress,
         isEventApplied,
+        isBlindTasting,
         isPaymentMethodsModalVisible,
         paymentMethodOptions,
         isPaymentMethodNextDisabled: selectedPaymentMethodId === null,

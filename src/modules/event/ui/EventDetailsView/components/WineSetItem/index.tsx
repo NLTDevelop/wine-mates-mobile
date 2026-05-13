@@ -9,20 +9,25 @@ import { IWineSetItem } from '@/entities/events/types/IWineSetItem';
 
 interface IProps {
     item: IWineSetItem;
+    isBlindTasting?: boolean;
+    wineOrder?: number;
+    isOwner: boolean;
 }
 
-export const WineSetItem = ({ item }: IProps) => {
+export const WineSetItem = ({ item, isBlindTasting = false, wineOrder = 1 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { title, imageUrl, onPress } = useWineSetItem({ item });
+    const { title, imageUrl, isImageVisible, onPress } = useWineSetItem({ item, isBlindTasting, wineOrder });
 
     return (
         <TouchableOpacity style={styles.row} onPress={onPress} disabled>
             <View style={styles.leftContent}>
-                {imageUrl ? (
-                    <Image source={{ uri: imageUrl }} style={styles.image} />
-                ) : (
-                    <View style={styles.image} />
+                {isImageVisible && (
+                    imageUrl ? (
+                        <Image source={{ uri: imageUrl }} style={styles.image} />
+                    ) : (
+                        <View style={styles.image} />
+                    )
                 )}
                 <Typography
                     text={title}

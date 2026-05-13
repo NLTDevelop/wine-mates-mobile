@@ -41,6 +41,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
         isCancelEventDisabled,
         isBookNowInProgress,
         isEventApplied,
+        isBlindTasting,
         isPaymentMethodsModalVisible,
         paymentMethodOptions,
         isPaymentMethodNextDisabled,
@@ -53,9 +54,9 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
 
     const keyExtractor = useCallback((item: IWineSetItem) => `${item.id}`, []);
 
-    const renderWineSetItem: ListRenderItem<IWineSetItem> = useCallback(({ item }) => {
-        return <WineSetItem item={item} />;
-    }, []);
+    const renderWineSetItem: ListRenderItem<IWineSetItem> = useCallback(({ item, index }) => {
+        return <WineSetItem item={item} isBlindTasting={isBlindTasting && !isOwner} wineOrder={index + 1} />;
+    }, [isBlindTasting, isOwner]);
 
     const renderWineSetItemSeparator = useCallback(() => {
         return <View style={styles.wineSetItemSeparator} />;
