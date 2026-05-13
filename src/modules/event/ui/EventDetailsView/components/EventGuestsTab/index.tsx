@@ -10,7 +10,7 @@ import { EmptyListView } from '@/UIKit/EmptyListView';
 
 interface IProps {
     eventId: number;
-    requiresConfirmation?: boolean;
+    requiresConfirmation: boolean;
 }
 
 export const GuestsTab = ({ eventId, requiresConfirmation }: IProps) => {
