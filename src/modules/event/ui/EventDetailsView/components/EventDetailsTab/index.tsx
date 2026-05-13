@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { ActivityIndicator, FlatList, ListRenderItem, ScrollView, View } from 'react-native';
+import { ActivityIndicator, FlatList, ListRenderItem, RefreshControl, ScrollView, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { EmptyListView } from '@/UIKit/EmptyListView';
@@ -22,9 +22,18 @@ interface IProps {
     setEventDetail: React.Dispatch<React.SetStateAction<IEventDetail | null>>;
     isError: boolean;
     isLoading: boolean;
+    isRefreshing: boolean;
+    onRefresh: () => void;
 }
 
-export const EventDetailsTab = ({ eventDetail, setEventDetail, isError, isLoading }: IProps) => {
+export const EventDetailsTab = ({
+    eventDetail,
+    setEventDetail,
+    isError,
+    isLoading,
+    isRefreshing,
+    onRefresh,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
@@ -55,13 +64,14 @@ export const EventDetailsTab = ({ eventDetail, setEventDetail, isError, isLoadin
         selectedPaymentMethod,
         onCloseSelectedPaymentMethodModal,
     } = useEventDetailsTab({ eventDetail, setEventDetail });
+    const currentEventId = eventDetail?.id ?? 0;
 
     const keyExtractor = useCallback((item: IWineSetItem) => `${item.id}`, []);
 
     const renderWineSetItem: ListRenderItem<IWineSetItem> = useCallback(({ item, index }) => {
         return (
             <WineSetItem
-                eventId={eventId}
+                eventId={currentEventId}
                 item={item}
                 isBlindTasting={isBlindTasting && !isOwner}
                 wineOrder={index + 1}
@@ -71,7 +81,7 @@ export const EventDetailsTab = ({ eventDetail, setEventDetail, isError, isLoadin
                 hasEventEnded={hasEventEnded}
             />
         );
-    }, [eventId, hasEventEnded, isBlindTasting, isOwner, isWineSetItemPressEnabled, isWineSetStatusVisible]);
+    }, [currentEventId, hasEventEnded, isBlindTasting, isOwner, isWineSetItemPressEnabled, isWineSetStatusVisible]);
 
     const renderWineSetItemSeparator = useCallback(() => {
         return <View style={styles.wineSetItemSeparator} />;
@@ -105,7 +115,18 @@ export const EventDetailsTab = ({ eventDetail, setEventDetail, isError, isLoadin
 
     return (
         <View style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.contentContainer}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isRefreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.primary}
+                        colors={[colors.primary]}
+                    />
+                }
+            >
                 {cardPreviewData && <EventDetailsPreview data={cardPreviewData} eventId={eventDetail.id} />}
 
                 <View style={styles.card}>

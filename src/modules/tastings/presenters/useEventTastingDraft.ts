@@ -24,6 +24,20 @@ const getAromaDraftItems = (ids?: number[]): IWineSelectedSmell[] => {
     }));
 };
 
+const getSuggestedAromaDraftItems = (names?: string[]): IWineSelectedSmell[] => {
+    if (!names?.length) {
+        return [];
+    }
+
+    return names
+        .filter(name => name.trim().length > 0)
+        .map((name, index) => ({
+            id: -(index + 1),
+            colorHex: null,
+            name,
+        }));
+};
+
 const getFlavorDraftItems = (ids?: number[]): IWineTaste[] => {
     if (!ids?.length) {
         return [];
@@ -124,7 +138,10 @@ export const useEventTastingDraft = () => {
             aiTastingNote: nextDraft.aiTastingNote || null,
             aiSnacks: nextDraft.aiSnacks || null,
         };
-        wineModel.selectedSmells = getAromaDraftItems(nextDraft.aromas);
+        wineModel.selectedSmells = [
+            ...getAromaDraftItems(nextDraft.aromas),
+            ...getSuggestedAromaDraftItems(nextDraft.suggestions?.aromas),
+        ];
         wineModel.selectedTastes = getFlavorDraftItems(nextDraft.flavors);
         wineModel.winePeak = typeof nextDraft.winePeak === 'number' ? nextDraft.winePeak : null;
     }, [getDefaultEventTastingDraft]);

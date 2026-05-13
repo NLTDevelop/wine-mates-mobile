@@ -7,7 +7,6 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
-import { CloseButton } from '../components/CloseButton';
 import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
@@ -18,28 +17,28 @@ import { SmellListItem } from '../../../../UIKit/SmellListItem';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { useAddItem } from '../../presenters/useAddItem';
 import { AddButton } from '../components/AddButton';
-import { useWineTaste } from './presenters/useWineTaste';
 import { useAnimatedItemAdd } from '../../presenters/useAnimatedItemAdd';
 import { wineModel } from '@/entities/wine/WineModel';
 import { IWineTasteGroup } from '@/entities/wine/types/IWineTatseGroup';
-import { useTasteSelectModal } from './presenters/useTasteSelectModal';
 import { SelectModal } from '../../../../UIKit/SelectModal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { scaleVertical } from '@/utils';
 import { SelectedItemsList } from '@/UIKit/SelectedItemsList';
+import { useTastingTasteSelectModal } from './presenters/useTastingTasteSelectModal';
+import { useTastingWineTaste } from './presenters/useTastingWineTaste';
 
-export const WineTasteView = observer(() => {
+export const TastingWineTasteView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { isVisible, onShowModal, onHide, selectData, groupId } = useTasteSelectModal();
+    const { isVisible, onShowModal, onHide, selectData, groupId } = useTastingTasteSelectModal();
     const { data, selected, isError, getTastes, isLoading, onItemPress: originalOnItemPress, onSelectedItemPress, onAddCustomTaste: originalOnAddCustomTaste,
-        onPressNext } = useWineTaste(onHide);
+        onPressNext } = useTastingWineTaste(onHide);
 
     const [onItemPress, selectedListRef] = useAnimatedItemAdd(originalOnItemPress);
     const [onAddCustomTaste] = useAnimatedItemAdd(originalOnAddCustomTaste);
 
-    const { text, setText, handleAddPress } = useAddItem(onAddCustomTaste);
+    const { text, setText, onAddPress } = useAddItem(onAddCustomTaste);
 
     const visibleGroups = useMemo(() => data.filter(group => group.flavors.length > 0), [data]);
     const createOnGroupPress = useCallback((group: IWineTasteGroup) => {
@@ -57,7 +56,7 @@ export const WineTasteView = observer(() => {
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton title={t('wine.taste')} rightComponent={<CloseButton />} />}
+                headerComponent={<HeaderWithBackButton title={t('wine.taste')} />}
             >
                 {!wineModel.tastes || wineModel.tastes.length === 0 || isLoading ? (
                     <Loader />
@@ -91,7 +90,7 @@ export const WineTasteView = observer(() => {
                                     onChangeText={setText}
                                     maxLength={40}
                                     placeholder={t('wine.addCustomTaste')}
-                                    RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
+                                    RightAccessory={<AddButton onPress={onAddPress} disabled={!text}/>}
                                     containerStyle={styles.input}
                                 />
                                 {selected.length > 0 && <SelectedItemsList ref={selectedListRef} data={selected} onPress={onSelectedItemPress} />}
@@ -119,3 +118,4 @@ export const WineTasteView = observer(() => {
         </WithErrorHandler>
     );
 });
+

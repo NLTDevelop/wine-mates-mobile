@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useMemo } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo } from 'react';
 import { TouchableOpacity, View, FlatList} from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -10,25 +10,35 @@ import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
 import { SelectedItemsListRef } from './types';
 import { SelectedItems } from './components/SelectedItem';
 
-interface IProps {
-    data: IWineSelectedSmell[] | IWineTaste[];
-    onPress: (item: IWineSelectedSmell | IWineTaste) => void;
+type SelectedItemType = IWineSelectedSmell | IWineTaste;
+type SelectedItemsListType = (<T extends SelectedItemType>(
+    props: IProps<T> & React.RefAttributes<SelectedItemsListRef>,
+) => React.ReactElement) & { displayName?: string };
+
+interface IProps<T extends SelectedItemType> {
+    data: T[];
+    onPress: (item: T) => void;
 }
 
-export const SelectedItemsList = forwardRef<SelectedItemsListRef, IProps>(({ data, onPress }, ref) => {
+const SelectedItemsListComponent = <T extends SelectedItemType>({ data, onPress }: IProps<T>, ref: React.ForwardedRef<SelectedItemsListRef>) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { listRef, onScroll, scrollLeft, scrollRight, scrollToStart, handleSetNewItemId, keyExtractor, renderItem } = useSelectedItemsList(onPress);
+    const { listRef, onScroll, scrollLeft, scrollRight, scrollToStart, onSetNewItemId, renderItem } =
+        useSelectedItemsList<T>(onPress);
 
     useImperativeHandle(ref, () => ({
         scrollToStart,
-        setNewItemId: handleSetNewItemId,
-    }), [scrollToStart, handleSetNewItemId]);
+        setNewItemId: onSetNewItemId,
+    }), [scrollToStart, onSetNewItemId]);
 
-    const renderListItem = ({ item }: { item: IWineSelectedSmell | IWineTaste }) => {
+    const keyExtractor = useCallback((item: T, index: number) => {
+        return `${item.id}-${index}`;
+    }, []);
+
+    const renderListItem = useCallback(({ item }: { item: T }) => {
         const itemProps = renderItem(item);
         return <SelectedItems {...itemProps} />;
-    };
+    }, [renderItem]);
 
     return (
         <View style={styles.container}>
@@ -54,6 +64,8 @@ export const SelectedItemsList = forwardRef<SelectedItemsListRef, IProps>(({ dat
             </TouchableOpacity>
         </View>
     );
-});
+};
+
+export const SelectedItemsList = forwardRef(SelectedItemsListComponent) as SelectedItemsListType;
 
 SelectedItemsList.displayName = 'SelectedItemsList';

@@ -54,6 +54,7 @@ export const TastingWineSmellView = observer(() => {
         onRightPress,
         onAddCustomSmell: originalOnAddCustomSmell,
         onNextPress,
+        isSaving,
         onGroupPress,
         onSubgroupPress,
     } = useTastingWineSmell(onHide);
@@ -211,6 +212,7 @@ export const TastingWineSmellView = observer(() => {
                         <Button
                             text={t('wine.letsTaste')}
                             onPress={onNextPress}
+                            inProgress={isSaving}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}
                             disabled={!selected.length}
