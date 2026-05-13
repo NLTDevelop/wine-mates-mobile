@@ -14,7 +14,6 @@ import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
-import { SelectedItemsList } from '../components/SelectedItemsList';
 import { SmellListItem } from '../../../../UIKit/SmellListItem';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { useAddItem } from '../../presenters/useAddItem';
@@ -27,6 +26,7 @@ import { useTasteSelectModal } from '../../presenters/useTasteSelectModal';
 import { SelectModal } from '../../../../UIKit/SelectModal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { scaleVertical } from '@/utils';
+import { SelectedItemsList } from '@/UIKit/SelectedItemsList';
 
 export const WineTasteView = observer(() => {
     const { colors, t } = useUiContext();

@@ -53,6 +53,8 @@ export interface ILinks {
     contacts: string;
     guests: string;
     guestsStatuses: string;
+    eventTastingDraft: string;
+    eventTastingSaveDraft: string;
 }
 
 class Links implements ILinks {
@@ -97,6 +99,8 @@ class Links implements ILinks {
         contacts: 'users/contacts',
         guests: 'event-bookings/event',
         guestsStatuses: 'event-bookings',
+        eventTastingDraft: 'event-tasting/draft',
+        eventTastingSaveDraft: 'event-tasting/save-draft',
     };
 
     private buildDomain() {
@@ -230,6 +234,12 @@ class Links implements ILinks {
     }
     public get guestsStatuses() {
         return `${this._domain}${this._links.guestsStatuses}`;
+    }
+    public get eventTastingDraft() {
+        return `${this._domain}${this._links.eventTastingDraft}`;
+    }
+    public get eventTastingSaveDraft() {
+        return `${this._domain}${this._links.eventTastingSaveDraft}`;
     }
 }
 

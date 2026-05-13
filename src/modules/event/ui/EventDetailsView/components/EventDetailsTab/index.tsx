@@ -60,6 +60,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
     const renderWineSetItem: ListRenderItem<IWineSetItem> = useCallback(({ item, index }) => {
         return (
             <WineSetItem
+                eventId={eventId}
                 item={item}
                 isBlindTasting={isBlindTasting && !isOwner}
                 wineOrder={index + 1}
@@ -69,7 +70,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                 hasEventEnded={hasEventEnded}
             />
         );
-    }, [hasEventEnded, isBlindTasting, isOwner, isWineSetItemPressEnabled, isWineSetStatusVisible]);
+    }, [eventId, hasEventEnded, isBlindTasting, isOwner, isWineSetItemPressEnabled, isWineSetStatusVisible]);
 
     const renderWineSetItemSeparator = useCallback(() => {
         return <View style={styles.wineSetItemSeparator} />;

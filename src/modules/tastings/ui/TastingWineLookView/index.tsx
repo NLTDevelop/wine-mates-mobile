@@ -35,6 +35,7 @@ export const TastingWineLookView = observer(() => {
         isError,
         getColorsWithShades,
         isLoading,
+        isSaving,
         onSelectColor,
         onPressNext,
         appearance,
@@ -43,6 +44,7 @@ export const TastingWineLookView = observer(() => {
         onShadeAnimationEnd,
         getSparklingSliderData,
         currentColor,
+        isSelectedParametersVisible,
     } = useTastingWineLook({ t, styles });
 
     const decorator = useMemo(() => {
@@ -151,11 +153,12 @@ export const TastingWineLookView = observer(() => {
                                 </View>
                             )}
 
-                            <SelectedParameters />
+                            {isSelectedParametersVisible && <SelectedParameters />}
                         </ScrollViewIndicator>
                         <Button
                             text={t('wine.letsSmell')}
                             onPress={onPressNext}
+                            inProgress={isSaving}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}
                         />

@@ -2,18 +2,19 @@ import { useCallback } from 'react';
 import { IWineSetItem, WineSetTastingStatus } from '@/entities/events/types/IWineSetItem';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useUiContext } from '@/UIProvider';
 
 type WineSetStatusBadgeType = 'notStarted' | 'inProgress' | 'tasted' | 'missed';
 type TTranslate = (key: string, options?: Record<string, unknown>) => string;
 
 interface IUseWineSetItemProps {
+    eventId: number;
     item: IWineSetItem;
     isBlindTasting: boolean;
     wineOrder: number;
     isPressEnabled: boolean;
     isStatusVisible: boolean;
     hasEventEnded: boolean;
+    t: TTranslate;
 }
 
 const getWineSetStatus = (item: IWineSetItem): WineSetTastingStatus => {
@@ -46,14 +47,15 @@ const getStatusBadgeData = (
 };
 
 export const useWineSetItem = ({
+    eventId,
     item,
     isBlindTasting,
     wineOrder,
     isPressEnabled,
     isStatusVisible,
     hasEventEnded,
+    t,
 }: IUseWineSetItemProps) => {
-    const { t } = useUiContext();
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const producerPrefix = item.wine.producer ? `${item.wine.producer}, ` : '';
     const vintageSuffix = item.wine.vintage ? ` ${item.wine.vintage}` : '';
@@ -64,14 +66,26 @@ export const useWineSetItem = ({
     const isImageVisible = !isBlindTasting;
     const status = getWineSetStatus(item);
     const statusBadgeData = getStatusBadgeData(status, isStatusVisible, hasEventEnded, t);
+    const wineId = item.wineId || item.wine.id;
+    const isEventTastingStatus = status === 'not_started' || status === 'in_progress';
 
     const onPress = useCallback(() => {
         if (!isPressEnabled) {
             return;
         }
 
-        navigation.navigate('WineDetailsView', { wineId: item.wineId || item.wine.id });
-    }, [isPressEnabled, item.wine.id, item.wineId, navigation]);
+        if (isEventTastingStatus) {
+            navigation.navigate('TastingWineLookView', {
+                eventId,
+                wineId,
+                tastingStatus: status,
+                isBlindTasting,
+            });
+            return;
+        }
+
+        navigation.navigate('WineDetailsView', { wineId });
+    }, [eventId, isBlindTasting, isEventTastingStatus, isPressEnabled, navigation, status, wineId]);
 
     return {
         title,

@@ -8,6 +8,7 @@ import { useWineSetItem } from './presenters/useWineSetItem';
 import { IWineSetItem } from '@/entities/events/types/IWineSetItem';
 
 interface IProps {
+    eventId: number;
     item: IWineSetItem;
     isBlindTasting?: boolean;
     wineOrder?: number;
@@ -18,6 +19,7 @@ interface IProps {
 }
 
 export const WineSetItem = ({
+    eventId,
     item,
     isBlindTasting = false,
     wineOrder = 1,
@@ -25,15 +27,17 @@ export const WineSetItem = ({
     isStatusVisible,
     hasEventEnded,
 }: IProps) => {
-    const { colors } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { title, imageUrl, isImageVisible, statusBadgeData, onPress } = useWineSetItem({
+        eventId,
         item,
         isBlindTasting,
         wineOrder,
         isPressEnabled,
         isStatusVisible,
         hasEventEnded,
+        t,
     });
 
     const statusBadgeStyle = statusBadgeData ? styles[`${statusBadgeData.type}Badge`] : null;
