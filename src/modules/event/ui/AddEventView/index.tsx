@@ -18,14 +18,12 @@ import { useEventTypeModal } from './presenters/useEventTypeModal';
 import { useSexModal } from './presenters/useSexModal';
 import { useParticipationConditionModal } from './presenters/useParticipationConditionModal';
 import { useConfirmationRequiredModal } from './presenters/useConfirmationRequiredModal';
-import { useCurrencyPickerModal } from './presenters/useCurrencyPickerModal';
 import { usePaymentMethodsModal } from './presenters/usePaymentMethodsModal';
 import { useContactInfoModal } from './presenters/useContactInfoModal';
 import { useEventDateTimeFormatter } from './presenters/useEventDateTimeFormatter';
 import { useEventTypeLabel } from './presenters/useEventTypeLabel';
 import { PaymentMethodsPickerModal } from './components/PaymentMethodsPickerModal';
 import { ContactInfoPickerModal } from './components/ContactInfoPickerModal';
-import { CurrencyModal } from './components/CurrencyModal';
 import { SingleSelectModal } from './components/SingleSelectModal';
 import { PickerButton } from './components/PickerButton';
 import { CalendarModal } from '@/UIKit/CalendarModal';
@@ -33,6 +31,8 @@ import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelec
 import { isIOS, scaleVertical } from '@/utils';
 import { ClockIcon } from '@assets/icons/ClockIcon';
 import { RangeSlider } from '@/UIKit/RangeSlider';
+import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
+import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCurrencyPickerModal';
 
 export const AddEventView = () => {
     const { colors, t } = useUiContext();
@@ -178,19 +178,13 @@ export const AddEventView = () => {
         onChange: onChangeRequiresConfirmation,
     });
 
-    const {
-        isVisible: isCurrencyModalVisible,
-        draft: currencyDraft,
-        items: currencyItems,
-        selectedText: selectedCurrencyText,
-        onOpen: onOpenCurrencyModal,
-        onClose: onCloseCurrencyModal,
-        onConfirm: onConfirmCurrency,
-    } = useCurrencyPickerModal({
+    const isCurrencyPickerDisabled = isCurrencyDisabled || !currencies.length;
+
+    const currencyPicker = useCurrencyPickerModal({
         value: form.currency,
         currencies,
         onChange: onChangeCurrency,
-        isDisabled: isCurrencyDisabled,
+        isDisabled: isCurrencyPickerDisabled,
     });
 
     const {
@@ -385,10 +379,10 @@ export const AddEventView = () => {
                             />
 
                             <PickerButton
-                                onPress={onOpenCurrencyModal}
-                                text={selectedCurrencyText || t('event.currency')}
+                                onPress={currencyPicker.onOpen}
+                                text={currencyPicker.selectedText || t('event.currency')}
                                 style={styles.pickerButton}
-                                isDisabled={isCurrencyDisabled}
+                                isDisabled={isCurrencyPickerDisabled}
                             />
 
                             <CustomInput
@@ -509,13 +503,14 @@ export const AddEventView = () => {
                     onConfirm={onConfirmConfirmationRequired}
                 />
             )}
-            {isCurrencyModalVisible && (
-                <CurrencyModal
-                    visible={isCurrencyModalVisible}
-                    onClose={onCloseCurrencyModal}
-                    items={currencyItems}
-                    selectedValue={currencyDraft}
-                    onConfirm={onConfirmCurrency}
+            {currencyPicker.isVisible && (
+                <CurrencyPickerBottomSheet
+                    visible={currencyPicker.isVisible}
+                    onClose={currencyPicker.onClose}
+                    items={currencyPicker.items}
+                    selectedValue={currencyPicker.draft}
+                    onConfirm={currencyPicker.onConfirm}
+                    title={t('event.currency')}
                 />
             )}
         </>

@@ -6,8 +6,8 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
     const styles = StyleSheet.create({
         bottomSheetContainer: {
             backgroundColor: colors.background,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
+            borderTopLeftRadius: scaleVertical(20),
+            borderTopRightRadius: scaleVertical(20),
         },
         header: {
             flexDirection: 'row',

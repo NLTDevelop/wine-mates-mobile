@@ -9,13 +9,13 @@ import { ParticipationCondition } from '@/entities/events/enums/ParticipationCon
 import { Sex } from '@/entities/events/enums/Sex';
 import { paymentsService } from '@/entities/payments/PaymentsService';
 import { contactsService } from '@/entities/contacts/ContactsService';
-import { eventsService } from '@/entities/events/EventsService';
 import { IPaymentsListItem } from '@/entities/payments/types/IPaymentsListItem';
 import { IContactsListItem } from '@/entities/contacts/types/IContactsListItem';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IAddEventDraft } from '../../../types/IAddEventDraft';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
+import { useUserCurrencies } from '@/UIKit/CurrencyPicker/presenters/useUserCurrencies';
 
 interface IEventForm {
     theme: string;
@@ -170,10 +170,9 @@ export const useAddEvent = () => {
 
     const [isPaymentMethodsLoading, setIsPaymentMethodsLoading] = useState(false);
     const [isContactInfoLoading, setIsContactInfoLoading] = useState(false);
-    const [isCurrenciesLoading, setIsCurrenciesLoading] = useState(false);
     const [paymentMethods, setPaymentMethods] = useState<IPaymentsListItem[]>([]);
     const [contacts, setContacts] = useState<IContactsListItem[]>([]);
-    const [currencies, setCurrencies] = useState<string[]>([]);
+    const { currencies, isCurrenciesLoading, onLoadCurrencies } = useUserCurrencies();
     const [isSeatsError, setIsSeatsError] = useState(false);
     const [form, setForm] = useState<IEventForm>(() => getInitialForm(route.params?.draft, isEditMode));
 
@@ -219,37 +218,30 @@ export const useAddEvent = () => {
         }
     }, []);
 
-    const onLoadCurrencies = useCallback(async () => {
-        try {
-            setIsCurrenciesLoading(true);
-            const response = await eventsService.getCurrencies();
+    const onLoadEventCurrencies = useCallback(async () => {
+        const data = await onLoadCurrencies();
 
-            if (!response.isError && response.data && Array.isArray(response.data.list)) {
-                const availableCurrencies = response.data.list;
-                const selectedCurrency = response.data.selected;
-
-                setCurrencies(availableCurrencies);
-
-                setForm(prev => {
-                    const hasCurrentCurrency = availableCurrencies.includes(prev.currency);
-
-                    if (hasCurrentCurrency) {
-                        return prev;
-                    }
-
-                    if (selectedCurrency && availableCurrencies.includes(selectedCurrency)) {
-                        return { ...prev, currency: selectedCurrency };
-                    }
-
-                    return { ...prev, currency: availableCurrencies[0] || '' };
-                });
-            }
-        } catch (error) {
-            console.warn('useAddEvent -> onLoadCurrencies: ', error);
-        } finally {
-            setIsCurrenciesLoading(false);
+        if (!data) {
+            return;
         }
-    }, []);
+
+        const availableCurrencies = data.list;
+        const selectedCurrency = data.selected;
+
+        setForm(prev => {
+            const hasCurrentCurrency = availableCurrencies.includes(prev.currency);
+
+            if (hasCurrentCurrency) {
+                return prev;
+            }
+
+            if (selectedCurrency && availableCurrencies.includes(selectedCurrency)) {
+                return { ...prev, currency: selectedCurrency };
+            }
+
+            return { ...prev, currency: availableCurrencies[0] || '' };
+        });
+    }, [onLoadCurrencies]);
 
     const onChangeTheme = useCallback((value: string) => {
         if (value.length <= 80) {
@@ -267,14 +259,17 @@ export const useAddEvent = () => {
         }
     }, []);
 
-    const onChangeLocation = useCallback((latitude: number, longitude: number, label: string, placeName?: string, countryName?: string) => {
-        setForm(prev => ({
-            ...prev,
-            location: { latitude, longitude },
-            locationLabel: label,
-            locationCountry: countryName || '',
-        }));
-    }, []);
+    const onChangeLocation = useCallback(
+        (latitude: number, longitude: number, label: string, placeName?: string, countryName?: string) => {
+            setForm(prev => ({
+                ...prev,
+                location: { latitude, longitude },
+                locationLabel: label,
+                locationCountry: countryName || '',
+            }));
+        },
+        [],
+    );
 
     const onStartDateSelect = useCallback((date: Date) => {
         const dateStr = formatDateToLocalApi(date);
@@ -388,13 +383,13 @@ export const useAddEvent = () => {
         const frameId = requestAnimationFrame(() => {
             onLoadPaymentMethods();
             onLoadContacts();
-            onLoadCurrencies();
+            onLoadEventCurrencies();
         });
 
         return () => {
             cancelAnimationFrame(frameId);
         };
-    }, [onLoadContacts, onLoadCurrencies, onLoadPaymentMethods]);
+    }, [onLoadContacts, onLoadEventCurrencies, onLoadPaymentMethods]);
 
     useEffect(() => {
         const pickedLocation = route.params?.pickedLocation;
@@ -451,7 +446,9 @@ export const useAddEvent = () => {
             theme: form.theme.trim(),
             description: form.description.trim() || 'Event description',
             restaurantName: form.restaurantName.trim(),
-            locationLabel: form.locationLabel.trim() || `${form.location.latitude.toFixed(4)}, ${form.location.longitude.toFixed(4)}`,
+            locationLabel:
+                form.locationLabel.trim() ||
+                `${form.location.latitude.toFixed(4)}, ${form.location.longitude.toFixed(4)}`,
             locationCountry: form.locationCountry,
             location: form.location,
             eventStartDate: form.eventStartDate,

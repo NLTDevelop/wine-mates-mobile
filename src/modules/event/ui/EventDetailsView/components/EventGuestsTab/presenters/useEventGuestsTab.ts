@@ -95,6 +95,12 @@ export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => 
             const age = getAge(guest.user.birthday);
             const ageText = age === null ? '' : `${age} ${t('eventGuests.age')}`;
             const isUpdating = updatingGuestId === guest.id;
+            const preparedGuest = {
+                id: guest.id,
+                fullName,
+                ageText,
+                avatarUrl: guest.user.avatar?.smallUrl || null,
+            };
 
             const confirmAction: IGuestAction = {
                 title: t('eventGuests.confirmAction'),
@@ -125,39 +131,29 @@ export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => 
             };
 
             if (!requiresConfirmation) {
-                return {
-                    id: guest.id,
-                    fullName,
-                    ageText,
-                    avatarUrl: guest.user.avatar?.smallUrl || null,
-                };
+                return preparedGuest;
             }
 
             if (selectedTab === GuestTabs.CONFIRM) {
                 return {
-                    id: guest.id,
-                    fullName,
-                    ageText,
-                    avatarUrl: guest.user.avatar?.smallUrl || null,
+                    ...preparedGuest,
                     primaryAction: cancelConfirmationAction,
                 };
             }
 
             if (selectedTab === GuestTabs.NOT_CONFIRM) {
                 return {
-                    id: guest.id,
-                    fullName,
-                    ageText,
-                    avatarUrl: guest.user.avatar?.smallUrl || null,
+                    ...preparedGuest,
                     primaryAction: provideConfirmationAction,
                 };
             }
 
+            if (guest.status !== GuestsBookingStatuses.PENDING) {
+                return preparedGuest;
+            }
+
             return {
-                id: guest.id,
-                fullName,
-                ageText,
-                avatarUrl: guest.user.avatar?.smallUrl || null,
+                ...preparedGuest,
                 primaryAction: confirmAction,
                 secondaryAction: notConfirmAction,
             };

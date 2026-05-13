@@ -16,7 +16,14 @@ const GuestsTabItemViewComponent = ({ tabName, isActive, onPress }: IProps) => {
 
     return (
         <Pressable style={styles.container} onPress={onPress}>
-            <Typography variant="body_500" text={tabName} style={styles.tabName} />
+            <Typography
+                variant="body_500"
+                text={tabName}
+                style={styles.tabName}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.85}
+            />
         </Pressable>
     );
 };

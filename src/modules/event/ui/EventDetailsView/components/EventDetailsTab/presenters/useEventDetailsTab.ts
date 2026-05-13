@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useEventDetails } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetails';
 import { useEventDetailsData } from '@/modules/event/ui/EventDetailsView/presenters/useEventDetailsData';
 import { eventsService } from '@/entities/events/EventsService';
 import { userModel } from '@/entities/users/UserModel';
@@ -18,9 +17,11 @@ import { IEventPaymentMethodOption } from '@/modules/event/ui/EventDetailsView/t
 import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
 import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
 import { eventsModel } from '@/entities/events/EventsModel';
+import { IEventDetail } from '@/entities/events/types/IEvent';
 
 interface IProps {
-    eventId: number;
+    eventDetail: IEventDetail | null;
+    setEventDetail: React.Dispatch<React.SetStateAction<IEventDetail | null>>;
 }
 
 interface IEventDetailWithPaymentMethods {
@@ -69,8 +70,8 @@ const getEventPaymentMethods = (eventDetail: IEventDetailWithPaymentMethods | nu
     }
 
     return eventDetail.paymentMethods
-        .filter((item) => item.isVisible !== false)
-        .map((item) => {
+        .filter(item => item.isVisible !== false)
+        .map(item => {
             return {
                 id: Number(item.id || 0),
                 name: item.name || '',
@@ -79,7 +80,7 @@ const getEventPaymentMethods = (eventDetail: IEventDetailWithPaymentMethods | nu
                 qrCodeOriginalUrl: item.qrCode?.originalUrl || '',
             };
         })
-        .filter((item) => item.id > 0 && !!item.name);
+        .filter(item => item.id > 0 && !!item.name);
 };
 
 const getEventDateTime = (date?: string | null, time?: string | null) => {
@@ -96,9 +97,8 @@ const getEventDateTime = (date?: string | null, time?: string | null) => {
     return eventDateTime;
 };
 
-export const useEventDetailsTab = ({ eventId }: IProps) => {
+export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
-    const { eventDetail, setEventDetail, isError, isLoading } = useEventDetails(eventId);
     const { detailsData, wineSetItems, contactItems, cardPreviewData } = useEventDetailsData(eventDetail);
     const [isBookNowInProgress, setIsBookNowInProgress] = useState(false);
     const [currentTime, setCurrentTime] = useState(() => new Date());
@@ -127,7 +127,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
             return null;
         }
 
-        return eventPaymentMethods.find((item) => item.id === selectedPaymentMethodId) || null;
+        return eventPaymentMethods.find(item => item.id === selectedPaymentMethodId) || null;
     }, [eventPaymentMethods, selectedPaymentMethodId]);
 
     const onSelectPaymentMethod = useCallback((id: number) => {
@@ -135,7 +135,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
     }, []);
 
     const paymentMethodOptions = useMemo<IEventPaymentMethodOption[]>(() => {
-        return eventPaymentMethods.map((item) => {
+        return eventPaymentMethods.map(item => {
             return {
                 id: item.id,
                 name: item.name,
@@ -150,11 +150,13 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
     const eventStartTimeRaw = eventDetail?.eventStartTime || eventDetail?.eventTime || null;
     const eventEndDateRaw = eventDetail?.eventEndDate || eventDetail?.eventDate || null;
     const eventEndTimeRaw = eventDetail?.eventEndTime || eventDetail?.endTime || null;
-    const eventStartDateTime = getEventDateTime(eventStartDateRaw, eventStartTimeRaw);
     const eventEndDateTime = getEventDateTime(eventEndDateRaw, eventEndTimeRaw);
-    const hasEventStarted = eventStartDateTime && !Number.isNaN(eventStartDateTime.getTime())
-        ? eventStartDateTime.getTime() <= currentTime.getTime()
-        : false;
+    const eventStartDateTime =
+        eventStartDateRaw && eventStartTimeRaw ? new Date(`${eventStartDateRaw}T${eventStartTimeRaw}`) : null;
+    const hasEventStarted =
+        eventStartDateTime && !Number.isNaN(eventStartDateTime.getTime())
+            ? eventStartDateTime.getTime() <= currentTime.getTime()
+            : false;
     const seatsLeft = eventDetail?.seats?.left;
     const hasNoSeatsLeft = typeof seatsLeft === 'number' && seatsLeft <= 0;
     const isEventInactive = eventDetail?.isActive === false;
@@ -208,45 +210,51 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
         setIsSelectedPaymentMethodModalVisible(false);
     }, []);
 
-    const onApplyForEvent = useCallback(async (showPaymentInfoModal: boolean) => {
-        if (!eventDetail) {
-            return;
-        }
-
-        setIsBookNowInProgress(true);
-        try {
-            const response = await eventsService.applyForEvent(eventId);
-            if (response.isError) {
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    response.message || localization.t('common.somethingWentWrong'),
-                );
+    const onApplyForEvent = useCallback(
+        async (showPaymentInfoModal: boolean) => {
+            if (!eventDetail) {
                 return;
             }
 
-            const nextSeatsLeft =
-                typeof eventDetail.seats?.left === 'number' ? Math.max(0, eventDetail.seats.left - 1) : undefined;
-            setEventDetail({
-                ...eventDetail,
-                isApplied: true,
-                seats:
-                    eventDetail.seats && typeof nextSeatsLeft === 'number'
-                        ? {
-                              ...eventDetail.seats,
-                              left: nextSeatsLeft,
-                          }
-                        : eventDetail.seats,
-            });
-            if (showPaymentInfoModal && selectedPaymentMethodId !== null) {
-                setIsSelectedPaymentMethodModalVisible(true);
+            setIsBookNowInProgress(true);
+            try {
+                const response = await eventsService.applyForEvent(eventDetail.id);
+                if (response.isError) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        response.message || localization.t('common.somethingWentWrong'),
+                    );
+                    return;
+                }
+
+                const nextSeatsLeft =
+                    typeof eventDetail.seats?.left === 'number' ? Math.max(0, eventDetail.seats.left - 1) : undefined;
+                setEventDetail({
+                    ...eventDetail,
+                    isApplied: true,
+                    seats:
+                        eventDetail.seats && typeof nextSeatsLeft === 'number'
+                            ? {
+                                  ...eventDetail.seats,
+                                  left: nextSeatsLeft,
+                              }
+                            : eventDetail.seats,
+                });
+                if (showPaymentInfoModal && selectedPaymentMethodId !== null) {
+                    setIsSelectedPaymentMethodModalVisible(true);
+                }
+            } catch (error) {
+                console.warn('useEventDetailsTab -> onApplyForEvent: ', error);
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('common.somethingWentWrong'),
+                );
+            } finally {
+                setIsBookNowInProgress(false);
             }
-        } catch (error) {
-            console.warn('useEventDetailsTab -> onApplyForEvent: ', error);
-            toastService.showError(localization.t('common.errorHappened'), localization.t('common.somethingWentWrong'));
-        } finally {
-            setIsBookNowInProgress(false);
-        }
-    }, [eventDetail, eventId, selectedPaymentMethodId, setEventDetail]);
+        },
+        [eventDetail, selectedPaymentMethodId, setEventDetail],
+    );
 
     const onNextPaymentMethodPress = useCallback(async () => {
         if (selectedPaymentMethodId === null) {
@@ -279,22 +287,24 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
 
     const onFavoritePress = useCallback(async () => {
         try {
-            const response = await eventsService.toggleSave(eventId);
-            if (response.isError || !eventDetail) {
-                return;
+            if (eventDetail?.id) {
+                const response = await eventsService.toggleSave(eventDetail.id);
+                if (response.isError || !eventDetail) {
+                    return;
+                }
+
+                const nextIsSaved =
+                    typeof response.data?.isSaved === 'boolean' ? response.data.isSaved : !eventDetail.isSaved;
+
+                setEventDetail({
+                    ...eventDetail,
+                    isSaved: nextIsSaved,
+                });
             }
-
-            const nextIsSaved =
-                typeof response.data?.isSaved === 'boolean' ? response.data.isSaved : !eventDetail.isSaved;
-
-            setEventDetail({
-                ...eventDetail,
-                isSaved: nextIsSaved,
-            });
         } catch (error) {
             console.warn('useEventDetailsTab -> onFavoritePress: ', error);
         }
-    }, [eventDetail, eventId, setEventDetail]);
+    }, [eventDetail, setEventDetail]);
 
     const onCancelEventPress = useCallback(async () => {
         if (!eventDetail || isCancelEventDisabled || isBookNowInProgress) {
@@ -303,7 +313,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
 
         setIsBookNowInProgress(true);
         try {
-            const response = await eventsService.updateEvent(eventId, { isActive: false });
+            const response = await eventsService.updateEvent(eventDetail.id, { isActive: false });
             if (response.isError) {
                 toastService.showError(
                     localization.t('common.errorHappened'),
@@ -322,7 +332,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
         } finally {
             setIsBookNowInProgress(false);
         }
-    }, [eventDetail, eventId, isBookNowInProgress, isCancelEventDisabled, setEventDetail]);
+    }, [eventDetail, isBookNowInProgress, isCancelEventDisabled, setEventDetail]);
 
     const onEditPress = useCallback(() => {
         if (!eventDetail) {
@@ -430,8 +440,6 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
         });
     }, [eventDetail, navigation]);
     return {
-        isLoading,
-        isError,
         eventDetail,
         detailsData,
         wineSetItems,

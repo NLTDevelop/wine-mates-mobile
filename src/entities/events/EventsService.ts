@@ -9,10 +9,10 @@ import { CreateEventDto } from './dto/CreateEvent.dto';
 import { eventsModel } from './EventsModel';
 import countries from 'world-countries';
 import { IEventPriceRange } from './types/IEventPriceRange';
-import { IEventCurrencies } from './types/IEventCurrencies';
 import { IGetEventsParams } from './params/IGetEventsParams';
 import { ISavedEvent } from './types/ISavedEvent';
 import { IAppliedEvent } from './types/IAppliedEvent';
+import { IUserCurrencies } from '../users/types/IUserCurrencies';
 
 class EventsService {
     constructor(
@@ -229,9 +229,7 @@ class EventsService {
     };
 
     private mapEventToSavedEvent = (eventSnapshot: IEvent | IEventDetail): ISavedEvent => {
-        const resolvedPriceUsd = 'priceUsd' in eventSnapshot
-            ? eventSnapshot.priceUsd
-            : eventSnapshot.price;
+        const resolvedPriceUsd = 'priceUsd' in eventSnapshot ? eventSnapshot.priceUsd : eventSnapshot.price;
         const resolvedDistanceKm = eventSnapshot.distanceKm ?? null;
         const resolvedCurrency = eventSnapshot.currency || '';
 
@@ -257,9 +255,7 @@ class EventsService {
             eventsModel.savedEvents = {
                 ...eventsModel.savedEvents,
                 rows: filteredRows,
-                count: wasInSaved
-                    ? Math.max(0, eventsModel.savedEvents.count - 1)
-                    : eventsModel.savedEvents.count,
+                count: wasInSaved ? Math.max(0, eventsModel.savedEvents.count - 1) : eventsModel.savedEvents.count,
             };
             return;
         }
@@ -316,9 +312,7 @@ class EventsService {
             });
 
             if (!response.isError) {
-                const responseFields = response.data && typeof response.data === 'object'
-                    ? response.data
-                    : {};
+                const responseFields = response.data && typeof response.data === 'object' ? response.data : {};
                 const updatedFields = {
                     ...data,
                     ...responseFields,
@@ -461,9 +455,9 @@ class EventsService {
         }
     };
 
-
     getCreatedEvents = async (params: IGetEventsParams): Promise<IResponse<IList<IEvent>>> => {
-        try {            const response = await this._requester.request({
+        try {
+            const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.createdEvents}`,
                 params,
@@ -477,7 +471,7 @@ class EventsService {
                     totalPages: 0,
                 };
 
-                if(params.offset === 0) {
+                if (params.offset === 0) {
                     eventsModel.createdEvents = normalizedList;
                 } else {
                     eventsModel.appendCreatedEvents(normalizedList);
@@ -493,11 +487,10 @@ class EventsService {
             console.warn('EventsService -> getCreatedEvents: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
-    }
-
+    };
 
     getSavedEvents = async (params: IGetEventsParams): Promise<IResponse<IList<ISavedEvent>>> => {
-        try {            
+        try {
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.favoriteEvents}`,
@@ -512,7 +505,7 @@ class EventsService {
                     totalPages: 0,
                 };
 
-                if(params.offset === 0) {
+                if (params.offset === 0) {
                     eventsModel.savedEvents = normalizedList;
                 } else {
                     eventsModel.appendSavedEvents(normalizedList);
@@ -528,10 +521,11 @@ class EventsService {
             console.warn('EventsService -> getSavedEvents: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
-    }
+    };
 
     getAppliedEvents = async (): Promise<IResponse<IAppliedEvent[]>> => {
-        try {            const response = await this._requester.request({
+        try {
+            const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.appliedEvents}`,
             });
@@ -550,14 +544,13 @@ class EventsService {
             console.warn('EventsService -> getAppliedEvents: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
-    }
+    };
 
-
-    getCurrencies = async (): Promise<IResponse<IEventCurrencies>> => {
+    getCurrencies = async (): Promise<IResponse<IUserCurrencies>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
-                url: `${this._links.eventCurrencies}`,
+                url: `${this._links.userCurrencies}`,
             });
 
             return response;

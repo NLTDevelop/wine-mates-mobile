@@ -48,7 +48,7 @@ export interface ILinks {
     createdEvents: string;
     appliedEvents: string;
     eventBookings: string;
-    eventCurrencies: string;
+    userCurrencies: string;
     paymentMethods: string;
     contacts: string;
     guests: string;
@@ -94,7 +94,7 @@ class Links implements ILinks {
         createdEvents: 'events/my',
         appliedEvents: 'event-bookings/my',
         eventBookings: 'event-bookings',
-        eventCurrencies: 'users/currencies',
+        userCurrencies: 'users/currencies',
         paymentMethods: 'users/payment-methods',
         contacts: 'users/contacts',
         guests: 'event-bookings/event',
@@ -220,8 +220,8 @@ class Links implements ILinks {
     public get eventBookings() {
         return `${this._domain}${this._links.eventBookings}`;
     }
-    public get eventCurrencies() {
-        return `${this._domain}${this._links.eventCurrencies}`;
+    public get userCurrencies() {
+        return `${this._domain}${this._links.userCurrencies}`;
     }
     public get paymentMethods() {
         return `${this._domain}${this._links.paymentMethods}`;

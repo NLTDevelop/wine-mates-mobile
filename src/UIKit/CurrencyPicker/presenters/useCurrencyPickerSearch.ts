@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
-import { ICurrencyOption } from '@/modules/event/types/ICurrencyOption';
+import { ICurrencyOption } from '../types/ICurrencyOption';
 
 interface IProps {
     items: ICurrencyOption[];
 }
 
-export const useCurrencyModal = ({ items }: IProps) => {
+export const useCurrencyPickerSearch = ({ items }: IProps) => {
     const [search, setSearch] = useState('');
 
     const onChangeSearch = useCallback((value: string) => {
@@ -19,7 +19,7 @@ export const useCurrencyModal = ({ items }: IProps) => {
             return items;
         }
 
-        return items.filter((item) => item.label.toLowerCase().includes(normalizedSearch));
+        return items.filter(item => item.label.toLowerCase().includes(normalizedSearch));
     }, [items, search]);
 
     return {

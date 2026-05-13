@@ -303,7 +303,8 @@
         "socialMediaLinks": "Посилання на соцмережі",
         "deleteProfilePhotoTitle": "Видалити фото профілю?",
         "deleteProfilePhotoMessage": "Ви впевнені, що хочете видалити фото профілю? Цю дію не можна скасувати.",
-        "delete": "Видалити"
+        "delete": "Видалити",
+        "selectedCurrency": "Обрана валюта"
     },
     "logout": {
         "logout": "Вийти?",

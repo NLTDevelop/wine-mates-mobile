@@ -15,18 +15,19 @@ import { EventPaymentMethodsModal } from '../EventPaymentMethodsModal';
 import { EventSelectedPaymentMethodModal } from '../EventSelectedPaymentMethodModal';
 import { getStyles } from './styles';
 import { useEventDetailsTab } from './presenters/useEventDetailsTab';
+import { IEventDetail } from '@/entities/events/types/IEvent';
 
 interface IProps {
-    eventId: number;
+    eventDetail: IEventDetail | null;
+    setEventDetail: React.Dispatch<React.SetStateAction<IEventDetail | null>>;
+    isError: boolean;
+    isLoading: boolean;
 }
 
-export const EventDetailsTab = ({ eventId }: IProps) => {
+export const EventDetailsTab = ({ eventDetail, setEventDetail, isError, isLoading }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
-        isLoading,
-        isError,
-        eventDetail,
         detailsData,
         wineSetItems,
         contactItems,
@@ -53,7 +54,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
         isSelectedPaymentMethodModalVisible,
         selectedPaymentMethod,
         onCloseSelectedPaymentMethodModal,
-    } = useEventDetailsTab({ eventId });
+    } = useEventDetailsTab({ eventDetail, setEventDetail });
 
     const keyExtractor = useCallback((item: IWineSetItem) => `${item.id}`, []);
 
@@ -105,7 +106,7 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
     return (
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-                {cardPreviewData && <EventDetailsPreview data={cardPreviewData} eventId={eventId} />}
+                {cardPreviewData && <EventDetailsPreview data={cardPreviewData} eventId={eventDetail.id} />}
 
                 <View style={styles.card}>
                     {detailsData.map((item, index) => (

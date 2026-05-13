@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -6,27 +6,28 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { SearchBar } from '@/UIKit/SearchBar';
-import { ICurrencyOption } from '@/modules/event/types/ICurrencyOption';
 import { useBottomModalState } from '@/UIKit/BottomModal/presenters/useBottomModalState';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { getStyles } from './styles';
-import { useCurrencyModal } from './presenters/useCurrencyModal';
+import { ICurrencyOption } from '../types/ICurrencyOption';
+import { useCurrencyPickerSearch } from '../presenters/useCurrencyPickerSearch';
 
 const SNAP_POINTS = ['90%'];
 
 interface IProps {
     visible: boolean;
+    title: string;
     onClose: () => void;
     items: ICurrencyOption[];
     selectedValue: string;
     onConfirm: () => void;
 }
 
-export const CurrencyModal = ({ visible, onClose, items, selectedValue, onConfirm }: IProps) => {
+const CurrencyPickerBottomSheetComponent = ({ visible, title, onClose, items, selectedValue, onConfirm }: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [bottom, colors]);
-    const { search, filteredItems, onChangeSearch } = useCurrencyModal({ items });
+    const { search, filteredItems, onChangeSearch } = useCurrencyPickerSearch({ items });
     const { modalRef, onRenderBackdrop, onRenderHandle, onDismiss, onClosePress } = useBottomModalState({
         visible,
         onClose,
@@ -36,20 +37,23 @@ export const CurrencyModal = ({ visible, onClose, items, selectedValue, onConfir
         return item.value;
     }, []);
 
-    const renderItem = useCallback(({ item }: { item: ICurrencyOption }) => {
-        return (
-            <TouchableOpacity
-                onPress={item.onPress}
-                style={[styles.option, selectedValue === item.value && styles.selectedOption]}
-            >
-                <Typography
-                    variant="h6"
-                    text={item.label}
-                    style={[styles.optionText, selectedValue === item.value && styles.selectedOptionText]}
-                />
-            </TouchableOpacity>
-        );
-    }, [selectedValue, styles]);
+    const renderItem = useCallback(
+        ({ item }: { item: ICurrencyOption }) => {
+            return (
+                <TouchableOpacity
+                    onPress={item.onPress}
+                    style={[styles.option, selectedValue === item.value && styles.selectedOption]}
+                >
+                    <Typography
+                        variant="h6"
+                        text={item.label}
+                        style={[styles.optionText, selectedValue === item.value && styles.selectedOptionText]}
+                    />
+                </TouchableOpacity>
+            );
+        },
+        [selectedValue, styles],
+    );
 
     const renderSeparator = useCallback(() => {
         return <View style={styles.separator} />;
@@ -81,7 +85,7 @@ export const CurrencyModal = ({ visible, onClose, items, selectedValue, onConfir
             <View style={styles.header}>
                 <View style={styles.closeButton} />
                 <View style={styles.titleContainer} pointerEvents="none">
-                    <Typography text={t('event.currency')} variant="h4" style={styles.title} />
+                    <Typography text={title} variant="h4" style={styles.title} />
                 </View>
                 <TouchableOpacity onPress={onClosePress} style={styles.closeButton} hitSlop={8}>
                     <CrossIcon />
@@ -119,3 +123,5 @@ export const CurrencyModal = ({ visible, onClose, items, selectedValue, onConfir
         </BottomSheetModal>
     );
 };
+
+export const CurrencyPickerBottomSheet = memo(CurrencyPickerBottomSheetComponent);
