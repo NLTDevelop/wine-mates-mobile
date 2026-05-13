@@ -16,6 +16,7 @@ import { useUiContext } from '@/UIProvider';
 import { countryDisplayNames } from '@/libs/countryCodePicker/countryDisplayNames';
 import { Keyboard } from 'react-native';
 import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCurrencyPickerModal';
+import { useUserCurrencies } from '@/UIKit/CurrencyPicker/presenters/useUserCurrencies';
 
 interface IProfileForm {
     fullName: string;
@@ -128,7 +129,7 @@ export const useEditProfileDetails = () => {
     const [shouldRemoveAvatar, setShouldRemoveAvatar] = useState(false);
     const [instagramLinkError, setInstagramLinkError] = useState<string | null>(null);
     const [isDeleteAvatarAlertVisible, setIsDeleteAvatarAlertVisible] = useState(false);
-    const [currencies, setCurrencies] = useState<string[]>([]);
+    const { currencies, isCurrenciesLoading, onLoadCurrencies } = useUserCurrencies();
 
     const normalizeE164Phone = useCallback((raw: string) => {
         const trimmed = raw.trim().replace(/\s+/g, '');
@@ -417,18 +418,23 @@ export const useEditProfileDetails = () => {
         [onChangeField],
     );
 
-    const onLoadCurrencies = useCallback(async () => {
-        // move getCurrencies to another place
-        const response = await userService.getCurrencies();
+    const onLoadProfileCurrencies = useCallback(async () => {
+        const data = await onLoadCurrencies();
 
-        if (response.isError || !response.data || !Array.isArray(response.data.list)) {
+        if (!data || !data.list.length) {
+            if (!currencies.length) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('common.somethingWentWrong'),
+                );
+            }
+
             return;
         }
 
-        const availableCurrencies = response.data.list;
-        const selectedCurrency = response.data.selected;
+        const availableCurrencies = data.list;
+        const selectedCurrency = data.selected;
 
-        setCurrencies(availableCurrencies);
         setForm(prev => {
             if (prev.selectedCurrency && availableCurrencies.includes(prev.selectedCurrency)) {
                 return prev;
@@ -440,7 +446,7 @@ export const useEditProfileDetails = () => {
 
             return { ...prev, selectedCurrency: availableCurrencies[0] || '' };
         });
-    }, []);
+    }, [currencies.length, onLoadCurrencies]);
 
     const onRefetchUser = useCallback(async () => {
         const response = await userService.me();
@@ -491,18 +497,19 @@ export const useEditProfileDetails = () => {
         useCallback(() => {
             const onFocus = async () => {
                 await onRefetchUser();
-                await onLoadCurrencies();
+                await onLoadProfileCurrencies();
             };
 
             onFocus();
-        }, [onLoadCurrencies, onRefetchUser]),
+        }, [onLoadProfileCurrencies, onRefetchUser]),
     );
 
+    const isCurrencySelectorDisabled = isCurrenciesLoading || !currencies.length;
     const currencyPicker = useCurrencyPickerModal({
         value: form.selectedCurrency,
         currencies,
         onChange: onChangeCurrency,
-        isDisabled: !currencies.length,
+        isDisabled: isCurrencySelectorDisabled,
     });
 
     const onChangeCountryCode = useCallback(
@@ -832,6 +839,7 @@ export const useEditProfileDetails = () => {
         onChangeGender,
         onChangeOccupation,
         currencyPicker,
+        isCurrencySelectorDisabled,
         onChangePlaceOfWork,
         onChangeInstagramLink,
         onChangeWebsite,

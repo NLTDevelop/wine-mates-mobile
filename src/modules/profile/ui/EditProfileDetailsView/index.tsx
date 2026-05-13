@@ -58,6 +58,7 @@ export const EditProfileDetailsView = () => {
         onChangeGender,
         onChangeOccupation,
         currencyPicker,
+        isCurrencySelectorDisabled,
         onChangePlaceOfWork,
         onChangeInstagramLink,
         onChangeWebsite,
@@ -211,7 +212,7 @@ export const EditProfileDetailsView = () => {
                         <ProfileSelectorRow
                             value={currencyPicker.selectedText}
                             placeholder={t('settings.selectedCurrency')}
-                            disabled={!currencyPicker.items.length}
+                            disabled={isCurrencySelectorDisabled}
                             onPress={currencyPicker.onOpen}
                         />
                         <CustomInput

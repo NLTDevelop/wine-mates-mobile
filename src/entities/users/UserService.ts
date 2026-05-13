@@ -250,7 +250,7 @@ class UserService {
 
             return response;
         } catch (error) {
-            console.warn('EventsService -> getCurrencies: ', error);
+            console.warn('UserService -> getCurrencies: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
