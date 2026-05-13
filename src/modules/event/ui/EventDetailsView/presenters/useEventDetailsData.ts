@@ -29,6 +29,12 @@ const STATIC_MAP_LIGHT_STYLE_PARAMS = [
     'style=feature:landscape|element:geometry|color:0xf5f5f5',
 ];
 
+interface IEventDetailWithPaymentMethods extends IEventDetail {
+    paymentMethods?: Array<{
+        name?: string;
+        isVisible?: boolean;
+    }>;
+}
 
 export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
     const { t, locale } = useUiContext();
@@ -308,6 +314,22 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         return t('event.participationConditionGuest');
     };
 
+    const formatPaymentMethods = (value?: IEventDetailWithPaymentMethods['paymentMethods']) => {
+        if (!Array.isArray(value) || value.length === 0) {
+            return '-';
+        }
+
+        const paymentMethodNames = value
+            .filter((item) => item?.isVisible !== false && !!item?.name?.trim())
+            .map((item) => item.name?.trim() || '');
+
+        if (paymentMethodNames.length === 0) {
+            return '-';
+        }
+
+        return paymentMethodNames.join(', ');
+    };
+
     const detailsData = (() => {
         if (!eventDetail) {
             return [];
@@ -327,6 +349,10 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                     value: formatParticipationCondition(eventDetail.participationCondition),
                 },
             ]
+            : [];
+        const paymentMethodsValue = formatPaymentMethods((eventDetail as IEventDetailWithPaymentMethods).paymentMethods);
+        const paymentMethodsDetails = paymentMethodsValue !== '-'
+            ? [{ key: 'paymentMethods', label: t('payments.paymentsMethods'), value: paymentMethodsValue }]
             : [];
 
         return [
@@ -369,6 +395,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             },
             { key: 'language', label: t('eventDetails.language'), value: formatLanguage(eventDetail.language) },
             { key: 'seats', label: t('eventDetails.seats'), value: formatSeats(eventDetail.seats, eventDetail.acceptedCount) },
+            ...paymentMethodsDetails,
             { key: 'confirmation', label: t('eventDetails.confirmationAvailability'), value: confirmationValue },
             ...partyDetails,
         ];

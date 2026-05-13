@@ -350,6 +350,7 @@
     },
     "event": {
         "addEvent": "Додати подію",
+        "editEvent": "Редагувати подію",
         "updateEvent": "Оновити події",
         "basicInfo": "Основна інформація",
         "locationAndSchedule": "Локація та розклад",

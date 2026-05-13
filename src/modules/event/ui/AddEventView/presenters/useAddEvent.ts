@@ -501,6 +501,7 @@ export const useAddEvent = () => {
 
     return {
         form,
+        isEditMode,
         isLoading: false,
         isPartyEventType,
         isPaymentMethodsLoading,

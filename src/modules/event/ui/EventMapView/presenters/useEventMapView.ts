@@ -83,6 +83,9 @@ export const useEventMapView = ({ events, onFavoritePress }: IUseEventMapViewPro
     }, [navigation]);
 
     const onEditPress = useCallback(async (eventId: number) => {
+        setIsModalVisible(false);
+        setSelectedEventId(null);
+
         const response = await eventsService.getById(eventId);
         if (response.isError || !response.data) {
             return;
