@@ -6,23 +6,22 @@ import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
-import { CloseButton } from '../components/CloseButton';
 import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
-import { useWineTasteCharacteristics } from './presenters/useWineTasteCharacteristics';
-import { TasteCharacteristicItem } from '../../../../UIKit/TasteCharacteristicItem';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
-import { WinePeakPicker } from '../../../../UIKit/WinePeakPicker';
+import { TasteCharacteristicItem } from '@/UIKit/TasteCharacteristicItem';
+import { WinePeakPicker } from '@/UIKit/WinePeakPicker';
+import { useWineTasteCharacteristics } from './presenters/useWineTasteCharacteristics';
 
 type ListItemType =
     | { type: 'characteristic'; data: IWineTasteCharacteristic }
     | { type: 'winePeak' };
 
-export const WineTasteCharacteristicsView = observer(() => {
+export const TastingWineTasteCharacteristicsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -72,7 +71,7 @@ export const WineTasteCharacteristicsView = observer(() => {
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton title={t('wine.tasteCharacteristics')} rightComponent={<CloseButton />} />}
+                headerComponent={<HeaderWithBackButton title={t('wine.tasteCharacteristics')} />}
             >
                 {!data || data.length === 0 || isLoading ? (
                     <Loader />

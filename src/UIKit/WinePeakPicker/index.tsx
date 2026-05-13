@@ -27,10 +27,10 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
         displayYear,
         currentYear,
         isVisible,
-        handleOpen,
-        handleClose,
+        onOpen,
+        onClose,
         onConfirm,
-        handleReset,
+        onReset,
     } = useWinePeakPicker({ value, onChange });
 
     return (
@@ -41,7 +41,7 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                     <Typography text={t('wine.winePeakDescription')} variant="subtitle_12_400" style={styles.description} />
                 </View>
                 <View style={styles.pickerRow}>
-                    <Pressable onPress={isPremiumUser ? handleOpen : undefined} style={styles.pickerButton} disabled={!isPremiumUser}>
+                    <Pressable onPress={isPremiumUser ? onOpen : undefined} style={styles.pickerButton} disabled={!isPremiumUser}>
                         <Typography
                             text={displayYear}
                             variant="h6"
@@ -55,7 +55,7 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                         {!isPremiumUser && <LockContainer/>}
                     </Pressable>
                     {value && isPremiumUser && (
-                        <Pressable onPress={handleReset} style={styles.resetButton}>
+                        <Pressable onPress={onReset} style={styles.resetButton}>
                             <CrossIcon width={20} height={20} color={colors.icon_inverted} />
                         </Pressable>
                     )}
@@ -63,9 +63,9 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
             </View>
             <YearPickerModal
                 visible={isVisible}
-                onClose={handleClose}
+                onClose={onClose}
                 onConfirm={onConfirm}
-                onReset={handleReset}
+                onReset={onReset}
                 selectedYear={selectedYear}
                 onYearChange={setSelectedYear}
                 currentYear={currentYear}

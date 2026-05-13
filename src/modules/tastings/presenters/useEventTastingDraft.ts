@@ -51,6 +51,21 @@ const getFlavorDraftItems = (ids?: number[]): IWineTaste[] => {
     }));
 };
 
+const getSuggestedFlavorDraftItems = (names?: string[]): IWineTaste[] => {
+    if (!names?.length) {
+        return [];
+    }
+
+    return names
+        .filter(name => name.trim().length > 0)
+        .map((name, index) => ({
+            id: -(index + 1),
+            colorHex: null,
+            name,
+            sortNumber: 0,
+        }));
+};
+
 export const useEventTastingDraft = () => {
     const currentEventTastingDraftRef = useRef<Partial<AddRateDto>>({});
 
@@ -139,10 +154,13 @@ export const useEventTastingDraft = () => {
             aiSnacks: nextDraft.aiSnacks || null,
         };
         wineModel.selectedSmells = [
-            ...getAromaDraftItems(nextDraft.aromas),
             ...getSuggestedAromaDraftItems(nextDraft.suggestions?.aromas),
+            ...getAromaDraftItems(nextDraft.aromas),
         ];
-        wineModel.selectedTastes = getFlavorDraftItems(nextDraft.flavors);
+        wineModel.selectedTastes = [
+            ...getSuggestedFlavorDraftItems(nextDraft.suggestions?.flavors),
+            ...getFlavorDraftItems(nextDraft.flavors),
+        ];
         wineModel.winePeak = typeof nextDraft.winePeak === 'number' ? nextDraft.winePeak : null;
     }, [getDefaultEventTastingDraft]);
 

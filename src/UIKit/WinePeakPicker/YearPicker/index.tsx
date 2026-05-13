@@ -16,7 +16,7 @@ export const YearPicker = memo(({ value, onChange, minimumYear }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, handleValueChange } = useYearPicker({ value, onChange, minimumYear, styles });
+    const { data, onValueChange } = useYearPicker({ value, onChange, minimumYear, styles });
 
     const renderItem = useCallback(({ item, itemTextStyle }: {
         item: { value: number; label: string };
@@ -38,7 +38,7 @@ export const YearPicker = memo(({ value, onChange, minimumYear }: IProps) => {
             <WheelPicker
                 data={data}
                 value={value}
-                onValueChanged={handleValueChange}
+                onValueChanged={onValueChange}
                 style={styles.picker}
                 itemHeight={50}
                 renderItem={renderItem}

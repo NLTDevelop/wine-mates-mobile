@@ -4,7 +4,7 @@ import { useUiContext } from '@/UIProvider';
 import { useIsFocused } from '@react-navigation/native';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { hexToRgba } from '@/utils';
-import { getStyles } from './styles';
+import { getStyles } from '../styles';
 
 interface UseTasteCharacteristicItemParams {
     item: IWineTasteCharacteristic;

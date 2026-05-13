@@ -4,7 +4,7 @@ import { SmoothSlider } from '@/UIKit/SmoothSlider';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { CrownIcon } from '@assets/icons/CrownIcon';
 import { LockContainer } from '@/UIKit/LockContainer/index.tsx';
-import { useTasteCharacteristicItem } from './useTasteCharacteristicItem.tsx';
+import { useTasteCharacteristicItem } from './presenters/useTasteCharacteristicItem';
 
 interface IProps {
     item: IWineTasteCharacteristic;

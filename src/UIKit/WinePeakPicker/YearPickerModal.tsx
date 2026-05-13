@@ -37,18 +37,18 @@ export const YearPickerModal = memo(({
     const { colors } = useUiContext();
     const styles = useMemo(() => getYearPickerModalStyles(colors), [colors]);
 
-    const { backdropOpacity, slideAnim, handleClose } = useYearPickerModal({ visible, onClose });
+    const { backdropOpacity, slideAnim, onClosePress } = useYearPickerModal({ visible, onClose });
 
     return (
         <Modal
             visible={visible}
             transparent
             animationType="none"
-            onRequestClose={handleClose}
+            onRequestClose={onClosePress}
         >
             <View style={styles.container}>
                 <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]}>
-                    <Pressable style={styles.backdropPressable} onPress={handleClose} />
+                    <Pressable style={styles.backdropPressable} onPress={onClosePress} />
                 </Animated.View>
                 <Animated.View style={[styles.modalWrapper, { transform: [{ translateY: slideAnim }] }]}>
                     <View style={styles.modalContent}>
@@ -57,7 +57,7 @@ export const YearPickerModal = memo(({
                                 <Typography variant="body_400" text={resetText} style={styles.resetText} />
                             </TouchableOpacity>
                             <Typography variant="h4" text={title} />
-                            <TouchableOpacity onPress={handleClose} hitSlop={20}>
+                            <TouchableOpacity onPress={onClosePress} hitSlop={20}>
                                 <CrossIcon />
                             </TouchableOpacity>
                         </View>

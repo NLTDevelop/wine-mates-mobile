@@ -33,7 +33,7 @@ export const TastingWineTasteView = observer(() => {
 
     const { isVisible, onShowModal, onHide, selectData, groupId } = useTastingTasteSelectModal();
     const { data, selected, isError, getTastes, isLoading, onItemPress: originalOnItemPress, onSelectedItemPress, onAddCustomTaste: originalOnAddCustomTaste,
-        onPressNext } = useTastingWineTaste(onHide);
+        onPressNext, isSaving } = useTastingWineTaste(onHide);
 
     const [onItemPress, selectedListRef] = useAnimatedItemAdd(originalOnItemPress);
     const [onAddCustomTaste] = useAnimatedItemAdd(originalOnAddCustomTaste);
@@ -100,6 +100,7 @@ export const TastingWineTasteView = observer(() => {
                         <Button
                             text={t('wine.letsTaste')}
                             onPress={onPressNext}
+                            inProgress={isSaving}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}
                             disabled={!selected.length}
@@ -118,4 +119,3 @@ export const TastingWineTasteView = observer(() => {
         </WithErrorHandler>
     );
 });
-

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useUiContext } from '@/UIProvider';
 
@@ -25,29 +26,29 @@ export const useWinePeakPicker = ({ value, onChange }: IUseWinePeakPickerParams)
         }
     }, [value, currentYear]);
 
-    const handleOpen = useCallback(() => {
+    const onOpen = useCallback(() => {
         setIsVisible(true);
     }, []);
 
-    const handleClose = useCallback(() => {
+    const onClose = useCallback(() => {
         setIsVisible(false);
     }, []);
 
-    const handleConfirm = useCallback(() => {
+    const onConfirmYear = useCallback(() => {
         if (selectedYear >= currentYear) {
             onChange(selectedYear);
         }
     }, [selectedYear, onChange, currentYear]);
 
     const onConfirm = useCallback(() => {
-        handleConfirm();
-        handleClose();
-    }, [handleConfirm, handleClose]);
+        onConfirmYear();
+        onClose();
+    }, [onConfirmYear, onClose]);
 
-    const handleReset = useCallback(() => {
+    const onReset = useCallback(() => {
         onChange(null);
-        handleClose();
-    }, [onChange, handleClose]);
+        onClose();
+    }, [onChange, onClose]);
 
     const displayYear = useMemo(() => {
         if (value && value >= currentYear) {
@@ -63,9 +64,9 @@ export const useWinePeakPicker = ({ value, onChange }: IUseWinePeakPickerParams)
         displayYear,
         currentYear,
         isVisible,
-        handleOpen,
-        handleClose,
+        onOpen,
+        onClose,
         onConfirm,
-        handleReset,
+        onReset,
     };
 };

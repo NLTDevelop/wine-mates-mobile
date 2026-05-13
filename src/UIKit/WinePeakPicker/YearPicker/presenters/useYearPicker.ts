@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useMemo, useCallback, useState, useEffect } from 'react';
 
 interface IUseYearPickerParams {
@@ -7,7 +8,7 @@ interface IUseYearPickerParams {
     styles: any;
 }
 
-export const useYearPicker = ({ value, onChange, minimumYear, styles }: IUseYearPickerParams) => {
+export const useYearPicker = ({ value, onChange, minimumYear, styles: _styles }: IUseYearPickerParams) => {
     const currentYear = new Date().getFullYear();
 
     const minYear = minimumYear || currentYear;
@@ -26,7 +27,7 @@ export const useYearPicker = ({ value, onChange, minimumYear, styles }: IUseYear
         return years;
     }, [minYear, maxYear]);
 
-    const handleValueChange = useCallback(({ item }: { item: { value: number; label: string } }) => {
+    const onValueChange = useCallback(({ item }: { item: { value: number; label: string } }) => {
         onChange(item.value);
 
         // Check if user is near the end (within last 10 years)
@@ -44,6 +45,6 @@ export const useYearPicker = ({ value, onChange, minimumYear, styles }: IUseYear
 
     return {
         data,
-        handleValueChange,
+        onValueChange,
     };
 };

@@ -3,11 +3,20 @@ import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { IWineTasteGroup } from '@/entities/wine/types/IWineTatseGroup';
 import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
+import { eventTastingService } from '@/entities/events/EventTastingService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
+
+interface IRouteParams {
+    source?: string;
+    wineId?: number;
+    eventId?: number;
+    isBlindTasting?: boolean;
+}
 
 const filterGroups = (groups: IWineTasteGroup[], selected: IWineTaste[]) =>
     groups.map(group => ({
@@ -15,11 +24,39 @@ const filterGroups = (groups: IWineTasteGroup[], selected: IWineTaste[]) =>
         flavors: group.flavors.filter(flavor => !selected.some(selectedItem => selectedItem.id === flavor.id)),
     }));
 
+const getResolvedSelectedTastes = (selectedItems: IWineTaste[], groups?: IWineTasteGroup[] | null): IWineTaste[] => {
+    if (!groups?.length || !selectedItems.length) {
+        return selectedItems;
+    }
+
+    const customSelectedItems = selectedItems.filter(item => !item.colorHex && item.id < 0);
+    const regularSelectedItems = selectedItems.filter(item => item.colorHex || item.id >= 0);
+    const resolvedRegularItems = regularSelectedItems.map(selectedItem => {
+        if (!selectedItem.colorHex && selectedItem.id < 0) {
+            return selectedItem;
+        }
+
+        for (const group of groups) {
+            const flavor = group.flavors.find(item => item.id === selectedItem.id);
+            if (flavor) {
+                return flavor;
+            }
+        }
+
+        return selectedItem;
+    });
+
+    return [...customSelectedItems, ...resolvedRegularItems];
+};
+
 export const useTastingWineTaste = (onHide?: () => void) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
-    const source = (route.params as { source?: string } | undefined)?.source ?? 'scanner';
-    const wineId = (route.params as { wineId?: number } | undefined)?.wineId;
+    const routeParams = (route.params as IRouteParams | undefined) || {};
+    const source = routeParams.source ?? 'eventTasting';
+    const wineId = routeParams.wineId;
+    const eventId = routeParams.eventId;
+    const { buildEventTastingDraftPayload } = useEventTastingDraft();
 
     const initialSelected = wineModel.selectedTastes ?? [];
     const [isLoading, setIsLoading] = useState(() => !wineModel.tastes?.length);
@@ -32,12 +69,16 @@ export const useTastingWineTaste = (onHide?: () => void) => {
     const initialDataRef = useRef<IWineTasteGroup[]>([]);
     const selectedRef = useRef<IWineTaste[]>(initialSelected);
     const initialData = wineModel.tastes;
+    const [isSaving, setIsSaving] = useState(false);
 
     const getTastes = useCallback(async () => {
         try {
             if (!wineModel.base?.colorOfWine?.id || !wineModel.base?.typeOfWine?.id) return;
 
             if (wineModel.tastes?.length) {
+                const resolvedSelected = getResolvedSelectedTastes(selectedRef.current, wineModel.tastes);
+                setSelected(resolvedSelected);
+                wineModel.selectedTastes = resolvedSelected;
                 setIsError(false);
                 setIsLoading(false);
                 return;
@@ -58,7 +99,10 @@ export const useTastingWineTaste = (onHide?: () => void) => {
                     setIsError(true);
                 }
             } else {
-                const nextData = filterGroups(response.data, selectedRef.current);
+                const resolvedSelected = getResolvedSelectedTastes(selectedRef.current, response.data);
+                const nextData = filterGroups(response.data, resolvedSelected);
+                setSelected(resolvedSelected);
+                wineModel.selectedTastes = resolvedSelected;
                 setData(nextData);
                 initialDataRef.current = response.data;
                 setIsError(false);
@@ -139,9 +183,57 @@ export const useTastingWineTaste = (onHide?: () => void) => {
         return newId;
     }, []);
 
-    const onPressNext = useCallback(() => {
+    const onPressNext = useCallback(async () => {
+        wineModel.selectedTastes = selected;
+
+        if (eventId && wineId) {
+            setIsSaving(true);
+
+            try {
+                const response = await eventTastingService.saveDraft({
+                    eventId,
+                    wineId,
+                    data: buildEventTastingDraftPayload(wineId),
+                    isFinal: false,
+                });
+
+                if (response.isError) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        response.message || localization.t('common.somethingWentWrong'),
+                    );
+                    return;
+                }
+            } catch (error) {
+                console.error(JSON.stringify(error, null, 2));
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('common.somethingWentWrong'),
+                );
+                return;
+            } finally {
+                setIsSaving(false);
+            }
+
+            navigation.navigate('TastingWineTasteCharacteristicsView', {
+                source,
+                wineId,
+                eventId,
+                isBlindTasting: routeParams.isBlindTasting,
+            });
+            return;
+        }
+
         navigation.navigate('WineTasteCharacteristicsView', { source, wineId });
-    }, [navigation, selected, source, wineId]);
+    }, [
+        buildEventTastingDraftPayload,
+        eventId,
+        navigation,
+        routeParams.isBlindTasting,
+        selected,
+        source,
+        wineId,
+    ]);
 
     return { 
         data,
@@ -153,5 +245,6 @@ export const useTastingWineTaste = (onHide?: () => void) => {
         onAddCustomTaste,
         onSelectedItemPress,
         onPressNext,
+        isSaving,
     };
 };

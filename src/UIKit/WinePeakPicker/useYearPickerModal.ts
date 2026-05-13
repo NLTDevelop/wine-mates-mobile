@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 import { useRef, useCallback, useEffect } from 'react';
 import { Animated } from 'react-native';
 
@@ -50,7 +51,7 @@ export const useYearPickerModal = ({ visible, onClose }: IUseYearPickerModalPara
         }
     }, [visible, animateIn]);
 
-    const handleClose = useCallback(() => {
+    const onClosePress = useCallback(() => {
         animateOut(() => {
             onClose();
         });
@@ -59,6 +60,6 @@ export const useYearPickerModal = ({ visible, onClose }: IUseYearPickerModalPara
     return {
         backdropOpacity,
         slideAnim,
-        handleClose,
+        onClosePress,
     };
 };

@@ -100,8 +100,8 @@ export const useWineTasteCharacteristics = () => {
     const saveCharacteristicDetails = useCallback((sliderVals: Record<number, number>) => {
         if (!data?.length) return;
 
-        const isPremiumUser = userModel.user?.hasPremium || false;
-        const available = isPremiumUser
+        const hasPremiumAccess = userModel.user?.hasPremium || false;
+        const available = hasPremiumAccess
             ? data
             : data.filter(c => !c.isPremium);
 
