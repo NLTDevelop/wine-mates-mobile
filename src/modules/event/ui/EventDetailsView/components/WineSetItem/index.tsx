@@ -12,15 +12,35 @@ interface IProps {
     isBlindTasting?: boolean;
     wineOrder?: number;
     isOwner: boolean;
+    isPressEnabled: boolean;
+    isStatusVisible: boolean;
+    hasEventEnded: boolean;
 }
 
-export const WineSetItem = ({ item, isBlindTasting = false, wineOrder = 1 }: IProps) => {
+export const WineSetItem = ({
+    item,
+    isBlindTasting = false,
+    wineOrder = 1,
+    isPressEnabled,
+    isStatusVisible,
+    hasEventEnded,
+}: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { title, imageUrl, isImageVisible, onPress } = useWineSetItem({ item, isBlindTasting, wineOrder });
+    const { title, imageUrl, isImageVisible, statusBadgeData, onPress } = useWineSetItem({
+        item,
+        isBlindTasting,
+        wineOrder,
+        isPressEnabled,
+        isStatusVisible,
+        hasEventEnded,
+    });
+
+    const statusBadgeStyle = statusBadgeData ? styles[`${statusBadgeData.type}Badge`] : null;
+    const statusBadgeTextStyle = statusBadgeData ? styles[`${statusBadgeData.type}BadgeText`] : null;
 
     return (
-        <TouchableOpacity style={styles.row} onPress={onPress} disabled>
+        <TouchableOpacity style={styles.row} onPress={onPress} disabled={!isPressEnabled}>
             <View style={styles.leftContent}>
                 {isImageVisible && (
                     imageUrl ? (
@@ -33,9 +53,15 @@ export const WineSetItem = ({ item, isBlindTasting = false, wineOrder = 1 }: IPr
                     text={title}
                     variant="body_400"
                     style={styles.title}
+                    numberOfLines={2}
                 />
             </View>
-            <ArrowDownIcon rotate={270} color={colors.text_light} width={20} height={20} />
+            {statusBadgeData && (
+                <View style={[styles.statusBadge, statusBadgeStyle]}>
+                    <Typography text={statusBadgeData.label} variant="subtitle_12_500" style={statusBadgeTextStyle} />
+                </View>
+            )}
+            {isPressEnabled && <ArrowDownIcon rotate={270} color={colors.text_light} width={20} height={20} />}
         </TouchableOpacity>
     );
 };

@@ -16,6 +16,8 @@ import { IMedia } from '@/entities/media/types/IMedia';
 import { IEventPaymentMethod } from '@/modules/event/ui/EventDetailsView/types/IEventPaymentMethod';
 import { IEventPaymentMethodOption } from '@/modules/event/ui/EventDetailsView/types/IEventPaymentMethodOption';
 import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
+import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
+import { eventsModel } from '@/entities/events/EventsModel';
 
 interface IProps {
     eventId: number;
@@ -33,6 +35,15 @@ interface IEventDetailWithPaymentMethods {
         } | null;
     }>;
 }
+
+interface IEventDetailWithBookingStatus {
+    appliedEventStatus?: AppliedEventStatus | string;
+    bookingStatus?: AppliedEventStatus | string;
+    applicationStatus?: AppliedEventStatus | string;
+    status?: string;
+}
+
+const WINE_ACCESS_BEFORE_START_MS = 15 * 60 * 1000;
 
 const mapWineImageToMedia = (
     image?: { smallUrl?: string; mediumUrl?: string; originalUrl?: string } | null,
@@ -71,6 +82,20 @@ const getEventPaymentMethods = (eventDetail: IEventDetailWithPaymentMethods | nu
         .filter((item) => item.id > 0 && !!item.name);
 };
 
+const getEventDateTime = (date?: string | null, time?: string | null) => {
+    if (!date || !time) {
+        return null;
+    }
+
+    const eventDateTime = new Date(`${date}T${time}`);
+
+    if (Number.isNaN(eventDateTime.getTime())) {
+        return null;
+    }
+
+    return eventDateTime;
+};
+
 export const useEventDetailsTab = ({ eventId }: IProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
     const { eventDetail, setEventDetail, isError, isLoading } = useEventDetails(eventId);
@@ -93,6 +118,7 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
 
     const isEventApplied = Boolean(eventDetail?.isApplied);
     const isBlindTasting = eventDetail?.tastingType === TastingType.Blind;
+    const isOwner = !!eventDetail?.ownerId && eventDetail.ownerId === userModel.user?.id;
     const eventPaymentMethods = useMemo(() => {
         return getEventPaymentMethods(eventDetail as IEventDetailWithPaymentMethods | null);
     }, [eventDetail]);
@@ -122,9 +148,10 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
 
     const eventStartDateRaw = eventDetail?.eventStartDate || eventDetail?.eventDate || null;
     const eventStartTimeRaw = eventDetail?.eventStartTime || eventDetail?.eventTime || null;
-    const eventStartDateTime = eventStartDateRaw && eventStartTimeRaw
-        ? new Date(`${eventStartDateRaw}T${eventStartTimeRaw}`)
-        : null;
+    const eventEndDateRaw = eventDetail?.eventEndDate || eventDetail?.eventDate || null;
+    const eventEndTimeRaw = eventDetail?.eventEndTime || eventDetail?.endTime || null;
+    const eventStartDateTime = getEventDateTime(eventStartDateRaw, eventStartTimeRaw);
+    const eventEndDateTime = getEventDateTime(eventEndDateRaw, eventEndTimeRaw);
     const hasEventStarted = eventStartDateTime && !Number.isNaN(eventStartDateTime.getTime())
         ? eventStartDateTime.getTime() <= currentTime.getTime()
         : false;
@@ -136,6 +163,37 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
     const isEventCanceled = eventStatus === SavedEventStatus.CANCELED || eventStatus === 'cancelled';
     const isBookNowDisabled = isEventInactive || isEventFinished || isEventCanceled || isEventApplied || hasNoSeatsLeft;
     const isCancelEventDisabled = hasEventStarted || isEventInactive;
+    const appliedEventStatus = eventsModel.appliedEvents.find(item => item.event.id === eventDetail?.id)?.status
+        || (eventDetail as IEventDetailWithBookingStatus | null)?.appliedEventStatus
+        || (eventDetail as IEventDetailWithBookingStatus | null)?.bookingStatus
+        || (eventDetail as IEventDetailWithBookingStatus | null)?.applicationStatus
+        || (eventDetail as IEventDetailWithBookingStatus | null)?.status;
+    const isBookingAccepted = eventDetail?.requiresConfirmation
+        ? appliedEventStatus === AppliedEventStatus.ACCEPTED
+        : isEventApplied;
+    const isWineAccessTimeAvailable = eventStartDateTime && eventEndDateTime
+        ? currentTime.getTime() >= eventStartDateTime.getTime() - WINE_ACCESS_BEFORE_START_MS
+            && currentTime.getTime() <= eventEndDateTime.getTime()
+        : false;
+    const hasEventEnded = eventEndDateTime
+        ? currentTime.getTime() > eventEndDateTime.getTime()
+        : false;
+    const isWineSetStatusVisible = Boolean(
+        eventDetail
+        && !isOwner
+        && isEventApplied
+        && isBookingAccepted
+        && hasEventStarted
+    );
+    const isWineSetItemPressEnabled = Boolean(
+        eventDetail
+        && !isOwner
+        && isEventApplied
+        && isBookingAccepted
+        && isWineAccessTimeAvailable
+        && !isEventInactive
+        && !isEventCanceled,
+    );
 
     const onOpenPaymentMethodsModal = useCallback(() => {
         setSelectedPaymentMethodId(null);
@@ -371,8 +429,6 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
             initialSelectedWines,
         });
     }, [eventDetail, navigation]);
-    const isOwner = !!eventDetail?.ownerId && eventDetail.ownerId === userModel.user?.id;
-
     return {
         isLoading,
         isError,
@@ -392,6 +448,9 @@ export const useEventDetailsTab = ({ eventId }: IProps) => {
         isBookNowInProgress,
         isEventApplied,
         isBlindTasting,
+        isWineSetItemPressEnabled,
+        isWineSetStatusVisible,
+        hasEventEnded,
         isPaymentMethodsModalVisible,
         paymentMethodOptions,
         isPaymentMethodNextDisabled: selectedPaymentMethodId === null,

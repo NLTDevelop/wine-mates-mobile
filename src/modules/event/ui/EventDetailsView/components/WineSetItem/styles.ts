@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '@/utils';
+import { colorOpacity, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -25,6 +25,35 @@ export const getStyles = (colors: IColors) => {
         title: {
             color: colors.text,
             flex: 1,
+        },
+        statusBadge: {
+            paddingHorizontal: scaleHorizontal(10),
+            paddingVertical: scaleVertical(4),
+            borderRadius: 12,
+        },
+        tastedBadge: {
+            backgroundColor: colorOpacity(colors.success, 15),
+        },
+        tastedBadgeText: {
+            color: colors.success,
+        },
+        notStartedBadge: {
+            backgroundColor: colorOpacity(colors.warning, 15),
+        },
+        notStartedBadgeText: {
+            color: colors.warning,
+        },
+        inProgressBadge: {
+            backgroundColor: colorOpacity(colors.info, 15),
+        },
+        inProgressBadgeText: {
+            color: colors.info,
+        },
+        missedBadge: {
+            backgroundColor: colorOpacity(colors.error, 15),
+        },
+        missedBadgeText: {
+            color: colors.error,
         },
     });
 
