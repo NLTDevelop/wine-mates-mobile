@@ -7,18 +7,18 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
-import { useWineReview } from './presenters/useWineReview';
 import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { Typography } from '@/UIKit/Typography';
 import { CustomInput } from '@/UIKit/CustomInput';
-import { Notes } from '../../../../UIKit/Notes';
 import { RateThisWine } from '@/UIKit/RateThisWine';
+import { Notes } from '@/UIKit/Notes';
+import { useTastingWineReview } from './presenters/useTastingWineReview';
 
-export const WineReviewView = observer(() => {
+export const TastingWineReviewView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { review, onChangeReview, onSliderChange, onNextPress, sliderValue, starRate, onStarRateChange } = useWineReview();
+    const { review, onChangeReview, onSliderChange, onNextPress, sliderValue, starRate, onStarRateChange } = useTastingWineReview();
 
     return (
         <ScreenContainer

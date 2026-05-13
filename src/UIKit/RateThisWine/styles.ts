@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { colorOpacity, scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -80,14 +80,5 @@ export const getStyles = (colors: IColors) => {
         }
     });
 
-    const tooltipIconSize = {
-        width: scaleHorizontal(24),
-        height: scaleHorizontal(24)
-    };
-
-    const tooltipIconColor = colorOpacity(colors.text, 45) || colors.border_light;
-
-    const tooltipMinWidth = scaleHorizontal(280);
-
-    return { styles, tooltipIconSize, tooltipIconColor, tooltipMinWidth };
+    return styles;
 };

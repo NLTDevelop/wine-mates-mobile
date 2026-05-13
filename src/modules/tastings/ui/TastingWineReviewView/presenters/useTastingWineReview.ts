@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useState } from 'react';
 
-export const useWineReview = () => {
+export const useTastingWineReview = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [review, setReview] = useState(() => wineModel.review?.review ?? '');
     const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? 70);
@@ -11,7 +11,7 @@ export const useWineReview = () => {
     const [hasChangedRate, setHasChangedRate] = useState(() => wineModel.review?.hasChangedRate ?? false);
     const [hasChangedStarRate, setHasChangedStarRate] = useState(() => wineModel.review?.hasChangedStarRate ?? false);
 
-    const handleSliderChange = useCallback((value: number) => {
+    const onSliderChange = useCallback((value: number) => {
         setSliderValue(value);
         setHasChangedRate(true);
     }, []);
@@ -26,7 +26,7 @@ export const useWineReview = () => {
         setHasChangedStarRate(true);
     }, []);
 
-    const handleNextPress = useCallback(() => {
+    const onNextPress = useCallback(() => {
         wineModel.review = {
             ...(wineModel.review || { review: '' }),
             starRate,
@@ -38,5 +38,5 @@ export const useWineReview = () => {
         navigation.navigate('WineReviewResultView');
     }, [navigation, review, sliderValue, starRate, hasChangedRate, hasChangedStarRate]);
 
-    return { review, onChangeReview, handleSliderChange, handleNextPress, sliderValue, starRate, onStarRateChange };
+    return { review, onChangeReview, onSliderChange, onNextPress, sliderValue, starRate, onStarRateChange };
 };

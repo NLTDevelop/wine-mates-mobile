@@ -161,6 +161,7 @@ export const useEventTastingDraft = () => {
             ...getSuggestedFlavorDraftItems(nextDraft.suggestions?.flavors),
             ...getFlavorDraftItems(nextDraft.flavors),
         ];
+        wineModel.draftTasteCharacteristics = nextDraft.tasteCharacteristics || null;
         wineModel.winePeak = typeof nextDraft.winePeak === 'number' ? nextDraft.winePeak : null;
     }, [getDefaultEventTastingDraft]);
 
@@ -200,6 +201,7 @@ export const useEventTastingDraft = () => {
 
         if (tasteCharacteristics) {
             payload.tasteCharacteristics = tasteCharacteristics;
+            wineModel.draftTasteCharacteristics = tasteCharacteristics;
         }
 
         if (wineModel.image) {

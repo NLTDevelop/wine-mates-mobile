@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { View } from 'react-native';
 import { getStyles } from './styles.ts';
 import { useUiContext } from '@/UIProvider';
@@ -28,7 +28,7 @@ export const RateMedal = ({ sliderValue, size, titleFontSize, mainFontSize, name
 
     const medalSize = size || 54;
 
-    const medalProps = {
+    const medalProps = useMemo(() => ({
         height: scaleHorizontal(medalSize),
         width: scaleHorizontal(medalSize),
         text: sliderValue ? sliderValue.toString() : '0',
@@ -36,28 +36,35 @@ export const RateMedal = ({ sliderValue, size, titleFontSize, mainFontSize, name
         mainFontSize,
         nameFontSize,
         hideText
-    };
+    }), [hideText, mainFontSize, medalSize, nameFontSize, sliderValue, titleFontSize]);
 
-    const renderMedal = () => {
-        switch (medalType) {
-            case 'nice':
-                return <NiceMedalIcon {...medalProps} />;
-            case 'bronze':
-                return <BronzeMedalIcon {...medalProps} />;
-            case 'silver':
-                return <SilverMedalIcon {...medalProps} />;
-            case 'gold':
-                return <GoldMedalIcon {...medalProps} />;
-            case 'platinum':
-                return <PlatinumMedalIcon {...medalProps} />;
-            case 'simple':
-                return <SimpleMedalIcon {...medalProps} />;
-            case 'weak':
-                return <WeakMedalIcon {...medalProps} />;
-            default:
-                return <WeakMedalIcon {...medalProps} />;
+    const renderMedal = useCallback(() => {
+        if (medalType === 'nice') {
+            return <NiceMedalIcon {...medalProps} />;
         }
-    };
+
+        if (medalType === 'bronze') {
+            return <BronzeMedalIcon {...medalProps} />;
+        }
+
+        if (medalType === 'silver') {
+            return <SilverMedalIcon {...medalProps} />;
+        }
+
+        if (medalType === 'gold') {
+            return <GoldMedalIcon {...medalProps} />;
+        }
+
+        if (medalType === 'platinum') {
+            return <PlatinumMedalIcon {...medalProps} />;
+        }
+
+        if (medalType === 'simple') {
+            return <SimpleMedalIcon {...medalProps} />;
+        }
+
+        return <WeakMedalIcon {...medalProps} />;
+    }, [medalProps, medalType]);
 
     return <View style={styles.container}>{renderMedal()}</View>;
 };

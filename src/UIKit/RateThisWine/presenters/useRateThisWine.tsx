@@ -16,7 +16,7 @@ interface StarIconProps {
 
 export const useRateThisWine = (disabled: boolean, starRate: number, sliderValue: number, hasChangedRating: boolean = false) => {
     const { colors, t } = useUiContext();
-    const { styles, tooltipIconSize, tooltipIconColor } = useMemo(() => getStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
     const [debouncedSliderValue, setDebouncedSliderValue] = useState(sliderValue);
 
     useEffect(() => {
@@ -131,8 +131,6 @@ export const useRateThisWine = (disabled: boolean, starRate: number, sliderValue
     }, [starRate, getRatingDescription]);
 
     return {
-        tooltipIconSize,
-        tooltipIconColor,
         StarIconComponent,
         tooltipContent,
         decorators,

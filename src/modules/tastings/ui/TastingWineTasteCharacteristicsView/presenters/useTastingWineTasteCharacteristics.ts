@@ -2,28 +2,43 @@
 import { userModel } from '@/entities/users/UserModel';
 import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
+import { eventTastingService } from '@/entities/events/EventTastingService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
-import { storage } from '@/libs/storage/MMKVStorage';
-import { TASTE_CHARACTERISTICS_CACHE_KEY } from '@/libs/storage/cacheUtils';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { Keyboard } from 'react-native';
 import { ITasteCharacteristicDetail } from '@/entities/wine/types/ITasteCharacteristicDetail';
 import { runInAction } from 'mobx';
+import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
+import type { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
 
-export const useWineTasteCharacteristics = () => {
+interface IRouteParams {
+    source?: string;
+    wineId?: number;
+    eventId?: number;
+    isBlindTasting?: boolean;
+}
+
+export const useTastingWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const route = useRoute();
+    const routeParams = (route.params as IRouteParams | undefined) || {};
+    const source = routeParams.source ?? 'eventTasting';
+    const wineId = routeParams.wineId;
+    const eventId = routeParams.eventId;
+    const { buildEventTastingDraftPayload, getEventTastingDraftData } = useEventTastingDraft();
 
     const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
     const [isError, setIsError] = useState(false);
-    const [sliderValues, setSliderValues] = useState<Record<number, number>>(() => {
-        const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY);
-        return cached || {};
-    });
+    const [isSaving, setIsSaving] = useState(false);
+    const [sliderValues, setSliderValues] = useState<Record<number, number>>({});
     const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
+    const [draftTasteCharacteristics, setDraftTasteCharacteristics] = useState<AddRateDto['tasteCharacteristics']>(() => {
+        return wineModel.draftTasteCharacteristics || [];
+    });
 
     const data = wineModel.tasteCharacteristics;
 
@@ -69,21 +84,63 @@ export const useWineTasteCharacteristics = () => {
         getTasteCharacteristics();
     }, [getTasteCharacteristics]);
 
+    const getEventTastingDraft = useCallback(async () => {
+        if (!eventId || !wineId) return;
+
+        if (wineModel.draftTasteCharacteristics?.length) {
+            setDraftTasteCharacteristics(wineModel.draftTasteCharacteristics);
+            return;
+        }
+
+        const response = await eventTastingService.getDraft({
+            eventId,
+            wineId,
+        });
+
+        if (response.isError) {
+            return;
+        }
+
+        const draft = getEventTastingDraftData(response.data);
+        const nextTasteCharacteristics = draft.tasteCharacteristics || [];
+
+        runInAction(() => {
+            wineModel.draftTasteCharacteristics = nextTasteCharacteristics;
+
+            if (typeof draft.winePeak === 'number') {
+                wineModel.winePeak = draft.winePeak;
+            }
+        });
+
+        setDraftTasteCharacteristics(nextTasteCharacteristics);
+
+        if (typeof draft.winePeak === 'number') {
+            setWinePeak(draft.winePeak);
+        }
+    }, [eventId, getEventTastingDraftData, wineId]);
+
+    useEffect(() => {
+        getEventTastingDraft();
+    }, [getEventTastingDraft]);
+
     useEffect(() => {
         if (!data || data.length === 0) {
             setSliderValues(prev => Object.keys(prev).length === 0 ? prev : {});
             return;
         }
 
-        const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY) || {};
+        const shouldUseDraftValues = Boolean(eventId && wineId);
         const next: Record<number, number> = {};
 
         data.forEach(item => {
             const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
-            const cachedValue = cached[item.id];
+            const draftValue = draftTasteCharacteristics.find(draftItem => draftItem.characteristicId === item.id);
+            const draftIndex = draftValue
+                ? item.levels.findIndex(level => level.id === draftValue.levelId)
+                : -1;
             const baseValue =
-                cachedValue !== undefined
-                    ? cachedValue
+                shouldUseDraftValues && draftIndex >= 0
+                    ? draftIndex
                     : typeof item.selectedIndex === 'number'
                     ? item.selectedIndex
                     : 0;
@@ -95,7 +152,7 @@ export const useWineTasteCharacteristics = () => {
                                Object.keys(prev).length !== Object.keys(next).length;
             return hasChanges ? next : prev;
         });
-    }, [data]);
+    }, [data, draftTasteCharacteristics, eventId, wineId]);
 
     const saveCharacteristicDetails = useCallback((sliderVals: Record<number, number>) => {
         if (!data?.length) return;
@@ -126,8 +183,6 @@ export const useWineTasteCharacteristics = () => {
                 const maxIndex = Math.max(levelsLength - 1, 0);
                 const nextValue = Math.min(Math.max(value, 0), maxIndex);
                 const next = { ...prev, [id]: nextValue };
-
-                storage.set(TASTE_CHARACTERISTICS_CACHE_KEY, next);
 
                 if (data?.length) {
                     runInAction(() => {
@@ -160,7 +215,7 @@ export const useWineTasteCharacteristics = () => {
         Keyboard.dismiss();
     }, []);
 
-    const onPressNext = useCallback(() => {
+    const onPressNext = useCallback(async () => {
         runInAction(() => {
             if (data) {
                 wineModel.tasteCharacteristics = data.map(item => ({
@@ -174,9 +229,58 @@ export const useWineTasteCharacteristics = () => {
             }
         });
 
+        if (eventId && wineId) {
+            setIsSaving(true);
+
+            try {
+                const response = await eventTastingService.saveDraft({
+                    eventId,
+                    wineId,
+                    data: buildEventTastingDraftPayload(wineId),
+                    isFinal: false,
+                });
+
+                if (response.isError) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        response.message || localization.t('common.somethingWentWrong'),
+                    );
+                    return;
+                }
+            } catch (error) {
+                console.error(JSON.stringify(error, null, 2));
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('common.somethingWentWrong'),
+                );
+                return;
+            } finally {
+                setIsSaving(false);
+            }
+
+            navigation.navigate('TastingWineReviewView', {
+                source,
+                wineId,
+                eventId,
+                isBlindTasting: routeParams.isBlindTasting,
+            });
+            Keyboard.dismiss();
+            return;
+        }
+
         navigation.navigate('WineReviewView');
         Keyboard.dismiss();
-    }, [data, navigation, sliderValues, winePeak]);
+    }, [
+        buildEventTastingDraftPayload,
+        data,
+        eventId,
+        navigation,
+        routeParams.isBlindTasting,
+        sliderValues,
+        source,
+        wineId,
+        winePeak,
+    ]);
 
     return {
         data,
@@ -191,5 +295,6 @@ export const useWineTasteCharacteristics = () => {
         winePeak,
         onWinePeakChange,
         isExpertOrWinemaker,
+        isSaving,
     };
 };

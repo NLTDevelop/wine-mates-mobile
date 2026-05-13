@@ -16,7 +16,7 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'space-between',
             borderRadius: 12,
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             paddingVertical: scaleVertical(14),
             paddingHorizontal: scaleHorizontal(16),
@@ -24,7 +24,7 @@ export const getStyles = (colors: IColors) => {
         mainContainer: {
             marginTop: scaleVertical(9),
             borderRadius: 12,
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             paddingHorizontal: scaleVertical(24),
             paddingVertical: scaleVertical(12),
@@ -35,7 +35,7 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'space-between',
             paddingVertical: scaleVertical(12),
             borderBottomColor: colors.border,
-            borderBottomWidth: 1,
+            borderBottomWidth: scaleHorizontal(1),
         },
         lastRow: {
             flexDirection: 'row',

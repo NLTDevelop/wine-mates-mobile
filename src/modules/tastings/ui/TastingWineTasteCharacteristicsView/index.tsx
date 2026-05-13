@@ -15,7 +15,7 @@ import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { TasteCharacteristicItem } from '@/UIKit/TasteCharacteristicItem';
 import { WinePeakPicker } from '@/UIKit/WinePeakPicker';
-import { useWineTasteCharacteristics } from './presenters/useWineTasteCharacteristics';
+import { useTastingWineTasteCharacteristics } from './presenters/useTastingWineTasteCharacteristics';
 
 type ListItemType =
     | { type: 'characteristic'; data: IWineTasteCharacteristic }
@@ -26,7 +26,7 @@ export const TastingWineTasteCharacteristicsView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { data, isError, getTasteCharacteristics, createOnSliderChange, isLoading, onPressNext, sliderValues,
-        isPremiumUser, winePeak, onWinePeakChange, isExpertOrWinemaker } = useWineTasteCharacteristics();
+        isPremiumUser, winePeak, onWinePeakChange, isExpertOrWinemaker, isSaving } = useTastingWineTasteCharacteristics();
 
     const listData = useMemo<ListItemType[]>(() => {
         const items: ListItemType[] = [];
@@ -97,6 +97,7 @@ export const TastingWineTasteCharacteristicsView = observer(() => {
                             <Button
                                 text={t('wine.letsRate')}
                                 onPress={onPressNext}
+                                inProgress={isSaving}
                                 containerStyle={styles.button}
                                 RightAccessory={<NextLongArrowIcon />}
                             />

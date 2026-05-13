@@ -7,8 +7,6 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
-import { storage } from '@/libs/storage/MMKVStorage';
-import { TASTE_CHARACTERISTICS_CACHE_KEY } from '@/libs/storage/cacheUtils';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { Keyboard } from 'react-native';
 import { ITasteCharacteristicDetail } from '@/entities/wine/types/ITasteCharacteristicDetail';
@@ -19,10 +17,7 @@ export const useWineTasteCharacteristics = () => {
 
     const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
     const [isError, setIsError] = useState(false);
-    const [sliderValues, setSliderValues] = useState<Record<number, number>>(() => {
-        const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY);
-        return cached || {};
-    });
+    const [sliderValues, setSliderValues] = useState<Record<number, number>>({});
     const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
 
     const data = wineModel.tasteCharacteristics;
@@ -75,16 +70,12 @@ export const useWineTasteCharacteristics = () => {
             return;
         }
 
-        const cached = storage.get(TASTE_CHARACTERISTICS_CACHE_KEY) || {};
         const next: Record<number, number> = {};
 
         data.forEach(item => {
             const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
-            const cachedValue = cached[item.id];
             const baseValue =
-                cachedValue !== undefined
-                    ? cachedValue
-                    : typeof item.selectedIndex === 'number'
+                typeof item.selectedIndex === 'number'
                     ? item.selectedIndex
                     : 0;
             next[item.id] = Math.min(Math.max(baseValue, 0), maxIndex);
@@ -126,8 +117,6 @@ export const useWineTasteCharacteristics = () => {
                 const maxIndex = Math.max(levelsLength - 1, 0);
                 const nextValue = Math.min(Math.max(value, 0), maxIndex);
                 const next = { ...prev, [id]: nextValue };
-
-                storage.set(TASTE_CHARACTERISTICS_CACHE_KEY, next);
 
                 if (data?.length) {
                     runInAction(() => {

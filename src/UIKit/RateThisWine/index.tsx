@@ -5,11 +5,11 @@ import { PartitionedSlider } from '@/UIKit/PartitionedSlider';
 import StarRating, { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
-import { RateMedal } from '../RateMedal/ui';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { useRateThisWine } from './presenters/useRateThisWine';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
+import { RateMedal } from '../RateMedal/ui';
 
 interface IProps {
     sliderValue: number;
@@ -22,7 +22,7 @@ interface IProps {
 
 export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false, hasChangedRating = false }: IProps) => {
     const { colors } = useUiContext();
-    const { styles } = useMemo(() => getStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
 
     const {
         StarIconComponent,

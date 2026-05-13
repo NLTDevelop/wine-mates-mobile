@@ -33,7 +33,7 @@ export const useTasteCharacteristicItem = ({ item, value, isPremiumUser }: UseTa
         if (value <= 0) {
             return 0;
         };
-        return value - 1;
+        return value;
     }, [maxIndex, value]);
 
     const displayLabelIndices = useMemo(() => {
