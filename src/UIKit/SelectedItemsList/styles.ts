@@ -18,7 +18,7 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'center',
             alignItems: 'center',
             shadowColor: colors.shadow,
-            shadowOffset: { width: 0, height: 1 },
+            shadowOffset: { width: 0, height: scaleVertical(1) },
             shadowOpacity: 0.1,
             shadowRadius: 3,
             elevation: 3,

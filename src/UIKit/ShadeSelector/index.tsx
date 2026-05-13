@@ -1,9 +1,9 @@
 import { memo } from 'react';
 import { View, Animated, Pressable } from 'react-native';
-import { ShadeSliderMark } from '../ShadeSliderMark';
 import { Typography } from '@/UIKit/Typography';
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
-import { useShadeSelector } from './useShadeSelector';
+import { useShadeSelector } from './presenters/useShadeSelector';
+import { ShadeSliderMark } from './components/ShadeSliderMark';
 
 interface IProps {
     value?: number;
@@ -19,12 +19,14 @@ export const ShadeSelector = memo((props: IProps) => {
         markerInnerSize,
         trackHeight,
         panResponder,
-        onLabelPress,
         markerPosition,
         fillWidth,
         labels,
         currentColor,
         onTrackLayout,
+        onLeftLabelPress,
+        onMiddleLabelPress,
+        onRightLabelPress,
     } = useShadeSelector(props);
 
     return (
@@ -44,15 +46,15 @@ export const ShadeSelector = memo((props: IProps) => {
                 </Animated.View>
             </View>
             <View style={styles.labelsContainer}>
-                <Pressable onPress={() => onLabelPress(1)}>
+                <Pressable onPress={onLeftLabelPress}>
                     <Typography text={labels.left} variant="h6" style={styles.label} />
                 </Pressable>
                 <View style={styles.labelWrapper}>
-                    <Pressable onPress={() => onLabelPress(2)}>
+                    <Pressable onPress={onMiddleLabelPress}>
                         <Typography text={labels.middle} variant="h6" style={styles.label} />
                     </Pressable>
                 </View>
-                <Pressable onPress={() => onLabelPress(3)}>
+                <Pressable onPress={onRightLabelPress}>
                     <Typography text={labels.right} variant="h6" style={styles.label} />
                 </Pressable>
             </View>

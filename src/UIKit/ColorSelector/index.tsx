@@ -3,7 +3,7 @@ import { ColorButton } from '@/modules/scanner/ui/components/ColorButton';
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 interface IProps {
     data: IWineColorShade[];
@@ -14,6 +14,11 @@ interface IProps {
 export const ColorSelector = ({ data, selectedColor, onSelectColor }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const createOnPressColor = useCallback((color: IWineColorShade) => {
+        return () => {
+            onSelectColor(color);
+        };
+    }, [onSelectColor]);
 
     return (
         <View style={styles.colorsContainer}>
@@ -22,7 +27,7 @@ export const ColorSelector = ({ data, selectedColor, onSelectColor }: IProps) =>
                     key={index}
                     color={item}
                     isActive={item.id === selectedColor?.id}
-                    onPress={() => onSelectColor(item)}
+                    onPress={createOnPressColor(item)}
                     containerStyle={styles.colorButton}
                 />
             ))}

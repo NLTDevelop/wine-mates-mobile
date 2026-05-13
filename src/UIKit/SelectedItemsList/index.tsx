@@ -4,11 +4,11 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ArrowIcon } from '@assets/icons/ArrowIcon';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
-import { SelectedItems } from '../SelectedItem';
 import { useSelectedItemsList } from '@/modules/scanner/presenters/useSelectedItemsList';
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
 import { SelectedItemsListRef } from './types';
+import { SelectedItems } from './components/SelectedItem';
 
 interface IProps {
     data: IWineSelectedSmell[] | IWineTaste[];

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { IWineTasteGroup } from '@/entities/wine/types/IWineTatseGroup';
 import { wineModel } from '@/entities/wine/WineModel';
@@ -124,7 +125,7 @@ export const useWineTaste = (onHide?: () => void) => {
         }
     }, []);
 
-    const handleAddCustomTaste = useCallback((text: string) => {
+    const onAddCustomTaste = useCallback((text: string) => {
         const newId = Date.now() + Math.floor(Math.random() * 10000);
         setSelected(prevState => [
             { 
@@ -138,11 +139,19 @@ export const useWineTaste = (onHide?: () => void) => {
         return newId;
     }, []);
 
-    const handleNextPress = useCallback(() => {
+    const onPressNext = useCallback(() => {
         navigation.navigate('WineTasteCharacteristicsView', { source, wineId });
     }, [navigation, selected, source, wineId]);
 
     return { 
-        data, selected, isError, getTastes, isLoading, onItemPress, handleAddCustomTaste, onSelectedItemPress, handleNextPress
+        data,
+        selected,
+        isError,
+        getTastes,
+        isLoading,
+        onItemPress,
+        onAddCustomTaste,
+        onSelectedItemPress,
+        onPressNext,
     };
 };

@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/refs, react-hooks/purity */
 import { useMemo, useRef, useEffect, useCallback } from 'react';
 import { Animated, PanResponder } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { scaleHorizontal, scaleVertical } from '@/utils';
-import { getStyles } from './styles';
+import { getStyles } from '../styles';
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
 
 const MIN = 1;
@@ -136,11 +137,20 @@ export const useShadeSelector = ({ value = MIN, onChange, colorShades, onAnimati
     );
 
 
-    const onLabelPress = (labelValue: number) => {
+    const onLabelPress = useCallback((labelValue: number) => {
         if (labelValue !== value) {
             onChange?.(labelValue);
         }
-    };
+    }, [onChange, value]);
+    const onLeftLabelPress = useCallback(() => {
+        onLabelPress(1);
+    }, [onLabelPress]);
+    const onMiddleLabelPress = useCallback(() => {
+        onLabelPress(2);
+    }, [onLabelPress]);
+    const onRightLabelPress = useCallback(() => {
+        onLabelPress(3);
+    }, [onLabelPress]);
 
     const onTrackLayout = useCallback((event: any) => {
         const { width } = event.nativeEvent.layout;
@@ -180,5 +190,8 @@ export const useShadeSelector = ({ value = MIN, onChange, colorShades, onAnimati
         labels,
         currentColor,
         onTrackLayout,
+        onLeftLabelPress,
+        onMiddleLabelPress,
+        onRightLabelPress,
     };
 };

@@ -12,7 +12,7 @@ interface IProps {
 
 export const SelectedParameters = ({ containerStyle }: IProps) => {
     const { colors, t } = useUiContext();
-    const { isOpened, onPress, parameters, maxLabelWidth, handleLabelLayout } = useSelectedParameters();
+    const { isOpened, onPress, parameters, maxLabelWidth, onLabelLayout } = useSelectedParameters();
     const styles = useMemo(() => getStyles(colors, maxLabelWidth), [colors, maxLabelWidth]);
 
     return (
@@ -30,7 +30,7 @@ export const SelectedParameters = ({ containerStyle }: IProps) => {
                                     variant="body_400"
                                     text={`${param.label}:`}
                                     style={styles.label}
-                                    onLayout={(e) => handleLabelLayout(e.nativeEvent.layout.width)}
+                                    onLayout={onLabelLayout}
                                 />
                             </View>
                             <View style={styles.valueContainer}>

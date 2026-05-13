@@ -7,7 +7,6 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
-import { CloseButton } from '../components/CloseButton';
 import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
@@ -15,26 +14,26 @@ import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { SearchBar } from '@/UIKit/SearchBar';
-import { SmellGroupSelector } from '../../../../UIKit/SmellGroupSelector';
 import { ISmellSubgroup, IWineSmell } from '@/entities/wine/types/IWineSmell';
-import { SmellListItem } from '../../../../UIKit/SmellListItem';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { AddButton } from '../components/AddButton';
-import { SelectModal } from '../../../../UIKit/SelectModal';
 import { IWineAroma } from '@/entities/wine/types/IWineAroma';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { scaleVertical } from '@/utils';
 import { useWineSmellViewPressHandlers } from './presenters/useWineSmellViewPressHandlers';
 import { useWineSmellViewContentState } from './presenters/useWineSmellViewContentState';
-import { useSelectModal } from '../../presenters/useSelectModal';
-import { useWineSmell } from './presenters/useWineSmell';
-import { useAnimatedItemAdd } from '../../presenters/useAnimatedItemAdd';
-import { useAddItem } from '../../presenters/useAddItem';
-import { useWineSmellSearch } from '../../presenters/useWineSmellSearch';
+import { useTastingWineSmell } from './presenters/useTastingWineSmell';
+import { SmellGroupSelector } from '@/UIKit/SmellGroupSelector';
+import { SmellListItem } from '@/UIKit/SmellListItem';
+import { SelectModal } from '@/UIKit/SelectModal';
 import { SelectedItemsList } from '@/UIKit/SelectedItemsList';
+import { useSelectModal } from '../../presenters/useSelectModal';
+import { useAddItem } from '../../presenters/useAddItem';
+import { useAnimatedItemAdd } from '../../presenters/useAnimatedItemAdd';
+import { useWineSmellSearch } from './presenters/useWineSmellSearch';
 
-export const WineSmellView = observer(() => {
+export const TastingWineSmellView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -57,10 +56,10 @@ export const WineSmellView = observer(() => {
         onNextPress,
         onGroupPress,
         onSubgroupPress,
-    } = useWineSmell(onHide);
+    } = useTastingWineSmell(onHide);
     const [onItemPress, selectedListRef] = useAnimatedItemAdd(originalOnItemPress);
     const [onAddCustomSmell] = useAnimatedItemAdd(originalOnAddCustomSmell);
-    const { text, setText, handleAddPress } = useAddItem(onAddCustomSmell);
+    const { text, setText, onAddPress } = useAddItem(onAddCustomSmell);
     const { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress, searchInputRef } =
         useWineSmellSearch({ data, selected, onItemPress, onSelectedItemPress });
 
@@ -100,7 +99,7 @@ export const WineSmellView = observer(() => {
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton title={t('wine.smell')} rightComponent={<CloseButton />} />}
+                headerComponent={<HeaderWithBackButton title={t('wine.smell')} />}
             >
                 {shouldShowLoader ? (
                     <Loader />
@@ -202,7 +201,7 @@ export const WineSmellView = observer(() => {
                                     onChangeText={setText}
                                     maxLength={40}
                                     placeholder={t('wine.addCustomSmell')}
-                                    RightAccessory={<AddButton onPress={handleAddPress} disabled={!text}/>}
+                                    RightAccessory={<AddButton onPress={onAddPress} disabled={!text}/>}
                                     containerStyle={styles.input}
                                 />
                                 {selected.length > 0 && <SelectedItemsList ref={selectedListRef} data={selected} onPress={onSelectedItemPress} />}

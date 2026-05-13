@@ -7,7 +7,7 @@ import { IAroma } from '@/entities/wine/types/IWineSmell';
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { SmellListItem } from '../SmellListItem';
 import { FlatListIndicator } from '@fanchenbao/react-native-scroll-indicator';
-import { useSelectModalIndicator } from '../../../presenters/useSelectModalIndicator';
+import { useSelectModalIndicator } from '../../modules/scanner/presenters/useSelectModalIndicator';
 
 type SelectableItem = IAroma | IWineTaste;
 
@@ -33,10 +33,18 @@ export const SelectModal = <T extends SelectableItem>({
     const styles = useMemo(() => getStyles(colors, hasIndicatorOffset), [colors, hasIndicatorOffset]);
 
     const keyExtractor = useCallback((item: T, index: number) => `${item.id}-${index}`, []);
+    const createOnItemPress = useCallback((item: T) => {
+        return () => {
+            onItemPress(item, subgroupId, groupId);
+        };
+    }, [groupId, onItemPress, subgroupId]);
     const renderItem = useCallback(
-        ({ item }: { item: T }) => <SmellListItem item={item} onPress={() => onItemPress(item, subgroupId, groupId)} />,
-        [groupId, onItemPress, subgroupId],
+        ({ item }: { item: T }) => <SmellListItem item={item} onPress={createOnItemPress(item)} />,
+        [createOnItemPress],
     );
+    const onLayout = useCallback((event: { nativeEvent: { layout: { height: number } } }) => {
+        onListLayout(event.nativeEvent.layout.height);
+    }, [onListLayout]);
 
     return (
         <Modal
@@ -66,7 +74,7 @@ export const SelectModal = <T extends SelectableItem>({
                         keyboardShouldPersistTaps: 'handled',
                         keyboardDismissMode: 'interactive',
                         showsVerticalScrollIndicator: true,
-                        onLayout: event => onListLayout(event.nativeEvent.layout.height),
+                        onLayout,
                         onScroll: onListScroll,
                     }}
                     indStyle={styles.indicator}

@@ -42,19 +42,13 @@ export const WineSetItem = ({
     return (
         <TouchableOpacity style={styles.row} onPress={onPress} disabled={!isPressEnabled}>
             <View style={styles.leftContent}>
-                {isImageVisible && (
-                    imageUrl ? (
+                {isImageVisible &&
+                    (imageUrl ? (
                         <Image source={{ uri: imageUrl }} style={styles.image} />
                     ) : (
                         <View style={styles.image} />
-                    )
-                )}
-                <Typography
-                    text={title}
-                    variant="body_400"
-                    style={styles.title}
-                    numberOfLines={2}
-                />
+                    ))}
+                <Typography text={title} variant="body_400" style={styles.title} numberOfLines={2} />
             </View>
             {statusBadgeData && (
                 <View style={[styles.statusBadge, statusBadgeStyle]}>

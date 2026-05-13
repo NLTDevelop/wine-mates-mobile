@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { userModel } from '@/entities/users/UserModel';
 import { wineModel } from '@/entities/wine/WineModel';
@@ -429,6 +430,7 @@ export const useWineReviewResult = () => {
         setIsNoteEditing(true);
         setNoteValidationError(localization.t('wine.emptyTastingNoteError'));
     }, []);
+    const onSubscribePress = useCallback(() => {}, []);
 
     return {
         onSavePress,
@@ -443,5 +445,6 @@ export const useWineReviewResult = () => {
         noteValidationError,
         onNoteEditingChange,
         onInvalidNoteEditingComplete,
+        onSubscribePress,
     };
 };

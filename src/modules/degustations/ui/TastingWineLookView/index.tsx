@@ -6,10 +6,6 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
-import { ColorSelector } from '../../../../UIKit/ColorSelector';
-import { useWineLook } from '../../presenters/useWineLook';
-import { CloseButton } from '../components/CloseButton';
-import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
@@ -19,8 +15,11 @@ import { wineModel } from '@/entities/wine/WineModel';
 import { SmoothSlider } from '@/UIKit/SmoothSlider';
 import { ScrollViewIndicator } from '@fanchenbao/react-native-scroll-indicator';
 import { ShadeSelector } from '@/UIKit/ShadeSelector';
+import { SelectedParameters } from '@/UIKit/SelectedParameters';
+import { useTastingWineLook } from './presenters/useTastingWineLook';
+import { ColorSelector } from '@/UIKit/ColorSelector';
 
-export const WineLookView = observer(() => {
+export const TastingWineLookView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -37,14 +36,14 @@ export const WineLookView = observer(() => {
         getColorsWithShades,
         isLoading,
         onSelectColor,
-        handlePressNext,
+        onPressNext,
         appearance,
         setAppearance,
         shadeSelectorKey,
-        handleShadeAnimationEnd,
+        onShadeAnimationEnd,
         getSparklingSliderData,
         currentColor,
-    } = useWineLook({ t, styles });
+    } = useTastingWineLook({ t, styles });
 
     const decorator = useMemo(() => {
         return {
@@ -63,7 +62,7 @@ export const WineLookView = observer(() => {
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton title={t('wine.look')} rightComponent={<CloseButton />} />}
+                headerComponent={<HeaderWithBackButton title={t('wine.look')} />}
             >
                 {!data || !selectedColor || isLoading ? (
                     <Loader />
@@ -96,7 +95,7 @@ export const WineLookView = observer(() => {
                                 value={shade}
                                 onChange={setShade}
                                 colorShades={selectedColor}
-                                onAnimationEnd={handleShadeAnimationEnd}
+                                onAnimationEnd={onShadeAnimationEnd}
                             />
 
                             {wineModel.base?.typeOfWine.isSparkling && (
@@ -156,7 +155,7 @@ export const WineLookView = observer(() => {
                         </ScrollViewIndicator>
                         <Button
                             text={t('wine.letsSmell')}
-                            onPress={handlePressNext}
+                            onPress={onPressNext}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}
                         />

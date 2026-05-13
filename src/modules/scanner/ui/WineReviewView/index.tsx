@@ -8,7 +8,7 @@ import { Button } from '@/UIKit/Button';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { useWineReview } from '../../presenters/useWineReview';
-import { SelectedParameters } from '../components/SelectedParameters';
+import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { Typography } from '@/UIKit/Typography';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { RateThisWine } from '../components/RateThisWine';

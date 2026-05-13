@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { userModel } from '@/entities/users/UserModel';
 import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
@@ -117,7 +118,7 @@ export const useWineTasteCharacteristics = () => {
         });
     }, [data]);
 
-    const handleSliderChange = useCallback(
+    const onSliderChange = useCallback(
         (id: number, value: number) => {
             setSliderValues(prev => {
                 const characteristic = data?.find(c => c.id === id);
@@ -145,8 +146,13 @@ export const useWineTasteCharacteristics = () => {
         },
         [data, saveCharacteristicDetails],
     );
+    const createOnSliderChange = useCallback((id: number) => {
+        return (value: number) => {
+            onSliderChange(id, value);
+        };
+    }, [onSliderChange]);
 
-    const handleWinePeakChange = useCallback((year: number | null) => {
+    const onWinePeakChange = useCallback((year: number | null) => {
         setWinePeak(year);
         runInAction(() => {
             wineModel.winePeak = year;
@@ -154,7 +160,7 @@ export const useWineTasteCharacteristics = () => {
         Keyboard.dismiss();
     }, []);
 
-    const handleNextPress = useCallback(() => {
+    const onPressNext = useCallback(() => {
         runInAction(() => {
             if (data) {
                 wineModel.tasteCharacteristics = data.map(item => ({
@@ -172,5 +178,18 @@ export const useWineTasteCharacteristics = () => {
         Keyboard.dismiss();
     }, [data, navigation, sliderValues, winePeak]);
 
-    return { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues, isPremiumUser, winePeak, handleWinePeakChange, isExpertOrWinemaker };
+    return {
+        data,
+        isError,
+        getTasteCharacteristics,
+        onSliderChange,
+        createOnSliderChange,
+        isLoading,
+        onPressNext,
+        sliderValues,
+        isPremiumUser,
+        winePeak,
+        onWinePeakChange,
+        isExpertOrWinemaker,
+    };
 };
