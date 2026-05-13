@@ -14,6 +14,7 @@ export const getStyles = (colors: IColors, isActive: boolean) => {
         },
         tabName: {
             color: colors.text,
+            textAlign: 'center',
         },
     });
 

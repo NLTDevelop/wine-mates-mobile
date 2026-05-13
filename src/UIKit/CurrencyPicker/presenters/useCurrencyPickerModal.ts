@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { ICurrencyOption } from '@/modules/event/types/ICurrencyOption';
+import { ICurrencyOption } from '../types/ICurrencyOption';
 
 interface IProps {
     value: string;
@@ -37,14 +37,17 @@ export const useCurrencyPickerModal = ({ value, currencies, onChange, isDisabled
         });
     }, [draft, onChange]);
 
-    const createOnSelect = useCallback((nextValue: string) => {
-        return () => {
-            onSelect(nextValue);
-        };
-    }, [onSelect]);
+    const createOnSelect = useCallback(
+        (nextValue: string) => {
+            return () => {
+                onSelect(nextValue);
+            };
+        },
+        [onSelect],
+    );
 
     const items = useMemo<ICurrencyOption[]>(() => {
-        return currencies.map((itemValue) => {
+        return currencies.map(itemValue => {
             return {
                 value: itemValue,
                 label: itemValue,
