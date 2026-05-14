@@ -5,43 +5,32 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { FlatList } from 'react-native';
 import { observer } from 'mobx-react-lite';
-import { ResultListHeader } from '../components/ResultListHeader';
-import { ReviewListItem } from '../../../../UIKit/ReviewListItem';
 import { useRefresh } from '@/hooks/useRefresh';
 import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 import { IWineReviewsListItem } from '@/entities/wine/types/IWineReviewsListItem';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { Loader } from '@/UIKit/Loader';
-import { useWineDetails } from '@/modules/wine/presenters/useWineDetails';
-import { useWineReviewsList } from '@/modules/wine/presenters/useWineReviewsList';
-import { AddToFavoriteBottomSheet } from '../components/AddToFavoriteBottomSheet';
-import { useAddToFavoriteBottomSheet } from '../../presenters/useAddToFavoriteBottomSheet';
+import { useTastingWineDetails } from './presenters/useTastingWineDetails';
+import { useTastingWineReviewsList } from './presenters/useTastingWineReviewsList';
+import { ReviewListItem } from '@/UIKit/ReviewListItem';
+import { TastingResultListHeader } from './components/TastingResultListHeader';
 
-export const WineDetailsView = observer(() => {
+export const TastingWineDetailsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
-        selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, myReview } = useWineDetails();
-    const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
+    const { details, isError, getDetails, isAllVintagesSelected, wineId, selectedWineId, isPreloadedData, myReview, eventId } =
+        useTastingWineDetails();
+    const { data, isReviewsLoading, onRefresh, onEndReached } = useTastingWineReviewsList(
         getDetails,
         selectedWineId ?? wineId,
+        eventId,
         isAllVintagesSelected,
         isPreloadedData,
         myReview,
     );
     const { refreshControl } = useRefresh(onRefresh);
-    const {
-        favoriteData,
-        isVisible: isAddToFavoriteModalVisible,
-        onItemPress,
-        onClose,
-        onOpen,
-        onSave,
-        isLoading,
-        isSaving,
-    } = useAddToFavoriteBottomSheet(details?.id, onUpdateIsSaved);
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
     const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);
@@ -51,7 +40,7 @@ export const WineDetailsView = observer(() => {
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton title={t('wine.result')} isCentered={false} />}
+                headerComponent={<HeaderWithBackButton title={t('wine.result')} isCentered={true} />}
             >
                 {!details ? (
                     <Loader />
@@ -64,29 +53,12 @@ export const WineDetailsView = observer(() => {
                         onEndReached={onEndReached}
                         contentContainerStyle={styles.containerStyle}
                         ListHeaderComponent={
-                            <ResultListHeader
+                            <TastingResultListHeader
                                 data={details}
-                                vintages={vintages}
-                                onVintageChange={onVintageChange}
-                                onFavoritePress={onOpen}
-                                hasCurrentVintageData={hasCurrentVintageData}
-                                isAllVintagesSelected={isAllVintagesSelected}
-                                fromScanner={fromScanner}
                                 hasReviews={data.length > 0}
                             />
                         }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
-                    />
-                )}
-                {isAddToFavoriteModalVisible && (
-                    <AddToFavoriteBottomSheet
-                        isVisible={isAddToFavoriteModalVisible}
-                        data={favoriteData}
-                        onItemPress={onItemPress}
-                        onClose={onClose}
-                        onSave={onSave}
-                        isLoading={isLoading}
-                        isSaving={isSaving}
                     />
                 )}
             </ScreenContainer>

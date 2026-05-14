@@ -11,7 +11,7 @@ export const getStyles = (colors: IColors) => {
             gap: scaleVertical(9),
             padding: scaleVertical(12),
             shadowColor: colors.shadow,
-            shadowOffset: { width: 0, height: 1 },
+            shadowOffset: { width: 0, height: scaleVertical(1) },
             shadowOpacity: 0.1,
             shadowRadius: 3,
             elevation: 3,

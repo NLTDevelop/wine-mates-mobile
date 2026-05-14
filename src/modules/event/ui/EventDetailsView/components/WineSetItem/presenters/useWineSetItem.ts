@@ -68,9 +68,11 @@ export const useWineSetItem = ({
     const statusBadgeData = getStatusBadgeData(status, isStatusVisible, hasEventEnded, t);
     const wineId = item.wineId || item.wine.id;
     const isEventTastingStatus = status === 'not_started' || status === 'in_progress';
+    const isTasted = status === 'tasted';
+    const isPressAvailable = isPressEnabled || isTasted;
 
     const onPress = useCallback(() => {
-        if (!isPressEnabled) {
+        if (!isPressAvailable) {
             return;
         }
 
@@ -84,14 +86,18 @@ export const useWineSetItem = ({
             return;
         }
 
-        navigation.navigate('WineDetailsView', { wineId });
-    }, [eventId, isBlindTasting, isEventTastingStatus, isPressEnabled, navigation, status, wineId]);
+        navigation.navigate('TastingWineDetailsView', {
+            eventId,
+            wineId,
+        });
+    }, [eventId, isBlindTasting, isEventTastingStatus, isPressAvailable, navigation, status, wineId]);
 
     return {
         title,
         imageUrl,
         isImageVisible,
         statusBadgeData,
+        isPressAvailable,
         onPress,
     };
 };

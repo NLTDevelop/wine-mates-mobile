@@ -60,6 +60,20 @@ class WineService {
         }
     };
 
+    getEventDetails = async (id: number, params: { eventId: number }): Promise<IResponse<IWineDetails>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineEventDetails}/${id}/event-details`,
+                params,
+            });
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getEventDetails: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
     searchWineSet = async (params: { query: string; limit: number; offset: number }): Promise<IResponse<IList<IWineSetSearchItem>>> => {
         try {
             const response = await this._requester.request({
@@ -306,6 +320,31 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getReviewsList: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getEventReviewsList = async (
+        params: { wineId: number; eventId: number; offset: number; limit: number },
+    ): Promise<IResponse<IList<IWineReviewsListItem>>>  => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.eventRates}`,
+                params,
+            });
+
+            if (!response.isError) {
+                if (params.offset === 0) {
+                    wineReviewsListModel.list = response.data;
+                } else {
+                    wineReviewsListModel.append(response.data);
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getEventReviewsList: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

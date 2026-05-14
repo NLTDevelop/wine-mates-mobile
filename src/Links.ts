@@ -21,6 +21,7 @@ export interface ILinks {
     wines: string;
     wineFilters: string;
     wineSetSearch: string;
+    wineEventDetails: string;
     scannedWines: string;
     wineTypes: string;
     wineColors: string;
@@ -32,6 +33,7 @@ export interface ILinks {
     wineTasteCharacteristic: string;
     countries: string;
     rates: string;
+    eventRates: string;
     generateSnacks: string;
     generateNote: string;
     generateBlindNote: string;
@@ -68,6 +70,7 @@ class Links implements ILinks {
         wines: 'wines',
         wineFilters: 'wines/filters',
         wineSetSearch: 'wines/search/wine-set',
+        wineEventDetails: 'wines',
         scannedWines: 'wines/scanner',
         wineTypes: 'wine-types',
         wineColors: 'wine-colors',
@@ -79,6 +82,7 @@ class Links implements ILinks {
         wineTasteCharacteristic: 'wine-taste-characteristics',
         countries: 'countries',
         rates: 'rates',
+        eventRates: 'rates/event-rates',
         generateSnacks: 'rates/generate-snacks',
         generateNote: 'rates/generate-note',
         generateBlindNote: 'rates/generate-blind-note',
@@ -141,6 +145,9 @@ class Links implements ILinks {
     public get wineSetSearch() {
         return `${this._domain}${this._links.wineSetSearch}`;
     }
+    public get wineEventDetails() {
+        return `${this._domain}${this._links.wineEventDetails}`;
+    }
     public get scannedWines() {
         return `${this._domain}${this._links.scannedWines}`;
     }
@@ -173,6 +180,9 @@ class Links implements ILinks {
     }
     public get rates() {
         return `${this._domain}${this._links.rates}`;
+    }
+    public get eventRates() {
+        return `${this._domain}${this._links.eventRates}`;
     }
     public get generateSnacks() {
         return `${this._domain}${this._links.generateSnacks}`;

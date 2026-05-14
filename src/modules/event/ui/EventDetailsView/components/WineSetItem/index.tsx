@@ -29,7 +29,7 @@ export const WineSetItem = ({
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { title, imageUrl, isImageVisible, statusBadgeData, onPress } = useWineSetItem({
+    const { title, imageUrl, isImageVisible, statusBadgeData, isPressAvailable, onPress } = useWineSetItem({
         eventId,
         item,
         isBlindTasting,
@@ -44,7 +44,7 @@ export const WineSetItem = ({
     const statusBadgeTextStyle = statusBadgeData ? styles[`${statusBadgeData.type}BadgeText`] : null;
 
     return (
-        <TouchableOpacity style={styles.row} onPress={onPress} disabled={!isPressEnabled}>
+        <TouchableOpacity style={styles.row} onPress={onPress} disabled={!isPressAvailable}>
             <View style={styles.leftContent}>
                 {isImageVisible &&
                     (imageUrl ? (
@@ -59,7 +59,7 @@ export const WineSetItem = ({
                     <Typography text={statusBadgeData.label} variant="subtitle_12_500" style={statusBadgeTextStyle} />
                 </View>
             )}
-            {isPressEnabled && <ArrowDownIcon rotate={270} color={colors.text_light} width={20} height={20} />}
+            {isPressAvailable && <ArrowDownIcon rotate={270} color={colors.text_light} width={20} height={20} />}
         </TouchableOpacity>
     );
 };
