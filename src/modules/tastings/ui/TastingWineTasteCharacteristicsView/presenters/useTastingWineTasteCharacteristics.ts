@@ -29,6 +29,7 @@ export const useTastingWineTasteCharacteristics = () => {
     const source = routeParams.source ?? 'eventTasting';
     const wineId = routeParams.wineId;
     const eventId = routeParams.eventId;
+    const isSelectedParametersVisible = !routeParams.isBlindTasting;
     const { buildEventTastingDraftPayload, getEventTastingDraftData } = useEventTastingDraft();
 
     const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
@@ -41,6 +42,20 @@ export const useTastingWineTasteCharacteristics = () => {
     });
 
     const data = wineModel.tasteCharacteristics;
+
+    const getDraftTasteCharacteristicsFromSliderValues = useCallback((sliderVals: Record<number, number>) => {
+        if (!data?.length) {
+            return [];
+        }
+
+        return data.map(item => {
+            const selectedIndex = sliderVals[item.id] ?? item.selectedIndex ?? 0;
+            return {
+                characteristicId: item.id,
+                levelId: item.levels[selectedIndex]?.id || 0,
+            };
+        });
+    }, [data]);
 
     const isPremiumUser = userModel.user?.hasPremium || false;
     const isExpertOrWinemaker = userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT ||
@@ -152,7 +167,23 @@ export const useTastingWineTasteCharacteristics = () => {
                                Object.keys(prev).length !== Object.keys(next).length;
             return hasChanges ? next : prev;
         });
-    }, [data, draftTasteCharacteristics, eventId, wineId]);
+
+        const nextTasteCharacteristics = data.map(item => ({
+            ...item,
+            selectedIndex: next[item.id] ?? item.selectedIndex ?? 0,
+        }));
+        const hasModelChanges = nextTasteCharacteristics.some(item => {
+            const currentItem = data.find(characteristic => characteristic.id === item.id);
+            return currentItem?.selectedIndex !== item.selectedIndex;
+        });
+
+        if (hasModelChanges) {
+            runInAction(() => {
+                wineModel.tasteCharacteristics = nextTasteCharacteristics;
+                wineModel.draftTasteCharacteristics = getDraftTasteCharacteristicsFromSliderValues(next);
+            });
+        }
+    }, [data, draftTasteCharacteristics, eventId, getDraftTasteCharacteristicsFromSliderValues, wineId]);
 
     const saveCharacteristicDetails = useCallback((sliderVals: Record<number, number>) => {
         if (!data?.length) return;
@@ -190,7 +221,9 @@ export const useTastingWineTasteCharacteristics = () => {
                             ...item,
                             selectedIndex: next[item.id] ?? item.selectedIndex ?? 0,
                         }));
+                        wineModel.draftTasteCharacteristics = getDraftTasteCharacteristicsFromSliderValues(next);
                     });
+                    setDraftTasteCharacteristics(getDraftTasteCharacteristicsFromSliderValues(next));
                 }
 
                 saveCharacteristicDetails(next);
@@ -199,7 +232,7 @@ export const useTastingWineTasteCharacteristics = () => {
             });
             Keyboard.dismiss();
         },
-        [data, saveCharacteristicDetails],
+        [data, getDraftTasteCharacteristicsFromSliderValues, saveCharacteristicDetails],
     );
     const createOnSliderChange = useCallback((id: number) => {
         return (value: number) => {
@@ -296,5 +329,6 @@ export const useTastingWineTasteCharacteristics = () => {
         onWinePeakChange,
         isExpertOrWinemaker,
         isSaving,
+        isSelectedParametersVisible,
     };
 };

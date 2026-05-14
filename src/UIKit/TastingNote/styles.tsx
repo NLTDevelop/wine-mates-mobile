@@ -22,7 +22,7 @@ export const getStyles = (colors: IColors) => {
             paddingVertical: scaleVertical(12),
             minHeight: scaleVertical(212),
             backgroundColor: colors.background,
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             justifyContent: 'space-between',
         },
@@ -34,7 +34,7 @@ export const getStyles = (colors: IColors) => {
         },
         loaderContainer: {
             borderRadius: 12,
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             justifyContent: 'center',
             alignItems: 'center',

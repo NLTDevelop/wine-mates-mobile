@@ -6,11 +6,11 @@ import { Typography } from '@/UIKit/Typography';
 import { CopyIcon } from '@assets/icons/CopyIcon';
 import { PencilIcon } from '@assets/icons/PencilIcon';
 import { useTastingNote } from '@/modules/scanner/presenters/useTastingNote';
-import { NoteLoader } from '../NoteLoader';
 import { Button } from '@/UIKit/Button';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
+import { NoteLoader } from './components/NoteLoader';
 
 interface IProps {
     note: string | null;

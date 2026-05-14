@@ -55,6 +55,7 @@ export const TastingWineSmellView = observer(() => {
         onAddCustomSmell: originalOnAddCustomSmell,
         onNextPress,
         isSaving,
+        isSelectedParametersVisible,
         onGroupPress,
         onSubgroupPress,
     } = useTastingWineSmell(onHide);
@@ -206,7 +207,7 @@ export const TastingWineSmellView = observer(() => {
                                     containerStyle={styles.input}
                                 />
                                 {selected.length > 0 && <SelectedItemsList ref={selectedListRef} data={selected} onPress={onSelectedItemPress} />}
-                                <SelectedParameters />
+                                {isSelectedParametersVisible ? <SelectedParameters /> : null}
                             </Pressable>
                         </KeyboardAwareScrollView>
                         <Button

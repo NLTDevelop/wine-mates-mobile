@@ -77,6 +77,7 @@ export const useTastingWineSmell = (onHide: () => void) => {
     const source = routeParams.source ?? 'eventTasting';
     const wineId = routeParams.wineId;
     const eventId = routeParams.eventId;
+    const isSelectedParametersVisible = !routeParams.isBlindTasting;
     const { buildEventTastingDraftPayload } = useEventTastingDraft();
 
     const colorId = wineModel.base?.colorOfWine?.id ?? null;
@@ -340,6 +341,6 @@ export const useTastingWineSmell = (onHide: () => void) => {
     return { 
         data, selected, isError, getSmells, isLoading, isOpened, onItemPress, toggleList, selectedIndex,
         onLeftPress, onRightPress, onAddCustomSmell, onSelectedItemPress, onNextPress, visibleSubgroups,
-        onGroupPress, onSubgroupPress, isSaving,
+        onGroupPress, onSubgroupPress, isSaving, isSelectedParametersVisible,
     };
 };

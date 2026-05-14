@@ -26,7 +26,8 @@ export const TastingWineTasteCharacteristicsView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { data, isError, getTasteCharacteristics, createOnSliderChange, isLoading, onPressNext, sliderValues,
-        isPremiumUser, winePeak, onWinePeakChange, isExpertOrWinemaker, isSaving } = useTastingWineTasteCharacteristics();
+        isPremiumUser, winePeak, onWinePeakChange, isExpertOrWinemaker, isSaving, isSelectedParametersVisible } =
+        useTastingWineTasteCharacteristics();
 
     const listData = useMemo<ListItemType[]>(() => {
         const items: ListItemType[] = [];
@@ -88,7 +89,9 @@ export const TastingWineTasteCharacteristicsView = observer(() => {
                                     contentContainerStyle: styles.contentContainer,
                                     nestedScrollEnabled: true,
                                     keyboardShouldPersistTaps: 'handled',
-                                    ListFooterComponent: <SelectedParameters containerStyle={styles.selectedParameters} />,
+                                    ListFooterComponent: isSelectedParametersVisible ? (
+                                        <SelectedParameters containerStyle={styles.selectedParameters} />
+                                    ) : null,
                                 }}
                                 indStyle={styles.indicator}
                             />

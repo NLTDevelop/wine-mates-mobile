@@ -150,6 +150,10 @@ export const useEventTastingDraft = () => {
         wineModel.look = nextDraft.color?.colorId ? nextDraft.color : null;
         wineModel.review = {
             review: nextDraft.review || '',
+            rate: typeof nextDraft.expertRating === 'number' ? nextDraft.expertRating : undefined,
+            starRate: typeof nextDraft.userRating === 'number' ? nextDraft.userRating : undefined,
+            hasChangedRate: typeof nextDraft.expertRating === 'number',
+            hasChangedStarRate: typeof nextDraft.userRating === 'number',
             aiTastingNote: nextDraft.aiTastingNote || null,
             aiSnacks: nextDraft.aiSnacks || null,
         };

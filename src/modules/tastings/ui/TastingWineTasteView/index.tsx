@@ -33,7 +33,7 @@ export const TastingWineTasteView = observer(() => {
 
     const { isVisible, onShowModal, onHide, selectData, groupId } = useTastingTasteSelectModal();
     const { data, selected, isError, getTastes, isLoading, onItemPress: originalOnItemPress, onSelectedItemPress, onAddCustomTaste: originalOnAddCustomTaste,
-        onPressNext, isSaving } = useTastingWineTaste(onHide);
+        onPressNext, isSaving, isSelectedParametersVisible } = useTastingWineTaste(onHide);
 
     const [onItemPress, selectedListRef] = useAnimatedItemAdd(originalOnItemPress);
     const [onAddCustomTaste] = useAnimatedItemAdd(originalOnAddCustomTaste);
@@ -94,7 +94,7 @@ export const TastingWineTasteView = observer(() => {
                                     containerStyle={styles.input}
                                 />
                                 {selected.length > 0 && <SelectedItemsList ref={selectedListRef} data={selected} onPress={onSelectedItemPress} />}
-                                <SelectedParameters />
+                                {isSelectedParametersVisible ? <SelectedParameters /> : null}
                             </Pressable>
                         </KeyboardAwareScrollView>
                         <Button

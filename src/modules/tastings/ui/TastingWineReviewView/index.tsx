@@ -18,7 +18,17 @@ export const TastingWineReviewView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { review, onChangeReview, onSliderChange, onNextPress, sliderValue, starRate, onStarRateChange } = useTastingWineReview();
+    const {
+        review,
+        onChangeReview,
+        onSliderChange,
+        onNextPress,
+        sliderValue,
+        starRate,
+        onStarRateChange,
+        isSaving,
+        isSelectedParametersVisible,
+    } = useTastingWineReview();
 
     return (
         <ScreenContainer
@@ -49,12 +59,15 @@ export const TastingWineReviewView = observer(() => {
                         inputContainerStyle={styles.input}
                     />
 
-                    <SelectedParameters containerStyle={styles.selectedParameters} />
+                    {isSelectedParametersVisible ? (
+                        <SelectedParameters containerStyle={styles.selectedParameters} />
+                    ) : null}
                 </View>
                 <Button
                     text={t('common.next')}
                     onPress={onNextPress}
                     containerStyle={styles.button}
+                    inProgress={isSaving}
                     RightAccessory={<NextLongArrowIcon />}
                 />
             </View>

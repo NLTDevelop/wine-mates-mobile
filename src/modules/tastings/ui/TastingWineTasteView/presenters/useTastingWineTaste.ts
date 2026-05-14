@@ -56,6 +56,7 @@ export const useTastingWineTaste = (onHide?: () => void) => {
     const source = routeParams.source ?? 'eventTasting';
     const wineId = routeParams.wineId;
     const eventId = routeParams.eventId;
+    const isSelectedParametersVisible = !routeParams.isBlindTasting;
     const { buildEventTastingDraftPayload } = useEventTastingDraft();
 
     const initialSelected = wineModel.selectedTastes ?? [];
@@ -246,5 +247,6 @@ export const useTastingWineTaste = (onHide?: () => void) => {
         onSelectedItemPress,
         onPressNext,
         isSaving,
+        isSelectedParametersVisible,
     };
 };
