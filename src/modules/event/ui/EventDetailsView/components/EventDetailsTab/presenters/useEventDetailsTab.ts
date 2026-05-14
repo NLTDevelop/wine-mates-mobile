@@ -45,6 +45,8 @@ interface IEventDetailWithBookingStatus {
 }
 
 const WINE_ACCESS_BEFORE_START_MS = 15 * 60 * 1000;
+const TASTING_START_BEFORE_EVENT_MS = 15 * 60 * 1000;
+const TASTING_STOP_AFTER_END_MS = 24 * 60 * 60 * 1000;
 
 const mapWineImageToMedia = (
     image?: { smallUrl?: string; mediumUrl?: string; originalUrl?: string } | null,
@@ -180,19 +182,30 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const hasEventEnded = eventEndDateTime
         ? currentTime.getTime() > eventEndDateTime.getTime()
         : false;
+    const isTastingStarted = Boolean(eventDetail?.isTastingStarted);
+    const isBeforeStartWindow = eventStartDateTime
+        ? currentTime.getTime() <= eventStartDateTime.getTime() - TASTING_START_BEFORE_EVENT_MS
+        : false;
+    const isStopWindowAvailable = eventEndDateTime
+        ? currentTime.getTime() <= eventEndDateTime.getTime() + TASTING_STOP_AFTER_END_MS
+        : false;
+    const isTastingToggleVisible = isOwner
+        && (isTastingStarted ? isStopWindowAvailable : isBeforeStartWindow);
+    const isTastingToggleDisabled = isBookNowInProgress || isEventInactive || isEventCanceled || isEventFinished;
+    const isWineSetAccessAvailable = isTastingStarted || isWineAccessTimeAvailable;
     const isWineSetStatusVisible = Boolean(
         eventDetail
         && !isOwner
         && isEventApplied
         && isBookingAccepted
-        && isWineAccessTimeAvailable
+        && isWineSetAccessAvailable
     );
     const isWineSetItemPressEnabled = Boolean(
         eventDetail
         && !isOwner
         && isEventApplied
         && isBookingAccepted
-        && isWineAccessTimeAvailable
+        && isWineSetAccessAvailable
         && !isEventInactive
         && !isEventCanceled,
     );
@@ -334,6 +347,45 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         }
     }, [eventDetail, isBookNowInProgress, isCancelEventDisabled, setEventDetail]);
 
+    const onToggleTastingPress = useCallback(async () => {
+        if (!eventDetail || !isTastingToggleVisible || isTastingToggleDisabled) {
+            return;
+        }
+
+        const nextIsTastingStarted = !isTastingStarted;
+
+        setIsBookNowInProgress(true);
+        try {
+            const response = await eventsService.updateEvent(eventDetail.id, {
+                isTastingStarted: nextIsTastingStarted,
+            });
+
+            if (response.isError) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    response.message || localization.t('common.somethingWentWrong'),
+                );
+                return;
+            }
+
+            setEventDetail({
+                ...eventDetail,
+                isTastingStarted: nextIsTastingStarted,
+            });
+        } catch (error) {
+            console.warn('useEventDetailsTab -> onToggleTastingPress: ', error);
+            toastService.showError(localization.t('common.errorHappened'), localization.t('common.somethingWentWrong'));
+        } finally {
+            setIsBookNowInProgress(false);
+        }
+    }, [
+        eventDetail,
+        isTastingStarted,
+        isTastingToggleDisabled,
+        isTastingToggleVisible,
+        setEventDetail,
+    ]);
+
     const onEditPress = useCallback(() => {
         if (!eventDetail) {
             return;
@@ -450,6 +502,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         onFavoritePress,
         onEditPress,
         onDuplicatePress,
+        onToggleTastingPress,
         isOwner,
         isBookNowDisabled,
         isCancelEventDisabled,
@@ -459,6 +512,9 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         isWineSetItemPressEnabled,
         isWineSetStatusVisible,
         hasEventEnded,
+        isTastingToggleVisible,
+        isTastingToggleDisabled,
+        tastingToggleButtonText: isTastingStarted ? localization.t('eventDetails.stopEvent') : localization.t('eventDetails.startEvent'),
         isPaymentMethodsModalVisible,
         paymentMethodOptions,
         isPaymentMethodNextDisabled: selectedPaymentMethodId === null,

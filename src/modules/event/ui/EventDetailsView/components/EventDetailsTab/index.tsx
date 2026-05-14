@@ -46,6 +46,7 @@ export const EventDetailsTab = ({
         onFavoritePress,
         onEditPress,
         onDuplicatePress,
+        onToggleTastingPress,
         isOwner,
         isBookNowDisabled,
         isCancelEventDisabled,
@@ -55,6 +56,9 @@ export const EventDetailsTab = ({
         isWineSetItemPressEnabled,
         isWineSetStatusVisible,
         hasEventEnded,
+        isTastingToggleVisible,
+        isTastingToggleDisabled,
+        tastingToggleButtonText,
         isPaymentMethodsModalVisible,
         paymentMethodOptions,
         isPaymentMethodNextDisabled,
@@ -68,20 +72,23 @@ export const EventDetailsTab = ({
 
     const keyExtractor = useCallback((item: IWineSetItem) => `${item.id}`, []);
 
-    const renderWineSetItem: ListRenderItem<IWineSetItem> = useCallback(({ item, index }) => {
-        return (
-            <WineSetItem
-                eventId={currentEventId}
-                item={item}
-                isBlindTasting={isBlindTasting && !isOwner}
-                wineOrder={index + 1}
-                isOwner={isOwner}
-                isPressEnabled={isWineSetItemPressEnabled}
-                isStatusVisible={isWineSetStatusVisible}
-                hasEventEnded={hasEventEnded}
-            />
-        );
-    }, [currentEventId, hasEventEnded, isBlindTasting, isOwner, isWineSetItemPressEnabled, isWineSetStatusVisible]);
+    const renderWineSetItem: ListRenderItem<IWineSetItem> = useCallback(
+        ({ item, index }) => {
+            return (
+                <WineSetItem
+                    eventId={currentEventId}
+                    item={item}
+                    isBlindTasting={isBlindTasting && !isOwner}
+                    wineOrder={index + 1}
+                    isOwner={isOwner}
+                    isPressEnabled={isWineSetItemPressEnabled}
+                    isStatusVisible={isWineSetStatusVisible}
+                    hasEventEnded={hasEventEnded}
+                />
+            );
+        },
+        [currentEventId, hasEventEnded, isBlindTasting, isOwner, isWineSetItemPressEnabled, isWineSetStatusVisible],
+    );
 
     const renderWineSetItemSeparator = useCallback(() => {
         return <View style={styles.wineSetItemSeparator} />;
@@ -169,6 +176,16 @@ export const EventDetailsTab = ({
                 <View style={styles.footer}>
                     {isOwner ? (
                         <>
+                            {isTastingToggleVisible && (
+                                <Button
+                                    type="secondary"
+                                    containerStyle={styles.bookNowButton}
+                                    text={tastingToggleButtonText}
+                                    onPress={onToggleTastingPress}
+                                    disabled={isTastingToggleDisabled}
+                                    inProgress={isBookNowInProgress}
+                                />
+                            )}
                             <View style={styles.footerRow}>
                                 <Button
                                     type="secondary"

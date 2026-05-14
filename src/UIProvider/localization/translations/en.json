@@ -458,6 +458,8 @@
         "bookNow": "Book now",
         "booked": "Booked",
         "cancel": "Cancel Event",
+        "startEvent": "Start event",
+        "stopEvent": "Stop event",
         "contactForBooking": "Contact for booking",
         "callToReserve": "Call to reserve",
         "duplicate": "Duplicate"
