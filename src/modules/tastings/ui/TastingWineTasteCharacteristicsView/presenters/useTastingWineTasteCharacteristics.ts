@@ -22,6 +22,29 @@ interface IRouteParams {
     isBlindTasting?: boolean;
 }
 
+const getInitialSliderValues = () => {
+    const data = wineModel.tasteCharacteristics || [];
+    const draftTasteCharacteristics = wineModel.draftTasteCharacteristics || [];
+    const next: Record<number, number> = {};
+
+    data.forEach(item => {
+        const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
+        const draftValue = draftTasteCharacteristics.find(draftItem => draftItem.characteristicId === item.id);
+        const draftIndex = draftValue
+            ? item.levels.findIndex(level => level.id === draftValue.levelId)
+            : -1;
+        const baseValue = draftIndex >= 0
+            ? draftIndex
+            : typeof item.selectedIndex === 'number'
+            ? item.selectedIndex
+            : 0;
+
+        next[item.id] = Math.min(Math.max(baseValue, 0), maxIndex);
+    });
+
+    return next;
+};
+
 export const useTastingWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
@@ -33,9 +56,13 @@ export const useTastingWineTasteCharacteristics = () => {
     const { buildEventTastingDraftPayload, getEventTastingDraftData } = useEventTastingDraft();
 
     const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
+    const [isDraftLoading, setIsDraftLoading] = useState(() => Boolean(eventId && wineId && !wineModel.draftTasteCharacteristics?.length));
     const [isError, setIsError] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-    const [sliderValues, setSliderValues] = useState<Record<number, number>>({});
+    const [sliderValues, setSliderValues] = useState<Record<number, number>>(getInitialSliderValues);
+    const [hasHydratedSliderValues, setHasHydratedSliderValues] = useState(() => {
+        return Object.keys(getInitialSliderValues()).length > 0;
+    });
     const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
     const [draftTasteCharacteristics, setDraftTasteCharacteristics] = useState<AddRateDto['tasteCharacteristics']>(() => {
         return wineModel.draftTasteCharacteristics || [];
@@ -100,19 +127,25 @@ export const useTastingWineTasteCharacteristics = () => {
     }, [getTasteCharacteristics]);
 
     const getEventTastingDraft = useCallback(async () => {
-        if (!eventId || !wineId) return;
-
-        if (wineModel.draftTasteCharacteristics?.length) {
-            setDraftTasteCharacteristics(wineModel.draftTasteCharacteristics);
+        if (!eventId || !wineId) {
+            setIsDraftLoading(false);
             return;
         }
 
+        if (wineModel.draftTasteCharacteristics?.length) {
+            setDraftTasteCharacteristics(wineModel.draftTasteCharacteristics);
+            setIsDraftLoading(false);
+            return;
+        }
+
+        setIsDraftLoading(true);
         const response = await eventTastingService.getDraft({
             eventId,
             wineId,
         });
 
         if (response.isError) {
+            setIsDraftLoading(false);
             return;
         }
 
@@ -128,10 +161,17 @@ export const useTastingWineTasteCharacteristics = () => {
         });
 
         setDraftTasteCharacteristics(nextTasteCharacteristics);
+        const nextSliderValues = getInitialSliderValues();
+        if (Object.keys(nextSliderValues).length > 0) {
+            setSliderValues(nextSliderValues);
+            setHasHydratedSliderValues(true);
+        }
 
         if (typeof draft.winePeak === 'number') {
             setWinePeak(draft.winePeak);
         }
+
+        setIsDraftLoading(false);
     }, [eventId, getEventTastingDraftData, wineId]);
 
     useEffect(() => {
@@ -141,6 +181,7 @@ export const useTastingWineTasteCharacteristics = () => {
     useEffect(() => {
         if (!data || data.length === 0) {
             setSliderValues(prev => Object.keys(prev).length === 0 ? prev : {});
+            setHasHydratedSliderValues(false);
             return;
         }
 
@@ -167,6 +208,7 @@ export const useTastingWineTasteCharacteristics = () => {
                                Object.keys(prev).length !== Object.keys(next).length;
             return hasChanges ? next : prev;
         });
+        setHasHydratedSliderValues(true);
 
         const nextTasteCharacteristics = data.map(item => ({
             ...item,
@@ -321,7 +363,7 @@ export const useTastingWineTasteCharacteristics = () => {
         getTasteCharacteristics,
         onSliderChange,
         createOnSliderChange,
-        isLoading,
+        isLoading: isLoading || isDraftLoading || !hasHydratedSliderValues,
         onPressNext,
         sliderValues,
         isPremiumUser,
