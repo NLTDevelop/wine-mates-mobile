@@ -185,7 +185,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         && !isOwner
         && isEventApplied
         && isBookingAccepted
-        && hasEventStarted
+        && isWineAccessTimeAvailable
     );
     const isWineSetItemPressEnabled = Boolean(
         eventDetail
