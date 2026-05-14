@@ -20,4 +20,6 @@ export interface IWineSetItem {
     sortOrder: number;
     wine: IWineInSet;
     tastingStatus?: WineSetTastingStatus;
+    avgUserRating?: number | null;
+    avgExpertRating?: number | null;
 }

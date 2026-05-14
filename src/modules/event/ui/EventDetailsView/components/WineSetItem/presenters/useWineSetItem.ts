@@ -11,6 +11,7 @@ interface IUseWineSetItemProps {
     item: IWineSetItem;
     isBlindTasting: boolean;
     wineOrder: number;
+    isOwner: boolean;
     isPressEnabled: boolean;
     isStatusVisible: boolean;
     hasEventEnded: boolean;
@@ -51,6 +52,7 @@ export const useWineSetItem = ({
     item,
     isBlindTasting,
     wineOrder,
+    isOwner,
     isPressEnabled,
     isStatusVisible,
     hasEventEnded,
@@ -68,15 +70,29 @@ export const useWineSetItem = ({
     const statusBadgeData = getStatusBadgeData(status, isStatusVisible, hasEventEnded, t);
     const wineId = item.wineId || item.wine.id;
     const isEventTastingStatus = status === 'not_started' || status === 'in_progress';
-    const isTasted = status === 'tasted';
-    const isPressAvailable = isPressEnabled || isTasted;
+    const userRating = item.avgUserRating ?? null;
+    const expertRating = item.avgExpertRating ?? null;
+    const hasUserRating = userRating !== null;
+    const hasExpertRating = expertRating !== null && expertRating >= 70;
+    const ratingData = isOwner && (hasUserRating || hasExpertRating)
+        ? {
+            userRatingText: hasUserRating ? userRating.toFixed(1) : null,
+            expertRating,
+            expertRatingText: hasExpertRating ? expertRating.toFixed(1) : null,
+            showUserRating: hasUserRating,
+            showExpertRating: hasExpertRating,
+        }
+        : null;
+    const isOwnerPressAvailable = isOwner && !!ratingData;
+    const isParticipantPressAvailable = !isOwner && isPressEnabled && isEventTastingStatus;
+    const isPressAvailable = isOwnerPressAvailable || isParticipantPressAvailable;
 
     const onPress = useCallback(() => {
         if (!isPressAvailable) {
             return;
         }
 
-        if (isEventTastingStatus) {
+        if (isParticipantPressAvailable) {
             navigation.navigate('TastingWineLookView', {
                 eventId,
                 wineId,
@@ -90,13 +106,14 @@ export const useWineSetItem = ({
             eventId,
             wineId,
         });
-    }, [eventId, isBlindTasting, isEventTastingStatus, isPressAvailable, navigation, status, wineId]);
+    }, [eventId, isBlindTasting, isParticipantPressAvailable, isPressAvailable, navigation, status, wineId]);
 
     return {
         title,
         imageUrl,
         isImageVisible,
         statusBadgeData,
+        ratingData,
         isPressAvailable,
         onPress,
     };

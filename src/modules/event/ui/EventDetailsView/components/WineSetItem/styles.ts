@@ -26,6 +26,19 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
             flex: 1,
         },
+        ratingContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(8),
+        },
+        ratingItem: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(4),
+        },
+        ratingText: {
+            color: colors.text,
+        },
         statusBadge: {
             paddingHorizontal: scaleHorizontal(10),
             paddingVertical: scaleVertical(4),
