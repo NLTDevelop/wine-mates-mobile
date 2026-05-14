@@ -240,13 +240,15 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
                     return;
                 }
 
-                const nextSeatsLeft =
-                    typeof eventDetail.seats?.left === 'number' ? Math.max(0, eventDetail.seats.left - 1) : undefined;
+                const shouldDecreaseSeats = !eventDetail.requiresConfirmation;
+                const nextSeatsLeft = shouldDecreaseSeats && typeof eventDetail.seats?.left === 'number'
+                    ? Math.max(0, eventDetail.seats.left - 1)
+                    : undefined;
                 setEventDetail({
                     ...eventDetail,
                     isApplied: true,
                     seats:
-                        eventDetail.seats && typeof nextSeatsLeft === 'number'
+                        eventDetail.seats && shouldDecreaseSeats && typeof nextSeatsLeft === 'number'
                             ? {
                                   ...eventDetail.seats,
                                   left: nextSeatsLeft,
