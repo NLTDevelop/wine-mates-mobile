@@ -34,6 +34,7 @@ export interface ILinks {
     rates: string;
     generateSnacks: string;
     generateNote: string;
+    generateBlindNote: string;
     getContext: string;
     myWine: string;
     tasteProfile: string;
@@ -80,6 +81,7 @@ class Links implements ILinks {
         rates: 'rates',
         generateSnacks: 'rates/generate-snacks',
         generateNote: 'rates/generate-note',
+        generateBlindNote: 'rates/generate-blind-note',
         getContext: 'rates/context',
         myWine: 'myWine',
         tasteProfile: 'users/taste-profile',
@@ -177,6 +179,9 @@ class Links implements ILinks {
     }
     public get generateNote() {
         return `${this._domain}${this._links.generateNote}`;
+    }
+    public get generateBlindNote() {
+        return `${this._domain}${this._links.generateBlindNote}`;
     }
     public get getContext() {
         return `${this._domain}${this._links.getContext}`;

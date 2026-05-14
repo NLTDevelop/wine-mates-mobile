@@ -325,6 +325,21 @@ class WineService {
         }
     };
 
+    generateBlindNote = async (data: GenerateNoteDto): Promise<IResponse<{note: string}>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.generateBlindNote}`,
+                data,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> generateBlindNote: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
     getLimits = async (params: { wineId: number }): Promise<IResponse<IRateContext>> => {
         try {
             const response = await this._requester.request({
