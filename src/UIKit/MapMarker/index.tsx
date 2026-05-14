@@ -8,7 +8,6 @@ import { TastingIcon } from '@assets/icons/TastingIcon';
 import { EventType } from '@/entities/events/enums/EventType';
 import { useMapMarker } from './presenters/useMapMarker';
 import { getStyles } from './styles';
-import { isAndroid } from '@/utils';
 
 interface IProps {
     onPress?: (id: number) => void;
@@ -31,8 +30,14 @@ export const MapMarker = ({
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { onPressHandler, isPartyEvent } = useMapMarker({ eventId, eventType, onPress });
     const markerCoordinate = coordinate || markerProps?.coordinate;
+    const { onPressHandler, isPartyEvent } = useMapMarker({
+        eventId,
+        eventType,
+        onPress,
+        coordinate: markerCoordinate,
+        markerProps,
+    });
 
     if (!markerCoordinate) {
         return null;
@@ -43,7 +48,7 @@ export const MapMarker = ({
             {...markerProps}
             coordinate={markerCoordinate}
             onPress={onPressHandler}
-            tracksViewChanges={markerProps?.tracksViewChanges ?? isAndroid}
+            tracksViewChanges={markerProps?.tracksViewChanges}
             identifier={`event-marker-${eventId}`}
         >
             {customIcon ? (

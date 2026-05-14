@@ -26,7 +26,11 @@ export const EventDetailsView = observer(() => {
     const { t, colors } = useUiContext();
     const { eventId, screenIndex, routes, onIndexChange, onPressBack } = useEventDetailsView({ t });
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { eventDetail, setEventDetail, isError, isLoading } = useEventDetails(eventId);
+    const isEventDetailsTabFocused = screenIndex === 0;
+    const { eventDetail, setEventDetail, isError, isLoading, isRefreshing, onRefresh } = useEventDetails(
+        eventId,
+        isEventDetailsTabFocused,
+    );
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
         if (sceneRoute.key === 'eventDetails') {
@@ -36,6 +40,8 @@ export const EventDetailsView = observer(() => {
                     setEventDetail={setEventDetail}
                     isError={isError}
                     isLoading={isLoading}
+                    isRefreshing={isRefreshing}
+                    onRefresh={onRefresh}
                 />
             );
         }

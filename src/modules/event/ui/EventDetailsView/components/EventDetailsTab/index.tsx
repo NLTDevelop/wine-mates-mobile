@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { ActivityIndicator, FlatList, ListRenderItem, ScrollView, View } from 'react-native';
+import { ActivityIndicator, FlatList, ListRenderItem, RefreshControl, ScrollView, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { EmptyListView } from '@/UIKit/EmptyListView';
@@ -22,9 +22,18 @@ interface IProps {
     setEventDetail: React.Dispatch<React.SetStateAction<IEventDetail | null>>;
     isError: boolean;
     isLoading: boolean;
+    isRefreshing: boolean;
+    onRefresh: () => void;
 }
 
-export const EventDetailsTab = ({ eventDetail, setEventDetail, isError, isLoading }: IProps) => {
+export const EventDetailsTab = ({
+    eventDetail,
+    setEventDetail,
+    isError,
+    isLoading,
+    isRefreshing,
+    onRefresh,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
@@ -37,11 +46,19 @@ export const EventDetailsTab = ({ eventDetail, setEventDetail, isError, isLoadin
         onFavoritePress,
         onEditPress,
         onDuplicatePress,
+        onToggleTastingPress,
         isOwner,
         isBookNowDisabled,
         isCancelEventDisabled,
         isBookNowInProgress,
         isEventApplied,
+        isBlindTasting,
+        isWineSetItemPressEnabled,
+        isWineSetStatusVisible,
+        hasEventEnded,
+        isTastingToggleVisible,
+        isTastingToggleDisabled,
+        tastingToggleButtonText,
         isPaymentMethodsModalVisible,
         paymentMethodOptions,
         isPaymentMethodNextDisabled,
@@ -51,12 +68,27 @@ export const EventDetailsTab = ({ eventDetail, setEventDetail, isError, isLoadin
         selectedPaymentMethod,
         onCloseSelectedPaymentMethodModal,
     } = useEventDetailsTab({ eventDetail, setEventDetail });
+    const currentEventId = eventDetail?.id ?? 0;
 
     const keyExtractor = useCallback((item: IWineSetItem) => `${item.id}`, []);
 
-    const renderWineSetItem: ListRenderItem<IWineSetItem> = useCallback(({ item }) => {
-        return <WineSetItem item={item} />;
-    }, []);
+    const renderWineSetItem: ListRenderItem<IWineSetItem> = useCallback(
+        ({ item, index }) => {
+            return (
+                <WineSetItem
+                    eventId={currentEventId}
+                    item={item}
+                    isBlindTasting={isBlindTasting && !isOwner}
+                    wineOrder={index + 1}
+                    isOwner={isOwner}
+                    isPressEnabled={isWineSetItemPressEnabled}
+                    isStatusVisible={isWineSetStatusVisible}
+                    hasEventEnded={hasEventEnded}
+                />
+            );
+        },
+        [currentEventId, hasEventEnded, isBlindTasting, isOwner, isWineSetItemPressEnabled, isWineSetStatusVisible],
+    );
 
     const renderWineSetItemSeparator = useCallback(() => {
         return <View style={styles.wineSetItemSeparator} />;
@@ -90,7 +122,18 @@ export const EventDetailsTab = ({ eventDetail, setEventDetail, isError, isLoadin
 
     return (
         <View style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.contentContainer}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isRefreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.primary}
+                        colors={[colors.primary]}
+                    />
+                }
+            >
                 {cardPreviewData && <EventDetailsPreview data={cardPreviewData} eventId={eventDetail.id} />}
 
                 <View style={styles.card}>
@@ -133,6 +176,16 @@ export const EventDetailsTab = ({ eventDetail, setEventDetail, isError, isLoadin
                 <View style={styles.footer}>
                     {isOwner ? (
                         <>
+                            {isTastingToggleVisible && (
+                                <Button
+                                    type="secondary"
+                                    containerStyle={styles.bookNowButton}
+                                    text={tastingToggleButtonText}
+                                    onPress={onToggleTastingPress}
+                                    disabled={isTastingToggleDisabled}
+                                    inProgress={isBookNowInProgress}
+                                />
+                            )}
                             <View style={styles.footerRow}>
                                 <Button
                                     type="secondary"

@@ -12,9 +12,14 @@ export interface IWineInSet {
     image?: IWineImage;
 }
 
+export type WineSetTastingStatus = 'not_started' | 'in_progress' | 'tasted';
+
 export interface IWineSetItem {
     id: number;
     wineId: number;
     sortOrder: number;
     wine: IWineInSet;
+    tastingStatus?: WineSetTastingStatus;
+    avgUserRating?: number | null;
+    avgExpertRating?: number | null;
 }

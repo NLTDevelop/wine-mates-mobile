@@ -6,7 +6,7 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { FlatList } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { ResultListHeader } from '../components/ResultListHeader';
-import { ReviewListItem } from '../components/ReviewListItem';
+import { ReviewListItem } from '../../../../UIKit/ReviewListItem';
 import { useRefresh } from '@/hooks/useRefresh';
 import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 import { IWineReviewsListItem } from '@/entities/wine/types/IWineReviewsListItem';

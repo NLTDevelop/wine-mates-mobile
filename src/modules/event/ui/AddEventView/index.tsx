@@ -40,6 +40,7 @@ export const AddEventView = () => {
 
     const {
         form,
+        isEditMode,
         isLoading,
         isPaymentMethodsLoading,
         isContactInfoLoading,
@@ -217,7 +218,7 @@ export const AddEventView = () => {
         <>
             <ScreenContainer
                 edges={['top', 'bottom']}
-                headerComponent={<HeaderWithBackButton title={t('event.addEvent')} isCentered={true} />}
+                headerComponent={<HeaderWithBackButton title={isEditMode ? t('event.editEvent') : t('event.addEvent')} isCentered={true} />}
                 withGradient
             >
                 <View style={styles.container}>

@@ -8,44 +8,49 @@ import { Typography } from '@/UIKit/Typography';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
 import { CloseButton } from '../components/CloseButton';
-import { SelectedParameters } from '../components/SelectedParameters';
+import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
-import { SelectedItemsList } from '../components/SelectedItemsList';
-import { SmellListItem } from '../components/SmellListItem';
+import { SmellListItem } from '../../../../UIKit/SmellListItem';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { useAddItem } from '../../presenters/useAddItem';
 import { AddButton } from '../components/AddButton';
-import { useWineTaste } from '../../presenters/useWineTaste';
+import { useWineTaste } from './presenters/useWineTaste';
 import { useAnimatedItemAdd } from '../../presenters/useAnimatedItemAdd';
 import { wineModel } from '@/entities/wine/WineModel';
 import { IWineTasteGroup } from '@/entities/wine/types/IWineTatseGroup';
-import { useTasteSelectModal } from '../../presenters/useTasteSelectModal';
-import { SelectModal } from '../components/SelectModal';
+import { useTasteSelectModal } from './presenters/useTasteSelectModal';
+import { SelectModal } from '../../../../UIKit/SelectModal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { scaleVertical } from '@/utils';
+import { SelectedItemsList } from '@/UIKit/SelectedItemsList';
 
 export const WineTasteView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { isVisible, onShowModal, onHide, selectData, groupId } = useTasteSelectModal();
-    const { data, selected, isError, getTastes, isLoading, onItemPress: originalOnItemPress, onSelectedItemPress, handleAddCustomTaste: originalHandleAddCustomTaste,
-        handleNextPress } = useWineTaste(onHide);
+    const { data, selected, isError, getTastes, isLoading, onItemPress: originalOnItemPress, onSelectedItemPress, onAddCustomTaste: originalOnAddCustomTaste,
+        onPressNext } = useWineTaste(onHide);
 
     const [onItemPress, selectedListRef] = useAnimatedItemAdd(originalOnItemPress);
-    const [handleAddCustomTaste] = useAnimatedItemAdd(originalHandleAddCustomTaste);
+    const [onAddCustomTaste] = useAnimatedItemAdd(originalOnAddCustomTaste);
 
-    const { text, setText, handleAddPress } = useAddItem(handleAddCustomTaste);
+    const { text, setText, handleAddPress } = useAddItem(onAddCustomTaste);
 
     const visibleGroups = useMemo(() => data.filter(group => group.flavors.length > 0), [data]);
+    const createOnGroupPress = useCallback((group: IWineTasteGroup) => {
+        return () => {
+            onShowModal(group);
+        };
+    }, [onShowModal]);
     const keyExtractor = useCallback((item: IWineTasteGroup, index: number) => `${item.id}-${index}`, []);
     const renderItem = useCallback(({ item }: { item: IWineTasteGroup }) => (
-        <SmellListItem item={item} onPress={() => onShowModal(item)} />
-    ), [onShowModal]);
+        <SmellListItem item={item} onPress={createOnGroupPress(item)} />
+    ), [createOnGroupPress]);
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getTastes} isLoading={isLoading}>
@@ -95,7 +100,7 @@ export const WineTasteView = observer(() => {
                         </KeyboardAwareScrollView>
                         <Button
                             text={t('wine.letsTaste')}
-                            onPress={handleNextPress}
+                            onPress={onPressNext}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}
                             disabled={!selected.length}

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { View } from 'react-native';
 import { Collapse } from '@/UIKit/Collapse';
 import { ColorPaletteItem } from '@/UIKit/ColorPaletteItem';
-import { TasteCharacteristicItem } from '@/modules/scanner/ui/components/TasteCharacteristicItem';
+import { TasteCharacteristicItem } from '@/UIKit/TasteCharacteristicItem';
 import { useUiContext } from '@/UIProvider';
 import { useTastesList } from './presenters/useTastesList';
 import { ITasteProfileStatisticItem, ITasteProfileCharacteristic } from '@/entities/wine/types/ITasteProfile';

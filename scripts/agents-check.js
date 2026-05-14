@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
@@ -103,6 +102,7 @@ const isComponentName = (name) => {
 
 const getLine = (sourceFile, node) => getLineNumber(sourceFile, node.getStart(sourceFile));
 const isOnName = (name) => /^on[A-Z]/.test(name);
+const isRenderFunctionName = (name) => /^render[A-Z0-9_]/.test(name);
 
 const getPropertyName = (nameNode) => {
     if (!nameNode) return null;
@@ -204,6 +204,13 @@ const isUseMemoCallWithGetStyles = (node) => {
     return containsGetStylesCall(callback.body);
 };
 
+const isUseCallbackWithArrow = (node) => {
+    if (!node || !ts.isCallExpression(node)) return false;
+    if (!ts.isIdentifier(node.expression) || node.expression.text !== 'useCallback') return false;
+    const callback = node.arguments?.[0];
+    return Boolean(callback && ts.isArrowFunction(callback));
+};
+
 const getFunctionLikeName = (node) => {
     if (ts.isFunctionDeclaration(node) && node.name) {
         return node.name.text;
@@ -300,6 +307,45 @@ const collectDataPreparationViolationsInComponent = (sourceFile, functionNode, v
     };
 
     ts.forEachChild(body, walk);
+};
+
+const collectRenderFunctionViolationsInComponent = (sourceFile, functionNode, violations) => {
+    const body = getFunctionLikeBody(functionNode);
+    if (!body || !ts.isBlock(body)) return;
+
+    body.statements.forEach((statement) => {
+        if (ts.isFunctionDeclaration(statement) && statement.name && isRenderFunctionName(statement.name.text)) {
+            violations.push({
+                line: getLine(sourceFile, statement),
+                rule: 'RenderFunctionMustBeMemoizedArrow',
+                message: `Render function "${statement.name.text}" must be an arrow function memoized with useCallback.`,
+            });
+            return;
+        }
+
+        if (!ts.isVariableStatement(statement)) {
+            return;
+        }
+
+        statement.declarationList.declarations.forEach((declaration) => {
+            if (!ts.isIdentifier(declaration.name)) {
+                return;
+            }
+
+            const name = declaration.name.text;
+            if (!isRenderFunctionName(name)) {
+                return;
+            }
+
+            if (!isUseCallbackWithArrow(declaration.initializer)) {
+                violations.push({
+                    line: getLine(sourceFile, declaration),
+                    rule: 'RenderFunctionMustBeMemoizedArrow',
+                    message: `Render function "${name}" must be an arrow function memoized with useCallback.`,
+                });
+            }
+        });
+    });
 };
 
 const collectScaleViolationsFromObject = (sourceFile, objectNode, violations) => {
@@ -408,6 +454,7 @@ const validateFile = (absolutePath) => {
     const inModel = isModelFile(relativePath);
     const isTsxFile = absolutePath.endsWith('.tsx');
     const inUiComponent = isUiComponentFile(relativePath, isTsxFile);
+    const inComponentFile = isTsxFile && !relativePath.includes('/presenters/') && !isStyleFile(relativePath);
     const inUiFileScope = isUiFile(relativePath) && !relativePath.includes('/types/') && !relativePath.includes('/enums/');
     const inStyleFile = isStyleFile(relativePath);
     const violations = [];
@@ -517,6 +564,14 @@ const validateFile = (absolutePath) => {
 
             if (functionName && isComponentName(functionName)) {
                 collectDataPreparationViolationsInComponent(sourceFile, node, violations);
+            }
+        }
+
+        if (inComponentFile && isFunctionLikeDeclaration(node)) {
+            const functionName = getFunctionLikeName(node);
+
+            if (functionName && isComponentName(functionName)) {
+                collectRenderFunctionViolationsInComponent(sourceFile, node, violations);
             }
         }
 
