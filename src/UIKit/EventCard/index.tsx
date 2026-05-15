@@ -17,6 +17,7 @@ import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
 import { EditButton } from '../EditButton';
 import { ShareIcon } from '@assets/icons/ShareIcon';
 import { EventParticipantsPreview } from '@/UIKit/EventParticipantsPreview';
+import { QR_CODE_SHARE_SIZE } from '@/utils';
 
 interface IProps {
     event: IEvent | ISavedEvent;
@@ -140,7 +141,7 @@ export const EventCard = ({
             ) : null}
 
             <View style={styles.hiddenQrCodeContainer}>
-                <QRCode value={eventDeepLink} getRef={onQrCodeRef} size={1} />
+                <QRCode value={eventDeepLink} getRef={onQrCodeRef} size={QR_CODE_SHARE_SIZE} />
             </View>
 
             <View style={styles.header}>

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
+import { QR_CODE_SHARE_SIZE, scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -35,8 +35,9 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'center',
         },
         hiddenQrCodeContainer: {
-            width: 0,
-            height: 0,
+            position: 'absolute',
+            width: scaleHorizontal(QR_CODE_SHARE_SIZE),
+            height: scaleHorizontal(QR_CODE_SHARE_SIZE),
             opacity: 0,
             overflow: 'hidden',
         },
