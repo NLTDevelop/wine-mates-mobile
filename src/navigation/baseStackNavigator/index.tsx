@@ -37,6 +37,9 @@ import { EditEventWineView } from '@/modules/event/ui/EditEventWineView';
 import { LocationPickerView } from '@/modules/event/ui/LocationPickerView';
 import { EventListView } from '@/modules/event/ui/EventListView';
 import { EventDetailsView } from '@/modules/event/ui/EventDetailsView';
+import { PaymentsView } from '@/modules/payments/ui/PaymentsView';
+import { ContactInfoView } from '@/modules/contactInfo/ui/ContactInfoView';
+import { CreatePaymentView } from '@/modules/payments/ui/CreatePaymentView';
 
 const Stack = createNativeStackNavigator();
 
@@ -88,6 +91,9 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="AvatarCameraView" component={AvatarCameraView} />
             <Stack.Screen name="EventListView" component={EventListView} />
             <Stack.Screen name="EventDetailsView" component={EventDetailsView} />
+            <Stack.Screen name="PaymentsView" component={PaymentsView} />
+            <Stack.Screen name="CreatePaymentView" component={CreatePaymentView} />
+            <Stack.Screen name="ContactInfoView" component={ContactInfoView} />
         </Stack.Navigator>
     );
 });

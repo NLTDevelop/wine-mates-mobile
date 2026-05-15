@@ -1,6 +1,5 @@
 import { IEventDetail } from '@/entities/events/types/IEvent';
 import { Linking } from 'react-native';
-import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { EventType } from '@/entities/events/enums/EventType';
 import { Sex } from '@/entities/events/enums/Sex';
@@ -372,21 +371,9 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
 
         return [
             { key: 'theme', label: t('eventDetails.theme'), value: getValueOrDash(eventDetail.theme) },
-            {
-                key: 'description',
-                label: t('eventDetails.description'),
-                value: getValueOrDash(eventDetail.description),
-            },
-            {
-                key: 'restaurant',
-                label: t('eventDetails.restaurant'),
-                value: getValueOrDash(eventDetail.restaurantName || eventDetail.restaurant),
-            },
-            {
-                key: 'location',
-                label: t('eventDetails.location'),
-                value: getValueOrDash(eventDetail.locationLabel || eventDetail.location),
-            },
+            { key: 'description', label: t('eventDetails.description'), value: getValueOrDash(eventDetail.description) },
+            { key: 'restaurant', label: t('eventDetails.meetingPlaceName'), value: getValueOrDash(eventDetail.restaurantName || eventDetail.restaurant) },
+            { key: 'location', label: t('eventDetails.location'), value: getValueOrDash(eventDetail.locationLabel || eventDetail.location) },
             {
                 key: 'eventStartDate',
                 label: t('eventDetails.startDate'),
@@ -456,21 +443,25 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return [];
         }
 
-        return eventDetail.contacts.map<IEventContactOption>(item => {
+        return eventDetail.contacts
+            .map<IEventContactOption | null>((item) => {
             const contactType = getContactType(item.name, item.value);
-            const phoneNumber = contactType === 'phone' ? parsePhoneNumberFromString(item.value) : null;
+            if (contactType === 'phone') {
+                return null;
+            }
+
             const contactUrl = getContactUrl(item.value, contactType);
 
             return {
                 id: item.id,
                 type: contactType,
                 title: getContactTitle(item.name, item.value, contactType),
-                phoneCountryCode: phoneNumber?.country || '',
                 onPress: () => {
                     Linking.openURL(contactUrl);
                 },
             };
-        });
+            })
+            .filter((item): item is IEventContactOption => item !== null);
     })();
 
     const cardPreviewData = (() => {

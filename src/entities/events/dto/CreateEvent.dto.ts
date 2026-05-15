@@ -27,7 +27,6 @@ export interface CreateEventDto {
     speakerName: string;
     language: string;
     seats: number;
-    phoneNumber: string;
     minAge?: number;
     maxAge?: number;
     sex?: Sex;

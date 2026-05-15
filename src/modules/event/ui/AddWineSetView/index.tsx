@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import Sortable, { SortableGridRenderItem } from 'react-native-sortables';
@@ -114,9 +114,9 @@ export const AddWineSetView = () => {
     } = useWineSetSortableList();
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
 
-    const renderWineItem: SortableGridRenderItem<IWineSetViewItem> = function renderWineItem({ item }) {
+    const renderWineItem: SortableGridRenderItem<IWineSetViewItem> = useCallback(({ item }) => {
         return <WineSetItemRow title={item.title} onEditPress={item.onEditPress} onDeletePress={item.onDeletePress} />;
-    };
+    }, []);
 
     return (
         <>

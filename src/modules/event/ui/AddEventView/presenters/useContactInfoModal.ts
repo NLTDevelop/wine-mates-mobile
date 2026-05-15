@@ -6,6 +6,7 @@ interface IProps {
     value: number[];
     contacts: IContactsListItem[];
     onChange: (value: number[]) => void;
+    onOpenContactsPress: () => void;
 }
 
 const getUrlPath = (value: string) => {
@@ -50,7 +51,7 @@ const getContactLabel = (item: IContactsListItem) => {
     return firstPathPart || item.name;
 };
 
-export const useContactInfoModal = ({ value, contacts, onChange }: IProps) => {
+export const useContactInfoModal = ({ value, contacts, onChange, onOpenContactsPress }: IProps) => {
     const [isVisible, setIsVisible] = useState(false);
     const [draftIds, setDraftIds] = useState<number[]>(value);
 
@@ -94,6 +95,14 @@ export const useContactInfoModal = ({ value, contacts, onChange }: IProps) => {
         });
     }, [draftIds, onChange]);
 
+    const onOpenContacts = useCallback(() => {
+        setIsVisible(false);
+
+        requestAnimationFrame(() => {
+            onOpenContactsPress();
+        });
+    }, [onOpenContactsPress]);
+
     const selectedText = useMemo(() => {
         const selectedContacts = contacts.filter(item => value.includes(item.id));
         const [firstContact, secondContact] = selectedContacts;
@@ -121,6 +130,7 @@ export const useContactInfoModal = ({ value, contacts, onChange }: IProps) => {
             onOpen,
             onClose,
             onConfirm,
+            onOpenContacts,
         };
-    }, [isVisible, onClose, onConfirm, onOpen, options, selectedText]);
+    }, [isVisible, onClose, onConfirm, onOpen, onOpenContacts, options, selectedText]);
 };

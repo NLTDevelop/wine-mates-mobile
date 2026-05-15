@@ -6,10 +6,17 @@ interface IProps {
     value: number[];
     paymentMethods: IPaymentsListItem[];
     onChange: (value: number[]) => void;
+    onOpenPaymentsPress: () => void;
     isDisabled?: boolean;
 }
 
-export const usePaymentMethodsModal = ({ value, paymentMethods, onChange, isDisabled = false }: IProps) => {
+export const usePaymentMethodsModal = ({
+    value,
+    paymentMethods,
+    onChange,
+    onOpenPaymentsPress,
+    isDisabled = false,
+}: IProps) => {
     const [isVisible, setIsVisible] = useState(false);
     const [draftIds, setDraftIds] = useState<number[]>(value);
 
@@ -57,6 +64,14 @@ export const usePaymentMethodsModal = ({ value, paymentMethods, onChange, isDisa
         });
     }, [draftIds, onChange]);
 
+    const onOpenPayments = useCallback(() => {
+        setIsVisible(false);
+
+        requestAnimationFrame(() => {
+            onOpenPaymentsPress();
+        });
+    }, [onOpenPaymentsPress]);
+
     const selectedText = useMemo(() => {
         const selectedPaymentMethods = paymentMethods.filter(item => value.includes(item.id));
         const [firstPaymentMethod, secondPaymentMethod] = selectedPaymentMethods;
@@ -84,6 +99,7 @@ export const usePaymentMethodsModal = ({ value, paymentMethods, onChange, isDisa
             onOpen,
             onClose,
             onConfirm,
+            onOpenPayments,
         };
-    }, [isVisible, onClose, onConfirm, onOpen, options, selectedText]);
+    }, [isVisible, onClose, onConfirm, onOpen, onOpenPayments, options, selectedText]);
 };

@@ -14,6 +14,7 @@ interface IProps {
     isLoading: boolean;
     onClose: () => void;
     onConfirm: () => void;
+    onOpenContactsPress: () => void;
 }
 
 export const ContactInfoPickerModal = ({
@@ -22,6 +23,7 @@ export const ContactInfoPickerModal = ({
     isLoading,
     onClose,
     onConfirm,
+    onOpenContactsPress,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -62,6 +64,12 @@ export const ContactInfoPickerModal = ({
                                     variant="h5"
                                     text={t('contactInfo.noVisibleContacts')}
                                     style={styles.emptyText}
+                                />
+                                <Button
+                                    text={t('contactInfo.openContacts')}
+                                    onPress={onOpenContactsPress}
+                                    type="secondary"
+                                    containerStyle={styles.emptyActionButton}
                                 />
                             </View>
                         }

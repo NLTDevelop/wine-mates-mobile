@@ -349,7 +349,7 @@
         "men": "Чоловіки",
         "women": "Жінки",
         "all": "Всі",
-        "age": "Вік",
+        "age": "Вік учасників",
         "kmSuffix": "км",
         "close": "Закрити"
     },
@@ -361,7 +361,7 @@
         "locationAndSchedule": "Локація та розклад",
         "bookingAndDetails": "Бронювання та деталі",
         "tastingTheme": "Тема вечора",
-        "restaurant": "Місце зустрічі",
+        "meetingPlaceName": "Назва місця зустрічі",
         "location": "Локація",
         "eventDate": "Дата події",
         "eventTime": "Час події",
@@ -404,7 +404,7 @@
         "eventType": "Тип події",
         "tastingType": "Тип дегустації",
         "tastingTypeBlind": "Сліпа дегустація",
-        "tastingTypeRegular": "Порівняльна дегустація",
+        "tastingTypeRegular": "Дегустація",
         "participationCondition": "Умова участі",
         "participationConditionFixedPrice": "Фіксована ціна",
         "participationConditionSplitBill": "Розділення порівну",
@@ -437,7 +437,7 @@
         "title": "Деталі події",
         "theme": "Тема",
         "description": "Опис",
-        "restaurant": "Ресторан",
+        "meetingPlaceName": "Назва місця зустрічі",
         "location": "Локація",
         "date": "Дата",
         "time": "Час",
@@ -452,7 +452,7 @@
         "kmOnly": "{{distance}} км",
         "language": "Мова",
         "sex": "Стать",
-        "age": "Вік",
+        "age": "Вік учасників",
         "participationCondition": "Умова участі",
         "seats": "Місця",
         "confirmationAvailability": "Наявність підтвердження",
@@ -541,7 +541,8 @@
         "deletePaymentMethodTitle": "Видалити спосіб оплати?",
         "deletePaymentMethodMessage": "Ви впевнені, що хочете видалити цей спосіб оплати?",
         "noVisiblePaymentMethods": "Немає видимих способів оплати",
-        "addPaymentMethodsInProfile": "Додайте способи оплати в профілі"
+        "addPaymentMethodsInProfile": "Додайте способи оплати в профілі",
+        "openPayments": "Відкрити способи оплати"
     },
     "contactInfo": {
         "contactInfo": "Контактна інформація",
@@ -554,6 +555,7 @@
         "invalidContactValue": "Введіть коректний номер телефону або посилання на підтримувану соціальну мережу",
         "deleteContactTitle": "Видалити контакт?",
         "deleteContactMessage": "Ви впевнені, що хочете видалити цей контакт?",
-        "noVisibleContacts": "Немає видимих контактів"
+        "noVisibleContacts": "Немає видимих контактів",
+        "openContacts": "Відкрити контакти"
     }
 }

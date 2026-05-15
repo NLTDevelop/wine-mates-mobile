@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CountryCode, parsePhoneNumberFromString } from 'libphonenumber-js';
 import { useValidator } from '@/hooks/useValidator';
 import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
@@ -28,9 +27,6 @@ interface IEventForm {
     eventEndDate: string;
     eventStartTime: string;
     eventEndTime: string;
-    phoneNumber: string;
-    phoneCountryCode: string;
-    phoneCountryCca2: CountryCode | null;
     price: string;
     currency: string;
     speakerName: string;
@@ -46,34 +42,6 @@ interface IEventForm {
     paymentMethodIds: number[];
     contactIds: number[];
 }
-
-const getParsedPhone = (value?: string) => {
-    const rawValue = (value || '').trim();
-
-    if (!rawValue) {
-        return {
-            phoneNumber: '',
-            phoneCountryCode: '',
-            phoneCountryCca2: null as CountryCode | null,
-        };
-    }
-
-    const parsed = parsePhoneNumberFromString(rawValue);
-
-    if (!parsed) {
-        return {
-            phoneNumber: rawValue.replace(/\D/g, ''),
-            phoneCountryCode: '',
-            phoneCountryCca2: null as CountryCode | null,
-        };
-    }
-
-    return {
-        phoneNumber: parsed.nationalNumber || '',
-        phoneCountryCode: `+${parsed.countryCallingCode}`,
-        phoneCountryCca2: parsed.country || null,
-    };
-};
 
 const formatDateToLocalApi = (date: Date) => {
     const year = date.getFullYear();
@@ -109,9 +77,6 @@ const getInitialForm = (draft?: IAddEventDraft, isEditMode = false): IEventForm 
             eventEndDate: '',
             eventStartTime: '',
             eventEndTime: '',
-            phoneNumber: '',
-            phoneCountryCode: '',
-            phoneCountryCca2: null,
             price: '',
             currency: '',
             speakerName: '',
@@ -129,8 +94,6 @@ const getInitialForm = (draft?: IAddEventDraft, isEditMode = false): IEventForm 
         };
     }
 
-    const parsedPhone = getParsedPhone(draft.phoneNumber);
-
     return {
         theme: draft.theme,
         description: draft.description,
@@ -142,9 +105,6 @@ const getInitialForm = (draft?: IAddEventDraft, isEditMode = false): IEventForm 
         eventEndDate: isEditMode ? draft.eventEndDate : '',
         eventStartTime: isEditMode ? normalizeTimeToHoursMinutes(draft.eventStartTime) : '',
         eventEndTime: isEditMode ? normalizeTimeToHoursMinutes(draft.eventEndTime) : '',
-        phoneNumber: parsedPhone.phoneNumber,
-        phoneCountryCode: parsedPhone.phoneCountryCode,
-        phoneCountryCca2: parsedPhone.phoneCountryCca2,
         price: draft.price,
         currency: draft.currency,
         speakerName: draft.speakerName,
@@ -295,18 +255,6 @@ export const useAddEvent = () => {
         setForm(prev => ({ ...prev, eventEndTime: timeStr }));
     }, []);
 
-    const onChangePhoneNumber = useCallback((value: string) => {
-        setForm(prev => ({ ...prev, phoneNumber: value }));
-    }, []);
-
-    const onChangePhoneCountryCode = useCallback((value: string) => {
-        setForm(prev => ({ ...prev, phoneCountryCode: value }));
-    }, []);
-
-    const onClearPhoneNumber = useCallback(() => {
-        setForm(prev => ({ ...prev, phoneNumber: '' }));
-    }, []);
-
     const onChangePrice = useCallback((value: string) => {
         const numericValue = value.replace(/[^0-9]/g, '');
         const isZeroPrice = numericValue !== '' && Number(numericValue) === 0;
@@ -379,6 +327,14 @@ export const useAddEvent = () => {
         });
     }, [form.eventType, form.location, navigation]);
 
+    const onOpenPaymentsPress = useCallback(() => {
+        navigation.navigate('PaymentsView' as never);
+    }, [navigation]);
+
+    const onOpenContactsPress = useCallback(() => {
+        navigation.navigate('ContactInfoView' as never);
+    }, [navigation]);
+
     useEffect(() => {
         const frameId = requestAnimationFrame(() => {
             onLoadPaymentMethods();
@@ -390,6 +346,13 @@ export const useAddEvent = () => {
             cancelAnimationFrame(frameId);
         };
     }, [onLoadContacts, onLoadEventCurrencies, onLoadPaymentMethods]);
+
+    useFocusEffect(
+        useCallback(() => {
+            onLoadPaymentMethods();
+            onLoadContacts();
+        }, [onLoadContacts, onLoadPaymentMethods]),
+    );
 
     useEffect(() => {
         const pickedLocation = route.params?.pickedLocation;
@@ -414,21 +377,6 @@ export const useAddEvent = () => {
             cancelAnimationFrame(frameId);
         };
     }, [navigation, onChangeLocation, route.params?.pickedLocation]);
-
-    const phoneValueToSubmit = useMemo(() => {
-        const normalizedPhone = form.phoneNumber.trim().replace(/\D/g, '');
-        const normalizedCountryCode = form.phoneCountryCode.trim();
-
-        if (!normalizedPhone) {
-            return '';
-        }
-
-        if (!normalizedCountryCode) {
-            return normalizedPhone;
-        }
-
-        return `${normalizedCountryCode}${normalizedPhone}`;
-    }, [form.phoneCountryCode, form.phoneNumber]);
 
     const onSubmit = useCallback(() => {
         if (!form.location) {
@@ -455,7 +403,6 @@ export const useAddEvent = () => {
             eventEndDate: form.eventEndDate,
             eventStartTime: form.eventStartTime,
             eventEndTime: form.eventEndTime,
-            phoneNumber: phoneValueToSubmit,
             paymentMethodIds: form.paymentMethodIds,
             contactIds: form.contactIds,
             price: form.price.trim(),
@@ -481,7 +428,6 @@ export const useAddEvent = () => {
     }, [
         form,
         navigation,
-        phoneValueToSubmit,
         route.params?.editEventId,
         route.params?.initialSelectedWines,
         route.params?.draft?.repeatRule,
@@ -495,7 +441,6 @@ export const useAddEvent = () => {
         !validateEmptyString(form.eventEndDate).isValid ||
         !validateEmptyString(form.eventStartTime).isValid ||
         !validateEmptyString(form.eventEndTime).isValid ||
-        !validateEmptyString(phoneValueToSubmit).isValid ||
         (!isPaymentMethodsDisabled && form.paymentMethodIds.length === 0) ||
         form.contactIds.length === 0 ||
         !validateEmptyString(form.price.trim()).isValid ||
@@ -526,9 +471,6 @@ export const useAddEvent = () => {
         onEndDateSelect,
         onStartTimeSelect,
         onEndTimeSelect,
-        onChangePhoneNumber,
-        onChangePhoneCountryCode,
-        onClearPhoneNumber,
         onChangePrice,
         onChangeSpeakerName,
         onChangeLanguage,
@@ -542,7 +484,8 @@ export const useAddEvent = () => {
         onChangePaymentMethodIds,
         onChangeContactInfoIds,
         onLocationPress,
+        onOpenPaymentsPress,
+        onOpenContactsPress,
         onSubmit,
-        phoneCountryCca2: form.phoneCountryCca2,
     };
 };
