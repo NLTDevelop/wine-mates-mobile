@@ -24,14 +24,16 @@ import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLe
 import { WineLoverIcon } from '@assets/icons/WineLoverIcon.tsx';
 import { WineExpertIcon } from '@assets/icons/WineExpertIcon.tsx';
 import { WinemakerIcon } from '@assets/icons/WinemakerIcon.tsx';
-import { isIOS, scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal } from '@/utils';
 import { ProfileSelectorRow } from './components/ProfileSelectorRow';
+import { useKeyboardStickyLayout } from '@/hooks/useKeyboardStickyLayout';
 
 const EXPERTISE_SIZE = scaleHorizontal(16);
 
 export const EditProfileDetailsView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const { scrollBottomOffset, stickyOpenedOffset, onStickyLayout } = useKeyboardStickyLayout();
 
     const {
         form,
@@ -104,7 +106,7 @@ export const EditProfileDetailsView = () => {
                     contentContainerStyle={styles.contentContainer}
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
-                    bottomOffset={scaleVertical(82)}
+                    bottomOffset={scrollBottomOffset}
                 >
                     <View style={styles.content}>
                         <View style={styles.avatarContainer}>
@@ -257,10 +259,10 @@ export const EditProfileDetailsView = () => {
                 <KeyboardStickyView
                     offset={{
                         closed: 0,
-                        opened: isIOS ? scaleVertical(32) : 0,
+                        opened: stickyOpenedOffset,
                     }}
                 >
-                    <View style={styles.buttonContainer}>
+                    <View style={styles.buttonContainer} onLayout={onStickyLayout}>
                         <Button
                             text={t('common.save')}
                             onPress={onSave}
