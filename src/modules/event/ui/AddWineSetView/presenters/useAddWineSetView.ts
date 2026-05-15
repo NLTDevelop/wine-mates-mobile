@@ -81,7 +81,7 @@ export const useAddWineSetView = ({
     const draft = route.params?.draft;
     const editEventId = route.params?.editEventId;
     const isEditMode = typeof editEventId === 'number';
-    const [repeatRule, setRepeatRule] = useState<RepeatRuleConfig | null>(null);
+    const [repeatRule, setRepeatRule] = useState<RepeatRuleConfig | null>(draft?.repeatRule || null);
     const [tastingType, setTastingType] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
     const [isCreating, setIsCreating] = useState(false);
     const [isEventCreatedAlertVisible, setIsEventCreatedAlertVisible] = useState(false);

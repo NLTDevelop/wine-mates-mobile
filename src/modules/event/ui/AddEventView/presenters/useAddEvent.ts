@@ -470,6 +470,7 @@ export const useAddEvent = () => {
             tastingType: form.tastingType,
             participationCondition: form.participationCondition,
             requiresConfirmation: !!form.requiresConfirmation,
+            repeatRule: route.params?.draft?.repeatRule || null,
         };
 
         navigation.navigate('AddWineSetView', {
@@ -477,7 +478,14 @@ export const useAddEvent = () => {
             initialSelectedWines: route.params?.initialSelectedWines,
             editEventId: route.params?.editEventId,
         });
-    }, [form, navigation, phoneValueToSubmit, route.params?.editEventId, route.params?.initialSelectedWines]);
+    }, [
+        form,
+        navigation,
+        phoneValueToSubmit,
+        route.params?.editEventId,
+        route.params?.initialSelectedWines,
+        route.params?.draft?.repeatRule,
+    ]);
 
     const disabled =
         !validateEmptyString(form.theme.trim()).isValid ||

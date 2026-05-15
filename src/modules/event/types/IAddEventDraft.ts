@@ -2,6 +2,7 @@ import { EventType } from '@/entities/events/enums/EventType';
 import { ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
 import { Sex } from '@/entities/events/enums/Sex';
 import { TastingType } from '@/entities/events/enums/TastingType';
+import { RepeatRuleConfig } from '@/entities/events/types/RepeatRuleConfig';
 
 export interface IAddEventDraft {
     theme: string;
@@ -32,4 +33,5 @@ export interface IAddEventDraft {
     tastingType: TastingType;
     participationCondition?: ParticipationCondition;
     requiresConfirmation: boolean;
+    repeatRule?: RepeatRuleConfig | null;
 }

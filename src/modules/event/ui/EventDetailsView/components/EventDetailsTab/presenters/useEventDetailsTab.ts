@@ -167,21 +167,21 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const isEventCanceled = eventStatus === SavedEventStatus.CANCELED || eventStatus === 'cancelled';
     const isBookNowDisabled = isEventInactive || isEventFinished || isEventCanceled || isEventApplied || hasNoSeatsLeft;
     const isCancelEventDisabled = hasEventStarted || isEventInactive;
-    const appliedEventStatus = eventsModel.appliedEvents.find(item => item.event.id === eventDetail?.id)?.status
-        || (eventDetail as IEventDetailWithBookingStatus | null)?.appliedEventStatus
-        || (eventDetail as IEventDetailWithBookingStatus | null)?.bookingStatus
-        || (eventDetail as IEventDetailWithBookingStatus | null)?.applicationStatus
-        || (eventDetail as IEventDetailWithBookingStatus | null)?.status;
+    const appliedEventStatus =
+        eventsModel.appliedEvents.find(item => item.event.id === eventDetail?.id)?.status ||
+        (eventDetail as IEventDetailWithBookingStatus | null)?.appliedEventStatus ||
+        (eventDetail as IEventDetailWithBookingStatus | null)?.bookingStatus ||
+        (eventDetail as IEventDetailWithBookingStatus | null)?.applicationStatus ||
+        (eventDetail as IEventDetailWithBookingStatus | null)?.status;
     const isBookingAccepted = eventDetail?.requiresConfirmation
         ? appliedEventStatus === AppliedEventStatus.ACCEPTED
         : isEventApplied;
-    const isWineAccessTimeAvailable = eventStartDateTime && eventEndDateTime
-        ? currentTime.getTime() >= eventStartDateTime.getTime() - WINE_ACCESS_BEFORE_START_MS
-            && currentTime.getTime() <= eventEndDateTime.getTime()
-        : false;
-    const hasEventEnded = eventEndDateTime
-        ? currentTime.getTime() > eventEndDateTime.getTime()
-        : false;
+    const isWineAccessTimeAvailable =
+        eventStartDateTime && eventEndDateTime
+            ? currentTime.getTime() >= eventStartDateTime.getTime() - WINE_ACCESS_BEFORE_START_MS &&
+              currentTime.getTime() <= eventEndDateTime.getTime()
+            : false;
+    const hasEventEnded = eventEndDateTime ? currentTime.getTime() > eventEndDateTime.getTime() : false;
     const isTastingStarted = Boolean(eventDetail?.isTastingStarted);
     const isBeforeStartWindow = eventStartDateTime
         ? currentTime.getTime() <= eventStartDateTime.getTime() - TASTING_START_BEFORE_EVENT_MS
@@ -189,25 +189,20 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const isStopWindowAvailable = eventEndDateTime
         ? currentTime.getTime() <= eventEndDateTime.getTime() + TASTING_STOP_AFTER_END_MS
         : false;
-    const isTastingToggleVisible = isOwner
-        && (isTastingStarted ? isStopWindowAvailable : isBeforeStartWindow);
+    const isTastingToggleVisible = isOwner && (isTastingStarted ? isStopWindowAvailable : isBeforeStartWindow);
     const isTastingToggleDisabled = isBookNowInProgress || isEventInactive || isEventCanceled || isEventFinished;
     const isWineSetAccessAvailable = isTastingStarted || isWineAccessTimeAvailable;
     const isWineSetStatusVisible = Boolean(
-        eventDetail
-        && !isOwner
-        && isEventApplied
-        && isBookingAccepted
-        && isWineSetAccessAvailable
+        eventDetail && !isOwner && isEventApplied && isBookingAccepted && isWineSetAccessAvailable,
     );
     const isWineSetItemPressEnabled = Boolean(
-        eventDetail
-        && !isOwner
-        && isEventApplied
-        && isBookingAccepted
-        && isWineSetAccessAvailable
-        && !isEventInactive
-        && !isEventCanceled,
+        eventDetail &&
+        !isOwner &&
+        isEventApplied &&
+        isBookingAccepted &&
+        isWineSetAccessAvailable &&
+        !isEventInactive &&
+        !isEventCanceled,
     );
 
     const onOpenPaymentMethodsModal = useCallback(() => {
@@ -241,9 +236,10 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
                 }
 
                 const shouldDecreaseSeats = !eventDetail.requiresConfirmation;
-                const nextSeatsLeft = shouldDecreaseSeats && typeof eventDetail.seats?.left === 'number'
-                    ? Math.max(0, eventDetail.seats.left - 1)
-                    : undefined;
+                const nextSeatsLeft =
+                    shouldDecreaseSeats && typeof eventDetail.seats?.left === 'number'
+                        ? Math.max(0, eventDetail.seats.left - 1)
+                        : undefined;
                 setEventDetail({
                     ...eventDetail,
                     isApplied: true,
@@ -380,13 +376,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         } finally {
             setIsBookNowInProgress(false);
         }
-    }, [
-        eventDetail,
-        isTastingStarted,
-        isTastingToggleDisabled,
-        isTastingToggleVisible,
-        setEventDetail,
-    ]);
+    }, [eventDetail, isTastingStarted, isTastingToggleDisabled, isTastingToggleVisible, setEventDetail]);
 
     const onEditPress = useCallback(() => {
         if (!eventDetail) {
@@ -422,6 +412,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
             tastingType: eventDetail.tastingType || TastingType.Regular,
             participationCondition: eventDetail.participationCondition,
             requiresConfirmation: !!eventDetail.requiresConfirmation,
+            repeatRule: eventDetail.repeatRule || null,
         };
 
         const initialSelectedWines: IWineSetSearchItem[] = (eventDetail.wineSet || []).map(item => ({
@@ -475,6 +466,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
             tastingType: eventDetail.tastingType || TastingType.Regular,
             participationCondition: eventDetail.participationCondition,
             requiresConfirmation: !!eventDetail.requiresConfirmation,
+            repeatRule: eventDetail.repeatRule || null,
         };
 
         const initialSelectedWines: IWineSetSearchItem[] = (eventDetail.wineSet || []).map(item => ({
@@ -516,7 +508,9 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         hasEventEnded,
         isTastingToggleVisible,
         isTastingToggleDisabled,
-        tastingToggleButtonText: isTastingStarted ? localization.t('eventDetails.stopEvent') : localization.t('eventDetails.startEvent'),
+        tastingToggleButtonText: isTastingStarted
+            ? localization.t('eventDetails.stopEvent')
+            : localization.t('eventDetails.startEvent'),
         isPaymentMethodsModalVisible,
         paymentMethodOptions,
         isPaymentMethodNextDisabled: selectedPaymentMethodId === null,

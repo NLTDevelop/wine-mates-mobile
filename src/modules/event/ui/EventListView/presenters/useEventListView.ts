@@ -27,7 +27,9 @@ interface IProps {
 
 type Navigation = NativeStackNavigationProp<Record<string, object | undefined>>;
 
-const mapWineImageToMedia = (image?: { smallUrl?: string; mediumUrl?: string; originalUrl?: string } | null): IMedia | null => {
+const mapWineImageToMedia = (
+    image?: { smallUrl?: string; mediumUrl?: string; originalUrl?: string } | null,
+): IMedia | null => {
     if (!image) {
         return null;
     }
@@ -59,9 +61,12 @@ export const useEventListView = ({ t, createdEvents, savedEvents, appliedEvents 
         setScreenIndex(index);
     }, []);
 
-    const onReadMorePress = useCallback((eventId: number) => {
-        navigation.navigate('EventDetailsView', { eventId });
-    }, [navigation]);
+    const onReadMorePress = useCallback(
+        (eventId: number) => {
+            navigation.navigate('EventDetailsView', { eventId });
+        },
+        [navigation],
+    );
 
     const onAddEventPress = useCallback(() => {
         navigation.navigate('AddEventView');
@@ -77,66 +82,73 @@ export const useEventListView = ({ t, createdEvents, savedEvents, appliedEvents 
         setSelectedEventId(null);
     }, []);
 
-    const onModalReadMorePress = useCallback((eventId: number) => {
-        onCloseModal();
-        navigation.navigate('EventDetailsView', { eventId });
-    }, [navigation, onCloseModal]);
+    const onModalReadMorePress = useCallback(
+        (eventId: number) => {
+            onCloseModal();
+            navigation.navigate('EventDetailsView', { eventId });
+        },
+        [navigation, onCloseModal],
+    );
 
-    const onEditPress = useCallback(async (eventId: number) => {
-        const response = await eventsService.getById(eventId);
-        if (response.isError || !response.data) {
-            return;
-        }
+    const onEditPress = useCallback(
+        async (eventId: number) => {
+            const response = await eventsService.getById(eventId);
+            if (response.isError || !response.data) {
+                return;
+            }
 
-        const eventDetail = response.data;
-        const draft: IAddEventDraft = {
-            theme: eventDetail.theme || '',
-            description: eventDetail.description || '',
-            restaurantName: eventDetail.restaurantName || eventDetail.restaurant || '',
-            locationLabel: eventDetail.locationLabel || eventDetail.location || '',
-            locationCountry: '',
-            location: {
-                latitude: eventDetail.latitude,
-                longitude: eventDetail.longitude,
-            },
-            eventStartDate: eventDetail.eventStartDate || eventDetail.eventDate || '',
-            eventEndDate: eventDetail.eventEndDate || eventDetail.eventDate || '',
-            eventStartTime: eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '',
-            eventEndTime: eventDetail.eventEndTime || eventDetail.endTime || '',
-            phoneNumber: eventDetail.phoneNumber || '',
-            paymentMethodIds: [],
-            contactIds: [],
-            price: String(eventDetail.price || ''),
-            currency: eventDetail.currency ? String(eventDetail.currency) : '',
-            speakerName: eventDetail.speakerName || eventDetail.speaker || '',
-            language: eventDetail.language || 'ua',
-            seats: String(eventDetail.seats?.total || ''),
-            minAge: typeof eventDetail.minAge === 'number' ? eventDetail.minAge : 18,
-            maxAge: typeof eventDetail.maxAge === 'number' ? eventDetail.maxAge : 100,
-            sex: eventDetail.sex,
-            eventType: eventDetail.eventType || EventType.Tastings,
-            tastingType: eventDetail.tastingType || TastingType.Regular,
-            participationCondition: eventDetail.participationCondition,
-            requiresConfirmation: !!eventDetail.requiresConfirmation,
-        };
+            const eventDetail = response.data;
+            const draft: IAddEventDraft = {
+                theme: eventDetail.theme || '',
+                description: eventDetail.description || '',
+                restaurantName: eventDetail.restaurantName || eventDetail.restaurant || '',
+                locationLabel: eventDetail.locationLabel || eventDetail.location || '',
+                locationCountry: '',
+                location: {
+                    latitude: eventDetail.latitude,
+                    longitude: eventDetail.longitude,
+                },
+                eventStartDate: eventDetail.eventStartDate || eventDetail.eventDate || '',
+                eventEndDate: eventDetail.eventEndDate || eventDetail.eventDate || '',
+                eventStartTime: eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '',
+                eventEndTime: eventDetail.eventEndTime || eventDetail.endTime || '',
+                phoneNumber: eventDetail.phoneNumber || '',
+                paymentMethodIds: [],
+                contactIds: [],
+                price: String(eventDetail.price || ''),
+                currency: eventDetail.currency ? String(eventDetail.currency) : '',
+                speakerName: eventDetail.speakerName || eventDetail.speaker || '',
+                language: eventDetail.language || 'ua',
+                seats: String(eventDetail.seats?.total || ''),
+                minAge: typeof eventDetail.minAge === 'number' ? eventDetail.minAge : 18,
+                maxAge: typeof eventDetail.maxAge === 'number' ? eventDetail.maxAge : 100,
+                sex: eventDetail.sex,
+                eventType: eventDetail.eventType || EventType.Tastings,
+                tastingType: eventDetail.tastingType || TastingType.Regular,
+                participationCondition: eventDetail.participationCondition,
+                requiresConfirmation: !!eventDetail.requiresConfirmation,
+                repeatRule: eventDetail.repeatRule || null,
+            };
 
-        const initialSelectedWines: IWineSetSearchItem[] = (eventDetail.wineSet || []).map(item => ({
-            id: item.wineId || item.wine.id,
-            name: item.wine.name,
-            producer: item.wine.producer || '',
-            vintage: item.wine.vintage || null,
-            image: mapWineImageToMedia(item.wine.image),
-            grapeVariety: null,
-            country: null,
-            region: null,
-        }));
+            const initialSelectedWines: IWineSetSearchItem[] = (eventDetail.wineSet || []).map(item => ({
+                id: item.wineId || item.wine.id,
+                name: item.wine.name,
+                producer: item.wine.producer || '',
+                vintage: item.wine.vintage || null,
+                image: mapWineImageToMedia(item.wine.image),
+                grapeVariety: null,
+                country: null,
+                region: null,
+            }));
 
-        navigation.navigate('AddEventView', {
-            draft,
-            initialSelectedWines,
-            editEventId: eventDetail.id,
-        });
-    }, [navigation]);
+            navigation.navigate('AddEventView', {
+                draft,
+                initialSelectedWines,
+                editEventId: eventDetail.id,
+            });
+        },
+        [navigation],
+    );
 
     const selectedCreatedEvent = createdEvents?.rows.find(event => event.id === selectedEventId);
     const selectedSavedEvent = savedEvents?.rows.find(event => event.id === selectedEventId);
