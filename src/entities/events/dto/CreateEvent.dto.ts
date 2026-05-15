@@ -1,8 +1,8 @@
-import { RepeatRule } from '../enums/RepeatRule';
 import { EventType } from '../enums/EventType';
 import { TastingType } from '../enums/TastingType';
 import { ParticipationCondition } from '../enums/ParticipationCondition';
 import { Sex } from '../enums/Sex';
+import { RepeatRuleConfig } from '../types/RepeatRuleConfig';
 
 interface IWineSetItem {
     wineId: number;
@@ -34,6 +34,6 @@ export interface CreateEventDto {
     tastingType: TastingType;
     participationCondition?: ParticipationCondition;
     requiresConfirmation: boolean;
-    repeatRule: RepeatRule;
+    repeatRule: RepeatRuleConfig | null;
     wineSet?: IWineSetItem[];
 }
