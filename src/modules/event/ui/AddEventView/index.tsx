@@ -27,11 +27,11 @@ import { SingleSelectModal } from './components/SingleSelectModal';
 import { PickerButton } from './components/PickerButton';
 import { CalendarModal } from '@/UIKit/CalendarModal';
 import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
-import { isIOS, isSmallIOSScreen, scaleVertical } from '@/utils';
 import { ClockIcon } from '@assets/icons/ClockIcon';
 import { RangeSlider } from '@/UIKit/RangeSlider';
 import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
 import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCurrencyPickerModal';
+import { useKeyboardStickyLayout } from '@/hooks/useKeyboardStickyLayout';
 
 export const AddEventView = () => {
     const { colors, t } = useUiContext();
@@ -176,6 +176,7 @@ export const AddEventView = () => {
     });
 
     const isCurrencyPickerDisabled = isCurrencyDisabled || !currencies.length;
+    const { scrollBottomOffset, stickyOpenedOffset, onStickyLayout } = useKeyboardStickyLayout();
 
     const currencyPicker = useCurrencyPickerModal({
         value: form.currency,
@@ -228,7 +229,7 @@ export const AddEventView = () => {
                         contentContainerStyle={styles.contentContainerStyle}
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
-                        bottomOffset={scaleVertical(82)}
+                        bottomOffset={scrollBottomOffset}
                     >
                         <View style={styles.content}>
                             <Typography variant="h4" text={t('event.basicInfo')} />
@@ -399,10 +400,10 @@ export const AddEventView = () => {
                     <KeyboardStickyView
                         offset={{
                             closed: 0,
-                            opened: isIOS ? (isSmallIOSScreen ? 0 : scaleVertical(32)) : 0,
+                            opened: stickyOpenedOffset,
                         }}
                     >
-                        <View style={styles.buttonContainer}>
+                        <View style={styles.buttonContainer} onLayout={onStickyLayout}>
                             <Button
                                 text={t('common.continue')}
                                 onPress={onSubmit}

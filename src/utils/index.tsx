@@ -9,7 +9,6 @@ export const isAndroid = Platform.OS === 'android';
 const idealWidth: number = 375;
 const idealHeight: number = 812;
 export const size: { width: number; height: number } = Dimensions.get('window');
-export const isSmallIOSScreen = isIOS && size.height < 700;
 const ratio: number = PixelRatio.getFontScale();
 
 export const scaleHorizontal = (inWidth: number = 1): number => {
