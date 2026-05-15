@@ -541,7 +541,8 @@
         "deletePaymentMethodTitle": "Видалити спосіб оплати?",
         "deletePaymentMethodMessage": "Ви впевнені, що хочете видалити цей спосіб оплати?",
         "noVisiblePaymentMethods": "Немає видимих способів оплати",
-        "addPaymentMethodsInProfile": "Додайте способи оплати в профілі"
+        "addPaymentMethodsInProfile": "Додайте способи оплати в профілі",
+        "openPayments": "Відкрити способи оплати"
     },
     "contactInfo": {
         "contactInfo": "Контактна інформація",
@@ -554,6 +555,7 @@
         "invalidContactValue": "Введіть коректний номер телефону або посилання на підтримувану соціальну мережу",
         "deleteContactTitle": "Видалити контакт?",
         "deleteContactMessage": "Ви впевнені, що хочете видалити цей контакт?",
-        "noVisibleContacts": "Немає видимих контактів"
+        "noVisibleContacts": "Немає видимих контактів",
+        "openContacts": "Відкрити контакти"
     }
 }

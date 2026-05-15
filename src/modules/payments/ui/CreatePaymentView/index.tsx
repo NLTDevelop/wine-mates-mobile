@@ -32,7 +32,7 @@ export const CreatePaymentView = () => {
 
     return (
         <ScreenContainer
-            edges={['top']}
+            edges={['top', 'bottom']}
             withGradient
             scrollEnabled
             isKeyboardAvoiding

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useValidator } from '@/hooks/useValidator';
 import { EventType } from '@/entities/events/enums/EventType';
@@ -327,6 +327,14 @@ export const useAddEvent = () => {
         });
     }, [form.eventType, form.location, navigation]);
 
+    const onOpenPaymentsPress = useCallback(() => {
+        navigation.navigate('PaymentsView' as never);
+    }, [navigation]);
+
+    const onOpenContactsPress = useCallback(() => {
+        navigation.navigate('ContactInfoView' as never);
+    }, [navigation]);
+
     useEffect(() => {
         const frameId = requestAnimationFrame(() => {
             onLoadPaymentMethods();
@@ -338,6 +346,13 @@ export const useAddEvent = () => {
             cancelAnimationFrame(frameId);
         };
     }, [onLoadContacts, onLoadEventCurrencies, onLoadPaymentMethods]);
+
+    useFocusEffect(
+        useCallback(() => {
+            onLoadPaymentMethods();
+            onLoadContacts();
+        }, [onLoadContacts, onLoadPaymentMethods]),
+    );
 
     useEffect(() => {
         const pickedLocation = route.params?.pickedLocation;
@@ -462,6 +477,8 @@ export const useAddEvent = () => {
         onChangePaymentMethodIds,
         onChangeContactInfoIds,
         onLocationPress,
+        onOpenPaymentsPress,
+        onOpenContactsPress,
         onSubmit,
     };
 };

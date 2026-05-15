@@ -71,6 +71,8 @@ export const AddEventView = () => {
         onChangePaymentMethodIds,
         onChangeContactInfoIds,
         onLocationPress,
+        onOpenPaymentsPress,
+        onOpenContactsPress,
         onSubmit,
     } = useAddEvent();
 
@@ -189,10 +191,12 @@ export const AddEventView = () => {
         onOpen: onOpenPaymentMethodsModal,
         onClose: onClosePaymentMethodsModal,
         onConfirm: onConfirmPaymentMethods,
+        onOpenPayments: onOpenPaymentsFromModal,
     } = usePaymentMethodsModal({
         value: form.paymentMethodIds,
         paymentMethods,
         onChange: onChangePaymentMethodIds,
+        onOpenPaymentsPress,
         isDisabled: isPaymentMethodsDisabled,
     });
 
@@ -203,10 +207,12 @@ export const AddEventView = () => {
         onOpen: onOpenContactInfoModal,
         onClose: onCloseContactInfoModal,
         onConfirm: onConfirmContactInfo,
+        onOpenContacts: onOpenContactsFromModal,
     } = useContactInfoModal({
         value: form.contactIds,
         contacts,
         onChange: onChangeContactInfoIds,
+        onOpenContactsPress,
     });
 
     return (
@@ -469,6 +475,7 @@ export const AddEventView = () => {
                     isLoading={isPaymentMethodsLoading}
                     onClose={onClosePaymentMethodsModal}
                     onConfirm={onConfirmPaymentMethods}
+                    onOpenPaymentsPress={onOpenPaymentsFromModal}
                 />
             )}
             {isContactInfoModalVisible && (
@@ -478,6 +485,7 @@ export const AddEventView = () => {
                     isLoading={isContactInfoLoading}
                     onClose={onCloseContactInfoModal}
                     onConfirm={onConfirmContactInfo}
+                    onOpenContactsPress={onOpenContactsFromModal}
                 />
             )}
             {isConfirmationRequiredModalVisible && (

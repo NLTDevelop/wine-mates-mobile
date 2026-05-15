@@ -46,7 +46,7 @@ export const ContactInfoView = observer(() => {
     return (
         <>
             <ScreenContainer
-                edges={['top']}
+                edges={['top', 'bottom']}
                 withGradient
                 scrollEnabled={false}
                 headerComponent={<HeaderWithBackButton title={t('contactInfo.contacts')} isCentered />}

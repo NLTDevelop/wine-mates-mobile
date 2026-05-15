@@ -34,6 +34,10 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
             textAlign: 'center',
         },
+        emptyActionButton: {
+            marginTop: scaleVertical(12),
+            width: '100%',
+        },
         confirmButton: {
             width: '100%',
             marginTop: scaleVertical(12),
