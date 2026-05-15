@@ -103,7 +103,6 @@ export const useEventListView = ({ t, createdEvents, savedEvents, appliedEvents 
             eventEndDate: eventDetail.eventEndDate || eventDetail.eventDate || '',
             eventStartTime: eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '',
             eventEndTime: eventDetail.eventEndTime || eventDetail.endTime || '',
-            phoneNumber: eventDetail.phoneNumber || '',
             paymentMethodIds: [],
             contactIds: [],
             price: String(eventDetail.price || ''),

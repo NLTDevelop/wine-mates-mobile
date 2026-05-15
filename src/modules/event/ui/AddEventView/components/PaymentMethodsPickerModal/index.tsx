@@ -14,6 +14,7 @@ interface IProps {
     isLoading: boolean;
     onClose: () => void;
     onConfirm: () => void;
+    onOpenPaymentsPress: () => void;
 }
 
 export const PaymentMethodsPickerModal = ({
@@ -22,6 +23,7 @@ export const PaymentMethodsPickerModal = ({
     isLoading,
     onClose,
     onConfirm,
+    onOpenPaymentsPress,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -62,6 +64,12 @@ export const PaymentMethodsPickerModal = ({
                                     variant="h5"
                                     text={t('payments.addPaymentMethodsInProfile')}
                                     style={styles.emptyText}
+                                />
+                                <Button
+                                    text={t('payments.openPayments')}
+                                    onPress={onOpenPaymentsPress}
+                                    type="secondary"
+                                    containerStyle={styles.emptyActionButton}
                                 />
                             </View>
                         }

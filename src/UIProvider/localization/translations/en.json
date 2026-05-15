@@ -345,7 +345,7 @@
         "men": "Men",
         "women": "Women",
         "all": "All",
-        "age": "Age",
+        "age": "Age of participants",
         "kmSuffix": "km",
         "close": "Close"
     },
@@ -357,7 +357,7 @@
         "locationAndSchedule": "Location & Schedule",
         "bookingAndDetails": "Booking & Details",
         "tastingTheme": "Theme of the evening",
-        "restaurant": "Meeting place",
+        "meetingPlaceName": "Meeting place name",
         "location": "Location",
         "eventDate": "Event date",
         "eventTime": "Event time",
@@ -400,7 +400,7 @@
         "eventType": "Event type",
         "tastingType": "Tasting type",
         "tastingTypeBlind": "Blind tasting",
-        "tastingTypeRegular": "Comparative tasting",
+        "tastingTypeRegular": "Tasting",
         "participationCondition": "Participation condition",
         "participationConditionFixedPrice": "Fixed price",
         "participationConditionSplitBill": "Split bill equally",
@@ -433,7 +433,7 @@
         "title": "Event Details",
         "theme": "Theme",
         "description": "Description",
-        "restaurant": "Restaurant",
+        "meetingPlaceName": "Meeting place name",
         "location": "Location",
         "date": "Date",
         "time": "Time",
@@ -448,7 +448,7 @@
         "kmOnly": "{{distance}} km",
         "language": "Language",
         "sex": "Sex",
-        "age": "Age",
+        "age": "Age of participants",
         "participationCondition": "Participation condition",
         "seats": "Seats",
         "confirmationAvailability": "Availability of confirmation",
@@ -537,7 +537,8 @@
         "deletePaymentMethodTitle": "Delete payment method?",
         "deletePaymentMethodMessage": "Are you sure you want to delete this payment method?",
         "noVisiblePaymentMethods": "No visible payment methods",
-        "addPaymentMethodsInProfile": "Add payment methods to your profile."
+        "addPaymentMethodsInProfile": "Add payment methods to your profile.",
+        "openPayments": "Open payments"
     },
     "contactInfo": {
         "contactInfo": "Contact information",
@@ -550,6 +551,7 @@
         "invalidContactValue": "Please enter a valid phone number or a supported social network link",
         "deleteContactTitle": "Delete contact?",
         "deleteContactMessage": "Are you sure you want to delete this contact?",
-        "noVisibleContacts": "No visible contacts"
+        "noVisibleContacts": "No visible contacts",
+        "openContacts": "Open contacts"
     }
 }

@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import Flag from 'react-native-round-flags';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { IEventContactOption } from '@/modules/event/ui/EventDetailsView/types/IEventContactOption';
@@ -84,14 +83,6 @@ export const EventContactItem = ({ item }: IProps) => {
         <TouchableOpacity style={styles.container} onPress={item.onPress} activeOpacity={0.8}>
             <View style={styles.leftContent}>
                 {renderSocialIcon(item.type)}
-                {item.type === 'phone' && !!item.phoneCountryCode && (
-                    <Flag code={item.phoneCountryCode} style={styles.flag} />
-                )}
-                {item.type === 'phone' && !item.phoneCountryCode && (
-                    <View style={styles.placeholderFlag}>
-                        <Typography text="?" variant="h6" style={styles.placeholderText} />
-                    </View>
-                )}
                 <Typography text={item.title} variant="h6" style={styles.title} numberOfLines={1} />
             </View>
             <NextArrowIcon width={20} height={20} color={colors.text_light} />

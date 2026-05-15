@@ -26,22 +26,6 @@ export const getStyles = (colors: IColors) => {
             flex: 1,
             color: colors.text,
         },
-        flag: {
-            width: scaleVertical(24),
-            height: scaleVertical(24),
-            borderRadius: scaleVertical(24),
-        },
-        placeholderFlag: {
-            width: scaleVertical(24),
-            height: scaleVertical(24),
-            borderRadius: scaleVertical(24),
-            backgroundColor: colors.background_grey,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        placeholderText: {
-            color: colors.text,
-        },
     });
 
     return styles;

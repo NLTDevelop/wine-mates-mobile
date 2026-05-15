@@ -8,11 +8,6 @@ import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
 import { EventType } from '@/entities/events/enums/EventType';
 
-const KYIV_COORDINATES = {
-    latitude: 50.4501,
-    longitude: 30.5234,
-};
-
 const DEFAULT_RADIUS_KM = 100;
 const DEFAULT_LIMIT = 10;
 const OFFSET = 0;
@@ -44,11 +39,14 @@ export const useEventsList = ({ searchLocation, filters, selectedEventType }: IP
     }, [list]);
 
     const getTargetLocation = useCallback((location?: IUserLocation | null) => {
-        return location || searchLocation || userLocation || KYIV_COORDINATES;
+        return location || searchLocation || userLocation || null;
     }, [searchLocation, userLocation]);
 
     const loadEvents = useCallback(async (offset: number, location?: IUserLocation | null) => {
         const targetLocation = getTargetLocation(location);
+        if (!targetLocation) {
+            return;
+        }
 
         if (offset === OFFSET) {
             setIsRefreshing(true);
@@ -98,6 +96,9 @@ export const useEventsList = ({ searchLocation, filters, selectedEventType }: IP
 
     const refetch = useCallback((location?: IUserLocation | null) => {
         const targetLocation = getTargetLocation(location);
+        if (!targetLocation) {
+            return Promise.resolve();
+        }
         hasAutoLoadedOnFocusRef.current = true;
         lastLoadedLocationKeyRef.current = `${targetLocation.latitude}:${targetLocation.longitude}`;
         lastLoadedFiltersKeyRef.current = filtersKey;
@@ -116,6 +117,9 @@ export const useEventsList = ({ searchLocation, filters, selectedEventType }: IP
         }
 
         const targetLocation = getTargetLocation();
+        if (!targetLocation) {
+            return;
+        }
         const currentLocationKey = `${targetLocation.latitude}:${targetLocation.longitude}`;
         const isSameLocation = lastLoadedLocationKeyRef.current === currentLocationKey;
         const isSameFilters = lastLoadedFiltersKeyRef.current === filtersKey;

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, View, TouchableOpacity } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -27,6 +27,7 @@ export const EventMapView = observer(() => {
         onFilterPress,
         filterCount,
         filteredEvents,
+        isLocationLoading,
         selectedEvent,
         isModalVisible,
         onAddEvent,
@@ -54,31 +55,39 @@ export const EventMapView = observer(() => {
                     isUpdateEventDisabled={isRefetching}
                     filterCount={filterCount}
                 />
-                <View style={styles.content}>
-                    <View style={styles.mapContainer}>
-                        <EventMap
-                            mapPins={mapPins}
-                            selectedTab={selectedTab}
-                            initialRegion={initialRegion}
-                            onMarkerPress={onMarkerPress}
-                            onMapPress={onMapPress}
-                            userLocation={userLocation}
-                            searchLocation={searchLocation}
-                        />
-                        <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onAddEvent}>
-                            <PlusIcon width={32} height={32} color="white" />
-                        </TouchableOpacity>
+                {isLocationLoading ? (
+                    <View style={styles.loaderContainer}>
+                        <ActivityIndicator size="large" color={colors.primary} />
                     </View>
-                </View>
+                ) : (
+                    <>
+                        <View style={styles.content}>
+                            <View style={styles.mapContainer}>
+                                <EventMap
+                                    mapPins={mapPins}
+                                    selectedTab={selectedTab}
+                                    initialRegion={initialRegion}
+                                    onMarkerPress={onMarkerPress}
+                                    onMapPress={onMapPress}
+                                    userLocation={userLocation}
+                                    searchLocation={searchLocation}
+                                />
+                                <TouchableOpacity style={styles.addButton} activeOpacity={0.8} onPress={onAddEvent}>
+                                    <PlusIcon width={32} height={32} color="white" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
 
-                <WineEventList
-                    events={filteredEvents}
-                    selectedEventId={null}
-                    onReadMorePress={onReadMorePress}
-                    onFavoritePress={onFavoritePress}
-                    onEditPress={onEditPress}
-                    onCardPress={onCardPress}
-                />
+                        <WineEventList
+                            events={filteredEvents}
+                            selectedEventId={null}
+                            onReadMorePress={onReadMorePress}
+                            onFavoritePress={onFavoritePress}
+                            onEditPress={onEditPress}
+                            onCardPress={onCardPress}
+                        />
+                    </>
+                )}
             </ScreenContainer>
 
             {selectedEvent && isModalVisible && (

@@ -10,7 +10,6 @@ import { Button } from '@/UIKit/Button';
 import { Typography } from '@/UIKit/Typography';
 import { useAddEvent } from './presenters/useAddEvent';
 import { MapLocationIcon } from '@assets/icons/MapLocationIcon';
-import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { CalendarIcon } from '@assets/icons/CalendarIcon';
 import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
 import { useDateTimePicker } from './presenters/useDateTimePicker';
@@ -28,7 +27,7 @@ import { SingleSelectModal } from './components/SingleSelectModal';
 import { PickerButton } from './components/PickerButton';
 import { CalendarModal } from '@/UIKit/CalendarModal';
 import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
-import { isIOS, scaleVertical } from '@/utils';
+import { isIOS, isSmallIOSScreen, scaleVertical } from '@/utils';
 import { ClockIcon } from '@assets/icons/ClockIcon';
 import { RangeSlider } from '@/UIKit/RangeSlider';
 import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
@@ -60,9 +59,6 @@ export const AddEventView = () => {
         onEndDateSelect,
         onStartTimeSelect,
         onEndTimeSelect,
-        onChangePhoneNumber,
-        onChangePhoneCountryCode,
-        onClearPhoneNumber,
         onChangePrice,
         onChangeLanguage,
         onChangeSeats,
@@ -75,8 +71,9 @@ export const AddEventView = () => {
         onChangePaymentMethodIds,
         onChangeContactInfoIds,
         onLocationPress,
+        onOpenPaymentsPress,
+        onOpenContactsPress,
         onSubmit,
-        phoneCountryCca2,
     } = useAddEvent();
 
     const {
@@ -194,10 +191,12 @@ export const AddEventView = () => {
         onOpen: onOpenPaymentMethodsModal,
         onClose: onClosePaymentMethodsModal,
         onConfirm: onConfirmPaymentMethods,
+        onOpenPayments: onOpenPaymentsFromModal,
     } = usePaymentMethodsModal({
         value: form.paymentMethodIds,
         paymentMethods,
         onChange: onChangePaymentMethodIds,
+        onOpenPaymentsPress,
         isDisabled: isPaymentMethodsDisabled,
     });
 
@@ -208,10 +207,12 @@ export const AddEventView = () => {
         onOpen: onOpenContactInfoModal,
         onClose: onCloseContactInfoModal,
         onConfirm: onConfirmContactInfo,
+        onOpenContacts: onOpenContactsFromModal,
     } = useContactInfoModal({
         value: form.contactIds,
         contacts,
         onChange: onChangeContactInfoIds,
+        onOpenContactsPress,
     });
 
     return (
@@ -255,15 +256,6 @@ export const AddEventView = () => {
                                 onChangeText={onChangeSpeakerName}
                                 placeholder={t('event.speakerName')}
                             />
-                            <PhoneInputField
-                                value={form.phoneNumber}
-                                onChangeText={onChangePhoneNumber}
-                                clearPhone={onClearPhoneNumber}
-                                onChangeCountryCode={onChangePhoneCountryCode}
-                                initialCca2={phoneCountryCca2}
-                                placeholder={t('event.phoneNumber')}
-                            />
-
                             {isPartyEventType && (
                                 <>
                                     <Typography variant="h6" text={t('eventFilters.age')} />
@@ -304,7 +296,7 @@ export const AddEventView = () => {
                                 value={form.restaurantName}
                                 containerStyle={styles.inputContainerStyle}
                                 onChangeText={onChangeRestaurantName}
-                                placeholder={t('event.restaurant')}
+                                placeholder={t('event.meetingPlaceName')}
                             />
 
                             <TouchableOpacity onPress={onLocationPress} style={styles.locationButton}>
@@ -407,7 +399,7 @@ export const AddEventView = () => {
                     <KeyboardStickyView
                         offset={{
                             closed: 0,
-                            opened: isIOS ? scaleVertical(32) : 0,
+                            opened: isIOS ? (isSmallIOSScreen ? 0 : scaleVertical(32)) : 0,
                         }}
                     >
                         <View style={styles.buttonContainer}>
@@ -483,6 +475,7 @@ export const AddEventView = () => {
                     isLoading={isPaymentMethodsLoading}
                     onClose={onClosePaymentMethodsModal}
                     onConfirm={onConfirmPaymentMethods}
+                    onOpenPaymentsPress={onOpenPaymentsFromModal}
                 />
             )}
             {isContactInfoModalVisible && (
@@ -492,6 +485,7 @@ export const AddEventView = () => {
                     isLoading={isContactInfoLoading}
                     onClose={onCloseContactInfoModal}
                     onConfirm={onConfirmContactInfo}
+                    onOpenContactsPress={onOpenContactsFromModal}
                 />
             )}
             {isConfirmationRequiredModalVisible && (
