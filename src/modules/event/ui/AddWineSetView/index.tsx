@@ -19,6 +19,7 @@ import { WineSearchBottomSheet } from './components/WineSearchBottomSheet';
 import { useRepeatRuleModal } from './presenters/useRepeatRuleModal';
 import { useTastingTypeModal } from './presenters/useTastingTypeModal';
 import { useWineSetSortableList } from './presenters/useWineSetSortableList';
+import { CustomRepeatEventModal } from './components/CustomRepeatEventModal';
 
 export const AddWineSetView = () => {
     const { colors, t } = useUiContext();
@@ -78,9 +79,14 @@ export const AddWineSetView = () => {
         draft: repeatRuleDraft,
         selectedText: repeatRuleLabel,
         items: repeatRuleItems,
+        isRepeatEnabled,
         onOpen: onOpenRepeatModal,
         onClose: onCloseRepeatModal,
         onConfirm: onConfirmRepeatRule,
+        onChangeSwitch: onChangeRepeatSwitch,
+        isCustomRepeatVisible,
+        onCloseCustomRepeat,
+        onConfirmCustomRepeat,
     } = useRepeatRuleModal({
         value: repeatRule,
         onChange: onChangeRepeatRule,
@@ -109,13 +115,7 @@ export const AddWineSetView = () => {
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
 
     const renderWineItem: SortableGridRenderItem<IWineSetViewItem> = function renderWineItem({ item }) {
-        return (
-            <WineSetItemRow
-                title={item.title}
-                onEditPress={item.onEditPress}
-                onDeletePress={item.onDeletePress}
-            />
-        );
+        return <WineSetItemRow title={item.title} onEditPress={item.onEditPress} onDeletePress={item.onDeletePress} />;
     };
 
     return (
@@ -169,11 +169,13 @@ export const AddWineSetView = () => {
                             </View>
                             <WineSetListFooter
                                 repeatRuleLabel={repeatRuleLabel}
+                                isRepeatEnabled={isRepeatEnabled}
                                 isCreating={isCreating}
                                 isCreateEventDisabled={isCreateEventDisabled}
                                 isEditMode={isEditMode}
                                 onAddWinePress={onAddWinePress}
                                 onOpenRepeatModal={onOpenRepeatModal}
+                                onChangeRepeatSwitch={onChangeRepeatSwitch}
                                 onCreateEventPress={onCreateEventPress}
                             />
                         </Animated.ScrollView>
@@ -188,6 +190,13 @@ export const AddWineSetView = () => {
                     items={repeatRuleItems}
                     selectedValue={repeatRuleDraft}
                     onConfirm={onConfirmRepeatRule}
+                />
+            )}
+            {isCustomRepeatVisible && (
+                <CustomRepeatEventModal
+                    visible={isCustomRepeatVisible}
+                    onClose={onCloseCustomRepeat}
+                    onConfirm={onConfirmCustomRepeat}
                 />
             )}
             {isTastingTypeModalVisible && (

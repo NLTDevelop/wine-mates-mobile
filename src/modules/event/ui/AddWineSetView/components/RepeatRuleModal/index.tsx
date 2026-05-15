@@ -6,17 +6,12 @@ import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { getStyles } from './styles';
 import { RepeatRule } from '@/entities/events/enums/RepeatRule';
-
-interface IRepeatRuleItem {
-    value: RepeatRule;
-    label: string;
-    onPress: () => void;
-}
+import { IRepeatRuleModalItem } from '@/modules/event/types/IRepeatRuleModalItem';
 
 interface IProps {
     visible: boolean;
     onClose: () => void;
-    items: IRepeatRuleItem[];
+    items: IRepeatRuleModalItem[];
     selectedValue: RepeatRule;
     onConfirm: () => void;
 }

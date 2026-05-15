@@ -4,6 +4,8 @@ import { EventType } from '../enums/EventType';
 import { TastingType } from '../enums/TastingType';
 import { ParticipationCondition } from '../enums/ParticipationCondition';
 import { IWineSetItem } from './IWineSetItem';
+import { RepeatRuleConfig } from './RepeatRuleConfig';
+import { IEventParticipant } from './IEventParticipant';
 
 export interface IEvent {
     id: number;
@@ -26,6 +28,7 @@ export interface IEvent {
     longitude: number;
     distanceKm: string | number | null;
     acceptedCount?: number;
+    participants?: IEventParticipant[];
     isSaved?: boolean;
     eventType?: EventType;
     tastingType?: TastingType;
@@ -79,8 +82,10 @@ export interface IEventDetail {
     attendeesCount?: number;
     contacts?: IEventContact[];
     acceptedCount?: number;
+    participants?: IEventParticipant[];
     price: number;
     eventType?: EventType;
+    repeatRule?: RepeatRuleConfig | null;
     isSaved?: boolean;
     theme: string;
     restaurant?: string;

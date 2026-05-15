@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Switch, TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
@@ -10,28 +10,32 @@ import { useWineSetListFooter } from './presenters/useWineSetListFooter';
 
 interface IProps {
     repeatRuleLabel: string;
+    isRepeatEnabled: boolean;
     isCreating: boolean;
     isCreateEventDisabled: boolean;
     isEditMode: boolean;
     onAddWinePress: () => void;
     onOpenRepeatModal: () => void;
+    onChangeRepeatSwitch: (value: boolean) => void;
     onCreateEventPress: () => void;
 }
 
 export const WineSetListFooter = ({
     repeatRuleLabel,
+    isRepeatEnabled,
     isCreating,
     isCreateEventDisabled,
     isEditMode,
     onAddWinePress,
     onOpenRepeatModal,
+    onChangeRepeatSwitch,
     onCreateEventPress,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { repeatValueText, repeatTitleText } = useWineSetListFooter({
         repeatRuleLabel,
-        repeatTitle: t('event.repeat'),
+        repeatTitle: t('repeatEvent.repetition'),
     });
 
     return (
@@ -45,12 +49,14 @@ export const WineSetListFooter = ({
             <View style={styles.divider} />
             <View style={styles.repeatRow}>
                 <Typography variant="h6" text={repeatTitleText} style={styles.repeatLabel} />
+                <Switch onValueChange={onChangeRepeatSwitch} value={isRepeatEnabled} />
+            </View>
+            {isRepeatEnabled && (
                 <TouchableOpacity style={styles.repeatButton} onPress={onOpenRepeatModal}>
-                    <Typography variant="h6" text={repeatValueText} style={styles.repeatButtonText} />
+                    <Typography variant="h6" text={repeatValueText} style={styles.repeatButtonText} numberOfLines={1} />
                     <ArrowDownIcon />
                 </TouchableOpacity>
-            </View>
-
+            )}
             <Button
                 text={isEditMode ? t('event.updateEvent') : t('event.createEvent')}
                 type="main"

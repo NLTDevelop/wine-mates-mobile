@@ -24,16 +24,17 @@ export const getStyles = (colors: IColors) => {
         repeatButton: {
             height: scaleVertical(40),
             borderWidth: scaleHorizontal(1),
-            borderColor: colors.primary,
+            borderColor: colors.border,
             borderRadius: 12,
             flexDirection: 'row',
             alignItems: 'center',
-            gap: scaleHorizontal(8),
             paddingHorizontal: scaleHorizontal(12),
             backgroundColor: colors.background,
+            justifyContent: 'space-between',
         },
         repeatButtonText: {
-            color: colors.text,
+            color: colors.text_middle,
+            flex: 1,
         },
         createButton: {
             marginTop: scaleVertical(8),
