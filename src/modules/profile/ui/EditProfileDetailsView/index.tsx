@@ -33,7 +33,7 @@ const EXPERTISE_SIZE = scaleHorizontal(16);
 export const EditProfileDetailsView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { scrollBottomOffset, stickyOpenedOffset, onStickyLayout } = useKeyboardStickyLayout();
+    const { scrollBottomOffset, extraKeyboardSpace, stickyOpenedOffset, onStickyLayout } = useKeyboardStickyLayout();
 
     const {
         form,
@@ -107,6 +107,7 @@ export const EditProfileDetailsView = () => {
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
                     bottomOffset={scrollBottomOffset}
+                    extraKeyboardSpace={extraKeyboardSpace}
                 >
                     <View style={styles.content}>
                         <View style={styles.avatarContainer}>

@@ -17,10 +17,12 @@ export const useKeyboardStickyLayout = () => {
         return stickyHeight + KEYBOARD_SCROLL_GAP;
     }, [stickyHeight]);
 
+    const extraKeyboardSpace = scrollBottomOffset;
     const stickyOpenedOffset = isIOS ? bottom : 0;
 
     return {
         scrollBottomOffset,
+        extraKeyboardSpace,
         stickyOpenedOffset,
         onStickyLayout,
     };

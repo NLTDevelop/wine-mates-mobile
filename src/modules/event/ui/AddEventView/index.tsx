@@ -176,7 +176,7 @@ export const AddEventView = () => {
     });
 
     const isCurrencyPickerDisabled = isCurrencyDisabled || !currencies.length;
-    const { scrollBottomOffset, stickyOpenedOffset, onStickyLayout } = useKeyboardStickyLayout();
+    const { scrollBottomOffset, extraKeyboardSpace, stickyOpenedOffset, onStickyLayout } = useKeyboardStickyLayout();
 
     const currencyPicker = useCurrencyPickerModal({
         value: form.currency,
@@ -230,6 +230,7 @@ export const AddEventView = () => {
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                         bottomOffset={scrollBottomOffset}
+                        extraKeyboardSpace={extraKeyboardSpace}
                     >
                         <View style={styles.content}>
                             <Typography variant="h4" text={t('event.basicInfo')} />
