@@ -26,7 +26,7 @@ interface IProps {
 
 export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
     const isFocused = useIsFocused();
-    const { userLocation, isLoading: isLocationLoading } = useLocationPermission();
+    const { userLocation, hasPermission, isLoading: isLocationLoading } = useLocationPermission();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoadingEvents, setIsLoadingEvents] = useState(false);
     const [selectedTab, setSelectedTab] = useState<'all' | 'tastings' | 'parties'>('all');
@@ -39,11 +39,14 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
     }, [filters?.eventDate, filters?.language, filters?.maxAge, filters?.maxPrice, filters?.minAge, filters?.minPrice, filters?.radiusKm, filters?.sex]);
 
     const getTargetLocation = useCallback((location?: IUserLocation | null) => {
-        return location || searchLocation || userLocation || KYIV_COORDINATES;
+        return location || searchLocation || userLocation || null;
     }, [searchLocation, userLocation]);
 
     const loadEvents = useCallback(async (location?: IUserLocation | null) => {
         const targetLocation = getTargetLocation(location);
+        if (!targetLocation) {
+            return;
+        }
 
         setIsLoadingEvents(true);
         try {
@@ -78,6 +81,9 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
         }
 
         const targetLocation = getTargetLocation();
+        if (!targetLocation) {
+            return;
+        }
         const currentLocationKey = `${targetLocation.latitude}:${targetLocation.longitude}`;
         const isSameLocation = lastLoadedLocationKeyRef.current === currentLocationKey;
         const isSameFilters = lastLoadedFiltersKeyRef.current === filtersKey;
@@ -92,6 +98,14 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
     }, [filtersKey, getTargetLocation, isFocused, isLocationLoading, loadEvents]);
 
     const initialRegion: Region = useMemo(() => {
+        if (searchLocation) {
+            return {
+                latitude: searchLocation.latitude,
+                longitude: searchLocation.longitude,
+                ...MAP_DELTA,
+            };
+        }
+
         if (userLocation) {
             return {
                 latitude: userLocation.latitude,
@@ -99,11 +113,20 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
                 ...MAP_DELTA,
             };
         }
+
+        if (hasPermission) {
+            return {
+                latitude: KYIV_COORDINATES.latitude,
+                longitude: KYIV_COORDINATES.longitude,
+                ...MAP_DELTA,
+            };
+        }
+
         return {
             ...KYIV_COORDINATES,
             ...MAP_DELTA,
         };
-    }, [userLocation]);
+    }, [hasPermission, searchLocation, userLocation]);
 
     const onMarkerPress = useCallback((markerId: number) => {
         eventsModel.setSelectedEventId(markerId);
@@ -130,6 +153,9 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
 
     const refetch = useCallback((location?: IUserLocation | null) => {
         const targetLocation = getTargetLocation(location);
+        if (!targetLocation) {
+            return Promise.resolve();
+        }
         hasAutoLoadedOnFocusRef.current = true;
         lastLoadedLocationKeyRef.current = `${targetLocation.latitude}:${targetLocation.longitude}`;
         lastLoadedFiltersKeyRef.current = filtersKey;

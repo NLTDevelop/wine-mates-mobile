@@ -27,7 +27,7 @@ import { SingleSelectModal } from './components/SingleSelectModal';
 import { PickerButton } from './components/PickerButton';
 import { CalendarModal } from '@/UIKit/CalendarModal';
 import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
-import { isIOS, scaleVertical } from '@/utils';
+import { isIOS, isSmallIOSScreen, scaleVertical } from '@/utils';
 import { ClockIcon } from '@assets/icons/ClockIcon';
 import { RangeSlider } from '@/UIKit/RangeSlider';
 import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
@@ -399,7 +399,7 @@ export const AddEventView = () => {
                     <KeyboardStickyView
                         offset={{
                             closed: 0,
-                            opened: isIOS ? scaleVertical(32) : 0,
+                            opened: isIOS ? (isSmallIOSScreen ? 0 : scaleVertical(32)) : 0,
                         }}
                     >
                         <View style={styles.buttonContainer}>

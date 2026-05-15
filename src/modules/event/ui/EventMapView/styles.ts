@@ -20,6 +20,11 @@ export const getStyles = (colors: IColors) => {
         mapContainer: {
             position: 'relative',
         },
+        loaderContainer: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
         addButton: {
             position: 'absolute',
             bottom: scaleVertical(16),
