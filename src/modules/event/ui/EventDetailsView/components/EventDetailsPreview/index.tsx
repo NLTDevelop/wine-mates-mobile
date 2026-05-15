@@ -12,6 +12,7 @@ import { IEventDetailsPreviewData } from '../../types/IEventDetailsPreviewData';
 import { getStyles } from './styles';
 import { useEventDetailsPreview } from './presenters/useEventDetailsPreview';
 import { EventParticipantsPreview } from '@/UIKit/EventParticipantsPreview';
+import { QR_CODE_SHARE_SIZE } from '@/utils';
 
 interface IProps {
     data: IEventDetailsPreviewData;
@@ -58,7 +59,7 @@ export const EventDetailsPreview = ({ data, eventId }: IProps) => {
             </View>
 
             <View style={styles.hiddenQrCodeContainer}>
-                <QRCode value={eventDeepLink} getRef={onQrCodeRef} size={1} />
+                <QRCode value={eventDeepLink} getRef={onQrCodeRef} size={QR_CODE_SHARE_SIZE} />
             </View>
         </View>
     );
