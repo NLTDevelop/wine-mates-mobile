@@ -150,7 +150,8 @@ export const useAddWineSetView = ({
         };
     }, [route.params?.replacedWine]);
 
-    const isCreateEventDisabled = selectedWines.length === 0;
+    const isWineRequired = draft?.eventType !== EventType.Parties;
+    const isCreateEventDisabled = isWineRequired && selectedWines.length === 0;
     const eventDeepLink = useMemo(() => {
         if (!createdEventId) {
             return null;
@@ -343,7 +344,11 @@ export const useAddWineSetView = ({
     }, []);
 
     const onCreateEventPress = useCallback(async () => {
-        if (isCreating || !draft || !draft.location || selectedWines.length === 0) {
+        if (isCreating || !draft || !draft.location) {
+            return;
+        }
+
+        if (isWineRequired && selectedWines.length === 0) {
             return;
         }
 
@@ -382,7 +387,6 @@ export const useAddWineSetView = ({
                 speakerName: draft.speakerName,
                 language: draft.language,
                 seats: Number(draft.seats),
-                phoneNumber: draft.phoneNumber,
                 eventType: draft.eventType,
                 tastingType,
                 requiresConfirmation: draft.requiresConfirmation,
@@ -440,7 +444,7 @@ export const useAddWineSetView = ({
         } finally {
             setIsCreating(false);
         }
-    }, [draft, editEventId, isCreating, isEditMode, navigation, onGetCreatedEventId, repeatRule, selectedWines, t, tastingType]);
+    }, [draft, editEventId, isCreating, isEditMode, isWineRequired, navigation, onGetCreatedEventId, repeatRule, selectedWines, t, tastingType]);
 
     const resetToEventList = useCallback(() => {
         navigation.dispatch(

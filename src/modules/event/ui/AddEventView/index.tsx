@@ -10,7 +10,6 @@ import { Button } from '@/UIKit/Button';
 import { Typography } from '@/UIKit/Typography';
 import { useAddEvent } from './presenters/useAddEvent';
 import { MapLocationIcon } from '@assets/icons/MapLocationIcon';
-import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { CalendarIcon } from '@assets/icons/CalendarIcon';
 import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
 import { useDateTimePicker } from './presenters/useDateTimePicker';
@@ -60,9 +59,6 @@ export const AddEventView = () => {
         onEndDateSelect,
         onStartTimeSelect,
         onEndTimeSelect,
-        onChangePhoneNumber,
-        onChangePhoneCountryCode,
-        onClearPhoneNumber,
         onChangePrice,
         onChangeLanguage,
         onChangeSeats,
@@ -76,7 +72,6 @@ export const AddEventView = () => {
         onChangeContactInfoIds,
         onLocationPress,
         onSubmit,
-        phoneCountryCca2,
     } = useAddEvent();
 
     const {
@@ -255,15 +250,6 @@ export const AddEventView = () => {
                                 onChangeText={onChangeSpeakerName}
                                 placeholder={t('event.speakerName')}
                             />
-                            <PhoneInputField
-                                value={form.phoneNumber}
-                                onChangeText={onChangePhoneNumber}
-                                clearPhone={onClearPhoneNumber}
-                                onChangeCountryCode={onChangePhoneCountryCode}
-                                initialCca2={phoneCountryCca2}
-                                placeholder={t('event.phoneNumber')}
-                            />
-
                             {isPartyEventType && (
                                 <>
                                     <Typography variant="h6" text={t('eventFilters.age')} />
@@ -304,7 +290,7 @@ export const AddEventView = () => {
                                 value={form.restaurantName}
                                 containerStyle={styles.inputContainerStyle}
                                 onChangeText={onChangeRestaurantName}
-                                placeholder={t('event.restaurant')}
+                                placeholder={t('event.meetingPlaceName')}
                             />
 
                             <TouchableOpacity onPress={onLocationPress} style={styles.locationButton}>
