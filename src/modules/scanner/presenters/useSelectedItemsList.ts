@@ -5,9 +5,10 @@ import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 
 const SCROLL_STEP = scaleHorizontal(100);
+type SelectedItemType = IWineSelectedSmell | IWineTaste;
 
-export const useSelectedItemsList = (onPress: (item: IWineSelectedSmell | IWineTaste) => void) => {
-    const listRef = useRef<FlatList<IWineSelectedSmell>>(null);
+export const useSelectedItemsList = <T extends SelectedItemType>(onPress: (item: T) => void) => {
+    const listRef = useRef<FlatList<T>>(null);
     const currentOffsetRef = useRef(0);
     const [newItemId, setNewItemId] = useState<number | null>(null);
 
@@ -33,18 +34,13 @@ export const useSelectedItemsList = (onPress: (item: IWineSelectedSmell | IWineT
         listRef.current?.scrollToOffset({ offset: 0, animated: true });
     }, []);
 
-    const handleSetNewItemId = useCallback((id: number) => {
+    const onSetNewItemId = useCallback((id: number) => {
         setNewItemId(id);
         setTimeout(() => setNewItemId(null), 600);
     }, []);
 
-    const keyExtractor = useCallback(
-        (item: IWineSelectedSmell | IWineTaste, index: number) => `${item.id}-${index}`,
-        []
-    );
-
     const renderItem = useCallback(
-        (item: IWineSelectedSmell | IWineTaste) => ({
+        (item: T) => ({
             item,
             onPress: () => onPress(item),
             isNew: item.id === newItemId,
@@ -58,8 +54,7 @@ export const useSelectedItemsList = (onPress: (item: IWineSelectedSmell | IWineT
         scrollLeft, 
         scrollRight, 
         scrollToStart, 
-        handleSetNewItemId, 
-        keyExtractor, 
+        onSetNewItemId,
         renderItem 
     };
 };

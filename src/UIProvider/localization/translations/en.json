@@ -196,6 +196,10 @@
         "taste": "Taste",
         "details": "Details",
         "tasted": "You have already tasted this wine",
+        "wineSetStatusTasted": "Tasted",
+        "wineSetStatusNotStarted": "No Tasted",
+        "wineSetStatusInProgress": "In Progress",
+        "wineSetStatusMissed": "Missed",
         "mostSelected": "Most selected",
         "mostSelectedColor": "Most selected",
         "reviews": "Reviews",
@@ -347,6 +351,7 @@
     },
     "event": {
         "addEvent": "Add event",
+        "editEvent": "Edit event",
         "updateEvent": "Update event",
         "basicInfo": "Basic info",
         "locationAndSchedule": "Location & Schedule",
@@ -455,6 +460,8 @@
         "bookNow": "Book now",
         "booked": "Booked",
         "cancel": "Cancel Event",
+        "startEvent": "Start event",
+        "stopEvent": "Stop event",
         "contactForBooking": "Contact for booking",
         "callToReserve": "Call to reserve",
         "duplicate": "Duplicate"

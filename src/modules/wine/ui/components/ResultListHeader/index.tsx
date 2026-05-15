@@ -6,7 +6,7 @@ import { Typography } from '@/UIKit/Typography';
 import { declOfWord } from '@/utils';
 import { ResultHeader } from '../ResultHeader';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
-import { TasteCharacteristicItem } from '@/modules/scanner/ui/components/TasteCharacteristicItem';
+import { TasteCharacteristicItem } from '@/UIKit/TasteCharacteristicItem';
 import { IStatistic, IWineDetails, IVintagesItem } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';

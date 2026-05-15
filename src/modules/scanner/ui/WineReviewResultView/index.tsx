@@ -6,15 +6,15 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
 import { observer } from 'mobx-react-lite';
-import { SelectedParameters } from '../components/SelectedParameters';
-import { RateThisWine } from '../components/RateThisWine';
-import { Notes } from '../components/Notes';
+import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
+import { Notes } from '../../../../UIKit/Notes';
 import { wineModel } from '@/entities/wine/WineModel';
-import { useWineReviewResult } from '../../presenters/useWineReviewResult';
-import { TastingNote } from '../components/TastingNote';
+import { useWineReviewResult } from './presenters/useWineReviewResult';
 import { Loader } from '@/UIKit/Loader';
 import { Typography } from '@/UIKit/Typography';
 import { FoodPairing } from '@/UIKit/FoodPairing';
+import { RateThisWine } from '@/UIKit/RateThisWine';
+import { TastingNote } from '@/UIKit/TastingNote';
 
 export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
@@ -33,6 +33,7 @@ export const WineReviewResultView = observer(() => {
         noteValidationError,
         onNoteEditingChange,
         onInvalidNoteEditingComplete,
+        onSubscribePress,
     } = useWineReviewResult();
 
     return (
@@ -62,7 +63,7 @@ export const WineReviewResultView = observer(() => {
                                     <Typography text={t('aiAttempts.label4')} />
                                     <Button
                                         text={t('aiAttempts.subscribe')}
-                                        onPress={() => {}}
+                                        onPress={onSubscribePress}
                                         containerStyle={styles.subscribeButton}
                                     />
                                 </>

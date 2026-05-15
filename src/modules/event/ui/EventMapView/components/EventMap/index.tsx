@@ -25,11 +25,6 @@ type ClusterMarkerProps = MapMarkerProps & {
 
 const ClusterMarker = Marker as ComponentType<ClusterMarkerProps>;
 
-const HIDDEN_PIN_COORDINATE = {
-    latitude: -85,
-    longitude: 0,
-};
-
 export const EventMap = memo(
     ({
         mapPins,
@@ -45,11 +40,13 @@ export const EventMap = memo(
         const isTastingsTab = selectedTab === 'tastings';
         const isPartiesTab = selectedTab === 'parties';
 
-        const isPinVisible = (pin: IEventMapPin) => {
-            return selectedTab === 'all'
-                || (isTastingsTab && pin.eventType === 'tastings')
-                || (isPartiesTab && pin.eventType === 'parties');
-        };
+        const visibleMapPins = useMemo(() => {
+            return mapPins.filter((pin) => {
+                return selectedTab === 'all'
+                    || (isTastingsTab && pin.eventType === 'tastings')
+                    || (isPartiesTab && pin.eventType === 'parties');
+            });
+        }, [isPartiesTab, isTastingsTab, mapPins, selectedTab]);
 
         return (
             <View style={styles.mapContainer}>
@@ -82,14 +79,14 @@ export const EventMap = memo(
                             <SearchLocationMarkerIcon color={colors.primary} borderColor={colors.background} />
                         </ClusterMarker>
                     )}
-                    {mapPins.map(pin => (
+                    {visibleMapPins.map(pin => (
                         <MapMarker
                             key={pin.id}
-                            coordinate={isPinVisible(pin) ? { latitude: pin.latitude, longitude: pin.longitude } : HIDDEN_PIN_COORDINATE}
+                            coordinate={{ latitude: pin.latitude, longitude: pin.longitude }}
                             eventId={pin.id}
                             eventType={pin.eventType}
-                            markerProps={{ opacity: isPinVisible(pin) ? 1 : 0, zIndex: 2 }}
-                            onPress={isPinVisible(pin) ? onMarkerPress : undefined}
+                            markerProps={{ zIndex: 2 }}
+                            onPress={onMarkerPress}
                         />
                     ))}
                 </MapView>

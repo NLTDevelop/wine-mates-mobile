@@ -15,6 +15,7 @@ import { IWineAroma } from './types/IWineAroma';
 import { IWine } from './types/IWine';
 import { IWineTasteGroup } from './types/IWineTatseGroup';
 import { IVintagesItem } from './types/IWineDetails';
+import type { AddRateDto } from './dto/AddRate.dto';
 
 export interface IWineListModel {
     wine: IWine | null;
@@ -33,6 +34,7 @@ export interface IWineListModel {
     tastes: IWineTasteGroup[] | null;
     selectedTastes: IWineTaste[] | null;
     tasteCharacteristics: IWineTasteCharacteristic[] | null;
+    draftTasteCharacteristics: AddRateDto['tasteCharacteristics'] | null;
     tasteCharacteristicDetails: ITasteCharacteristicDetail[] | null;
     winePeak: number | null;
     review: IWineReview | null;
@@ -56,6 +58,7 @@ class WineModel implements IWineListModel {
     private tastesRepository = new MobXRepository<IWineTasteGroup[] | null>(null);
     private selectedTastesRepository = new MobXRepository<IWineTaste[] | null>(null);
     private tasteCharacteristicsRepository = new MobXRepository<IWineTasteCharacteristic[] | null>(null);
+    private draftTasteCharacteristicsRepository = new MobXRepository<AddRateDto['tasteCharacteristics'] | null>(null);
     private tasteCharacteristicDetailsRepository = new MobXRepository<ITasteCharacteristicDetail[] | null>(null);
     private winePeakRepository = new MobXRepository<number | null>(null);
     private reviewRepository = new MobXRepository<IWineReview | null>(null);
@@ -188,6 +191,14 @@ class WineModel implements IWineListModel {
         this.tasteCharacteristicsRepository.save(value);
     }
 
+    public get draftTasteCharacteristics() {
+        return this.draftTasteCharacteristicsRepository.data;
+    }
+
+    public set draftTasteCharacteristics(value: AddRateDto['tasteCharacteristics'] | null) {
+        this.draftTasteCharacteristicsRepository.save(value);
+    }
+
     public get tasteCharacteristicDetails() {
         return this.tasteCharacteristicDetailsRepository.data;
     }
@@ -228,6 +239,7 @@ class WineModel implements IWineListModel {
         this.tastes = null;
         this.selectedTastes = null;
         this.tasteCharacteristics = null;
+        this.draftTasteCharacteristics = null;
         this.tasteCharacteristicDetails = null;
         this.winePeak = null;
         this.review = null;

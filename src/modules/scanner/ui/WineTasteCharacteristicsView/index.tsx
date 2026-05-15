@@ -7,16 +7,16 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
 import { CloseButton } from '../components/CloseButton';
-import { SelectedParameters } from '../components/SelectedParameters';
+import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
-import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics';
-import { TasteCharacteristicItem } from '../components/TasteCharacteristicItem';
+import { useWineTasteCharacteristics } from './presenters/useWineTasteCharacteristics';
+import { TasteCharacteristicItem } from '../../../../UIKit/TasteCharacteristicItem';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
-import { WinePeakPicker } from '../components/WinePeakPicker';
+import { WinePeakPicker } from '../../../../UIKit/WinePeakPicker';
 
 type ListItemType =
     | { type: 'characteristic'; data: IWineTasteCharacteristic }
@@ -26,8 +26,8 @@ export const WineTasteCharacteristicsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, isError, getTasteCharacteristics, handleSliderChange, isLoading, handleNextPress, sliderValues,
-        isPremiumUser, winePeak, handleWinePeakChange, isExpertOrWinemaker } = useWineTasteCharacteristics();
+    const { data, isError, getTasteCharacteristics, createOnSliderChange, isLoading, onPressNext, sliderValues,
+        isPremiumUser, winePeak, onWinePeakChange, isExpertOrWinemaker } = useWineTasteCharacteristics();
 
     const listData = useMemo<ListItemType[]>(() => {
         const items: ListItemType[] = [];
@@ -54,17 +54,17 @@ export const WineTasteCharacteristicsView = observer(() => {
         ({ item }: { item: ListItemType }) => {
             if (item.type === 'characteristic') {
                 return (
-                    <TasteCharacteristicItem
-                        item={item.data}
-                        value={sliderValues[item.data.id] ?? 0}
-                        onChange={value => handleSliderChange(item.data.id, value)}
-                        isPremiumUser={isPremiumUser}
-                    />
+                        <TasteCharacteristicItem
+                            item={item.data}
+                            value={sliderValues[item.data.id] ?? 0}
+                            onChange={createOnSliderChange(item.data.id)}
+                            isPremiumUser={isPremiumUser}
+                        />
                 );
             }
-            return <WinePeakPicker value={winePeak} onChange={handleWinePeakChange} />;
+            return <WinePeakPicker value={winePeak} onChange={onWinePeakChange} />;
         },
-        [handleSliderChange, sliderValues, isPremiumUser, winePeak, handleWinePeakChange],
+        [createOnSliderChange, sliderValues, isPremiumUser, winePeak, onWinePeakChange],
     );
 
     return (
@@ -97,7 +97,7 @@ export const WineTasteCharacteristicsView = observer(() => {
                         <View style={styles.buttonContainer}>
                             <Button
                                 text={t('wine.letsRate')}
-                                onPress={handleNextPress}
+                                onPress={onPressNext}
                                 containerStyle={styles.button}
                                 RightAccessory={<NextLongArrowIcon />}
                             />

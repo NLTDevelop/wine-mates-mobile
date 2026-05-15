@@ -1,11 +1,11 @@
-import { useMemo, ReactNode } from 'react';
+import { useCallback, useMemo, ReactNode } from 'react';
 import { Image, Pressable, View } from 'react-native';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { EmptyWine } from '@/UIKit/EmptyWine';
 import { SmallStarRating } from '@/UIKit/SmallStarRating';
-import { RateMedal } from '@/modules/scanner/ui/components/RateMedal/ui';
+import { RateMedal } from '@/UIKit/RateMedal/ui';
 import { ShowLock } from '@/UIKit/ShowLock';
 import { useWineListItem } from './presenters/useWineListItem';
 import { getStyles } from './styles';
@@ -46,10 +46,14 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
         showExpertReviewCount
     } = useWineListItem({ item, onPress, removeCardStyles, isMyWine });
     const { description } = useWineDescription({ item, showVintage, showNonVintage });
+    const getContainerStyle = useCallback(
+        ({ pressed }: { pressed: boolean }) => [styles.container, pressed && styles.pressed],
+        [styles.container, styles.pressed],
+    );
 
     return (
         <Pressable
-            style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+            style={getContainerStyle}
             onPress={onItemPress}
             disabled={!onPress}
         >

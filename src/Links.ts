@@ -21,6 +21,7 @@ export interface ILinks {
     wines: string;
     wineFilters: string;
     wineSetSearch: string;
+    wineEventDetails: string;
     scannedWines: string;
     wineTypes: string;
     wineColors: string;
@@ -32,8 +33,10 @@ export interface ILinks {
     wineTasteCharacteristic: string;
     countries: string;
     rates: string;
+    eventRates: string;
     generateSnacks: string;
     generateNote: string;
+    generateBlindNote: string;
     getContext: string;
     myWine: string;
     tasteProfile: string;
@@ -53,6 +56,8 @@ export interface ILinks {
     contacts: string;
     guests: string;
     guestsStatuses: string;
+    eventTastingDraft: string;
+    eventTastingSaveDraft: string;
 }
 
 class Links implements ILinks {
@@ -65,6 +70,7 @@ class Links implements ILinks {
         wines: 'wines',
         wineFilters: 'wines/filters',
         wineSetSearch: 'wines/search/wine-set',
+        wineEventDetails: 'wines',
         scannedWines: 'wines/scanner',
         wineTypes: 'wine-types',
         wineColors: 'wine-colors',
@@ -76,8 +82,10 @@ class Links implements ILinks {
         wineTasteCharacteristic: 'wine-taste-characteristics',
         countries: 'countries',
         rates: 'rates',
+        eventRates: 'rates/event-rates',
         generateSnacks: 'rates/generate-snacks',
         generateNote: 'rates/generate-note',
+        generateBlindNote: 'rates/generate-blind-note',
         getContext: 'rates/context',
         myWine: 'myWine',
         tasteProfile: 'users/taste-profile',
@@ -97,6 +105,8 @@ class Links implements ILinks {
         contacts: 'users/contacts',
         guests: 'event-bookings/event',
         guestsStatuses: 'event-bookings',
+        eventTastingDraft: 'event-tasting/draft',
+        eventTastingSaveDraft: 'event-tasting/save-draft',
     };
 
     private buildDomain() {
@@ -135,6 +145,9 @@ class Links implements ILinks {
     public get wineSetSearch() {
         return `${this._domain}${this._links.wineSetSearch}`;
     }
+    public get wineEventDetails() {
+        return `${this._domain}${this._links.wineEventDetails}`;
+    }
     public get scannedWines() {
         return `${this._domain}${this._links.scannedWines}`;
     }
@@ -168,11 +181,17 @@ class Links implements ILinks {
     public get rates() {
         return `${this._domain}${this._links.rates}`;
     }
+    public get eventRates() {
+        return `${this._domain}${this._links.eventRates}`;
+    }
     public get generateSnacks() {
         return `${this._domain}${this._links.generateSnacks}`;
     }
     public get generateNote() {
         return `${this._domain}${this._links.generateNote}`;
+    }
+    public get generateBlindNote() {
+        return `${this._domain}${this._links.generateBlindNote}`;
     }
     public get getContext() {
         return `${this._domain}${this._links.getContext}`;
@@ -230,6 +249,12 @@ class Links implements ILinks {
     }
     public get guestsStatuses() {
         return `${this._domain}${this._links.guestsStatuses}`;
+    }
+    public get eventTastingDraft() {
+        return `${this._domain}${this._links.eventTastingDraft}`;
+    }
+    public get eventTastingSaveDraft() {
+        return `${this._domain}${this._links.eventTastingSaveDraft}`;
     }
 }
 

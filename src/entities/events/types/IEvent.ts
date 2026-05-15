@@ -12,6 +12,7 @@ export interface IEvent {
     ownerId?: number;
     isActive?: boolean;
     isApplied?: boolean;
+    isTastingStarted?: boolean;
     theme: string;
     eventDate?: string;
     eventTime?: string;
@@ -64,6 +65,7 @@ export interface IEventDetail {
     ownerId?: number;
     isActive?: boolean;
     isApplied?: boolean;
+    isTastingStarted?: boolean;
     latitude: number;
     longitude: number;
     title?: string;

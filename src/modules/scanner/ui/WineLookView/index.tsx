@@ -6,11 +6,10 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
-import { ColorSelector } from './components/ColorSelector';
+import { ColorSelector } from '../../../../UIKit/ColorSelector';
 import { useWineLook } from '../../presenters/useWineLook';
-import { ShadeSelector } from '../components/ShadeSelector';
 import { CloseButton } from '../components/CloseButton';
-import { SelectedParameters } from '../components/SelectedParameters';
+import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
@@ -19,6 +18,7 @@ import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { wineModel } from '@/entities/wine/WineModel';
 import { SmoothSlider } from '@/UIKit/SmoothSlider';
 import { ScrollViewIndicator } from '@fanchenbao/react-native-scroll-indicator';
+import { ShadeSelector } from '@/UIKit/ShadeSelector';
 
 export const WineLookView = observer(() => {
     const { colors, t } = useUiContext();
