@@ -387,7 +387,7 @@
         "repeatWeekly": "Weekly",
         "repeatMonthly": "Monthly",
         "repeatCustom": "Custom",
-        "interesting": "interesting",
+        "followers": "followers",
         "editWine": "Edit wine",
         "editWineStubDescription": "Wine editing screen placeholder. TODO: implement final editing flow.",
         "eventCreatedTitle": "Event created!",

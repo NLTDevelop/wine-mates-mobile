@@ -36,6 +36,13 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_middle,
             flex: 1,
         },
+        switchInnerCircle: {
+            width: scaleHorizontal(22),
+            height: scaleVertical(18),
+            borderRadius: 100,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
         createButton: {
             marginTop: scaleVertical(8),
         },

@@ -41,9 +41,6 @@ export const getStyles = (colors: IColors) => {
         dateButtonText: {
             color: colors.text,
         },
-        dateButtonTextDisabled: {
-            color: colors.text_light,
-        },
         checkbox: {
             width: scaleVertical(16),
             height: scaleVertical(16),

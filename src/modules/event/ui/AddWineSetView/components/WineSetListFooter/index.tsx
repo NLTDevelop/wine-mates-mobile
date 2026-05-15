@@ -1,12 +1,14 @@
-import { useMemo } from 'react';
-import { Switch, TouchableOpacity, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { PlusIcon } from '@assets/icons/PlusIcon';
+import { TickIcon } from '@assets/icons/TickIcon';
 import { getStyles } from './styles';
 import { useWineSetListFooter } from './presenters/useWineSetListFooter';
+import { Switch } from 'react-native-switch';
 
 interface IProps {
     repeatRuleLabel: string;
@@ -33,10 +35,18 @@ export const WineSetListFooter = ({
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { repeatValueText, repeatTitleText } = useWineSetListFooter({
+    const { repeatValueText, repeatTitleText, switchCircleSize, switchBarHeight } = useWineSetListFooter({
         repeatRuleLabel,
         repeatTitle: t('repeatEvent.repetition'),
     });
+
+    const renderSwitchCircle = useCallback(() => {
+        if (!isRepeatEnabled) {
+            return null;
+        }
+
+        return <TickIcon width={16} height={16} color={colors.primary} />;
+    }, [isRepeatEnabled, colors.primary]);
 
     return (
         <View style={styles.container}>
@@ -49,7 +59,25 @@ export const WineSetListFooter = ({
             <View style={styles.divider} />
             <View style={styles.repeatRow}>
                 <Typography variant="h6" text={repeatTitleText} style={styles.repeatLabel} />
-                <Switch onValueChange={onChangeRepeatSwitch} value={isRepeatEnabled} />
+                <Switch
+                    value={isRepeatEnabled}
+                    onValueChange={onChangeRepeatSwitch}
+                    circleSize={switchCircleSize}
+                    barHeight={switchBarHeight}
+                    circleBorderWidth={0}
+                    backgroundActive={colors.primary}
+                    backgroundInactive={colors.border}
+                    circleActiveColor={colors.background}
+                    circleInActiveColor={colors.background}
+                    circleBorderActiveColor={colors.background}
+                    circleBorderInactiveColor={colors.background}
+                    renderInsideCircle={renderSwitchCircle}
+                    changeValueImmediately
+                    innerCircleStyle={styles.switchInnerCircle}
+                    renderActiveText={false}
+                    renderInActiveText={false}
+                    switchWidthMultiplier={2.4}
+                />
             </View>
             {isRepeatEnabled && (
                 <TouchableOpacity style={styles.repeatButton} onPress={onOpenRepeatModal}>

@@ -77,11 +77,7 @@ const CustomRepeatEventEndConditionComponent = ({
                     onPress={onOpenCalendar}
                     disabled={isDateControlDisabled}
                 >
-                    <Typography
-                        text={formattedEndDate}
-                        variant="h6"
-                        style={[styles.dateButtonText, isDateControlDisabled && styles.dateButtonTextDisabled]}
-                    />
+                    <Typography text={formattedEndDate} variant="h6" style={styles.dateButtonText} />
                     <ArrowDownIcon />
                 </TouchableOpacity>
             </View>

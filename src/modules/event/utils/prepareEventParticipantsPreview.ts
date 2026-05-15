@@ -37,7 +37,7 @@ export const prepareEventParticipantsPreview = (
         firstParticipant: getParticipant(visibleParticipants[0]),
         secondParticipant: getParticipant(visibleParticipants[1]),
         thirdParticipant: getParticipant(visibleParticipants[2]),
-        additionalCountText: additionalCount ? `+${additionalCount} ${localization.t('event.interesting')}` : '',
+        additionalCountText: additionalCount ? `+${additionalCount} ${localization.t('event.followers')}` : '',
         isNeedShow: visibleParticipants.length > 0,
     };
 };
