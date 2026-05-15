@@ -65,10 +65,7 @@ export const getRepeatRuleDescription = (value: RepeatRuleConfig) => {
     const parts = [baseText];
 
     if (value.frequency === RepeatRuleFrequency.Week && value.weekDays?.length) {
-        const weekDaysText = value.weekDays
-            .map(day => localization.t(WEEK_DAY_LABEL_KEYS[day]))
-            .filter(Boolean)
-            .join(', ');
+        const weekDaysText = value.weekDays.map(day => localization.t(WEEK_DAY_LABEL_KEYS[day])).join(', ');
 
         parts.push(localization.t('repeatEvent.onWeekDays', { days: weekDaysText }));
     }
