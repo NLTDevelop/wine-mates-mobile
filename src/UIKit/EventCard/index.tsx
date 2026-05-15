@@ -16,6 +16,7 @@ import { ISavedEvent } from '@/entities/events/types/ISavedEvent';
 import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
 import { EditButton } from '../EditButton';
 import { ShareIcon } from '@assets/icons/ShareIcon';
+import { EventParticipantsPreview } from '@/UIKit/EventParticipantsPreview';
 
 interface IProps {
     event: IEvent | ISavedEvent;
@@ -66,6 +67,7 @@ export const EventCard = ({
         onEditPress: onEditPressHandler,
         isOwner,
         mapPreviewUri,
+        participantsPreviewData,
     } = useEventCard({
         event,
         appliedEventStatus,
@@ -76,7 +78,6 @@ export const EventCard = ({
     });
 
     const canPressCard = !isModalContent && Boolean(onCardPress);
-
 
     return (
         <Pressable
@@ -150,7 +151,7 @@ export const EventCard = ({
                     <Typography text={formattedDateTime} variant="body_400" style={styles.timeText} />
                 </View>
             </View>
-
+            <EventParticipantsPreview data={participantsPreviewData} />
             {showDescription && (
                 <Typography
                     text={event.description}

@@ -11,11 +11,9 @@ import { config } from '@/config';
 import { IEventDetailsPreviewData } from '../types/IEventDetailsPreviewData';
 import { useLocalizedLanguageOptions } from '@/libs/languagePicker/presenters/useLocalizedLanguageOptions';
 import { IEventContactOption } from '../types/IEventContactOption';
-import {
-    getContactTitle,
-    getContactType,
-    getContactUrl,
-} from '@/entities/contacts/presenters/useContactType';
+import { getContactTitle, getContactType, getContactUrl } from '@/entities/contacts/presenters/useContactType';
+import { getRepeatRuleDescription } from '@/modules/event/utils/repeatRuleFormatter';
+import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
 
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 14;
@@ -247,13 +245,13 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return '-';
         }
 
-        const matchedLanguage = languageOptions.find((item) => item.code === normalizedCode);
+        const matchedLanguage = languageOptions.find(item => item.code === normalizedCode);
         if (matchedLanguage) {
             return matchedLanguage.name;
         }
 
         if (normalizedCode === 'uk') {
-            const matchedUkrainianAlias = languageOptions.find((item) => item.code === 'ua');
+            const matchedUkrainianAlias = languageOptions.find(item => item.code === 'ua');
             if (matchedUkrainianAlias) {
                 return matchedUkrainianAlias.name;
             }
@@ -320,8 +318,8 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         }
 
         const paymentMethodNames = value
-            .filter((item) => item?.isVisible !== false && !!item?.name?.trim())
-            .map((item) => item.name?.trim() || '');
+            .filter(item => item?.isVisible !== false && !!item?.name?.trim())
+            .map(item => item.name?.trim() || '');
 
         if (paymentMethodNames.length === 0) {
             return '-';
@@ -338,28 +336,57 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         const confirmationValue = eventDetail.requiresConfirmation
             ? t('eventDetails.confirmationRequired')
             : t('eventDetails.noConfirmation');
-
-        const partyDetails = eventDetail.eventType === EventType.Parties
+        const repeatDetails = eventDetail.repeatRule
             ? [
-                { key: 'sex', label: t('eventDetails.sex'), value: formatSex(eventDetail.sex) },
-                { key: 'age', label: t('eventDetails.age'), value: formatAge(eventDetail.minAge, eventDetail.maxAge) },
-                {
-                    key: 'participationCondition',
-                    label: t('eventDetails.participationCondition'),
-                    value: formatParticipationCondition(eventDetail.participationCondition),
-                },
-            ]
+                  {
+                      key: 'repeatRule',
+                      label: t('repeatEvent.repetition'),
+                      value: getRepeatRuleDescription(eventDetail.repeatRule),
+                  },
+              ]
             : [];
-        const paymentMethodsValue = formatPaymentMethods((eventDetail as IEventDetailWithPaymentMethods).paymentMethods);
-        const paymentMethodsDetails = paymentMethodsValue !== '-'
-            ? [{ key: 'paymentMethods', label: t('payments.paymentsMethods'), value: paymentMethodsValue }]
-            : [];
+        const paymentMethodsValue = formatPaymentMethods(
+            (eventDetail as IEventDetailWithPaymentMethods).paymentMethods,
+        );
+        const paymentMethodsDetails =
+            paymentMethodsValue !== '-'
+                ? [{ key: 'paymentMethods', label: t('payments.paymentsMethods'), value: paymentMethodsValue }]
+                : [];
+
+        const partyDetails =
+            eventDetail.eventType === EventType.Parties
+                ? [
+                      { key: 'sex', label: t('eventDetails.sex'), value: formatSex(eventDetail.sex) },
+                      {
+                          key: 'age',
+                          label: t('eventDetails.age'),
+                          value: formatAge(eventDetail.minAge, eventDetail.maxAge),
+                      },
+                      {
+                          key: 'participationCondition',
+                          label: t('eventDetails.participationCondition'),
+                          value: formatParticipationCondition(eventDetail.participationCondition),
+                      },
+                  ]
+                : [];
 
         return [
             { key: 'theme', label: t('eventDetails.theme'), value: getValueOrDash(eventDetail.theme) },
-            { key: 'description', label: t('eventDetails.description'), value: getValueOrDash(eventDetail.description) },
-            { key: 'restaurant', label: t('eventDetails.restaurant'), value: getValueOrDash(eventDetail.restaurantName || eventDetail.restaurant) },
-            { key: 'location', label: t('eventDetails.location'), value: getValueOrDash(eventDetail.locationLabel || eventDetail.location) },
+            {
+                key: 'description',
+                label: t('eventDetails.description'),
+                value: getValueOrDash(eventDetail.description),
+            },
+            {
+                key: 'restaurant',
+                label: t('eventDetails.restaurant'),
+                value: getValueOrDash(eventDetail.restaurantName || eventDetail.restaurant),
+            },
+            {
+                key: 'location',
+                label: t('eventDetails.location'),
+                value: getValueOrDash(eventDetail.locationLabel || eventDetail.location),
+            },
             {
                 key: 'eventStartDate',
                 label: t('eventDetails.startDate'),
@@ -373,7 +400,9 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             {
                 key: 'eventStartTime',
                 label: t('eventDetails.startTime'),
-                value: formatLocalizedTime(eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime),
+                value: formatLocalizedTime(
+                    eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime,
+                ),
             },
             {
                 key: 'eventEndTime',
@@ -381,8 +410,16 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                 value: formatLocalizedTime(eventDetail.eventEndTime || eventDetail.endTime),
             },
             { key: 'tastingType', label: t('event.tastingType'), value: formatTastingType(eventDetail.tastingType) },
-            { key: 'price', label: t('eventDetails.price'), value: formatPrice(eventDetail.price, eventDetail.currency) },
-            { key: 'speaker', label: t('eventDetails.speaker'), value: getValueOrDash(eventDetail.speakerName || eventDetail.speaker) },
+            {
+                key: 'price',
+                label: t('eventDetails.price'),
+                value: formatPrice(eventDetail.price, eventDetail.currency),
+            },
+            {
+                key: 'speaker',
+                label: t('eventDetails.speaker'),
+                value: getValueOrDash(eventDetail.speakerName || eventDetail.speaker),
+            },
             {
                 key: 'distance',
                 label: t('eventDetails.distance'),
@@ -394,9 +431,14 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                 ),
             },
             { key: 'language', label: t('eventDetails.language'), value: formatLanguage(eventDetail.language) },
-            { key: 'seats', label: t('eventDetails.seats'), value: formatSeats(eventDetail.seats, eventDetail.acceptedCount) },
+            {
+                key: 'seats',
+                label: t('eventDetails.seats'),
+                value: formatSeats(eventDetail.seats, eventDetail.acceptedCount),
+            },
             ...paymentMethodsDetails,
             { key: 'confirmation', label: t('eventDetails.confirmationAvailability'), value: confirmationValue },
+            ...repeatDetails,
             ...partyDetails,
         ];
     })();
@@ -414,11 +456,9 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return [];
         }
 
-        return eventDetail.contacts.map<IEventContactOption>((item) => {
+        return eventDetail.contacts.map<IEventContactOption>(item => {
             const contactType = getContactType(item.name, item.value);
-            const phoneNumber = contactType === 'phone'
-                ? parsePhoneNumberFromString(item.value)
-                : null;
+            const phoneNumber = contactType === 'phone' ? parsePhoneNumberFromString(item.value) : null;
             const contactUrl = getContactUrl(item.value, contactType);
 
             return {
@@ -442,11 +482,12 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         const parsedDate = previewDate ? new Date(previewDate) : null;
         const isDateValid = parsedDate && !Number.isNaN(parsedDate.getTime());
         const month = isDateValid
-            ? new Intl.DateTimeFormat(locale || 'en', { month: 'short' }).format(parsedDate).replace('.', '').toUpperCase()
+            ? new Intl.DateTimeFormat(locale || 'en', { month: 'short' })
+                  .format(parsedDate)
+                  .replace('.', '')
+                  .toUpperCase()
             : '';
-        const day = isDateValid
-            ? new Intl.DateTimeFormat(locale || 'en', { day: 'numeric' }).format(parsedDate)
-            : '';
+        const day = isDateValid ? new Intl.DateTimeFormat(locale || 'en', { day: 'numeric' }).format(parsedDate) : '';
 
         const formattedDateTime = (() => {
             if (!isDateValid) {
@@ -496,9 +537,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return formatPrice(eventDetail.price || 0);
         })();
 
-        const eventTypeLabel = eventDetail.eventType === EventType.Parties
-            ? t('event.parties')
-            : t('event.tastings');
+        const eventTypeLabel = eventDetail.eventType === EventType.Parties ? t('event.parties') : t('event.tastings');
         const isPartyEvent = eventDetail.eventType === EventType.Parties;
 
         const mapPreviewUri = (() => {
@@ -527,6 +566,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             isPartyEvent,
             mapPreviewUri,
             title: eventDetail.theme || '-',
+            participantsPreviewData: prepareEventParticipantsPreview(eventDetail.participants),
         };
 
         return previewData;

@@ -9,6 +9,7 @@ import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
 import Share from 'react-native-share';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 import { toastService } from '@/libs/toast/toastService';
+import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
 
 interface IUseEventCardProps {
     event: IEvent;
@@ -265,6 +266,10 @@ export const useEventCard = ({
         return event.eventType === EventType.Parties;
     }, [event.eventType]);
 
+    const participantsPreviewData = useMemo(() => {
+        return prepareEventParticipantsPreview(event.participants);
+    }, [event.participants]);
+
     const onCardPressHandler = useCallback(() => {
         onCardPress?.(event.id);
     }, [event.id, onCardPress]);
@@ -384,5 +389,6 @@ export const useEventCard = ({
         onEditPress: onEditPressHandler,
         isOwner,
         mapPreviewUri,
+        participantsPreviewData,
     };
 };

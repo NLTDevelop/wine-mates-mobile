@@ -11,6 +11,7 @@ import { ShareIcon } from '@assets/icons/ShareIcon';
 import { IEventDetailsPreviewData } from '../../types/IEventDetailsPreviewData';
 import { getStyles } from './styles';
 import { useEventDetailsPreview } from './presenters/useEventDetailsPreview';
+import { EventParticipantsPreview } from '@/UIKit/EventParticipantsPreview';
 
 interface IProps {
     data: IEventDetailsPreviewData;
@@ -27,7 +28,11 @@ export const EventDetailsPreview = ({ data, eventId }: IProps) => {
             <View style={styles.metaRow}>
                 <View style={styles.metaBadgesRow}>
                     <View style={styles.metaBadge}>
-                        {data.isPartyEvent ? <PartyIcon width={20} height={20} /> : <TastingIcon width={20} height={20} />}
+                        {data.isPartyEvent ? (
+                            <PartyIcon width={20} height={20} />
+                        ) : (
+                            <TastingIcon width={20} height={20} />
+                        )}
                         <Typography text={data.eventTypeLabel} variant="body_400" style={styles.metaText} />
                     </View>
                     <View style={styles.metaBadge}>
@@ -36,7 +41,7 @@ export const EventDetailsPreview = ({ data, eventId }: IProps) => {
                     </View>
                 </View>
                 <TouchableOpacity style={styles.shareButton} onPress={onShareIconPress}>
-                    <ShareIcon/>
+                    <ShareIcon />
                 </TouchableOpacity>
             </View>
 
@@ -47,17 +52,13 @@ export const EventDetailsPreview = ({ data, eventId }: IProps) => {
                     <Typography text={data.formattedDateTime} variant="body_400" style={styles.timeText} />
                 </View>
             </View>
-
+            <EventParticipantsPreview data={data.participantsPreviewData} />
             <View style={styles.mapContainer}>
                 <Image source={{ uri: data.mapPreviewUri }} style={styles.map} resizeMode="cover" />
             </View>
 
             <View style={styles.hiddenQrCodeContainer}>
-                <QRCode
-                    value={eventDeepLink}
-                    getRef={onQrCodeRef}
-                    size={1}
-                />
+                <QRCode value={eventDeepLink} getRef={onQrCodeRef} size={1} />
             </View>
         </View>
     );

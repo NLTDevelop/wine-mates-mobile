@@ -6,8 +6,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { eventsService } from '@/entities/events/EventsService';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { EventType } from '@/entities/events/enums/EventType';
-import { RepeatRule } from '@/entities/events/enums/RepeatRule';
 import { TastingType, TASTING_TYPES } from '@/entities/events/enums/TastingType';
+import { RepeatRuleConfig } from '@/entities/events/types/RepeatRuleConfig';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { IWineSearchResultViewItem, IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
 import { useUiContext } from '@/UIProvider';
@@ -47,9 +47,7 @@ const getSearchText = (value?: string | { name?: string | null } | null) => {
 };
 
 const getWineSubtitle = (wine: IWineSetSearchItem) => {
-    const parts = [wine.producer, wine.grapeVariety, wine.country, wine.region]
-        .map(getSearchText)
-        .filter(Boolean);
+    const parts = [wine.producer, wine.grapeVariety, wine.country, wine.region].map(getSearchText).filter(Boolean);
 
     return parts.join(' / ');
 };
@@ -83,7 +81,7 @@ export const useAddWineSetView = ({
     const draft = route.params?.draft;
     const editEventId = route.params?.editEventId;
     const isEditMode = typeof editEventId === 'number';
-    const [repeatRule, setRepeatRule] = useState<RepeatRule>(RepeatRule.Never);
+    const [repeatRule, setRepeatRule] = useState<RepeatRuleConfig | null>(null);
     const [tastingType, setTastingType] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
     const [isCreating, setIsCreating] = useState(false);
     const [isEventCreatedAlertVisible, setIsEventCreatedAlertVisible] = useState(false);
@@ -159,7 +157,7 @@ export const useAddWineSetView = ({
         return createEventDeepLink(createdEventId);
     }, [createdEventId]);
 
-    const onChangeRepeatRule = useCallback((value: RepeatRule) => {
+    const onChangeRepeatRule = useCallback((value: RepeatRuleConfig | null) => {
         setRepeatRule(value);
     }, []);
 
@@ -171,34 +169,40 @@ export const useAddWineSetView = ({
         onOpenSearchModal();
     }, [onOpenSearchModal]);
 
-    const createOnSelectWinePress = useCallback((wine: IWineSetSearchItem) => {
-        return () => {
-            setSelectedWines(prev => {
-                if (prev.some(item => item.id === wine.id)) {
-                    return prev;
+    const createOnSelectWinePress = useCallback(
+        (wine: IWineSetSearchItem) => {
+            return () => {
+                setSelectedWines(prev => {
+                    if (prev.some(item => item.id === wine.id)) {
+                        return prev;
+                    }
+
+                    return [...prev, wine];
+                });
+                onResetSearch();
+                Keyboard.dismiss();
+            };
+        },
+        [onResetSearch],
+    );
+
+    const createOnEditWinePress = useCallback(
+        (wine: IWineSetSearchItem) => {
+            return () => {
+                if (!draft) {
+                    return;
                 }
 
-                return [...prev, wine];
-            });
-            onResetSearch();
-            Keyboard.dismiss();
-        };
-    }, [onResetSearch]);
-
-    const createOnEditWinePress = useCallback((wine: IWineSetSearchItem) => {
-        return () => {
-            if (!draft) {
-                return;
-            }
-
-            navigation.navigate('EditEventWineView', {
-                wineId: wine.id,
-                wine,
-                draft,
-                selectedWines,
-            });
-        };
-    }, [draft, navigation, selectedWines]);
+                navigation.navigate('EditEventWineView', {
+                    wineId: wine.id,
+                    wine,
+                    draft,
+                    selectedWines,
+                });
+            };
+        },
+        [draft, navigation, selectedWines],
+    );
 
     const createOnDeleteWinePress = useCallback((wineId: number) => {
         return () => {
@@ -207,7 +211,7 @@ export const useAddWineSetView = ({
     }, []);
 
     const wineSetViewItems = useMemo<IWineSetViewItem[]>(() => {
-        return selectedWines.map((item) => ({
+        return selectedWines.map(item => ({
             id: item.id,
             title: getWineTitle(item),
             onEditPress: createOnEditWinePress(item),
@@ -216,7 +220,7 @@ export const useAddWineSetView = ({
     }, [createOnDeleteWinePress, createOnEditWinePress, selectedWines]);
 
     const onReorderWineSet = useCallback(({ data }: IWineSetDragEndPayload) => {
-        setSelectedWines((prev) => {
+        setSelectedWines(prev => {
             const orderMap = new Map(data.map((item, index) => [item.id, index]));
             const ordered = [...prev].sort((a, b) => {
                 const leftOrder = orderMap.get(a.id);
@@ -249,12 +253,13 @@ export const useAddWineSetView = ({
     }, [createOnSelectWinePress, isSearchListVisible, selectedWines, wineSearchResults]);
 
     useEffect(() => {
-        const shouldLoadMoreFilteredResults = isSearchListVisible
-            && isInitialSearchFinished
-            && !isSearchingWines
-            && hasMoreSearchResults
-            && wineSearchResults.length > 0
-            && wineSearchResultItems.length === 0;
+        const shouldLoadMoreFilteredResults =
+            isSearchListVisible &&
+            isInitialSearchFinished &&
+            !isSearchingWines &&
+            hasMoreSearchResults &&
+            wineSearchResults.length > 0 &&
+            wineSearchResultItems.length === 0;
 
         if (!shouldLoadMoreFilteredResults) {
             return;
@@ -272,12 +277,13 @@ export const useAddWineSetView = ({
     ]);
 
     const hasWineSearchQuery = searchQuery.trim().length > 0;
-    const shouldShowScannerButton = isSearchListVisible
-        && hasWineSearchQuery
-        && isInitialSearchFinished
-        && !isSearchingWines
-        && !hasMoreSearchResults
-        && wineSearchResultItems.length === 0;
+    const shouldShowScannerButton =
+        isSearchListVisible &&
+        hasWineSearchQuery &&
+        isInitialSearchFinished &&
+        !isSearchingWines &&
+        !hasMoreSearchResults &&
+        wineSearchResultItems.length === 0;
     const wineSearchEmptyText = useMemo(() => {
         if (!hasWineSearchQuery) {
             return t('event.startTypingWineSearch');
@@ -355,14 +361,15 @@ export const useAddWineSetView = ({
                 sortOrder: index + 1,
             }));
 
-            const partyPayload = draft.eventType === EventType.Parties
-                ? {
-                    minAge: draft.minAge,
-                    maxAge: draft.maxAge,
-                    sex: draft.sex,
-                    participationCondition: draft.participationCondition,
-                }
-                : {};
+            const partyPayload =
+                draft.eventType === EventType.Parties
+                    ? {
+                          minAge: draft.minAge,
+                          maxAge: draft.maxAge,
+                          sex: draft.sex,
+                          participationCondition: draft.participationCondition,
+                      }
+                    : {};
 
             const payload = {
                 theme: draft.theme,
@@ -440,7 +447,18 @@ export const useAddWineSetView = ({
         } finally {
             setIsCreating(false);
         }
-    }, [draft, editEventId, isCreating, isEditMode, navigation, onGetCreatedEventId, repeatRule, selectedWines, t, tastingType]);
+    }, [
+        draft,
+        editEventId,
+        isCreating,
+        isEditMode,
+        navigation,
+        onGetCreatedEventId,
+        repeatRule,
+        selectedWines,
+        t,
+        tastingType,
+    ]);
 
     const resetToEventList = useCallback(() => {
         navigation.dispatch(
@@ -489,9 +507,7 @@ export const useAddWineSetView = ({
                                         name: 'EventStack',
                                         state: {
                                             index: 0,
-                                            routes: [
-                                                { name: 'EventMapView' },
-                                            ],
+                                            routes: [{ name: 'EventMapView' }],
                                         },
                                     },
                                 ],
@@ -508,28 +524,31 @@ export const useAddWineSetView = ({
         resetToEventList();
     }, [createdEventId, navigation, resetToEventList]);
 
-    const onShareQrPress = useCallback(async (qrCodeImageUrl: string | null) => {
-        if (!eventDeepLink || !qrCodeImageUrl) {
-            toastService.showError(t('common.errorHappened'), t('event.shareQrCodeUnavailable'));
-            return;
-        }
+    const onShareQrPress = useCallback(
+        async (qrCodeImageUrl: string | null) => {
+            if (!eventDeepLink || !qrCodeImageUrl) {
+                toastService.showError(t('common.errorHappened'), t('event.shareQrCodeUnavailable'));
+                return;
+            }
 
-        try {
-            await Share.open({
-                failOnCancel: false,
-                filenames: [`wine-event-${createdEventId}-qr.png`],
-                message: `${t('event.shareQrCodeMessage')}\n${eventDeepLink}`,
-                title: t('event.shareQrCodeTitle'),
-                type: 'image/png',
-                urls: [qrCodeImageUrl],
-                subject: t('event.shareQrCodeTitle'),
-                useInternalStorage: true,
-            });
-        } catch (error) {
-            console.warn('useAddWineSetView -> onShareQrPress: ', error);
-            toastService.showError(t('common.errorHappened'), t('common.somethingWentWrong'));
-        }
-    }, [createdEventId, eventDeepLink, t]);
+            try {
+                await Share.open({
+                    failOnCancel: false,
+                    filenames: [`wine-event-${createdEventId}-qr.png`],
+                    message: `${t('event.shareQrCodeMessage')}\n${eventDeepLink}`,
+                    title: t('event.shareQrCodeTitle'),
+                    type: 'image/png',
+                    urls: [qrCodeImageUrl],
+                    subject: t('event.shareQrCodeTitle'),
+                    useInternalStorage: true,
+                });
+            } catch (error) {
+                console.warn('useAddWineSetView -> onShareQrPress: ', error);
+                toastService.showError(t('common.errorHappened'), t('common.somethingWentWrong'));
+            }
+        },
+        [createdEventId, eventDeepLink, t],
+    );
 
     return {
         searchQuery,

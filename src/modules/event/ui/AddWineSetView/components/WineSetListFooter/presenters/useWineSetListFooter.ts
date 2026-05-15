@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { scaleVertical } from '@/utils';
 
 interface IProps {
     repeatRuleLabel: string;
@@ -6,6 +7,9 @@ interface IProps {
 }
 
 export const useWineSetListFooter = ({ repeatRuleLabel, repeatTitle }: IProps) => {
+    const switchCircleSize = scaleVertical(18);
+    const switchBarHeight = scaleVertical(24);
+
     const repeatValueText = useMemo(() => {
         return repeatRuleLabel;
     }, [repeatRuleLabel]);
@@ -17,5 +21,7 @@ export const useWineSetListFooter = ({ repeatRuleLabel, repeatTitle }: IProps) =
     return {
         repeatValueText,
         repeatTitleText,
+        switchCircleSize,
+        switchBarHeight,
     };
 };
