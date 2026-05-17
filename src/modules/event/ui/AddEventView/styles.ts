@@ -27,6 +27,10 @@ export const getStyles = (colors: IColors) => {
             minHeight: scaleVertical(115),
             alignItems: 'stretch',
         },
+        priceInputHelperText: {
+            color: colors.text_light,
+            marginTop: scaleVertical(4),
+        },
         locationButton: {
             minHeight: scaleVertical(48),
             borderWidth: scaleHorizontal(1),

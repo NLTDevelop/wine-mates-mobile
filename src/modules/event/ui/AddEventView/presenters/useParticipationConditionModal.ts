@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { PARTICIPATION_CONDITIONS, ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
 import { ISingleSelectModalItem } from '../types/ISingleSelectModalItem';
+import { PriceInputParticipationCondition } from '@/entities/events/types/PriceInputParticipationCondition';
 
 interface IProps {
     value?: ParticipationCondition;
@@ -32,6 +33,30 @@ const getParticipationConditionLabel = (value: ParticipationCondition) => {
     return localization.t('event.participationConditionGuest');
 };
 
+const PRICE_INPUT_PARTICIPATION_CONDITIONS = [
+    ParticipationCondition.FixedPrice,
+    ParticipationCondition.SplitBill,
+    ParticipationCondition.Charity,
+] as const;
+
+const PRICE_INPUT_HELPER_TEXT_KEYS: Record<PriceInputParticipationCondition, string> = {
+    [ParticipationCondition.FixedPrice]: 'event.priceInputHelperTextFixedPrice',
+    [ParticipationCondition.SplitBill]: 'event.priceInputHelperTextSplitBill',
+    [ParticipationCondition.Charity]: 'event.priceInputHelperTextCharity',
+};
+
+const getPriceInputParticipationCondition = (value?: ParticipationCondition): PriceInputParticipationCondition | undefined => {
+    if (!value || !PRICE_INPUT_PARTICIPATION_CONDITIONS.includes(value as PriceInputParticipationCondition)) {
+        return undefined;
+    }
+
+    return value as PriceInputParticipationCondition;
+};
+
+const getPriceInputHelperText = (value: PriceInputParticipationCondition): string => {
+    return localization.t(PRICE_INPUT_HELPER_TEXT_KEYS[value]);
+};
+
 export const useParticipationConditionModal = ({ value, onChange }: IProps) => {
     const [isVisible, setIsVisible] = useState(false);
     const [draft, setDraft] = useState<ParticipationCondition | undefined>(value);
@@ -60,7 +85,7 @@ export const useParticipationConditionModal = ({ value, onChange }: IProps) => {
     }, []);
 
     const items = useMemo<ISingleSelectModalItem[]>(() => {
-        return PARTICIPATION_CONDITIONS.map((itemValue) => {
+        return PARTICIPATION_CONDITIONS.map(itemValue => {
             return {
                 key: itemValue,
                 label: getParticipationConditionLabel(itemValue),
@@ -78,6 +103,16 @@ export const useParticipationConditionModal = ({ value, onChange }: IProps) => {
         return getParticipationConditionLabel(value);
     }, [value]);
 
+    const priceInputHelperText = useMemo(() => {
+        const priceInputParticipationCondition = getPriceInputParticipationCondition(value);
+
+        if (priceInputParticipationCondition) {
+            return getPriceInputHelperText(priceInputParticipationCondition);
+        }
+
+        return '';
+    }, [value]);
+
     return useMemo(() => {
         return {
             title: localization.t('event.participationCondition'),
@@ -87,6 +122,7 @@ export const useParticipationConditionModal = ({ value, onChange }: IProps) => {
             onOpen,
             onClose,
             onConfirm,
+            priceInputHelperText,
         };
-    }, [isVisible, items, onClose, onConfirm, onOpen, selectedText]);
+    }, [isVisible, items, onClose, onConfirm, onOpen, selectedText, priceInputHelperText]);
 };
