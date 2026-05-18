@@ -64,6 +64,14 @@ const normalizeTimeToHoursMinutes = (value?: string) => {
     return `${hours}:${minutes}`;
 };
 
+const getIsPriceFieldAvailable = (value?: ParticipationCondition) => {
+    return (
+        value === ParticipationCondition.FixedPrice ||
+        value === ParticipationCondition.SplitBill ||
+        value === ParticipationCondition.Charity
+    );
+};
+
 const getInitialForm = (draft?: IAddEventDraft, isEditMode = false): IEventForm => {
     if (!draft) {
         return {
@@ -137,16 +145,33 @@ export const useAddEvent = () => {
     const [form, setForm] = useState<IEventForm>(() => getInitialForm(route.params?.draft, isEditMode));
 
     const isPartyEventType = form.eventType === EventType.Parties;
-    const isPaymentMethodsDisabled = useMemo(() => {
+
+    const isPriceFieldAvailable = useMemo(() => {
+        return getIsPriceFieldAvailable(form.participationCondition);
+    }, [form.participationCondition]);
+
+    const isPriceRequired = useMemo(() => {
+        return (
+            form.participationCondition === ParticipationCondition.FixedPrice ||
+            form.participationCondition === ParticipationCondition.SplitBill
+        );
+    }, [form.participationCondition]);
+
+    const isPriceValid = useMemo(() => {
+        if (!isPriceRequired) {
+            return true;
+        }
+
         const normalizedPrice = form.price.trim();
 
         if (!normalizedPrice) {
             return false;
         }
 
-        return Number(normalizedPrice) === 0;
-    }, [form.price]);
-    const isCurrencyDisabled = isPaymentMethodsDisabled;
+        return Number(normalizedPrice) > 0;
+    }, [form.price, isPriceRequired]);
+    const isPaymentMethodsDisabled = !isPriceFieldAvailable;
+    const isCurrencyDisabled = !isPriceFieldAvailable;
 
     const onLoadPaymentMethods = useCallback(async () => {
         try {
@@ -301,7 +326,14 @@ export const useAddEvent = () => {
     }, []);
 
     const onChangeParticipationCondition = useCallback((value?: ParticipationCondition) => {
-        setForm(prev => ({ ...prev, participationCondition: value }));
+        const isNextPriceFieldAvailable = getIsPriceFieldAvailable(value);
+
+        setForm(prev => ({
+            ...prev,
+            participationCondition: value,
+            price: isNextPriceFieldAvailable ? prev.price : '',
+            paymentMethodIds: isNextPriceFieldAvailable ? prev.paymentMethodIds : [],
+        }));
     }, []);
 
     const onChangeCurrency = useCallback((value: string) => {
@@ -441,10 +473,10 @@ export const useAddEvent = () => {
         !validateEmptyString(form.eventEndDate).isValid ||
         !validateEmptyString(form.eventStartTime).isValid ||
         !validateEmptyString(form.eventEndTime).isValid ||
-        (!isPaymentMethodsDisabled && form.paymentMethodIds.length === 0) ||
+        (isPriceRequired && form.paymentMethodIds.length === 0) ||
         form.contactIds.length === 0 ||
-        !validateEmptyString(form.price.trim()).isValid ||
-        !validateEmptyString(form.currency.trim()).isValid ||
+        !isPriceValid ||
+        (isPriceRequired && !validateEmptyString(form.currency.trim()).isValid) ||
         (isPartyEventType && !form.sex) ||
         (isPartyEventType && !form.participationCondition) ||
         !validateEmptyString(form.seats.trim()).isValid;
@@ -459,6 +491,7 @@ export const useAddEvent = () => {
         isCurrenciesLoading,
         isPaymentMethodsDisabled,
         isCurrencyDisabled,
+        isPriceFieldAvailable,
         paymentMethods,
         contacts,
         currencies,

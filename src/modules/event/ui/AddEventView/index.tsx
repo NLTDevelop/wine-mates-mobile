@@ -49,6 +49,7 @@ export const AddEventView = () => {
         currencies,
         isPaymentMethodsDisabled,
         isCurrencyDisabled,
+        isPriceFieldAvailable,
         isSeatsError,
         disabled,
         onChangeTheme,
@@ -157,6 +158,7 @@ export const AddEventView = () => {
         onOpen: onOpenParticipationConditionModal,
         onClose: onCloseParticipationConditionModal,
         onConfirm: onConfirmParticipationCondition,
+        priceInputHelperText,
     } = useParticipationConditionModal({
         value: form.participationCondition,
         onChange: onChangeParticipationCondition,
@@ -220,7 +222,12 @@ export const AddEventView = () => {
         <>
             <ScreenContainer
                 edges={['top', 'bottom']}
-                headerComponent={<HeaderWithBackButton title={isEditMode ? t('event.editEvent') : t('event.addEvent')} isCentered={true} />}
+                headerComponent={
+                    <HeaderWithBackButton
+                        title={isEditMode ? t('event.editEvent') : t('event.addEvent')}
+                        isCentered={true}
+                    />
+                }
                 withGradient
             >
                 <View style={styles.container}>
@@ -365,27 +372,42 @@ export const AddEventView = () => {
                                 style={styles.pickerButton}
                             />
 
-                            <PickerButton
-                                onPress={onOpenPaymentMethodsModal}
-                                text={selectedPaymentMethodsText || t('payments.paymentsMethods')}
-                                style={styles.pickerButton}
-                                isDisabled={isPaymentMethodsDisabled}
-                            />
+                            {isPriceFieldAvailable && (
+                                <>
+                                    <PickerButton
+                                        onPress={onOpenPaymentMethodsModal}
+                                        text={selectedPaymentMethodsText || t('payments.paymentsMethods')}
+                                        style={styles.pickerButton}
+                                        isDisabled={isPaymentMethodsDisabled}
+                                    />
 
-                            <PickerButton
-                                onPress={currencyPicker.onOpen}
-                                text={currencyPicker.selectedText || t('event.currency')}
-                                style={styles.pickerButton}
-                                isDisabled={isCurrencyPickerDisabled}
-                            />
+                                    <PickerButton
+                                        onPress={currencyPicker.onOpen}
+                                        text={currencyPicker.selectedText || t('event.currency')}
+                                        style={styles.pickerButton}
+                                        isDisabled={isCurrencyPickerDisabled}
+                                    />
+                                </>
+                            )}
 
-                            <CustomInput
-                                value={form.price}
-                                containerStyle={styles.inputContainerStyle}
-                                onChangeText={onChangePrice}
-                                placeholder={t('event.price')}
-                                keyboardType="numeric"
-                            />
+                            {isPriceFieldAvailable && (
+                                <View>
+                                    <CustomInput
+                                        value={form.price}
+                                        containerStyle={styles.inputContainerStyle}
+                                        onChangeText={onChangePrice}
+                                        placeholder={t('event.price')}
+                                        keyboardType="numeric"
+                                    />
+                                    {!!priceInputHelperText && (
+                                        <Typography
+                                            variant="subtitle_12_400"
+                                            text={priceInputHelperText}
+                                            style={styles.priceInputHelperText}
+                                        />
+                                    )}
+                                </View>
+                            )}
 
                             <CustomInput
                                 value={form.seats}
