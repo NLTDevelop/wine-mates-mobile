@@ -69,13 +69,13 @@ export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => 
             },
             {
                 value: GuestTabs.CONFIRM,
-                label: t('eventGuests.confirm'),
+                label: t('eventGuests.confirmed'),
                 isActive: selectedTab === GuestTabs.CONFIRM,
                 onPress: onPressConfirmTab,
             },
             {
                 value: GuestTabs.NOT_CONFIRM,
-                label: t('eventGuests.notConfirm'),
+                label: t('eventGuests.notConfirmed'),
                 isActive: selectedTab === GuestTabs.NOT_CONFIRM,
                 onPress: onPressNotConfirmTab,
             },

@@ -433,18 +433,13 @@ export const useEditProfileDetails = () => {
         }
 
         const availableCurrencies = data.list;
-        const selectedCurrency = data.selected;
 
         setForm(prev => {
             if (prev.selectedCurrency && availableCurrencies.includes(prev.selectedCurrency)) {
                 return prev;
             }
 
-            if (selectedCurrency && availableCurrencies.includes(selectedCurrency)) {
-                return { ...prev, selectedCurrency };
-            }
-
-            return { ...prev, selectedCurrency: availableCurrencies[0] || '' };
+            return { ...prev, selectedCurrency: '' };
         });
     }, [currencies.length, onLoadCurrencies]);
 

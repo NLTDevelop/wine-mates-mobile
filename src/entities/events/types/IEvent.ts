@@ -21,6 +21,8 @@ export interface IEvent {
     eventStartTime?: string;
     eventEndTime?: string;
     phoneNumber?: string;
+    restaurantName?: string;
+    locationLabel?: string;
     price: number;
     priceUsd: number;
     currency: Currency | string;

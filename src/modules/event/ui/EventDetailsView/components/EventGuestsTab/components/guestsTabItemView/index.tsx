@@ -22,7 +22,7 @@ const GuestsTabItemViewComponent = ({ tabName, isActive, onPress }: IProps) => {
                 style={styles.tabName}
                 numberOfLines={1}
                 adjustsFontSizeToFit
-                minimumFontScale={0.85}
+                minimumFontScale={0.75}
             />
         </Pressable>
     );
