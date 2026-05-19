@@ -15,6 +15,7 @@ import { IAddEventDraft } from '../../../types/IAddEventDraft';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useUserCurrencies } from '@/UIKit/CurrencyPicker/presenters/useUserCurrencies';
+import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
 
 interface IEventForm {
     theme: string;
@@ -102,6 +103,13 @@ const getInitialForm = (draft?: IAddEventDraft, isEditMode = false): IEventForm 
         };
     }
 
+    const startDateTime = isEditMode
+        ? convertUtcEventDateTimeToLocal(draft.eventStartDate, draft.eventStartTime)
+        : { date: '', time: '' };
+    const endDateTime = isEditMode
+        ? convertUtcEventDateTimeToLocal(draft.eventEndDate, draft.eventEndTime)
+        : { date: '', time: '' };
+
     return {
         theme: draft.theme,
         description: draft.description,
@@ -109,10 +117,10 @@ const getInitialForm = (draft?: IAddEventDraft, isEditMode = false): IEventForm 
         locationLabel: draft.locationLabel,
         locationCountry: draft.locationCountry || '',
         location: draft.location,
-        eventStartDate: isEditMode ? draft.eventStartDate : '',
-        eventEndDate: isEditMode ? draft.eventEndDate : '',
-        eventStartTime: isEditMode ? normalizeTimeToHoursMinutes(draft.eventStartTime) : '',
-        eventEndTime: isEditMode ? normalizeTimeToHoursMinutes(draft.eventEndTime) : '',
+        eventStartDate: startDateTime.date,
+        eventEndDate: endDateTime.date,
+        eventStartTime: normalizeTimeToHoursMinutes(startDateTime.time),
+        eventEndTime: normalizeTimeToHoursMinutes(endDateTime.time),
         price: draft.price,
         currency: draft.currency,
         speakerName: draft.speakerName,
