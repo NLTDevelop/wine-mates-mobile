@@ -159,6 +159,7 @@
         "selectMousse": "Мус",
         "selectPerlage": "Перляж",
         "typeOfWine": "Тип вина",
+        "blindTastingWineTitle": "Вино %{order}",
         "colorOfWine": "Колір вина",
         "country": "Країна",
         "region": "Регіон",
