@@ -57,9 +57,32 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
         const styles = useMemo(() => getStyles(colors), [colors]);
         const dropdownRef = useRef<any>(null);
 
-        const { value, isOpen, search, filteredData, selectedItem, triggerContainerRef, dropdownLiftOffset, shouldShowSearch,
-            setSearch, handleSelect, onBlurDropdown, onPressDropdown, onCloseDropdown, onOpenDropdown, handleOpen,
-        } = useCustomDropdown({ onPress, data, onSelect, selectedValue, emptyStateLabel, withSearch, disableLocalFilter, onSearchChange });
+        const {
+            value,
+            isOpen,
+            search,
+            filteredData,
+            selectedItem,
+            triggerContainerRef,
+            dropdownLiftOffset,
+            shouldShowSearch,
+            setSearch,
+            handleSelect,
+            onBlurDropdown,
+            onPressDropdown,
+            onCloseDropdown,
+            onOpenDropdown,
+            handleOpen,
+        } = useCustomDropdown({
+            onPress,
+            data,
+            onSelect,
+            selectedValue,
+            emptyStateLabel,
+            withSearch,
+            disableLocalFilter,
+            onSearchChange,
+        });
         const { animatedArrowStyle, animatedLiftOffset } = useCustomDropdownAnimation({ isOpen, dropdownLiftOffset });
 
         useImperativeHandle(ref, () => ({
@@ -75,10 +98,13 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
             onPressDropdown(disabled, dropdownRef.current);
         }, [disabled, onPressDropdown]);
 
-        const onSearchTextChange = useCallback((text: string) => {
-            setSearch(text);
-            onSearchChange?.(text);
-        }, [setSearch, onSearchChange]);
+        const onSearchTextChange = useCallback(
+            (text: string) => {
+                setSearch(text);
+                onSearchChange?.(text);
+            },
+            [setSearch, onSearchChange],
+        );
 
         const renderInputSearch = useCallback(() => {
             if (!shouldShowSearch) {
@@ -95,11 +121,14 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
             );
         }, [search, onSearchTextChange, shouldShowSearch, styles.searchContainer, t]);
 
-        const renderRightIcon = useCallback(() => (
-            <Animated.View style={animatedArrowStyle}>
-                <ArrowDownIcon rotate={0} />
-            </Animated.View>
-        ), [animatedArrowStyle]);
+        const renderRightIcon = useCallback(
+            () => (
+                <Animated.View style={animatedArrowStyle}>
+                    <ArrowDownIcon rotate={0} />
+                </Animated.View>
+            ),
+            [animatedArrowStyle],
+        );
 
         const renderDropdownItem = useCallback(
             (item: unknown, selected?: boolean) => {

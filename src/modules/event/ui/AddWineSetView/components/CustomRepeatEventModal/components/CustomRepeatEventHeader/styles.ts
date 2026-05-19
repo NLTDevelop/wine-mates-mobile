@@ -1,5 +1,5 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleLineHeight, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors) => {
@@ -13,6 +13,7 @@ export const getStyles = (colors: IColors) => {
         title: {
             flex: 1,
             color: colors.text,
+            lineHeight: scaleLineHeight(20),
             textAlign: 'center',
             paddingLeft: scaleHorizontal(24),
         },
