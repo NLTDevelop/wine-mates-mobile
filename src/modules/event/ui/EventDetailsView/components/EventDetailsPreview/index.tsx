@@ -22,7 +22,7 @@ interface IProps {
 export const EventDetailsPreview = ({ data, eventId }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { eventDeepLink, onQrCodeRef, onShareIconPress } = useEventDetailsPreview({ eventId });
+    const { eventDeepLink, onQrCodeRef, onShareIconPress } = useEventDetailsPreview({ data, eventId });
 
     return (
         <View style={styles.container}>

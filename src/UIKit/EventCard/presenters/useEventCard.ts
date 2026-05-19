@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { EventType } from '@/entities/events/enums/EventType';
+import { TastingType } from '@/entities/events/enums/TastingType';
 import { localization } from '@/UIProvider/localization/Localization';
 import { config } from '@/config';
 import { userModel } from '@/entities/users/UserModel';
@@ -11,6 +12,9 @@ import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 import { toastService } from '@/libs/toast/toastService';
 import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
 import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
+import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShareMessage';
+import { createMapLink } from '@/modules/event/utils/createMapLink';
+import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
 
 interface IUseEventCardProps {
     event: IEvent;
@@ -146,17 +150,15 @@ export const useEventCard = ({
 
         const endDateLabel = parsedEndDate
             ? new Intl.DateTimeFormat(currentLocale, {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric',
-            })
-                .format(parsedEndDate)
-                .replace('.', '')
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric',
+              })
+                  .format(parsedEndDate)
+                  .replace('.', '')
             : startDateLabel;
 
-        const dateLabel = startDateLabel === endDateLabel
-            ? startDateLabel
-            : `${startDateLabel} - ${endDateLabel}`;
+        const dateLabel = startDateLabel === endDateLabel ? startDateLabel : `${startDateLabel} - ${endDateLabel}`;
 
         if (!startTimeValue && !endTimeValue) {
             return dateLabel;
@@ -203,41 +205,11 @@ export const useEventCard = ({
     }, [currentLocale, endTimeValue, parsedEndDate, parsedStartDate, startTimeValue]);
 
     const priceLabel = useMemo(() => {
-        const symbolByCurrency: Record<string, string> = {
-            UAH: '₴',
-            USD: '$',
-            EUR: '€',
-            GBP: '£',
-            PLN: 'zł',
-            JPY: '¥',
-            CNY: '¥',
-            INR: '₹',
-            KRW: '₩',
-            TRY: '₺',
-            RUB: '₽',
-            CHF: '₣',
-            SEK: 'kr',
-            NOK: 'kr',
-            DKK: 'kr',
-            CZK: 'Kč',
-            HUF: 'Ft',
-            RON: 'lei',
-            AMD: '֏',
-        };
-
-        const normalizedCurrency = (event.currency || '').trim().toUpperCase();
-        const symbol = symbolByCurrency[normalizedCurrency] || normalizedCurrency;
-
-        if (!symbol) {
-            return `${event.price}`;
-        }
-
-        return `${event.price} ${symbol}`;
+        return formatEventPrice(event.price, event.currency);
     }, [event.currency, event.price]);
 
-    const eventTypeLabel = event.eventType === EventType.Parties
-        ? localization.t('event.parties')
-        : localization.t('event.tastings');
+    const eventTypeLabel =
+        event.eventType === EventType.Parties ? localization.t('event.parties') : localization.t('event.tastings');
 
     const isAllSpotsFull = useMemo(() => {
         return typeof event.seats?.left === 'number' && event.seats.left <= 0;
@@ -327,37 +299,94 @@ export const useEventCard = ({
         return createEventDeepLink(event.id);
     }, [event.id]);
 
-    const onSharePress = useCallback(async (qrCodeDataUrl: string | null) => {
-        if (!eventDeepLink || !qrCodeDataUrl) {
-            toastService.showError(localization.t('common.errorHappened'), localization.t('event.shareQrCodeUnavailable'));
-            return;
-        }
+    const onSharePress = useCallback(
+        async (qrCodeDataUrl: string | null) => {
+            if (!eventDeepLink || !qrCodeDataUrl) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('event.shareQrCodeUnavailable'),
+                );
+                return;
+            }
 
-        try {
-            await Share.open({
-                failOnCancel: false,
-                filenames: [`wine-event-${event.id}-qr.png`],
-                message: `${localization.t('event.shareQrCodeMessage')}\n${eventDeepLink}`,
-                title: localization.t('event.shareQrCodeTitle'),
-                type: 'image/png',
-                urls: [qrCodeDataUrl],
-                subject: localization.t('event.shareQrCodeTitle'),
-                useInternalStorage: true,
-            });
-        } catch (error) {
-            console.warn('useEventCard -> onSharePress: ', error);
-            toastService.showError(localization.t('common.errorHappened'), localization.t('common.somethingWentWrong'));
-        }
-    }, [event.id, eventDeepLink]);
+            try {
+                const location = event.locationLabel || '';
+                const mapLink = createMapLink(event.latitude, event.longitude);
+                const tastingTypeLabel =
+                    event.eventType === EventType.Parties
+                        ? ''
+                        : event.tastingType === TastingType.Blind
+                          ? localization.t('event.tastingTypeBlind')
+                          : localization.t('event.tastingTypeRegular');
+                const labels = {
+                    title: localization.t('event.shareEventName'),
+                    dateTime: localization.t('event.shareEventDateTime'),
+                    meetingPlaceName: localization.t('event.shareEventMeetingPlaceName'),
+                    location: localization.t('event.shareEventLocation'),
+                    mapLink: localization.t('event.shareEventMap'),
+                    price: localization.t('event.price'),
+                    eventType: localization.t('event.eventType'),
+                    tastingType: localization.t('event.tastingType'),
+                };
+                const message = prepareEventShareMessage({
+                    intro: localization.t('event.shareQrCodeMessage'),
+                    labels,
+                    title: event.theme,
+                    dateTime: formattedDateTime,
+                    meetingPlaceName: event.restaurantName,
+                    location,
+                    mapLink,
+                    price: priceLabel,
+                    eventType: eventTypeLabel,
+                    tastingType: tastingTypeLabel,
+                    link: eventDeepLink,
+                });
 
-    const onQrCodeSharePress = useCallback((qrCodeData?: string) => {
-        if (!qrCodeData) {
-            onSharePress(null);
-            return;
-        }
+                await Share.open({
+                    failOnCancel: false,
+                    filename: `wine-event-${event.id}-qr.png`,
+                    message,
+                    title: localization.t('event.shareQrCodeTitle'),
+                    type: 'image/png',
+                    url: qrCodeDataUrl,
+                    subject: localization.t('event.shareQrCodeTitle'),
+                    useInternalStorage: true,
+                });
+            } catch (error) {
+                console.warn('useEventCard -> onSharePress: ', error);
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('common.somethingWentWrong'),
+                );
+            }
+        },
+        [
+            event.eventType,
+            event.id,
+            event.latitude,
+            event.locationLabel,
+            event.longitude,
+            event.restaurantName,
+            event.tastingType,
+            event.theme,
+            eventDeepLink,
+            eventTypeLabel,
+            formattedDateTime,
+            priceLabel,
+        ],
+    );
 
-        onSharePress(`${QR_CODE_IMAGE_PREFIX}${qrCodeData}`);
-    }, [onSharePress]);
+    const onQrCodeSharePress = useCallback(
+        (qrCodeData?: string) => {
+            if (!qrCodeData) {
+                onSharePress(null);
+                return;
+            }
+
+            onSharePress(`${QR_CODE_IMAGE_PREFIX}${qrCodeData}`);
+        },
+        [onSharePress],
+    );
 
     const onQrCodeRef = useCallback((ref: QrCodeRef | null) => {
         qrCodeRef.current = ref;

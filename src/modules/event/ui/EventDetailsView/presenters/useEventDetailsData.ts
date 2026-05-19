@@ -14,6 +14,8 @@ import { getContactTitle, getContactType, getContactUrl } from '@/entities/conta
 import { getRepeatRuleDescription } from '@/modules/event/utils/repeatRuleFormatter';
 import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
 import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
+import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
+import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
 
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 14;
@@ -113,39 +115,6 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         }
 
         return `0/${total}`;
-    };
-
-    const formatPrice = (price: number, currency?: string) => {
-        const symbolByCurrency: Record<string, string> = {
-            UAH: '₴',
-            USD: '$',
-            EUR: '€',
-            GBP: '£',
-            PLN: 'zł',
-            JPY: '¥',
-            CNY: '¥',
-            INR: '₹',
-            KRW: '₩',
-            TRY: '₺',
-            RUB: '₽',
-            CHF: '₣',
-            SEK: 'kr',
-            NOK: 'kr',
-            DKK: 'kr',
-            CZK: 'Kč',
-            HUF: 'Ft',
-            RON: 'lei',
-            AMD: '֏',
-        };
-
-        const normalizedCurrency = (currency || '').trim().toUpperCase();
-        const symbol = symbolByCurrency[normalizedCurrency] || normalizedCurrency;
-
-        if (!symbol) {
-            return `${price}`;
-        }
-
-        return `${price} ${symbol}`;
     };
 
     const calculateDistanceKm = (
@@ -407,7 +376,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             {
                 key: 'price',
                 label: t('eventDetails.price'),
-                value: formatPrice(eventDetail.price, eventDetail.currency),
+                value: formatEventPrice(eventDetail.price, eventDetail.currency),
             },
             {
                 key: 'speaker',
@@ -490,53 +459,13 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             : '';
         const day = isDateValid ? new Intl.DateTimeFormat(locale || 'en', { day: 'numeric' }).format(parsedDate) : '';
 
-        const formattedDateTime = (() => {
-            if (!isDateValid) {
-                return previewDateTime.time;
-            }
+        const formattedDateTime = prepareEventDateTimeLabel({
+            date: isDateValid ? parsedDate : null,
+            time: eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime,
+            locale,
+        });
 
-            const dateLabel = new Intl.DateTimeFormat(locale || 'en', {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric',
-            })
-                .format(parsedDate)
-                .replace('.', '');
-
-            const rawTime = previewDateTime.time;
-            if (!rawTime) {
-                return dateLabel;
-            }
-
-            const [hoursPart, minutesPart] = rawTime.split(':');
-            const hours = Number(hoursPart);
-            const minutes = Number(minutesPart);
-            if (Number.isNaN(hours) || Number.isNaN(minutes)) {
-                return `${dateLabel} · ${rawTime}`;
-            }
-
-            const dateWithTime = new Date(parsedDate);
-            dateWithTime.setHours(hours, minutes, 0, 0);
-            const timeLabel = new Intl.DateTimeFormat(locale || 'en', {
-                hour: 'numeric',
-                minute: '2-digit',
-            }).format(dateWithTime);
-
-            return `${dateLabel} · ${timeLabel}`;
-        })();
-
-        const priceLabel = (() => {
-            const currency = eventDetail.currency;
-            if (currency) {
-                try {
-                    return formatPrice(eventDetail.price || 0, currency);
-                } catch {
-                    return formatPrice(eventDetail.price || 0, currency);
-                }
-            }
-
-            return formatPrice(eventDetail.price || 0);
-        })();
+        const priceLabel = formatEventPrice(eventDetail.price || 0, eventDetail.currency);
 
         const eventTypeLabel = eventDetail.eventType === EventType.Parties ? t('event.parties') : t('event.tastings');
         const isPartyEvent = eventDetail.eventType === EventType.Parties;
@@ -567,6 +496,11 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             isPartyEvent,
             mapPreviewUri,
             title: eventDetail.theme || '-',
+            meetingPlaceName: eventDetail.restaurantName || eventDetail.restaurant || '',
+            locationLabel: eventDetail.locationLabel || eventDetail.location || '',
+            latitude: eventDetail.latitude,
+            longitude: eventDetail.longitude,
+            tastingTypeLabel: isPartyEvent ? '' : formatTastingType(eventDetail.tastingType),
             participantsPreviewData: prepareEventParticipantsPreview(eventDetail.participants),
         };
 

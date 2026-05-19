@@ -9,5 +9,10 @@ export interface IEventDetailsPreviewData {
     isPartyEvent: boolean;
     mapPreviewUri: string;
     title: string;
+    meetingPlaceName: string;
+    locationLabel: string;
+    latitude: number;
+    longitude: number;
+    tastingTypeLabel: string;
     participantsPreviewData: IEventParticipantsPreviewData;
 }

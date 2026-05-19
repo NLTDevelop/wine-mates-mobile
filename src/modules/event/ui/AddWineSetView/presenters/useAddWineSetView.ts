@@ -15,6 +15,10 @@ import { wineSetScannerModel } from '../../../../../entities/events/WineSetScann
 import { toastService } from '@/libs/toast/toastService';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 import { convertLocalEventDateTimeToUtc } from '@/modules/event/utils/eventDateTimeUtc';
+import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShareMessage';
+import { createMapLink } from '@/modules/event/utils/createMapLink';
+import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
+import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
 
 interface IWineSetDragEndPayload {
     data: IWineSetViewItem[];
@@ -78,7 +82,7 @@ export const useAddWineSetView = ({
 }: IProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<Route>();
-    const { t } = useUiContext();
+    const { locale, t } = useUiContext();
     const draft = route.params?.draft;
     const editEventId = route.params?.editEventId;
     const isDuplicateMode = route.params?.isDuplicateEvent === true;
@@ -466,7 +470,19 @@ export const useAddWineSetView = ({
         } finally {
             setIsCreating(false);
         }
-    }, [draft, editEventId, isCreating, isEditMode, isWineRequired, navigation, onGetCreatedEventId, repeatRule, selectedWines, t, tastingType]);
+    }, [
+        draft,
+        editEventId,
+        isCreating,
+        isEditMode,
+        isWineRequired,
+        navigation,
+        onGetCreatedEventId,
+        repeatRule,
+        selectedWines,
+        t,
+        tastingType,
+    ]);
 
     const resetToEventList = useCallback(() => {
         navigation.dispatch(
@@ -540,13 +556,53 @@ export const useAddWineSetView = ({
             }
 
             try {
+                const eventDate = draft?.eventStartDate ? new Date(draft.eventStartDate) : null;
+                const isEventDateValid = eventDate && !Number.isNaN(eventDate.getTime());
+                const eventDateTime = prepareEventDateTimeLabel({
+                    date: isEventDateValid ? eventDate : null,
+                    time: draft?.eventStartTime,
+                    locale,
+                });
+                const price = formatEventPrice(draft?.price, draft?.currency);
+                const mapLink = createMapLink(draft?.location?.latitude, draft?.location?.longitude);
+                const eventTypeLabel = draft?.eventType === EventType.Parties ? t('event.parties') : t('event.tastings');
+                const tastingTypeLabel =
+                    draft?.eventType === EventType.Parties
+                        ? ''
+                        : tastingType === TastingType.Blind
+                          ? t('event.tastingTypeBlind')
+                          : t('event.tastingTypeRegular');
+                const labels = {
+                    title: t('event.shareEventName'),
+                    dateTime: t('event.shareEventDateTime'),
+                    meetingPlaceName: t('event.shareEventMeetingPlaceName'),
+                    location: t('event.shareEventLocation'),
+                    mapLink: t('event.shareEventMap'),
+                    price: t('event.price'),
+                    eventType: t('event.eventType'),
+                    tastingType: t('event.tastingType'),
+                };
+                const message = prepareEventShareMessage({
+                    intro: t('event.shareQrCodeMessage'),
+                    labels,
+                    title: draft?.theme || '',
+                    dateTime: eventDateTime,
+                    meetingPlaceName: draft?.restaurantName,
+                    location: draft?.locationLabel,
+                    mapLink,
+                    price,
+                    eventType: eventTypeLabel,
+                    tastingType: tastingTypeLabel,
+                    link: eventDeepLink,
+                });
+
                 await Share.open({
                     failOnCancel: false,
-                    filenames: [`wine-event-${createdEventId}-qr.png`],
-                    message: `${t('event.shareQrCodeMessage')}\n${eventDeepLink}`,
+                    filename: `wine-event-${createdEventId}-qr.png`,
+                    message,
                     title: t('event.shareQrCodeTitle'),
                     type: 'image/png',
-                    urls: [qrCodeImageUrl],
+                    url: qrCodeImageUrl,
                     subject: t('event.shareQrCodeTitle'),
                     useInternalStorage: true,
                 });
@@ -555,7 +611,7 @@ export const useAddWineSetView = ({
                 toastService.showError(t('common.errorHappened'), t('common.somethingWentWrong'));
             }
         },
-        [createdEventId, eventDeepLink, t],
+        [createdEventId, draft, eventDeepLink, locale, t, tastingType],
     );
 
     return {
