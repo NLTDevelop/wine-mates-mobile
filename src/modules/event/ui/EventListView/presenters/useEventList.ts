@@ -53,17 +53,23 @@ export const useEventsList = () => {
                 limit: LIMIT,
             };
             if(_type === 'saved') {
-                await eventsService.getSavedEvents(params);
+                const savedResult = await eventsService.getSavedEvents(params);
+                if (savedResult.isError || !savedResult.data) {
+                        return;
+                    }
             } else if (_type === 'created') {
-                await eventsService.getCreatedEvents(params);
+                const createdResult = await eventsService.getCreatedEvents(params);
+                if (createdResult.isError || !createdResult.data) {
+                        return;
+                    }
             } else {
-                const [createdResult, savedResult, appliedResult] =await Promise.all([
+                const [createdResult, savedResult, appliedResult] = await Promise.all([
                         eventsService.getCreatedEvents(params),
                         eventsService.getSavedEvents(params),
                         eventsService.getAppliedEvents(),
                     ]);
 
-                    if (createdResult.isError || !createdResult.data || savedResult.isError || !savedResult.data || appliedResult.isError || !appliedResult.data) {
+                    if (createdResult.isError || createdResult.data !== null || savedResult.isError || savedResult.data !== null || appliedResult.isError || appliedResult.data !== null) {
                         return;
                     }
             }
