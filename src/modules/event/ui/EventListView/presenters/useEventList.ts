@@ -115,13 +115,17 @@ export const useEventsList = () => {
             return;
         }
         const timer = setTimeout(() => {
-            onRefresh(OFFSET);
+            const isNeedToLoad = (appliedEvents.length === 0 && (savedEvents?.rows ?? 0) === 0 && (createdEvents?.rows ?? 0) === 0); 
+            
+            if(isNeedToLoad){
+                onRefresh(OFFSET);
+            }
         }, 150);
 
 
        return () => clearTimeout(timer);
        
-    }, [ isFocused, onRefresh]);
+    }, [ isFocused, onRefresh, createdEvents, appliedEvents, savedEvents]);
 
 
     useEffect(() => {
