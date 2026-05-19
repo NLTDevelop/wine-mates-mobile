@@ -527,11 +527,11 @@ export const useAddWineSetView = ({
             try {
                 await Share.open({
                     failOnCancel: false,
-                    filenames: [`wine-event-${createdEventId}-qr.png`],
+                    filename: `wine-event-${createdEventId}-qr.png`,
                     message: `${t('event.shareQrCodeMessage')}\n${eventDeepLink}`,
                     title: t('event.shareQrCodeTitle'),
                     type: 'image/png',
-                    urls: [qrCodeImageUrl],
+                    url: qrCodeImageUrl,
                     subject: t('event.shareQrCodeTitle'),
                     useInternalStorage: true,
                 });

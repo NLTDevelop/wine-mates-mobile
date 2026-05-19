@@ -471,8 +471,8 @@
     },
     "eventGuests": {
         "all": "All",
-        "confirm": "Confirm",
-        "notConfirm": "Not confirm",
+        "confirmed": "Confirmed",
+        "notConfirmed": "Not confirmed",
         "confirmAction": "Confirm",
         "notConfirmAction": "Not confirm",
         "cancelConfirmation": "Cancel confirmation",

@@ -315,11 +315,11 @@ export const useEventCard = ({
         try {
             await Share.open({
                 failOnCancel: false,
-                filenames: [`wine-event-${event.id}-qr.png`],
+                filename: `wine-event-${event.id}-qr.png`,
                 message: `${localization.t('event.shareQrCodeMessage')}\n${eventDeepLink}`,
                 title: localization.t('event.shareQrCodeTitle'),
                 type: 'image/png',
-                urls: [qrCodeDataUrl],
+                url: qrCodeDataUrl,
                 subject: localization.t('event.shareQrCodeTitle'),
                 useInternalStorage: true,
             });

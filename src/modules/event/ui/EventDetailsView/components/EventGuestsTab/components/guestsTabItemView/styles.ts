@@ -1,5 +1,5 @@
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
 export const getStyles = (colors: IColors, isActive: boolean) => {
@@ -11,10 +11,12 @@ export const getStyles = (colors: IColors, isActive: boolean) => {
             alignItems: 'center',
             borderColor: isActive ? colors.primary : colors.border,
             borderBottomWidth: scaleVertical(1),
+            paddingHorizontal: scaleHorizontal(4),
         },
         tabName: {
             color: colors.text,
             textAlign: 'center',
+            width: '100%',
         },
     });
 

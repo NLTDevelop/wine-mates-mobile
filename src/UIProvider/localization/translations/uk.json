@@ -475,8 +475,8 @@
     },
     "eventGuests": {
         "all": "Усі",
-        "confirm": "Підтверджено",
-        "notConfirm": "Не підтверджено",
+        "confirmed": "Підтверджено",
+        "notConfirmed": "Не підтверджено",
         "confirmAction": "Підтвердити",
         "notConfirmAction": "Не підтвердити",
         "cancelConfirmation": "Скасувати підтвердження",
