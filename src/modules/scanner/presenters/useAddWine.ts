@@ -182,6 +182,8 @@ export const useAddWine = () => {
                                 StackActions.popTo('AddWineSetView', {
                                     draft: addWineSetScannerState.draft,
                                     initialSelectedWines: addWineSetScannerState.selectedWines,
+                                    editEventId: addWineSetScannerState.editEventId,
+                                    isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
                                     selectedWine: getWineSetSearchItem(wineId, form),
                                 }),
                             );
@@ -224,6 +226,8 @@ export const useAddWine = () => {
                             StackActions.popTo('AddWineSetView', {
                                 draft: addWineSetScannerState.draft,
                                 initialSelectedWines: addWineSetScannerState.selectedWines,
+                                editEventId: addWineSetScannerState.editEventId,
+                                isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
                                 selectedWine: getWineSetSearchItem(response.data.id, form),
                             }),
                         );

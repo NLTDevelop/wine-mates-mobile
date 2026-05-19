@@ -94,7 +94,7 @@ const getWineSetSearchItem = (id: number, form: IWineBase): IWineSetSearchItem =
 export const useEditEventWineView = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<Route>();
-    const { wineId, wine, draft, selectedWines } = route.params;
+    const { wineId, wine, draft, selectedWines, editEventId, isDuplicateEvent } = route.params;
     const [form, setForm] = useState<IWineBase>(() => createInitialForm(wine));
     const [initialForm, setInitialForm] = useState<IWineBase>(() => createInitialForm(wine));
     const [inProgress, setInProgress] = useState(false);
@@ -235,6 +235,8 @@ export const useEditEventWineView = () => {
             navigation.navigate('AddWineSetView', {
                 draft,
                 initialSelectedWines: selectedWines,
+                editEventId,
+                isDuplicateEvent,
                 replacedWine: {
                     previousWineId: wineId,
                     newWine: getWineSetSearchItem(response.data.id, form),
@@ -245,7 +247,7 @@ export const useEditEventWineView = () => {
         } finally {
             setInProgress(false);
         }
-    }, [draft, form, isDisabled, navigation, selectedWines, wineId]);
+    }, [draft, editEventId, form, isDisabled, isDuplicateEvent, navigation, selectedWines, wineId]);
 
     return {
         form,

@@ -352,6 +352,7 @@
     "event": {
         "addEvent": "Add event",
         "editEvent": "Edit event",
+        "duplicateEvent": "Duplicate event",
         "updateEvent": "Update event",
         "basicInfo": "Basic info",
         "locationAndSchedule": "Location & Schedule",

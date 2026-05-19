@@ -80,7 +80,15 @@ export const useAddWineSetView = ({
     const { t } = useUiContext();
     const draft = route.params?.draft;
     const editEventId = route.params?.editEventId;
+    const isDuplicateMode = route.params?.isDuplicateEvent === true;
     const isEditMode = typeof editEventId === 'number';
+    const headerTitleKey = useMemo(() => {
+        if (isDuplicateMode) {
+            return 'event.duplicateEvent';
+        }
+
+        return 'event.listWineEvent';
+    }, [isDuplicateMode]);
     const [repeatRule, setRepeatRule] = useState<RepeatRuleConfig | null>(draft?.repeatRule || null);
     const [tastingType, setTastingType] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
     const [isCreating, setIsCreating] = useState(false);
@@ -199,10 +207,12 @@ export const useAddWineSetView = ({
                     wine,
                     draft,
                     selectedWines,
+                    editEventId,
+                    isDuplicateEvent: route.params?.isDuplicateEvent,
                 });
             };
         },
-        [draft, navigation, selectedWines],
+        [draft, editEventId, navigation, route.params?.isDuplicateEvent, selectedWines],
     );
 
     const createOnDeleteWinePress = useCallback((wineId: number) => {
@@ -301,6 +311,8 @@ export const useAddWineSetView = ({
         wineSetScannerModel.setState({
             draft,
             selectedWines,
+            editEventId,
+            isDuplicateEvent: route.params?.isDuplicateEvent,
         });
         onResetSearch();
 
@@ -310,7 +322,7 @@ export const useAddWineSetView = ({
                 screen: 'ScannerView',
             },
         });
-    }, [draft, navigation, onResetSearch, selectedWines]);
+    }, [draft, editEventId, navigation, onResetSearch, route.params?.isDuplicateEvent, selectedWines]);
 
     const onGetCreatedEventId = useCallback((data: unknown): number | null => {
         if (!data || typeof data !== 'object') {
@@ -558,6 +570,7 @@ export const useAddWineSetView = ({
         isCreating,
         isCreateEventDisabled,
         isEditMode,
+        headerTitleKey,
         onChangeRepeatRule,
         onChangeTastingType,
         onCloseEventCreatedAlert,

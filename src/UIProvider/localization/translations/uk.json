@@ -356,6 +356,7 @@
     "event": {
         "addEvent": "Додати подію",
         "editEvent": "Редагувати подію",
+        "duplicateEvent": "Дублювати подію",
         "updateEvent": "Оновити події",
         "basicInfo": "Основна інформація",
         "locationAndSchedule": "Локація та розклад",

@@ -481,6 +481,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         navigation.navigate('AddEventView', {
             draft,
             initialSelectedWines,
+            isDuplicateEvent: true,
         });
     }, [eventDetail, navigation]);
     return {
