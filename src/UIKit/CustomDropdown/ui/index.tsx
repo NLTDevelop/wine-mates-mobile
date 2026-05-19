@@ -26,6 +26,7 @@ interface IProps {
     emptyStateLabel?: string;
     onSearchChange?: (value: string) => void;
     disableLocalFilter?: boolean;
+    dropdownMaxHeight?: number;
 }
 
 export interface ICustomDropdownRef {
@@ -50,6 +51,7 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
             emptyStateLabel,
             onSearchChange,
             disableLocalFilter = false,
+            dropdownMaxHeight,
         },
         ref,
     ) => {
@@ -129,6 +131,7 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
                             placeholderStyle={styles.placeholder}
                             containerStyle={[
                                 styles.dropdownContainer,
+                                dropdownMaxHeight ? { maxHeight: dropdownMaxHeight } : null,
                                 animatedLiftOffset > 0 ? { marginTop: -animatedLiftOffset } : null,
                             ]}
                             selectedTextStyle={[
@@ -142,6 +145,7 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
                             valueField="value"
                             value={value}
                             placeholder={placeholder}
+                            maxHeight={dropdownMaxHeight}
                             activeColor="transparent"
                             onFocus={handleOpen}
                             onBlur={onBlurDropdown}

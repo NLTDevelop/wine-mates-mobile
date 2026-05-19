@@ -30,7 +30,14 @@ const CustomRepeatEventIntervalComponent = ({
     return (
         <View style={styles.container}>
             <View style={styles.intervalRow}>
-                <Typography text={t('repeatEvent.repeatWithInterval')} variant="h6" style={styles.intervalLabel} />
+                <Typography
+                    text={t('repeatEvent.repeatWithInterval')}
+                    variant="h6"
+                    style={styles.intervalLabel}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.75}
+                    numberOfLines={2}
+                />
                 <CustomDropdown
                     placeholder={t('repeatEvent.interval')}
                     data={intervalItems}

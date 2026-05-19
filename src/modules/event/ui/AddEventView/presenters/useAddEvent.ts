@@ -159,15 +159,23 @@ export const useAddEvent = () => {
     const isPartyEventType = form.eventType === EventType.Parties;
 
     const isPriceFieldAvailable = useMemo(() => {
+        if (!isPartyEventType) {
+            return true;
+        }
+
         return getIsPriceFieldAvailable(form.participationCondition);
-    }, [form.participationCondition]);
+    }, [form.participationCondition, isPartyEventType]);
 
     const isPriceRequired = useMemo(() => {
+        if (!isPartyEventType) {
+            return true;
+        }
+
         return (
             form.participationCondition === ParticipationCondition.FixedPrice ||
             form.participationCondition === ParticipationCondition.SplitBill
         );
-    }, [form.participationCondition]);
+    }, [form.participationCondition, isPartyEventType]);
 
     const isPriceValid = useMemo(() => {
         if (!isPriceRequired) {

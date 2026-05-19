@@ -4,7 +4,7 @@ import { useUiContext } from '@/UIProvider';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { memo, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { getStyles } from './styles';
+import { getStyles, REPETITION_COUNT_DROPDOWN_MAX_HEIGHT } from './styles';
 import { Checkbox } from '@/UIKit/Checkbox';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 
@@ -101,6 +101,7 @@ const CustomRepeatEventEndConditionComponent = ({
                     onPress={onSelectRepetitionCount}
                     containerStyle={styles.endConditionDropdown}
                     disabled={isCountControlDisabled}
+                    dropdownMaxHeight={REPETITION_COUNT_DROPDOWN_MAX_HEIGHT}
                 />
             </View>
         </View>
