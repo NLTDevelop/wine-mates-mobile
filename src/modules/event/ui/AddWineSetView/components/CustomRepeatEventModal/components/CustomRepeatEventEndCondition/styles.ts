@@ -2,8 +2,6 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const REPETITION_COUNT_DROPDOWN_MAX_HEIGHT = scaleVertical(200);
-
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
