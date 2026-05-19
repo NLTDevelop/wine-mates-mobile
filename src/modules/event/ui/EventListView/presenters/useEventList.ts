@@ -115,7 +115,6 @@ export const useEventsList = () => {
             return;
         }
         const timer = setTimeout(() => {
-            console.log('Refresh list');
             const isNeedToLoad = (appliedEvents.length == 0 && (savedEvents?.rows ?? 0) == 0 && (createdEvents?.rows ?? 0) == 0); 
             
             if(isNeedToLoad){
