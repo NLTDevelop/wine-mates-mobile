@@ -116,9 +116,9 @@ export const useEventsList = () => {
         }
         const timer = setTimeout(() => {
             console.log('Refresh list');
-            const isNoNeedToLoad = (appliedEvents.length != 0 || (savedEvents?.rows ?? 0) !=0 || (createdEvents?.rows ?? 0) != 0); 
+            const isNeedToLoad = (appliedEvents.length == 0 && (savedEvents?.rows ?? 0) == 0 && (createdEvents?.rows ?? 0) == 0); 
             
-            if(isNoNeedToLoad == false){
+            if(isNeedToLoad){
                 onRefresh(OFFSET);
             }
         }, 150);
