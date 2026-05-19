@@ -149,9 +149,9 @@ export const useEventListView = ({ t, createdEvents, savedEvents, appliedEvents 
         [navigation],
     );
 
-    const selectedCreatedEvent = createdEvents?.rows.find(event => event.id === selectedEventId);
-    const selectedSavedEvent = savedEvents?.rows.find(event => event.id === selectedEventId);
-    const selectedAppliedEvent = appliedEvents.find(item => item.event.id === selectedEventId)?.event;
+    const selectedCreatedEvent = createdEvents !== null ? createdEvents.rows.find(event => event.id === selectedEventId) ?? null : null;
+    const selectedSavedEvent = savedEvents !== null ? savedEvents.rows.find(event => event.id === selectedEventId) ?? null : null;
+    const selectedAppliedEvent = appliedEvents.length !== 0 ? appliedEvents.find(item => item.event.id === selectedEventId)?.event ?? null : null;
     const selectedEvent = selectedCreatedEvent || selectedSavedEvent || selectedAppliedEvent || null;
 
     return {
