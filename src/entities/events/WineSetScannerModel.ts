@@ -5,6 +5,8 @@ import { IAddEventDraft } from '@/modules/event/types/IAddEventDraft';
 interface IWineSetScannerState {
     draft: IAddEventDraft;
     selectedWines: IWineSetSearchItem[];
+    editEventId?: number;
+    isDuplicateEvent?: boolean;
 }
 
 class WineSetScannerModel {

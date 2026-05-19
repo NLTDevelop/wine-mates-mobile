@@ -18,6 +18,7 @@ export const useLocationPickerView = () => {
     const route = useRoute<RouteProps>();
     const initialLocation = route.params?.initialLocation;
     const eventType = route.params?.eventType || EventType.Tastings;
+    const isDuplicateEvent = route.params?.isDuplicateEvent;
 
     const onSelectLocation = useCallback((
         latitude: number,
@@ -35,9 +36,10 @@ export const useLocationPickerView = () => {
                     placeName,
                     countryName,
                 },
+                isDuplicateEvent,
             }),
         );
-    }, [navigation]);
+    }, [isDuplicateEvent, navigation]);
 
     const {
         selectedLocation,

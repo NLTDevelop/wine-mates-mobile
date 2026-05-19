@@ -80,6 +80,8 @@ export const useScannerResultsList = () => {
                 StackActions.popTo('AddWineSetView', {
                     draft: addWineSetScannerState.draft,
                     initialSelectedWines: addWineSetScannerState.selectedWines,
+                    editEventId: addWineSetScannerState.editEventId,
+                    isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
                     selectedWine: getWineSetSearchItem(item),
                 }),
             );

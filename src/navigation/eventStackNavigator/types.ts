@@ -15,11 +15,13 @@ export type EventStackParamList = {
         draft?: IAddEventDraft;
         initialSelectedWines?: IWineSetSearchItem[];
         editEventId?: number;
+        isDuplicateEvent?: boolean;
     } | undefined;
     AddWineSetView: {
         draft: IAddEventDraft;
         initialSelectedWines?: IWineSetSearchItem[];
         editEventId?: number;
+        isDuplicateEvent?: boolean;
         selectedWine?: IWineSetSearchItem;
         replacedWine?: {
             previousWineId: number;
@@ -31,10 +33,13 @@ export type EventStackParamList = {
         wine: IWineSetSearchItem;
         draft: IAddEventDraft;
         selectedWines: IWineSetSearchItem[];
+        editEventId?: number;
+        isDuplicateEvent?: boolean;
     };
     LocationPickerView: {
         initialLocation?: { latitude: number; longitude: number } | null;
         eventType?: EventType;
+        isDuplicateEvent?: boolean;
     };
     EventFiltersView: undefined;
 };

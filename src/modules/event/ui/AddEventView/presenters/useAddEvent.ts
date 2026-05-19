@@ -135,6 +135,18 @@ export const useAddEvent = () => {
     const route = useRoute<RouteProp<EventStackParamList, 'AddEventView'>>();
     const { validateEmptyString } = useValidator();
     const isEditMode = typeof route.params?.editEventId === 'number';
+    const isDuplicateMode = route.params?.isDuplicateEvent === true;
+    const headerTitleKey = useMemo(() => {
+        if (isEditMode) {
+            return 'event.editEvent';
+        }
+
+        if (isDuplicateMode) {
+            return 'event.duplicateEvent';
+        }
+
+        return 'event.addEvent';
+    }, [isDuplicateMode, isEditMode]);
 
     const [isPaymentMethodsLoading, setIsPaymentMethodsLoading] = useState(false);
     const [isContactInfoLoading, setIsContactInfoLoading] = useState(false);
@@ -356,8 +368,9 @@ export const useAddEvent = () => {
         navigation.navigate('LocationPickerView', {
             initialLocation: form.location,
             eventType: form.eventType,
+            isDuplicateEvent: route.params?.isDuplicateEvent,
         });
-    }, [form.eventType, form.location, navigation]);
+    }, [form.eventType, form.location, navigation, route.params?.isDuplicateEvent]);
 
     const onOpenPaymentsPress = useCallback(() => {
         navigation.navigate('PaymentsView' as never);
@@ -456,11 +469,13 @@ export const useAddEvent = () => {
             draft,
             initialSelectedWines: route.params?.initialSelectedWines,
             editEventId: route.params?.editEventId,
+            isDuplicateEvent: route.params?.isDuplicateEvent,
         });
     }, [
         form,
         navigation,
         route.params?.editEventId,
+        route.params?.isDuplicateEvent,
         route.params?.initialSelectedWines,
         route.params?.draft?.repeatRule,
     ]);
@@ -483,6 +498,7 @@ export const useAddEvent = () => {
 
     return {
         form,
+        headerTitleKey,
         isEditMode,
         isLoading: false,
         isPartyEventType,

@@ -53,6 +53,7 @@ export const AddWineSetView = () => {
         isCreating,
         isCreateEventDisabled,
         isEditMode,
+        headerTitleKey,
         onChangeRepeatRule,
         onChangeTastingType,
         onCloseEventCreatedAlert,
@@ -124,7 +125,7 @@ export const AddWineSetView = () => {
                 <ScreenContainer
                     edges={['top', 'bottom']}
                     scrollEnabled={false}
-                    headerComponent={<HeaderWithBackButton title={t('event.listWineEvent')} isCentered />}
+                    headerComponent={<HeaderWithBackButton title={t(headerTitleKey)} isCentered />}
                 >
                     <Sortable.PortalProvider>
                         <Animated.ScrollView

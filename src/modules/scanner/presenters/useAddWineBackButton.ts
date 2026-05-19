@@ -22,6 +22,8 @@ export const useAddWineBackButton = () => {
                 StackActions.popTo('AddWineSetView', {
                     draft: addWineSetScannerState.draft,
                     initialSelectedWines: addWineSetScannerState.selectedWines,
+                    editEventId: addWineSetScannerState.editEventId,
+                    isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
                 }),
             );
             return;
