@@ -1,15 +1,12 @@
-export interface IWineImage {
-    smallUrl?: string;
-    mediumUrl?: string;
-    originalUrl?: string;
-}
+import { IMedia } from "@/entities/media/types/IMedia";
 
 export interface IWineInSet {
     id: number;
     name: string;
     producer?: string;
     vintage?: number;
-    image?: IWineImage;
+    image?: IMedia;
+    defaultImage?: IMedia 
 }
 
 export type WineSetTastingStatus = 'not_started' | 'in_progress' | 'tasted';

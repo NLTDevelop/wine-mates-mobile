@@ -11,7 +11,6 @@ interface IProps {
 
 export const useLanguageSelector = ({ value, onChange }: IProps) => {
     const modalRef = useRef<BottomSheetModal>(null);
-    const pendingLanguageCodeRef = useRef<string | null>(null);
     const frameRef = useRef<number | null>(null);
     const [isMounted, setIsMounted] = useState(false);
     const [isOpened, setIsOpened] = useState(false);
@@ -28,26 +27,22 @@ export const useLanguageSelector = ({ value, onChange }: IProps) => {
     }, []);
 
     const onClose = useCallback(() => {
+        setIsOpened(false);
         modalRef.current?.dismiss();
     }, []);
 
     const onDismiss = useCallback(() => {
         setIsOpened(false);
         setIsMounted(false);
-        const pendingLanguageCode = pendingLanguageCodeRef.current;
-
-        if (pendingLanguageCode) {
-            pendingLanguageCodeRef.current = null;
-            onChange(pendingLanguageCode);
-        }
-    }, [onChange]);
+    }, []);
 
     const onSelect = useCallback(
         (item: ILanguageOption) => {
-            pendingLanguageCodeRef.current = item.code;
+            onChange(item.code);
+            setIsOpened(false);
             modalRef.current?.dismiss();
         },
-        [],
+        [onChange],
     );
 
     useEffect(() => {

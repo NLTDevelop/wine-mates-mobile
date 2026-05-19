@@ -39,7 +39,7 @@ export const AddEventView = () => {
 
     const {
         form,
-        isEditMode,
+        headerTitleKey,
         isLoading,
         isPaymentMethodsLoading,
         isContactInfoLoading,
@@ -224,7 +224,7 @@ export const AddEventView = () => {
                 edges={['top', 'bottom']}
                 headerComponent={
                     <HeaderWithBackButton
-                        title={isEditMode ? t('event.editEvent') : t('event.addEvent')}
+                        title={t(headerTitleKey)}
                         isCentered={true}
                     />
                 }

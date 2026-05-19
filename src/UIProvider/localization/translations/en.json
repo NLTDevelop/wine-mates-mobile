@@ -159,6 +159,7 @@
         "selectMousse": "Mousse",
         "selectPerlage": "Perlage",
         "typeOfWine": "Type of wine",
+        "blindTastingWineTitle": "Wine %{order}",
         "colorOfWine": "Color of wine",
         "country": "Country",
         "region": "Region",
@@ -352,6 +353,7 @@
     "event": {
         "addEvent": "Add event",
         "editEvent": "Edit event",
+        "duplicateEvent": "Duplicate event",
         "updateEvent": "Update event",
         "basicInfo": "Basic info",
         "locationAndSchedule": "Location & Schedule",
