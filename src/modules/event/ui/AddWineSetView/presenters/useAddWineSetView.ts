@@ -14,6 +14,7 @@ import { useUiContext } from '@/UIProvider';
 import { wineSetScannerModel } from '../../../../../entities/events/WineSetScannerModel';
 import { toastService } from '@/libs/toast/toastService';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
+import { convertLocalEventDateTimeToUtc } from '@/modules/event/utils/eventDateTimeUtc';
 
 interface IWineSetDragEndPayload {
     data: IWineSetViewItem[];
@@ -387,6 +388,8 @@ export const useAddWineSetView = ({
                           participationCondition: draft.participationCondition,
                       }
                     : {};
+            const startDateTime = convertLocalEventDateTimeToUtc(draft.eventStartDate, draft.eventStartTime);
+            const endDateTime = convertLocalEventDateTimeToUtc(draft.eventEndDate, draft.eventEndTime);
 
             const payload = {
                 theme: draft.theme,
@@ -395,10 +398,10 @@ export const useAddWineSetView = ({
                 locationLabel: draft.locationLabel,
                 latitude: draft.location.latitude,
                 longitude: draft.location.longitude,
-                eventStartDate: draft.eventStartDate,
-                eventEndDate: draft.eventEndDate,
-                eventStartTime: draft.eventStartTime,
-                eventEndTime: draft.eventEndTime,
+                eventStartDate: startDateTime.date,
+                eventEndDate: endDateTime.date,
+                eventStartTime: startDateTime.time,
+                eventEndTime: endDateTime.time,
                 paymentMethodIds: draft.paymentMethodIds,
                 contactIds: draft.contactIds,
                 price: Number(draft.price),

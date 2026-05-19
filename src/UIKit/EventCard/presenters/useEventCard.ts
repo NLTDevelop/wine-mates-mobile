@@ -10,6 +10,7 @@ import Share from 'react-native-share';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 import { toastService } from '@/libs/toast/toastService';
 import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
+import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
 
 interface IUseEventCardProps {
     event: IEvent;
@@ -50,27 +51,47 @@ export const useEventCard = ({
     const qrCodeRef = useRef<QrCodeRef | null>(null);
 
     const startDateValue = useMemo(() => {
-        return event.eventStartDate || event.eventDate;
-    }, [event.eventDate, event.eventStartDate]);
+        const startDateTime = convertUtcEventDateTimeToLocal(
+            event.eventStartDate || event.eventDate || '',
+            event.eventStartTime || event.eventTime || '',
+        );
+
+        return startDateTime.date;
+    }, [event.eventDate, event.eventStartDate, event.eventStartTime, event.eventTime]);
 
     const endDateValue = useMemo(() => {
-        return event.eventEndDate || event.eventDate;
-    }, [event.eventDate, event.eventEndDate]);
+        const endDateTime = convertUtcEventDateTimeToLocal(
+            event.eventEndDate || event.eventDate || '',
+            event.eventEndTime || '',
+        );
+
+        return endDateTime.date;
+    }, [event.eventDate, event.eventEndDate, event.eventEndTime]);
 
     const startTimeValue = useMemo(() => {
-        return event.eventStartTime || event.eventTime;
-    }, [event.eventStartTime, event.eventTime]);
+        const startDateTime = convertUtcEventDateTimeToLocal(
+            event.eventStartDate || event.eventDate || '',
+            event.eventStartTime || event.eventTime || '',
+        );
+
+        return startDateTime.time;
+    }, [event.eventDate, event.eventStartDate, event.eventStartTime, event.eventTime]);
 
     const endTimeValue = useMemo(() => {
-        return event.eventEndTime;
-    }, [event.eventEndTime]);
+        const endDateTime = convertUtcEventDateTimeToLocal(
+            event.eventEndDate || event.eventDate || '',
+            event.eventEndTime || '',
+        );
+
+        return endDateTime.time;
+    }, [event.eventDate, event.eventEndDate, event.eventEndTime]);
 
     const parsedStartDate = useMemo(() => {
         if (!startDateValue) {
             return null;
         }
 
-        const date = new Date(startDateValue);
+        const date = new Date(`${startDateValue}T00:00:00`);
         if (Number.isNaN(date.getTime())) {
             return null;
         }
@@ -83,7 +104,7 @@ export const useEventCard = ({
             return null;
         }
 
-        const date = new Date(endDateValue);
+        const date = new Date(`${endDateValue}T00:00:00`);
         if (Number.isNaN(date.getTime())) {
             return null;
         }

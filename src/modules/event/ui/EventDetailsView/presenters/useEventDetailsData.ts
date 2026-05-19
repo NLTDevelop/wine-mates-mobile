@@ -13,6 +13,7 @@ import { IEventContactOption } from '../types/IEventContactOption';
 import { getContactTitle, getContactType, getContactUrl } from '@/entities/contacts/presenters/useContactType';
 import { getRepeatRuleDescription } from '@/modules/event/utils/repeatRuleFormatter';
 import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
+import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
 
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 14;
@@ -368,6 +369,14 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                       },
                   ]
                 : [];
+        const startDateTime = convertUtcEventDateTimeToLocal(
+            eventDetail.eventStartDate || eventDetail.eventDate || eventDetail.date || '',
+            eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '',
+        );
+        const endDateTime = convertUtcEventDateTimeToLocal(
+            eventDetail.eventEndDate || eventDetail.eventDate || eventDetail.date || '',
+            eventDetail.eventEndTime || eventDetail.endTime || '',
+        );
 
         return [
             { key: 'theme', label: t('eventDetails.theme'), value: getValueOrDash(eventDetail.theme) },
@@ -377,24 +386,22 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             {
                 key: 'eventStartDate',
                 label: t('eventDetails.startDate'),
-                value: formatLocalizedDate(eventDetail.eventStartDate || eventDetail.eventDate || eventDetail.date),
+                value: formatLocalizedDate(startDateTime.date),
             },
             {
                 key: 'eventEndDate',
                 label: t('eventDetails.endDate'),
-                value: formatLocalizedDate(eventDetail.eventEndDate || eventDetail.eventDate || eventDetail.date),
+                value: formatLocalizedDate(endDateTime.date),
             },
             {
                 key: 'eventStartTime',
                 label: t('eventDetails.startTime'),
-                value: formatLocalizedTime(
-                    eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime,
-                ),
+                value: formatLocalizedTime(startDateTime.time),
             },
             {
                 key: 'eventEndTime',
                 label: t('eventDetails.endTime'),
-                value: formatLocalizedTime(eventDetail.eventEndTime || eventDetail.endTime),
+                value: formatLocalizedTime(endDateTime.time),
             },
             { key: 'tastingType', label: t('event.tastingType'), value: formatTastingType(eventDetail.tastingType) },
             {
@@ -469,8 +476,11 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return null;
         }
 
-        const previewDate = eventDetail.eventStartDate || eventDetail.eventDate;
-        const parsedDate = previewDate ? new Date(previewDate) : null;
+        const rawPreviewDate = eventDetail.eventStartDate || eventDetail.eventDate || '';
+        const rawPreviewTime = eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '';
+        const previewDateTime = convertUtcEventDateTimeToLocal(rawPreviewDate, rawPreviewTime);
+        const previewDate = previewDateTime.date;
+        const parsedDate = previewDate ? new Date(`${previewDate}T00:00:00`) : null;
         const isDateValid = parsedDate && !Number.isNaN(parsedDate.getTime());
         const month = isDateValid
             ? new Intl.DateTimeFormat(locale || 'en', { month: 'short' })
@@ -482,7 +492,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
 
         const formattedDateTime = (() => {
             if (!isDateValid) {
-                return eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '';
+                return previewDateTime.time;
             }
 
             const dateLabel = new Intl.DateTimeFormat(locale || 'en', {
@@ -493,7 +503,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                 .format(parsedDate)
                 .replace('.', '');
 
-            const rawTime = eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime;
+            const rawTime = previewDateTime.time;
             if (!rawTime) {
                 return dateLabel;
             }

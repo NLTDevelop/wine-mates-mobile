@@ -18,6 +18,7 @@ import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
 import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { IEventDetail } from '@/entities/events/types/IEvent';
+import { getUtcEventDateTime } from '@/modules/event/utils/eventDateTimeUtc';
 
 interface IProps {
     eventDetail: IEventDetail | null;
@@ -90,9 +91,9 @@ const getEventDateTime = (date?: string | null, time?: string | null) => {
         return null;
     }
 
-    const eventDateTime = new Date(`${date}T${time}`);
+    const eventDateTime = getUtcEventDateTime(date, time);
 
-    if (Number.isNaN(eventDateTime.getTime())) {
+    if (!eventDateTime || Number.isNaN(eventDateTime.getTime())) {
         return null;
     }
 
@@ -153,8 +154,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const eventEndDateRaw = eventDetail?.eventEndDate || eventDetail?.eventDate || null;
     const eventEndTimeRaw = eventDetail?.eventEndTime || eventDetail?.endTime || null;
     const eventEndDateTime = getEventDateTime(eventEndDateRaw, eventEndTimeRaw);
-    const eventStartDateTime =
-        eventStartDateRaw && eventStartTimeRaw ? new Date(`${eventStartDateRaw}T${eventStartTimeRaw}`) : null;
+    const eventStartDateTime = getEventDateTime(eventStartDateRaw, eventStartTimeRaw);
     const hasEventStarted =
         eventStartDateTime && !Number.isNaN(eventStartDateTime.getTime())
             ? eventStartDateTime.getTime() <= currentTime.getTime()
