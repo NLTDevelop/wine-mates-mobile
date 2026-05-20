@@ -61,12 +61,8 @@ export const useTastingWineReviewResult = () => {
             wineId: wineModel.wine?.id || wineId || 0,
             review: wineModel.review?.review.trim() || '',
             color: wineModel.look,
-            aromas: (wineModel.selectedSmells || [])
-                .filter(item => item.colorHex)
-                .map(item => item.id),
-            flavors: (wineModel.selectedTastes || [])
-                .filter(item => item.colorHex)
-                .map(item => item.id),
+            aromas: (wineModel.selectedSmells || []).filter(item => item.colorHex).map(item => item.id),
+            flavors: (wineModel.selectedTastes || []).filter(item => item.colorHex).map(item => item.id),
             tasteCharacteristics: (wineModel.tasteCharacteristics || [])
                 .map(item => {
                     const selectedIndex = item.selectedIndex ?? 0;
@@ -147,6 +143,26 @@ export const useTastingWineReviewResult = () => {
         }
     }, []);
 
+    const saveEventTastingDraft = useCallback(async () => {
+        if (!eventId || !wineId) {
+            return;
+        }
+
+        const response = await eventTastingService.saveDraft({
+            eventId,
+            wineId,
+            data: buildEventTastingDraftPayload(wineId),
+            isFinal: false,
+        });
+
+        if (response.isError) {
+            toastService.showError(
+                localization.t('common.errorHappened'),
+                response.message || localization.t('common.somethingWentWrong'),
+            );
+        }
+    }, [buildEventTastingDraftPayload, eventId, wineId]);
+
     const getNote = useCallback(async () => {
         try {
             setIsLoading(true);
@@ -199,34 +215,38 @@ export const useTastingWineReviewResult = () => {
                     initialAiTastingNote: generatedNote,
                     hasEditedAiTastingNote: false,
                 });
+                await saveEventTastingDraft();
             }
         } catch (error) {
             console.error(JSON.stringify(error, null, 2));
         } finally {
             setIsLoading(false);
         }
-    }, [buildGenerateNotePayload, patchReview, routeParams.isBlindTasting]);
+    }, [buildGenerateNotePayload, patchReview, routeParams.isBlindTasting, saveEventTastingDraft]);
 
-    const load = useCallback(async (isActiveRef: { current: boolean }) => {
-        const limitsData = await getLimits();
-        if (!isActiveRef.current) {
-            return;
-        }
+    const load = useCallback(
+        async (isActiveRef: { current: boolean }) => {
+            const limitsData = await getLimits();
+            if (!isActiveRef.current) {
+                return;
+            }
 
-        const cachedNote = wineModel.review?.aiTastingNote || null;
-        if (cachedNote) {
-            setNote(cachedNote);
-            setIsLoading(false);
-            return;
-        }
+            const cachedNote = wineModel.review?.aiTastingNote || null;
+            if (cachedNote) {
+                setNote(cachedNote);
+                setIsLoading(false);
+                return;
+            }
 
-        if (limitsData?.aiUsage.left === 0) {
-            setIsLoading(false);
-            return;
-        }
+            if (limitsData?.aiUsage.left === 0) {
+                setIsLoading(false);
+                return;
+            }
 
-        await getNote();
-    }, [getLimits, getNote]);
+            await getNote();
+        },
+        [getLimits, getNote],
+    );
 
     useEffect(() => {
         const isActiveRef = { current: true };
@@ -238,21 +258,24 @@ export const useTastingWineReviewResult = () => {
         };
     }, [load]);
 
-    const updateNote = useCallback((updatedNote: string) => {
-        const trimmedNote = updatedNote.trim();
-        const initialNote = (wineModel.review?.initialAiTastingNote || '').trim();
-        const hasEdited = Boolean(trimmedNote) && trimmedNote !== initialNote;
+    const updateNote = useCallback(
+        (updatedNote: string) => {
+            const trimmedNote = updatedNote.trim();
+            const initialNote = (wineModel.review?.initialAiTastingNote || '').trim();
+            const hasEdited = Boolean(trimmedNote) && trimmedNote !== initialNote;
 
-        if (trimmedNote) {
-            setNoteValidationError(null);
-        }
+            if (trimmedNote) {
+                setNoteValidationError(null);
+            }
 
-        setNote(updatedNote);
-        patchReview({
-            aiTastingNote: updatedNote,
-            hasEditedAiTastingNote: hasEdited,
-        });
-    }, [patchReview]);
+            setNote(updatedNote);
+            patchReview({
+                aiTastingNote: updatedNote,
+                hasEditedAiTastingNote: hasEdited,
+            });
+        },
+        [patchReview],
+    );
 
     const resetToEventDetails = useCallback(() => {
         if (!eventId) return;
@@ -271,9 +294,7 @@ export const useTastingWineReviewResult = () => {
 
         if (eventDetailsIndex >= 0) {
             const updatedRoutes = state.routes.map(route =>
-                route.name === 'EventDetailsView'
-                    ? { ...route, params: eventDetailsParams }
-                    : route
+                route.name === 'EventDetailsView' ? { ...route, params: eventDetailsParams } : route,
             );
             const routes = updatedRoutes.slice(0, eventDetailsIndex + 1);
 
@@ -339,9 +360,7 @@ export const useTastingWineReviewResult = () => {
                 ? wineModel.tasteCharacteristics
                 : wineModel.tasteCharacteristics?.filter(item => !item.isPremium);
 
-            const aromas = wineModel.selectedSmells
-                ?.filter(item => item.colorHex)
-                ?.map(item => item.id);
+            const aromas = wineModel.selectedSmells?.filter(item => item.colorHex)?.map(item => item.id);
             const suggestedAromas = wineModel.selectedSmells
                 ?.filter(item => !item.colorHex)
                 ?.map(item => item.name || '');
@@ -477,9 +496,7 @@ export const useTastingWineReviewResult = () => {
                     const detailsRoute = state.routes.find(route => route.name === 'WineDetailsView');
                     if (detailsRoute) {
                         const updatedRoutes = state.routes.map(route =>
-                            route.name === 'WineDetailsView'
-                                ? { ...route, params: wineDetailsParams }
-                                : route
+                            route.name === 'WineDetailsView' ? { ...route, params: wineDetailsParams } : route,
                         );
                         const detailsIndex = updatedRoutes.findIndex(r => r.name === 'WineDetailsView');
                         const filteredRoutes = updatedRoutes.slice(0, detailsIndex + 1);
@@ -517,23 +534,19 @@ export const useTastingWineReviewResult = () => {
         } finally {
             setIsSaving(false);
         }
-    }, [
-        buildEventTastingDraftPayload,
-        eventId,
-        isPremiumUser,
-        isNoteEditing,
-        navigation,
-        resetToEventDetails,
-        wineId,
-    ]);
+    }, [buildEventTastingDraftPayload, eventId, isPremiumUser, isNoteEditing, navigation, resetToEventDetails, wineId]);
 
-    const onNoteEditingChange = useCallback((isEditing: boolean) => {
-        setIsNoteEditing(isEditing);
+    const onNoteEditingChange = useCallback(
+        (isEditing: boolean) => {
+            setIsNoteEditing(isEditing);
 
-        if (!isEditing) {
-            setNoteValidationError(null);
-        }
-    }, []);
+            if (!isEditing) {
+                setNoteValidationError(null);
+                saveEventTastingDraft();
+            }
+        },
+        [saveEventTastingDraft],
+    );
 
     const onInvalidNoteEditingComplete = useCallback(() => {
         setIsNoteEditing(true);
@@ -556,5 +569,6 @@ export const useTastingWineReviewResult = () => {
         onInvalidNoteEditingComplete,
         onSubscribePress,
         isSelectedParametersVisible,
+        saveEventTastingDraft,
     };
 };

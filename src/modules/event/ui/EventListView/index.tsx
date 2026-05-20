@@ -66,7 +66,7 @@ export const EventListView = observer(() => {
     const emptyList = (
         <EmptyListView
             image={<Image source={require('@assets/images/city_search.jpeg')} style={styles.emptyImage} />}
-            text={'Empty event list'}
+            text={t('event.emptyList')}
             isLoading={isLoading}
         />
     );

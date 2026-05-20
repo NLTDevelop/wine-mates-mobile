@@ -425,6 +425,7 @@
         "created": "Created",
         "saved": "Saved",
         "applied": "Applied",
+        "emptyList": "Empty event list",
         "cancelled": "Cancelled",
         "finished": "Finished",
         "confirmed": "Confirmed",

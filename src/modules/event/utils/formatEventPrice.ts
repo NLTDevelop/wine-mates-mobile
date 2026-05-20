@@ -20,9 +20,14 @@ const SYMBOL_BY_CURRENCY: Record<string, string> = {
     AMD: '֏',
 };
 
-export const formatEventPrice = (price?: number | string | null, currency?: string | null) => {
+export const getCurrencySymbol = (currency?: string | null) => {
     const normalizedCurrency = (currency || '').trim().toUpperCase();
-    const symbol = SYMBOL_BY_CURRENCY[normalizedCurrency] || normalizedCurrency;
+
+    return SYMBOL_BY_CURRENCY[normalizedCurrency] || ` ${normalizedCurrency}`;
+};
+
+export const formatEventPrice = (price?: number | string | null, currency?: string | null) => {
+    const symbol = getCurrencySymbol(currency);
     const normalizedPrice = typeof price === 'string' ? price.trim() : price;
 
     if (normalizedPrice === undefined || normalizedPrice === null || normalizedPrice === '') {
