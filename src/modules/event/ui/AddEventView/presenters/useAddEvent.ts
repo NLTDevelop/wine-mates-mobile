@@ -66,6 +66,10 @@ const normalizeTimeToHoursMinutes = (value?: string) => {
 };
 
 const getIsPriceFieldAvailable = (value?: ParticipationCondition) => {
+    if (!value) {
+        return true;
+    }
+
     return (
         value === ParticipationCondition.FixedPrice ||
         value === ParticipationCondition.SplitBill ||

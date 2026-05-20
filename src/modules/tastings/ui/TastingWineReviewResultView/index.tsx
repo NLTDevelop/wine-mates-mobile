@@ -35,6 +35,7 @@ export const TastingWineReviewResultView = observer(() => {
         onInvalidNoteEditingComplete,
         onSubscribePress,
         isSelectedParametersVisible,
+        saveEventTastingDraft,
     } = useTastingWineReviewResult();
 
     return (
@@ -80,7 +81,11 @@ export const TastingWineReviewResultView = observer(() => {
                                 </Typography>
                             )}
                         </View>
-                        <FoodPairing setLimits={setLimits} generatedSnacks={wineModel.review?.aiSnacks || undefined} />
+                        <FoodPairing
+                            setLimits={setLimits}
+                            generatedSnacks={wineModel.review?.aiSnacks || undefined}
+                            onGenerateSuccess={saveEventTastingDraft}
+                        />
                         <TastingNote
                             note={note}
                             isLoading={isLoading}

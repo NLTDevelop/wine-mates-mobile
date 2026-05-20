@@ -32,6 +32,7 @@ export const EventFiltersView = ({}: IProps) => {
         selectedMaxAge,
         selectedMinPrice,
         selectedMaxPrice,
+        priceCurrencySuffix,
         minAgeLimit,
         maxAgeLimit,
         minPriceLimit,
@@ -121,7 +122,7 @@ export const EventFiltersView = ({}: IProps) => {
                             minValue={selectedMinPrice}
                             maxValue={selectedMaxPrice}
                             onChange={onPriceRangeChange}
-                            valueSuffix="$"
+                            valueSuffix={priceCurrencySuffix}
                         />
                     </View>
                     <View>

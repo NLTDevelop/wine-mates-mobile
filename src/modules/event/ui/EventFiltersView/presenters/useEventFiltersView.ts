@@ -3,11 +3,13 @@ import { DateData } from 'react-native-calendars';
 import { MarkedDates } from 'react-native-calendars/src/types';
 import { format, isValid, parseISO } from 'date-fns';
 import { eventsModel } from '@/entities/events/EventsModel';
+import { userModel } from '@/entities/users/UserModel';
 import { Sex } from '@/entities/events/enums/Sex';
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
 import { IRadiusOption } from '@/modules/event/ui/EventFiltersView/types/IRadiusOption';
 import { ISingleSelectModalItem } from '@/modules/event/ui/AddEventView/types/ISingleSelectModalItem';
+import { getCurrencySymbol } from '@/modules/event/utils/formatEventPrice';
 
 const DATE_API_FORMAT = 'yyyy-MM-dd';
 const DATE_DISPLAY_FORMAT = 'dd.MM.yyyy';
@@ -16,6 +18,7 @@ const MIN_AGE_LIMIT = 18;
 const MAX_AGE_LIMIT = 100;
 const DEFAULT_MIN_PRICE_LIMIT = 0;
 const DEFAULT_MAX_PRICE_LIMIT = 500;
+const DEFAULT_PRICE_CURRENCY_SUFFIX = '$';
 
 const parseDate = (value?: string) => {
     if (!value) {
@@ -38,6 +41,7 @@ interface IProps {
 export const useEventFiltersView = ({ t }: IProps) => {
     const modelFilters = eventsModel.eventFilters;
     const modelPriceRange = eventsModel.eventPriceRange;
+    const priceCurrencySuffix = getCurrencySymbol(userModel.user?.selectedCurrency) || DEFAULT_PRICE_CURRENCY_SUFFIX;
     const initialFilters: IEventFilters = {
         radiusKm: modelFilters.radiusKm,
         eventDate: modelFilters.eventDate,
@@ -436,6 +440,7 @@ export const useEventFiltersView = ({ t }: IProps) => {
         selectedMaxAge,
         selectedMinPrice,
         selectedMaxPrice,
+        priceCurrencySuffix,
         minAgeLimit: MIN_AGE_LIMIT,
         maxAgeLimit: MAX_AGE_LIMIT,
         minPriceLimit,

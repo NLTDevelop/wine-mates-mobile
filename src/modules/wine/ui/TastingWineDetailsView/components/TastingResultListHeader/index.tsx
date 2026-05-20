@@ -116,7 +116,7 @@ export const TastingResultListHeader = ({ data, hasReviews }: IProps) => {
                             <TasteCharacteristicItem
                                 key={`${item.id}-${item.selectedIndex ?? 0}-${data.vintage ?? 'none'}`}
                                 item={item}
-                                value={item.selectedIndex || 0}
+                                value={Math.max((item.selectedIndex ?? 0) - 1, 0)}
                                 isPremiumUser={isPremiumUser}
                                 disabled={true}
                             />

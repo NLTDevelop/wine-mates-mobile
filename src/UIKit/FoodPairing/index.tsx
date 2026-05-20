@@ -16,13 +16,20 @@ interface IProps {
     hideGenerateButton?: boolean;
     generatedSnacks?: ISnack[];
     isLocked?: boolean;
+    onGenerateSuccess?: () => void | Promise<void>;
 }
 
-export const FoodPairing = ({ setLimits, hideGenerateButton = false, generatedSnacks, isLocked = false }: IProps) => {
+export const FoodPairing = ({
+    setLimits,
+    hideGenerateButton = false,
+    generatedSnacks,
+    isLocked = false,
+    onGenerateSuccess,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors, isLocked), [colors, isLocked]);
 
-    const { snacks, isGenerating, onGeneratePress } = useFoodPairing(setLimits, generatedSnacks);
+    const { snacks, isGenerating, onGeneratePress } = useFoodPairing(setLimits, generatedSnacks, onGenerateSuccess);
     const hasSnacks = !!snacks && snacks.length > 0;
 
     return (
@@ -43,7 +50,7 @@ export const FoodPairing = ({ setLimits, hideGenerateButton = false, generatedSn
                 )}
             </View>
             <View style={styles.card}>
-                {(hasSnacks && !isLocked) ? (
+                {hasSnacks && !isLocked ? (
                     snacks.map(snack => (
                         <View key={snack.label} style={styles.item}>
                             <Typography variant="h6" text={snack.label} />

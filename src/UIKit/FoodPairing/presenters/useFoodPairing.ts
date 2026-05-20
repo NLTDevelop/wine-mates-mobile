@@ -9,13 +9,19 @@ import type { Dispatch, SetStateAction } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 
 type SetLimits = Dispatch<SetStateAction<IRateContext | null>>;
+type OnGenerateSuccess = () => void | Promise<void>;
 
-export const useFoodPairing = (setLimits?: SetLimits, generatedSnacks?: ISnack[]) => {
+export const useFoodPairing = (
+    setLimits?: SetLimits,
+    generatedSnacks?: ISnack[],
+    onGenerateSuccess?: OnGenerateSuccess,
+) => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [snacks, setSnacks] = useState<ISnack[] | null>(generatedSnacks || wineModel.review?.aiSnacks || null);
 
     useEffect(() => {
         if (generatedSnacks) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSnacks(generatedSnacks);
         }
     }, [generatedSnacks]);
@@ -73,21 +79,20 @@ export const useFoodPairing = (setLimits?: SetLimits, generatedSnacks?: ISnack[]
                         },
                     };
                 });
-                const snacksData = Array.isArray(response.data.snacks)
-                    ? response.data.snacks
-                    : [response.data.snacks];
+                const snacksData = Array.isArray(response.data.snacks) ? response.data.snacks : [response.data.snacks];
                 setSnacks(snacksData);
                 wineModel.review = {
                     ...(wineModel.review || { review: '' }),
                     aiSnacks: snacksData,
                 };
+                await onGenerateSuccess?.();
             }
         } catch (error) {
             console.error('onGeneratePress error: ', JSON.stringify(error, null, 2));
         } finally {
             setIsGenerating(false);
         }
-    }, [setLimits]);
+    }, [onGenerateSuccess, setLimits]);
 
     return { snacks, isGenerating, onGeneratePress };
 };
