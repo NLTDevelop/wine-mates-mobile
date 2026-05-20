@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, Keyboard, StatusBar, View } from 'react-native';
-import { isAndroid, isIOS, scaleVertical } from '@/utils';
+import { Dimensions, Keyboard, View } from 'react-native';
+import { isIOS, scaleVertical } from '@/utils';
 import { useKeyboardHeight } from '@/hooks/useKeyboardHeight';
 
 const DROPDOWN_MAX_HEIGHT = scaleVertical(250);
 const KEYBOARD_SPACING = isIOS ? scaleVertical(16) : scaleVertical(32);
-const DROPDOWN_STATUS_BAR_OFFSET = isAndroid ? StatusBar.currentHeight || 0 : 0;
 
 export const useDropdownLiftOffset = (isOpen: boolean) => {
     const [windowHeight, setWindowHeight] = useState(Dimensions.get('window').height);
@@ -65,20 +64,15 @@ export const useDropdownLiftOffset = (isOpen: boolean) => {
     }, [keyboardTop, keyboardHeight, windowHeight]);
 
     const dropdownLiftOffset = useMemo(() => {
-        if (!isOpen) {
+        if (!isOpen || effectiveKeyboardTop === null || triggerBottom <= 0) {
             return 0;
-        }
-
-        if (effectiveKeyboardTop === null || triggerBottom <= 0) {
-            return DROPDOWN_STATUS_BAR_OFFSET;
         }
 
         const allowedDropdownBottom = effectiveKeyboardTop - KEYBOARD_SPACING;
         const expectedDropdownBottom = triggerBottom + DROPDOWN_MAX_HEIGHT;
         const overlap = expectedDropdownBottom - allowedDropdownBottom;
-        const keyboardLiftOffset = overlap > 0 ? overlap : 0;
 
-        return DROPDOWN_STATUS_BAR_OFFSET + keyboardLiftOffset;
+        return overlap > 0 ? overlap : 0;
     }, [isOpen, effectiveKeyboardTop, triggerBottom]);
 
     return {

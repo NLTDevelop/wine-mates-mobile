@@ -101,6 +101,7 @@ const CustomRepeatEventEndConditionComponent = ({
                     onPress={onSelectRepetitionCount}
                     containerStyle={styles.endConditionDropdown}
                     disabled={isCountControlDisabled}
+                    fixAndroidDropdownGap
                 />
             </View>
         </View>
