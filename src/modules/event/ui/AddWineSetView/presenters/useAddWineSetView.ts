@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Keyboard } from 'react-native';
-import Share from 'react-native-share';
 import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { eventsService } from '@/entities/events/EventsService';
@@ -19,6 +18,7 @@ import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShar
 import { createMapLink } from '@/modules/event/utils/createMapLink';
 import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
 import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
+import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
 
 interface IWineSetDragEndPayload {
     data: IWineSetViewItem[];
@@ -595,16 +595,13 @@ export const useAddWineSetView = ({
                     tastingType: tastingTypeLabel,
                     link: eventDeepLink,
                 });
+                const shareTitle = t('event.shareQrCodeTitle');
 
-                await Share.open({
-                    failOnCancel: false,
+                await shareEventQrCode({
                     filename: `wine-event-${createdEventId}-qr.png`,
                     message,
-                    title: t('event.shareQrCodeTitle'),
-                    type: 'image/png',
-                    url: qrCodeImageUrl,
-                    subject: t('event.shareQrCodeTitle'),
-                    useInternalStorage: true,
+                    qrCodeImageUrl,
+                    title: shareTitle,
                 });
             } catch (error) {
                 console.warn('useAddWineSetView -> onShareQrPress: ', error);

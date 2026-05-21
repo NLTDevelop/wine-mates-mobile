@@ -393,6 +393,7 @@
         "repeatMonthly": "Monthly",
         "repeatCustom": "Custom",
         "followers": "followers",
+        "follower": "follower",
         "editWine": "Edit wine",
         "editWineStubDescription": "Wine editing screen placeholder. TODO: implement final editing flow.",
         "eventCreatedTitle": "Event created!",

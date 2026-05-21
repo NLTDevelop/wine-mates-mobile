@@ -19,7 +19,7 @@ export const TastingResultHeader = ({ item }: IProps) => {
                 item={item}
                 // footer={ }
                 removeCardStyles
-                showExpertRatingWithoutPremium={false}
+                showExpertRatingWithoutPremium
             />
         </View>
     );

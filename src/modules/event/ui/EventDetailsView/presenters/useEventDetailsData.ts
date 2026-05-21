@@ -349,9 +349,21 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
 
         return [
             { key: 'theme', label: t('eventDetails.theme'), value: getValueOrDash(eventDetail.theme) },
-            { key: 'description', label: t('eventDetails.description'), value: getValueOrDash(eventDetail.description) },
-            { key: 'restaurant', label: t('eventDetails.meetingPlaceName'), value: getValueOrDash(eventDetail.restaurantName || eventDetail.restaurant) },
-            { key: 'location', label: t('eventDetails.location'), value: getValueOrDash(eventDetail.locationLabel || eventDetail.location) },
+            {
+                key: 'description',
+                label: t('eventDetails.description'),
+                value: getValueOrDash(eventDetail.description),
+            },
+            {
+                key: 'restaurant',
+                label: t('eventDetails.meetingPlaceName'),
+                value: getValueOrDash(eventDetail.restaurantName || eventDetail.restaurant),
+            },
+            {
+                key: 'location',
+                label: t('eventDetails.location'),
+                value: getValueOrDash(eventDetail.locationLabel || eventDetail.location),
+            },
             {
                 key: 'eventStartDate',
                 label: t('eventDetails.startDate'),
@@ -420,22 +432,22 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         }
 
         return eventDetail.contacts
-            .map<IEventContactOption | null>((item) => {
-            const contactType = getContactType(item.name, item.value);
-            if (contactType === 'phone') {
-                return null;
-            }
+            .map<IEventContactOption | null>(item => {
+                const contactType = getContactType(item.name, item.value);
+                if (contactType === 'phone') {
+                    return null;
+                }
 
-            const contactUrl = getContactUrl(item.value, contactType);
+                const contactUrl = getContactUrl(item.value, contactType);
 
-            return {
-                id: item.id,
-                type: contactType,
-                title: getContactTitle(item.name, item.value, contactType),
-                onPress: () => {
-                    Linking.openURL(contactUrl);
-                },
-            };
+                return {
+                    id: item.id,
+                    type: contactType,
+                    title: getContactTitle(item.name, item.value, contactType),
+                    onPress: () => {
+                        Linking.openURL(contactUrl);
+                    },
+                };
             })
             .filter((item): item is IEventContactOption => item !== null);
     })();
@@ -461,7 +473,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
 
         const formattedDateTime = prepareEventDateTimeLabel({
             date: isDateValid ? parsedDate : null,
-            time: eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime,
+            time: previewDateTime.time,
             locale,
         });
 

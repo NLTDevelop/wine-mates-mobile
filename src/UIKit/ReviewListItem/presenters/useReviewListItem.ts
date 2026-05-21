@@ -6,14 +6,19 @@ import { userModel } from '@/entities/users/UserModel';
 interface IProps {
     item: IWineReviewsListItem;
     locale: string;
+    showReviewWithoutPremium?: boolean;
 }
 
-export const useReviewListItem = ({ item, locale }: IProps) => {
+export const useReviewListItem = ({ item, locale, showReviewWithoutPremium = false }: IProps) => {
     const isJustNow = isLessThanMinuteFromNow(item.createdAt);
     const formattedDate = formatRelativeDate(item.createdAt, locale);
     const isPremiumUser = userModel.user?.hasPremium || false;
     const isMyReview = item.user.id === userModel.user?.id;
-    const isLocked = !isMyReview && item.user.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && !isPremiumUser;
+    const isLocked =
+        !showReviewWithoutPremium &&
+        !isMyReview &&
+        item.user.wineExperienceLevel !== WineExperienceLevelEnum.LOVER &&
+        !isPremiumUser;
     const isLoverLevel = item.user.wineExperienceLevel === WineExperienceLevelEnum.LOVER;
 
     const formattedUserRating = (item.userRating || 0).toFixed(1);

@@ -7,7 +7,6 @@ import { config } from '@/config';
 import { userModel } from '@/entities/users/UserModel';
 import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
 import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
-import Share from 'react-native-share';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 import { toastService } from '@/libs/toast/toastService';
 import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
@@ -15,6 +14,7 @@ import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateT
 import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShareMessage';
 import { createMapLink } from '@/modules/event/utils/createMapLink';
 import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
+import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
 
 interface IUseEventCardProps {
     event: IEvent;
@@ -341,16 +341,13 @@ export const useEventCard = ({
                     tastingType: tastingTypeLabel,
                     link: eventDeepLink,
                 });
+                const shareTitle = localization.t('event.shareQrCodeTitle');
 
-                await Share.open({
-                    failOnCancel: false,
+                await shareEventQrCode({
                     filename: `wine-event-${event.id}-qr.png`,
                     message,
-                    title: localization.t('event.shareQrCodeTitle'),
-                    type: 'image/png',
-                    url: qrCodeDataUrl,
-                    subject: localization.t('event.shareQrCodeTitle'),
-                    useInternalStorage: true,
+                    qrCodeImageUrl: qrCodeDataUrl,
+                    title: shareTitle,
                 });
             } catch (error) {
                 console.warn('useEventCard -> onSharePress: ', error);
