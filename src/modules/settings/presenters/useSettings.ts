@@ -27,7 +27,7 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
     }, [navigation]);
 
     const onSubscriptionPress = useCallback(() => {
-        navigation.navigate('');
+        navigation.navigate('SubscriptionsView');
     }, [navigation]);
 
     const onFAQPress = useCallback(() => {

@@ -552,6 +552,14 @@
         "addPaymentMethodsInProfile": "Add payment methods to your profile.",
         "openPayments": "Open payments"
     },
+    "subscriptions": {
+        "subscription": "Subscription",
+        "heroTitle": "Dive deeper into the world of wine — unlock premium features!",
+        "suitableForEveryone": "Suitable for everyone",
+        "startTrial": "Start 3 day trial",
+        "saveDiscount": "Save {{discount}}%",
+        "popular": "Popular"
+    },
     "contactInfo": {
         "contactInfo": "Contact information",
         "addContact": "Add contact",

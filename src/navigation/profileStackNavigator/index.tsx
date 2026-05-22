@@ -6,6 +6,7 @@ import { FAQView } from '@/modules/settings/ui/FAQView';
 import { PaymentsView } from '@/modules/payments/ui/PaymentsView';
 import { CreatePaymentView } from '@/modules/payments/ui/CreatePaymentView';
 import { ContactInfoView } from '@/modules/contactInfo/ui/ContactInfoView';
+import { SubscriptionsView } from '@/modules/subscriptions/ui/SubscriptionsView';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,5 +19,6 @@ export const ProfileStack = () => (
         <Stack.Screen name="PaymentsView" component={PaymentsView} />
         <Stack.Screen name="CreatePaymentView" component={CreatePaymentView} />
         <Stack.Screen name="ContactInfoView" component={ContactInfoView} />
+        <Stack.Screen name="SubscriptionsView" component={SubscriptionsView} />
     </Stack.Navigator>
 );

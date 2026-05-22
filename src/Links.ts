@@ -54,6 +54,7 @@ export interface ILinks {
     userCurrencies: string;
     paymentMethods: string;
     contacts: string;
+    subscriptions: string;
     guests: string;
     guestsStatuses: string;
     eventTastingDraft: string;
@@ -103,6 +104,7 @@ class Links implements ILinks {
         userCurrencies: 'users/currencies',
         paymentMethods: 'users/payment-methods',
         contacts: 'users/contacts',
+        subscriptions: 'subscriptions',
         guests: 'event-bookings/event',
         guestsStatuses: 'event-bookings',
         eventTastingDraft: 'event-tasting/draft',
@@ -243,6 +245,9 @@ class Links implements ILinks {
     }
     public get contacts() {
         return `${this._domain}${this._links.contacts}`;
+    }
+    public get subscriptions() {
+        return `${this._domain}${this._links.subscriptions}`;
     }
     public get guests() {
         return `${this._domain}${this._links.guests}`;

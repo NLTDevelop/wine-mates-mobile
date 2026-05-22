@@ -556,6 +556,14 @@
         "addPaymentMethodsInProfile": "Додайте способи оплати в профілі",
         "openPayments": "Відкрити способи оплати"
     },
+    "subscriptions": {
+        "subscription": "Підписка",
+        "heroTitle": "Пориньте глибше у світ вина — відкрийте преміум-функції!",
+        "suitableForEveryone": "Підходить кожному",
+        "startTrial": "Почати 3-денний пробний період",
+        "saveDiscount": "Знижка {{discount}}%",
+        "popular": "Популярна"
+    },
     "contactInfo": {
         "contactInfo": "Контактна інформація",
         "addContact": "Додати контакт",
