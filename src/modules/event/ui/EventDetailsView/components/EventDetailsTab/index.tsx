@@ -55,7 +55,6 @@ export const EventDetailsTab = ({
         isBlindTasting,
         isWineSetItemPressEnabled,
         isWineSetStatusVisible,
-        hasEventEnded,
         isTastingToggleVisible,
         isTastingToggleDisabled,
         tastingToggleButtonText,
@@ -83,11 +82,10 @@ export const EventDetailsTab = ({
                     isOwner={isOwner}
                     isPressEnabled={isWineSetItemPressEnabled}
                     isStatusVisible={isWineSetStatusVisible}
-                    hasEventEnded={hasEventEnded}
                 />
             );
         },
-        [currentEventId, hasEventEnded, isBlindTasting, isOwner, isWineSetItemPressEnabled, isWineSetStatusVisible],
+        [currentEventId, isBlindTasting, isOwner, isWineSetItemPressEnabled, isWineSetStatusVisible],
     );
 
     const renderWineSetItemSeparator = useCallback(() => {

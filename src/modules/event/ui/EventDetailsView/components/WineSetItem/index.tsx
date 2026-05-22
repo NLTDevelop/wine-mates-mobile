@@ -17,7 +17,6 @@ interface IProps {
     isOwner: boolean;
     isPressEnabled: boolean;
     isStatusVisible: boolean;
-    hasEventEnded: boolean;
 }
 
 export const WineSetItem = ({
@@ -28,7 +27,6 @@ export const WineSetItem = ({
     isOwner,
     isPressEnabled,
     isStatusVisible,
-    hasEventEnded,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -40,7 +38,6 @@ export const WineSetItem = ({
         isOwner,
         isPressEnabled,
         isStatusVisible,
-        hasEventEnded,
         t,
     });
 

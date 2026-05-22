@@ -12,29 +12,36 @@ export const useEventDetails = (eventId: number, isEventDetailsTabFocused: boole
     const hasLoadedRef = useRef(false);
     const isRefreshInProgressRef = useRef(false);
 
-    const loadEventDetails = useCallback(async (showLoader: boolean) => {
-        if (showLoader) {
-            setIsLoading(true);
-        }
-
-        try {
-            const response = await eventsService.getById(eventId);
-            if (!response.isError && response.data) {
-                setEventDetail(response.data);
-                setIsError(false);
-            } else {
-                setIsError(true);
-            }
-        } catch (error) {
-            console.warn('useEventDetails -> loadEventDetails: ', error);
-            setIsError(true);
-        } finally {
-            hasLoadedRef.current = true;
+    const loadEventDetails = useCallback(
+        async (showLoader: boolean) => {
             if (showLoader) {
-                setIsLoading(false);
+                setIsLoading(true);
             }
-        }
-    }, [eventId]);
+
+            try {
+                const [response, respAppliedEvents] = await Promise.all([
+                    eventsService.getById(eventId),
+                    eventsService.getAppliedEvents(),
+                ]);
+
+                if (!response.isError && !respAppliedEvents.isError && response.data && respAppliedEvents.data) {
+                    setEventDetail(response.data);
+                    setIsError(false);
+                } else {
+                    setIsError(true);
+                }
+            } catch (error) {
+                console.warn('useEventDetails -> loadEventDetails: ', error);
+                setIsError(true);
+            } finally {
+                hasLoadedRef.current = true;
+                if (showLoader) {
+                    setIsLoading(false);
+                }
+            }
+        },
+        [eventId],
+    );
 
     const onRefresh = useCallback(async () => {
         if (isRefreshInProgressRef.current) {
