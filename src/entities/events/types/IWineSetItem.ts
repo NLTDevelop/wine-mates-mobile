@@ -9,7 +9,7 @@ export interface IWineInSet {
     defaultImage?: IMedia 
 }
 
-export type WineSetTastingStatus = 'not_started' | 'in_progress' | 'tasted';
+export type WineSetTastingStatus = 'not_started' | 'in_progress' | 'tasted' | 'missed';
 
 export interface IWineSetItem {
     id: number;
