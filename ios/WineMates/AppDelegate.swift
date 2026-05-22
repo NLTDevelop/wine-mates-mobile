@@ -11,6 +11,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   var reactNativeDelegate: ReactNativeDelegate?
   var reactNativeFactory: RCTReactNativeFactory?
+  var pendingUniversalLinkUrl: URL?
 
   func application(
     _ application: UIApplication,
@@ -52,6 +53,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     return RCTLinkingManager.application(app, open: url, options: options)
+  }
+
+  func application(
+    _ application: UIApplication,
+    continue userActivity: NSUserActivity,
+    restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+  ) -> Bool {
+    if userActivity.activityType == NSUserActivityTypeBrowsingWeb {
+      pendingUniversalLinkUrl = userActivity.webpageURL
+    }
+
+    return RCTLinkingManager.application(
+      application,
+      continue: userActivity,
+      restorationHandler: restorationHandler
+    )
+  }
+
+  func applicationDidBecomeActive(_ application: UIApplication) {
+    guard let url = pendingUniversalLinkUrl else {
+      return
+    }
+
+    pendingUniversalLinkUrl = nil
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+      RCTLinkingManager.application(application, open: url, options: [:])
+    }
   }
 }
 

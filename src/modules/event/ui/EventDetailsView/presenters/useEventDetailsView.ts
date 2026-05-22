@@ -62,7 +62,7 @@ export const useEventDetailsView = ({ t }: IProps) => {
     }, [navigation]);
 
     const onPressBack = useCallback(() => {
-        if (openedFromDeepLink) {
+        if (openedFromDeepLink && !navigation.canGoBack()) {
             resetToHome();
             return;
         }
@@ -77,6 +77,10 @@ export const useEventDetailsView = ({ t }: IProps) => {
 
         return navigation.addListener('beforeRemove', (event) => {
             if (isResettingRef.current) {
+                return;
+            }
+
+            if (navigation.canGoBack()) {
                 return;
             }
 

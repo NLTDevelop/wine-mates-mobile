@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
@@ -15,6 +15,7 @@ import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShar
 import { createMapLink } from '@/modules/event/utils/createMapLink';
 import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
 import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
+import { useEventQrCodeShare } from '@/modules/event/presenters/useEventQrCodeShare';
 
 interface IUseEventCardProps {
     event: IEvent;
@@ -27,11 +28,6 @@ interface IUseEventCardProps {
 
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 14;
-const QR_CODE_IMAGE_PREFIX = 'data:image/png;base64,';
-
-type QrCodeRef = {
-    toDataURL: (callback: (data: string) => void) => void;
-};
 const STATIC_MAP_LIGHT_STYLE_PARAMS = [
     'style=element:geometry|color:0xf5f5f5',
     'style=element:labels.icon|visibility:off',
@@ -52,7 +48,6 @@ export const useEventCard = ({
 }: IUseEventCardProps) => {
     const currentLocale = localization.locale || 'en';
     const [isCardPressed, setIsCardPressed] = useState(false);
-    const qrCodeRef = useRef<QrCodeRef | null>(null);
 
     const startDateValue = useMemo(() => {
         const startDateTime = convertUtcEventDateTimeToLocal(
@@ -373,28 +368,7 @@ export const useEventCard = ({
         ],
     );
 
-    const onQrCodeSharePress = useCallback(
-        (qrCodeData?: string) => {
-            if (!qrCodeData) {
-                onSharePress(null);
-                return;
-            }
-
-            onSharePress(`${QR_CODE_IMAGE_PREFIX}${qrCodeData}`);
-        },
-        [onSharePress],
-    );
-
-    const onQrCodeRef = useCallback((ref: QrCodeRef | null) => {
-        qrCodeRef.current = ref;
-    }, []);
-
-    const onShareIconPress = useCallback(() => {
-        qrCodeRef.current?.toDataURL(onQrCodeSharePress);
-        if (!qrCodeRef.current) {
-            onQrCodeSharePress();
-        }
-    }, [onQrCodeSharePress]);
+    const { onQrCodeRef, onShareQrCodePress } = useEventQrCodeShare({ onShareQrPress: onSharePress });
 
     const mapPreviewUri = useMemo(() => {
         const params = [
@@ -428,9 +402,8 @@ export const useEventCard = ({
         onPressIn,
         onPressOut,
         onReadMorePress: onReadMorePressHandler,
-        onQrCodeSharePress,
         onQrCodeRef,
-        onShareIconPress,
+        onShareIconPress: onShareQrCodePress,
         eventDeepLink,
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
