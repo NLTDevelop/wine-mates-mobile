@@ -1,17 +1,12 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShareMessage';
 import { createMapLink } from '@/modules/event/utils/createMapLink';
 import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
+import { useEventQrCodeShare } from '@/modules/event/presenters/useEventQrCodeShare';
 import { IEventDetailsPreviewData } from '../../../types/IEventDetailsPreviewData';
-
-const QR_CODE_IMAGE_PREFIX = 'data:image/png;base64,';
-
-type QrCodeRef = {
-    toDataURL: (callback: (data: string) => void) => void;
-};
 
 interface IProps {
     data: IEventDetailsPreviewData;
@@ -19,7 +14,6 @@ interface IProps {
 }
 
 export const useEventDetailsPreview = ({ data, eventId }: IProps) => {
-    const qrCodeRef = useRef<QrCodeRef | null>(null);
     const eventDeepLink = useMemo(() => createEventDeepLink(eventId), [eventId]);
 
     const onSharePress = useCallback(
@@ -76,32 +70,11 @@ export const useEventDetailsPreview = ({ data, eventId }: IProps) => {
         [data, eventDeepLink, eventId],
     );
 
-    const onQrCodeRef = useCallback((ref: QrCodeRef | null) => {
-        qrCodeRef.current = ref;
-    }, []);
-
-    const onQrCodeSharePress = useCallback(
-        (qrCodeData?: string) => {
-            if (!qrCodeData) {
-                onSharePress(null);
-                return;
-            }
-
-            onSharePress(`${QR_CODE_IMAGE_PREFIX}${qrCodeData}`);
-        },
-        [onSharePress],
-    );
-
-    const onShareIconPress = useCallback(() => {
-        qrCodeRef.current?.toDataURL(onQrCodeSharePress);
-        if (!qrCodeRef.current) {
-            onQrCodeSharePress();
-        }
-    }, [onQrCodeSharePress]);
+    const { onQrCodeRef, onShareQrCodePress } = useEventQrCodeShare({ onShareQrPress: onSharePress });
 
     return {
         eventDeepLink,
         onQrCodeRef,
-        onShareIconPress,
+        onShareIconPress: onShareQrCodePress,
     };
 };
