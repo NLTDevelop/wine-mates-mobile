@@ -181,7 +181,6 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
             ? currentTime.getTime() >= eventStartDateTime.getTime() - WINE_ACCESS_BEFORE_START_MS &&
               currentTime.getTime() <= eventEndDateTime.getTime()
             : false;
-    const hasEventEnded = eventEndDateTime ? currentTime.getTime() > eventEndDateTime.getTime() : false;
     const isTastingStarted = Boolean(eventDetail?.isTastingStarted);
     const isBeforeStartWindow = eventStartDateTime
         ? currentTime.getTime() <= eventStartDateTime.getTime() - TASTING_START_BEFORE_EVENT_MS
@@ -504,7 +503,6 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         isBlindTasting,
         isWineSetItemPressEnabled,
         isWineSetStatusVisible,
-        hasEventEnded,
         isTastingToggleVisible,
         isTastingToggleDisabled,
         tastingToggleButtonText: isTastingStarted
