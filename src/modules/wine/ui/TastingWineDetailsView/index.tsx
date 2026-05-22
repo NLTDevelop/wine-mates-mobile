@@ -20,8 +20,17 @@ export const TastingWineDetailsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { details, isError, getDetails, isAllVintagesSelected, wineId, selectedWineId, isPreloadedData, myReview, eventId } =
-        useTastingWineDetails();
+    const {
+        details,
+        isError,
+        getDetails,
+        isAllVintagesSelected,
+        wineId,
+        selectedWineId,
+        isPreloadedData,
+        myReview,
+        eventId,
+    } = useTastingWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useTastingWineReviewsList(
         getDetails,
         selectedWineId ?? wineId,
@@ -33,7 +42,10 @@ export const TastingWineDetailsView = observer(() => {
     const { refreshControl } = useRefresh(onRefresh);
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
-    const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);
+    const renderItem = useCallback(
+        ({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} showReviewWithoutPremium />,
+        [],
+    );
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getDetails}>
@@ -52,12 +64,7 @@ export const TastingWineDetailsView = observer(() => {
                         refreshControl={refreshControl}
                         onEndReached={onEndReached}
                         contentContainerStyle={styles.containerStyle}
-                        ListHeaderComponent={
-                            <TastingResultListHeader
-                                data={details}
-                                hasReviews={data.length > 0}
-                            />
-                        }
+                        ListHeaderComponent={<TastingResultListHeader data={details} hasReviews={data.length > 0} />}
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
                     />
                 )}

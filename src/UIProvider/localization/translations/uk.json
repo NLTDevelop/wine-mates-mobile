@@ -397,6 +397,7 @@
         "repeatMonthly": "Щомісяця",
         "repeatCustom": "Індивідуально",
         "followers": "підписників",
+        "follower": "підписник",
         "editWine": "Редагування вина",
         "editWineStubDescription": "Заглушка екрана редагування вина. TODO: реалізувати фінальний флоу редагування.",
         "eventCreatedTitle": "Подію створено!",

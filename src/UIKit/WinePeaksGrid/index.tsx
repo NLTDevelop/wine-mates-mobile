@@ -11,14 +11,15 @@ import { LockContainer } from '@/UIKit/LockContainer';
 
 interface IProps {
     peaks: ITasteProfileTopWinePeak[];
+    showWithoutPremium?: boolean;
 }
 
-export const WinePeaksGrid = observer(({ peaks }: IProps) => {
+export const WinePeaksGrid = observer(({ peaks, showWithoutPremium = false }: IProps) => {
     const { colors, t } = useUiContext();
-    const isPremiumUser = userModel.user?.hasPremium || false;
-    const styles = useMemo(() => getStyles(colors, isPremiumUser), [colors, isPremiumUser]);
+    const hasAccess = showWithoutPremium || userModel.user?.hasPremium || false;
+    const styles = useMemo(() => getStyles(colors, hasAccess), [colors, hasAccess]);
     const title = t('wine.winePeak');
-    const textColor = isPremiumUser ? getContrastColor(colors.primary) : colors.text;
+    const textColor = hasAccess ? getContrastColor(colors.primary) : colors.text;
 
     return (
         <>
@@ -40,11 +41,8 @@ export const WinePeaksGrid = observer(({ peaks }: IProps) => {
                         />
                     </View>
                 ))}
-                {!isPremiumUser && (
-                   <LockContainer/>
-                )}
+                {!hasAccess && <LockContainer />}
             </View>
         </>
     );
-
 });

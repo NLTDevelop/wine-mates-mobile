@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useRef } from 'react';
-import Share from 'react-native-share';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShareMessage';
 import { createMapLink } from '@/modules/event/utils/createMapLink';
+import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
 import { IEventDetailsPreviewData } from '../../../types/IEventDetailsPreviewData';
 
 const QR_CODE_IMAGE_PREFIX = 'data:image/png;base64,';
@@ -57,16 +57,13 @@ export const useEventDetailsPreview = ({ data, eventId }: IProps) => {
                     tastingType: data.tastingTypeLabel,
                     link: eventDeepLink,
                 });
+                const shareTitle = localization.t('event.shareQrCodeTitle');
 
-                await Share.open({
-                    failOnCancel: false,
+                await shareEventQrCode({
                     filename: `wine-event-${eventId}-qr.png`,
                     message,
-                    title: localization.t('event.shareQrCodeTitle'),
-                    type: 'image/png',
-                    url: qrCodeDataUrl,
-                    subject: localization.t('event.shareQrCodeTitle'),
-                    useInternalStorage: true,
+                    qrCodeImageUrl: qrCodeDataUrl,
+                    title: shareTitle,
                 });
             } catch (error) {
                 console.warn('useEventDetailsPreview -> onSharePress: ', error);

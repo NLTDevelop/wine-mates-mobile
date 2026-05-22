@@ -37,7 +37,7 @@ export const useLocationPickerView = () => {
                     countryName,
                 },
                 isDuplicateEvent,
-            }),
+            }, { merge: true }),
         );
     }, [isDuplicateEvent, navigation]);
 

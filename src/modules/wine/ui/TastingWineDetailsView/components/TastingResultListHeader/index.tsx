@@ -102,7 +102,7 @@ export const TastingResultListHeader = ({ data, hasReviews }: IProps) => {
             )}
 
             {data.statistics.topWinePeaks && data.statistics.topWinePeaks.length > 0 && (
-                <WinePeaksGrid peaks={data.statistics.topWinePeaks} />
+                <WinePeaksGrid peaks={data.statistics.topWinePeaks} showWithoutPremium />
             )}
 
             {tasteCharacteristics.length > 0 && (

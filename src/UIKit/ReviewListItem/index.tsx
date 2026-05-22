@@ -11,16 +11,19 @@ import { useReviewListItem } from './presenters/useReviewListItem';
 
 interface IProps {
     item: IWineReviewsListItem;
+    showReviewWithoutPremium?: boolean;
 }
 
-export const ReviewListItem = ({ item }: IProps) => {
+export const ReviewListItem = ({ item, showReviewWithoutPremium = false }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { isJustNow, formattedDate, isLocked, isLoverLevel, formattedUserRating, formattedExpertRating } = useReviewListItem({
-        item,
-        locale,
-    });
+    const { isJustNow, formattedDate, isLocked, isLoverLevel, formattedUserRating, formattedExpertRating } =
+        useReviewListItem({
+            item,
+            locale,
+            showReviewWithoutPremium,
+        });
 
     return (
         <View style={styles.container}>
@@ -38,7 +41,10 @@ export const ReviewListItem = ({ item }: IProps) => {
                                 <StarIcon />
                                 <Typography text={formattedUserRating} variant="subtitle_12_500" />
                                 <View style={styles.expertRateContainer}>
-                                    <Typography text={t(`wineLevel.${item.user?.wineExperienceLevel}`)} variant="subtitle_12_500" />
+                                    <Typography
+                                        text={t(`wineLevel.${item.user?.wineExperienceLevel}`)}
+                                        variant="subtitle_12_500"
+                                    />
                                 </View>
                             </>
                         ) : (
@@ -47,7 +53,10 @@ export const ReviewListItem = ({ item }: IProps) => {
                                     <Typography text={formattedExpertRating} variant="subtitle_12_500" />
                                 </View>
                                 <View style={styles.expertRateContainer}>
-                                    <Typography text={t(`wineLevel.${item.user?.wineExperienceLevel}`)} variant="subtitle_12_500" />
+                                    <Typography
+                                        text={t(`wineLevel.${item.user?.wineExperienceLevel}`)}
+                                        variant="subtitle_12_500"
+                                    />
                                 </View>
                             </View>
                         )}
@@ -56,7 +65,7 @@ export const ReviewListItem = ({ item }: IProps) => {
                 <Typography text={isJustNow ? t('common.now') : formattedDate} variant="body_400" style={styles.date} />
             </View>
             {item.review ? <Typography text={item.review} variant="body_400" /> : null}
-            {isLocked && <LockContainer/>}
+            {isLocked && <LockContainer />}
         </View>
     );
 };
