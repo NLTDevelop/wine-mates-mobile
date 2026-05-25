@@ -13,7 +13,7 @@ import { useUiContext } from '@/UIProvider';
 import { wineSetScannerModel } from '../../../../../entities/events/WineSetScannerModel';
 import { toastService } from '@/libs/toast/toastService';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
-import { convertLocalEventDateTimeToUtc } from '@/modules/event/utils/eventDateTimeUtc';
+import { convertLocalEventDateTimeToUtc, convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
 import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShareMessage';
 import { createMapLink } from '@/modules/event/utils/createMapLink';
 import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
@@ -556,20 +556,42 @@ export const useAddWineSetView = ({
             }
 
             try {
-                const eventDate = draft?.eventStartDate ? new Date(draft.eventStartDate) : null;
+                const eventResponse = createdEventId ? await eventsService.getById(createdEventId) : null;
+                const eventDetail = eventResponse && !eventResponse.isError ? eventResponse.data : null;
+                const eventDateTimeValue = eventDetail
+                    ? convertUtcEventDateTimeToLocal(
+                          eventDetail.eventStartDate || eventDetail.eventDate || eventDetail.date || '',
+                          eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '',
+                      )
+                    : {
+                          date: draft?.eventStartDate || '',
+                          time: draft?.eventStartTime || '',
+                      };
+                const eventDate = eventDateTimeValue.date ? new Date(`${eventDateTimeValue.date}T00:00:00`) : null;
                 const isEventDateValid = eventDate && !Number.isNaN(eventDate.getTime());
                 const eventDateTime = prepareEventDateTimeLabel({
                     date: isEventDateValid ? eventDate : null,
-                    time: draft?.eventStartTime,
+                    time: eventDateTimeValue.time,
                     locale,
                 });
-                const price = formatEventPrice(draft?.price, draft?.currency);
-                const mapLink = createMapLink(draft?.location?.latitude, draft?.location?.longitude);
-                const eventTypeLabel = draft?.eventType === EventType.Parties ? t('event.parties') : t('event.tastings');
+                const eventType = eventDetail?.eventType || draft?.eventType;
+                const eventTastingType = eventDetail?.tastingType || tastingType;
+                const latitude = eventDetail?.latitude ?? draft?.location?.latitude;
+                const longitude = eventDetail?.longitude ?? draft?.location?.longitude;
+                const locationLabel =
+                    eventDetail?.locationLabel ||
+                    eventDetail?.location ||
+                    draft?.locationLabel ||
+                    (typeof latitude === 'number' && typeof longitude === 'number'
+                        ? `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+                        : '');
+                const price = formatEventPrice(eventDetail?.price ?? draft?.price, eventDetail?.currency || draft?.currency);
+                const mapLink = createMapLink(latitude, longitude);
+                const eventTypeLabel = eventType === EventType.Parties ? t('event.parties') : t('event.tastings');
                 const tastingTypeLabel =
-                    draft?.eventType === EventType.Parties
+                    eventType === EventType.Parties
                         ? ''
-                        : tastingType === TastingType.Blind
+                        : eventTastingType === TastingType.Blind
                           ? t('event.tastingTypeBlind')
                           : t('event.tastingTypeRegular');
                 const labels = {
@@ -585,10 +607,10 @@ export const useAddWineSetView = ({
                 const message = prepareEventShareMessage({
                     intro: t('event.shareQrCodeMessage'),
                     labels,
-                    title: draft?.theme || '',
+                    title: eventDetail?.theme || draft?.theme || '',
                     dateTime: eventDateTime,
-                    meetingPlaceName: draft?.restaurantName,
-                    location: draft?.locationLabel,
+                    meetingPlaceName: eventDetail?.restaurantName || eventDetail?.restaurant || draft?.restaurantName,
+                    location: locationLabel,
                     mapLink,
                     price,
                     eventType: eventTypeLabel,
