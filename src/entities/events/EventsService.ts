@@ -7,7 +7,6 @@ import { IEventMapPin } from './types/IEventMapPin';
 import { IEventMapPinsParams } from './params/IEventMapPinsParams';
 import { CreateEventDto } from './dto/CreateEvent.dto';
 import { eventsModel } from './EventsModel';
-import countries from 'world-countries';
 import { IEventPriceRange } from './types/IEventPriceRange';
 import { IGetEventsParams } from './params/IGetEventsParams';
 import { ISavedEvent } from './types/ISavedEvent';
@@ -20,39 +19,10 @@ class EventsService {
         private _links: ILinks,
     ) {}
 
-    private getCountryHeaderValue = (countryName?: string) => {
-        const rawCountry = (countryName || '').trim();
-        if (!rawCountry) {
-            return '';
-        }
+    private getCountryHeaderValue = (countryCode?: string) => {
+        const normalizedCountryCode = (countryCode || '').trim().toUpperCase();
 
-        const normalizedCountry = rawCountry.toUpperCase();
-        const country = countries.find(
-            item =>
-                item.cca2?.toUpperCase() === normalizedCountry ||
-                item.cca3?.toUpperCase() === normalizedCountry ||
-                item.name?.common?.toUpperCase() === normalizedCountry ||
-                item.name?.official?.toUpperCase() === normalizedCountry,
-        );
-
-        if (country?.name?.common) {
-            return country.name.common;
-        }
-
-        if (rawCountry.length !== 2 && rawCountry.length !== 3) {
-            return rawCountry;
-        }
-
-        try {
-            const regionName = new Intl.DisplayNames(['en'], { type: 'region' }).of(normalizedCountry);
-            if (regionName && regionName !== normalizedCountry) {
-                return regionName;
-            }
-        } catch {
-            return rawCountry;
-        }
-
-        return rawCountry;
+        return normalizedCountryCode.length === 2 ? normalizedCountryCode : '';
     };
 
     getList = async (params: IEventsListParams): Promise<IResponse<IList<IEvent>>> => {
