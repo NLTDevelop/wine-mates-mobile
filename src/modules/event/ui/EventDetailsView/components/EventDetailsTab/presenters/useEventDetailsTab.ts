@@ -188,6 +188,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const isStopWindowAvailable = eventEndDateTime
         ? currentTime.getTime() <= eventEndDateTime.getTime() + TASTING_STOP_AFTER_END_MS
         : false;
+
     const isTastingToggleVisible = isOwner && (isTastingStarted ? isStopWindowAvailable : isBeforeStartWindow);
     const isTastingToggleDisabled = isBookNowInProgress || isEventInactive || isEventCanceled || isEventFinished;
     const isWineSetAccessAvailable = isTastingStarted || isWineAccessTimeAvailable;
