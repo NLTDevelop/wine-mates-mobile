@@ -9,5 +9,10 @@ export interface IPlaceDetails {
     latitude: number;
     longitude: number;
     address: string;
-    country?: string;
+    countryCode?: string;
+}
+
+export interface IReverseGeocodeDetails {
+    address: string;
+    countryCode: string;
 }

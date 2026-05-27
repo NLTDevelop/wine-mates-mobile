@@ -35,18 +35,23 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
     const sessionTokenRef = useRef<string>(createSessionToken());
     const mapRef = useRef<MapView>(null);
 
-    const getCountryFromAddress = useCallback((address?: string) => {
-        if (!address) {
-            return '';
-        }
+    const getLocationDetails = useCallback(
+        async (latitude: number, longitude: number) => {
+            const details = await locationService.reverseGeocodeDetails({
+                latitude,
+                longitude,
+                language,
+            });
 
-        const parts = address
-            .split(',')
-            .map(part => part.trim())
-            .filter(Boolean);
+            const address = details?.address || '';
 
-        return parts[parts.length - 1] || '';
-    }, []);
+            return {
+                address,
+                countryCode: details?.countryCode || '',
+            };
+        },
+        [language],
+    );
 
     useEffect(() => {
         if (selectedLocation) {
@@ -101,22 +106,18 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
             longitudeDelta: 0.01,
         }, 500);
 
-        const address = await locationService.reverseGeocode({
-            latitude,
-            longitude,
-            language,
-        });
+        const details = await getLocationDetails(latitude, longitude);
 
-        if (address) {
+        if (details.address) {
             setSelectedLocation({
                 latitude,
                 longitude,
-                label: address,
-                countryName: getCountryFromAddress(address),
+                label: details.address,
+                countryName: details.countryCode,
             });
-            setSearchQuery(address);
+            setSearchQuery(details.address);
         }
-    }, [getCountryFromAddress, isSuggestionSelectionInProgress, language, showSuggestions]);
+    }, [getLocationDetails, isSuggestionSelectionInProgress, showSuggestions]);
 
     const onSearchChange = useCallback((text: string) => {
         setSearchQuery(text);
@@ -150,24 +151,24 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
         try {
             const details = await locationService.getPlaceDetails({
                 placeId: suggestion.placeId,
-                language,
                 sessionToken: sessionTokenRef.current,
             });
 
             if (details) {
-                const localizedAddress = await locationService.reverseGeocode({
+                const localizedDetails = await locationService.reverseGeocodeDetails({
                     latitude: details.latitude,
                     longitude: details.longitude,
                     language,
                 });
-                const address = localizedAddress || details.address;
+                const address = localizedDetails?.address || details.address;
+                const countryCode = details.countryCode || localizedDetails?.countryCode || '';
 
                 setSelectedLocation({
                     latitude: details.latitude,
                     longitude: details.longitude,
                     label: address,
                     placeName: suggestion.mainText,
-                    countryName: details.country || getCountryFromAddress(address),
+                    countryName: countryCode,
                 });
                 setSearchQuery(address);
 
@@ -183,7 +184,7 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
                 setIsSuggestionSelectionInProgress(false);
             }, 250);
         }
-    }, [getCountryFromAddress, language]);
+    }, [language]);
 
     const onPoiClick = useCallback(async (event: any) => {
         const poi = event.nativeEvent;
@@ -204,40 +205,41 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
             longitudeDelta: 0.01,
         }, 500);
 
-        const address = await locationService.reverseGeocode({
-            latitude: poi.coordinate.latitude,
-            longitude: poi.coordinate.longitude,
-            language,
-        });
+        const details = await getLocationDetails(poi.coordinate.latitude, poi.coordinate.longitude);
 
-        if (address) {
+        if (details.address) {
             setSelectedLocation({
                 latitude: poi.coordinate.latitude,
                 longitude: poi.coordinate.longitude,
-                label: address,
+                label: details.address,
                 placeName: poi.name,
-                countryName: getCountryFromAddress(address),
+                countryName: details.countryCode,
             });
-            setSearchQuery(address);
+            setSearchQuery(details.address);
         }
-    }, [getCountryFromAddress, language]);
+    }, [getLocationDetails]);
 
-    const onConfirm = useCallback(() => {
+    const onConfirm = useCallback(async () => {
         const locationToConfirm = selectedLocation || initialLocation;
 
         if (locationToConfirm) {
-            const label = selectedLocation?.label || `${locationToConfirm.latitude.toFixed(4)}, ${locationToConfirm.longitude.toFixed(4)}`;
+            const fallbackLabel = `${locationToConfirm.latitude.toFixed(4)}, ${locationToConfirm.longitude.toFixed(4)}`;
+            const resolvedDetails = selectedLocation?.countryName
+                ? null
+                : await getLocationDetails(locationToConfirm.latitude, locationToConfirm.longitude);
+            const label = selectedLocation?.label || resolvedDetails?.address || fallbackLabel;
+            const countryName = selectedLocation?.countryName || resolvedDetails?.countryCode || '';
             onSelectLocation(
                 locationToConfirm.latitude,
                 locationToConfirm.longitude,
                 label,
                 selectedLocation?.placeName,
-                selectedLocation?.countryName || getCountryFromAddress(label),
+                countryName,
             );
             sessionTokenRef.current = createSessionToken();
             onClose();
         }
-    }, [getCountryFromAddress, initialLocation, onClose, onSelectLocation, selectedLocation]);
+    }, [getLocationDetails, initialLocation, onClose, onSelectLocation, selectedLocation]);
 
     return {
         selectedLocation,
