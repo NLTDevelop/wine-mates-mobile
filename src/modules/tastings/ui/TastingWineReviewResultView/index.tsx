@@ -16,7 +16,6 @@ import { RateThisWine } from '@/UIKit/RateThisWine';
 import { TastingNote } from '@/UIKit/TastingNote';
 import { useTastingWineReviewResult } from './presenters/useTastingWineReviewResult';
 import { WineSnackCuisinePickerModal } from '@/UIKit/WineSnackCuisinePickerModal';
-import { WineSnackCuisineSelectButton } from '@/UIKit/WineSnackCuisineSelectButton';
 
 export const TastingWineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
@@ -92,16 +91,14 @@ export const TastingWineReviewResultView = observer(() => {
                                 </Typography>
                             )}
                         </View>
-                        <WineSnackCuisineSelectButton
-                            text={cuisineSelectButtonText}
-                            onPress={onOpenCuisinePickerPress}
-                        />
                         <FoodPairing
                             setLimits={setLimits}
                             generatedSnacks={wineModel.review?.aiSnacks || undefined}
                             snacks={snacks}
                             isGenerating={isGeneratingSnacks}
                             onGeneratePress={onGenerateSnacksPress}
+                            cuisineSelectButtonText={cuisineSelectButtonText}
+                            onCuisineSelectPress={onOpenCuisinePickerPress}
                         />
                         <TastingNote
                             note={note}

@@ -10,6 +10,7 @@ import { userModel } from '@/entities/users/UserModel';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 import { ISnack } from '@/entities/snacks/types/ISnack';
 import { LockContainer } from '@/UIKit/LockContainer';
+import { WineSnackCuisineSelectButton } from '@/UIKit/WineSnackCuisineSelectButton';
 
 interface IProps {
     setLimits?: Dispatch<SetStateAction<IRateContext | null>>;
@@ -20,6 +21,8 @@ interface IProps {
     snacks?: ISnack[] | null;
     isGenerating?: boolean;
     onGeneratePress?: () => void;
+    cuisineSelectButtonText?: string;
+    onCuisineSelectPress?: () => void;
 }
 
 export const FoodPairing = ({
@@ -31,6 +34,8 @@ export const FoodPairing = ({
     snacks: controlledSnacks,
     isGenerating: controlledIsGenerating,
     onGeneratePress: controlledOnGeneratePress,
+    cuisineSelectButtonText,
+    onCuisineSelectPress,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors, isLocked), [colors, isLocked]);
@@ -58,6 +63,13 @@ export const FoodPairing = ({
                     />
                 )}
             </View>
+            {cuisineSelectButtonText && onCuisineSelectPress ? (
+                <WineSnackCuisineSelectButton
+                    text={cuisineSelectButtonText}
+                    onPress={onCuisineSelectPress}
+                    containerStyle={styles.cuisineSelectButton}
+                />
+            ) : null}
             <View style={styles.card}>
                 {hasSnacks && !isLocked ? (
                     snacks.map(snack => (

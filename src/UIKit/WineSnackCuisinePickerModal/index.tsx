@@ -1,12 +1,17 @@
 import { useCallback, useMemo } from 'react';
-import { ActivityIndicator, FlatList, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, TouchableOpacity, View } from 'react-native';
+import { BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useUiContext } from '@/UIProvider';
-import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { Checkbox } from '@/UIKit/Checkbox';
 import { IWineSnackCuisineOption } from '@/entities/snacks/types/IWineSnackCuisineOption';
 import { getStyles } from './styles';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useBottomModalState } from '@/UIKit/BottomModal/presenters/useBottomModalState';
+import { CrossIcon } from '@assets/icons/CrossIcon';
+
+const windowHeight = Dimensions.get('window').height;
 
 interface IProps {
     visible: boolean;
@@ -26,7 +31,13 @@ export const WineSnackCuisinePickerModal = ({
     onConfirm,
 }: IProps) => {
     const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const { top, bottom } = useSafeAreaInsets();
+    const styles = useMemo(() => getStyles(colors, bottom), [bottom, colors]);
+    const snapPoints = useMemo(() => [windowHeight], []);
+    const { modalRef, onRenderBackdrop, onRenderHandle, onDismiss, onClosePress } = useBottomModalState({
+        visible,
+        onClose,
+    });
 
     const keyExtractor = useCallback((item: IWineSnackCuisineOption) => {
         return `${item.id}`;
@@ -46,18 +57,44 @@ export const WineSnackCuisinePickerModal = ({
     }, [styles]);
 
     return (
-        <BottomModal visible={visible} onClose={onClose} title={t('wine.snackCuisines')}>
-            <View style={styles.container}>
+        <BottomSheetModal
+            ref={modalRef}
+            index={0}
+            snapPoints={snapPoints}
+            topInset={top}
+            enablePanDownToClose={false}
+            enableDynamicSizing={false}
+            enableOverDrag={false}
+            backdropComponent={onRenderBackdrop}
+            handleComponent={onRenderHandle}
+            onDismiss={onDismiss}
+            backgroundStyle={styles.bottomSheetContainer}
+        >
+            <View style={styles.header}>
+                <View style={styles.closeButton} />
+                <View style={styles.titleContainer} pointerEvents="none">
+                    <Typography text={t('wine.snackCuisines')} variant="h4" style={styles.title} />
+                </View>
+                <TouchableOpacity onPress={onClosePress} style={styles.closeButton} hitSlop={8}>
+                    <CrossIcon />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.content}>
                 {isLoading ? (
                     <View style={styles.stateContainer}>
                         <ActivityIndicator color={colors.primary} />
                     </View>
                 ) : (
-                    <FlatList
+                    <BottomSheetFlatList
                         data={options}
                         keyExtractor={keyExtractor}
                         renderItem={renderItem}
                         ItemSeparatorComponent={renderSeparator}
+                        style={styles.list}
+                        contentContainerStyle={styles.listContent}
+                        nestedScrollEnabled
+                        bounces={false}
+                        overScrollMode="never"
                         ListEmptyComponent={
                             <View style={styles.stateContainer}>
                                 <Typography
@@ -70,7 +107,8 @@ export const WineSnackCuisinePickerModal = ({
                         showsVerticalScrollIndicator={false}
                     />
                 )}
-
+            </View>
+            <View style={styles.footer}>
                 <Button
                     text={t('common.confirm')}
                     onPress={onConfirm}
@@ -80,6 +118,6 @@ export const WineSnackCuisinePickerModal = ({
                     containerStyle={styles.confirmButton}
                 />
             </View>
-        </BottomModal>
+        </BottomSheetModal>
     );
 };

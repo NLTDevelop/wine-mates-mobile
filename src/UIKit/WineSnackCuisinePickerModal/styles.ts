@@ -2,11 +2,51 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (colors: IColors, bottomInset: number) => {
     const styles = StyleSheet.create({
-        container: {
-            gap: scaleVertical(12),
-            maxHeight: scaleVertical(420),
+        bottomSheetContainer: {
+            backgroundColor: colors.background,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+        },
+        header: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: scaleHorizontal(16),
+            paddingTop: scaleVertical(16),
+            minHeight: scaleVertical(56),
+            position: 'relative',
+        },
+        titleContainer: {
+            position: 'absolute',
+            left: scaleHorizontal(16),
+            right: scaleHorizontal(16),
+            top: scaleVertical(16),
+            height: scaleHorizontal(40),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        closeButton: {
+            width: scaleHorizontal(40),
+            height: scaleHorizontal(40),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        title: {
+            textAlign: 'center',
+            color: colors.text,
+        },
+        content: {
+            flex: 1,
+            overflow: 'hidden',
+        },
+        list: {
+            flex: 1,
+        },
+        listContent: {
+            flexGrow: 1,
+            paddingHorizontal: scaleHorizontal(16),
         },
         option: {
             minHeight: scaleVertical(56),
@@ -26,6 +66,7 @@ export const getStyles = (colors: IColors) => {
             backgroundColor: colors.border,
         },
         stateContainer: {
+            flex: 1,
             minHeight: scaleVertical(120),
             alignItems: 'center',
             justifyContent: 'center',
@@ -36,7 +77,12 @@ export const getStyles = (colors: IColors) => {
         },
         confirmButton: {
             width: '100%',
-            marginTop: scaleVertical(12),
+        },
+        footer: {
+            paddingHorizontal: scaleHorizontal(16),
+            paddingTop: scaleVertical(12),
+            paddingBottom: bottomInset + scaleVertical(16),
+            backgroundColor: colors.background,
         },
     });
 

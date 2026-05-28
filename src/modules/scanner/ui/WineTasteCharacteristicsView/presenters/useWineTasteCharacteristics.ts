@@ -6,11 +6,23 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { Keyboard } from 'react-native';
 import { ITasteCharacteristicDetail } from '@/entities/wine/types/ITasteCharacteristicDetail';
 import { runInAction } from 'mobx';
+import {
+    getTasteCharacteristicsCache,
+    setTasteCharacteristicsCache,
+} from '@/libs/storage/cacheUtils';
+
+const getTasteCharacteristicsCacheContext = (wineId?: number) => {
+    return {
+        wineId: wineId ?? wineModel.wine?.id ?? null,
+        colorId: wineModel.base?.colorOfWine?.id ?? null,
+        typeId: wineModel.base?.typeOfWine?.id ?? null,
+    };
+};
 
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -20,7 +32,10 @@ export const useWineTasteCharacteristics = () => {
 
     const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
     const [isError, setIsError] = useState(false);
-    const [sliderValues, setSliderValues] = useState<Record<number, number>>({});
+    const cacheContext = useMemo(() => getTasteCharacteristicsCacheContext(wineId), [wineId]);
+    const [sliderValues, setSliderValues] = useState<Record<number, number>>(() => {
+        return getTasteCharacteristicsCache(cacheContext) || {};
+    });
     const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
 
     const data = wineModel.tasteCharacteristics;
@@ -73,12 +88,16 @@ export const useWineTasteCharacteristics = () => {
             return;
         }
 
+        const cachedValues = getTasteCharacteristicsCache(cacheContext);
         const next: Record<number, number> = {};
 
         data.forEach(item => {
             const maxIndex = Math.max((item.levels?.length ?? 0) - 1, 0);
+            const cachedValue = cachedValues?.[item.id];
             const baseValue =
-                typeof item.selectedIndex === 'number'
+                typeof cachedValue === 'number'
+                    ? cachedValue
+                    : typeof item.selectedIndex === 'number'
                     ? item.selectedIndex
                     : 0;
             next[item.id] = Math.min(Math.max(baseValue, 0), maxIndex);
@@ -89,7 +108,22 @@ export const useWineTasteCharacteristics = () => {
                                Object.keys(prev).length !== Object.keys(next).length;
             return hasChanges ? next : prev;
         });
-    }, [data]);
+
+        const nextTasteCharacteristics = data.map(item => ({
+            ...item,
+            selectedIndex: next[item.id] ?? item.selectedIndex ?? 0,
+        }));
+        const hasModelChanges = nextTasteCharacteristics.some(item => {
+            const currentItem = data.find(characteristic => characteristic.id === item.id);
+            return currentItem?.selectedIndex !== item.selectedIndex;
+        });
+
+        if (hasModelChanges) {
+            runInAction(() => {
+                wineModel.tasteCharacteristics = nextTasteCharacteristics;
+            });
+        }
+    }, [cacheContext, data]);
 
     const saveCharacteristicDetails = useCallback((sliderVals: Record<number, number>) => {
         if (!data?.length) return;
@@ -130,13 +164,14 @@ export const useWineTasteCharacteristics = () => {
                     });
                 }
 
+                setTasteCharacteristicsCache(cacheContext, next);
                 saveCharacteristicDetails(next);
 
                 return next;
             });
             Keyboard.dismiss();
         },
-        [data, saveCharacteristicDetails],
+        [cacheContext, data, saveCharacteristicDetails],
     );
     const createOnSliderChange = useCallback((id: number) => {
         return (value: number) => {
@@ -165,10 +200,11 @@ export const useWineTasteCharacteristics = () => {
                 wineModel.winePeak = winePeak;
             }
         });
+        setTasteCharacteristicsCache(cacheContext, sliderValues);
 
         navigation.navigate('WineReviewView', { isFullTastingReview: true, source, wineId });
         Keyboard.dismiss();
-    }, [data, navigation, sliderValues, winePeak, source, wineId]);
+    }, [cacheContext, data, navigation, sliderValues, winePeak, source, wineId]);
 
     return {
         data,
