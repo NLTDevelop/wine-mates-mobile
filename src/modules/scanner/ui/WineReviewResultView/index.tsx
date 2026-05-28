@@ -39,6 +39,7 @@ export const WineReviewResultView = observer(() => {
         isCuisineModalVisible,
         isLoadingCuisines,
         cuisineOptions,
+        cuisineSelectButtonText,
         onOpenCuisinePickerPress,
         onCloseCuisinePicker,
         onConfirmCuisineSelection,
@@ -90,7 +91,10 @@ export const WineReviewResultView = observer(() => {
                                 </Typography>
                             )}
                         </View>
-                        <WineSnackCuisineSelectButton onPress={onOpenCuisinePickerPress} />
+                        <WineSnackCuisineSelectButton
+                            text={cuisineSelectButtonText}
+                            onPress={onOpenCuisinePickerPress}
+                        />
                         <FoodPairing
                             setLimits={setLimits}
                             generatedSnacks={wineModel.review?.aiSnacks || undefined}

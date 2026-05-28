@@ -6,16 +6,17 @@ import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { getStyles } from './styles';
 
 interface IProps {
+    text: string;
     onPress: () => void;
 }
 
-export const WineSnackCuisineSelectButton = ({ onPress }: IProps) => {
-    const { colors, t } = useUiContext();
+export const WineSnackCuisineSelectButton = ({ text, onPress }: IProps) => {
+    const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
         <TouchableOpacity style={styles.button} onPress={onPress}>
-            <Typography variant="h6" text={t('wine.snackCuisines')} />
+            <Typography variant="h6" text={text} style={styles.text} numberOfLines={1} />
             <ArrowDownIcon />
         </TouchableOpacity>
     );
