@@ -11,6 +11,7 @@ export interface GenerateSnacksDto {
     aromas: number[];
     flavors: number[];
     tasteCharacteristics: ITasteCharacteristic[];
+    cuisines?: string[];
 }
 
 interface ITasteCharacteristic {

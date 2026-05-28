@@ -17,6 +17,9 @@ interface IProps {
     generatedSnacks?: ISnack[];
     isLocked?: boolean;
     onGenerateSuccess?: () => void | Promise<void>;
+    snacks?: ISnack[] | null;
+    isGenerating?: boolean;
+    onGeneratePress?: () => void;
 }
 
 export const FoodPairing = ({
@@ -25,11 +28,17 @@ export const FoodPairing = ({
     generatedSnacks,
     isLocked = false,
     onGenerateSuccess,
+    snacks: controlledSnacks,
+    isGenerating: controlledIsGenerating,
+    onGeneratePress: controlledOnGeneratePress,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors, isLocked), [colors, isLocked]);
 
-    const { snacks, isGenerating, onGeneratePress } = useFoodPairing(setLimits, generatedSnacks, onGenerateSuccess);
+    const foodPairing = useFoodPairing(setLimits, generatedSnacks, onGenerateSuccess);
+    const snacks = controlledSnacks !== undefined ? controlledSnacks : foodPairing.snacks;
+    const isGenerating = controlledIsGenerating ?? foodPairing.isGenerating;
+    const onGeneratePress = controlledOnGeneratePress ?? foodPairing.onGeneratePress;
     const hasSnacks = !!snacks && snacks.length > 0;
 
     return (

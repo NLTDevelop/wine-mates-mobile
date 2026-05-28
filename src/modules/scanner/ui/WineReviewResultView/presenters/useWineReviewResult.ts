@@ -6,9 +6,13 @@ import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { GenerateNoteDto } from '@/entities/wine/dto/GenerateNote.dto';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 import { useWineRateSubmit } from '@/modules/scanner/presenters/useWineRateSubmit';
+import { snackService } from '@/entities/snacks/SnackService';
+import { IWineSnackCuisine } from '@/entities/snacks/types/IWineSnackCuisine';
+import { IWineSnackCuisineOption } from '@/entities/snacks/types/IWineSnackCuisineOption';
+import { useFoodPairing } from '@/UIKit/FoodPairing/presenters/useFoodPairing';
 
 export const useWineReviewResult = () => {
     const { saveWineRate } = useWineRateSubmit();
@@ -19,11 +23,87 @@ export const useWineReviewResult = () => {
     const [noteValidationError, setNoteValidationError] = useState<string | null>(null);
     const [note, setNote] = useState<string | null>(wineModel.review?.aiTastingNote || null);
     const [limits, setLimits] = useState<IRateContext | null>(null);
+    const [isCuisineModalVisible, setIsCuisineModalVisible] = useState(false);
+    const [isLoadingCuisines, setIsLoadingCuisines] = useState(false);
+    const [cuisines, setCuisines] = useState<IWineSnackCuisine[]>([]);
+    const [selectedCuisineIds, setSelectedCuisineIds] = useState<number[]>([]);
+
+    const selectedCuisineNames = useMemo(() => {
+        return cuisines
+            .filter(item => selectedCuisineIds.includes(item.id))
+            .map(item => item.name);
+    }, [cuisines, selectedCuisineIds]);
+
+    const {
+        snacks,
+        isGenerating: isGeneratingSnacks,
+        onGeneratePress: onGenerateSnacksPress,
+    } = useFoodPairing(setLimits, wineModel.review?.aiSnacks || undefined, undefined, selectedCuisineNames);
+
     const patchReview = useCallback((payload: Partial<NonNullable<typeof wineModel.review>>) => {
         wineModel.review = {
             ...(wineModel.review || { review: '' }),
             ...payload,
         };
+    }, []);
+
+    const loadCuisines = useCallback(async () => {
+        try {
+            setIsLoadingCuisines(true);
+
+            const response = await snackService.getWineSnackCuisines();
+
+            if (response.isError || !response.data) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    response.message || localization.t('common.somethingWentWrong'),
+                );
+                return;
+            }
+
+            setCuisines(response.data);
+        } catch (error) {
+            console.error(JSON.stringify(error, null, 2));
+        } finally {
+            setIsLoadingCuisines(false);
+        }
+    }, []);
+
+    const onOpenCuisinePickerPress = useCallback(() => {
+        setIsCuisineModalVisible(true);
+
+        if (cuisines.length === 0) {
+            loadCuisines();
+        }
+    }, [cuisines.length, loadCuisines]);
+
+    const onCloseCuisinePicker = useCallback(() => {
+        setIsCuisineModalVisible(false);
+    }, []);
+
+    const onToggleCuisine = useCallback((id: number) => {
+        setSelectedCuisineIds(prevState => {
+            if (prevState.includes(id)) {
+                return prevState.filter(item => item !== id);
+            }
+
+            return [...prevState, id];
+        });
+    }, []);
+
+    const cuisineOptions = useMemo<IWineSnackCuisineOption[]>(() => {
+        return cuisines.map(item => {
+            return {
+                id: item.id,
+                name: item.name,
+                isSelected: selectedCuisineIds.includes(item.id),
+                onPress: () => onToggleCuisine(item.id),
+            };
+        });
+    }, [cuisines, onToggleCuisine, selectedCuisineIds]);
+
+    const onConfirmCuisineSelection = useCallback(() => {
+        setIsCuisineModalVisible(false);
     }, []);
 
     const getLimits = useCallback(async () => {
@@ -264,5 +344,14 @@ export const useWineReviewResult = () => {
         onNoteEditingChange,
         onInvalidNoteEditingComplete,
         onSubscribePress,
+        isCuisineModalVisible,
+        isLoadingCuisines,
+        cuisineOptions,
+        onOpenCuisinePickerPress,
+        onCloseCuisinePicker,
+        onConfirmCuisineSelection,
+        snacks,
+        isGeneratingSnacks,
+        onGenerateSnacksPress,
     };
 };

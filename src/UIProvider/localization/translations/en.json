@@ -213,6 +213,8 @@
         "rating": "Rating",
         "foodPairing": "Food pairing",
         "emptyFoodPairing": "No food pairings yet. Click Generate to get food pairing recommendations for this wine.",
+        "snackCuisines": "Choose cuisines",
+        "noSnackCuisines": "No cuisines available.",
         "attemptsLeft": "attempts left",
         "exhaustedAllAttempts": "You have exhausted all attempts.",
         "tastingNotes": "Tasting notes",
