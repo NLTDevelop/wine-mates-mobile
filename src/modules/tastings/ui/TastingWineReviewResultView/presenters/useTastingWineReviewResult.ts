@@ -177,6 +177,14 @@ export const useTastingWineReviewResult = () => {
             .map(item => item.name);
     }, [cuisines, selectedCuisineIds]);
 
+    const cuisineSelectButtonText = useMemo(() => {
+        if (selectedCuisineNames.length === 0) {
+            return localization.t('wine.snackCuisines');
+        }
+
+        return selectedCuisineNames.join(', ');
+    }, [selectedCuisineNames]);
+
     const {
         snacks,
         isGenerating: isGeneratingSnacks,
@@ -652,6 +660,7 @@ export const useTastingWineReviewResult = () => {
         isCuisineModalVisible,
         isLoadingCuisines,
         cuisineOptions,
+        cuisineSelectButtonText,
         onOpenCuisinePickerPress,
         onCloseCuisinePicker,
         onConfirmCuisineSelection,

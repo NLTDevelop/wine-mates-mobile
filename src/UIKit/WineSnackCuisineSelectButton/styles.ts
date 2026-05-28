@@ -16,6 +16,10 @@ export const getStyles = (colors: IColors) => {
             marginHorizontal: scaleHorizontal(16),
             marginBottom: scaleVertical(16),
         },
+        text: {
+            flex: 1,
+            marginRight: scaleHorizontal(12),
+        },
     });
 
     return styles;
