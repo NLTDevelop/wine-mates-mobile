@@ -23,7 +23,15 @@ export const getStyles = (_colors: IColors) => {
         selectedParameters: {
             marginHorizontal: scaleHorizontal(16),
         },
+        buttonsContainer: {
+            marginHorizontal: scaleHorizontal(16),
+            marginBottom: scaleVertical(16),
+            gap: scaleVertical(12),
+        },
         button: {
+            width: '100%',
+        },
+        resultButton: {
             marginHorizontal: scaleHorizontal(16),
             marginBottom: scaleVertical(16),
         },

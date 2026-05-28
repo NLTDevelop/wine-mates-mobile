@@ -338,6 +338,8 @@ export const useTastingWineTasteCharacteristics = () => {
                 wineId,
                 eventId,
                 isBlindTasting: routeParams.isBlindTasting,
+                isFullTastingReview: true,
+                tastingStatus: 'in_progress',
             });
             Keyboard.dismiss();
             return;

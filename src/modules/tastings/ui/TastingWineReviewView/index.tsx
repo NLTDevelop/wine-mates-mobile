@@ -23,11 +23,14 @@ export const TastingWineReviewView = observer(() => {
         onChangeReview,
         onSliderChange,
         onNextPress,
+        onContinueFullTastingPress,
+        onFinishTastingPress,
         sliderValue,
         starRate,
         onStarRateChange,
         isSaving,
         isSelectedParametersVisible,
+        isFullTastingReview,
     } = useTastingWineReview();
 
     return (
@@ -45,8 +48,9 @@ export const TastingWineReviewView = observer(() => {
                         handleSliderChange={onSliderChange}
                         starRate={starRate}
                         onStarRateChange={onStarRateChange}
+                        isFullTastingReview={isFullTastingReview}
                     />
-                    <Notes/>
+                    {isFullTastingReview ? <Notes /> : null}
                     <Typography text={t('wine.review')} variant="subtitle_20_500" style={styles.title} />
                     <CustomInput
                         value={review}
@@ -63,13 +67,31 @@ export const TastingWineReviewView = observer(() => {
                         <SelectedParameters containerStyle={styles.selectedParameters} />
                     ) : null}
                 </View>
-                <Button
-                    text={t('common.next')}
-                    onPress={onNextPress}
-                    containerStyle={styles.button}
-                    inProgress={isSaving}
-                    RightAccessory={<NextLongArrowIcon />}
-                />
+                {isFullTastingReview ? (
+                    <Button
+                        text={t('common.next')}
+                        onPress={onNextPress}
+                        containerStyle={styles.resultButton}
+                        inProgress={isSaving}
+                        RightAccessory={<NextLongArrowIcon />}
+                    />
+                ) : (
+                    <View style={styles.buttonsContainer}>
+                        <Button
+                            text={t('wine.continueFullTasting')}
+                            onPress={onContinueFullTastingPress}
+                            containerStyle={styles.button}
+                            type="secondary"
+                            disabled={isSaving}
+                        />
+                        <Button
+                            text={t('wine.finishTasting')}
+                            onPress={onFinishTastingPress}
+                            containerStyle={styles.button}
+                            inProgress={isSaving}
+                        />
+                    </View>
+                )}
             </View>
         </ScreenContainer>
     );

@@ -117,7 +117,7 @@ export const useResultHeader = (item: IWineDetails, fromScanner?: boolean) => {
             };
             wineModel.customVintage = null;
             const source = fromScanner ? 'scanner' : 'wineDetails';
-            navigation.navigate('WineLookView', { source, wineId: item.id });
+            navigation.navigate('WineReviewView', { source, wineId: item.id });
         } catch (error) {
             setIsCreating(false);
             console.error('Create wine for new vintage error:', error);

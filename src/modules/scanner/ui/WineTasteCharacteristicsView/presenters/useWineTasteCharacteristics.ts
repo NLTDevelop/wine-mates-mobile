@@ -4,7 +4,7 @@ import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
@@ -14,6 +14,9 @@ import { runInAction } from 'mobx';
 
 export const useWineTasteCharacteristics = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const route = useRoute();
+    const source = (route.params as { source?: string } | undefined)?.source ?? 'scanner';
+    const wineId = (route.params as { wineId?: number } | undefined)?.wineId;
 
     const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
     const [isError, setIsError] = useState(false);
@@ -163,9 +166,9 @@ export const useWineTasteCharacteristics = () => {
             }
         });
 
-        navigation.navigate('WineReviewView');
+        navigation.navigate('WineReviewView', { isFullTastingReview: true, source, wineId });
         Keyboard.dismiss();
-    }, [data, navigation, sliderValues, winePeak]);
+    }, [data, navigation, sliderValues, winePeak, source, wineId]);
 
     return {
         data,

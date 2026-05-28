@@ -98,7 +98,7 @@ export const useWineSetItem = ({
         }
 
         if (isParticipantPressAvailable) {
-            navigation.navigate('TastingWineLookView', {
+            navigation.navigate('TastingWineReviewView', {
                 eventId,
                 wineId,
                 tastingStatus: status,
