@@ -12,9 +12,10 @@ interface StarIconProps {
     size: number;
     color: string;
     fill?: number;
+    isFullTastingReview?: boolean
 }
 
-export const useRateThisWine = (disabled: boolean, starRate: number, sliderValue: number, hasChangedRating: boolean = false) => {
+export const useRateThisWine = (disabled: boolean, starRate: number, sliderValue: number, hasChangedRating: boolean = false, isFullTastingReview) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const [debouncedSliderValue, setDebouncedSliderValue] = useState(sliderValue);
@@ -114,7 +115,7 @@ export const useRateThisWine = (disabled: boolean, starRate: number, sliderValue
 
     const title = disabled 
         ? (hasChangedRating ? t('wine.ratedWine') : t('wine.didNotRateWine'))
-        : t('wine.rateThisWine');
+        : isFullTastingReview ? t('wine.rateThisWineShort') : t('wine.rateThisWine');
 
     const getRatingDescription = useCallback((rating: number): string => {
         if (rating >= 5.0) return t('wine.ratingScale.exceptional');

@@ -18,9 +18,10 @@ interface IProps {
     onStarRateChange?: (value: number) => void;
     disabled?: boolean;
     hasChangedRating?: boolean;
+    isFullTastingReview?: boolean;
 }
 
-export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false, hasChangedRating = false }: IProps) => {
+export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false, hasChangedRating = false, isFullTastingReview }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -30,7 +31,7 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
         title,
         currentRatingDescription,
         debouncedSliderValue,
-    } = useRateThisWine(disabled, starRate, sliderValue, hasChangedRating);
+    } = useRateThisWine(disabled, starRate, sliderValue, hasChangedRating, isFullTastingReview);
 
     return (
         <View style={styles.container}>

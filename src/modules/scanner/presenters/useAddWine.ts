@@ -206,7 +206,7 @@ export const useAddWine = () => {
                         },
                     };
 
-                    navigation.navigate('WineLookView', { source: 'scanner' });
+                    navigation.navigate('WineReviewView', { source: 'scanner' });
                 } else if (response?.errors?.errors?.vintage) {
                     setIsVintageError({status: true, errorText: response.errors.errors.vintage[0]});
                 } else {
@@ -249,7 +249,7 @@ export const useAddWine = () => {
                     name: response.data.name,
                     vintage: response.data.vintage,
                 };
-                navigation.navigate('WineLookView', { source: 'scanner' });
+                navigation.navigate('WineReviewView', { source: 'scanner' });
             }
         } catch (error) {
             console.error('Add wine error: ', JSON.stringify(error, null, 2));

@@ -286,7 +286,7 @@ class WineService {
         }
     };
 
-    addToRate = async (data: AddRateDto): Promise<IResponse<{}>> => {
+    addToRate = async (data: Partial<AddRateDto>): Promise<IResponse<{}>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',

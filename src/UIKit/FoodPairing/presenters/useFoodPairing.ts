@@ -15,6 +15,7 @@ export const useFoodPairing = (
     setLimits?: SetLimits,
     generatedSnacks?: ISnack[],
     onGenerateSuccess?: OnGenerateSuccess,
+    cuisines?: string[],
 ) => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [snacks, setSnacks] = useState<ISnack[] | null>(generatedSnacks || wineModel.review?.aiSnacks || null);
@@ -59,6 +60,10 @@ export const useFoodPairing = (
                     .filter((item): item is GenerateSnacksDto['tasteCharacteristics'][number] => Boolean(item)),
             };
 
+            if (cuisines && cuisines.length > 0) {
+                payload.cuisines = cuisines;
+            }
+
             const response = await snackService.generateSnacks(payload);
 
             if (response.isError || !response.data) {
@@ -92,7 +97,7 @@ export const useFoodPairing = (
         } finally {
             setIsGenerating(false);
         }
-    }, [onGenerateSuccess, setLimits]);
+    }, [cuisines, onGenerateSuccess, setLimits]);
 
     return { snacks, isGenerating, onGeneratePress };
 };

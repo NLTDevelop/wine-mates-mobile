@@ -3,6 +3,7 @@ import { ILinks, links } from '@/Links';
 
 import { GenerateSnacksDto } from './dto/GenerateSnacks.dto';
 import { ISnack } from './types/ISnack';
+import { IWineSnackCuisine } from './types/IWineSnackCuisine';
 
 class SnackService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -18,6 +19,20 @@ class SnackService {
             return response;
         } catch (error) {
             console.warn('SnackService -> generateSnacks: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getWineSnackCuisines = async (): Promise<IResponse<IWineSnackCuisine[]>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineSnackCuisines}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('SnackService -> getWineSnackCuisines: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

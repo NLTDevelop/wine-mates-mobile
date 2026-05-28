@@ -15,6 +15,8 @@ import { Typography } from '@/UIKit/Typography';
 import { FoodPairing } from '@/UIKit/FoodPairing';
 import { RateThisWine } from '@/UIKit/RateThisWine';
 import { TastingNote } from '@/UIKit/TastingNote';
+import { WineSnackCuisinePickerModal } from '@/UIKit/WineSnackCuisinePickerModal';
+import { WineSnackCuisineSelectButton } from '@/UIKit/WineSnackCuisineSelectButton';
 
 export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
@@ -34,6 +36,15 @@ export const WineReviewResultView = observer(() => {
         onNoteEditingChange,
         onInvalidNoteEditingComplete,
         onSubscribePress,
+        isCuisineModalVisible,
+        isLoadingCuisines,
+        cuisineOptions,
+        onOpenCuisinePickerPress,
+        onCloseCuisinePicker,
+        onConfirmCuisineSelection,
+        snacks,
+        isGeneratingSnacks,
+        onGenerateSnacksPress,
     } = useWineReviewResult();
 
     return (
@@ -79,7 +90,14 @@ export const WineReviewResultView = observer(() => {
                                 </Typography>
                             )}
                         </View>
-                        <FoodPairing setLimits={setLimits} generatedSnacks={wineModel.review?.aiSnacks || undefined} />
+                        <WineSnackCuisineSelectButton onPress={onOpenCuisinePickerPress} />
+                        <FoodPairing
+                            setLimits={setLimits}
+                            generatedSnacks={wineModel.review?.aiSnacks || undefined}
+                            snacks={snacks}
+                            isGenerating={isGeneratingSnacks}
+                            onGeneratePress={onGenerateSnacksPress}
+                        />
                         <TastingNote
                             note={note}
                             isLoading={isLoading}
@@ -99,6 +117,16 @@ export const WineReviewResultView = observer(() => {
                         inProgress={isSaving}
                     />
                 </View>
+            )}
+            {isCuisineModalVisible && (
+                <WineSnackCuisinePickerModal
+                    visible={isCuisineModalVisible}
+                    options={cuisineOptions}
+                    isLoading={isLoadingCuisines}
+                    isConfirming={isGeneratingSnacks}
+                    onClose={onCloseCuisinePicker}
+                    onConfirm={onConfirmCuisineSelection}
+                />
             )}
         </ScreenContainer>
     );
