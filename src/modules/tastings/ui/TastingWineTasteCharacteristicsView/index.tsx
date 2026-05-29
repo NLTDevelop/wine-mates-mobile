@@ -14,7 +14,7 @@ import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { TasteCharacteristicItem } from '@/UIKit/TasteCharacteristicItem';
-import { WinePeakPicker } from '@/UIKit/WinePeakPicker';
+import { WinePeakPicker } from '@/UIKit/WinePeakPicker/ui';
 import { useTastingWineTasteCharacteristics } from './presenters/useTastingWineTasteCharacteristics';
 
 type ListItemType =

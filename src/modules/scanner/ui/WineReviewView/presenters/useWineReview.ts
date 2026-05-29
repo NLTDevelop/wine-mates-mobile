@@ -3,6 +3,10 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useState } from 'react';
 import { useWineRateSubmit } from '@/modules/scanner/presenters/useWineRateSubmit';
+import { userModel } from '@/entities/users/UserModel';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { Keyboard } from 'react-native';
+import { runInAction } from 'mobx';
 
 type WineReviewRouteParams = {
     isFullTastingReview?: boolean;
@@ -21,9 +25,13 @@ export const useWineReview = () => {
     const [review, setReview] = useState(() => wineModel.review?.review ?? '');
     const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? 70);
     const [starRate, setStarRate] = useState(() => wineModel.review?.starRate ?? 0);
+    const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
     const [hasChangedRate, setHasChangedRate] = useState(() => wineModel.review?.hasChangedRate ?? false);
     const [hasChangedStarRate, setHasChangedStarRate] = useState(() => wineModel.review?.hasChangedStarRate ?? false);
     const [isSaving, setIsSaving] = useState(false);
+    const isExpertOrWinemaker = userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT ||
+        userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR;
+    const isWinePeakPickerVisible = isExpertOrWinemaker && !isFullTastingReview;
 
     const onSliderChange = useCallback((value: number) => {
         setSliderValue(value);
@@ -38,6 +46,14 @@ export const useWineReview = () => {
         const newValue = Number(value.toFixed(1));
         setStarRate(prev => prev === newValue ? prev : newValue);
         setHasChangedStarRate(true);
+    }, []);
+
+    const onWinePeakChange = useCallback((year: number | null) => {
+        setWinePeak(year);
+        runInAction(() => {
+            wineModel.winePeak = year;
+        });
+        Keyboard.dismiss();
     }, []);
 
     const saveReview = useCallback(() => {
@@ -80,8 +96,11 @@ export const useWineReview = () => {
         onResultPress,
         sliderValue,
         starRate,
+        winePeak,
         onStarRateChange,
+        onWinePeakChange,
         isSaving,
         isFullTastingReview,
+        isWinePeakPickerVisible,
     };
 };

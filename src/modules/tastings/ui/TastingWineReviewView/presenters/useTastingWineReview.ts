@@ -13,6 +13,8 @@ import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { userModel } from '@/entities/users/UserModel';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
+import { Keyboard } from 'react-native';
+import { runInAction } from 'mobx';
 
 interface IRouteParams {
     source?: string;
@@ -23,7 +25,7 @@ interface IRouteParams {
     isFullTastingReview?: boolean;
 }
 
-type ReviewOnlyDraftPayload = Pick<Partial<AddRateDto>, 'wineId' | 'review' | 'userRating' | 'expertRating'>;
+type ReviewOnlyDraftPayload = Pick<Partial<AddRateDto>, 'wineId' | 'review' | 'userRating' | 'expertRating' | 'winePeak'>;
 
 export const useTastingWineReview = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -46,14 +48,19 @@ export const useTastingWineReview = () => {
     const [review, setReview] = useState(() => wineModel.review?.review ?? '');
     const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? 70);
     const [starRate, setStarRate] = useState(() => wineModel.review?.starRate ?? 0);
+    const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
     const [hasChangedRate, setHasChangedRate] = useState(() => wineModel.review?.hasChangedRate ?? false);
     const [hasChangedStarRate, setHasChangedStarRate] = useState(() => wineModel.review?.hasChangedStarRate ?? false);
     const [isSaving, setIsSaving] = useState(false);
+    const isExpertOrWinemaker = userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT ||
+        userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR;
+    const isWinePeakPickerVisible = isExpertOrWinemaker && !isFullTastingReview;
 
     const applyDraftReview = useCallback((draftReview: {
         review?: string;
         expertRating?: number;
         userRating?: number;
+        winePeak?: number;
     }) => {
         const nextReview = draftReview.review || '';
         const nextSliderValue = typeof draftReview.expertRating === 'number'
@@ -70,6 +77,7 @@ export const useTastingWineReview = () => {
         setStarRate(nextStarRate);
         setHasChangedRate(nextHasChangedRate);
         setHasChangedStarRate(nextHasChangedStarRate);
+        setWinePeak(typeof draftReview.winePeak === 'number' ? draftReview.winePeak : wineModel.winePeak);
 
         wineModel.review = {
             ...(wineModel.review || { review: '' }),
@@ -79,6 +87,7 @@ export const useTastingWineReview = () => {
             hasChangedRate: nextHasChangedRate,
             hasChangedStarRate: nextHasChangedStarRate,
         };
+        wineModel.winePeak = typeof draftReview.winePeak === 'number' ? draftReview.winePeak : wineModel.winePeak;
     }, []);
 
     const getEventTastingDraft = useCallback(async () => {
@@ -145,6 +154,14 @@ export const useTastingWineReview = () => {
         const newValue = Number(value.toFixed(1));
         setStarRate(prev => prev === newValue ? prev : newValue);
         setHasChangedStarRate(true);
+    }, []);
+
+    const onWinePeakChange = useCallback((year: number | null) => {
+        setWinePeak(year);
+        runInAction(() => {
+            wineModel.winePeak = year;
+        });
+        Keyboard.dismiss();
     }, []);
 
     const saveReview = useCallback(() => {
@@ -252,6 +269,10 @@ export const useTastingWineReview = () => {
             }
         } else if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
             payload.expertRating = wineModel.review.rate;
+        }
+
+        if (wineModel.winePeak !== null) {
+            payload.winePeak = wineModel.winePeak;
         }
 
         return payload;
@@ -368,11 +389,14 @@ export const useTastingWineReview = () => {
         onNextPress,
         sliderValue,
         starRate,
+        winePeak,
         onStarRateChange,
+        onWinePeakChange,
         isSaving,
         isSelectedParametersVisible,
         onContinueFullTastingPress,
         onFinishTastingPress,
         isFullTastingReview,
+        isWinePeakPickerVisible,
     };
 };

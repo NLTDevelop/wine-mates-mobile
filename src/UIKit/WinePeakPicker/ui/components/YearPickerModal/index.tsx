@@ -4,38 +4,36 @@ import { Typography } from '@/UIKit/Typography';
 import { useUiContext } from '@/UIProvider';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { Button } from '@/UIKit/Button';
-import { YearPicker } from './YearPicker';
-import { useYearPickerModal } from './useYearPickerModal';
-import { getYearPickerModalStyles } from './YearPickerModalStyles';
+import { YearPicker } from '../YearPicker';
+import { useYearPickerModal } from './presenters/useYearPickerModal';
+import { getStyles } from './styles';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface IProps {
     visible: boolean;
     onClose: () => void;
     onConfirm: () => void;
-    onReset: () => void;
     selectedYear: number;
     onYearChange: (year: number) => void;
     currentYear: number;
     title: string;
     confirmText: string;
-    resetText: string;
 }
 
 export const YearPickerModal = memo(({
     visible,
     onClose,
     onConfirm,
-    onReset,
     selectedYear,
     onYearChange,
     currentYear,
     title,
     confirmText,
-    resetText,
 }: IProps) => {
 
     const { colors } = useUiContext();
-    const styles = useMemo(() => getYearPickerModalStyles(colors), [colors]);
+    const { bottom } = useSafeAreaInsets();
+    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
 
     const { backdropOpacity, slideAnim, onClosePress } = useYearPickerModal({ visible, onClose });
 
@@ -48,16 +46,14 @@ export const YearPickerModal = memo(({
         >
             <View style={styles.container}>
                 <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]}>
-                    <Pressable style={styles.backdropPressable} onPress={onClosePress} />
+                    <Pressable style={styles.backdropPressable} onPressIn={onClosePress} />
                 </Animated.View>
                 <Animated.View style={[styles.modalWrapper, { transform: [{ translateY: slideAnim }] }]}>
                     <View style={styles.modalContent}>
                         <View style={styles.header}>
-                            <TouchableOpacity onPress={onReset} hitSlop={20}>
-                                <Typography variant="body_400" text={resetText} style={styles.resetText} />
-                            </TouchableOpacity>
+                            <View style={styles.headerSpacer} />
                             <Typography variant="h4" text={title} />
-                            <TouchableOpacity onPress={onClosePress} hitSlop={20}>
+                            <TouchableOpacity onPressIn={onClosePress} hitSlop={20} style={styles.closeButton}>
                                 <CrossIcon />
                             </TouchableOpacity>
                         </View>

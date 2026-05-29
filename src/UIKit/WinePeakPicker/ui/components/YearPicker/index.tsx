@@ -3,7 +3,7 @@ import { StyleProp, TextStyle, View } from 'react-native';
 import WheelPicker from '@quidone/react-native-wheel-picker';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { getStyles } from './styles';
+import { getStyles, YEAR_PICKER_ITEM_HEIGHT, YEAR_PICKER_VISIBLE_ITEM_COUNT } from './styles';
 import { useYearPicker } from './presenters/useYearPicker';
 
 interface IProps {
@@ -24,13 +24,15 @@ export const YearPicker = memo(({ value, onChange, minimumYear }: IProps) => {
         itemTextStyle: StyleProp<TextStyle>;
     }) => {
         return (
-            <Typography
-                text={item.label}
-                variant="h3"
-                style={itemTextStyle}
-            />
+            <View style={styles.itemContainer}>
+                <Typography
+                    text={item.label}
+                    variant="h3"
+                    style={itemTextStyle}
+                />
+            </View>
         );
-    }, []);
+    }, [styles.itemContainer]);
 
     return (
         <View style={styles.container}>
@@ -40,7 +42,9 @@ export const YearPicker = memo(({ value, onChange, minimumYear }: IProps) => {
                 value={value}
                 onValueChanged={onValueChange}
                 style={styles.picker}
-                itemHeight={50}
+                width="100%"
+                itemHeight={YEAR_PICKER_ITEM_HEIGHT}
+                visibleItemCount={YEAR_PICKER_VISIBLE_ITEM_COUNT}
                 renderItem={renderItem}
                 itemTextStyle={styles.itemText}
                 overlayItemStyle={styles.overlayHidden}
