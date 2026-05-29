@@ -23,13 +23,16 @@ export const getStyles = (colors: IColors, isLocked: boolean = false) => {
             height: scaleVertical(36),
             minWidth: scaleHorizontal(109),
         },
+        cuisineSelectButton: {
+            marginBottom: scaleVertical(16),
+        },
         card: {
             borderRadius: 12,
             backgroundColor: colors.background,
             minHeight: isLocked ? scaleVertical(100) : scaleVertical(212),
             paddingVertical: scaleVertical(14),
             paddingHorizontal: scaleHorizontal(16),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             maxHeight: isLocked ? scaleVertical(100) : undefined,
         },

@@ -11,8 +11,15 @@ export const useYearPickerModal = ({ visible, onClose }: IUseYearPickerModalPara
     
     const backdropOpacity = useRef(new Animated.Value(0)).current;
     const slideAnim = useRef(new Animated.Value(300)).current;
+    const isClosingRef = useRef(false);
 
     const animateIn = useCallback(() => {
+        isClosingRef.current = false;
+        backdropOpacity.stopAnimation();
+        slideAnim.stopAnimation();
+        backdropOpacity.setValue(0);
+        slideAnim.setValue(300);
+
         Animated.parallel([
             Animated.timing(backdropOpacity, {
                 toValue: 1,
@@ -28,7 +35,10 @@ export const useYearPickerModal = ({ visible, onClose }: IUseYearPickerModalPara
         ]).start();
     }, [backdropOpacity, slideAnim]);
 
-    const animateOut = useCallback((callback: () => void) => {
+    const animateOut = useCallback(() => {
+        backdropOpacity.stopAnimation();
+        slideAnim.stopAnimation();
+
         Animated.parallel([
             Animated.timing(backdropOpacity, {
                 toValue: 0,
@@ -40,9 +50,7 @@ export const useYearPickerModal = ({ visible, onClose }: IUseYearPickerModalPara
                 duration: 200,
                 useNativeDriver: true,
             }),
-        ]).start(() => {
-            callback();
-        });
+        ]).start();
     }, [backdropOpacity, slideAnim]);
 
     useEffect(() => {
@@ -52,9 +60,13 @@ export const useYearPickerModal = ({ visible, onClose }: IUseYearPickerModalPara
     }, [visible, animateIn]);
 
     const onClosePress = useCallback(() => {
-        animateOut(() => {
-            onClose();
-        });
+        if (isClosingRef.current) {
+            return;
+        }
+
+        isClosingRef.current = true;
+        animateOut();
+        onClose();
     }, [animateOut, onClose]);
 
     return {

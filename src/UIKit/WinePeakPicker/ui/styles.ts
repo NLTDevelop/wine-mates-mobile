@@ -6,7 +6,7 @@ export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
     const styles = StyleSheet.create({
         container: {
             gap: scaleVertical(4),
-            paddingBottom: scaleVertical(10),
+            paddingBottom: scaleVertical(16),
             paddingHorizontal: scaleHorizontal(16),
         },
         infoContainer: {
@@ -41,32 +41,6 @@ export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
         },
         pickerText: {
             color: colors.text_inverted,
-        },
-        modalOverlay: {
-            flex: 1,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            justifyContent: 'flex-end',
-        },
-        modalContent: {
-            backgroundColor: colors.background,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            paddingHorizontal: scaleHorizontal(16),
-            paddingBottom: scaleVertical(20),
-            gap: scaleVertical(16),
-        },
-        header: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingVertical: scaleVertical(16),
-        },
-        headerSpacer: {
-            width: scaleHorizontal(24),
-        },
-        pickerContainer: {
-            alignItems: 'center',
-            justifyContent: 'center',
         },
         crownIconContainer: {
             position: 'absolute',

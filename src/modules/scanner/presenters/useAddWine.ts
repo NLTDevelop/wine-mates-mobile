@@ -10,6 +10,7 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { IAIData } from '@/entities/wine/types/IAIData';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
+import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
 
 const createValue = (): IWineBaseValue => ({ id: null, value: '' });
 
@@ -103,7 +104,10 @@ export const useAddWine = () => {
     }, [form]);
 
     useEffect(() => {
-        return () => wineModel.clear();
+        return () => {
+            clearTasteCharacteristicsCache();
+            wineModel.clear();
+        };
     }, []);
 
     const onChangeType = useCallback((item: IDropdownItem) => {
@@ -175,6 +179,7 @@ export const useAddWine = () => {
                     if (isAddingWineToEvent && wineId) {
                         const addWineSetScannerState = wineSetScannerModel.state;
                         wineSetScannerModel.clear();
+                        clearTasteCharacteristicsCache();
                         wineModel.clear();
 
                         if (addWineSetScannerState) {
@@ -192,6 +197,7 @@ export const useAddWine = () => {
                     }
 
                     const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
+                    clearTasteCharacteristicsCache();
                     wineModel.clear();
                     wineModel.wine = {
                         id: wineId,
@@ -219,6 +225,7 @@ export const useAddWine = () => {
                 if (isAddingWineToEvent) {
                     const addWineSetScannerState = wineSetScannerModel.state;
                     wineSetScannerModel.clear();
+                    clearTasteCharacteristicsCache();
                     wineModel.clear();
 
                     if (addWineSetScannerState) {
@@ -236,6 +243,7 @@ export const useAddWine = () => {
                 }
 
                 const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
+                clearTasteCharacteristicsCache();
                 wineModel.clear();
                 wineModel.base = {
                     ...form,

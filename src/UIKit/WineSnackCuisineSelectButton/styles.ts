@@ -13,8 +13,6 @@ export const getStyles = (colors: IColors) => {
             borderColor: colors.border,
             paddingVertical: scaleVertical(14),
             paddingHorizontal: scaleHorizontal(16),
-            marginHorizontal: scaleHorizontal(16),
-            marginBottom: scaleVertical(16),
         },
         text: {
             flex: 1,

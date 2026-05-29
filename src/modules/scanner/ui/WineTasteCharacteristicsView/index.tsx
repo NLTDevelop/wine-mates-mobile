@@ -16,7 +16,7 @@ import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { useWineTasteCharacteristics } from './presenters/useWineTasteCharacteristics';
 import { TasteCharacteristicItem } from '../../../../UIKit/TasteCharacteristicItem';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
-import { WinePeakPicker } from '../../../../UIKit/WinePeakPicker';
+import { WinePeakPicker } from '../../../../UIKit/WinePeakPicker/ui';
 
 type ListItemType =
     | { type: 'characteristic'; data: IWineTasteCharacteristic }

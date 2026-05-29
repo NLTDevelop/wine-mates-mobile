@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { View, Pressable } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { Typography } from '@/UIKit/Typography';
 import { useUiContext } from '@/UIProvider';
-import { useWinePeakPicker } from './useWinePeakPicker';
-import { YearPickerModal } from './YearPickerModal';
+import { useWinePeakPicker } from '../presenters/useWinePeakPicker';
+import { YearPickerModal } from './components/YearPickerModal';
 import { getStyles } from './styles';
 import { CrownIcon } from '@assets/icons/CrownIcon';
 import { CrossIcon } from '@assets/icons/CrossIcon';
@@ -41,7 +41,12 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                     <Typography text={t('wine.winePeakDescription')} variant="subtitle_12_400" style={styles.description} />
                 </View>
                 <View style={styles.pickerRow}>
-                    <Pressable onPress={isPremiumUser ? onOpen : undefined} style={styles.pickerButton} disabled={!isPremiumUser}>
+                    <TouchableOpacity
+                        onPress={onOpen}
+                        style={styles.pickerButton}
+                        disabled={!isPremiumUser}
+                        activeOpacity={0.75}
+                    >
                         <Typography
                             text={displayYear}
                             variant="h6"
@@ -53,11 +58,11 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                             </View>
                         )}
                         {!isPremiumUser && <LockContainer/>}
-                    </Pressable>
+                    </TouchableOpacity>
                     {value && isPremiumUser && (
-                        <Pressable onPress={onReset} style={styles.resetButton}>
+                        <TouchableOpacity onPress={onReset} style={styles.resetButton} activeOpacity={0.75}>
                             <CrossIcon width={20} height={20} color={colors.icon_inverted} />
-                        </Pressable>
+                        </TouchableOpacity>
                     )}
                 </View>
             </View>
@@ -65,13 +70,11 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                 visible={isVisible}
                 onClose={onClose}
                 onConfirm={onConfirm}
-                onReset={onReset}
                 selectedYear={selectedYear}
                 onYearChange={setSelectedYear}
                 currentYear={currentYear}
                 title={t('wine.winePeak')}
                 confirmText={t('common.confirm')}
-                resetText={t('common.reset')}
             />
         </>
     );

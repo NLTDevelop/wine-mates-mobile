@@ -13,6 +13,7 @@ import { CustomInput } from '@/UIKit/CustomInput';
 import { RateThisWine } from '@/UIKit/RateThisWine';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { Notes } from '@/UIKit/Notes';
+import { WinePeakPicker } from '@/UIKit/WinePeakPicker/ui';
 
 export const WineReviewView = observer(() => {
     const { colors, t } = useUiContext();
@@ -27,9 +28,12 @@ export const WineReviewView = observer(() => {
         onResultPress,
         sliderValue,
         starRate,
+        winePeak,
         onStarRateChange,
+        onWinePeakChange,
         isSaving,
         isFullTastingReview,
+        isWinePeakPickerVisible,
     } = useWineReview();
 
     return (
@@ -50,6 +54,7 @@ export const WineReviewView = observer(() => {
                         isFullTastingReview={isFullTastingReview}
                     />
                     {isFullTastingReview && <Notes/>}
+                    {isWinePeakPickerVisible ? <WinePeakPicker value={winePeak} onChange={onWinePeakChange} /> : null}
                     <Typography text={t('wine.review')} variant="subtitle_20_500" style={styles.title} />
                     <CustomInput
                         value={review}

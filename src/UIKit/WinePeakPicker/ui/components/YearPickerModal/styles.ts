@@ -2,7 +2,9 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleVertical, scaleHorizontal } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getYearPickerModalStyles = (colors: IColors) => {
+const scaleBottomPadding = (bottom: number) => Math.max(bottom, scaleVertical(16));
+
+export const getStyles = (colors: IColors, bottom: number) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -25,20 +27,24 @@ export const getYearPickerModalStyles = (colors: IColors) => {
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             paddingHorizontal: scaleHorizontal(16),
-            paddingBottom: scaleVertical(20),
-            gap: scaleVertical(16),
+            paddingBottom: scaleBottomPadding(bottom),
+            gap: scaleVertical(12),
         },
         header: {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            paddingVertical: scaleVertical(16),
+            paddingTop: scaleVertical(12),
+        },
+        closeButton: {
+            width: scaleHorizontal(24),
+            height: scaleVertical(24),
+            alignItems: 'center',
+            justifyContent: 'center',
         },
         headerSpacer: {
             width: scaleHorizontal(24),
-        },
-        resetText: {
-            color: colors.primary,
+            height: scaleVertical(24),
         },
     });
     return styles;
