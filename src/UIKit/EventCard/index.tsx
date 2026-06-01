@@ -67,6 +67,7 @@ export const EventCard = ({
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
         isOwner,
+        hasMapPreview,
         mapPreviewUri,
         participantsPreviewData,
     } = useEventCard({
@@ -162,9 +163,11 @@ export const EventCard = ({
                 />
             )}
 
-            <View style={styles.mapContainer}>
-                <Image source={{ uri: mapPreviewUri }} style={styles.map} resizeMode="cover" />
-            </View>
+            {hasMapPreview && (
+                <View style={styles.mapContainer}>
+                    <Image source={{ uri: mapPreviewUri }} style={styles.map} resizeMode="cover" />
+                </View>
+            )}
 
             {showFooter && (
                 <View style={styles.footer}>

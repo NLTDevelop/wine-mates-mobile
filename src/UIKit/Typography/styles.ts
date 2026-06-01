@@ -46,6 +46,12 @@ export const getStyle = (colors: IColors) => {
             color: colors.text,
             flexShrink: 1,
         },
+        subtitle_16_700: {
+            fontSize: scaleFontSize(16),
+            fontFamily: 'VisueltPro-Bold',
+            color: colors.text,
+            flexShrink: 1,
+        },
         subtitle_12_400: {
             fontSize: scaleFontSize(12),
             fontFamily: 'VisueltPro-Regular',

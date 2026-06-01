@@ -4,15 +4,15 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-        },
-        loaderContainer: {
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
+        contentContainer: {
+            flexGrow: 1,
             paddingHorizontal: scaleHorizontal(16),
-            paddingVertical: scaleVertical(16),
+            paddingTop: scaleVertical(16),
+            paddingBottom: scaleVertical(16),
+            gap: scaleVertical(16),
+        },
+        footer: {
+            paddingTop: scaleVertical(4),
         },
     });
 

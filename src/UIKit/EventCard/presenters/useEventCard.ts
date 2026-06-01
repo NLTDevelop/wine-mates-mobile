@@ -37,6 +37,7 @@ const STATIC_MAP_LIGHT_STYLE_PARAMS = [
     'style=feature:poi|element:geometry|color:0xeeeeee',
     'style=feature:landscape|element:geometry|color:0xf5f5f5',
 ];
+const EMPTY_FIELD = '-';
 
 export const useEventCard = ({
     event,
@@ -113,7 +114,7 @@ export const useEventCard = ({
 
     const month = useMemo(() => {
         if (!parsedStartDate) {
-            return '';
+            return EMPTY_FIELD;
         }
 
         return new Intl.DateTimeFormat(currentLocale, { month: 'short' })
@@ -124,7 +125,7 @@ export const useEventCard = ({
 
     const day = useMemo(() => {
         if (!parsedStartDate) {
-            return '';
+            return EMPTY_FIELD;
         }
 
         return new Intl.DateTimeFormat(currentLocale, { day: 'numeric' }).format(parsedStartDate);
@@ -132,7 +133,7 @@ export const useEventCard = ({
 
     const formattedDateTime = useMemo(() => {
         if (!parsedStartDate) {
-            return startTimeValue || '';
+            return startTimeValue || EMPTY_FIELD;
         }
 
         const startDateLabel = new Intl.DateTimeFormat(currentLocale, {
@@ -203,12 +204,17 @@ export const useEventCard = ({
         return formatEventPrice(event.price, event.currency);
     }, [event.currency, event.price]);
 
-    const eventTypeLabel =
-        event.eventType === EventType.Parties ? localization.t('event.parties') : localization.t('event.tastings');
+    const eventTypeLabel = useMemo(() => {
+        if (!event.eventType) {
+            return EMPTY_FIELD;
+        }
+
+        return event.eventType === EventType.Parties ? localization.t('event.parties') : localization.t('event.tastings');
+    }, [event.eventType]);
 
     const isAllSpotsFull = useMemo(() => {
         return typeof event.seats?.left === 'number' && event.seats.left <= 0;
-    }, [event.seats?.left]);
+    }, [event.seats]);
 
     const eventStatusLabel = useMemo(() => {
         if (!('status' in event) || !event.status) {
@@ -370,7 +376,15 @@ export const useEventCard = ({
 
     const { onQrCodeRef, onShareQrCodePress } = useEventQrCodeShare({ onShareQrPress: onSharePress });
 
+    const hasMapPreview = useMemo(() => {
+        return Number.isFinite(event.latitude) && Number.isFinite(event.longitude);
+    }, [event.latitude, event.longitude]);
+
     const mapPreviewUri = useMemo(() => {
+        if (!hasMapPreview) {
+            return '';
+        }
+
         const params = [
             `center=${event.latitude},${event.longitude}`,
             `zoom=${STATIC_MAP_ZOOM}`,
@@ -385,7 +399,7 @@ export const useEventCard = ({
         }
 
         return `https://maps.googleapis.com/maps/api/staticmap?${params.join('&')}`;
-    }, [event.latitude, event.longitude]);
+    }, [event.latitude, event.longitude, hasMapPreview]);
 
     return {
         month,
@@ -408,6 +422,7 @@ export const useEventCard = ({
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
         isOwner,
+        hasMapPreview,
         mapPreviewUri,
         participantsPreviewData,
     };

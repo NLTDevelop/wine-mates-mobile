@@ -2,35 +2,55 @@ import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
-import { Typography } from '@/UIKit/Typography';
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
+import { useHomeView } from '../../presenters/useHomeView';
+import { HomeSectionsBottomSheet } from './components/HomeSectionsBottomSheet';
+import { HomeConfiguredSections } from './components/HomeConfiguredSections';
+import { observer } from 'mobx-react-lite';
 
-/*import { Typography } from '@/UIKit/Typography';
-import { ScrollView, View } from 'react-native';
-import { WineOfTheDay } from '@/modules/home/components/WineOfTheDay';*/
-
-export const HomeView = () => {
-    const { colors } = useUiContext();
+export const HomeView = observer(() => {
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const {
+        visibleSectionItems,
+        hasVisibleSections,
+        sectionOptions,
+        isLoading,
+        isRefreshing,
+        isSaving,
+        isSectionsModalVisible,
+        onRefresh,
+        onOpenSectionsModal,
+        onCloseSectionsModal,
+        onSaveSections,
+    } = useHomeView();
 
     return (
-        // <WithErrorHandler error={isAuthError ? ErrorTypeEnum.ERROR : null} onRetry={retrySignIn}>
         <ScreenContainer edges={[]} scrollEnabled={false}>
-
-            {/*TODO: make available at future
-            <ScrollView style={styles.container}>
-
-                <View style={styles.content}>
-                    <WineOfTheDay />
-                </View>
-
-            </ScrollView>*/}
-
             <View style={styles.container}>
-                <Typography text={'Home Screen'} variant="h3"/>
+                {isLoading && !hasVisibleSections ? (
+                    <View style={styles.loaderContainer}>
+                        <ActivityIndicator color={colors.primary} size="large" />
+                    </View>
+                ) : (
+                    <HomeConfiguredSections
+                        sections={visibleSectionItems}
+                        isRefreshing={isRefreshing}
+                        onRefresh={onRefresh}
+                        addEntryText={t('home.addEntry')}
+                        onAddEntryPress={onOpenSectionsModal}
+                    />
+                )}
             </View>
-
+            {isSectionsModalVisible && (
+                <HomeSectionsBottomSheet
+                    isVisible={isSectionsModalVisible}
+                    items={sectionOptions}
+                    onClose={onCloseSectionsModal}
+                    onSave={onSaveSections}
+                    isSaving={isSaving}
+                />
+            )}
         </ScreenContainer>
-        // </WithErrorHandler>
     );
-};
+});

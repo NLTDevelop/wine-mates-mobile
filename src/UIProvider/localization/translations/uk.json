@@ -338,7 +338,24 @@
         }
     },
     "home": {
-        "mostTastedWine": "Найпопулярніше вино за останні 24 години"
+        "mostTastedWine": "Найпопулярніше вино за останні 24 години",
+        "addEntry": "Додати запис",
+        "emptyDescription": "Тут поки нічого немає. Додайте контент на сторінку.",
+        "chooseWine": "Обрати вино",
+        "events": "Події",
+        "peopleTalking": "Обговорення",
+        "sectionOptionDescription": "Останні відгуки та коментарі спільноти",
+        "chooseWineMyself": "Для себе",
+        "chooseWineMyselfDescription": "На основі вашої історії смаків",
+        "chooseWineFriend": "Для друга",
+        "chooseWineFriendDescription": "Подарунок чи вечеря?",
+        "eventFallbackTitle": "Натуральні вина та петнати",
+        "eventFallbackLocation": "Лінден-Гіллз",
+        "eventFallbackDescription": "Приєднуйтеся до вечора доброго вина та чудової компанії. Відкрийте унікальні смаки, дізнайтеся більше від експертів і познайомтеся з людьми, які люблять вино так само, як і ви.",
+        "peopleTalkingFallbackAuthor": "Артем Пилипенко",
+        "peopleTalkingFallbackText": "Хороша пляшка вина схожа на машину часу. Один ковток, і ви знову в літніх вечорах, вечерях при свічках і розмовах, що ніколи не закінчувалися.",
+        "peopleTalkingFallbackTime": "3д",
+        "peopleTalkingDaysAgo": "{{count}}д"
     },
     "eventMap": {
         "wineEvents": "Винні події",

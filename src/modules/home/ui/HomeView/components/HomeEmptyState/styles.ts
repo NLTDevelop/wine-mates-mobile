@@ -7,12 +7,17 @@ export const getStyles = (_colors: IColors) => {
         container: {
             flex: 1,
         },
-        loaderContainer: {
+        content: {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
-            paddingHorizontal: scaleHorizontal(16),
-            paddingVertical: scaleVertical(16),
+            paddingHorizontal: scaleHorizontal(56),
+        },
+        description: {
+            marginTop: scaleVertical(18),
+            textAlign: 'center',
+            color: '#757575',
+            lineHeight: scaleVertical(22),
         },
     });
 

@@ -18,6 +18,7 @@ export interface ILinks {
     auth: string;
     resetPassword: string;
     features: string;
+    homeSections: string;
     wines: string;
     wineFilters: string;
     wineSetSearch: string;
@@ -68,6 +69,7 @@ class Links implements ILinks {
         auth: 'auth',
         resetPassword: 'auth/reset-password',
         features: 'features',
+        homeSections: 'home-sections',
         wines: 'wines',
         wineFilters: 'wines/filters',
         wineSetSearch: 'wines/search/wine-set',
@@ -137,6 +139,9 @@ class Links implements ILinks {
     }
     public get features() {
         return `${this._domain}${this._links.features}`;
+    }
+    public get homeSections() {
+        return `${this._domain}${this._links.homeSections}`;
     }
     public get wines() {
         return `${this._domain}${this._links.wines}`;

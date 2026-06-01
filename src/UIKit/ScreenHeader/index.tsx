@@ -7,7 +7,6 @@ import { observer } from 'mobx-react-lite';
 import { userModel } from '@/entities/users/UserModel';
 import { Typography } from '@/UIKit/Typography';
 import { NextArrowIcon } from '@assets/icons/NextArrowIcon.tsx';
-import { SearchIcon } from '@assets/icons/SearchIcon.tsx';
 import { NotificationBadge } from '@/UIKit/NotificationBadge';
 import { useNavigation } from '@react-navigation/native';
 
@@ -22,31 +21,22 @@ export const ScreenHeader = observer(() => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.avatarWrapper}>
+            <TouchableOpacity style={styles.avatarWrapper} onPress={onProfilePress}>
                 <Avatar
                     size={40}
                     avatarUrl={userModel.user?.avatarUrl ?? null}
                     fullname={`${userModel.user?.firstName} ${userModel.user?.lastName}`}
                 />
-                <TouchableOpacity activeOpacity={0.7} style={styles.userNameWrapper} onPress={onProfilePress}>
-                    <Typography
-                        text={`Hi, ${userModel.user?.firstName} 👋🏻`}
-                        variant="h5"
-                    />
+                <View style={styles.userNameWrapper} >
+                    <Typography text={`Hi, ${userModel.user?.firstName} 👋🏻`} variant="h5" />
                     <NextArrowIcon height={20} width={20} color={colors.text} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.actionsWrapper}>
-                <TouchableOpacity activeOpacity={0.7}>
-                    <SearchIcon />
-                </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.7}>
-                    <NotificationBadge count={10} />
-                </TouchableOpacity>
-            </View>
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity>
+                <NotificationBadge count={0} />
+            </TouchableOpacity>
         </View>
     );
 });
 
 ScreenHeader.displayName = 'ScreenHeader';
-
