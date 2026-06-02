@@ -313,23 +313,23 @@ export const useHomeView = () => {
     const sectionOptions = useMemo<IHomeSectionOption[]>(() => {
         return [
             {
-                key: 'events',
-                title: localization.t('home.events'),
-                description: localization.t('home.sectionOptionDescription'),
-                isSelected: getIsDraftSelected('events'),
-                onPress: onToggleEvents,
-            },
-            {
                 key: 'choose_wine',
                 title: localization.t('home.chooseWine'),
-                description: localization.t('home.sectionOptionDescription'),
+                description: localization.t('home.chooseWineSectionOptionDescription'),
                 isSelected: getIsDraftSelected('choose_wine'),
                 onPress: onToggleChooseWine,
             },
             {
+                key: 'events',
+                title: localization.t('home.events'),
+                description: localization.t('home.eventsSectionOptionDescription'),
+                isSelected: getIsDraftSelected('events'),
+                onPress: onToggleEvents,
+            },
+            {
                 key: 'people_talking',
                 title: localization.t('home.peopleTalking'),
-                description: localization.t('home.sectionOptionDescription'),
+                description: localization.t('home.peopleTalkingSectionOptionDescription'),
                 isSelected: getIsDraftSelected('people_talking'),
                 onPress: onTogglePeopleTalking,
             },

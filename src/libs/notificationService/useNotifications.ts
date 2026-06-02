@@ -13,9 +13,11 @@ export const useNotifications = () => {
         });
 
         notificationService.startForegroundSubscription();
+        notificationService.startTokenRefreshSubscription();
 
         return () => {
             notificationService.stopForegroundSubscription();
+            notificationService.stopTokenRefreshSubscription();
         };
     }, []);
 };

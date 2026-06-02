@@ -1,4 +1,4 @@
-import { deleteToken, getInitialNotification, getMessaging, getToken, hasPermission, onMessage, onNotificationOpenedApp, onTokenRefresh, registerDeviceForRemoteMessages, setBackgroundMessageHandler } from '@react-native-firebase/messaging';
+import { deleteToken, getAPNSToken, getInitialNotification, getMessaging, getToken, hasPermission, isDeviceRegisteredForRemoteMessages, onMessage, onNotificationOpenedApp, onTokenRefresh, registerDeviceForRemoteMessages, setBackgroundMessageHandler } from '@react-native-firebase/messaging';
 import { IMessaging } from './IMessaging';
 
 export class FirebaseMessaging implements IMessaging {
@@ -26,7 +26,7 @@ export class FirebaseMessaging implements IMessaging {
     registerAppWithFCM = async (): Promise<void> => {
         try {
             await this.requestUserPermission();
-            if (!this.messaging.isDeviceRegisteredForRemoteMessages) {
+            if (!isDeviceRegisteredForRemoteMessages(this.messaging)) {
                 await registerDeviceForRemoteMessages(this.messaging);
             }
         } catch (error) {
@@ -44,7 +44,16 @@ export class FirebaseMessaging implements IMessaging {
         }
     }
 
-    onUpdateToken = (callBack: Function): Function => {
+    getAPNSToken = async (): Promise<string | null> => {
+        try {
+            return getAPNSToken(this.messaging);
+        } catch (error) {
+            console.warn('FirebaseMessaging -> getAPNSToken: ', error);
+            return null;
+        }
+    }
+
+    onUpdateToken = (callBack: Function): (() => void) => {
         const unsubscribe = onTokenRefresh(this.messaging, async token => await callBack(token));
         return unsubscribe;
     }

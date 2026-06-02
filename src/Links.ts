@@ -17,6 +17,7 @@ const getInitialIsDev = () => {
 export interface ILinks {
     auth: string;
     resetPassword: string;
+    device: string;
     features: string;
     homeSections: string;
     wines: string;
@@ -68,6 +69,7 @@ class Links implements ILinks {
     private _links = {
         auth: 'auth',
         resetPassword: 'auth/reset-password',
+        device: 'users/devices/register',
         features: 'features',
         homeSections: 'home-sections',
         wines: 'wines',
@@ -136,6 +138,9 @@ class Links implements ILinks {
     }
     public get resetPassword() {
         return `${this._domain}${this._links.resetPassword}`;
+    }
+    public get device() {
+        return `${this._domain}${this._links.device}`;
     }
     public get features() {
         return `${this._domain}${this._links.features}`;
