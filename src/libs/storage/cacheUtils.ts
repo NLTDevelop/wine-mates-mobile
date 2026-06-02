@@ -1,6 +1,12 @@
 import { storage } from './MMKVStorage';
 
 export const TASTE_CHARACTERISTICS_CACHE_KEY = 'wine_taste_characteristics_slider_values';
+export const WINE_SNACK_CUISINES_CACHE_KEY = 'wine_snack_cuisines_values';
+
+export interface IWineSnackCuisineCacheItem {
+    id: number;
+    name: string;
+}
 
 interface ITasteCharacteristicsCacheContext {
     wineId?: number | null;
@@ -11,6 +17,11 @@ interface ITasteCharacteristicsCacheContext {
 interface ITasteCharacteristicsCachePayload {
     context: ITasteCharacteristicsCacheContext;
     values: Record<number, number>;
+}
+
+interface IWineSnackCuisinesCachePayload {
+    wineId?: number | null;
+    values: IWineSnackCuisineCacheItem[];
 }
 
 const isSameTasteCharacteristicsContext = (
@@ -42,4 +53,32 @@ export const setTasteCharacteristicsCache = (
 
 export const clearTasteCharacteristicsCache = () => {
     storage.remove(TASTE_CHARACTERISTICS_CACHE_KEY);
+};
+
+export const getWineSnackCuisinesCache = (wineId?: number | null) => {
+    const payload = storage.get(WINE_SNACK_CUISINES_CACHE_KEY) as IWineSnackCuisinesCachePayload | null;
+
+    if (!payload) {
+        return null;
+    }
+
+    if (payload.wineId !== wineId) {
+        return null;
+    }
+
+    return payload.values;
+};
+
+export const setWineSnackCuisinesCache = (
+    wineId: number | null | undefined,
+    values: IWineSnackCuisineCacheItem[],
+) => {
+    storage.set(WINE_SNACK_CUISINES_CACHE_KEY, {
+        wineId,
+        values,
+    });
+};
+
+export const clearWineSnackCuisinesCache = () => {
+    storage.remove(WINE_SNACK_CUISINES_CACHE_KEY);
 };

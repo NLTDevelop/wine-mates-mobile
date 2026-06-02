@@ -6,7 +6,7 @@ import { userModel } from '@/entities/users/UserModel';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
 import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
-import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
+import { clearTasteCharacteristicsCache, clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 
@@ -218,6 +218,7 @@ const resetAfterWineRate = (navigation: NativeStackNavigationProp<any>) => {
     }
 
     clearTasteCharacteristicsCache();
+    clearWineSnackCuisinesCache();
     wineModel.clear();
 };
 
