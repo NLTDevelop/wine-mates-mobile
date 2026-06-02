@@ -17,14 +17,15 @@ export const getStyles = (colors: IColors) => {
             gap: scaleVertical(10),
         },
         editButton: {
-            width: scaleVertical(40),
+            minWidth: scaleHorizontal(72),
             height: scaleVertical(40),
-            borderRadius: scaleVertical(22),
-            borderWidth: scaleHorizontal(1),
-            borderColor: colors.border,
-            backgroundColor: colors.background,
+          
             alignItems: 'center',
             justifyContent: 'center',
+            paddingHorizontal: scaleHorizontal(14),
+        },
+        editButtonText: {
+            color: colors.text,
         },
     });
 

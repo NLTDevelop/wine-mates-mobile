@@ -352,6 +352,11 @@ export const useTastingWineReviewResult = () => {
                 return;
             }
 
+            if (eventId) {
+                setIsLoading(false);
+                return;
+            }
+
             if (limitsData?.aiUsage.left === 0) {
                 setIsLoading(false);
                 return;
@@ -359,7 +364,7 @@ export const useTastingWineReviewResult = () => {
 
             await getNote();
         },
-        [getLimits, getNote],
+        [eventId, getLimits, getNote],
     );
 
     useEffect(() => {

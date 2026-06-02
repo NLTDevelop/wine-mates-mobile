@@ -66,6 +66,7 @@ export const EventCard = ({
         onShareIconPress,
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
+        isEditDisabled,
         isOwner,
         hasMapPreview,
         mapPreviewUri,
@@ -178,7 +179,7 @@ export const EventCard = ({
                         onPress={onReadMorePressHandler}
                     />
                     {isOwner ? (
-                        <EditButton onPress={onEditPressHandler} size={48} />
+                        <EditButton onPress={onEditPressHandler} size={48} disabled={isEditDisabled} />
                     ) : (
                         <FavoriteButton onPress={onFavoritePressHandler} size={48} isSaved={Boolean(event.isSaved)} />
                     )}

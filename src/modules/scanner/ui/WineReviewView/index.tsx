@@ -79,15 +79,15 @@ export const WineReviewView = observer(() => {
                 ) : (
                     <View style={styles.buttonsContainer}>
                         <Button
-                            text={t('wine.continueFullTasting')}
-                            onPress={onContinueFullTastingPress}
+                            text={t('wine.finishTasting')}
+                            onPress={onFinishTastingPress}
                             containerStyle={styles.button}
                             type="secondary"
                             disabled={isSaving}
                         />
                         <Button
-                            text={t('wine.finishTasting')}
-                            onPress={onFinishTastingPress}
+                            text={t('wine.continueFullTasting')}
+                            onPress={onContinueFullTastingPress}
                             containerStyle={styles.button}
                             inProgress={isSaving}
                         />

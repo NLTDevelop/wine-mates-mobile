@@ -8,7 +8,7 @@ type ActiveModal = 'calendar' | 'time' | null;
 type CalendarField = 'startDate' | 'endDate';
 type TimeField = 'startTime' | 'endTime';
 
-const MIN_START_TIME_OFFSET_MINUTES = 30;
+const MIN_START_TIME_OFFSET_MINUTES = 5;
 
 interface IUseDateTimePickerProps {
     onStartDateSelect: (date: Date) => void;

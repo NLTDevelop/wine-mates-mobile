@@ -80,11 +80,6 @@ export const PeopleTalkingSection = ({ title, data }: IProps) => {
                 onProgressChange={onProgressChange}
                 renderItem={renderItem}
                 onConfigurePanGesture={onConfigurePanGesture}
-                mode="parallax"
-                modeConfig={{
-                    parallaxScrollingScale: 0.9,
-                    parallaxScrollingOffset: 50,
-                }}
             />
             <CarouselDots count={data.length} activeIndex={activeIndex} />
         </View>

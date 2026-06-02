@@ -144,8 +144,8 @@ export const useVintageDropdown = ({
         years.sort((a, b) => {
             if (a.value === null) return -1;
             if (b.value === null) return 1;
-            if (a.value === NONE_VINTAGE_DROPDOWN_VALUE) return 1;
-            if (b.value === NONE_VINTAGE_DROPDOWN_VALUE) return -1;
+            if (a.value === NONE_VINTAGE_DROPDOWN_VALUE) return -1;
+            if (b.value === NONE_VINTAGE_DROPDOWN_VALUE) return 1;
             return (b.value as number) - (a.value as number);
         });
 

@@ -108,6 +108,9 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const [isPaymentMethodsModalVisible, setIsPaymentMethodsModalVisible] = useState(false);
     const [isSelectedPaymentMethodModalVisible, setIsSelectedPaymentMethodModalVisible] = useState(false);
     const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<number | null>(null);
+    const [pendingBookingSuccessToastRequiresConfirmation, setPendingBookingSuccessToastRequiresConfirmation] = useState<
+        boolean | null
+    >(null);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -214,9 +217,20 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         setIsPaymentMethodsModalVisible(false);
     }, []);
 
+    const showBookingSuccessToast = useCallback((requiresConfirmation: boolean) => {
+        const bookingSuccessMessage = requiresConfirmation
+            ? localization.t('eventDetails.bookingPendingConfirmation')
+            : localization.t('eventDetails.bookingSuccess');
+        toastService.showSuccess(bookingSuccessMessage);
+    }, []);
+
     const onCloseSelectedPaymentMethodModal = useCallback(() => {
         setIsSelectedPaymentMethodModalVisible(false);
-    }, []);
+        if (pendingBookingSuccessToastRequiresConfirmation !== null) {
+            showBookingSuccessToast(pendingBookingSuccessToastRequiresConfirmation);
+            setPendingBookingSuccessToastRequiresConfirmation(null);
+        }
+    }, [pendingBookingSuccessToastRequiresConfirmation, showBookingSuccessToast]);
 
     const onApplyForEvent = useCallback(
         async (showPaymentInfoModal: boolean) => {
@@ -251,9 +265,13 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
                               }
                             : eventDetail.seats,
                 });
-                if (showPaymentInfoModal && selectedPaymentMethodId !== null) {
+                const shouldShowPaymentInfoModal = showPaymentInfoModal && selectedPaymentMethodId !== null;
+                if (shouldShowPaymentInfoModal) {
+                    setPendingBookingSuccessToastRequiresConfirmation(Boolean(eventDetail.requiresConfirmation));
                     setIsSelectedPaymentMethodModalVisible(true);
+                    return;
                 }
+                showBookingSuccessToast(Boolean(eventDetail.requiresConfirmation));
             } catch (error) {
                 console.warn('useEventDetailsTab -> onApplyForEvent: ', error);
                 toastService.showError(
@@ -264,7 +282,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
                 setIsBookNowInProgress(false);
             }
         },
-        [eventDetail, selectedPaymentMethodId, setEventDetail],
+        [eventDetail, selectedPaymentMethodId, setEventDetail, showBookingSuccessToast],
     );
 
     const onNextPaymentMethodPress = useCallback(async () => {

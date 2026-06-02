@@ -457,12 +457,17 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return null;
         }
 
-        const rawPreviewDate = eventDetail.eventStartDate || eventDetail.eventDate || '';
-        const rawPreviewTime = eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '';
-        const previewDateTime = convertUtcEventDateTimeToLocal(rawPreviewDate, rawPreviewTime);
-        const previewDate = previewDateTime.date;
+        const rawPreviewStartDate = eventDetail.eventStartDate || eventDetail.eventDate || '';
+        const rawPreviewStartTime = eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '';
+        const rawPreviewEndDate = eventDetail.eventEndDate || eventDetail.eventDate || '';
+        const rawPreviewEndTime = eventDetail.eventEndTime || eventDetail.endTime || '';
+        const previewStartDateTime = convertUtcEventDateTimeToLocal(rawPreviewStartDate, rawPreviewStartTime);
+        const previewEndDateTime = convertUtcEventDateTimeToLocal(rawPreviewEndDate, rawPreviewEndTime);
+        const previewDate = previewStartDateTime.date;
         const parsedDate = previewDate ? new Date(`${previewDate}T00:00:00`) : null;
+        const parsedEndDate = previewEndDateTime.date ? new Date(`${previewEndDateTime.date}T00:00:00`) : null;
         const isDateValid = parsedDate && !Number.isNaN(parsedDate.getTime());
+        const isEndDateValid = parsedEndDate && !Number.isNaN(parsedEndDate.getTime());
         const month = isDateValid
             ? new Intl.DateTimeFormat(locale || 'en', { month: 'short' })
                   .format(parsedDate)
@@ -473,7 +478,9 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
 
         const formattedDateTime = prepareEventDateTimeLabel({
             date: isDateValid ? parsedDate : null,
-            time: previewDateTime.time,
+            time: previewStartDateTime.time,
+            endDate: isEndDateValid ? parsedEndDate : null,
+            endTime: previewEndDateTime.time,
             locale,
         });
 

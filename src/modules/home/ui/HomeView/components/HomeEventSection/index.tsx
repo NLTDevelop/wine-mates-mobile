@@ -49,7 +49,7 @@ export const HomeEventSection = ({ title, events }: IProps) => {
     }, [onCardLayout, onEditPress, onFavoritePress, onReadMorePress, styles]);
 
     return (
-        <View>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <Typography variant="h3" text={title} />
                 <TouchableOpacity onPress={onArrowPress} style={styles.arrowButton} hitSlop={8}>
@@ -65,11 +65,6 @@ export const HomeEventSection = ({ title, events }: IProps) => {
                 onProgressChange={onProgressChange}
                 renderItem={renderItem}
                 onConfigurePanGesture={onConfigurePanGesture}
-                mode="parallax"
-                modeConfig={{
-                    parallaxScrollingScale: 0.9,
-                    parallaxScrollingOffset: 50,
-                }}
             />
             <CarouselDots count={events.length} activeIndex={activeIndex} />
         </View>

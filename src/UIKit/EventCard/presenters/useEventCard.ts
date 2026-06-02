@@ -10,12 +10,13 @@ import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 import { toastService } from '@/libs/toast/toastService';
 import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
-import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
+import { convertUtcEventDateTimeToLocal, getUtcEventDateTime } from '@/modules/event/utils/eventDateTimeUtc';
 import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShareMessage';
 import { createMapLink } from '@/modules/event/utils/createMapLink';
 import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
 import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
 import { useEventQrCodeShare } from '@/modules/event/presenters/useEventQrCodeShare';
+import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
 
 interface IUseEventCardProps {
     event: IEvent;
@@ -48,6 +49,7 @@ export const useEventCard = ({
     onCardPress,
 }: IUseEventCardProps) => {
     const currentLocale = localization.locale || 'en';
+    const [currentTime] = useState(() => new Date());
     const [isCardPressed, setIsCardPressed] = useState(false);
 
     const startDateValue = useMemo(() => {
@@ -136,68 +138,13 @@ export const useEventCard = ({
             return startTimeValue || EMPTY_FIELD;
         }
 
-        const startDateLabel = new Intl.DateTimeFormat(currentLocale, {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-        })
-            .format(parsedStartDate)
-            .replace('.', '');
-
-        const endDateLabel = parsedEndDate
-            ? new Intl.DateTimeFormat(currentLocale, {
-                  weekday: 'short',
-                  month: 'short',
-                  day: 'numeric',
-              })
-                  .format(parsedEndDate)
-                  .replace('.', '')
-            : startDateLabel;
-
-        const dateLabel = startDateLabel === endDateLabel ? startDateLabel : `${startDateLabel} - ${endDateLabel}`;
-
-        if (!startTimeValue && !endTimeValue) {
-            return dateLabel;
-        }
-
-        const formatTime = (value?: string) => {
-            if (!value) {
-                return '';
-            }
-
-            const [hoursPart, minutesPart] = value.split(':');
-            const hours = Number(hoursPart);
-            const minutes = Number(minutesPart);
-            if (Number.isNaN(hours) || Number.isNaN(minutes)) {
-                return value;
-            }
-
-            const dateWithTime = new Date(parsedStartDate);
-            dateWithTime.setHours(hours, minutes, 0, 0);
-
-            return new Intl.DateTimeFormat(currentLocale, {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-            }).format(dateWithTime);
-        };
-
-        const formattedStartTime = formatTime(startTimeValue);
-        const formattedEndTime = formatTime(endTimeValue);
-
-        if (formattedStartTime && formattedEndTime) {
-            return `${dateLabel} · ${formattedStartTime}-${formattedEndTime}`;
-        }
-
-        if (formattedStartTime) {
-            return `${dateLabel} · ${formattedStartTime}`;
-        }
-
-        if (formattedEndTime) {
-            return `${dateLabel} · ${formattedEndTime}`;
-        }
-
-        return dateLabel;
+        return prepareEventDateTimeLabel({
+            date: parsedStartDate,
+            time: startTimeValue,
+            endDate: parsedEndDate,
+            endTime: endTimeValue,
+            locale: currentLocale,
+        });
     }, [currentLocale, endTimeValue, parsedEndDate, parsedStartDate, startTimeValue]);
 
     const priceLabel = useMemo(() => {
@@ -280,10 +227,6 @@ export const useEventCard = ({
         onFavoritePress?.(event.id);
     }, [event.id, onFavoritePress]);
 
-    const onEditPressHandler = useCallback(() => {
-        onEditPress?.(event.id);
-    }, [event.id, onEditPress]);
-
     const isOwner = useMemo(() => {
         if (!event.ownerId || !userModel.user?.id) {
             return false;
@@ -291,6 +234,29 @@ export const useEventCard = ({
 
         return event.ownerId === userModel.user.id;
     }, [event.ownerId]);
+
+    const isEditDisabled = useMemo(() => {
+        const rawStartDate = event.eventStartDate || event.eventDate || '';
+        const rawStartTime = event.eventStartTime || event.eventTime || '';
+        const eventStartDateTime = getUtcEventDateTime(rawStartDate, rawStartTime);
+        const hasEventStarted = eventStartDateTime && !Number.isNaN(eventStartDateTime.getTime())
+            ? eventStartDateTime.getTime() <= currentTime.getTime()
+            : false;
+        const status = String(('status' in event && event.status) || '').toLowerCase();
+        const isEventFinished = status === SavedEventStatus.FINISHED;
+        const isEventCanceled = status === SavedEventStatus.CANCELED || status === 'cancelled';
+        const isEventInactive = event.isActive === false;
+
+        return hasEventStarted || isEventInactive || isEventFinished || isEventCanceled;
+    }, [currentTime, event]);
+
+    const onEditPressHandler = useCallback(() => {
+        if (isEditDisabled) {
+            return;
+        }
+
+        onEditPress?.(event.id);
+    }, [event.id, isEditDisabled, onEditPress]);
 
     const onReadMorePressHandler = useCallback(() => {
         onReadMorePress?.(event.id);
@@ -421,6 +387,7 @@ export const useEventCard = ({
         eventDeepLink,
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
+        isEditDisabled,
         isOwner,
         hasMapPreview,
         mapPreviewUri,

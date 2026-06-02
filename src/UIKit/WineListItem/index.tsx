@@ -24,10 +24,11 @@ interface IProps {
     customBottomComponent?: ReactNode;
     showExpertRatingWithoutPremium?: boolean;
     isMyWine?: boolean;
+    hideDate?: boolean;
 }
 
 export const WineListItem = ({ item, onPress, showSimilarity = false, footer, removeCardStyles = false,
-    showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent, showExpertRatingWithoutPremium = false }: IProps) => {
+    showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent, showExpertRatingWithoutPremium = false, hideDate = false }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
     const {
@@ -144,7 +145,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                 </View>
             </View>
             {customBottomComponent ||
-                ((showDate || shouldReviewShow) && lastReviewData?.createdAt ? (
+                (!hideDate && (showDate || shouldReviewShow) && lastReviewData?.createdAt ? (
                     <View style={styles.dateContainer}>
                         <Typography
                             variant="subtitle_12_400"

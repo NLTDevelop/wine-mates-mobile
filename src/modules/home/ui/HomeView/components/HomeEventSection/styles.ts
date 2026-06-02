@@ -4,6 +4,9 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
+        container: {
+            gap: scaleVertical(8),
+        },
         header: {
             flexDirection: 'row',
             alignItems: 'center',

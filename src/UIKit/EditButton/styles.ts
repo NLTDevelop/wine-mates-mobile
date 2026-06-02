@@ -4,7 +4,7 @@ import { scaleVertical } from '@/utils';
 
 const DEFAULT_BUTTON_SIZE = scaleVertical(40);
 
-export const getStyles = (colors: IColors, size?: number) => {
+export const getStyles = (colors: IColors, size?: number, disabled = false) => {
     const buttonSize = scaleVertical(size) || DEFAULT_BUTTON_SIZE;
 
     const styles = StyleSheet.create({
@@ -15,7 +15,8 @@ export const getStyles = (colors: IColors, size?: number) => {
             justifyContent: 'center',
             borderRadius: buttonSize,
             borderWidth: scaleVertical(1),
-            borderColor: colors.primary,
+            borderColor: disabled ? colors.background_disabled : colors.primary,
+            backgroundColor: disabled ? colors.background_middle : colors.background,
         },
     });
     return styles;
