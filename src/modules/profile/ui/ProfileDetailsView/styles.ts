@@ -19,7 +19,6 @@ export const getStyles = (colors: IColors) => {
         editButton: {
             minWidth: scaleHorizontal(72),
             height: scaleVertical(40),
-          
             alignItems: 'center',
             justifyContent: 'center',
             paddingHorizontal: scaleHorizontal(14),
