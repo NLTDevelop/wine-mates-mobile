@@ -5,7 +5,11 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
-            gap: scaleVertical(10),
+            gap: scaleVertical(8),
+        },
+        header: {
+            height: scaleVertical(40),
+            justifyContent: 'center',
         },
         optionsRow: {
             flexDirection: 'row',
@@ -13,8 +17,9 @@ export const getStyles = (colors: IColors) => {
         },
         option: {
             flex: 1,
-            minHeight: scaleVertical(108),
+            minHeight: scaleVertical(131),
             alignItems: 'center',
+            justifyContent: 'center',
             paddingHorizontal: scaleHorizontal(10),
             paddingVertical: scaleVertical(12),
             borderRadius: scaleHorizontal(12),

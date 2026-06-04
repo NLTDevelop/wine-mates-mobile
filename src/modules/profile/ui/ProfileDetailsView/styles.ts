@@ -19,9 +19,8 @@ export const getStyles = (colors: IColors) => {
         editButton: {
             minWidth: scaleHorizontal(72),
             height: scaleVertical(40),
-            alignItems: 'center',
+            alignItems: 'flex-end',
             justifyContent: 'center',
-            paddingHorizontal: scaleHorizontal(14),
         },
         editButtonText: {
             color: colors.text,

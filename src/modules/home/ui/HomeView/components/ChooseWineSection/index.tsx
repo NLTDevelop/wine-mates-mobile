@@ -18,7 +18,9 @@ export const ChooseWineSection = ({ title }: IProps) => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.header}>
             <Typography variant="h3" text={title} />
+            </View>
             <View style={styles.optionsRow}>
                 <TouchableOpacity onPress={onMyselfPress} style={styles.option}>
                     <UserIcon/>

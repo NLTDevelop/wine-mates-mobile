@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { homeSectionsService } from '@/entities/homeSections/HomeSectionsService';
 import { homeSectionsModel } from '@/entities/homeSections/HomeSectionsModel';
 import { IHomeSection } from '@/entities/homeSections/types/IHomeSection';
@@ -10,6 +10,8 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
+import type { SortableGridDragEndParams } from 'react-native-sortables';
+import { toastService } from '@/libs/toast/toastService';
 
 const EMPTY_FIELD = '-';
 
@@ -31,8 +33,33 @@ const DEFAULT_SECTIONS: IUpdateHomeSectionItemDto[] = [
     },
 ];
 
-const getDefaultSection = (key: HomeSectionKey) => {
-    return DEFAULT_SECTIONS.find(item => item.key === key);
+const getOrderedSections = (sections: IHomeSection[]) => {
+    const normalizedSections = getNormalizedSections(sections);
+    const visibleSections = getSortedSections(normalizedSections).filter(section => section.isVisible);
+    const hiddenSections = getSortedSections(normalizedSections).filter(section => !section.isVisible);
+    const sortedSections = [...visibleSections, ...hiddenSections];
+
+    return sortedSections.map((section, index) => ({
+        ...section,
+        sortOrder: index,
+    }));
+};
+
+const getSectionPayload = (sections: IHomeSection[]) => {
+    const orderedSections = getOrderedSections(sections);
+
+    return orderedSections.map(section => ({
+        key: section.key,
+        sortOrder: section.sortOrder,
+        isVisible: section.isVisible,
+    }));
+};
+
+const showHomeRequestError = (message?: string) => {
+    toastService.showError(
+        localization.t('common.errorHappened'),
+        message || localization.t('common.somethingWentWrong'),
+    );
 };
 
 const getSortedSections = (sections: IHomeSection[]) => {
@@ -188,13 +215,23 @@ const createPeopleTalking = (section: IHomeSection) => {
 };
 
 export const useHomeView = () => {
+    const isMountedRef = useRef(true);
     const [draftSections, setDraftSections] = useState<IHomeSection[]>([]);
+    const [placementSections, setPlacementSections] = useState<IHomeSection[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isSectionsModalVisible, setIsSectionsModalVisible] = useState(false);
+    const [isPlacementEditMode, setIsPlacementEditMode] = useState(false);
+    const [isError, setIsError] = useState(false);
 
     const sections = homeSectionsModel.sections;
+
+    useEffect(() => {
+        return () => {
+            isMountedRef.current = false;
+        };
+    }, []);
 
     const normalizedSections = useMemo(() => {
         return getNormalizedSections(sections);
@@ -204,15 +241,40 @@ export const useHomeView = () => {
         return getSortedSections(normalizedSections).filter(section => section.isVisible);
     }, [normalizedSections]);
 
+    const placementVisibleSections = useMemo(() => {
+        return getSortedSections(getNormalizedSections(placementSections)).filter(section => section.isVisible);
+    }, [placementSections]);
+
+    const activeVisibleSections = isPlacementEditMode ? placementVisibleSections : visibleSections;
     const hasVisibleSections = visibleSections.length > 0;
+    const hasConfiguredSections = activeVisibleSections.length > 0;
+    const canConfigurePlacement = hasVisibleSections && !isPlacementEditMode;
+
+    const onRemovePlacementSection = useCallback((key: HomeSectionKey) => {
+        setPlacementSections(currentSections => currentSections.map(section => {
+            if (section.key !== key) {
+                return section;
+            }
+
+            return {
+                ...section,
+                isVisible: false,
+            };
+        }));
+    }, []);
 
     const visibleSectionItems = useMemo<IHomeVisibleSection[]>(() => {
-        return visibleSections.map(section => {
+        return activeVisibleSections.map(section => {
+            const onRemovePress = isPlacementEditMode
+                ? () => onRemovePlacementSection(section.key)
+                : undefined;
+
             if (section.key === 'events') {
                 return {
                     key: section.key,
                     sortOrder: section.sortOrder,
                     title: localization.t('home.events'),
+                    onRemovePress,
                     events: createHomeEvents(section),
                 };
             }
@@ -222,6 +284,7 @@ export const useHomeView = () => {
                     key: section.key,
                     sortOrder: section.sortOrder,
                     title: localization.t('home.peopleTalking'),
+                    onRemovePress,
                     peopleTalking: createPeopleTalking(section),
                 };
             }
@@ -230,30 +293,54 @@ export const useHomeView = () => {
                 key: section.key,
                 sortOrder: section.sortOrder,
                 title: localization.t('home.chooseWine'),
+                onRemovePress,
             };
         });
-    }, [visibleSections]);
+    }, [activeVisibleSections, isPlacementEditMode, onRemovePlacementSection]);
+
+    const getHomeSections = useCallback(async () => {
+        setIsError(false);
+        setIsLoading(true);
+
+        const response = await homeSectionsService.list();
+
+        if (!isMountedRef.current) {
+            return;
+        }
+
+        if (response.isError) {
+            setIsError(true);
+        }
+
+        setIsLoading(false);
+    }, []);
 
     useEffect(() => {
-        let isMounted = true;
+        const loadHomeSections = async () => {
+            const response = await homeSectionsService.list();
 
-        homeSectionsService.list().then(() => {
-            if (!isMounted) {
+            if (!isMountedRef.current) {
                 return;
             }
 
-            setIsLoading(false);
-        });
+            if (response.isError) {
+                setIsError(true);
+            }
 
-        return () => {
-            isMounted = false;
+            setIsLoading(false);
         };
+
+        loadHomeSections();
     }, []);
 
     const onRefresh = useCallback(async () => {
         setIsRefreshing(true);
 
-        await homeSectionsService.list();
+        const response = await homeSectionsService.list();
+
+        if (response.isError) {
+            showHomeRequestError(response.message);
+        }
 
         setIsRefreshing(false);
     }, []);
@@ -265,6 +352,36 @@ export const useHomeView = () => {
 
     const onCloseSectionsModal = useCallback(() => {
         setIsSectionsModalVisible(false);
+    }, []);
+
+    const onOpenPlacementConfig = useCallback(() => {
+        setPlacementSections(normalizedSections);
+        setIsPlacementEditMode(true);
+    }, [normalizedSections]);
+
+    const onReorderPlacementSections = useCallback((params: SortableGridDragEndParams<IHomeVisibleSection>) => {
+        const nextVisibleSections = params.data;
+
+        setPlacementSections(currentSections => {
+            const nextSortOrderByKey = nextVisibleSections.reduce<Record<HomeSectionKey, number>>((acc, section, index) => {
+                acc[section.key] = index;
+
+                return acc;
+            }, {} as Record<HomeSectionKey, number>);
+
+            return currentSections.map(section => {
+                const nextSortOrder = nextSortOrderByKey[section.key];
+
+                if (typeof nextSortOrder !== 'number') {
+                    return section;
+                }
+
+                return {
+                    ...section,
+                    sortOrder: nextSortOrder,
+                };
+            });
+        });
     }, []);
 
     const onToggleChooseWine = useCallback(() => {
@@ -344,15 +461,7 @@ export const useHomeView = () => {
         setIsSaving(true);
 
         const normalizedDraft = getNormalizedSections(draftSections);
-        const payloadSections = normalizedDraft.map(section => {
-            const defaultSection = getDefaultSection(section.key);
-
-            return {
-                key: section.key,
-                sortOrder: defaultSection?.sortOrder ?? section.sortOrder,
-                isVisible: section.isVisible,
-            };
-        });
+        const payloadSections = getSectionPayload(normalizedDraft);
 
         const response = await homeSectionsService.update({
             sections: payloadSections,
@@ -360,27 +469,63 @@ export const useHomeView = () => {
 
         if (!response.isError) {
             if (!Array.isArray(response.data)) {
-                homeSectionsModel.sections = normalizedDraft;
+                homeSectionsModel.sections = getOrderedSections(normalizedDraft);
             }
 
             setIsSectionsModalVisible(false);
+        } else {
+            showHomeRequestError(response.message);
         }
 
         setIsSaving(false);
     }, [draftSections, isSaving]);
 
+    const onSavePlacementSections = useCallback(async () => {
+        if (isSaving) {
+            return;
+        }
+
+        setIsSaving(true);
+
+        const normalizedPlacementSections = getNormalizedSections(placementSections);
+        const payloadSections = getSectionPayload(normalizedPlacementSections);
+        const response = await homeSectionsService.update({
+            sections: payloadSections,
+        });
+
+        if (!response.isError) {
+            if (!Array.isArray(response.data)) {
+                homeSectionsModel.sections = getOrderedSections(normalizedPlacementSections);
+            }
+
+            setIsPlacementEditMode(false);
+        } else {
+            showHomeRequestError(response.message);
+        }
+
+        setIsSaving(false);
+    }, [isSaving, placementSections]);
+
     return {
         visibleSections,
         visibleSectionItems,
         hasVisibleSections,
+        hasConfiguredSections,
+        canConfigurePlacement,
         sectionOptions,
         isLoading,
         isRefreshing,
         isSaving,
+        isError,
         isSectionsModalVisible,
+        isPlacementEditMode,
+        getHomeSections,
         onRefresh,
         onOpenSectionsModal,
         onCloseSectionsModal,
         onSaveSections,
+        onOpenPlacementConfig,
+        onReorderPlacementSections,
+        onSavePlacementSections,
     };
 };

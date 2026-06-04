@@ -16,6 +16,7 @@ export interface IHomeVisibleSection {
     key: HomeSectionKey;
     sortOrder: number;
     title: string;
+    onRemovePress?: () => void;
     events?: IEvent[];
     peopleTalking?: IHomePeopleTalking[];
 }

@@ -337,6 +337,7 @@
     "home": {
         "mostTastedWine": "Most tasted wine in the last 24 hours",
         "addEntry": "Add entry",
+        "configurePlacement": "Configure placement",
         "emptyDescription": "There is nothing here. Add content to the page.",
         "chooseWine": "Choose wine",
         "events": "Events",

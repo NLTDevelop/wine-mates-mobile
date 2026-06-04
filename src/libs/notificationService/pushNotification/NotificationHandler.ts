@@ -1,6 +1,7 @@
 import notifee, {
     AndroidImportance,
     AndroidStyle,
+    NotificationAndroid,
     Notification,
 } from '@notifee/react-native';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
@@ -39,6 +40,24 @@ class NotificationHandler {
         );
     };
 
+    private getAndroidNotificationStyle = (body: string, imageUrl?: string): NotificationAndroid['style'] => {
+        if (body) {
+            return {
+                type: AndroidStyle.BIGTEXT,
+                text: body,
+            };
+        }
+
+        if (imageUrl) {
+            return {
+                type: AndroidStyle.BIGPICTURE,
+                picture: imageUrl,
+            };
+        }
+
+        return undefined;
+    };
+
     private getNotificationId = (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
         return this.normalizeString(remoteMessage.data?.notify_id ?? remoteMessage.messageId) ?? String(Date.now());
     };
@@ -66,6 +85,7 @@ class NotificationHandler {
         const imageUrl = this.getNotificationImageUrl(remoteMessage);
         const title = this.getNotificationTitle(remoteMessage);
         const body = this.getNotificationBody(remoteMessage);
+        const androidStyle = this.getAndroidNotificationStyle(body, imageUrl);
 
         if (!title && !body) {
             return;
@@ -82,7 +102,7 @@ class NotificationHandler {
                 importance: AndroidImportance.HIGH,
                 sound: DEFAULT_SOUND,
                 ...(imageUrl ? { largeIcon: imageUrl } : {}),
-                ...(imageUrl ? { style: { type: AndroidStyle.BIGPICTURE, picture: imageUrl } } : {}),
+                ...(androidStyle ? { style: androidStyle } : {}),
             },
             ios: {
                 sound: DEFAULT_SOUND,

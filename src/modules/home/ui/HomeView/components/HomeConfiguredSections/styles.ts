@@ -13,6 +13,7 @@ export const getStyles = (_colors: IColors) => {
         },
         footer: {
             paddingTop: scaleVertical(4),
+            gap: scaleVertical(8),
         },
     });
 
