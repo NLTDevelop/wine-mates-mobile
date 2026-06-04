@@ -13,9 +13,16 @@ import { snackService } from '@/entities/snacks/SnackService';
 import { IWineSnackCuisine } from '@/entities/snacks/types/IWineSnackCuisine';
 import { IWineSnackCuisineOption } from '@/entities/snacks/types/IWineSnackCuisineOption';
 import { useFoodPairing } from '@/UIKit/FoodPairing/presenters/useFoodPairing';
+import {
+    clearWineSnackCuisinesCache,
+    getWineSnackCuisinesCache,
+    IWineSnackCuisineCacheItem,
+    setWineSnackCuisinesCache,
+} from '@/libs/storage/cacheUtils';
 
 export const useWineReviewResult = () => {
     const { saveWineRate } = useWineRateSubmit();
+    const cuisineCacheWineId = wineModel.wine?.id;
     const [isLoadingLimits, setIsLoadingLimits] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -26,13 +33,23 @@ export const useWineReviewResult = () => {
     const [isCuisineModalVisible, setIsCuisineModalVisible] = useState(false);
     const [isLoadingCuisines, setIsLoadingCuisines] = useState(false);
     const [cuisines, setCuisines] = useState<IWineSnackCuisine[]>([]);
-    const [selectedCuisineIds, setSelectedCuisineIds] = useState<number[]>([]);
+    const [selectedCuisineItems, setSelectedCuisineItems] = useState<IWineSnackCuisineCacheItem[]>(() => {
+        return getWineSnackCuisinesCache(cuisineCacheWineId) || [];
+    });
+
+    const selectedCuisineIds = useMemo(() => {
+        return selectedCuisineItems.map(item => item.id);
+    }, [selectedCuisineItems]);
 
     const selectedCuisineNames = useMemo(() => {
-        return cuisines
-            .filter(item => selectedCuisineIds.includes(item.id))
-            .map(item => item.name);
-    }, [cuisines, selectedCuisineIds]);
+        if (cuisines.length === 0) {
+            return selectedCuisineItems.map(item => item.name);
+        }
+
+        return selectedCuisineIds
+            .map(id => cuisines.find(item => item.id === id)?.name)
+            .filter((name): name is string => Boolean(name));
+    }, [cuisines, selectedCuisineIds, selectedCuisineItems]);
 
     const cuisineSelectButtonText = useMemo(() => {
         if (selectedCuisineNames.length === 0) {
@@ -90,14 +107,24 @@ export const useWineReviewResult = () => {
     }, []);
 
     const onToggleCuisine = useCallback((id: number) => {
-        setSelectedCuisineIds(prevState => {
-            if (prevState.includes(id)) {
-                return prevState.filter(item => item !== id);
+        setSelectedCuisineItems(prevState => {
+            if (prevState.some(item => item.id === id)) {
+                const nextState = prevState.filter(item => item.id !== id);
+                setWineSnackCuisinesCache(cuisineCacheWineId, nextState);
+                return nextState;
             }
 
-            return [...prevState, id];
+            const cuisine = cuisines.find(item => item.id === id);
+
+            if (!cuisine) {
+                return prevState;
+            }
+
+            const nextState = [...prevState, { id: cuisine.id, name: cuisine.name }];
+            setWineSnackCuisinesCache(cuisineCacheWineId, nextState);
+            return nextState;
         });
-    }, []);
+    }, [cuisineCacheWineId, cuisines]);
 
     const cuisineOptions = useMemo<IWineSnackCuisineOption[]>(() => {
         return cuisines.map(item => {
@@ -316,7 +343,11 @@ export const useWineReviewResult = () => {
 
         try {
             setIsSaving(true);
-            await saveWineRate();
+            const isSaved = await saveWineRate();
+
+            if (isSaved) {
+                clearWineSnackCuisinesCache();
+            }
         } catch (error) {
             console.error(JSON.stringify(error, null, 2));
         } finally {

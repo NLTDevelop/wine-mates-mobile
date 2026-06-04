@@ -16,6 +16,8 @@ import { createMapLink } from '@/modules/event/utils/createMapLink';
 import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
 import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
 import { useEventQrCodeShare } from '@/modules/event/presenters/useEventQrCodeShare';
+import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
+import { getIsEventEditDisabled } from '@/modules/event/utils/getIsEventEditDisabled';
 
 interface IUseEventCardProps {
     event: IEvent;
@@ -24,6 +26,7 @@ interface IUseEventCardProps {
     onFavoritePress?: (eventId: number) => void;
     onEditPress?: (eventId: number) => void;
     onCardPress?: (eventId: number) => void;
+    locale?: string;
 }
 
 const STATIC_MAP_SIZE = '720x320';
@@ -37,6 +40,7 @@ const STATIC_MAP_LIGHT_STYLE_PARAMS = [
     'style=feature:poi|element:geometry|color:0xeeeeee',
     'style=feature:landscape|element:geometry|color:0xf5f5f5',
 ];
+const EMPTY_FIELD = '-';
 
 export const useEventCard = ({
     event,
@@ -45,8 +49,10 @@ export const useEventCard = ({
     onFavoritePress,
     onEditPress,
     onCardPress,
+    locale,
 }: IUseEventCardProps) => {
-    const currentLocale = localization.locale || 'en';
+    const currentLocale = locale || localization.locale || 'en';
+    const [currentTime] = useState(() => new Date());
     const [isCardPressed, setIsCardPressed] = useState(false);
 
     const startDateValue = useMemo(() => {
@@ -113,7 +119,7 @@ export const useEventCard = ({
 
     const month = useMemo(() => {
         if (!parsedStartDate) {
-            return '';
+            return EMPTY_FIELD;
         }
 
         return new Intl.DateTimeFormat(currentLocale, { month: 'short' })
@@ -124,7 +130,7 @@ export const useEventCard = ({
 
     const day = useMemo(() => {
         if (!parsedStartDate) {
-            return '';
+            return EMPTY_FIELD;
         }
 
         return new Intl.DateTimeFormat(currentLocale, { day: 'numeric' }).format(parsedStartDate);
@@ -132,83 +138,35 @@ export const useEventCard = ({
 
     const formattedDateTime = useMemo(() => {
         if (!parsedStartDate) {
-            return startTimeValue || '';
+            return startTimeValue || EMPTY_FIELD;
         }
 
-        const startDateLabel = new Intl.DateTimeFormat(currentLocale, {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-        })
-            .format(parsedStartDate)
-            .replace('.', '');
-
-        const endDateLabel = parsedEndDate
-            ? new Intl.DateTimeFormat(currentLocale, {
-                  weekday: 'short',
-                  month: 'short',
-                  day: 'numeric',
-              })
-                  .format(parsedEndDate)
-                  .replace('.', '')
-            : startDateLabel;
-
-        const dateLabel = startDateLabel === endDateLabel ? startDateLabel : `${startDateLabel} - ${endDateLabel}`;
-
-        if (!startTimeValue && !endTimeValue) {
-            return dateLabel;
-        }
-
-        const formatTime = (value?: string) => {
-            if (!value) {
-                return '';
-            }
-
-            const [hoursPart, minutesPart] = value.split(':');
-            const hours = Number(hoursPart);
-            const minutes = Number(minutesPart);
-            if (Number.isNaN(hours) || Number.isNaN(minutes)) {
-                return value;
-            }
-
-            const dateWithTime = new Date(parsedStartDate);
-            dateWithTime.setHours(hours, minutes, 0, 0);
-
-            return new Intl.DateTimeFormat(currentLocale, {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-            }).format(dateWithTime);
-        };
-
-        const formattedStartTime = formatTime(startTimeValue);
-        const formattedEndTime = formatTime(endTimeValue);
-
-        if (formattedStartTime && formattedEndTime) {
-            return `${dateLabel} · ${formattedStartTime}-${formattedEndTime}`;
-        }
-
-        if (formattedStartTime) {
-            return `${dateLabel} · ${formattedStartTime}`;
-        }
-
-        if (formattedEndTime) {
-            return `${dateLabel} · ${formattedEndTime}`;
-        }
-
-        return dateLabel;
+        return prepareEventDateTimeLabel({
+            date: parsedStartDate,
+            time: startTimeValue,
+            endDate: parsedEndDate,
+            endTime: endTimeValue,
+            locale: currentLocale,
+        });
     }, [currentLocale, endTimeValue, parsedEndDate, parsedStartDate, startTimeValue]);
 
     const priceLabel = useMemo(() => {
         return formatEventPrice(event.price, event.currency);
     }, [event.currency, event.price]);
 
-    const eventTypeLabel =
-        event.eventType === EventType.Parties ? localization.t('event.parties') : localization.t('event.tastings');
+    const eventTypeLabel = useMemo(() => {
+        if (!event.eventType) {
+            return EMPTY_FIELD;
+        }
+
+        return event.eventType === EventType.Parties
+            ? localization.t('event.parties', { locale: currentLocale })
+            : localization.t('event.tastings', { locale: currentLocale });
+    }, [currentLocale, event.eventType]);
 
     const isAllSpotsFull = useMemo(() => {
         return typeof event.seats?.left === 'number' && event.seats.left <= 0;
-    }, [event.seats?.left]);
+    }, [event.seats]);
 
     const eventStatusLabel = useMemo(() => {
         if (!('status' in event) || !event.status) {
@@ -216,15 +174,15 @@ export const useEventCard = ({
         }
 
         if (event.status === SavedEventStatus.FINISHED) {
-            return localization.t('event.finished');
+            return localization.t('event.finished', { locale: currentLocale });
         }
 
         if (event.status === SavedEventStatus.CANCELED) {
-            return localization.t('event.cancelled');
+            return localization.t('event.cancelled', { locale: currentLocale });
         }
 
         return String(event.status);
-    }, [event]);
+    }, [currentLocale, event]);
 
     const appliedEventStatusLabel = useMemo(() => {
         if (!appliedEventStatus) {
@@ -232,31 +190,31 @@ export const useEventCard = ({
         }
 
         if (appliedEventStatus === AppliedEventStatus.ACCEPTED) {
-            return localization.t('event.confirmed');
+            return localization.t('event.confirmed', { locale: currentLocale });
         }
 
         if (appliedEventStatus === AppliedEventStatus.PENDING) {
-            return localization.t('event.pending');
+            return localization.t('event.pending', { locale: currentLocale });
         }
 
         if (appliedEventStatus === AppliedEventStatus.REJECTED) {
-            return localization.t('event.rejected');
+            return localization.t('event.rejected', { locale: currentLocale });
         }
 
         if (appliedEventStatus === SavedEventStatus.CANCELED) {
-            return localization.t('event.cancelled');
+            return localization.t('event.cancelled', { locale: currentLocale });
         }
 
         return String(appliedEventStatus);
-    }, [appliedEventStatus]);
+    }, [appliedEventStatus, currentLocale]);
 
     const isPartyEvent = useMemo(() => {
         return event.eventType === EventType.Parties;
     }, [event.eventType]);
 
     const participantsPreviewData = useMemo(() => {
-        return prepareEventParticipantsPreview(event.participants);
-    }, [event.participants]);
+        return prepareEventParticipantsPreview(event.participants, currentLocale);
+    }, [currentLocale, event.participants]);
 
     const onCardPressHandler = useCallback(() => {
         onCardPress?.(event.id);
@@ -274,10 +232,6 @@ export const useEventCard = ({
         onFavoritePress?.(event.id);
     }, [event.id, onFavoritePress]);
 
-    const onEditPressHandler = useCallback(() => {
-        onEditPress?.(event.id);
-    }, [event.id, onEditPress]);
-
     const isOwner = useMemo(() => {
         if (!event.ownerId || !userModel.user?.id) {
             return false;
@@ -285,6 +239,18 @@ export const useEventCard = ({
 
         return event.ownerId === userModel.user.id;
     }, [event.ownerId]);
+
+    const isEditDisabled = useMemo(() => {
+        return getIsEventEditDisabled(event, currentTime);
+    }, [currentTime, event]);
+
+    const onEditPressHandler = useCallback(() => {
+        if (isEditDisabled) {
+            return;
+        }
+
+        onEditPress?.(event.id);
+    }, [event.id, isEditDisabled, onEditPress]);
 
     const onReadMorePressHandler = useCallback(() => {
         onReadMorePress?.(event.id);
@@ -298,8 +264,8 @@ export const useEventCard = ({
         async (qrCodeDataUrl: string | null) => {
             if (!eventDeepLink || !qrCodeDataUrl) {
                 toastService.showError(
-                    localization.t('common.errorHappened'),
-                    localization.t('event.shareQrCodeUnavailable'),
+                    localization.t('common.errorHappened', { locale: currentLocale }),
+                    localization.t('event.shareQrCodeUnavailable', { locale: currentLocale }),
                 );
                 return;
             }
@@ -311,20 +277,20 @@ export const useEventCard = ({
                     event.eventType === EventType.Parties
                         ? ''
                         : event.tastingType === TastingType.Blind
-                          ? localization.t('event.tastingTypeBlind')
-                          : localization.t('event.tastingTypeRegular');
+                          ? localization.t('event.tastingTypeBlind', { locale: currentLocale })
+                          : localization.t('event.tastingTypeRegular', { locale: currentLocale });
                 const labels = {
-                    title: localization.t('event.shareEventName'),
-                    dateTime: localization.t('event.shareEventDateTime'),
-                    meetingPlaceName: localization.t('event.shareEventMeetingPlaceName'),
-                    location: localization.t('event.shareEventLocation'),
-                    mapLink: localization.t('event.shareEventMap'),
-                    price: localization.t('event.price'),
-                    eventType: localization.t('event.eventType'),
-                    tastingType: localization.t('event.tastingType'),
+                    title: localization.t('event.shareEventName', { locale: currentLocale }),
+                    dateTime: localization.t('event.shareEventDateTime', { locale: currentLocale }),
+                    meetingPlaceName: localization.t('event.shareEventMeetingPlaceName', { locale: currentLocale }),
+                    location: localization.t('event.shareEventLocation', { locale: currentLocale }),
+                    mapLink: localization.t('event.shareEventMap', { locale: currentLocale }),
+                    price: localization.t('event.price', { locale: currentLocale }),
+                    eventType: localization.t('event.eventType', { locale: currentLocale }),
+                    tastingType: localization.t('event.tastingType', { locale: currentLocale }),
                 };
                 const message = prepareEventShareMessage({
-                    intro: localization.t('event.shareQrCodeMessage'),
+                    intro: localization.t('event.shareQrCodeMessage', { locale: currentLocale }),
                     labels,
                     title: event.theme,
                     dateTime: formattedDateTime,
@@ -336,7 +302,7 @@ export const useEventCard = ({
                     tastingType: tastingTypeLabel,
                     link: eventDeepLink,
                 });
-                const shareTitle = localization.t('event.shareQrCodeTitle');
+                const shareTitle = localization.t('event.shareQrCodeTitle', { locale: currentLocale });
 
                 await shareEventQrCode({
                     filename: `wine-event-${event.id}-qr.png`,
@@ -347,8 +313,8 @@ export const useEventCard = ({
             } catch (error) {
                 console.warn('useEventCard -> onSharePress: ', error);
                 toastService.showError(
-                    localization.t('common.errorHappened'),
-                    localization.t('common.somethingWentWrong'),
+                    localization.t('common.errorHappened', { locale: currentLocale }),
+                    localization.t('common.somethingWentWrong', { locale: currentLocale }),
                 );
             }
         },
@@ -364,13 +330,22 @@ export const useEventCard = ({
             eventDeepLink,
             eventTypeLabel,
             formattedDateTime,
+            currentLocale,
             priceLabel,
         ],
     );
 
     const { onQrCodeRef, onShareQrCodePress } = useEventQrCodeShare({ onShareQrPress: onSharePress });
 
+    const hasMapPreview = useMemo(() => {
+        return Number.isFinite(event.latitude) && Number.isFinite(event.longitude);
+    }, [event.latitude, event.longitude]);
+
     const mapPreviewUri = useMemo(() => {
+        if (!hasMapPreview) {
+            return '';
+        }
+
         const params = [
             `center=${event.latitude},${event.longitude}`,
             `zoom=${STATIC_MAP_ZOOM}`,
@@ -385,7 +360,7 @@ export const useEventCard = ({
         }
 
         return `https://maps.googleapis.com/maps/api/staticmap?${params.join('&')}`;
-    }, [event.latitude, event.longitude]);
+    }, [event.latitude, event.longitude, hasMapPreview]);
 
     return {
         month,
@@ -407,7 +382,9 @@ export const useEventCard = ({
         eventDeepLink,
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
+        isEditDisabled,
         isOwner,
+        hasMapPreview,
         mapPreviewUri,
         participantsPreviewData,
     };

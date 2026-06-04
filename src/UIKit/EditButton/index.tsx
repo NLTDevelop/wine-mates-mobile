@@ -12,7 +12,7 @@ interface IProps {
 
 export const EditButton = ({ onPress, size, disabled = false, }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, size), [colors, size]);
+    const styles = useMemo(() => getStyles(colors, size, disabled), [colors, disabled, size]);
 
     return (
         <TouchableOpacity
@@ -20,7 +20,7 @@ export const EditButton = ({ onPress, size, disabled = false, }: IProps) => {
             onPress={onPress}
             disabled={disabled}
         >
-            <EditIcon />
+            <EditIcon color={disabled ? colors.text_light : colors.primary} />
         </TouchableOpacity>
     );
 };

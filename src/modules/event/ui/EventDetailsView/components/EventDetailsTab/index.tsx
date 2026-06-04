@@ -49,6 +49,7 @@ export const EventDetailsTab = ({
         onToggleTastingPress,
         isOwner,
         isBookNowDisabled,
+        isEditEventDisabled,
         isCancelEventDisabled,
         isBookNowInProgress,
         isEventApplied,
@@ -191,7 +192,7 @@ export const EventDetailsTab = ({
                                     text={t('eventDetails.duplicate')}
                                     onPress={onDuplicatePress}
                                 />
-                                <EditButton onPress={onEditPress} size={48} disabled={isCancelEventDisabled} />
+                                <EditButton onPress={onEditPress} size={48} disabled={isEditEventDisabled} />
                             </View>
                             <Button
                                 type="main"

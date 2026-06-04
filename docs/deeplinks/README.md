@@ -9,6 +9,7 @@ Deep link format used by the app:
 
 ```text
 https://wine-mates.nltdev.pp.ua/event/<eventId>
+https://wine-mates.nltdev.pp.ua/wineDetails/<wineId>
 ```
 
 Android package: `com.winemates`.

@@ -14,7 +14,7 @@ import { useLocation } from '@/libs/locations/presenters/useLocation';
 import { useAvatarPicker } from '@/UIKit/AvatarPicker/presenters/useAvatarPicker';
 import { useUiContext } from '@/UIProvider';
 import { countryDisplayNames } from '@/libs/countryCodePicker/countryDisplayNames';
-import { Keyboard } from 'react-native';
+import { InteractionManager, Keyboard } from 'react-native';
 import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCurrencyPickerModal';
 import { useUserCurrencies } from '@/UIKit/CurrencyPicker/presenters/useUserCurrencies';
 
@@ -130,6 +130,7 @@ export const useEditProfileDetails = () => {
     const [instagramLinkError, setInstagramLinkError] = useState<string | null>(null);
     const [isDeleteAvatarAlertVisible, setIsDeleteAvatarAlertVisible] = useState(false);
     const { currencies, isCurrenciesLoading, onLoadCurrencies } = useUserCurrencies();
+    const [isDeferredContentReady, setIsDeferredContentReady] = useState(false);
 
     const normalizeE164Phone = useCallback((raw: string) => {
         const trimmed = raw.trim().replace(/\s+/g, '');
@@ -223,7 +224,28 @@ export const useEditProfileDetails = () => {
     const [draftBirthday, setDraftBirthday] = useState<string | null>(null);
     const currentLocale = locale || localization.locale || 'en';
 
+    useEffect(() => {
+        const task = InteractionManager.runAfterInteractions(() => {
+            setIsDeferredContentReady(true);
+        });
+
+        return () => {
+            task.cancel();
+        };
+    }, []);
+
     const countryOptions = useMemo<IDropdownItem[]>(() => {
+        if (!isDeferredContentReady) {
+            return form.country
+                ? [
+                      {
+                          label: form.country,
+                          value: form.country,
+                      },
+                  ]
+                : [];
+        }
+
         const resolvedLocale = (currentLocale || 'en').toLowerCase();
         const translationKeyMap: Record<string, string> = {
             ar: 'ara',
@@ -282,34 +304,38 @@ export const useEditProfileDetails = () => {
                 };
             })
             .sort((a, b) => a.label.localeCompare(b.label, currentLocale));
-    }, [currentLocale]);
+    }, [currentLocale, form.country, isDeferredContentReady]);
 
     const cityOptions = useMemo<IDropdownItem[]>(() => {
+        if (!isDeferredContentReady) {
+            return [];
+        }
+
         return citySuggestions.map(city => ({
             label: city.description,
             value: city.description,
         }));
-    }, [citySuggestions]);
+    }, [citySuggestions, isDeferredContentReady]);
 
     const cityEmptyStateText = useMemo(() => {
         const trimmed = citySearch.trim();
         if (!trimmed) {
-            return localization.t('settings.startTypingCity');
+            return localization.t('settings.startTypingCity', { locale: currentLocale });
         }
 
         if (!isCityLoading && !cityOptions.length) {
-            return localization.t('settings.cityNotFound');
+            return localization.t('settings.cityNotFound', { locale: currentLocale });
         }
 
         return '';
-    }, [cityOptions.length, citySearch, isCityLoading]);
+    }, [cityOptions.length, citySearch, currentLocale, isCityLoading]);
 
     const genderOptions = useMemo<IDropdownItem[]>(
         () => [
-            { label: localization.t('registration.genderMale'), value: 'male' },
-            { label: localization.t('registration.genderFemale'), value: 'female' },
+            { label: localization.t('registration.genderMale', { locale: currentLocale }), value: 'male' },
+            { label: localization.t('registration.genderFemale', { locale: currentLocale }), value: 'female' },
         ],
-        [],
+        [currentLocale],
     );
 
     const validateInstagramLink = useCallback((link: string): boolean => {
@@ -490,12 +516,14 @@ export const useEditProfileDetails = () => {
 
     useFocusEffect(
         useCallback(() => {
-            const onFocus = async () => {
+            const task = InteractionManager.runAfterInteractions(async () => {
                 await onRefetchUser();
                 await onLoadProfileCurrencies();
-            };
+            });
 
-            onFocus();
+            return () => {
+                task.cancel();
+            };
         }, [onLoadProfileCurrencies, onRefetchUser]),
     );
 
@@ -865,5 +893,6 @@ export const useEditProfileDetails = () => {
         isInProgress,
         instagramLinkError,
         onEditModeBackHandler,
+        isDeferredContentReady,
     };
 };

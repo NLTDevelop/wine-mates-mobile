@@ -19,6 +19,7 @@ import { createMapLink } from '@/modules/event/utils/createMapLink';
 import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
 import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
 import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
+import { addEventWineSetDraftModel } from '@/entities/events/AddEventWineSetDraftModel';
 
 interface IWineSetDragEndPayload {
     data: IWineSetViewItem[];
@@ -87,6 +88,7 @@ export const useAddWineSetView = ({
     const editEventId = route.params?.editEventId;
     const isDuplicateMode = route.params?.isDuplicateEvent === true;
     const isEditMode = typeof editEventId === 'number';
+    const savedWineSetDraft = addEventWineSetDraftModel.state;
     const headerTitleKey = useMemo(() => {
         if (isDuplicateMode) {
             return 'event.duplicateEvent';
@@ -94,13 +96,17 @@ export const useAddWineSetView = ({
 
         return 'event.listWineEvent';
     }, [isDuplicateMode]);
-    const [repeatRule, setRepeatRule] = useState<RepeatRuleConfig | null>(draft?.repeatRule || null);
-    const [tastingType, setTastingType] = useState<TastingType>(draft?.tastingType || DEFAULT_TASTING_TYPE);
+    const [repeatRule, setRepeatRule] = useState<RepeatRuleConfig | null>(
+        savedWineSetDraft ? savedWineSetDraft.repeatRule : draft?.repeatRule || null,
+    );
+    const [tastingType, setTastingType] = useState<TastingType>(
+        savedWineSetDraft?.tastingType || draft?.tastingType || DEFAULT_TASTING_TYPE,
+    );
     const [isCreating, setIsCreating] = useState(false);
     const [isEventCreatedAlertVisible, setIsEventCreatedAlertVisible] = useState(false);
     const [createdEventId, setCreatedEventId] = useState<number | null>(null);
     const [selectedWines, setSelectedWines] = useState<IWineSetSearchItem[]>(() => {
-        const initialWines = draft ? route.params?.initialSelectedWines || [] : [];
+        const initialWines = draft ? savedWineSetDraft?.selectedWines || route.params?.initialSelectedWines || [] : [];
         const selectedWine = route.params?.selectedWine;
 
         if (!selectedWine || initialWines.some(item => item.id === selectedWine.id)) {
@@ -109,6 +115,26 @@ export const useAddWineSetView = ({
 
         return [...initialWines, selectedWine];
     });
+    const currentDraft = useMemo(() => {
+        if (!draft) {
+            return draft;
+        }
+
+        return {
+            ...draft,
+            repeatRule,
+            tastingType,
+        };
+    }, [draft, repeatRule, tastingType]);
+
+    useEffect(() => {
+        addEventWineSetDraftModel.state = {
+            selectedWines,
+            repeatRule,
+            tastingType,
+        };
+    }, [repeatRule, selectedWines, tastingType]);
+
     useEffect(() => {
         const selectedWine = route.params?.selectedWine;
 
@@ -203,21 +229,21 @@ export const useAddWineSetView = ({
     const createOnEditWinePress = useCallback(
         (wine: IWineSetSearchItem) => {
             return () => {
-                if (!draft) {
+                if (!currentDraft) {
                     return;
                 }
 
                 navigation.navigate('EditEventWineView', {
                     wineId: wine.id,
                     wine,
-                    draft,
+                    draft: currentDraft,
                     selectedWines,
                     editEventId,
                     isDuplicateEvent: route.params?.isDuplicateEvent,
                 });
             };
         },
-        [draft, editEventId, navigation, route.params?.isDuplicateEvent, selectedWines],
+        [currentDraft, editEventId, navigation, route.params?.isDuplicateEvent, selectedWines],
     );
 
     const createOnDeleteWinePress = useCallback((wineId: number) => {
@@ -293,13 +319,6 @@ export const useAddWineSetView = ({
     ]);
 
     const hasWineSearchQuery = searchQuery.trim().length > 0;
-    const shouldShowScannerButton =
-        isSearchListVisible &&
-        hasWineSearchQuery &&
-        isInitialSearchFinished &&
-        !isSearchingWines &&
-        !hasMoreSearchResults &&
-        wineSearchResultItems.length === 0;
     const wineSearchEmptyText = useMemo(() => {
         if (!hasWineSearchQuery) {
             return t('event.startTypingWineSearch');
@@ -309,12 +328,12 @@ export const useAddWineSetView = ({
     }, [hasWineSearchQuery, t]);
 
     const onOpenScannerPress = useCallback(() => {
-        if (!draft) {
+        if (!currentDraft) {
             return;
         }
 
         wineSetScannerModel.setState({
-            draft,
+            draft: currentDraft,
             selectedWines,
             editEventId,
             isDuplicateEvent: route.params?.isDuplicateEvent,
@@ -327,7 +346,7 @@ export const useAddWineSetView = ({
                 screen: 'ScannerView',
             },
         });
-    }, [draft, editEventId, navigation, onResetSearch, route.params?.isDuplicateEvent, selectedWines]);
+    }, [currentDraft, editEventId, navigation, onResetSearch, route.params?.isDuplicateEvent, selectedWines]);
 
     const onGetCreatedEventId = useCallback((data: unknown): number | null => {
         if (!data || typeof data !== 'object') {
@@ -424,6 +443,7 @@ export const useAddWineSetView = ({
             if (isEditMode && editEventId) {
                 const response = await eventsService.updateEvent(editEventId, payload as any);
                 if (!response.isError) {
+                    addEventWineSetDraftModel.state = null;
                     navigation.dispatch(
                         CommonActions.reset({
                             index: 1,
@@ -458,6 +478,7 @@ export const useAddWineSetView = ({
 
             if (!response.isError) {
                 const eventId = onGetCreatedEventId(response.data);
+                addEventWineSetDraftModel.state = null;
                 setCreatedEventId(eventId);
                 setIsEventCreatedAlertVisible(true);
                 return;
@@ -640,7 +661,6 @@ export const useAddWineSetView = ({
         wineSetViewItems,
         wineSearchResultItems,
         isSearchingWines,
-        shouldShowScannerButton,
         wineSearchEmptyText,
         isSearchListVisible,
         isEventCreatedAlertVisible,

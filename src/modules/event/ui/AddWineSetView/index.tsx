@@ -46,7 +46,6 @@ export const AddWineSetView = () => {
         repeatRule,
         wineSetViewItems,
         wineSearchResultItems,
-        shouldShowScannerButton,
         wineSearchEmptyText,
         isEventCreatedAlertVisible,
         eventDeepLink,
@@ -174,6 +173,7 @@ export const AddWineSetView = () => {
                                 isCreating={isCreating}
                                 isCreateEventDisabled={isCreateEventDisabled}
                                 isEditMode={isEditMode}
+                                onOpenScannerPress={onOpenScannerPress}
                                 onAddWinePress={onAddWinePress}
                                 onOpenRepeatModal={onOpenRepeatModal}
                                 onChangeRepeatSwitch={onChangeRepeatSwitch}
@@ -216,12 +216,10 @@ export const AddWineSetView = () => {
                 data={wineSearchResultItems}
                 isLoading={isSearchingWines}
                 emptyText={wineSearchEmptyText}
-                shouldShowScannerButton={shouldShowScannerButton}
                 onChangeText={onChangeSearchQuery}
                 onClose={onCloseSearchModal}
                 onDismiss={onDismissSearchModal}
                 onLoadMore={onLoadMoreSearchResults}
-                onOpenScannerPress={onOpenScannerPress}
             />
             <EventCreatedAlert
                 visible={isEventCreatedAlertVisible}

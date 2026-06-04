@@ -6,11 +6,45 @@ import { userModel } from '@/entities/users/UserModel';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
 import { wineModel } from '@/entities/wine/WineModel';
 import { wineService } from '@/entities/wine/WineService';
-import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
+import { clearTasteCharacteristicsCache, clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 
-const buildWineRatePayload = (isPremiumUser: boolean): Partial<AddRateDto> => {
+interface ISaveWineRateParams {
+    isFullTasting?: boolean;
+}
+
+const addRatingToPayload = (payload: Partial<AddRateDto>) => {
+    if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
+        const starRate = wineModel.review?.starRate ?? 0;
+        if (typeof starRate === 'number' && !Number.isNaN(starRate)) {
+            payload.userRating = Number(starRate.toFixed(1));
+        }
+
+        return;
+    }
+
+    if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
+        payload.expertRating = wineModel.review.rate;
+    }
+};
+
+const buildShortWineRatePayload = (): Partial<AddRateDto> => {
+    const payload: Partial<AddRateDto> = {
+        wineId: wineModel.wine?.id || 0,
+        review: wineModel.review?.review.trim() || '',
+    };
+
+    addRatingToPayload(payload);
+
+    if (wineModel.winePeak !== null) {
+        payload.winePeak = wineModel.winePeak;
+    }
+
+    return payload;
+};
+
+const buildFullWineRatePayload = (isPremiumUser: boolean): Partial<AddRateDto> => {
     const payload: Partial<AddRateDto> = {
         wineId: wineModel.wine?.id || 0,
         review: wineModel.review?.review.trim() || '',
@@ -75,14 +109,7 @@ const buildWineRatePayload = (isPremiumUser: boolean): Partial<AddRateDto> => {
         payload.winePeak = wineModel.winePeak;
     }
 
-    if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
-        const starRate = wineModel.review?.starRate ?? 0;
-        if (typeof starRate === 'number' && !Number.isNaN(starRate)) {
-            payload.userRating = Number(starRate.toFixed(1));
-        }
-    } else if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
-        payload.expertRating = wineModel.review.rate;
-    }
+    addRatingToPayload(payload);
 
     const hasSuggestedAromas = (suggestedAromas?.length ?? 0) > 0;
     const hasSuggestedFlavors = (suggestedFlavors?.length ?? 0) > 0;
@@ -191,6 +218,7 @@ const resetAfterWineRate = (navigation: NativeStackNavigationProp<any>) => {
     }
 
     clearTasteCharacteristicsCache();
+    clearWineSnackCuisinesCache();
     wineModel.clear();
 };
 
@@ -198,8 +226,11 @@ export const useWineRateSubmit = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const isPremiumUser = userModel.user?.hasPremium || false;
 
-    const saveWineRate = useCallback(async () => {
-        const response = await wineService.addToRate(buildWineRatePayload(isPremiumUser));
+    const saveWineRate = useCallback(async (params?: ISaveWineRateParams) => {
+        const payload = params?.isFullTasting === false
+            ? buildShortWineRatePayload()
+            : buildFullWineRatePayload(isPremiumUser);
+        const response = await wineService.addToRate(payload);
 
         if (response.isError) {
             toastService.showError(

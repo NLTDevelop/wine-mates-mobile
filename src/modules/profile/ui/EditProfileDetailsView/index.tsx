@@ -27,6 +27,7 @@ import { WinemakerIcon } from '@assets/icons/WinemakerIcon.tsx';
 import { scaleHorizontal } from '@/utils';
 import { ProfileSelectorRow } from './components/ProfileSelectorRow';
 import { useKeyboardStickyLayout } from '@/hooks/useKeyboardStickyLayout';
+import { Loader } from '@/UIKit/Loader';
 
 const EXPERTISE_SIZE = scaleHorizontal(16);
 
@@ -90,15 +91,29 @@ export const EditProfileDetailsView = () => {
         onCloseDeleteAvatarAlert,
         onConfirmDeleteAvatar,
         onEditModeBackHandler,
+        isDeferredContentReady,
     } = useEditProfileDetails();
+    const headerComponent = (
+        <HeaderWithBackButton title={t('settings.profileSettings')} onPressBack={onEditModeBackHandler} />
+    );
+
+    if (!isDeferredContentReady) {
+        return (
+            <ScreenContainer
+                edges={['top', 'bottom']}
+                withGradient
+                headerComponent={headerComponent}
+            >
+                <Loader />
+            </ScreenContainer>
+        );
+    }
 
     return (
         <ScreenContainer
             edges={['top', 'bottom']}
             withGradient
-            headerComponent={
-                <HeaderWithBackButton title={t('settings.profileSettings')} onPressBack={onEditModeBackHandler} />
-            }
+            headerComponent={headerComponent}
         >
             <View style={styles.container}>
                 <KeyboardAwareScrollView
@@ -275,22 +290,26 @@ export const EditProfileDetailsView = () => {
                 </KeyboardStickyView>
             </View>
 
-            <SelectExpertiseBottomSheet
-                modalRef={selectExpertiseModalRef}
-                selectedValue={expertiseLevel}
-                onSelect={onSelectExpertise}
-                onClose={onCloseExpertiseModal}
-            />
-            <SelectCityBottomSheet
-                modalRef={cityModalRef}
-                value={citySearch}
-                data={cityOptions}
-                isLoading={isCityLoading}
-                emptyText={cityEmptyStateText}
-                onChangeText={onSearchCityChange}
-                onSelect={onSelectCityOption}
-                onClose={onCloseCitySelector}
-            />
+            {isDeferredContentReady && (
+                <>
+                    <SelectExpertiseBottomSheet
+                        modalRef={selectExpertiseModalRef}
+                        selectedValue={expertiseLevel}
+                        onSelect={onSelectExpertise}
+                        onClose={onCloseExpertiseModal}
+                    />
+                    <SelectCityBottomSheet
+                        modalRef={cityModalRef}
+                        value={citySearch}
+                        data={cityOptions}
+                        isLoading={isCityLoading}
+                        emptyText={cityEmptyStateText}
+                        onChangeText={onSearchCityChange}
+                        onSelect={onSelectCityOption}
+                        onClose={onCloseCitySelector}
+                    />
+                </>
+            )}
             {currencyPicker.isVisible && (
                 <CurrencyPickerBottomSheet
                     visible={currencyPicker.isVisible}
@@ -301,43 +320,47 @@ export const EditProfileDetailsView = () => {
                     onConfirm={currencyPicker.onConfirm}
                 />
             )}
-            <DateTimePickerModal
-                visible={isBirthdayModalVisible}
-                mode="date"
-                title={t('registration.birthday')}
-                date={pickerDate}
-                onClose={onCloseBirthdayModal}
-                onConfirm={onConfirmBirthday}
-                onDateChange={onChangePickerDate}
-            />
-            <CustomAlert
-                visible={isDeleteAvatarAlertVisible}
-                onClose={onCloseDeleteAvatarAlert}
-                header={t('settings.deleteProfilePhotoTitle')}
-                content={
-                    <Typography
-                        text={t('settings.deleteProfilePhotoMessage')}
-                        variant="subtitle_12_400"
-                        style={styles.alertMessage}
-                    />
-                }
-                footer={
-                    <View style={styles.alertFooter}>
-                        <Button
-                            text={t('settings.delete')}
-                            onPress={onConfirmDeleteAvatar}
-                            type="main"
-                            containerStyle={styles.alertButton}
+            {isBirthdayModalVisible && (
+                <DateTimePickerModal
+                    visible={isBirthdayModalVisible}
+                    mode="date"
+                    title={t('registration.birthday')}
+                    date={pickerDate}
+                    onClose={onCloseBirthdayModal}
+                    onConfirm={onConfirmBirthday}
+                    onDateChange={onChangePickerDate}
+                />
+            )}
+            {isDeleteAvatarAlertVisible && (
+                <CustomAlert
+                    visible={isDeleteAvatarAlertVisible}
+                    onClose={onCloseDeleteAvatarAlert}
+                    header={t('settings.deleteProfilePhotoTitle')}
+                    content={
+                        <Typography
+                            text={t('settings.deleteProfilePhotoMessage')}
+                            variant="subtitle_12_400"
+                            style={styles.alertMessage}
                         />
-                        <Button
-                            text={t('common.cancel')}
-                            onPress={onCloseDeleteAvatarAlert}
-                            type="secondary"
-                            containerStyle={styles.alertButton}
-                        />
-                    </View>
-                }
-            />
+                    }
+                    footer={
+                        <View style={styles.alertFooter}>
+                            <Button
+                                text={t('settings.delete')}
+                                onPress={onConfirmDeleteAvatar}
+                                type="main"
+                                containerStyle={styles.alertButton}
+                            />
+                            <Button
+                                text={t('common.cancel')}
+                                onPress={onCloseDeleteAvatarAlert}
+                                type="secondary"
+                                containerStyle={styles.alertButton}
+                            />
+                        </View>
+                    }
+                />
+            )}
         </ScreenContainer>
     );
 };

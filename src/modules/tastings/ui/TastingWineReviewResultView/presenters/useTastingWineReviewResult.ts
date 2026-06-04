@@ -12,7 +12,13 @@ import { CommonActions, useNavigation, useRoute } from '@react-navigation/native
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
-import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
+import {
+    clearTasteCharacteristicsCache,
+    clearWineSnackCuisinesCache,
+    getWineSnackCuisinesCache,
+    IWineSnackCuisineCacheItem,
+    setWineSnackCuisinesCache,
+} from '@/libs/storage/cacheUtils';
 import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
 import { snackService } from '@/entities/snacks/SnackService';
 import { IWineSnackCuisine } from '@/entities/snacks/types/IWineSnackCuisine';
@@ -31,6 +37,7 @@ export const useTastingWineReviewResult = () => {
     const routeParams = (navigationRoute.params as IRouteParams | undefined) || {};
     const eventId = routeParams.eventId;
     const wineId = routeParams.wineId;
+    const cuisineCacheWineId = wineModel.wine?.id ?? wineId;
     const { buildEventTastingDraftPayload } = useEventTastingDraft();
     const [isLoadingLimits, setIsLoadingLimits] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +49,9 @@ export const useTastingWineReviewResult = () => {
     const [isCuisineModalVisible, setIsCuisineModalVisible] = useState(false);
     const [isLoadingCuisines, setIsLoadingCuisines] = useState(false);
     const [cuisines, setCuisines] = useState<IWineSnackCuisine[]>([]);
-    const [selectedCuisineIds, setSelectedCuisineIds] = useState<number[]>([]);
+    const [selectedCuisineItems, setSelectedCuisineItems] = useState<IWineSnackCuisineCacheItem[]>(() => {
+        return getWineSnackCuisinesCache(cuisineCacheWineId) || [];
+    });
     const isPremiumUser = userModel.user?.hasPremium || false;
     const isSelectedParametersVisible = !routeParams.isBlindTasting;
 
@@ -171,11 +180,19 @@ export const useTastingWineReviewResult = () => {
         }
     }, [buildEventTastingDraftPayload, eventId, wineId]);
 
+    const selectedCuisineIds = useMemo(() => {
+        return selectedCuisineItems.map(item => item.id);
+    }, [selectedCuisineItems]);
+
     const selectedCuisineNames = useMemo(() => {
-        return cuisines
-            .filter(item => selectedCuisineIds.includes(item.id))
-            .map(item => item.name);
-    }, [cuisines, selectedCuisineIds]);
+        if (cuisines.length === 0) {
+            return selectedCuisineItems.map(item => item.name);
+        }
+
+        return selectedCuisineIds
+            .map(id => cuisines.find(item => item.id === id)?.name)
+            .filter((name): name is string => Boolean(name));
+    }, [cuisines, selectedCuisineIds, selectedCuisineItems]);
 
     const cuisineSelectButtonText = useMemo(() => {
         if (selectedCuisineNames.length === 0) {
@@ -226,14 +243,24 @@ export const useTastingWineReviewResult = () => {
     }, []);
 
     const onToggleCuisine = useCallback((id: number) => {
-        setSelectedCuisineIds(prevState => {
-            if (prevState.includes(id)) {
-                return prevState.filter(item => item !== id);
+        setSelectedCuisineItems(prevState => {
+            if (prevState.some(item => item.id === id)) {
+                const nextState = prevState.filter(item => item.id !== id);
+                setWineSnackCuisinesCache(cuisineCacheWineId, nextState);
+                return nextState;
             }
 
-            return [...prevState, id];
+            const cuisine = cuisines.find(item => item.id === id);
+
+            if (!cuisine) {
+                return prevState;
+            }
+
+            const nextState = [...prevState, { id: cuisine.id, name: cuisine.name }];
+            setWineSnackCuisinesCache(cuisineCacheWineId, nextState);
+            return nextState;
         });
-    }, []);
+    }, [cuisineCacheWineId, cuisines]);
 
     const cuisineOptions = useMemo<IWineSnackCuisineOption[]>(() => {
         return cuisines.map(item => {
@@ -325,6 +352,11 @@ export const useTastingWineReviewResult = () => {
                 return;
             }
 
+            if (eventId) {
+                setIsLoading(false);
+                return;
+            }
+
             if (limitsData?.aiUsage.left === 0) {
                 setIsLoading(false);
                 return;
@@ -332,7 +364,7 @@ export const useTastingWineReviewResult = () => {
 
             await getNote();
         },
-        [getLimits, getNote],
+        [eventId, getLimits, getNote],
     );
 
     useEffect(() => {
@@ -439,6 +471,7 @@ export const useTastingWineReviewResult = () => {
 
                 resetToEventDetails();
                 clearTasteCharacteristicsCache();
+                clearWineSnackCuisinesCache();
                 wineModel.clear();
                 return;
             }
@@ -614,6 +647,7 @@ export const useTastingWineReviewResult = () => {
                 }
 
                 clearTasteCharacteristicsCache();
+                clearWineSnackCuisinesCache();
                 wineModel.clear();
             }
         } catch (error) {

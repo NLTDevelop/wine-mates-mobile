@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { InteractionManager } from 'react-native';
 import { format } from 'date-fns';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import countries from 'world-countries';
@@ -8,7 +9,7 @@ import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { localization } from '@/UIProvider/localization/Localization';
 
-const getCountryName = (cca2: string) => {
+const getCountryName = (cca2: string, locale: string) => {
     if (!cca2) {
         return '';
     }
@@ -19,7 +20,7 @@ const getCountryName = (cca2: string) => {
     }
 
     try {
-        const formatter = new Intl.DisplayNames([localization.locale || 'en'], { type: 'region' });
+        const formatter = new Intl.DisplayNames([locale || 'en'], { type: 'region' });
         const localized = formatter.of(country.cca2);
         if (localized) {
             return localized;
@@ -28,14 +29,14 @@ const getCountryName = (cca2: string) => {
         // fallback below
     }
 
-    if ((localization.locale || '').startsWith('uk')) {
+    if ((locale || '').startsWith('uk')) {
         return country.name?.native?.ukr?.common || country.name?.common || '';
     }
 
     return country.name?.common || '';
 };
 
-const getBirthdayDisplayText = (birthday: string) => {
+const getBirthdayDisplayText = (birthday: string, locale: string) => {
     if (!birthday) {
         return '';
     }
@@ -46,7 +47,7 @@ const getBirthdayDisplayText = (birthday: string) => {
     }
 
     try {
-        return new Intl.DateTimeFormat(localization.locale || 'en', {
+        return new Intl.DateTimeFormat(locale || 'en', {
             month: 'long',
             day: 'numeric',
             year: 'numeric',
@@ -79,16 +80,18 @@ const getProfileField = (value: string | undefined | null, placeholder: string) 
     return { text, isPlaceholder: !value };
 };
 
-export const useProfileDetails = () => {
+export const useProfileDetails = (locale: string) => {
     const navigation = useNavigation<any>();
 
     useFocusEffect(
         useCallback(() => {
-            const onLoadUser = async () => {
-                await userService.me();
-            };
+            const task = InteractionManager.runAfterInteractions(() => {
+                userService.me();
+            });
 
-            onLoadUser();
+            return () => {
+                task.cancel();
+            };
         }, []),
     );
 
@@ -96,20 +99,20 @@ export const useProfileDetails = () => {
     const expertiseLevel = userModel.user?.wineExperienceLevel || WineExperienceLevelEnum.LOVER;
     const expertiseLabel =
         expertiseLevel === WineExperienceLevelEnum.EXPERT
-            ? localization.t('registration.wineExpert')
+            ? localization.t('registration.wineExpert', { locale })
             : expertiseLevel === WineExperienceLevelEnum.CREATOR
-              ? localization.t('registration.winemaker')
-              : localization.t('registration.wineLover');
-    const birthdayDisplayText = getBirthdayDisplayText(userModel.user?.birthday || '');
+              ? localization.t('registration.winemaker', { locale })
+              : localization.t('registration.wineLover', { locale });
+    const birthdayDisplayText = getBirthdayDisplayText(userModel.user?.birthday || '', locale);
     const { phoneCca2, phoneNationalNumber } = getPhoneParts(userModel.user?.phoneNumber || '');
     const email = userModel.user?.email || '';
-    const country = getCountryName(userModel.user?.country || '');
+    const country = getCountryName(userModel.user?.country || '', locale);
     const city = userModel.user?.city || '';
     const gender =
         userModel.user?.gender === 'male'
-            ? localization.t('registration.genderMale')
+            ? localization.t('registration.genderMale', { locale })
             : userModel.user?.gender === 'female'
-              ? localization.t('registration.genderFemale')
+              ? localization.t('registration.genderFemale', { locale })
               : '';
     const occupation = userModel.user?.occupation || '';
     const placeOfWork = userModel.user?.wineryName || '';
@@ -119,18 +122,18 @@ export const useProfileDetails = () => {
     const selectedCurrency = userModel.user?.selectedCurrency || '';
 
     const fields = {
-        fullName: getProfileField(fullName, localization.t('settings.fullName')),
-        email: getProfileField(email, localization.t('settings.email')),
-        country: getProfileField(country, localization.t('settings.country')),
-        city: getProfileField(city, localization.t('settings.city')),
-        birthday: getProfileField(birthdayDisplayText, localization.t('registration.birthday')),
-        gender: getProfileField(gender, localization.t('settings.gender')),
-        occupation: getProfileField(occupation, localization.t('settings.occupation')),
-        placeOfWork: getProfileField(placeOfWork, localization.t('settings.placeOfWork')),
-        selectedCurrency: getProfileField(selectedCurrency, localization.t('settings.selectedCurrency')),
-        instagram: getProfileField(instagramLink, localization.t('settings.instagram')),
-        website: getProfileField(website, localization.t('settings.website')),
-        bio: getProfileField(bio, localization.t('settings.bio')),
+        fullName: getProfileField(fullName, localization.t('settings.fullName', { locale })),
+        email: getProfileField(email, localization.t('settings.email', { locale })),
+        country: getProfileField(country, localization.t('settings.country', { locale })),
+        city: getProfileField(city, localization.t('settings.city', { locale })),
+        birthday: getProfileField(birthdayDisplayText, localization.t('registration.birthday', { locale })),
+        gender: getProfileField(gender, localization.t('settings.gender', { locale })),
+        occupation: getProfileField(occupation, localization.t('settings.occupation', { locale })),
+        placeOfWork: getProfileField(placeOfWork, localization.t('settings.placeOfWork', { locale })),
+        selectedCurrency: getProfileField(selectedCurrency, localization.t('settings.selectedCurrency', { locale })),
+        instagram: getProfileField(instagramLink, localization.t('settings.instagram', { locale })),
+        website: getProfileField(website, localization.t('settings.website', { locale })),
+        bio: getProfileField(bio, localization.t('settings.bio', { locale })),
     };
 
     const onPressBack = useCallback(() => {

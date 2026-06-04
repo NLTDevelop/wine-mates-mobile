@@ -25,12 +25,10 @@ interface IProps {
     data: IWineSearchResultViewItem[];
     isLoading: boolean;
     emptyText: string;
-    shouldShowScannerButton: boolean;
     onChangeText: (value: string) => void;
     onClose: () => void;
     onDismiss: () => void;
     onLoadMore: () => void;
-    onOpenScannerPress: () => void;
 }
 
 export const WineSearchBottomSheet = ({
@@ -40,12 +38,10 @@ export const WineSearchBottomSheet = ({
     data,
     isLoading,
     emptyText,
-    shouldShowScannerButton,
     onChangeText,
     onClose,
     onDismiss,
     onLoadMore,
-    onOpenScannerPress,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const { top } = useSafeAreaInsets();
@@ -75,11 +71,9 @@ export const WineSearchBottomSheet = ({
             <WineSearchEmptyState
                 text={emptyText}
                 isLoading={isLoading}
-                shouldShowScannerButton={shouldShowScannerButton}
-                onOpenScannerPress={onOpenScannerPress}
             />
         );
-    }, [emptyText, isLoading, onOpenScannerPress, shouldShowScannerButton]);
+    }, [emptyText, isLoading]);
 
     return (
         <BottomSheetModal

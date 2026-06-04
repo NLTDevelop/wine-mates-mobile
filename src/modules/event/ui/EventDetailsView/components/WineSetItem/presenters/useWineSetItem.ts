@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { IWineSetItem, WineSetTastingStatus } from '@/entities/events/types/IWineSetItem';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
 
 type WineSetStatusBadgeType = 'notStarted' | 'inProgress' | 'tasted' | 'missed';
 type TTranslate = (key: string, options?: Record<string, unknown>) => string;
@@ -98,6 +99,7 @@ export const useWineSetItem = ({
         }
 
         if (isParticipantPressAvailable) {
+            clearWineSnackCuisinesCache();
             navigation.navigate('TastingWineReviewView', {
                 eventId,
                 wineId,

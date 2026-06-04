@@ -21,9 +21,6 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
             textAlign: 'center',
         },
-        scannerButton: {
-            width: '100%',
-        },
     });
 
     return styles;

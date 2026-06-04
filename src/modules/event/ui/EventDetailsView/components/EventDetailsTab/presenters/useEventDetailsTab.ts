@@ -19,6 +19,7 @@ import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { IEventDetail } from '@/entities/events/types/IEvent';
 import { getUtcEventDateTime } from '@/modules/event/utils/eventDateTimeUtc';
+import { getIsEventEditDisabled } from '@/modules/event/utils/getIsEventEditDisabled';
 
 interface IProps {
     eventDetail: IEventDetail | null;
@@ -108,6 +109,9 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const [isPaymentMethodsModalVisible, setIsPaymentMethodsModalVisible] = useState(false);
     const [isSelectedPaymentMethodModalVisible, setIsSelectedPaymentMethodModalVisible] = useState(false);
     const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<number | null>(null);
+    const [pendingBookingSuccessToastRequiresConfirmation, setPendingBookingSuccessToastRequiresConfirmation] = useState<
+        boolean | null
+    >(null);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -167,6 +171,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const isEventCanceled = eventStatus === SavedEventStatus.CANCELED || eventStatus === 'cancelled';
     const isBookNowDisabled = isEventInactive || isEventFinished || isEventCanceled || isEventApplied || hasNoSeatsLeft;
     const isCancelEventDisabled = hasEventStarted || isEventInactive;
+    const isEditEventDisabled = getIsEventEditDisabled(eventDetail, currentTime);
     const appliedEventStatus =
         eventsModel.appliedEvents.find(item => item.event.id === eventDetail?.id)?.status ||
         (eventDetail as IEventDetailWithBookingStatus | null)?.appliedEventStatus ||
@@ -214,9 +219,20 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         setIsPaymentMethodsModalVisible(false);
     }, []);
 
+    const showBookingSuccessToast = useCallback((requiresConfirmation: boolean) => {
+        const bookingSuccessMessage = requiresConfirmation
+            ? localization.t('eventDetails.bookingPendingConfirmation')
+            : localization.t('eventDetails.bookingSuccess');
+        toastService.showSuccess(bookingSuccessMessage);
+    }, []);
+
     const onCloseSelectedPaymentMethodModal = useCallback(() => {
         setIsSelectedPaymentMethodModalVisible(false);
-    }, []);
+        if (pendingBookingSuccessToastRequiresConfirmation !== null) {
+            showBookingSuccessToast(pendingBookingSuccessToastRequiresConfirmation);
+            setPendingBookingSuccessToastRequiresConfirmation(null);
+        }
+    }, [pendingBookingSuccessToastRequiresConfirmation, showBookingSuccessToast]);
 
     const onApplyForEvent = useCallback(
         async (showPaymentInfoModal: boolean) => {
@@ -251,9 +267,13 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
                               }
                             : eventDetail.seats,
                 });
-                if (showPaymentInfoModal && selectedPaymentMethodId !== null) {
+                const shouldShowPaymentInfoModal = showPaymentInfoModal && selectedPaymentMethodId !== null;
+                if (shouldShowPaymentInfoModal) {
+                    setPendingBookingSuccessToastRequiresConfirmation(Boolean(eventDetail.requiresConfirmation));
                     setIsSelectedPaymentMethodModalVisible(true);
+                    return;
                 }
+                showBookingSuccessToast(Boolean(eventDetail.requiresConfirmation));
             } catch (error) {
                 console.warn('useEventDetailsTab -> onApplyForEvent: ', error);
                 toastService.showError(
@@ -264,7 +284,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
                 setIsBookNowInProgress(false);
             }
         },
-        [eventDetail, selectedPaymentMethodId, setEventDetail],
+        [eventDetail, selectedPaymentMethodId, setEventDetail, showBookingSuccessToast],
     );
 
     const onNextPaymentMethodPress = useCallback(async () => {
@@ -379,7 +399,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     }, [eventDetail, isTastingStarted, isTastingToggleDisabled, isTastingToggleVisible, setEventDetail]);
 
     const onEditPress = useCallback(() => {
-        if (!eventDetail) {
+        if (!eventDetail || isEditEventDisabled) {
             return;
         }
 
@@ -430,7 +450,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
             initialSelectedWines,
             editEventId: eventDetail.id,
         });
-    }, [eventDetail, navigation]);
+    }, [eventDetail, isEditEventDisabled, navigation]);
     const onDuplicatePress = useCallback(() => {
         if (!eventDetail) {
             return;
@@ -498,6 +518,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         onToggleTastingPress,
         isOwner,
         isBookNowDisabled,
+        isEditEventDisabled,
         isCancelEventDisabled,
         isBookNowInProgress,
         isEventApplied,

@@ -23,7 +23,7 @@ export const WineDetailsView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
-        selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, myReview } = useWineDetails();
+        selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, myReview, onPressBack } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
         selectedWineId ?? wineId,
@@ -51,7 +51,7 @@ export const WineDetailsView = observer(() => {
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton title={t('wine.result')} isCentered={false} />}
+                headerComponent={<HeaderWithBackButton title={t('wine.result')} isCentered={false} onPressBack={onPressBack} />}
             >
                 {!details ? (
                     <Loader />

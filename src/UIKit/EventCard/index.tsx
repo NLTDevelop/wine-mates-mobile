@@ -44,7 +44,7 @@ export const EventCard = ({
     showFooter = true,
     appliedEventStatus = null,
 }: IProps) => {
-    const { colors, t } = useUiContext();
+    const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
         month,
@@ -66,7 +66,9 @@ export const EventCard = ({
         onShareIconPress,
         onFavoritePress: onFavoritePressHandler,
         onEditPress: onEditPressHandler,
+        isEditDisabled,
         isOwner,
+        hasMapPreview,
         mapPreviewUri,
         participantsPreviewData,
     } = useEventCard({
@@ -76,6 +78,7 @@ export const EventCard = ({
         onFavoritePress,
         onEditPress,
         onCardPress,
+        locale,
     });
 
     const canPressCard = !isModalContent && Boolean(onCardPress);
@@ -162,9 +165,11 @@ export const EventCard = ({
                 />
             )}
 
-            <View style={styles.mapContainer}>
-                <Image source={{ uri: mapPreviewUri }} style={styles.map} resizeMode="cover" />
-            </View>
+            {hasMapPreview && (
+                <View style={styles.mapContainer}>
+                    <Image source={{ uri: mapPreviewUri }} style={styles.map} resizeMode="cover" />
+                </View>
+            )}
 
             {showFooter && (
                 <View style={styles.footer}>
@@ -175,7 +180,7 @@ export const EventCard = ({
                         onPress={onReadMorePressHandler}
                     />
                     {isOwner ? (
-                        <EditButton onPress={onEditPressHandler} size={48} />
+                        <EditButton onPress={onEditPressHandler} size={48} disabled={isEditDisabled} />
                     ) : (
                         <FavoriteButton onPress={onFavoritePressHandler} size={48} isSaved={Boolean(event.isSaved)} />
                     )}

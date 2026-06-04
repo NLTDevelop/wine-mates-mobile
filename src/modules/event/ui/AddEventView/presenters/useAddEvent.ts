@@ -16,6 +16,7 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useUserCurrencies } from '@/UIKit/CurrencyPicker/presenters/useUserCurrencies';
 import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
+import { addEventWineSetDraftModel } from '@/entities/events/AddEventWineSetDraftModel';
 
 interface IEventForm {
     theme: string;
@@ -420,6 +421,12 @@ export const useAddEvent = () => {
     );
 
     useEffect(() => {
+        return () => {
+            addEventWineSetDraftModel.state = null;
+        };
+    }, []);
+
+    useEffect(() => {
         const pickedLocation = route.params?.pickedLocation;
 
         if (!pickedLocation) {
@@ -448,6 +455,7 @@ export const useAddEvent = () => {
             return;
         }
 
+        const savedWineSetDraft = addEventWineSetDraftModel.state;
         const seatsValue = Number(form.seats.trim());
         if (!Number.isFinite(seatsValue) || seatsValue < 1) {
             setIsSeatsError(true);
@@ -479,15 +487,15 @@ export const useAddEvent = () => {
             maxAge: form.maxAge,
             sex: form.sex,
             eventType: form.eventType,
-            tastingType: form.tastingType,
+            tastingType: savedWineSetDraft?.tastingType || form.tastingType,
             participationCondition: form.participationCondition,
             requiresConfirmation: !!form.requiresConfirmation,
-            repeatRule: route.params?.draft?.repeatRule || null,
+            repeatRule: savedWineSetDraft ? savedWineSetDraft.repeatRule : route.params?.draft?.repeatRule || null,
         };
 
         navigation.navigate('AddWineSetView', {
             draft,
-            initialSelectedWines: route.params?.initialSelectedWines,
+            initialSelectedWines: savedWineSetDraft?.selectedWines ?? route.params?.initialSelectedWines,
             editEventId: route.params?.editEventId,
             isDuplicateEvent: route.params?.isDuplicateEvent,
         });

@@ -17,7 +17,10 @@ const getInitialIsDev = () => {
 export interface ILinks {
     auth: string;
     resetPassword: string;
+    device: string;
+    deviceUnregister: string;
     features: string;
+    homeSections: string;
     wines: string;
     wineFilters: string;
     wineSetSearch: string;
@@ -67,7 +70,10 @@ class Links implements ILinks {
     private _links = {
         auth: 'auth',
         resetPassword: 'auth/reset-password',
+        device: 'users/devices/register',
+        deviceUnregister: 'users/devices/unregister',
         features: 'features',
+        homeSections: 'home-sections',
         wines: 'wines',
         wineFilters: 'wines/filters',
         wineSetSearch: 'wines/search/wine-set',
@@ -135,8 +141,17 @@ class Links implements ILinks {
     public get resetPassword() {
         return `${this._domain}${this._links.resetPassword}`;
     }
+    public get device() {
+        return `${this._domain}${this._links.device}`;
+    }
+    public get deviceUnregister() {
+        return `${this._domain}${this._links.deviceUnregister}`;
+    }
     public get features() {
         return `${this._domain}${this._links.features}`;
+    }
+    public get homeSections() {
+        return `${this._domain}${this._links.homeSections}`;
     }
     public get wines() {
         return `${this._domain}${this._links.wines}`;

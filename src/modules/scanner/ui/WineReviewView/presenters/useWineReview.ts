@@ -81,7 +81,7 @@ export const useWineReview = () => {
         try {
             setIsSaving(true);
             saveReview();
-            await saveWineRate();
+            await saveWineRate({ isFullTasting: false });
         } finally {
             setIsSaving(false);
         }

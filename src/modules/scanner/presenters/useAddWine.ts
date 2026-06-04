@@ -10,7 +10,7 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { IAIData } from '@/entities/wine/types/IAIData';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
-import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
+import { clearTasteCharacteristicsCache, clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
 
 const createValue = (): IWineBaseValue => ({ id: null, value: '' });
 
@@ -212,6 +212,7 @@ export const useAddWine = () => {
                         },
                     };
 
+                    clearWineSnackCuisinesCache();
                     navigation.navigate('WineReviewView', { source: 'scanner' });
                 } else if (response?.errors?.errors?.vintage) {
                     setIsVintageError({status: true, errorText: response.errors.errors.vintage[0]});
@@ -257,6 +258,7 @@ export const useAddWine = () => {
                     name: response.data.name,
                     vintage: response.data.vintage,
                 };
+                clearWineSnackCuisinesCache();
                 navigation.navigate('WineReviewView', { source: 'scanner' });
             }
         } catch (error) {

@@ -16,9 +16,14 @@ export type RootDeepLinkParamList = {
         eventId: number;
         openedFromDeepLink?: boolean;
     };
+    WineDetailsView: {
+        wineId: number;
+        openedFromDeepLink?: boolean;
+    };
 };
 
 const EVENT_ID_PARAM = 'eventId';
+const WINE_ID_PARAM = 'wineId';
 
 export const APP_DEEP_LINK_SCHEME = 'winemates';
 export const APP_DEEP_LINK_PREFIX = `${APP_DEEP_LINK_SCHEME}://`;
@@ -26,6 +31,10 @@ export const APP_LINK_DOMAIN = 'https://wine-mates.nltdev.pp.ua';
 
 export const createEventDeepLink = (eventId: number) => {
     return `${APP_LINK_DOMAIN}/event/${eventId}`;
+};
+
+export const createWineDeepLink = (wineId: number) => {
+    return `${APP_LINK_DOMAIN}/wineDetails/${wineId}`;
 };
 
 let lastHandledDeepLinkUrl: string | null = null;
@@ -47,6 +56,12 @@ export const linking: LinkingOptions<RootDeepLinkParamList> = {
                 path: `event/:${EVENT_ID_PARAM}`,
                 parse: {
                     [EVENT_ID_PARAM]: Number,
+                },
+            },
+            WineDetailsView: {
+                path: `wineDetails/:${WINE_ID_PARAM}`,
+                parse: {
+                    [WINE_ID_PARAM]: Number,
                 },
             },
         },
@@ -87,7 +102,7 @@ export const linking: LinkingOptions<RootDeepLinkParamList> = {
     },
     getStateFromPath: (path, options) => {
         const state = getStateFromPath(path, options) as PartialState<any> | undefined;
-        const route = state?.routes?.find((item) => item.name === 'EventDetailsView') as
+        const route = state?.routes?.find((item) => item.name === 'EventDetailsView' || item.name === 'WineDetailsView') as
             | { params?: Record<string, unknown> }
             | undefined;
 

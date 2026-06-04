@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "131867207635",
+    "project_id": "wine-mates",
+    "storage_bucket": "wine-mates.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131867207635:android:b16a6b702233105f717126",
+        "android_client_info": {
+          "package_name": "com.winemates"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWwC4wE5q3IdG7IelPtgjEH9NgxvkVl-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
