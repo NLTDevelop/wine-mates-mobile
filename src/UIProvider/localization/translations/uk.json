@@ -236,6 +236,12 @@
         },
         "overallScore": "Загальний бал",
         "expertReview": "Оцінка експерта",
+        "myReview": "Моя оцінка",
+        "shareWineTitle": "Поділитися вином",
+        "shareWineIntro": "Подивіться це вино у WineMates",
+        "shareWineName": "Назва",
+        "shareWineProducer": "Виробник",
+        "shareWineGrapeVariety": "Сорт винограду",
         "customVintage": "Власний вінтаж",
         "expertScoreTitle": "Оцінка від експерта",
         "similarity": "Збіг по фото"

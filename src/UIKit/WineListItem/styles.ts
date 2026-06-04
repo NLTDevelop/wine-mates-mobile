@@ -2,12 +2,13 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
-    const medalSize = 54;
+export const WINE_LIST_ITEM_MEDAL_SIZE = 54;
 
+export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
     const styles = StyleSheet.create({
         container: {
             overflow: 'hidden',
+            position: 'relative',
             ...(removeCardStyles
                 ? {}
                 : {
@@ -117,9 +118,20 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         footerContainer: {
             width: '100%',
         },
+        shareButton: {
+            position: 'absolute',
+            top: removeCardStyles ? 0 : scaleVertical(12),
+            right: removeCardStyles ? 0 : scaleHorizontal(12),
+            width: scaleHorizontal(32),
+            height: scaleVertical(32),
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10,
+        },
         pressed: {
             transform: [{ scale: 0.99 }],
         },
     });
-    return { styles, medalSize };
+
+    return styles;
 };

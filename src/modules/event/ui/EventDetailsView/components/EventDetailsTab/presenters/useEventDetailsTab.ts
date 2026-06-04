@@ -19,6 +19,7 @@ import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { IEventDetail } from '@/entities/events/types/IEvent';
 import { getUtcEventDateTime } from '@/modules/event/utils/eventDateTimeUtc';
+import { getIsEventEditDisabled } from '@/modules/event/utils/getIsEventEditDisabled';
 
 interface IProps {
     eventDetail: IEventDetail | null;
@@ -170,6 +171,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const isEventCanceled = eventStatus === SavedEventStatus.CANCELED || eventStatus === 'cancelled';
     const isBookNowDisabled = isEventInactive || isEventFinished || isEventCanceled || isEventApplied || hasNoSeatsLeft;
     const isCancelEventDisabled = hasEventStarted || isEventInactive;
+    const isEditEventDisabled = getIsEventEditDisabled(eventDetail, currentTime);
     const appliedEventStatus =
         eventsModel.appliedEvents.find(item => item.event.id === eventDetail?.id)?.status ||
         (eventDetail as IEventDetailWithBookingStatus | null)?.appliedEventStatus ||
@@ -397,7 +399,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     }, [eventDetail, isTastingStarted, isTastingToggleDisabled, isTastingToggleVisible, setEventDetail]);
 
     const onEditPress = useCallback(() => {
-        if (!eventDetail) {
+        if (!eventDetail || isEditEventDisabled) {
             return;
         }
 
@@ -448,7 +450,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
             initialSelectedWines,
             editEventId: eventDetail.id,
         });
-    }, [eventDetail, navigation]);
+    }, [eventDetail, isEditEventDisabled, navigation]);
     const onDuplicatePress = useCallback(() => {
         if (!eventDetail) {
             return;
@@ -516,6 +518,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         onToggleTastingPress,
         isOwner,
         isBookNowDisabled,
+        isEditEventDisabled,
         isCancelEventDisabled,
         isBookNowInProgress,
         isEventApplied,

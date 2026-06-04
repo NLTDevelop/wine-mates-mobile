@@ -24,7 +24,7 @@ interface IProps {
 }
 
 export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isAllVintagesSelected, onVintageChange }: IProps) => {
-    const { colors } = useUiContext();
+    const { colors, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const hasPremium = userModel.user?.hasPremium ?? false;
@@ -36,6 +36,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isA
             selectedVintage: typeof selectedVintage === 'number' ? selectedVintage : null,
             isAllVintagesSelected,
             onVintageChange,
+            locale,
         });
 
     const renderRatingInfo = useCallback((dropdownItem: IVintageDropdownItem) => {

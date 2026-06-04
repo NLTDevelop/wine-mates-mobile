@@ -4,7 +4,7 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { WineListScope } from '@/entities/wine/types/IWineListScope';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList } from 'react-native';
@@ -15,22 +15,17 @@ const OFFSET = 0;
 export const useMyWine = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isLoading, setIsLoading] = useState(false);
-    const [scrollToTop, setScrollToTop] = useState<(() => void) | null>(null);
     const data = wineListsModel.list?.rows;
     const listRef = useRef<FlatList>(null);
 
-    const handleScrollToTop = useCallback(() => {
+    const scrollToTop = useCallback(() => {
         listRef.current?.scrollToOffset({ offset: 0, animated: true });
     }, []);
-
-    useEffect(() => {
-        setScrollToTop(() => handleScrollToTop);
-    }, [handleScrollToTop, setScrollToTop]);
 
     const getList = useCallback(async (offset: number) => {
         try {
             setIsLoading(true);
-            
+
             const filters = wineListsModel.filters;
             const params = {
                 limit: LIMIT,
@@ -43,36 +38,54 @@ export const useMyWine = () => {
             };
 
             const response = await myWineService.list(params);
-    
+
             if (response.isError || !response.data) {
                 toastService.showError(
                     localization.t('common.errorHappened'),
                     response.message || localization.t('common.somethingWentWrong'),
                 );
-            } else {
-                //TODO
             }
-        } catch(error) {
+        } catch (error) {
             console.error(JSON.stringify(error, null, 4));
         } finally {
             setIsLoading(false);
         }
     }, []);
 
-    const onRefresh = useCallback(async (offset: number = OFFSET) => {
-        await getList(offset);
-    }, [getList]);
-
-    useFocusEffect(
-        useCallback(() => {
-            onRefresh();
-
-            return () => {
-                wineListsModel.search = '';
-                wineListsModel.clearFilters();
-            };
-        }, [onRefresh])
+    const onRefresh = useCallback(
+        async (offset: number = OFFSET) => {
+            await getList(offset);
+        },
+        [getList],
     );
+
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         onRefresh();
+
+    //         return () => {
+    //             wineListsModel.search = '';
+    //             wineListsModel.clearFilters();
+    //         };
+    //     }, [onRefresh])
+    // );
+
+    useEffect(() => {
+        const frameId = requestAnimationFrame(() => {
+            onRefresh();
+        });
+
+        return () => {
+            cancelAnimationFrame(frameId);
+        };
+    }, [onRefresh]);
+
+    useEffect(() => {
+        return () => {
+            wineListsModel.search = '';
+            wineListsModel.clearFilters();
+        };
+    }, []);
 
     useEffect(() => {
         return () => wineListsModel.clear();
@@ -85,34 +98,37 @@ export const useMyWine = () => {
         }
     }, [isLoading, getList]);
 
-    const onItemPress = useCallback(async (item: IWineListItem) => {
-        if (item.myReview?.id) {
-            try {
-                const params = {
-                    rateId: item.myReview.id
-                };
-                const response = await myWineService.getMyWineDetails(item.id, params);
-                
-                if (response.isError || !response.data) {
+    const onItemPress = useCallback(
+        async (item: IWineListItem) => {
+            if (item.myReview?.id) {
+                try {
+                    const params = {
+                        rateId: item.myReview.id,
+                    };
+                    const response = await myWineService.getMyWineDetails(item.id, params);
+
+                    if (response.isError || !response.data) {
+                        toastService.showError(
+                            localization.t('common.errorHappened'),
+                            response.message || localization.t('common.somethingWentWrong'),
+                        );
+                        return;
+                    }
+
+                    navigation.navigate('WineDetailsView', { wineDetailsData: response.data });
+                } catch (error) {
+                    console.error('onItemPress error: ', JSON.stringify(error, null, 2));
                     toastService.showError(
                         localization.t('common.errorHappened'),
-                        response.message || localization.t('common.somethingWentWrong'),
+                        localization.t('common.somethingWentWrong'),
                     );
-                    return;
                 }
-                
-                navigation.navigate('WineDetailsView', { wineDetailsData: response.data });
-            } catch (error) {
-                console.error('onItemPress error: ', JSON.stringify(error, null, 2));
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    localization.t('common.somethingWentWrong'),
-                );
+            } else {
+                navigation.navigate('WineDetailsView', { wineId: item.id });
             }
-        } else {
-            navigation.navigate('WineDetailsView', { wineId: item.id });
-        }
-    }, [navigation]);
+        },
+        [navigation],
+    );
 
     return { data, onRefresh, onEndReached, onItemPress, isLoading, getList, scrollToTop, listRef };
 };

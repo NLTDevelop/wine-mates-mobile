@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback } from 'react';
 
-export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) => {
+export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void, locale: string) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const onNotificationPress = useCallback(() => {
@@ -53,28 +53,28 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
     const APP_BUTTONS = [
         {
             id: 1,
-            text: localization.t('settings.notifications'),
+            text: localization.t('settings.notifications', { locale }),
             onPress: onNotificationPress,
         },
         {
             id: 2,
-            text: localization.t('settings.language'),
+            text: localization.t('settings.language', { locale }),
             onPress: onLanguagePress,
-            description: localization.t(`locale.${localization.locale}`) ,
+            description: localization.t(`locale.${locale}`, { locale }),
         },
         {
             id: 3,
-            text: localization.t('settings.blockedUser'),
+            text: localization.t('settings.blockedUser', { locale }),
             onPress: onBlockUserPress,
         },
         {
             id: 4,
-            text: localization.t('payments.paymentsMethods'),
+            text: localization.t('payments.paymentsMethods', { locale }),
             onPress: onPaymentsPress,
         },
         {
             id: 5,
-            text: localization.t('contactInfo.contactInfo'),
+            text: localization.t('contactInfo.contactInfo', { locale }),
             onPress: onContactInfoPress,
         },
     ];
@@ -82,22 +82,22 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
     const BUTTONS = [
         {
             id: 1,
-            text: localization.t('settings.subscription'),
+            text: localization.t('settings.subscription', { locale }),
             onPress: onSubscriptionPress,
         },
         {
             id: 2,
-            text: localization.t('settings.FAQ'),
+            text: localization.t('settings.FAQ', { locale }),
             onPress: onFAQPress,
         },
         {
             id: 3,
-            text: localization.t('settings.rateTheApp'),
+            text: localization.t('settings.rateTheApp', { locale }),
             onPress: onRateTheAppPress,
         },
         {
             id: 4,
-            text: localization.t('settings.inviteFriends'),
+            text: localization.t('settings.inviteFriends', { locale }),
             onPress: onInviteFriendsPress,
         },
     ];
@@ -105,18 +105,18 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void) =
     const ACCOUNT_BUTTONS = [
         {
             id: 1,
-            text: localization.t('settings.changePassword'),
+            text: localization.t('settings.changePassword', { locale }),
             onPress: onChangePasswordPress,
         },
         {
             id: 2,
-            text: localization.t('settings.logOut'),
+            text: localization.t('settings.logOut', { locale }),
             onPress: onShowLogoutModal,
             hideIcon: true,
         },
         {
             id: 3,
-            text: localization.t('settings.deleteAccount'),
+            text: localization.t('settings.deleteAccount', { locale }),
             onPress: onDeleteAccountPress,
             hideIcon: true,
             isPrimary: true,

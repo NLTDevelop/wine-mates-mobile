@@ -16,7 +16,7 @@ export const useIsUserAuthorized = () => {
             featuresModel.clear();
             notificationService.stopForegroundSubscription();
             notificationService.removeAllDeliveredNotifications();
-            notificationService.deleteToken();
+            await notificationService.deleteToken();
 
             await GoogleSignin.signOut().catch(() => {});
         } finally {

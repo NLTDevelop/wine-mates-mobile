@@ -10,6 +10,10 @@
           {
             "/": "/event/*",
             "comment": "WineMates event details links"
+          },
+          {
+            "/": "/wineDetails/*",
+            "comment": "WineMates wine details links"
           }
         ]
       }

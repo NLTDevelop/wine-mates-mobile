@@ -18,6 +18,7 @@ export interface ILinks {
     auth: string;
     resetPassword: string;
     device: string;
+    deviceUnregister: string;
     features: string;
     homeSections: string;
     wines: string;
@@ -70,6 +71,7 @@ class Links implements ILinks {
         auth: 'auth',
         resetPassword: 'auth/reset-password',
         device: 'users/devices/register',
+        deviceUnregister: 'users/devices/unregister',
         features: 'features',
         homeSections: 'home-sections',
         wines: 'wines',
@@ -141,6 +143,9 @@ class Links implements ILinks {
     }
     public get device() {
         return `${this._domain}${this._links.device}`;
+    }
+    public get deviceUnregister() {
+        return `${this._domain}${this._links.deviceUnregister}`;
     }
     public get features() {
         return `${this._domain}${this._links.features}`;

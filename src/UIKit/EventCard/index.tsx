@@ -44,7 +44,7 @@ export const EventCard = ({
     showFooter = true,
     appliedEventStatus = null,
 }: IProps) => {
-    const { colors, t } = useUiContext();
+    const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
         month,
@@ -78,6 +78,7 @@ export const EventCard = ({
         onFavoritePress,
         onEditPress,
         onCardPress,
+        locale,
     });
 
     const canPressCard = !isModalContent && Boolean(onCardPress);

@@ -13,7 +13,7 @@ import { ProfileDetailsField } from './components/ProfileDetailsField';
 import { Typography } from '@/UIKit/Typography';
 
 export const ProfileDetailsView = observer(() => {
-    const { colors, t } = useUiContext();
+    const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const {
@@ -28,7 +28,7 @@ export const ProfileDetailsView = observer(() => {
         onPressEdit,
         onPhoneChange,
         onCountryCodeChange,
-    } = useProfileDetails();
+    } = useProfileDetails(locale);
 
     return (
         <ScreenContainer

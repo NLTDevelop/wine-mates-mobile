@@ -150,7 +150,7 @@ const createHomeEvents = (section: IHomeSection): IEvent[] => {
     }));
 };
 
-const getPeopleTalkingCreatedAtLabel = (createdAt?: string | null) => {
+const getPeopleTalkingCreatedAtLabel = (createdAt?: string | null, locale?: string) => {
     if (!createdAt) {
         return EMPTY_FIELD;
     }
@@ -165,6 +165,7 @@ const getPeopleTalkingCreatedAtLabel = (createdAt?: string | null) => {
 
     return localization.t('home.peopleTalkingDaysAgo', {
         count: diffInDays,
+        locale,
     });
 };
 
@@ -178,7 +179,7 @@ const getAvatarUrl = (avatar?: { smallUrl?: string; mediumUrl?: string; original
     return avatar?.mediumUrl || avatar?.smallUrl || avatar?.originalUrl || null;
 };
 
-const createPeopleTalking = (section: IHomeSection) => {
+const createPeopleTalking = (section: IHomeSection, locale: string) => {
     if (section.key !== 'people_talking') {
         return [];
     }
@@ -209,12 +210,12 @@ const createPeopleTalking = (section: IHomeSection) => {
             commentsCount,
             hasLikes: likesCount > 0,
             hasComments: commentsCount > 0,
-            createdAtLabel: getPeopleTalkingCreatedAtLabel(item.createdAt),
+            createdAtLabel: getPeopleTalkingCreatedAtLabel(item.createdAt, locale),
         };
     });
 };
 
-export const useHomeView = () => {
+export const useHomeView = (locale: string) => {
     const isMountedRef = useRef(true);
     const [draftSections, setDraftSections] = useState<IHomeSection[]>([]);
     const [placementSections, setPlacementSections] = useState<IHomeSection[]>([]);
@@ -273,7 +274,7 @@ export const useHomeView = () => {
                 return {
                     key: section.key,
                     sortOrder: section.sortOrder,
-                    title: localization.t('home.events'),
+                    title: localization.t('home.events', { locale }),
                     onRemovePress,
                     events: createHomeEvents(section),
                 };
@@ -283,20 +284,20 @@ export const useHomeView = () => {
                 return {
                     key: section.key,
                     sortOrder: section.sortOrder,
-                    title: localization.t('home.peopleTalking'),
+                    title: localization.t('home.peopleTalking', { locale }),
                     onRemovePress,
-                    peopleTalking: createPeopleTalking(section),
+                    peopleTalking: createPeopleTalking(section, locale),
                 };
             }
 
             return {
                 key: section.key,
                 sortOrder: section.sortOrder,
-                title: localization.t('home.chooseWine'),
+                title: localization.t('home.chooseWine', { locale }),
                 onRemovePress,
             };
         });
-    }, [activeVisibleSections, isPlacementEditMode, onRemovePlacementSection]);
+    }, [activeVisibleSections, isPlacementEditMode, locale, onRemovePlacementSection]);
 
     const getHomeSections = useCallback(async () => {
         setIsError(false);
@@ -431,27 +432,27 @@ export const useHomeView = () => {
         return [
             {
                 key: 'choose_wine',
-                title: localization.t('home.chooseWine'),
-                description: localization.t('home.chooseWineSectionOptionDescription'),
+                title: localization.t('home.chooseWine', { locale }),
+                description: localization.t('home.chooseWineSectionOptionDescription', { locale }),
                 isSelected: getIsDraftSelected('choose_wine'),
                 onPress: onToggleChooseWine,
             },
             {
                 key: 'events',
-                title: localization.t('home.events'),
-                description: localization.t('home.eventsSectionOptionDescription'),
+                title: localization.t('home.events', { locale }),
+                description: localization.t('home.eventsSectionOptionDescription', { locale }),
                 isSelected: getIsDraftSelected('events'),
                 onPress: onToggleEvents,
             },
             {
                 key: 'people_talking',
-                title: localization.t('home.peopleTalking'),
-                description: localization.t('home.peopleTalkingSectionOptionDescription'),
+                title: localization.t('home.peopleTalking', { locale }),
+                description: localization.t('home.peopleTalkingSectionOptionDescription', { locale }),
                 isSelected: getIsDraftSelected('people_talking'),
                 onPress: onTogglePeopleTalking,
             },
         ];
-    }, [getIsDraftSelected, onToggleChooseWine, onToggleEvents, onTogglePeopleTalking]);
+    }, [getIsDraftSelected, locale, onToggleChooseWine, onToggleEvents, onTogglePeopleTalking]);
 
     const onSaveSections = useCallback(async () => {
         if (isSaving) {

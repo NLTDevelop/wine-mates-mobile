@@ -7,6 +7,8 @@ import type { PanGesture } from 'react-native-gesture-handler';
 import { scaleVertical } from '@/utils';
 import type { IEvent } from '@/entities/events/types/IEvent';
 import { eventsService } from '@/entities/events/EventsService';
+import { homeSectionsModel } from '@/entities/homeSections/HomeSectionsModel';
+import { IHomeSectionEventData } from '@/entities/homeSections/types/IHomeSection';
 import { IAddEventDraft } from '@/modules/event/types/IAddEventDraft';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { EventType } from '@/entities/events/enums/EventType';
@@ -16,6 +18,30 @@ import { IMedia } from '@/entities/media/types/IMedia';
 type NavigationProp = NativeStackNavigationProp<Record<string, object | undefined>>;
 
 const DEFAULT_CAROUSEL_HEIGHT = scaleVertical(360);
+
+const updateHomeEventFavoriteState = (eventId: number, isSaved: boolean) => {
+    homeSectionsModel.sections = homeSectionsModel.sections.map(section => {
+        if (section.key !== 'events' || !Array.isArray(section.data)) {
+            return section;
+        }
+
+        return {
+            ...section,
+            data: section.data.map(item => {
+                const eventItem = item as IHomeSectionEventData;
+
+                if (eventItem.id !== eventId) {
+                    return item;
+                }
+
+                return {
+                    ...eventItem,
+                    isSaved,
+                };
+            }),
+        };
+    });
+};
 
 const mapWineImageToMedia = (
     image?: { smallUrl?: string; mediumUrl?: string; originalUrl?: string } | null,
@@ -54,7 +80,31 @@ export const useHomeEventSection = (events: IEvent[]) => {
         }
     }, [navigation]);
 
-    const onFavoritePress = useCallback((_eventId: number) => {}, []);
+    const onFavoritePress = useCallback(async (eventId: number) => {
+        const event = events.find(item => item.id === eventId);
+        if (!event) {
+            return;
+        }
+
+        try {
+            const nextIsSaved = !event.isSaved;
+            const response = event.isSaved
+                ? await eventsService.removeFromFavorite(eventId)
+                : await eventsService.addToFavorite(eventId);
+
+            if (response.isError) {
+                return;
+            }
+
+            const responseIsSaved = typeof response.data?.isSaved === 'boolean'
+                ? response.data.isSaved
+                : nextIsSaved;
+
+            updateHomeEventFavoriteState(eventId, responseIsSaved);
+        } catch (error) {
+            console.warn('useHomeEventSection -> onFavoritePress: ', error);
+        }
+    }, [events]);
 
     const onEditPress = useCallback(
         async (eventId: number) => {

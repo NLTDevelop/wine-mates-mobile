@@ -520,7 +520,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             latitude: eventDetail.latitude,
             longitude: eventDetail.longitude,
             tastingTypeLabel: isPartyEvent ? '' : formatTastingType(eventDetail.tastingType),
-            participantsPreviewData: prepareEventParticipantsPreview(eventDetail.participants),
+            participantsPreviewData: prepareEventParticipantsPreview(eventDetail.participants, locale),
         };
 
         return previewData;

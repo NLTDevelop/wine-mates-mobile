@@ -13,11 +13,11 @@ import { useSelectLanguageBottomSheet } from '../../presenters/useSelectLanguage
 import { SelectLanguageBottomSheet } from '../components/SelectLanguageBottomSheet';
 
 export const SettingsView = () => {
-    const { colors, t } = useUiContext();
+    const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { isVisible: isLanguageModalVisible, onItemPress, onClose, onOpen } = useSelectLanguageBottomSheet()
     const { isVisible, onShowLogoutModal, onHideLogoutModal, onLogout } = useLogoutModal();
-    const { APP_BUTTONS, BUTTONS, ACCOUNT_BUTTONS } = useSettings(onShowLogoutModal, onOpen);
+    const { APP_BUTTONS, BUTTONS, ACCOUNT_BUTTONS } = useSettings(onShowLogoutModal, onOpen, locale);
 
     return (
         <ScreenContainer

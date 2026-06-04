@@ -79,6 +79,25 @@ class NotificationService {
         }
     };
 
+    private unregisterToken = async (token: string) => {
+        if (!token) {
+            return null;
+        }
+
+        try {
+            return this._requester.request({
+                method: 'POST',
+                url: this._links.deviceUnregister,
+                data: {
+                    fcmToken: token,
+                },
+            });
+        } catch (error) {
+            console.warn('NotificationService -> unregisterToken: ', error);
+            return null;
+        }
+    };
+
     register = async () => {
         await this.messaging.registerAppWithFCM();
 
@@ -94,6 +113,12 @@ class NotificationService {
 
     deleteToken = async () => {
         await this.messaging.removeFCMToken();
+    };
+
+    unregisterCurrentDevice = async () => {
+        const token = await this.getToken();
+
+        return this.unregisterToken(token);
     };
 
     subscribeForeground = () => {

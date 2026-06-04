@@ -1,5 +1,5 @@
 import { useCallback, useMemo, ReactNode } from 'react';
-import { Image, Pressable, View } from 'react-native';
+import { Image, Pressable, TouchableOpacity, View } from 'react-native';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -8,9 +8,10 @@ import { SmallStarRating } from '@/UIKit/SmallStarRating';
 import { RateMedal } from '@/UIKit/RateMedal/ui';
 import { ShowLock } from '@/UIKit/ShowLock';
 import { useWineListItem } from './presenters/useWineListItem';
-import { getStyles } from './styles';
+import { getStyles, WINE_LIST_ITEM_MEDAL_SIZE } from './styles';
 import { useWineDescription } from './presenters/useWineDescription';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
+import { ShareIcon } from '@assets/icons/ShareIcon';
 
 interface IProps {
     item: IWineListItem | IWineDetails;
@@ -30,7 +31,7 @@ interface IProps {
 export const WineListItem = ({ item, onPress, showSimilarity = false, footer, removeCardStyles = false,
     showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent, showExpertRatingWithoutPremium = false, hideDate = false }: IProps) => {
     const { colors, locale, t } = useUiContext();
-    const { styles, medalSize } = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
+    const styles = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
     const {
         onItemPress,
         similarityText,
@@ -44,7 +45,9 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
         expertRating,
         showMedal, 
         showUserReviewCount,
-        showExpertReviewCount
+        showExpertReviewCount,
+        expertReviewLabel,
+        onSharePress,
     } = useWineListItem({ item, onPress, removeCardStyles, isMyWine });
     const { description } = useWineDescription({ item, showVintage, showNonVintage });
     const getContainerStyle = useCallback(
@@ -58,6 +61,9 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
             onPress={onItemPress}
             disabled={!onPress}
         >
+            <TouchableOpacity style={styles.shareButton} onPress={onSharePress} hitSlop={12}>
+                <ShareIcon width={20} height={20} color={colors.text} />
+            </TouchableOpacity>
             <View style={styles.content}>
                 <View style={styles.imageContainer} pointerEvents="none">
                     {showSimilarity && (
@@ -88,11 +94,11 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
                 <View style={styles.rightColumn}>
                     <View style={styles.medalContainer}>
                         {!hasPremium && showMedal && !showExpertRatingWithoutPremium ? (
-                            <ShowLock iconSize={medalSize} />
+                            <ShowLock iconSize={WINE_LIST_ITEM_MEDAL_SIZE} />
                         ) : showMedal ? (
                             <RateMedal
                                 sliderValue={expertRating ?? 0}
-                                size={medalSize}
+                                size={WINE_LIST_ITEM_MEDAL_SIZE}
                                 titleFontSize={24}
                                 mainFontSize={90}
                                 nameFontSize={26}
@@ -102,7 +108,7 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
 
                     {showMedal && (hasPremium || showExpertRatingWithoutPremium) ? (
                         <>
-                            <Typography variant="subtitle_10_400" text={t('wine.expertReview')} />
+                            <Typography variant="subtitle_10_400" text={expertReviewLabel} />
                             {expertReviewCount && showExpertReviewCount ? (
                                 <Typography
                                     variant="subtitle_10_400"

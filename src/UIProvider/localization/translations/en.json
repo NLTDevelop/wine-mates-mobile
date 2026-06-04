@@ -232,6 +232,12 @@
         },
         "overallScore": "Overall Score",
         "expertReview": "Expert review",
+        "myReview": "My review",
+        "shareWineTitle": "Share wine",
+        "shareWineIntro": "Check this wine in WineMates",
+        "shareWineName": "Name",
+        "shareWineProducer": "Producer",
+        "shareWineGrapeVariety": "Grape variety",
         "customVintage": "Custom vintage",
         "expertScoreTitle": "Expert Rate",
         "similarity": "Photo match"

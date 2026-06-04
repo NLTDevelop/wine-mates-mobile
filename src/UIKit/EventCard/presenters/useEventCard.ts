@@ -10,13 +10,14 @@ import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 import { toastService } from '@/libs/toast/toastService';
 import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
-import { convertUtcEventDateTimeToLocal, getUtcEventDateTime } from '@/modules/event/utils/eventDateTimeUtc';
+import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
 import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShareMessage';
 import { createMapLink } from '@/modules/event/utils/createMapLink';
 import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
 import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
 import { useEventQrCodeShare } from '@/modules/event/presenters/useEventQrCodeShare';
 import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
+import { getIsEventEditDisabled } from '@/modules/event/utils/getIsEventEditDisabled';
 
 interface IUseEventCardProps {
     event: IEvent;
@@ -25,6 +26,7 @@ interface IUseEventCardProps {
     onFavoritePress?: (eventId: number) => void;
     onEditPress?: (eventId: number) => void;
     onCardPress?: (eventId: number) => void;
+    locale?: string;
 }
 
 const STATIC_MAP_SIZE = '720x320';
@@ -47,8 +49,9 @@ export const useEventCard = ({
     onFavoritePress,
     onEditPress,
     onCardPress,
+    locale,
 }: IUseEventCardProps) => {
-    const currentLocale = localization.locale || 'en';
+    const currentLocale = locale || localization.locale || 'en';
     const [currentTime] = useState(() => new Date());
     const [isCardPressed, setIsCardPressed] = useState(false);
 
@@ -156,8 +159,10 @@ export const useEventCard = ({
             return EMPTY_FIELD;
         }
 
-        return event.eventType === EventType.Parties ? localization.t('event.parties') : localization.t('event.tastings');
-    }, [event.eventType]);
+        return event.eventType === EventType.Parties
+            ? localization.t('event.parties', { locale: currentLocale })
+            : localization.t('event.tastings', { locale: currentLocale });
+    }, [currentLocale, event.eventType]);
 
     const isAllSpotsFull = useMemo(() => {
         return typeof event.seats?.left === 'number' && event.seats.left <= 0;
@@ -169,15 +174,15 @@ export const useEventCard = ({
         }
 
         if (event.status === SavedEventStatus.FINISHED) {
-            return localization.t('event.finished');
+            return localization.t('event.finished', { locale: currentLocale });
         }
 
         if (event.status === SavedEventStatus.CANCELED) {
-            return localization.t('event.cancelled');
+            return localization.t('event.cancelled', { locale: currentLocale });
         }
 
         return String(event.status);
-    }, [event]);
+    }, [currentLocale, event]);
 
     const appliedEventStatusLabel = useMemo(() => {
         if (!appliedEventStatus) {
@@ -185,31 +190,31 @@ export const useEventCard = ({
         }
 
         if (appliedEventStatus === AppliedEventStatus.ACCEPTED) {
-            return localization.t('event.confirmed');
+            return localization.t('event.confirmed', { locale: currentLocale });
         }
 
         if (appliedEventStatus === AppliedEventStatus.PENDING) {
-            return localization.t('event.pending');
+            return localization.t('event.pending', { locale: currentLocale });
         }
 
         if (appliedEventStatus === AppliedEventStatus.REJECTED) {
-            return localization.t('event.rejected');
+            return localization.t('event.rejected', { locale: currentLocale });
         }
 
         if (appliedEventStatus === SavedEventStatus.CANCELED) {
-            return localization.t('event.cancelled');
+            return localization.t('event.cancelled', { locale: currentLocale });
         }
 
         return String(appliedEventStatus);
-    }, [appliedEventStatus]);
+    }, [appliedEventStatus, currentLocale]);
 
     const isPartyEvent = useMemo(() => {
         return event.eventType === EventType.Parties;
     }, [event.eventType]);
 
     const participantsPreviewData = useMemo(() => {
-        return prepareEventParticipantsPreview(event.participants);
-    }, [event.participants]);
+        return prepareEventParticipantsPreview(event.participants, currentLocale);
+    }, [currentLocale, event.participants]);
 
     const onCardPressHandler = useCallback(() => {
         onCardPress?.(event.id);
@@ -236,18 +241,7 @@ export const useEventCard = ({
     }, [event.ownerId]);
 
     const isEditDisabled = useMemo(() => {
-        const rawStartDate = event.eventStartDate || event.eventDate || '';
-        const rawStartTime = event.eventStartTime || event.eventTime || '';
-        const eventStartDateTime = getUtcEventDateTime(rawStartDate, rawStartTime);
-        const hasEventStarted = eventStartDateTime && !Number.isNaN(eventStartDateTime.getTime())
-            ? eventStartDateTime.getTime() <= currentTime.getTime()
-            : false;
-        const status = String(('status' in event && event.status) || '').toLowerCase();
-        const isEventFinished = status === SavedEventStatus.FINISHED;
-        const isEventCanceled = status === SavedEventStatus.CANCELED || status === 'cancelled';
-        const isEventInactive = event.isActive === false;
-
-        return hasEventStarted || isEventInactive || isEventFinished || isEventCanceled;
+        return getIsEventEditDisabled(event, currentTime);
     }, [currentTime, event]);
 
     const onEditPressHandler = useCallback(() => {
@@ -270,8 +264,8 @@ export const useEventCard = ({
         async (qrCodeDataUrl: string | null) => {
             if (!eventDeepLink || !qrCodeDataUrl) {
                 toastService.showError(
-                    localization.t('common.errorHappened'),
-                    localization.t('event.shareQrCodeUnavailable'),
+                    localization.t('common.errorHappened', { locale: currentLocale }),
+                    localization.t('event.shareQrCodeUnavailable', { locale: currentLocale }),
                 );
                 return;
             }
@@ -283,20 +277,20 @@ export const useEventCard = ({
                     event.eventType === EventType.Parties
                         ? ''
                         : event.tastingType === TastingType.Blind
-                          ? localization.t('event.tastingTypeBlind')
-                          : localization.t('event.tastingTypeRegular');
+                          ? localization.t('event.tastingTypeBlind', { locale: currentLocale })
+                          : localization.t('event.tastingTypeRegular', { locale: currentLocale });
                 const labels = {
-                    title: localization.t('event.shareEventName'),
-                    dateTime: localization.t('event.shareEventDateTime'),
-                    meetingPlaceName: localization.t('event.shareEventMeetingPlaceName'),
-                    location: localization.t('event.shareEventLocation'),
-                    mapLink: localization.t('event.shareEventMap'),
-                    price: localization.t('event.price'),
-                    eventType: localization.t('event.eventType'),
-                    tastingType: localization.t('event.tastingType'),
+                    title: localization.t('event.shareEventName', { locale: currentLocale }),
+                    dateTime: localization.t('event.shareEventDateTime', { locale: currentLocale }),
+                    meetingPlaceName: localization.t('event.shareEventMeetingPlaceName', { locale: currentLocale }),
+                    location: localization.t('event.shareEventLocation', { locale: currentLocale }),
+                    mapLink: localization.t('event.shareEventMap', { locale: currentLocale }),
+                    price: localization.t('event.price', { locale: currentLocale }),
+                    eventType: localization.t('event.eventType', { locale: currentLocale }),
+                    tastingType: localization.t('event.tastingType', { locale: currentLocale }),
                 };
                 const message = prepareEventShareMessage({
-                    intro: localization.t('event.shareQrCodeMessage'),
+                    intro: localization.t('event.shareQrCodeMessage', { locale: currentLocale }),
                     labels,
                     title: event.theme,
                     dateTime: formattedDateTime,
@@ -308,7 +302,7 @@ export const useEventCard = ({
                     tastingType: tastingTypeLabel,
                     link: eventDeepLink,
                 });
-                const shareTitle = localization.t('event.shareQrCodeTitle');
+                const shareTitle = localization.t('event.shareQrCodeTitle', { locale: currentLocale });
 
                 await shareEventQrCode({
                     filename: `wine-event-${event.id}-qr.png`,
@@ -319,8 +313,8 @@ export const useEventCard = ({
             } catch (error) {
                 console.warn('useEventCard -> onSharePress: ', error);
                 toastService.showError(
-                    localization.t('common.errorHappened'),
-                    localization.t('common.somethingWentWrong'),
+                    localization.t('common.errorHappened', { locale: currentLocale }),
+                    localization.t('common.somethingWentWrong', { locale: currentLocale }),
                 );
             }
         },
@@ -336,6 +330,7 @@ export const useEventCard = ({
             eventDeepLink,
             eventTypeLabel,
             formattedDateTime,
+            currentLocale,
             priceLabel,
         ],
     );

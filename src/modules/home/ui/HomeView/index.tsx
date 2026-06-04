@@ -11,7 +11,7 @@ import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 
 export const HomeView = observer(() => {
-    const { colors, t } = useUiContext();
+    const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
         visibleSectionItems,
@@ -33,7 +33,7 @@ export const HomeView = observer(() => {
         onOpenPlacementConfig,
         onReorderPlacementSections,
         onSavePlacementSections,
-    } = useHomeView();
+    } = useHomeView(locale);
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getHomeSections} isLoading={isLoading}>
