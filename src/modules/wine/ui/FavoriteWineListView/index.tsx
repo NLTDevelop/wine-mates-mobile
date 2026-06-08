@@ -14,6 +14,8 @@ import { WineListItem } from '@/UIKit/WineListItem';
 import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
 import { useFavoriteWineListView } from '../../presenters/useFavoriteWineListView';
 import { useRoute, RouteProp } from '@react-navigation/native';
+import { WineShareModal } from '@/UIKit/WineShareModal';
+import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 
 type RootStackParamList = {
     FavoriteWineListView: {
@@ -33,6 +35,13 @@ export const FavoriteWineListView = observer(() => {
 
     const { wines, isLoading, isError, onWinePress, loadWines } = useFavoriteWineListView(listId);
     const { refreshControl } = useRefresh(loadWines);
+    const {
+        isShareModalVisible,
+        onOpenShareModal,
+        onCloseShareModal,
+        onShareMessengerPress,
+        onCopyWineLinkPress,
+    } = useWineShareModal();
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
 
@@ -45,9 +54,9 @@ export const FavoriteWineListView = observer(() => {
 
     const renderItem = useCallback(
         ({ item }: { item: IWineListItem }) => (
-            <WineListItem item={item} onPress={onWinePress} showDate footer={renderFooter(item)} />
+            <WineListItem item={item} onPress={onWinePress} onSharePress={onOpenShareModal} showDate footer={renderFooter(item)} />
         ),
-        [onWinePress, renderFooter],
+        [onWinePress, onOpenShareModal, renderFooter],
     );
     const renderSeparator = useCallback(() => <View style={styles.separator} />, [styles.separator]);
 
@@ -70,6 +79,12 @@ export const FavoriteWineListView = observer(() => {
                         contentContainerStyle={styles.containerStyle}
                     />
                 )}
+                <WineShareModal
+                    visible={isShareModalVisible}
+                    onClose={onCloseShareModal}
+                    onShareMessengerPress={onShareMessengerPress}
+                    onCopyLinkPress={onCopyWineLinkPress}
+                />
             </ScreenContainer>
         </WithErrorHandler>
     );

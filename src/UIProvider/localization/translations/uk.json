@@ -273,6 +273,10 @@
         "shareWineName": "Назва",
         "shareWineProducer": "Виробник",
         "shareWineGrapeVariety": "Сорт винограду",
+        "shareWineDescription": "Хочете порекомендувати це вино комусь?",
+        "shareWineMessenger": "Поділитися в месенджері",
+        "shareWineCopyLink": "Копіювати посилання",
+        "shareWineLinkCopied": "Посилання на вино скопійовано до буферу обміну",
         "customVintage": "Власний вінтаж",
         "expertScoreTitle": "Оцінка від експерта",
         "similarity": "Збіг по фото"

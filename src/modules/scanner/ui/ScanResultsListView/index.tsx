@@ -16,6 +16,8 @@ import { observer } from 'mobx-react-lite';
 import { WineListItem } from '@/UIKit/WineListItem';
 import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
+import { WineShareModal } from '@/UIKit/WineShareModal';
+import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 
 export const ScanResultsListView = observer(() => {
     const { colors, t } = useUiContext();
@@ -24,6 +26,13 @@ export const ScanResultsListView = observer(() => {
     const { data, isLoading, onRefresh, onItemPress, onAddWinePress } = useScannerResultsList();
     const { refreshControl } = useRefresh(onRefresh);
     const { onPressBack } = useScanResultsListBackButton();
+    const {
+        isShareModalVisible,
+        onOpenShareModal,
+        onCloseShareModal,
+        onShareMessengerPress,
+        onCopyWineLinkPress,
+    } = useWineShareModal();
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
 
@@ -35,8 +44,8 @@ export const ScanResultsListView = observer(() => {
     }, []);
 
     const renderItem = useCallback(({ item }: { item: IWineListItem }) => {
-        return <WineListItem item={item} onPress={onItemPress} showSimilarity footer={renderFooter(item)} />;
-    }, [onItemPress, renderFooter]);
+        return <WineListItem item={item} onPress={onItemPress} onSharePress={onOpenShareModal} showSimilarity footer={renderFooter(item)} />;
+    }, [onItemPress, onOpenShareModal, renderFooter]);
 
 
     return (
@@ -67,6 +76,12 @@ export const ScanResultsListView = observer(() => {
                 />
                 <Button text={t('scanner.addWine')} onPress={onAddWinePress} containerStyle={styles.button} />
             </View>
+            <WineShareModal
+                visible={isShareModalVisible}
+                onClose={onCloseShareModal}
+                onShareMessengerPress={onShareMessengerPress}
+                onCopyLinkPress={onCopyWineLinkPress}
+            />
         </ScreenContainer>
         // </WithErrorHandler>
     );

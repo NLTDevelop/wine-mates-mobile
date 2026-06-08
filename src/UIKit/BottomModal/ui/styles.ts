@@ -18,7 +18,6 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
             justifyContent: 'flex-end',
             paddingHorizontal: scaleHorizontal(16),
             paddingTop: scaleVertical(16),
-            minHeight: scaleVertical(56),
             position: 'relative',
         },
         titleContainer: {
@@ -44,7 +43,7 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
             color: colors.text,
         },
         contentContainer: {
-            padding: scaleHorizontal(16),
+            paddingHorizontal: scaleHorizontal(16),
             paddingBottom: bottomInset + scaleVertical(16),
         },
     });

@@ -13,6 +13,8 @@ import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 import { useChooseWineResults } from '../../presenters/useChooseWineResults';
 import { getStyles } from './styles';
 import { ResultsFilterButton } from './components/ResultsFilterButton';
+import { WineShareModal } from '@/UIKit/WineShareModal';
+import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 
 export const ChooseWineResultsView = observer(() => {
     const { colors, t } = useUiContext();
@@ -31,6 +33,13 @@ export const ChooseWineResultsView = observer(() => {
         onWinePress,
         onFilterPress,
     } = useChooseWineResults();
+    const {
+        isShareModalVisible,
+        onOpenShareModal,
+        onCloseShareModal,
+        onShareMessengerPress,
+        onCopyWineLinkPress,
+    } = useWineShareModal();
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => {
         return `${item.id}-${index}`;
@@ -41,13 +50,14 @@ export const ChooseWineResultsView = observer(() => {
             <WineListItem
                 item={item}
                 onPress={onWinePress}
+                onSharePress={onOpenShareModal}
                 showDate
                 showVintage
                 showNonVintage
                 showExpertRatingWithoutPremium
             />
         );
-    }, [onWinePress]);
+    }, [onOpenShareModal, onWinePress]);
 
     return (
         <ScreenContainer
@@ -84,6 +94,12 @@ export const ChooseWineResultsView = observer(() => {
                     />
                 }
                 showsVerticalScrollIndicator={false}
+            />
+            <WineShareModal
+                visible={isShareModalVisible}
+                onClose={onCloseShareModal}
+                onShareMessengerPress={onShareMessengerPress}
+                onCopyLinkPress={onCopyWineLinkPress}
             />
         </ScreenContainer>
     );

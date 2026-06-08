@@ -9,6 +9,7 @@ import { Button } from '@/UIKit/Button';
 import { RangeSlider } from '@/UIKit/RangeSlider';
 import { Checkbox } from '@/UIKit/Checkbox';
 import { UniversalPickerModal } from '@/UIKit/UniversalPickerModal';
+import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 import { UserIcon } from '@assets/icons/UserIcon';
 import { PeopleIcon } from '@assets/icons/PeopleIcon';
 import { useChooseWineFilters } from '../../presenters/useChooseWineFilters';
@@ -45,7 +46,7 @@ export const ChooseWineFiltersView = observer(() => {
         userRatingHintText,
         isLoverRating,
         constants,
-        tasteItems,
+        visibleTasteItems,
         applyTasteCharacteristics,
         onSelectMyselfMode,
         onSelectFriendMode,
@@ -212,7 +213,10 @@ export const ChooseWineFiltersView = observer(() => {
                         />
 
                         <TouchableOpacity onPress={onToggleTasteCharacteristics} style={styles.checkboxRow}>
-                            <Checkbox isChecked={applyTasteCharacteristics} onPress={onToggleTasteCharacteristics} />
+                            <Checkbox
+                                isChecked={applyTasteCharacteristics}
+                                onPress={onToggleTasteCharacteristics}
+                            />
                             <Typography
                                 variant="h6"
                                 text={t('chooseWine.applyTasteCharacteristics')}
@@ -221,7 +225,7 @@ export const ChooseWineFiltersView = observer(() => {
                         </TouchableOpacity>
 
                         <FlatList
-                            data={applyTasteCharacteristics ? tasteItems : []}
+                            data={visibleTasteItems}
                             keyExtractor={keyExtractor}
                             renderItem={renderTasteItem}
                             scrollEnabled={false}
@@ -234,17 +238,31 @@ export const ChooseWineFiltersView = observer(() => {
                 </View>
             )}
             {pickerState ? (
-                <UniversalPickerModal
-                    visible={!!pickerState}
-                    title={pickerState.title}
-                    options={pickerState.options}
-                    isLoading={pickerState.isLoading}
-                    selectionMode={pickerState.selectionMode}
-                    emptyText={t('common.nothingFoundTitle')}
-                    confirmText={t('common.choose')}
-                    onClose={onClosePicker}
-                    onConfirm={onConfirmPicker}
-                />
+                pickerState.modalType === 'bottom' ? (
+                    <UniversalPickerBottomModal
+                        visible={!!pickerState}
+                        title={pickerState.title}
+                        options={pickerState.options}
+                        isLoading={pickerState.isLoading}
+                        selectionMode={pickerState.selectionMode}
+                        emptyText={t('common.nothingFoundTitle')}
+                        confirmText={t('common.choose')}
+                        onClose={onClosePicker}
+                        onConfirm={onConfirmPicker}
+                    />
+                ) : (
+                    <UniversalPickerModal
+                        visible={!!pickerState}
+                        title={pickerState.title}
+                        options={pickerState.options}
+                        isLoading={pickerState.isLoading}
+                        selectionMode={pickerState.selectionMode}
+                        emptyText={t('common.nothingFoundTitle')}
+                        confirmText={t('common.choose')}
+                        onClose={onClosePicker}
+                        onConfirm={onConfirmPicker}
+                    />
+                )
             ) : null}
         </ScreenContainer>
     );

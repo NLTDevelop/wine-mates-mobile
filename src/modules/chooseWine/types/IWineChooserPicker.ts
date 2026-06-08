@@ -16,4 +16,5 @@ export interface IWineChooserPickerState {
     options: IUniversalPickerOption[];
     isLoading: boolean;
     selectionMode: 'single' | 'multiple';
+    modalType: 'fullScreen' | 'bottom';
 }

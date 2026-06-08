@@ -231,7 +231,9 @@ export const useChooseWineFilters = () => {
     const [tasteCharacteristics, setTasteCharacteristics] = useState<IWineTasteCharacteristic[]>([]);
     const [loadingPickerKey, setLoadingPickerKey] = useState<WineChooserPickerKey | null>(null);
     const [pickerState, setPickerState] = useState<IWineChooserPickerState | null>(null);
-    const [applyTasteCharacteristics, setApplyTasteCharacteristics] = useState(true);
+    const [applyTasteCharacteristics, setApplyTasteCharacteristics] = useState(false);
+    const isPremiumUser = userModel.user?.hasPremium || false;
+    const isTasteCharacteristicsLocked = !isPremiumUser;
 
     const selectedTypeId = filters.typeIds[0];
     const selectedColorId = filters.colorIds[0];
@@ -691,6 +693,7 @@ export const useChooseWineFilters = () => {
                 options: typeOptions,
                 isLoading: loadingPickerKey === key,
                 selectionMode: 'single',
+                modalType: 'bottom',
             };
         }
 
@@ -701,30 +704,31 @@ export const useChooseWineFilters = () => {
                 options: colorOptions,
                 isLoading: loadingPickerKey === key,
                 selectionMode: 'single',
+                modalType: 'bottom',
             };
         }
 
         if (key === 'country') {
-            return { key, title: localization.t('chooseWine.country'), options: countryOptions, isLoading: loadingPickerKey === key, selectionMode: 'single' };
+            return { key, title: localization.t('chooseWine.country'), options: countryOptions, isLoading: loadingPickerKey === key, selectionMode: 'single', modalType: 'fullScreen' };
         }
 
         if (key === 'region') {
-            return { key, title: localization.t('chooseWine.region'), options: regionOptions, isLoading: loadingPickerKey === key, selectionMode: 'single' };
+            return { key, title: localization.t('chooseWine.region'), options: regionOptions, isLoading: loadingPickerKey === key, selectionMode: 'single', modalType: 'fullScreen' };
         }
 
         if (key === 'vintage') {
-            return { key, title: localization.t('chooseWine.vintage'), options: vintageOptions, isLoading: loadingPickerKey === key, selectionMode: 'single' };
+            return { key, title: localization.t('chooseWine.vintage'), options: vintageOptions, isLoading: loadingPickerKey === key, selectionMode: 'single', modalType: 'fullScreen' };
         }
 
         if (key === 'grape') {
-            return { key, title: localization.t('chooseWine.grapeVariety'), options: grapeOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple' };
+            return { key, title: localization.t('chooseWine.grapeVariety'), options: grapeOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple', modalType: 'fullScreen' };
         }
 
         if (key === 'aroma') {
-            return { key, title: localization.t('chooseWine.aroma'), options: aromaOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple' };
+            return { key, title: localization.t('chooseWine.aroma'), options: aromaOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple', modalType: 'fullScreen' };
         }
 
-        return { key, title: localization.t('chooseWine.taste'), options: flavorOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple' };
+        return { key, title: localization.t('chooseWine.taste'), options: flavorOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple', modalType: 'fullScreen' };
     }, [
         aromaOptions,
         colorOptions,
@@ -892,18 +896,24 @@ export const useChooseWineFilters = () => {
                 minValue: 1,
                 maxValue,
                 labels: getTasteFilterLabels(levels, item.isTriple),
+                isLocked: isTasteCharacteristicsLocked,
                 onChange: createOnTasteRangeChange(item.id),
             };
         });
-    }, [createOnTasteRangeChange, filters.tasteFilters, tasteCharacteristics]);
+    }, [createOnTasteRangeChange, filters.tasteFilters, isTasteCharacteristicsLocked, tasteCharacteristics]);
+
+    const visibleTasteItems = useMemo(() => {
+        return applyTasteCharacteristics ? tasteItems : [];
+    }, [applyTasteCharacteristics, tasteItems]);
 
     const onApplyPress = useCallback(() => {
         setIsApplying(true);
-        const nextFilters = applyTasteCharacteristics ? filters : { ...filters, tasteFilters: [] };
+        const shouldApplyTasteFilters = applyTasteCharacteristics && !isTasteCharacteristicsLocked;
+        const nextFilters = shouldApplyTasteFilters ? filters : { ...filters, tasteFilters: [] };
         saveModeFilters(mode, nextFilters);
         navigation.navigate('ChooseWineResultsView', { mode });
         setIsApplying(false);
-    }, [applyTasteCharacteristics, filters, mode, navigation]);
+    }, [applyTasteCharacteristics, filters, isTasteCharacteristicsLocked, mode, navigation]);
 
     const isLoverRating = userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER;
 
@@ -945,7 +955,9 @@ export const useChooseWineFilters = () => {
             RATING_MAX,
         },
         tasteItems,
+        visibleTasteItems,
         applyTasteCharacteristics,
+        isTasteCharacteristicsLocked,
         onSelectMyselfMode,
         onSelectFriendMode,
         onSelectFemale,

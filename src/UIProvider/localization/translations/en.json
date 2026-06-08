@@ -269,6 +269,10 @@
         "shareWineName": "Name",
         "shareWineProducer": "Producer",
         "shareWineGrapeVariety": "Grape variety",
+        "shareWineDescription": "Want to recommend this wine to someone?",
+        "shareWineMessenger": "Share on messenger",
+        "shareWineCopyLink": "Copy link",
+        "shareWineLinkCopied": "Wine link copied to clipboard",
         "customVintage": "Custom vintage",
         "expertScoreTitle": "Expert Rate",
         "similarity": "Photo match"

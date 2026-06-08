@@ -15,5 +15,6 @@ export interface IChooseWineTasteFilterItem {
     minValue: number;
     maxValue: number;
     labels: IChooseWineTasteFilterLabel[];
+    isLocked: boolean;
     onChange: (minSortNumber: number, maxSortNumber: number) => void;
 }

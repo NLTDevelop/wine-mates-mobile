@@ -96,7 +96,7 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="PaymentsView" component={PaymentsView} />
             <Stack.Screen name="CreatePaymentView" component={CreatePaymentView} />
             <Stack.Screen name="ContactInfoView" component={ContactInfoView} />
-            <Stack.Screen name="ChooseWineFiltersView" component={ChooseWineFiltersView} />
+            <Stack.Screen name="ChooseWineFiltersView" component={ChooseWineFiltersView} options={{ gestureEnabled: false }}/>
             <Stack.Screen name="ChooseWineResultsView" component={ChooseWineResultsView} />
         </Stack.Navigator>
     );

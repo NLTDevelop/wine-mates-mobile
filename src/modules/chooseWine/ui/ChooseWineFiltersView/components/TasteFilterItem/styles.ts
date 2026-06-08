@@ -6,9 +6,19 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             marginBottom: scaleVertical(16),
+            position: 'relative',
+        },
+        lockedContainer: {
+            opacity: 0.6,
+        },
+        titleRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
         },
         title: {
             color: colors.text,
+            flex: 1,
         },
         description: {
             color: colors.text_light,
@@ -32,6 +42,11 @@ export const getStyles = (colors: IColors) => {
         },
         rightLabelText: {
             textAlign: 'right',
+        },
+        lockIconContainer: {
+            ...StyleSheet.absoluteFill,
+            alignItems: 'center',
+            justifyContent: 'center',
         },
     });
 

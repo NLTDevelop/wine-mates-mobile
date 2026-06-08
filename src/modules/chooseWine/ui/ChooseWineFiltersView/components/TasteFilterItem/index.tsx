@@ -4,6 +4,7 @@ import { Typography } from '@/UIKit/Typography';
 import { RangeSlider } from '@/UIKit/RangeSlider';
 import { useUiContext } from '@/UIProvider';
 import { IChooseWineTasteFilterItem } from '@/modules/chooseWine/types/IChooseWineTasteFilterItem';
+import { LockIcon } from '@assets/icons/LockIcon';
 import { getStyles } from './styles';
 
 interface IProps {
@@ -15,22 +16,26 @@ export const TasteFilterItem = ({ item }: IProps) => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
-        <View style={styles.container}>
-            <Typography variant="h6" text={item.title} style={styles.title} />
+        <View style={[styles.container, item.isLocked ? styles.lockedContainer : undefined]}>
+            <View style={styles.titleRow}>
+                <Typography variant="h6" text={item.title} style={styles.title} />
+            </View>
             <Typography variant="subtitle_12_400" text={item.description} style={styles.description} />
-            <RangeSlider
-                min={item.minValue}
-                max={item.maxValue}
-                minValue={item.minSortNumber}
-                maxValue={item.maxSortNumber}
-                onChange={item.onChange}
-                step={1}
-                activeColor={item.colorHex}
-                inactiveColor={item.inactiveColor}
-                showValueLabels={false}
-                showTrackDividers
-                containerStyle={styles.slider}
-            />
+            <View pointerEvents={item.isLocked ? 'none' : 'auto'}>
+                <RangeSlider
+                    min={item.minValue}
+                    max={item.maxValue}
+                    minValue={item.minSortNumber}
+                    maxValue={item.maxSortNumber}
+                    onChange={item.onChange}
+                    step={1}
+                    activeColor={item.colorHex}
+                    inactiveColor={item.inactiveColor}
+                    showValueLabels={false}
+                    showTrackDividers
+                    containerStyle={styles.slider}
+                />
+            </View>
             <View style={styles.labelsRow}>
                 {item.labels.map(label => (
                     <Typography
@@ -45,6 +50,11 @@ export const TasteFilterItem = ({ item }: IProps) => {
                     />
                 ))}
             </View>
+            {item.isLocked ? (
+                <View pointerEvents="none" style={styles.lockIconContainer}>
+                    <LockIcon />
+                </View>
+            ) : null}
         </View>
     );
 };
