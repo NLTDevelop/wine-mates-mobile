@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Keyboard, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Flag from 'react-native-round-flags';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -16,14 +16,19 @@ interface IProps {
 export const LanguageSelector = ({ value, onChange }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { modalRef, selectedLanguage, isOpened, onOpen, onClose, onSelect } = useLanguageSelector({
-        value,
-        onChange,
-    });
+    const { modalRef, selectedLanguage, isMounted, isOpened, onOpen, onClose, onDismiss, onSelect } =
+        useLanguageSelector({
+            value,
+            onChange,
+        });
 
     const renderFlag = () => {
         if (!selectedLanguage) {
             return null;
+        }
+
+        if (selectedLanguage.countryCode === 'BY') {
+            return <Typography variant="h6" text="🇧🇾" />;
         }
 
         try {
@@ -35,7 +40,7 @@ export const LanguageSelector = ({ value, onChange }: IProps) => {
 
     return (
         <>
-            <TouchableOpacity style={styles.container} onPress={onOpen} onPressIn={Keyboard.dismiss}>
+            <TouchableOpacity style={styles.container} onPress={onOpen}>
                 <View style={styles.leftContent}>
                     {renderFlag()}
                     <Typography
@@ -45,12 +50,21 @@ export const LanguageSelector = ({ value, onChange }: IProps) => {
                     />
                 </View>
                 <View style={styles.rightContent}>
-                    {selectedLanguage ? <Typography variant="h6" text={selectedLanguage.code} style={styles.code} /> : null}
+                    {selectedLanguage ? (
+                        <Typography variant="h6" text={selectedLanguage.code} style={styles.code} />
+                    ) : null}
                     <ArrowDownIcon rotate={isOpened ? 180 : 0} />
                 </View>
             </TouchableOpacity>
 
-            <LanguagePickerBottomSheet modalRef={modalRef} onSelect={onSelect} onClose={onClose} />
+            {isMounted && (
+                <LanguagePickerBottomSheet
+                    modalRef={modalRef}
+                    onSelect={onSelect}
+                    onClose={onClose}
+                    onDismiss={onDismiss}
+                />
+            )}
         </>
     );
 };

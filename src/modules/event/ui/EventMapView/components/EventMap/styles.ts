@@ -8,7 +8,8 @@ export const getStyles = (_colors: IColors) => {
             height: scaleVertical(474),
             borderRadius: 12,
             overflow: 'hidden',
-        }
+        },
     });
+
     return styles;
 };

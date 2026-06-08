@@ -1,16 +1,34 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { EventType } from '@/entities/events/enums/EventType';
+import { TastingType } from '@/entities/events/enums/TastingType';
 import { localization } from '@/UIProvider/localization/Localization';
 import { config } from '@/config';
+import { userModel } from '@/entities/users/UserModel';
+import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
+import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
+import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
+import { toastService } from '@/libs/toast/toastService';
+import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
+import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
+import { prepareEventShareMessage } from '@/modules/event/utils/prepareEventShareMessage';
+import { createMapLink } from '@/modules/event/utils/createMapLink';
+import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
+import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
+import { useEventQrCodeShare } from '@/modules/event/presenters/useEventQrCodeShare';
+import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
+import { getIsEventEditDisabled } from '@/modules/event/utils/getIsEventEditDisabled';
 
 interface IUseEventCardProps {
     event: IEvent;
+    appliedEventStatus?: string | null;
     onReadMorePress?: (eventId: number) => void;
     onFavoritePress?: (eventId: number) => void;
+    onEditPress?: (eventId: number) => void;
+    onCardPress?: (eventId: number) => void;
+    locale?: string;
 }
 
-const NAVIGATION_DEBOUNCE_MS = 260;
 const STATIC_MAP_SIZE = '720x320';
 const STATIC_MAP_ZOOM = 14;
 const STATIC_MAP_LIGHT_STYLE_PARAMS = [
@@ -22,148 +40,185 @@ const STATIC_MAP_LIGHT_STYLE_PARAMS = [
     'style=feature:poi|element:geometry|color:0xeeeeee',
     'style=feature:landscape|element:geometry|color:0xf5f5f5',
 ];
+const EMPTY_FIELD = '-';
 
 export const useEventCard = ({
     event,
+    appliedEventStatus = null,
     onReadMorePress,
-    onFavoritePress
+    onFavoritePress,
+    onEditPress,
+    onCardPress,
+    locale,
 }: IUseEventCardProps) => {
-    const currentLocale = localization.locale || 'en';
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const currentLocale = locale || localization.locale || 'en';
+    const [currentTime] = useState(() => new Date());
     const [isCardPressed, setIsCardPressed] = useState(false);
-    const navigationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    useEffect(() => {
-        return () => {
-            if (navigationTimeoutRef.current) {
-                clearTimeout(navigationTimeoutRef.current);
-            }
-        };
-    }, []);
+    const startDateValue = useMemo(() => {
+        const startDateTime = convertUtcEventDateTimeToLocal(
+            event.eventStartDate || event.eventDate || '',
+            event.eventStartTime || event.eventTime || '',
+        );
 
-    const scheduleNavigation = useCallback(() => {
-        if (navigationTimeoutRef.current) {
-            clearTimeout(navigationTimeoutRef.current);
-        }
+        return startDateTime.date;
+    }, [event.eventDate, event.eventStartDate, event.eventStartTime, event.eventTime]);
 
-        navigationTimeoutRef.current = setTimeout(() => {
-            onReadMorePress?.(event.id);
-            navigationTimeoutRef.current = null;
-        }, NAVIGATION_DEBOUNCE_MS);
-    }, [event.id, onReadMorePress]);
+    const endDateValue = useMemo(() => {
+        const endDateTime = convertUtcEventDateTimeToLocal(
+            event.eventEndDate || event.eventDate || '',
+            event.eventEndTime || '',
+        );
 
-    const navigateImmediately = useCallback(() => {
-        onReadMorePress?.(event.id);
-    }, [event.id, onReadMorePress]);
+        return endDateTime.date;
+    }, [event.eventDate, event.eventEndDate, event.eventEndTime]);
 
-    const parsedDate = useMemo(() => {
-        if (!event.eventDate) {
+    const startTimeValue = useMemo(() => {
+        const startDateTime = convertUtcEventDateTimeToLocal(
+            event.eventStartDate || event.eventDate || '',
+            event.eventStartTime || event.eventTime || '',
+        );
+
+        return startDateTime.time;
+    }, [event.eventDate, event.eventStartDate, event.eventStartTime, event.eventTime]);
+
+    const endTimeValue = useMemo(() => {
+        const endDateTime = convertUtcEventDateTimeToLocal(
+            event.eventEndDate || event.eventDate || '',
+            event.eventEndTime || '',
+        );
+
+        return endDateTime.time;
+    }, [event.eventDate, event.eventEndDate, event.eventEndTime]);
+
+    const parsedStartDate = useMemo(() => {
+        if (!startDateValue) {
             return null;
         }
 
-        const date = new Date(event.eventDate);
+        const date = new Date(`${startDateValue}T00:00:00`);
         if (Number.isNaN(date.getTime())) {
             return null;
         }
 
         return date;
-    }, [event.eventDate]);
+    }, [startDateValue]);
+
+    const parsedEndDate = useMemo(() => {
+        if (!endDateValue) {
+            return null;
+        }
+
+        const date = new Date(`${endDateValue}T00:00:00`);
+        if (Number.isNaN(date.getTime())) {
+            return null;
+        }
+
+        return date;
+    }, [endDateValue]);
 
     const month = useMemo(() => {
-        if (!parsedDate) {
-            return '';
+        if (!parsedStartDate) {
+            return EMPTY_FIELD;
         }
 
         return new Intl.DateTimeFormat(currentLocale, { month: 'short' })
-            .format(parsedDate)
+            .format(parsedStartDate)
             .replace('.', '')
             .toUpperCase();
-    }, [currentLocale, parsedDate]);
+    }, [currentLocale, parsedStartDate]);
 
     const day = useMemo(() => {
-        if (!parsedDate) {
+        if (!parsedStartDate) {
+            return EMPTY_FIELD;
+        }
+
+        return new Intl.DateTimeFormat(currentLocale, { day: 'numeric' }).format(parsedStartDate);
+    }, [currentLocale, parsedStartDate]);
+
+    const formattedDateTime = useMemo(() => {
+        if (!parsedStartDate) {
+            return startTimeValue || EMPTY_FIELD;
+        }
+
+        return prepareEventDateTimeLabel({
+            date: parsedStartDate,
+            time: startTimeValue,
+            endDate: parsedEndDate,
+            endTime: endTimeValue,
+            locale: currentLocale,
+        });
+    }, [currentLocale, endTimeValue, parsedEndDate, parsedStartDate, startTimeValue]);
+
+    const priceLabel = useMemo(() => {
+        return formatEventPrice(event.price, event.currency);
+    }, [event.currency, event.price]);
+
+    const eventTypeLabel = useMemo(() => {
+        if (!event.eventType) {
+            return EMPTY_FIELD;
+        }
+
+        return event.eventType === EventType.Parties
+            ? localization.t('event.parties', { locale: currentLocale })
+            : localization.t('event.tastings', { locale: currentLocale });
+    }, [currentLocale, event.eventType]);
+
+    const isAllSpotsFull = useMemo(() => {
+        return typeof event.seats?.left === 'number' && event.seats.left <= 0;
+    }, [event.seats]);
+
+    const eventStatusLabel = useMemo(() => {
+        if (!('status' in event) || !event.status) {
             return '';
         }
 
-        return new Intl.DateTimeFormat(currentLocale, { day: 'numeric' }).format(parsedDate);
-    }, [currentLocale, parsedDate]);
-
-    const formattedDateTime = useMemo(() => {
-        if (!parsedDate) {
-            return event.eventTime || '';
+        if (event.status === SavedEventStatus.FINISHED) {
+            return localization.t('event.finished', { locale: currentLocale });
         }
 
-        const dateLabel = new Intl.DateTimeFormat(currentLocale, {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-        })
-            .format(parsedDate)
-            .replace('.', '');
-
-        if (!event.eventTime) {
-            return dateLabel;
+        if (event.status === SavedEventStatus.CANCELED) {
+            return localization.t('event.cancelled', { locale: currentLocale });
         }
 
-        const [hoursPart, minutesPart] = event.eventTime.split(':');
-        const hours = Number(hoursPart);
-        const minutes = Number(minutesPart);
-        if (Number.isNaN(hours) || Number.isNaN(minutes)) {
-            return `${dateLabel} · ${event.eventTime}`;
+        return String(event.status);
+    }, [currentLocale, event]);
+
+    const appliedEventStatusLabel = useMemo(() => {
+        if (!appliedEventStatus) {
+            return '';
         }
 
-        const dateWithTime = new Date(parsedDate);
-        dateWithTime.setHours(hours, minutes, 0, 0);
-
-        const timeLabel = new Intl.DateTimeFormat(currentLocale, {
-            hour: 'numeric',
-            minute: '2-digit',
-        }).format(dateWithTime);
-
-        return `${dateLabel} · ${timeLabel}`;
-    }, [currentLocale, event.eventTime, parsedDate]);
-
-    const priceLabel = useMemo(() => {
-        if (event.currency) {
-            try {
-                return new Intl.NumberFormat(currentLocale, {
-                    style: 'currency',
-                    currency: event.currency,
-                    maximumFractionDigits: 0,
-                }).format(event.price || 0);
-            } catch {
-                return `${event.currency} ${event.price}`;
-            }
+        if (appliedEventStatus === AppliedEventStatus.ACCEPTED) {
+            return localization.t('event.confirmed', { locale: currentLocale });
         }
 
-        return `${event.price}`;
-    }, [currentLocale, event.currency, event.price]);
+        if (appliedEventStatus === AppliedEventStatus.PENDING) {
+            return localization.t('event.pending', { locale: currentLocale });
+        }
 
-    const eventTypeLabel = event.eventType === EventType.Parties
-        ? localization.t('event.parties')
-        : localization.t('event.tastings');
+        if (appliedEventStatus === AppliedEventStatus.REJECTED) {
+            return localization.t('event.rejected', { locale: currentLocale });
+        }
+
+        if (appliedEventStatus === SavedEventStatus.CANCELED) {
+            return localization.t('event.cancelled', { locale: currentLocale });
+        }
+
+        return String(appliedEventStatus);
+    }, [appliedEventStatus, currentLocale]);
 
     const isPartyEvent = useMemo(() => {
         return event.eventType === EventType.Parties;
     }, [event.eventType]);
 
-    const onCardPress = useCallback(() => {
-        setIsModalVisible(true);
-    }, []);
+    const participantsPreviewData = useMemo(() => {
+        return prepareEventParticipantsPreview(event.participants, currentLocale);
+    }, [currentLocale, event.participants]);
 
-    const onBookingPress = useCallback(() => {
-        if (isModalVisible) {
-            setIsModalVisible(false);
-            scheduleNavigation();
-            return;
-        }
-
-        navigateImmediately();
-    }, [isModalVisible, navigateImmediately, scheduleNavigation]);
-
-    const onCloseModal = useCallback(() => {
-        setIsModalVisible(false);
-    }, []);
+    const onCardPressHandler = useCallback(() => {
+        onCardPress?.(event.id);
+    }, [event.id, onCardPress]);
 
     const onPressIn = useCallback(() => {
         setIsCardPressed(true);
@@ -177,22 +232,120 @@ export const useEventCard = ({
         onFavoritePress?.(event.id);
     }, [event.id, onFavoritePress]);
 
-    const onReadMorePressHandler = useCallback(() => {
-        if (isModalVisible) {
-            setIsModalVisible(false);
-            scheduleNavigation();
+    const isOwner = useMemo(() => {
+        if (!event.ownerId || !userModel.user?.id) {
+            return false;
+        }
+
+        return event.ownerId === userModel.user.id;
+    }, [event.ownerId]);
+
+    const isEditDisabled = useMemo(() => {
+        return getIsEventEditDisabled(event, currentTime);
+    }, [currentTime, event]);
+
+    const onEditPressHandler = useCallback(() => {
+        if (isEditDisabled) {
             return;
         }
 
-        navigateImmediately();
-    }, [isModalVisible, navigateImmediately, scheduleNavigation]);
+        onEditPress?.(event.id);
+    }, [event.id, isEditDisabled, onEditPress]);
 
-    const onReadMoreFromModalContent = useCallback(() => {
-        setIsModalVisible(false);
-        scheduleNavigation();
-    }, [scheduleNavigation]);
+    const onReadMorePressHandler = useCallback(() => {
+        onReadMorePress?.(event.id);
+    }, [event.id, onReadMorePress]);
+
+    const eventDeepLink = useMemo(() => {
+        return createEventDeepLink(event.id);
+    }, [event.id]);
+
+    const onSharePress = useCallback(
+        async (qrCodeDataUrl: string | null) => {
+            if (!eventDeepLink || !qrCodeDataUrl) {
+                toastService.showError(
+                    localization.t('common.errorHappened', { locale: currentLocale }),
+                    localization.t('event.shareQrCodeUnavailable', { locale: currentLocale }),
+                );
+                return;
+            }
+
+            try {
+                const location = event.locationLabel || '';
+                const mapLink = createMapLink(event.latitude, event.longitude);
+                const tastingTypeLabel =
+                    event.eventType === EventType.Parties
+                        ? ''
+                        : event.tastingType === TastingType.Blind
+                          ? localization.t('event.tastingTypeBlind', { locale: currentLocale })
+                          : localization.t('event.tastingTypeRegular', { locale: currentLocale });
+                const labels = {
+                    title: localization.t('event.shareEventName', { locale: currentLocale }),
+                    dateTime: localization.t('event.shareEventDateTime', { locale: currentLocale }),
+                    meetingPlaceName: localization.t('event.shareEventMeetingPlaceName', { locale: currentLocale }),
+                    location: localization.t('event.shareEventLocation', { locale: currentLocale }),
+                    mapLink: localization.t('event.shareEventMap', { locale: currentLocale }),
+                    price: localization.t('event.price', { locale: currentLocale }),
+                    eventType: localization.t('event.eventType', { locale: currentLocale }),
+                    tastingType: localization.t('event.tastingType', { locale: currentLocale }),
+                };
+                const message = prepareEventShareMessage({
+                    intro: localization.t('event.shareQrCodeMessage', { locale: currentLocale }),
+                    labels,
+                    title: event.theme,
+                    dateTime: formattedDateTime,
+                    meetingPlaceName: event.restaurantName,
+                    location,
+                    mapLink,
+                    price: priceLabel,
+                    eventType: eventTypeLabel,
+                    tastingType: tastingTypeLabel,
+                    link: eventDeepLink,
+                });
+                const shareTitle = localization.t('event.shareQrCodeTitle', { locale: currentLocale });
+
+                await shareEventQrCode({
+                    filename: `wine-event-${event.id}-qr.png`,
+                    message,
+                    qrCodeImageUrl: qrCodeDataUrl,
+                    title: shareTitle,
+                });
+            } catch (error) {
+                console.warn('useEventCard -> onSharePress: ', error);
+                toastService.showError(
+                    localization.t('common.errorHappened', { locale: currentLocale }),
+                    localization.t('common.somethingWentWrong', { locale: currentLocale }),
+                );
+            }
+        },
+        [
+            event.eventType,
+            event.id,
+            event.latitude,
+            event.locationLabel,
+            event.longitude,
+            event.restaurantName,
+            event.tastingType,
+            event.theme,
+            eventDeepLink,
+            eventTypeLabel,
+            formattedDateTime,
+            currentLocale,
+            priceLabel,
+        ],
+    );
+
+    const { onQrCodeRef, onShareQrCodePress } = useEventQrCodeShare({ onShareQrPress: onSharePress });
+
+    const hasMapPreview = useMemo(() => {
+        return Number.isFinite(event.latitude) && Number.isFinite(event.longitude);
+    }, [event.latitude, event.longitude]);
 
     const mapPreviewUri = useMemo(() => {
+        if (!hasMapPreview) {
+            return '';
+        }
+
         const params = [
             `center=${event.latitude},${event.longitude}`,
             `zoom=${STATIC_MAP_ZOOM}`,
@@ -207,7 +360,7 @@ export const useEventCard = ({
         }
 
         return `https://maps.googleapis.com/maps/api/staticmap?${params.join('&')}`;
-    }, [event.latitude, event.longitude]);
+    }, [event.latitude, event.longitude, hasMapPreview]);
 
     return {
         month,
@@ -215,17 +368,24 @@ export const useEventCard = ({
         formattedDateTime,
         priceLabel,
         eventTypeLabel,
+        isAllSpotsFull,
+        eventStatusLabel,
+        appliedEventStatusLabel,
         isPartyEvent,
-        isModalVisible,
         isCardPressed,
-        onCardPress,
+        onCardPress: onCardPressHandler,
         onPressIn,
         onPressOut,
-        onBookingPress,
-        onCloseModal,
         onReadMorePress: onReadMorePressHandler,
-        onReadMoreFromModalContent,
+        onQrCodeRef,
+        onShareIconPress: onShareQrCodePress,
+        eventDeepLink,
         onFavoritePress: onFavoritePressHandler,
+        onEditPress: onEditPressHandler,
+        isEditDisabled,
+        isOwner,
+        hasMapPreview,
         mapPreviewUri,
+        participantsPreviewData,
     };
 };

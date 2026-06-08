@@ -1,6 +1,8 @@
 import { useCallback, useDeferredValue, useMemo, useState, type SetStateAction } from 'react';
-import { WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
+import { Dimensions } from 'react-native';
 import { useLocalizedLanguageOptions } from '../../../presenters/useLocalizedLanguageOptions';
+
+const windowHeight = Dimensions.get('window').height;
 
 export const useLanguagePickerModal = () => {
     const [search, setSearch] = useState('');
@@ -25,7 +27,7 @@ export const useLanguagePickerModal = () => {
         setSearch(value);
     }, []);
 
-    const snapPoints = useMemo(() => [WINDOW_HEIGHT], []);
+    const snapPoints = useMemo(() => [windowHeight], []);
 
     return {
         search,

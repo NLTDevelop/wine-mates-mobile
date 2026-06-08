@@ -5,6 +5,10 @@ import { declOfWord } from '@/utils';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { createWineDeepLink } from '@/navigation/rootNavigator/linking';
+import { prepareWineShareMessage } from '@/modules/wine/utils/prepareWineShareMessage';
+import { shareWine } from '@/modules/wine/utils/shareWine';
+import { toastService } from '@/libs/toast/toastService';
 
 interface IProps {
     item: IWineListItem | IWineDetails;
@@ -18,6 +22,16 @@ const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListIt
     return 'similarity' in item || 'myReview' in item || 'lastReview' in item || 'lastRate' in item
 };
 const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails => 'currentVintage' in item;
+
+const getWineTitle = (item: IWineListItem | IWineDetails) => {
+    const parts = [item.producer, item.name, item.vintage ? `${item.vintage}` : null].filter(Boolean);
+
+    if (parts.length) {
+        return parts.join(' ');
+    }
+
+    return `Wine #${item.id}`;
+};
 
 export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: IProps) => {
     const { t } = useUiContext();
@@ -97,6 +111,7 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
     const hasPremium = useMemo(() => userModel.user?.hasPremium ?? false, []);
 
     const userId = useMemo(() => userModel.user?.id ?? null, []);
+    const currentUserWineExperienceLevel = userModel.user?.wineExperienceLevel;
 
     const shouldReviewShow = useMemo(() => {
         if (!isWineListItem(item)) return false;
@@ -122,8 +137,8 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
     }, [shouldReviewShow, expertRating]);
 
     const isCurrentUserLover = useMemo(() => {
-        return userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER;
-    }, [userModel.user?.wineExperienceLevel]);
+        return currentUserWineExperienceLevel === WineExperienceLevelEnum.LOVER;
+    }, [currentUserWineExperienceLevel]);
 
     const showExpertReviewCount = useMemo(() => {
         if (!isMyWine) {
@@ -141,6 +156,52 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
         return !isCurrentUserLover;
     }, [isCurrentUserLover, isMyWine]);
 
+    const expertReviewLabel = useMemo(() => {
+        if (isMyWine && !isCurrentUserLover) {
+            return t('wine.myReview');
+        }
+
+        return t('wine.expertReview');
+    }, [isCurrentUserLover, isMyWine, t]);
+
+    const wineDeepLink = useMemo(() => {
+        return createWineDeepLink(item.id);
+    }, [item.id]);
+    const wineImageUrl = item.image?.originalUrl || item.defaultImage?.originalUrl || null;
+
+    const onSharePress = useCallback(async () => {
+        try {
+            const message = prepareWineShareMessage({
+                intro: t('wine.shareWineIntro'),
+                labels: {
+                    title: t('wine.shareWineName'),
+                    producer: t('wine.shareWineProducer'),
+                    grapeVariety: t('wine.shareWineGrapeVariety'),
+                    country: t('wine.country'),
+                    region: t('wine.region'),
+                    type: t('wine.typeOfWine'),
+                },
+                title: getWineTitle(item),
+                producer: item.producer,
+                grapeVariety: item.grapeVariety,
+                country: item.country?.name,
+                region: item.region?.name,
+                type: item.type?.name,
+                link: wineDeepLink,
+            });
+
+            await shareWine({
+                filename: `wine-${item.id}`,
+                imageUrl: wineImageUrl,
+                message,
+                title: t('wine.shareWineTitle'),
+            });
+        } catch (error) {
+            console.warn('useWineListItem -> onSharePress: ', error);
+            toastService.showError(t('common.errorHappened'), t('common.somethingWentWrong'));
+        }
+    }, [item, t, wineDeepLink, wineImageUrl]);
+
     return {
         onItemPress,
         similarityText,
@@ -157,6 +218,8 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
         expertRating,
         showMedal,
         showUserReviewCount,
-        showExpertReviewCount
+        showExpertReviewCount,
+        expertReviewLabel,
+        onSharePress,
     };
 };

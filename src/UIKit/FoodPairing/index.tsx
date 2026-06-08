@@ -10,19 +10,40 @@ import { userModel } from '@/entities/users/UserModel';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
 import { ISnack } from '@/entities/snacks/types/ISnack';
 import { LockContainer } from '@/UIKit/LockContainer';
+import { WineSnackCuisineSelectButton } from '@/UIKit/WineSnackCuisineSelectButton';
 
 interface IProps {
     setLimits?: Dispatch<SetStateAction<IRateContext | null>>;
     hideGenerateButton?: boolean;
     generatedSnacks?: ISnack[];
     isLocked?: boolean;
+    onGenerateSuccess?: () => void | Promise<void>;
+    snacks?: ISnack[] | null;
+    isGenerating?: boolean;
+    onGeneratePress?: () => void;
+    cuisineSelectButtonText?: string;
+    onCuisineSelectPress?: () => void;
 }
 
-export const FoodPairing = ({ setLimits, hideGenerateButton = false, generatedSnacks, isLocked = false }: IProps) => {
+export const FoodPairing = ({
+    setLimits,
+    hideGenerateButton = false,
+    generatedSnacks,
+    isLocked = false,
+    onGenerateSuccess,
+    snacks: controlledSnacks,
+    isGenerating: controlledIsGenerating,
+    onGeneratePress: controlledOnGeneratePress,
+    cuisineSelectButtonText,
+    onCuisineSelectPress,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors, isLocked), [colors, isLocked]);
 
-    const { snacks, isGenerating, onGeneratePress } = useFoodPairing(setLimits, generatedSnacks);
+    const foodPairing = useFoodPairing(setLimits, generatedSnacks, onGenerateSuccess);
+    const snacks = controlledSnacks !== undefined ? controlledSnacks : foodPairing.snacks;
+    const isGenerating = controlledIsGenerating ?? foodPairing.isGenerating;
+    const onGeneratePress = controlledOnGeneratePress ?? foodPairing.onGeneratePress;
     const hasSnacks = !!snacks && snacks.length > 0;
 
     return (
@@ -42,8 +63,15 @@ export const FoodPairing = ({ setLimits, hideGenerateButton = false, generatedSn
                     />
                 )}
             </View>
+            {cuisineSelectButtonText && onCuisineSelectPress ? (
+                <WineSnackCuisineSelectButton
+                    text={cuisineSelectButtonText}
+                    onPress={onCuisineSelectPress}
+                    containerStyle={styles.cuisineSelectButton}
+                />
+            ) : null}
             <View style={styles.card}>
-                {(hasSnacks && !isLocked) ? (
+                {hasSnacks && !isLocked ? (
                     snacks.map(snack => (
                         <View key={snack.label} style={styles.item}>
                             <Typography variant="h6" text={snack.label} />

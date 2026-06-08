@@ -11,9 +11,9 @@ import { ProfileListButton } from '../components/ProfileListButton';
 import { observer } from 'mobx-react-lite';
 
 export const ProfileView = observer(() => {
-    const { colors, t } = useUiContext();
+    const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { BUTTONS } = useProfile();
+    const { BUTTONS } = useProfile(locale);
 
     return (
         <ScreenContainer edges={['top', 'bottom']} withGradient>

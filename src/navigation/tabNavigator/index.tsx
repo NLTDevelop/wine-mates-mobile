@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useCallback } from 'react';
 import { useUiContext } from '../../UIProvider';
 import { useIsUserAuthorized } from '@/hooks/useIsUserAuthorized';
 import { TabBarIcon } from './components/TabBarIcon';
@@ -14,12 +15,19 @@ import { ProfileStack } from '../profileStackNavigator';
 import { EventStack } from '../eventStackNavigator';
 import { FeedStack } from '../feedStackNavigator';
 import { CustomTabBar } from './components/CustomTabBar';
+import { useNotifications } from '@/libs/notificationService/useNotifications';
 
 const Tab = createBottomTabNavigator();
 
 export const TabNavigator = observer(() => {
     const { colors, t } = useUiContext();
+    
+    useNotifications();
     useIsUserAuthorized();
+
+    const renderTabBar = useCallback((props: any) => {
+        return <CustomTabBar {...props} />;
+    }, []);
 
     return (
         <Tab.Navigator
@@ -27,7 +35,7 @@ export const TabNavigator = observer(() => {
             screenOptions={{
                 headerShown: false,
             }}
-            tabBar={props => <CustomTabBar {...props} />}
+            tabBar={renderTabBar}
             detachInactiveScreens={false}
         >
             <Tab.Screen

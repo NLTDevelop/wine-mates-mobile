@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: 'com.google.gms.google-services'
 import java.util.Properties
 
 /**
@@ -94,8 +95,8 @@ android {
         applicationId "com.winemates"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 79
-        versionName "1.6.3"
+        versionCode 101
+        versionName "1.7.5"
         manifestPlaceholders = [GOOGLE_MAPS_API_KEY: googleMapsApiKey]
 
         externalNativeBuild {

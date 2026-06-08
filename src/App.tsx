@@ -31,12 +31,12 @@ const ThemedApp = () => {
             <SafeAreaProvider style={{ flex: 1, backgroundColor: colors.background }}>
                 <BottomSheetModalProvider>
                     <RootNavigator />
-                    <ToastOverlay />
                     <StatusBar
                         translucent
                         barStyle={theme === 'light' ? 'dark-content' : 'dark-content'}
                     />
                 </BottomSheetModalProvider>
+                <ToastOverlay />
             </SafeAreaProvider>
         </KeyboardProvider>
     );

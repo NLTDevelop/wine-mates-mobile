@@ -13,7 +13,7 @@ export const getStyles = (colors: IColors) => {
         },
         card: {
             width: '100%',
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             borderRadius: 12,
             backgroundColor: colors.background,
@@ -44,6 +44,16 @@ export const getStyles = (colors: IColors) => {
         iconContainer: {
             marginTop: scaleVertical(16),
             alignItems: 'center',
+        },
+        qrCodeContainer: {
+            marginTop: scaleVertical(16),
+            alignItems: 'center',
+            padding: scaleHorizontal(12),
+            borderWidth: scaleHorizontal(1),
+            borderColor: colors.border,
+            borderRadius: 12,
+            alignSelf: 'center',
+            backgroundColor: colors.background,
         },
         checkButton: {
             marginTop: scaleVertical(16),

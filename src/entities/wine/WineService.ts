@@ -23,6 +23,7 @@ import { IAIData } from './types/IAIData';
 import { IWineTasteGroup } from './types/IWineTatseGroup';
 import { ITasteProfile } from './types/ITasteProfile';
 import { IRecommendationWineListParams } from './params/IRecommendationWineListParams';
+import { IWineSetSearchItem } from './types/IWineSetSearchItem';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -55,6 +56,35 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getById: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getEventDetails = async (id: number, params: { eventId: number }): Promise<IResponse<IWineDetails>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineEventDetails}/${id}/event-details`,
+                params,
+            });
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getEventDetails: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    searchWineSet = async (params: { query: string; limit: number; offset: number }): Promise<IResponse<IList<IWineSetSearchItem>>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineSetSearch}`,
+                params,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> searchWineSet: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
@@ -256,7 +286,7 @@ class WineService {
         }
     };
 
-    addToRate = async (data: AddRateDto): Promise<IResponse<{}>> => {
+    addToRate = async (data: Partial<AddRateDto>): Promise<IResponse<{}>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -294,6 +324,31 @@ class WineService {
         }
     };
 
+    getEventReviewsList = async (
+        params: { wineId: number; eventId: number; offset: number; limit: number },
+    ): Promise<IResponse<IList<IWineReviewsListItem>>>  => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.eventRates}`,
+                params,
+            });
+
+            if (!response.isError) {
+                if (params.offset === 0) {
+                    wineReviewsListModel.list = response.data;
+                } else {
+                    wineReviewsListModel.append(response.data);
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getEventReviewsList: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
     generateNote = async (data: GenerateNoteDto): Promise<IResponse<{note: string}>> => {
         try {
             const response = await this._requester.request({
@@ -305,6 +360,21 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> generateNote: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    generateBlindNote = async (data: GenerateNoteDto): Promise<IResponse<{note: string}>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.generateBlindNote}`,
+                data,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> generateBlindNote: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

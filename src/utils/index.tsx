@@ -111,11 +111,7 @@ export const getContrastColor = (hexColor: string) => {
     return brightness > 128 ? colorTheme.colors.text : colorTheme.colors.text_inverted;
 };
 
-export const colorOpacity = (
-    hex: string,
-    opacityPercent: number
-): string => {
-
+export const colorOpacity = (hex: string, opacityPercent: number): string => {
     let cleanHex = hex.replace('#', '');
 
     if (cleanHex.length === 3) {
@@ -136,7 +132,12 @@ export const colorOpacity = (
     const alpha = Math.min(100, Math.max(0, opacityPercent)) / 100;
 
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
+};
+
+export const setUppercaseFirstLetter = (str?: string): string => {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
 
 export const formatEventDate = (date: string): { month: string; day: string } => {
     if (!date) {
@@ -150,9 +151,9 @@ export const formatEventDate = (date: string): { month: string; day: string } =>
         const day = dateObj.getDate().toString();
 
         return { month, day };
-    } catch (error) {
+    } catch {
         return { month: 'DEC', day: '16' };
     }
 };
 
-
+export const QR_CODE_SHARE_SIZE: number = 256;

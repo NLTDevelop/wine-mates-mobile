@@ -1,5 +1,6 @@
 import { featuresModel } from '@/entities/features/FeaturesModel';
 import { userModel } from '@/entities/users/UserModel';
+import { notificationService } from '@/libs/notificationService/NotificationService';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -13,6 +14,9 @@ export const useIsUserAuthorized = () => {
         try {
             userModel.clear();
             featuresModel.clear();
+            notificationService.stopForegroundSubscription();
+            notificationService.removeAllDeliveredNotifications();
+            await notificationService.deleteToken();
 
             await GoogleSignin.signOut().catch(() => {});
         } finally {

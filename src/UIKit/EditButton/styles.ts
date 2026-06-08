@@ -1,0 +1,23 @@
+import { StyleSheet } from 'react-native';
+import { IColors } from '@/UIProvider/theme/IColors';
+import { scaleVertical } from '@/utils';
+
+const DEFAULT_BUTTON_SIZE = scaleVertical(40);
+
+export const getStyles = (colors: IColors, size?: number, disabled = false) => {
+    const buttonSize = scaleVertical(size) || DEFAULT_BUTTON_SIZE;
+
+    const styles = StyleSheet.create({
+        favoriteButton: {
+            width: buttonSize,
+            height: buttonSize,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: buttonSize,
+            borderWidth: scaleVertical(1),
+            borderColor: disabled ? colors.background_disabled : colors.primary,
+            backgroundColor: disabled ? colors.background_middle : colors.background,
+        },
+    });
+    return styles;
+};

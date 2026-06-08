@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
+import { QR_CODE_SHARE_SIZE, scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -9,7 +9,14 @@ export const getStyles = (colors: IColors) => {
         },
         metaRow: {
             flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             gap: scaleHorizontal(8),
+        },
+        metaBadgesRow: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(8),
+            flexShrink: 1,
         },
         metaBadge: {
             flexDirection: 'row',
@@ -22,6 +29,17 @@ export const getStyles = (colors: IColors) => {
         },
         metaText: {
             color: colors.text,
+        },
+        shareButton: {
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        hiddenQrCodeContainer: {
+            position: 'absolute',
+            width: scaleHorizontal(QR_CODE_SHARE_SIZE),
+            height: scaleHorizontal(QR_CODE_SHARE_SIZE),
+            opacity: 0,
+            overflow: 'hidden',
         },
         header: {
             flexDirection: 'row',

@@ -17,7 +17,7 @@ const MyWineSearchBarComponent = ({ onSearch, scrollToTop }: IProps) => {
         search, 
         onSearchChange, 
         onFilterPress, 
-        filtersModalRef, 
+        isFiltersModalVisible,
         onCloseFilters, 
         hasFilters, 
         onClearFilters,
@@ -42,18 +42,20 @@ const MyWineSearchBarComponent = ({ onSearch, scrollToTop }: IProps) => {
                 />
                 <FilterTags tags={filterTags} onRemoveTag={onRemoveTag} />
             </View>
-            <MyWineFiltersBottomSheet 
-                modalRef={filtersModalRef} 
-                onClose={onCloseFilters} 
-                hasFilters={hasFilters}
-                onClear={onClearFilters}
-                filters={filters}
-                selectedFilters={selectedFilters}
-                onSortChange={onSortChange}
-                onColorsChange={onColorsChange}
-                onTypesChange={onTypesChange}
-                onApply={onApplyFilters}
-            />
+            {isFiltersModalVisible && (
+                <MyWineFiltersBottomSheet
+                    isVisible={isFiltersModalVisible}
+                    onClose={onCloseFilters}
+                    hasFilters={hasFilters}
+                    onClear={onClearFilters}
+                    filters={filters}
+                    selectedFilters={selectedFilters}
+                    onSortChange={onSortChange}
+                    onColorsChange={onColorsChange}
+                    onTypesChange={onTypesChange}
+                    onApply={onApplyFilters}
+                />
+            )}
         </>
     );
 };

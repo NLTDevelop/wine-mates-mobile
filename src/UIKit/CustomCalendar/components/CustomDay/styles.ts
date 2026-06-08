@@ -6,7 +6,7 @@ import { ICustomDayStyleDetails } from './types';
 export const getStyles = (colors: IColors, styleDetails: ICustomDayStyleDetails) => {
     const isMiddle = styleDetails.isSelected && !styleDetails.isRangeStart && !styleDetails.isRangeEnd;
     const backgroundColor =
-        styleDetails.isRangeStart || styleDetails.isRangeEnd ? colors.primary : isMiddle ? colors.card : 'transparent';
+        styleDetails.isRangeStart || styleDetails.isRangeEnd ? colors.primary : isMiddle ? colors.primary_secondary : 'transparent';
 
     const styles = StyleSheet.create({
         wrapper: {
@@ -36,7 +36,9 @@ export const getStyles = (colors: IColors, styleDetails: ICustomDayStyleDetails)
             borderBottomRightRadius: styleDetails.isRangeEnd ? 8 : 0,
         },
         text: {
-            color: styleDetails.isSelected
+            color: isMiddle
+                ? colors.text
+                : styleDetails.isSelected
                 ? colors.text_inverted
                 : styleDetails.isToday
                 ? colors.primary

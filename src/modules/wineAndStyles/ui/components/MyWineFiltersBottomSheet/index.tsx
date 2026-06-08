@@ -1,24 +1,17 @@
-import { useCallback, useMemo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
-import {
-    BottomSheetModal,
-    BottomSheetBackdrop,
-    BottomSheetBackdropProps,
-    BottomSheetScrollView,
-    SCREEN_HEIGHT,
-} from '@gorhom/bottom-sheet';
+import { useMemo } from 'react';
+import { ScrollView, View, TouchableOpacity } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { getStyles } from './styles';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IWineFilters } from '@/entities/wine/types/IWineFilters';
 import { Button } from '@/UIKit/Button';
 import { observer } from 'mobx-react-lite';
 import { FiltersContent } from '../FiltersContent';
+import { BottomModal } from '@/UIKit/BottomModal/ui';
 
 interface IProps {
-    modalRef: React.RefObject<BottomSheetModal | null>;
+    isVisible: boolean;
     onClose: () => void;
     hasFilters: boolean;
     onClear: () => void;
@@ -30,29 +23,13 @@ interface IProps {
     onApply: () => void;
 }
 
-export const MyWineFiltersBottomSheet = observer(({ modalRef, onClose, hasFilters, onClear, filters, selectedFilters, onSortChange, onColorsChange, onTypesChange, onApply }: IProps) => {
+export const MyWineFiltersBottomSheet = observer(({ isVisible, onClose, hasFilters, onClear, filters, selectedFilters, onSortChange, onColorsChange, onTypesChange, onApply }: IProps) => {
     const { colors, t } = useUiContext();
-    const { top, bottom } = useSafeAreaInsets();
-    const styles = useMemo(() => getStyles(colors, bottom, top), [colors, bottom, top]);
-
-    const maxContentSize = useMemo(() => SCREEN_HEIGHT * 2 - top, [top]);
-
-    const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => (
-        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
-    ), []);
+    const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
-        <BottomSheetModal
-            ref={modalRef}
-            topInset={top}
-            enablePanDownToClose
-            enableDynamicSizing
-            maxDynamicContentSize={maxContentSize}
-            backdropComponent={renderBackdrop}
-            backgroundStyle={styles.bottomSheetContainer}
-            onDismiss={onClose}
-        >
-            <BottomSheetScrollView contentContainerStyle={styles.scrollContent}>
+        <BottomModal visible={isVisible} onClose={onClose} customHeader={<View />}>
+            <View style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={onClose} hitSlop={20} style={styles.headerAction}>
                         <CrossIcon />
@@ -66,17 +43,19 @@ export const MyWineFiltersBottomSheet = observer(({ modalRef, onClose, hasFilter
                         />
                     </TouchableOpacity>
                 </View>
-                <FiltersContent
-                    filters={filters}
-                    selectedFilters={selectedFilters}
-                    onSortChange={onSortChange}
-                    onColorsChange={onColorsChange}
-                    onTypesChange={onTypesChange}
-                />
+                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                    <FiltersContent
+                        filters={filters}
+                        selectedFilters={selectedFilters}
+                        onSortChange={onSortChange}
+                        onColorsChange={onColorsChange}
+                        onTypesChange={onTypesChange}
+                    />
+                </ScrollView>
                 <View style={styles.buttonContainer}>
                     <Button type='main' onPress={onApply} text={t('common.showResults')} />
                 </View>
-            </BottomSheetScrollView>
-        </BottomSheetModal>
+            </View>
+        </BottomModal>
     );
 });

@@ -6,6 +6,7 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useState } from 'react';
+import { clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
 
 export const useResultHeader = (item: IWineDetails, fromScanner?: boolean) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -13,6 +14,7 @@ export const useResultHeader = (item: IWineDetails, fromScanner?: boolean) => {
 
     const onPress = useCallback(async () => {
         try {
+            clearWineSnackCuisinesCache();
             const isNewVintage = item.currentVintage === null;
 
             if (isNewVintage) {
@@ -117,7 +119,7 @@ export const useResultHeader = (item: IWineDetails, fromScanner?: boolean) => {
             };
             wineModel.customVintage = null;
             const source = fromScanner ? 'scanner' : 'wineDetails';
-            navigation.navigate('WineLookView', { source, wineId: item.id });
+            navigation.navigate('WineReviewView', { source, wineId: item.id });
         } catch (error) {
             setIsCreating(false);
             console.error('Create wine for new vintage error:', error);

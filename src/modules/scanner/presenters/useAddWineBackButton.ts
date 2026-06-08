@@ -1,7 +1,9 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { CommonActions, StackActions, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { useCallback } from 'react';
+import { BackHandler } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CommonActions } from '@react-navigation/native';
 import { wineModel } from '@/entities/wine/WineModel';
+import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 
 export const useAddWineBackButton = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -9,8 +11,23 @@ export const useAddWineBackButton = () => {
     const params = route.params as { hasResults?: boolean } | undefined;
     const hasResults = params?.hasResults ?? false;
 
-    const onPressBack = () => {
+    const onPressBack = useCallback(() => {
+        const addWineSetScannerState = wineSetScannerModel.state;
+
         wineModel.clear();
+
+        if (addWineSetScannerState) {
+            wineSetScannerModel.clear();
+            navigation.dispatch(
+                StackActions.popTo('AddWineSetView', {
+                    draft: addWineSetScannerState.draft,
+                    initialSelectedWines: addWineSetScannerState.selectedWines,
+                    editEventId: addWineSetScannerState.editEventId,
+                    isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
+                }),
+            );
+            return;
+        }
 
         if (hasResults) {
             navigation.goBack();
@@ -30,7 +47,22 @@ export const useAddWineBackButton = () => {
                 }),
             );
         }
-    };
+    }, [hasResults, navigation]);
+
+    useFocusEffect(
+        useCallback(() => {
+            const onHardwareBackPress = () => {
+                onPressBack();
+                return true;
+            };
+
+            const subscription = BackHandler.addEventListener('hardwareBackPress', onHardwareBackPress);
+
+            return () => {
+                subscription.remove();
+            };
+        }, [onPressBack]),
+    );
 
     return { onPressBack };
 };

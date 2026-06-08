@@ -138,6 +138,7 @@ A `components` folder inside a component is allowed **only in UIKit**.
 **Required:**
 - render functions must be declared inside the component
 - render functions should be used only when really necessary
+- render functions inside components must be arrow functions memoized with `useCallback`
 
 **Allowed:**
 - `renderItem`
@@ -149,6 +150,8 @@ A `components` folder inside a component is allowed **only in UIKit**.
 - moving render functions to a presenter
 - creating a separate hook only for a render function
 - using render functions as a regular UI decomposition pattern
+- declaring render functions as `function renderItem(...)`
+- declaring render functions as non-memoized arrows, for example `const renderItem = (...) => ...`
 
 **Principle:**
 - if regular JSX can be used, regular JSX must be used
@@ -574,6 +577,10 @@ export const getStyles = (colors: IColors) => {
 - `map`, `filter`, `reduce` for data preparation inside UI component
 - `useCallback` inside UI component
 - `useMemo` inside UI component for anything except style creation through `getStyles`
+
+**Exception:**
+- `useCallback` is allowed inside UI component only for render callbacks required by library APIs
+- `useCallback` is allowed for `keyExtractor` because `keyExtractor` must stay inside the component
 
 ---
 

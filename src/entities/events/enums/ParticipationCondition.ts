@@ -6,3 +6,12 @@ export enum ParticipationCondition {
     Host = 'host',
     Guest = 'guest',
 }
+
+export const PARTICIPATION_CONDITIONS = [
+    ParticipationCondition.FixedPrice,
+    ParticipationCondition.SplitBill,
+    ParticipationCondition.Free,
+    ParticipationCondition.Charity,
+    ParticipationCondition.Host,
+    ParticipationCondition.Guest,
+] as const;

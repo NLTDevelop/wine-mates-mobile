@@ -1,47 +1,107 @@
-import { useMemo } from 'react';
-import { ActivityIndicator, FlatList, ListRenderItem, ScrollView, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { ActivityIndicator, FlatList, ListRenderItem, RefreshControl, ScrollView, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 import { Button } from '@/UIKit/Button';
 import { FavoriteButton } from '@/UIKit/FavoriteButton';
-import { BottomModal } from '@/UIKit/BottomModal/ui';
+import { EditButton } from '@/UIKit/EditButton';
 import { IWineSetItem } from '@/entities/events/types/IWineSetItem';
+import { IEventContactOption } from '@/modules/event/ui/EventDetailsView/types/IEventContactOption';
 import { WineSetItem } from '../WineSetItem';
+import { EventContactItem } from '../EventContactItem';
 import { EventDetailsPreview } from '../EventDetailsPreview';
+import { EventPaymentMethodsModal } from '../EventPaymentMethodsModal';
+import { EventSelectedPaymentMethodModal } from '../EventSelectedPaymentMethodModal';
 import { getStyles } from './styles';
 import { useEventDetailsTab } from './presenters/useEventDetailsTab';
+import { IEventDetail } from '@/entities/events/types/IEvent';
 
 interface IProps {
-    eventId: number;
+    eventDetail: IEventDetail | null;
+    setEventDetail: React.Dispatch<React.SetStateAction<IEventDetail | null>>;
+    isError: boolean;
+    isLoading: boolean;
+    isRefreshing: boolean;
+    onRefresh: () => void;
 }
 
-export const EventDetailsTab = ({ eventId }: IProps) => {
+export const EventDetailsTab = ({
+    eventDetail,
+    setEventDetail,
+    isError,
+    isLoading,
+    isRefreshing,
+    onRefresh,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
-        isLoading,
-        isError,
-        eventDetail,
         detailsData,
         wineSetItems,
+        contactItems,
         cardPreviewData,
-        isBookingModalVisible,
         onBookNowPress,
-        onCloseModal,
+        onCancelEventPress,
         onFavoritePress,
-        onCallToReservePress,
-    } = useEventDetailsTab({ eventId });
+        onEditPress,
+        onDuplicatePress,
+        onToggleTastingPress,
+        isOwner,
+        isBookNowDisabled,
+        isEditEventDisabled,
+        isCancelEventDisabled,
+        isBookNowInProgress,
+        isEventApplied,
+        isBlindTasting,
+        isWineSetItemPressEnabled,
+        isWineSetStatusVisible,
+        isTastingToggleVisible,
+        isTastingToggleDisabled,
+        tastingToggleButtonText,
+        isPaymentMethodsModalVisible,
+        paymentMethodOptions,
+        isPaymentMethodNextDisabled,
+        onClosePaymentMethodsModal,
+        onNextPaymentMethodPress,
+        isSelectedPaymentMethodModalVisible,
+        selectedPaymentMethod,
+        onCloseSelectedPaymentMethodModal,
+    } = useEventDetailsTab({ eventDetail, setEventDetail });
+    const currentEventId = eventDetail?.id ?? 0;
 
-    const keyExtractor = (item: IWineSetItem) => `${item.id}`;
+    const keyExtractor = useCallback((item: IWineSetItem) => `${item.id}`, []);
 
-    const renderWineSetItem: ListRenderItem<IWineSetItem> = function renderWineSetItem({ item }) {
-        return <WineSetItem item={item} />;
-    };
+    const renderWineSetItem: ListRenderItem<IWineSetItem> = useCallback(
+        ({ item, index }) => {
+            return (
+                <WineSetItem
+                    eventId={currentEventId}
+                    item={item}
+                    isBlindTasting={isBlindTasting && !isOwner}
+                    wineOrder={index + 1}
+                    isOwner={isOwner}
+                    isPressEnabled={isWineSetItemPressEnabled}
+                    isStatusVisible={isWineSetStatusVisible}
+                />
+            );
+        },
+        [currentEventId, isBlindTasting, isOwner, isWineSetItemPressEnabled, isWineSetStatusVisible],
+    );
 
-    const renderWineSetItemSeparator = function renderWineSetItemSeparator() {
+    const renderWineSetItemSeparator = useCallback(() => {
         return <View style={styles.wineSetItemSeparator} />;
-    };
+    }, [styles.wineSetItemSeparator]);
+
+    const contactKeyExtractor = useCallback((item: IEventContactOption) => `${item.id}`, []);
+
+    const renderContactItem: ListRenderItem<IEventContactOption> = useCallback(({ item }) => {
+        return <EventContactItem item={item} />;
+    }, []);
+
+    const renderContactItemSeparator = useCallback(() => {
+        return <View style={styles.contactItemSeparator} />;
+    }, [styles.contactItemSeparator]);
 
     if (isLoading) {
         return (
@@ -61,18 +121,28 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
 
     return (
         <View style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-                {cardPreviewData && <EventDetailsPreview data={cardPreviewData} />}
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.contentContainer}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isRefreshing}
+                        onRefresh={onRefresh}
+                        tintColor={colors.primary}
+                        colors={[colors.primary]}
+                    />
+                }
+            >
+                {cardPreviewData && <EventDetailsPreview data={cardPreviewData} eventId={eventDetail.id} />}
 
                 <View style={styles.card}>
-                    {detailsData.map(item => (
-                        <View key={item.key} style={styles.row}>
-                            <View style={styles.labelContainer}>
+                    {detailsData.map((item, index) => (
+                        <View key={item.key}>
+                            <View>
                                 <Typography text={`${item.label}:`} variant="h6" style={styles.label} />
-                            </View>
-                            <View style={styles.valueContainer}>
                                 <Typography text={item.value} variant="h6" style={styles.value} />
                             </View>
+                            {index < detailsData.length - 1 && <View style={styles.rowDivider} />}
                         </View>
                     ))}
                 </View>
@@ -88,27 +158,86 @@ export const EventDetailsTab = ({ eventId }: IProps) => {
                         />
                     </View>
                 )}
-            </ScrollView>
 
-            <View style={styles.footer}>
-                <Button
-                    type="main"
-                    containerStyle={styles.bookNowButton}
-                    text={t('eventDetails.bookNow')}
-                    onPress={onBookNowPress}
-                />
-                <FavoriteButton onPress={onFavoritePress} size={52} />
-            </View>
+                {contactItems.length > 0 && (
+                    <View style={styles.contactsSection}>
+                        <Typography text={t('contactInfo.contacts')} variant="h5" style={styles.contactsTitle} />
+                        <FlatList
+                            data={contactItems}
+                            keyExtractor={contactKeyExtractor}
+                            renderItem={renderContactItem}
+                            scrollEnabled={false}
+                            ItemSeparatorComponent={renderContactItemSeparator}
+                        />
+                    </View>
+                )}
 
-            <BottomModal
-                visible={isBookingModalVisible}
-                onClose={onCloseModal}
-                title={t('eventDetails.contactForBooking')}
-            >
-                <View>
-                    <Button type="main" text={t('eventDetails.callToReserve')} onPress={onCallToReservePress} />
+                <View style={styles.footer}>
+                    {isOwner ? (
+                        <>
+                            {isTastingToggleVisible && (
+                                <Button
+                                    type="secondary"
+                                    containerStyle={styles.bookNowButton}
+                                    text={tastingToggleButtonText}
+                                    onPress={onToggleTastingPress}
+                                    disabled={isTastingToggleDisabled}
+                                    inProgress={isBookNowInProgress}
+                                />
+                            )}
+                            <View style={styles.footerRow}>
+                                <Button
+                                    type="secondary"
+                                    containerStyle={styles.bookNowButton}
+                                    text={t('eventDetails.duplicate')}
+                                    onPress={onDuplicatePress}
+                                />
+                                <EditButton onPress={onEditPress} size={48} disabled={isEditEventDisabled} />
+                            </View>
+                            <Button
+                                type="main"
+                                containerStyle={styles.bookNowButton}
+                                text={t('eventDetails.cancel')}
+                                onPress={onCancelEventPress}
+                                disabled={isCancelEventDisabled}
+                                inProgress={isBookNowInProgress}
+                            />
+                        </>
+                    ) : (
+                        <View style={styles.footerRow}>
+                            <Button
+                                type="main"
+                                containerStyle={styles.bookNowButton}
+                                text={isEventApplied ? t('eventDetails.booked') : t('eventDetails.bookNow')}
+                                onPress={onBookNowPress}
+                                disabled={isBookNowDisabled || isBookNowInProgress}
+                                inProgress={isBookNowInProgress}
+                            />
+                            <FavoriteButton
+                                onPress={onFavoritePress}
+                                size={48}
+                                isSaved={Boolean(eventDetail.isSaved)}
+                            />
+                        </View>
+                    )}
                 </View>
-            </BottomModal>
+            </ScrollView>
+            {isPaymentMethodsModalVisible && (
+                <EventPaymentMethodsModal
+                    visible={isPaymentMethodsModalVisible}
+                    options={paymentMethodOptions}
+                    isNextDisabled={isPaymentMethodNextDisabled}
+                    onClose={onClosePaymentMethodsModal}
+                    onNextPress={onNextPaymentMethodPress}
+                />
+            )}
+            {isSelectedPaymentMethodModalVisible && (
+                <EventSelectedPaymentMethodModal
+                    visible={isSelectedPaymentMethodModalVisible}
+                    paymentMethod={selectedPaymentMethod}
+                    onClose={onCloseSelectedPaymentMethodModal}
+                />
+            )}
         </View>
     );
 };

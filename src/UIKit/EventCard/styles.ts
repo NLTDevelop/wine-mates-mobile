@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
+import { QR_CODE_SHARE_SIZE, scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             backgroundColor: colors.background,
-            borderRadius: scaleHorizontal(20),
+            borderRadius: scaleHorizontal(12),
             padding: scaleHorizontal(16),
             gap: scaleVertical(12),
             borderWidth: scaleHorizontal(1),
@@ -26,7 +26,19 @@ export const getStyles = (colors: IColors) => {
         },
         metaRow: {
             flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             gap: scaleHorizontal(8),
+        },
+        metaBadgesRow: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(8),
+            flexShrink: 1,
+        },
+        statusRow: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(8),
+            flexWrap: 'wrap',
         },
         metaBadge: {
             flexDirection: 'row',
@@ -37,8 +49,57 @@ export const getStyles = (colors: IColors) => {
             gap: scaleHorizontal(6),
             backgroundColor: colors.background_middle
         },
+        eventStatusFinished: {
+            paddingHorizontal: scaleHorizontal(8),
+            paddingVertical: scaleVertical(6),
+            backgroundColor: colors.finishStatus,
+            borderRadius: scaleHorizontal(6),
+            justifyContent: 'center',
+        },
+        eventStatusCanceled: {
+            paddingHorizontal: scaleHorizontal(8),
+            paddingVertical: scaleVertical(6),
+            backgroundColor: colors.text_light,
+            borderRadius: scaleHorizontal(6),
+            justifyContent: 'center',
+        },
+        appliedStatusContainer: {
+            borderRadius: scaleHorizontal(6),
+            paddingHorizontal: scaleHorizontal(8),
+            paddingVertical: scaleVertical(6),
+            justifyContent: 'center',
+        },
+        appliedEventStatusCanceled: {
+            backgroundColor: colors.background_grey,
+        },
+        appliedEventStatusRejected:{
+            backgroundColor: colors.error,
+        },
+        appliedEventStatusPending:{
+            backgroundColor:colors.stars,
+        },
+        appliedEventStatusConfirmed:{
+            backgroundColor: colors.success,
+        },
         metaText: {
             color: colors.text,
+        },
+        fullSpotsText: {
+            color: colors.primary,
+        },
+        shareButton: {
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        hiddenQrCodeContainer: {
+            position: 'absolute',
+            width: scaleHorizontal(QR_CODE_SHARE_SIZE),
+            height: scaleHorizontal(QR_CODE_SHARE_SIZE),
+            opacity: 0,
+            overflow: 'hidden',
+        },
+        statusText: {
+            color: colors.background,
         },
         headerContent: {
             gap: scaleVertical(2),
@@ -49,7 +110,7 @@ export const getStyles = (colors: IColors) => {
         },
         timeText: {
             color: colors.text_light,
-            fontSize: scaleFontSize(16),
+            maxWidth: scaleHorizontal(255)
         },
         descriptionText: {
             color: colors.text_light,

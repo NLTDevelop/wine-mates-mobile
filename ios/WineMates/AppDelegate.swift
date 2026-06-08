@@ -4,6 +4,7 @@ import React_RCTAppDelegate
 import ReactAppDependencyProvider
 import GoogleSignIn
 import GoogleMaps
+import FirebaseCore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -11,11 +12,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   var reactNativeDelegate: ReactNativeDelegate?
   var reactNativeFactory: RCTReactNativeFactory?
+  var pendingUniversalLinkUrl: URL?
 
   func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
+    if FirebaseApp.app() == nil {
+      FirebaseApp.configure()
+    }
+
     let environmentApiKey = ProcessInfo.processInfo.environment["GOOGLE_MAPS_API_KEY"] ?? ""
     let plistApiKey = Bundle.main.object(forInfoDictionaryKey: "GMSApiKey") as? String ?? ""
     let googleMapsApiKey = environmentApiKey.isEmpty ? plistApiKey : environmentApiKey
@@ -51,13 +57,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       return true
     }
 
-    // Apple Sign-In не требует отдельного SDK-обработчика — просто возвращаем true
-    if url.scheme?.starts(with: Bundle.main.bundleIdentifier ?? "") == true {
-      return true
+    return RCTLinkingManager.application(app, open: url, options: options)
+  }
+
+  func application(
+    _ application: UIApplication,
+    continue userActivity: NSUserActivity,
+    restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+  ) -> Bool {
+    if userActivity.activityType == NSUserActivityTypeBrowsingWeb {
+      pendingUniversalLinkUrl = userActivity.webpageURL
     }
 
-    // На всякий случай возвращаем true для любых собственных URL
-    return true
+    return RCTLinkingManager.application(
+      application,
+      continue: userActivity,
+      restorationHandler: restorationHandler
+    )
+  }
+
+  func applicationDidBecomeActive(_ application: UIApplication) {
+    guard let url = pendingUniversalLinkUrl else {
+      return
+    }
+
+    pendingUniversalLinkUrl = nil
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+      RCTLinkingManager.application(application, open: url, options: [:])
+    }
   }
 }
 

@@ -39,6 +39,7 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
                 />}
                 removeCardStyles
                 showExpertRatingWithoutPremium={false}
+                hideDate
             />
         </View>
     );

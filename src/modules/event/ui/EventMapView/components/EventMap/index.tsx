@@ -1,12 +1,13 @@
-import { memo, useMemo } from 'react';
+import { ComponentType, memo, useEffect, useMemo, useRef } from 'react';
 import { View } from 'react-native';
-import { Region, MapPressEvent, Marker } from 'react-native-maps';
+import RNMapView, { Region, MapPressEvent, Marker, MapMarkerProps } from 'react-native-maps';
 import { MapView } from '@/UIKit/MapView';
 import { MapMarker } from '@/UIKit/MapMarker';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { IEventMapPin } from '@/entities/events/types/IEventMapPin';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
+import { SearchLocationMarkerIcon } from '@assets/icons/SearchLocationMarkerIcon';
 
 interface IEventMapProps {
     mapPins: IEventMapPin[];
@@ -14,15 +15,15 @@ interface IEventMapProps {
     initialRegion: Region;
     onMarkerPress: (markerId: number) => void;
     onMapPress: (event: MapPressEvent) => void;
-    onRegionChangeComplete: (region: Region) => void;
     userLocation?: IUserLocation | null;
     searchLocation?: IUserLocation | null;
 }
 
-const HIDDEN_PIN_COORDINATE = {
-    latitude: -85,
-    longitude: 0,
+type ClusterMarkerProps = MapMarkerProps & {
+    cluster?: boolean;
 };
+
+const ClusterMarker = Marker as ComponentType<ClusterMarkerProps>;
 
 export const EventMap = memo(
     ({
@@ -31,53 +32,72 @@ export const EventMap = memo(
         initialRegion,
         onMarkerPress,
         onMapPress,
-        onRegionChangeComplete,
         userLocation,
         searchLocation,
     }: IEventMapProps) => {
+        const mapRef = useRef<RNMapView | null>(null);
+        const isFirstRegionSyncRef = useRef(true);
         const { colors } = useUiContext();
         const styles = useMemo(() => getStyles(colors), [colors]);
         const isTastingsTab = selectedTab === 'tastings';
         const isPartiesTab = selectedTab === 'parties';
 
-        const isPinVisible = (pin: IEventMapPin) => {
-            return selectedTab === 'all'
-                || (isTastingsTab && pin.eventType === 'tastings')
-                || (isPartiesTab && pin.eventType === 'parties');
-        };
+        const visibleMapPins = useMemo(() => {
+            return mapPins.filter((pin) => {
+                return selectedTab === 'all'
+                    || (isTastingsTab && pin.eventType === 'tastings')
+                    || (isPartiesTab && pin.eventType === 'parties');
+            });
+        }, [isPartiesTab, isTastingsTab, mapPins, selectedTab]);
+        useEffect(() => {
+            if (isFirstRegionSyncRef.current) {
+                isFirstRegionSyncRef.current = false;
+                return;
+            }
+
+            mapRef.current?.animateToRegion(initialRegion, 250);
+        }, [initialRegion]);
 
         return (
             <View style={styles.mapContainer}>
                 <MapView
+                    ref={mapRef}
                     initialRegion={initialRegion}
                     showsUserLocation={!!userLocation}
                     showsMyLocationButton={!!userLocation}
                     userInterfaceStyle="light"
                     onPress={onMapPress}
-                    onRegionChangeComplete={onRegionChangeComplete}
                     clusteringEnabled
                     clusterColor={colors.primary}
                     clusterTextColor={colors.background}
+                    clusterRadius={28}
                 >
                     {searchLocation && (
-                        <Marker
+                        <ClusterMarker
                             key="search-location-marker"
+                            identifier="search-location-marker"
                             coordinate={{
                                 latitude: searchLocation.latitude,
                                 longitude: searchLocation.longitude,
                             }}
                             cluster={false}
-                            pinColor="#1A73E8"
-                        />
+                            tappable={false}
+                            tracksViewChanges={false}
+                            zIndex={1}
+                            anchor={{ x: 0.5, y: 0.5 }}
+                            centerOffset={{ x: 0, y: 0 }}
+                        >
+                            <SearchLocationMarkerIcon color={colors.primary} borderColor={colors.background} />
+                        </ClusterMarker>
                     )}
-                    {mapPins.map(pin => (
+                    {visibleMapPins.map(pin => (
                         <MapMarker
                             key={pin.id}
-                            coordinate={isPinVisible(pin) ? { latitude: pin.latitude, longitude: pin.longitude } : HIDDEN_PIN_COORDINATE}
+                            coordinate={{ latitude: pin.latitude, longitude: pin.longitude }}
                             eventId={pin.id}
                             eventType={pin.eventType}
-                            markerProps={{ opacity: isPinVisible(pin) ? 1 : 0 }}
-                            onPress={isPinVisible(pin) ? onMarkerPress : undefined}
+                            markerProps={{ zIndex: 2 }}
+                            onPress={onMarkerPress}
                         />
                     ))}
                 </MapView>

@@ -13,6 +13,7 @@ interface IProps {
     selectedVintage: number | null;
     isAllVintagesSelected: boolean;
     onVintageChange: (item: IDropdownItem) => void;
+    locale: string;
 }
 
 export const useVintageDropdown = ({
@@ -21,6 +22,7 @@ export const useVintageDropdown = ({
     selectedVintage,
     isAllVintagesSelected,
     onVintageChange,
+    locale,
 }: IProps) => {
     const dropdownRef = useRef<any>(null);
     const isVintageObject = (item: IVintagesItem): item is IVintage => typeof item === 'object' && item !== null;
@@ -33,8 +35,8 @@ export const useVintageDropdown = ({
         let noneVintageWineId: number | undefined;
 
         const years: IVintageDropdownItem[] = [];
-        const allVintagesLabel = localization.t('wine.allVintages');
-        const noneVintageLabel = localization.t('wine.nonVintage');
+        const allVintagesLabel = localization.t('wine.allVintages', { locale });
+        const noneVintageLabel = localization.t('wine.nonVintage', { locale });
 
         const ensureAllVintagesItem = () => {
             if (years.some(item => item.value === null)) return;
@@ -144,13 +146,13 @@ export const useVintageDropdown = ({
         years.sort((a, b) => {
             if (a.value === null) return -1;
             if (b.value === null) return 1;
-            if (a.value === NONE_VINTAGE_DROPDOWN_VALUE) return 1;
-            if (b.value === NONE_VINTAGE_DROPDOWN_VALUE) return -1;
+            if (a.value === NONE_VINTAGE_DROPDOWN_VALUE) return -1;
+            if (b.value === NONE_VINTAGE_DROPDOWN_VALUE) return 1;
             return (b.value as number) - (a.value as number);
         });
 
         return years;
-    }, [vintages, currentVintage]);
+    }, [currentVintage, locale, vintages]);
 
     const onCustomVintageAdd = useCallback(
         (year: number) => {
@@ -175,15 +177,6 @@ export const useVintageDropdown = ({
             .filter((value): value is number => typeof value === 'number');
     }, [vintageData]);
 
-    const handleAddVintage = useCallback(
-        (year: number, closeDropdown: () => void) => {
-            wineModel.customVintage = year;
-            onCustomVintageAdd(year);
-            closeDropdown();
-        },
-        [onCustomVintageAdd],
-    );
-
     const selectedValue = useMemo(() => {
         if (isAllVintagesSelected) {
             return null;
@@ -197,5 +190,14 @@ export const useVintageDropdown = ({
         return selectedVintage;
     }, [isAllVintagesSelected, selectedVintage, vintageData]);
 
-    return { vintageData, existingYears, handleAddVintage, dropdownRef, onCloseDropdown, selectedValue };
+    const onAddVintage = useCallback(
+        (year: number) => {
+            wineModel.customVintage = year;
+            onCustomVintageAdd(year);
+            onCloseDropdown();
+        },
+        [onCloseDropdown, onCustomVintageAdd],
+    );
+
+    return { vintageData, existingYears, onAddVintage, dropdownRef, selectedValue };
 };

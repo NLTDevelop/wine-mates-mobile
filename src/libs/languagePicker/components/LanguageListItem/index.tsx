@@ -1,5 +1,5 @@
 import { memo, useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import Flag from 'react-native-round-flags';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -19,6 +19,14 @@ export const LanguageListItem = memo(({ item, onPress }: IProps) => {
     const firstLetter = item.name?.[0]?.toUpperCase() || '?';
 
     const renderFlag = () => {
+        if (item.countryCode === 'BY') {
+            return (
+                <View style={styles.placeholderFlag}>
+                    <Text style={styles.placeholderText}>🇧🇾</Text>
+                </View>
+            );
+        }
+
         try {
             return <Flag code={item.countryCode} style={styles.flag} />;
         } catch {

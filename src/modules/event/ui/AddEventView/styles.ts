@@ -20,11 +20,16 @@ export const getStyles = (colors: IColors) => {
             flexGrow: 1,
         },
         inputContainerStyle: {
-          marginBottom: 0,
+            marginBottom: 0,
+            backgroundColor: colors.background,
         },
         descriptionInputContainerStyle: {
             minHeight: scaleVertical(115),
             alignItems: 'stretch',
+        },
+        priceInputHelperText: {
+            color: colors.text_light,
+            marginTop: scaleVertical(4),
         },
         locationButton: {
             minHeight: scaleVertical(48),
@@ -55,6 +60,22 @@ export const getStyles = (colors: IColors) => {
             borderColor: colors.border,
             height: scaleVertical(48),
             paddingHorizontal: scaleHorizontal(16),
+        },
+        row: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(8),
+        },
+        inlinePickerButton: {
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: colors.background,
+            borderRadius: 12,
+            borderWidth: scaleHorizontal(1),
+            borderColor: colors.border,
+            height: scaleVertical(48),
+            paddingHorizontal: scaleHorizontal(12),
         },
         disabledPickerButton: {
             opacity: 0.5,
