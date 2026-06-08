@@ -386,9 +386,14 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
                 return;
             }
 
+            const responseFields = response.data && typeof response.data === 'object' ? response.data : {};
             setEventDetail({
                 ...eventDetail,
+                ...responseFields,
                 isTastingStarted: nextIsTastingStarted,
+                status: nextIsTastingStarted
+                    ? responseFields.status || eventDetail.status
+                    : responseFields.status || SavedEventStatus.FINISHED,
             });
         } catch (error) {
             console.warn('useEventDetailsTab -> onToggleTastingPress: ', error);

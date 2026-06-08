@@ -54,7 +54,6 @@ export const ChooseWineResultsView = observer(() => {
                 showDate
                 showVintage
                 showNonVintage
-                showExpertRatingWithoutPremium
             />
         );
     }, [onOpenShareModal, onWinePress]);
