@@ -13,7 +13,7 @@ export interface IWineListsModel {
     search: string;
     filters: ISelectedFilters;
     filtersData: IWineFilters | null;
-    appened: (value: IList<IWineListItem>) => void;
+    append: (value: IList<IWineListItem>) => void;
 }
 
 class WineListsModel implements IWineListsModel {
@@ -62,7 +62,7 @@ class WineListsModel implements IWineListsModel {
         this.filtersDataRepository.save(value);
     }
    
-    public appened(value: IList<IWineListItem>) {
+    public append(value: IList<IWineListItem>) {
         if (this.list) {
             this.list = {
                 ...this.list,

@@ -4,7 +4,7 @@ import { IList } from "@/entities/IList";
 
 export interface IWineListModel {
     list: IList<IWineListItem> | null;
-    appened: (value: IList<IWineListItem>) => void;
+    append: (value: IList<IWineListItem>) => void;
 }
 
 class WineListModel implements IWineListModel {
@@ -18,7 +18,7 @@ class WineListModel implements IWineListModel {
         this.listRepository.save(value);
     }
 
-    public appened(value: IList<IWineListItem>) {
+    public append(value: IList<IWineListItem>) {
         if (this.list) {
             this.list = {
                 ...this.list,

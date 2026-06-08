@@ -321,7 +321,7 @@ class WineService {
                 if (params.offset === 0) {
                     wineReviewsListModel.list = response.data;
                 } else {
-                    wineReviewsListModel.appened(response.data);
+                    wineReviewsListModel.append(response.data);
                 }
             }
 
@@ -346,7 +346,7 @@ class WineService {
                 if (params.offset === 0) {
                     wineReviewsListModel.list = response.data;
                 } else {
-                    wineReviewsListModel.appened(response.data);
+                    wineReviewsListModel.append(response.data);
                 }
             }
 

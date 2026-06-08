@@ -22,7 +22,7 @@ class MyWineService {
                 if (params.offset === 0) {
                     wineListsModel.list = response.data;
                 } else {
-                    wineListsModel.appened(response.data);
+                    wineListsModel.append(response.data);
                 }
             }
          

@@ -24,7 +24,7 @@ class FavoriteWineService {
                 if (params.offset === 0) {
                     favoriteWinesListModel.currentListWines = response.data;
                 } else {
-                    favoriteWinesListModel.appened(response.data);
+                    favoriteWinesListModel.append(response.data);
                 }
             }
 

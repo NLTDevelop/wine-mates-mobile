@@ -4,7 +4,7 @@ import { IGuestBooking } from './types/IGuestBooking';
 
 export interface IGuestListModel {
     guests: IList<IGuestBooking> | null;
-    appened: (value: IList<IGuestBooking>) => void;
+    append: (value: IList<IGuestBooking>) => void;
     clear: () => void;
 }
 
@@ -19,7 +19,7 @@ class GuestListModel implements IGuestListModel {
         this.guestsRepository.save(value);
     }
 
-    public appened(value: IList<IGuestBooking>) {
+    public append(value: IList<IGuestBooking>) {
         if (this.guests) {
             this.guests = {
                 ...this.guests,

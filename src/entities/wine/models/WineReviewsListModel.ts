@@ -4,7 +4,7 @@ import { IWineReviewsListItem } from "../types/IWineReviewsListItem";
 
 export interface IWineReviewsListModel {
     list: IList<IWineReviewsListItem> | null;
-    appened: (value: IList<IWineReviewsListItem>) => void;
+    append: (value: IList<IWineReviewsListItem>) => void;
 }
 
 class WineReviewsListModel implements IWineReviewsListModel {
@@ -18,7 +18,7 @@ class WineReviewsListModel implements IWineReviewsListModel {
         this.listRepository.save(value);
     }
 
-    public appened(value: IList<IWineReviewsListItem>) {
+    public append(value: IList<IWineReviewsListItem>) {
         if (this.list) {
             this.list = {
                 ...this.list,

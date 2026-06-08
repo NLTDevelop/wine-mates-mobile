@@ -7,7 +7,7 @@ export interface IFavoriteWinesListModel {
     lists: IFavoriteWineList[] | null;
     currentListId: number | null;
     currentListWines: IList<IWineListItem> | null;
-    appened: (value: IList<IWineListItem>) => void;
+    append: (value: IList<IWineListItem>) => void;
 }
 
 class FavoriteWinesListModel implements IFavoriteWinesListModel {
@@ -39,7 +39,7 @@ class FavoriteWinesListModel implements IFavoriteWinesListModel {
         this.currentListWinesRepository.save(value);
     }
 
-    public appened(value: IList<IWineListItem>) {
+    public append(value: IList<IWineListItem>) {
         if (this.currentListWines) {
             this.currentListWines = {
                 ...this.currentListWines,
