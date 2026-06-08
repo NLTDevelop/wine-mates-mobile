@@ -1,10 +1,9 @@
 import { MobXRepository } from "@/repository/MobXRepository";
-import { IList } from "../IList";
-import { IWineListItem } from "./types/IWineListItem";
+import { IWineListItem } from "../types/IWineListItem";
+import { IList } from "@/entities/IList";
 
 export interface IWineListModel {
     list: IList<IWineListItem> | null;
-    clear: () => void;
     append: (value: IList<IWineListItem>) => void;
 }
 
@@ -19,10 +18,6 @@ class WineListModel implements IWineListModel {
         this.listRepository.save(value);
     }
 
-    public clear() {
-        this.list = null;
-    }
-
     public append(value: IList<IWineListItem>) {
         if (this.list) {
             this.list = {
@@ -30,10 +25,6 @@ class WineListModel implements IWineListModel {
                 rows: [...this.list.rows, ...value.rows],
             };
         }
-    }
-
-    public setList(value: IList<IWineListItem>) {
-        this.listRepository.save(value);
     }
 }
 

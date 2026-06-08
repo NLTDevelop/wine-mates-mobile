@@ -1,13 +1,13 @@
 import { IWineAroma } from '@/entities/wine/types/IWineAroma';
 import { IAroma, IWineSmell } from '@/entities/wine/types/IWineSmell';
 import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { useDebounce } from '@/hooks/useDebounce';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useCallback, useRef, useState } from 'react';
 import { Keyboard, TextInput } from 'react-native';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 interface IProps {
     data: IWineSmell[],

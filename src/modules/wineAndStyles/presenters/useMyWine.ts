@@ -1,5 +1,6 @@
-import { wineListsModel } from '@/entities/wine/WineListsModel';
-import { myWineService } from '@/entities/wine/MyWineService';
+import { wineListsModel } from '@/entities/wine/models/WineListsModel';
+import { myWineService } from '@/entities/wine/services/MyWineService';
+import { clearWineListsFilters, clearWineListsModel } from '@/entities/wine/services/WineModelService';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { WineListScope } from '@/entities/wine/types/IWineListScope';
 import { toastService } from '@/libs/toast/toastService';
@@ -65,7 +66,7 @@ export const useMyWine = () => {
 
     //         return () => {
     //             wineListsModel.search = '';
-    //             wineListsModel.clearFilters();
+    //             clearWineListsFilters();
     //         };
     //     }, [onRefresh])
     // );
@@ -83,12 +84,12 @@ export const useMyWine = () => {
     useEffect(() => {
         return () => {
             wineListsModel.search = '';
-            wineListsModel.clearFilters();
+            clearWineListsFilters();
         };
     }, []);
 
     useEffect(() => {
-        return () => wineListsModel.clear();
+        return () => clearWineListsModel();
     }, []);
 
     const onEndReached = useCallback(async () => {

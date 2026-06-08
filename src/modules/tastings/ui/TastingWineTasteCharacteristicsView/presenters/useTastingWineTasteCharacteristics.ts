@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { userModel } from '@/entities/users/UserModel';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { eventTastingService } from '@/entities/events/EventTastingService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -14,6 +13,7 @@ import { ITasteCharacteristicDetail } from '@/entities/wine/types/ITasteCharacte
 import { runInAction } from 'mobx';
 import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
 import type { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 interface IRouteParams {
     source?: string;

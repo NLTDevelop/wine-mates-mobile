@@ -3,11 +3,11 @@ import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
-import { wineModel } from '@/entities/wine/WineModel';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { EventTastingDraftData, IEventTastingDraftResponse } from '@/entities/events/types/IEventTastingDraft';
 import { colorTheme } from '@/UIProvider/theme/ColorTheme';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 const createSuggestedItemName = (id: number) => `${id}`;
 const DRAFT_ITEM_COLOR = colorTheme.colors.background;

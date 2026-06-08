@@ -14,9 +14,14 @@ import { CarouselDots } from '../CarouselDots';
 interface IProps {
     title: string;
     events: IEvent[];
+    carouselHorizontalOffset?: number;
 }
 
-export const HomeEventSection = ({ title, events }: IProps) => {
+export const HomeEventSection = ({
+    title,
+    events,
+    carouselHorizontalOffset = 32,
+}: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { width } = useWindowDimensions();
@@ -32,7 +37,7 @@ export const HomeEventSection = ({ title, events }: IProps) => {
         onEditPress,
         onConfigurePanGesture,
     } = useHomeEventSection(events);
-    const carouselWidth = width - scaleHorizontal(32);
+    const carouselWidth = width - scaleHorizontal(carouselHorizontalOffset);
 
     const renderItem = useCallback(({ item }: { item: IEvent }) => {
         return (

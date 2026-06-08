@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { userModel } from '@/entities/users/UserModel';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { GenerateNoteDto } from '@/entities/wine/dto/GenerateNote.dto';
@@ -19,6 +18,7 @@ import {
     IWineSnackCuisineCacheItem,
     setWineSnackCuisinesCache,
 } from '@/libs/storage/cacheUtils';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const useWineReviewResult = () => {
     const { saveWineRate } = useWineRateSubmit();

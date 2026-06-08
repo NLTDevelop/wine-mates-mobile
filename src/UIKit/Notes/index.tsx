@@ -3,8 +3,8 @@ import { getStyles } from './styles';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { wineModel } from '@/entities/wine/WineModel';
 import { DropdownButton } from '@/UIKit/DropdownButton';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const Notes = () => {
     const { colors, t } = useUiContext();

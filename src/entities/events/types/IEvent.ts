@@ -6,6 +6,7 @@ import { ParticipationCondition } from '../enums/ParticipationCondition';
 import { IWineSetItem } from './IWineSetItem';
 import { RepeatRuleConfig } from './RepeatRuleConfig';
 import { IEventParticipant } from './IEventParticipant';
+import { SavedEventStatus } from '../enums/SavedEventStatus';
 
 export interface IEvent {
     id: number;
@@ -13,6 +14,7 @@ export interface IEvent {
     isActive?: boolean;
     isApplied?: boolean;
     isTastingStarted?: boolean;
+    status?: SavedEventStatus | string;
     theme: string;
     eventDate?: string;
     eventTime?: string;
@@ -68,6 +70,7 @@ export interface IEventDetail {
     isActive?: boolean;
     isApplied?: boolean;
     isTastingStarted?: boolean;
+    status?: SavedEventStatus | string;
     latitude: number;
     longitude: number;
     title?: string;

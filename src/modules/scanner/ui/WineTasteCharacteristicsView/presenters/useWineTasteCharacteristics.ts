@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { userModel } from '@/entities/users/UserModel';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -15,6 +14,7 @@ import {
     getTasteCharacteristicsCache,
     setTasteCharacteristicsCache,
 } from '@/libs/storage/cacheUtils';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 const getTasteCharacteristicsCacheContext = (wineId?: number) => {
     return {

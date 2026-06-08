@@ -1,4 +1,5 @@
-import { favoriteWineService } from '@/entities/wine/FavoriteWineService';
+/* eslint-disable react-hooks/set-state-in-effect */
+import { favoriteWineService } from '@/entities/wine/services/FavoriteWineService';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';

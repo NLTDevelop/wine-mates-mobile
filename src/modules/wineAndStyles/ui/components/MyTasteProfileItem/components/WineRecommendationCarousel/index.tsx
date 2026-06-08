@@ -9,6 +9,8 @@ import { CarouselWineCard } from '@/UIKit/CarouselWineCard';
 import { scaleHorizontal } from '@/utils';
 import { ArrowRightIcon } from '@assets/icons/ArrowRightIcon';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
+import { WineShareModal } from '@/UIKit/WineShareModal';
+import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 
 interface IProps {
     typeId: number;
@@ -23,6 +25,13 @@ export const WineRecommendationCarousel = observer(({ typeId, colorId }: IProps)
         typeId,
         colorId,
     });
+    const {
+        isShareModalVisible,
+        onOpenShareModal,
+        onCloseShareModal,
+        onShareMessengerPress,
+        onCopyWineLinkPress,
+    } = useWineShareModal();
 
     if (wines.length === 0) {
         return null;
@@ -33,7 +42,7 @@ export const WineRecommendationCarousel = observer(({ typeId, colorId }: IProps)
     const renderCarouselItem = function renderCarouselItem({ item }: { item: IWineListItem }) {
         return (
             <View style={styles.cardContainer}>
-                <CarouselWineCard item={item} onPress={onWinePress} />
+                <CarouselWineCard item={item} onPress={onWinePress} onSharePress={onOpenShareModal} />
             </View>
         );
     };
@@ -75,6 +84,12 @@ export const WineRecommendationCarousel = observer(({ typeId, colorId }: IProps)
                     </TouchableOpacity>
                 </>
             )}
+            <WineShareModal
+                visible={isShareModalVisible}
+                onClose={onCloseShareModal}
+                onShareMessengerPress={onShareMessengerPress}
+                onCopyLinkPress={onCopyWineLinkPress}
+            />
         </View>
     );
 });

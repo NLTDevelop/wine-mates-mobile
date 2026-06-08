@@ -1,5 +1,6 @@
 import { userModel } from '@/entities/users/UserModel';
 import { userService } from '@/entities/users/UserService';
+import { getCurrentLocationPayload } from '@/libs/locations/getCurrentLocationPayload';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
@@ -16,6 +17,10 @@ export const useSplash = () => {
                         userModel.clear();
                         navigation.reset({ index: 0, routes: [{ name: 'WelcomeView' }] });
                         return;
+                    }
+                    const locationPayload = await getCurrentLocationPayload();
+                    if (locationPayload) {
+                        userService.location(locationPayload);
                     }
                     navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
                 } else {

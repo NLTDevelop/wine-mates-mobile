@@ -1,13 +1,13 @@
 import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
 import { IAroma, ISmellSubgroup, IWineSmell } from '@/entities/wine/types/IWineSmell';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Keyboard } from 'react-native';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const useWineSmell = (onHide: () => void) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();

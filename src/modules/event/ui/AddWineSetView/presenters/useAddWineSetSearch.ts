@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, TextInput } from 'react-native';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 
 const SEARCH_LIMIT = 10;

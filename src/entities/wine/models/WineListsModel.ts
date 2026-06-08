@@ -1,7 +1,7 @@
 import { MobXRepository } from '@/repository/MobXRepository';
-import { IList } from '../IList';
-import { IWineListItem } from './types/IWineListItem';
-import { IWineFilters } from './types/IWineFilters';
+import { IWineListItem } from '../types/IWineListItem';
+import { IWineFilters } from '../types/IWineFilters';
+import { IList } from '@/entities/IList';
 export interface ISelectedFilters {
     sort: (string | number)[];
     colors: (string | number)[];
@@ -13,9 +13,7 @@ export interface IWineListsModel {
     search: string;
     filters: ISelectedFilters;
     filtersData: IWineFilters | null;
-    clear: () => void;
     append: (value: IList<IWineListItem>) => void;
-    clearFilters: () => void;
 }
 
 class WineListsModel implements IWineListsModel {
@@ -64,42 +62,6 @@ class WineListsModel implements IWineListsModel {
         this.filtersDataRepository.save(value);
     }
    
-    public clear() {
-        this.list = null;
-    }
-
-    public clearFilters() {
-        this.filtersRepository.save({
-            sort: [],
-            colors: [],
-            types: [],
-        });
-    }
-
-    public setSort(value: (string | number)[]) {
-        const currentFilters = this.filters;
-        this.filtersRepository.save({
-            ...currentFilters,
-            sort: value,
-        });
-    }
-
-    public setColors(value: (string | number)[]) {
-        const currentFilters = this.filters;
-        this.filtersRepository.save({
-            ...currentFilters,
-            colors: value,
-        });
-    }
-
-    public setTypes(value: (string | number)[]) {
-        const currentFilters = this.filters;
-        this.filtersRepository.save({
-            ...currentFilters,
-            types: value,
-        });
-    }
-
     public append(value: IList<IWineListItem>) {
         if (this.list) {
             this.list = {
@@ -107,10 +69,6 @@ class WineListsModel implements IWineListsModel {
                 rows: [...this.list.rows, ...value.rows],
             };
         }
-    }
-
-    public setList(value: IList<IWineListItem>) {
-        this.listRepository.save(value);
     }
 }
 

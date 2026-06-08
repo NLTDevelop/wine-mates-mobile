@@ -4,11 +4,12 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { userModel } from '@/entities/users/UserModel';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { clearTasteCharacteristicsCache, clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
 
 interface ISaveWineRateParams {
     isFullTasting?: boolean;
@@ -219,7 +220,7 @@ const resetAfterWineRate = (navigation: NativeStackNavigationProp<any>) => {
 
     clearTasteCharacteristicsCache();
     clearWineSnackCuisinesCache();
-    wineModel.clear();
+    clearWineModel();
 };
 
 export const useWineRateSubmit = () => {

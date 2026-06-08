@@ -1,9 +1,9 @@
 import { IRequester, IResponse, requester } from '@/libs/requester';
 import { ILinks, links } from '@/Links';
-import { IFavoriteWineList } from './types/IFavoriteWineList';
-import { CreateFavoriteWineListDto } from './dto/CreateFavoriteWineList.dto';
-import { UpdateFavoriteWineListDto } from './dto/UpdateFavoriteWineList.dto';
-import { favoriteWinesListModel } from './FavoriteWineListsModel';
+import { favoriteWinesListModel } from '../models/FavoriteWineListsModel';
+import { CreateFavoriteWineListDto } from '../dto/CreateFavoriteWineList.dto';
+import { IFavoriteWineList } from '../types/IFavoriteWineList';
+import { UpdateFavoriteWineListDto } from '../dto/UpdateFavoriteWineList.dto';
 
 class FavoriteWineListService {
     constructor(private _requester: IRequester, private _links: ILinks) {}

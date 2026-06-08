@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { wineModel } from '@/entities/wine/WineModel';
 import { eventTastingService } from '@/entities/events/EventTastingService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -7,7 +6,7 @@ import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTast
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { WineSetTastingStatus } from '@/entities/events/types/IWineSetItem';
 import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
@@ -15,6 +14,8 @@ import { userModel } from '@/entities/users/UserModel';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
 import { Keyboard } from 'react-native';
 import { runInAction } from 'mobx';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
 
 interface IRouteParams {
     source?: string;
@@ -104,7 +105,7 @@ export const useTastingWineReview = () => {
             return;
         }
 
-        wineModel.clear();
+        clearWineModel();
         applyWineDetailsToTastingModel(wineResponse.data);
 
         if (tastingStatus !== 'in_progress') {
@@ -350,7 +351,7 @@ export const useTastingWineReview = () => {
 
         resetToEventDetails();
         clearTasteCharacteristicsCache();
-        wineModel.clear();
+        clearWineModel();
     }, [resetToEventDetails, saveReview, saveReviewOnlyFinalDraft]);
 
     const onNextPress = useCallback(async () => {

@@ -1,12 +1,13 @@
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useState } from 'react';
 import { clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
 
 export const useResultHeader = (item: IWineDetails, fromScanner?: boolean) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -67,14 +68,14 @@ export const useResultHeader = (item: IWineDetails, fromScanner?: boolean) => {
                     ? Number(response.errors?.wineId || item.id)
                     : response.data?.id || item.id;
 
-                wineModel.clear();
+                clearWineModel();
                 wineModel.wine = {
                     id: wineId,
                     name: item.name,
                     vintage: item.vintage,
                 };
             } else {
-                wineModel.clear();
+                clearWineModel();
                 wineModel.wine = {
                     id: item.id,
                     name: item.name,

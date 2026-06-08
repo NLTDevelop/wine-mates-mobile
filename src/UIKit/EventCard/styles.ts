@@ -102,15 +102,16 @@ export const getStyles = (colors: IColors) => {
             color: colors.background,
         },
         headerContent: {
+            flex: 1,
             gap: scaleVertical(2),
         },
         title: {
             color: colors.text,
-            maxWidth: scaleHorizontal(255)
+            flexShrink: 1,
         },
         timeText: {
             color: colors.text_light,
-            maxWidth: scaleHorizontal(255)
+            flexShrink: 1,
         },
         descriptionText: {
             color: colors.text_light,

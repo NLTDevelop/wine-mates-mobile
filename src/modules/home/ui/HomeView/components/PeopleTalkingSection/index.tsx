@@ -16,9 +16,14 @@ import { CarouselDots } from '../CarouselDots';
 interface IProps {
     title: string;
     data: IHomePeopleTalking[];
+    carouselHorizontalOffset?: number;
 }
 
-export const PeopleTalkingSection = ({ title, data }: IProps) => {
+export const PeopleTalkingSection = ({
+    title,
+    data,
+    carouselHorizontalOffset = 32,
+}: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { width } = useWindowDimensions();
@@ -30,7 +35,7 @@ export const PeopleTalkingSection = ({ title, data }: IProps) => {
         onCardLayout,
         onConfigurePanGesture,
     } = usePeopleTalkingSection(data);
-    const carouselWidth = width - scaleHorizontal(32);
+    const carouselWidth = width - scaleHorizontal(carouselHorizontalOffset);
 
     const renderItem = useCallback(({ item }: { item: IHomePeopleTalking }) => {
         return (

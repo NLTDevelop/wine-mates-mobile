@@ -3,7 +3,7 @@ import { IPaymentsListItem } from "./types/IPaymentsListItem";
 
 export interface IPaymentsModel {
     list: IPaymentsListItem[] | null;
-    appened: (payment: IPaymentsListItem) => void;
+    append: (payment: IPaymentsListItem) => void;
     clear: () => void;
 }
 
@@ -18,7 +18,7 @@ class PaymentsModel implements IPaymentsModel {
         this.listRepository.save(value);
     }
 
-    public appened(payment: IPaymentsListItem) {
+    public append(payment: IPaymentsListItem) {
         this.list = [...(this.list || []), payment];
     }
 

@@ -18,7 +18,6 @@ import { CustomInput } from '@/UIKit/CustomInput';
 import { useAddItem } from '../../presenters/useAddItem';
 import { AddButton } from '../components/AddButton';
 import { useAnimatedItemAdd } from '../../presenters/useAnimatedItemAdd';
-import { wineModel } from '@/entities/wine/WineModel';
 import { IWineTasteGroup } from '@/entities/wine/types/IWineTatseGroup';
 import { SelectModal } from '../../../../UIKit/SelectModal';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -26,6 +25,7 @@ import { scaleVertical } from '@/utils';
 import { SelectedItemsList } from '@/UIKit/SelectedItemsList';
 import { useTastingTasteSelectModal } from './presenters/useTastingTasteSelectModal';
 import { useTastingWineTaste } from './presenters/useTastingWineTaste';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const TastingWineTasteView = observer(() => {
     const { colors, t } = useUiContext();

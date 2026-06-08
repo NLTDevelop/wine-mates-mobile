@@ -1,5 +1,4 @@
-import { wineListsModel } from '@/entities/wine/WineListsModel';
-import { myWineService } from '@/entities/wine/MyWineService';
+import { myWineService } from '@/entities/wine/services/MyWineService';
 import { useDebounce } from '@/hooks/useDebounce';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -7,6 +6,7 @@ import { useCallback, useEffect } from 'react';
 import { useMyWineFiltersBottomSheet } from './useMyWineFiltersBottomSheet';
 import { IFilterTagItem } from '../ui/components/FilterTags';
 import { computed } from 'mobx';
+import { wineListsModel } from '@/entities/wine/models/WineListsModel';
 
 interface IUseMyWineSearchBarProps {
     onSearch: (offset: number) => Promise<void>;
@@ -107,13 +107,22 @@ export const useMyWineSearchBar = ({ onSearch, scrollToTop }: IUseMyWineSearchBa
 
         if (tag.type === 'sort') {
             const newSort = currentFilters.sort.filter((v) => v !== tag.value);
-            wineListsModel.setSort(newSort);
+            wineListsModel.filters = {
+                ...currentFilters,
+                sort: newSort,
+            };
         } else if (tag.type === 'color') {
             const newColors = currentFilters.colors.filter((v) => v !== tag.value);
-            wineListsModel.setColors(newColors);
+            wineListsModel.filters = {
+                ...currentFilters,
+                colors: newColors,
+            };
         } else if (tag.type === 'type') {
             const newTypes = currentFilters.types.filter((v) => v !== tag.value);
-            wineListsModel.setTypes(newTypes);
+            wineListsModel.filters = {
+                ...currentFilters,
+                types: newTypes,
+            };
         }
 
         scrollToTop?.();

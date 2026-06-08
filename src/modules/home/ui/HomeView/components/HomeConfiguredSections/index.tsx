@@ -30,6 +30,8 @@ interface IProps {
     onReorderPlacementSections: (params: SortableGridDragEndParams<IHomeVisibleSection>) => void;
 }
 
+const PLACEMENT_CAROUSEL_HORIZONTAL_OFFSET = 56;
+
 export const HomeConfiguredSections = ({
     sections,
     hasConfiguredSections,
@@ -55,6 +57,7 @@ export const HomeConfiguredSections = ({
         rowGap,
         scrollableRef,
     } = useHomeConfiguredSections();
+    const shouldShowConfigurePlacementButton = canConfigurePlacement && sections.length > 1;
 
     const keyExtractor = useCallback((item: IHomeVisibleSection) => item.key, []);
 
@@ -86,7 +89,11 @@ export const HomeConfiguredSections = ({
         if (item.key === 'events' && item.events) {
             return (
                 <HomePlacementSection onRemovePress={item.onRemovePress}>
-                    <HomeEventSection title={item.title} events={item.events} />
+                    <HomeEventSection
+                        title={item.title}
+                        events={item.events}
+                        carouselHorizontalOffset={PLACEMENT_CAROUSEL_HORIZONTAL_OFFSET}
+                    />
                 </HomePlacementSection>
             );
         }
@@ -94,7 +101,11 @@ export const HomeConfiguredSections = ({
         if (item.key === 'people_talking' && item.peopleTalking) {
             return (
                 <HomePlacementSection onRemovePress={item.onRemovePress}>
-                    <PeopleTalkingSection title={item.title} data={item.peopleTalking} />
+                    <PeopleTalkingSection
+                        title={item.title}
+                        data={item.peopleTalking}
+                        carouselHorizontalOffset={PLACEMENT_CAROUSEL_HORIZONTAL_OFFSET}
+                    />
                 </HomePlacementSection>
             );
         }
@@ -107,37 +118,39 @@ export const HomeConfiguredSections = ({
             <Sortable.PortalProvider>
                 <Animated.ScrollView
                     ref={scrollableRef}
-                    contentContainerStyle={styles.contentContainer}
+                    contentContainerStyle={styles.placementContentContainer}
                     showsVerticalScrollIndicator={false}
                 >
-                    {hasConfiguredSections ? (
-                        <Sortable.Grid
-                            activeItemOpacity={0.96}
-                            activeItemScale={1.02}
-                            activeItemShadowOpacity={0.18}
-                            autoScrollActivationOffset={autoScrollActivationOffset}
-                            autoScrollMaxVelocity={autoScrollMaxVelocity}
-                            columns={1}
-                            data={sections}
-                            dimensionsAnimationType="none"
-                            dragActivationDelay={dragActivationDelay}
-                            inactiveItemOpacity={0.78}
-                            inactiveItemScale={1}
-                            itemEntering={null}
-                            itemExiting={null}
-                            itemsLayoutTransitionMode="reorder"
-                            keyExtractor={keyExtractor}
-                            overDrag="vertical"
-                            renderItem={renderPlacementItem}
-                            reorderTriggerOrigin="touch"
-                            rowGap={rowGap}
-                            scrollableRef={scrollableRef}
-                            strategy="insert"
-                            onDragEnd={onReorderPlacementSections}
-                        />
-                    ) : (
-                        <HomeEmptyState />
-                    )}
+                    <View style={styles.placementListContainer}>
+                        {hasConfiguredSections ? (
+                            <Sortable.Grid
+                                activeItemOpacity={0.96}
+                                activeItemScale={1.02}
+                                activeItemShadowOpacity={0.18}
+                                autoScrollActivationOffset={autoScrollActivationOffset}
+                                autoScrollMaxVelocity={autoScrollMaxVelocity}
+                                columns={1}
+                                data={sections}
+                                dimensionsAnimationType="none"
+                                dragActivationDelay={dragActivationDelay}
+                                inactiveItemOpacity={0.78}
+                                inactiveItemScale={1}
+                                itemEntering={null}
+                                itemExiting={null}
+                                itemsLayoutTransitionMode="reorder"
+                                keyExtractor={keyExtractor}
+                                overDrag="vertical"
+                                renderItem={renderPlacementItem}
+                                reorderTriggerOrigin="touch"
+                                rowGap={rowGap}
+                                scrollableRef={scrollableRef}
+                                strategy="insert"
+                                onDragEnd={onReorderPlacementSections}
+                            />
+                        ) : (
+                            <HomeEmptyState />
+                        )}
+                    </View>
                     <View style={styles.footer}>
                         <Button
                             text={saveText}
@@ -161,7 +174,7 @@ export const HomeConfiguredSections = ({
             ListFooterComponent={
                 <View style={styles.footer}>
                     <Button text={addEntryText} type="main" onPress={onAddEntryPress} />
-                    {canConfigurePlacement && (
+                    {shouldShowConfigurePlacementButton && (
                         <Button
                             text={configurePlacementText}
                             type="secondary"
@@ -170,6 +183,7 @@ export const HomeConfiguredSections = ({
                     )}
                 </View>
             }
+            ListFooterComponentStyle={styles.listFooterContainer}
             refreshControl={
                 <RefreshControl
                     refreshing={isRefreshing}

@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
-import { wineModel } from '@/entities/wine/WineModel';
 import { IWineLook } from '@/entities/wine/types/IWineLook';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { eventTastingService } from '@/entities/events/EventTastingService';
 import { WineSetTastingStatus } from '@/entities/events/types/IWineSetItem';
 import { toastService } from '@/libs/toast/toastService';
@@ -12,6 +11,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
 
 interface IUseWineLookArgs {
     t: (key: string, params?: Record<string, any> | undefined) => string;
@@ -149,7 +150,7 @@ export const useTastingWineLook = ({ t, styles }: IUseWineLookArgs) => {
                 return;
             }
 
-            wineModel.clear();
+            clearWineModel();
             applyWineDetailsToTastingModel(wineResponse.data);
 
             if (tastingStatus === 'in_progress') {

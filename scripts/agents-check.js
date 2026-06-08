@@ -8,7 +8,7 @@ const ROOT_DIR = process.cwd();
 const SRC_DIR = path.join(ROOT_DIR, 'src');
 const TS_EXTENSIONS = new Set(['.ts', '.tsx']);
 const DATA_PREPARATION_METHODS = new Set(['map', 'filter', 'reduce']);
-const ALLOWED_MODEL_METHODS = new Set(['appened']);
+const ALLOWED_MODEL_METHODS = new Set(['append']);
 const SCALE_REQUIRED_STYLE_KEYS = new Set([
     'width',
     'height',
@@ -582,7 +582,7 @@ const validateFile = (absolutePath) => {
                     violations.push({
                         line: getLine(sourceFile, node),
                         rule: 'NoBusinessLogicInModel',
-                        message: `Model method "${methodName}" is forbidden. Only "appened" is allowed.`,
+                        message: `Model method "${methodName}" is forbidden. Only "append" is allowed.`,
                     });
                 }
             }
@@ -590,7 +590,7 @@ const validateFile = (absolutePath) => {
             if (isFunctionLikeDeclaration(node)) {
                 const functionName = getFunctionLikeName(node);
 
-                if (functionName && functionName !== 'appened') {
+                if (functionName && functionName !== 'append') {
                     violations.push({
                         line: getLine(sourceFile, node),
                         rule: 'NoBusinessLogicInModel',

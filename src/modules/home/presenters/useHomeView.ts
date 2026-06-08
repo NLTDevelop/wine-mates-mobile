@@ -12,6 +12,8 @@ import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import type { SortableGridDragEndParams } from 'react-native-sortables';
 import { toastService } from '@/libs/toast/toastService';
+import { getCurrentLocationPayload } from '@/libs/locations/getCurrentLocationPayload';
+import { IHomeSectionsListParams } from '@/entities/homeSections/params/IHomeSectionsListParams';
 
 const EMPTY_FIELD = '-';
 
@@ -60,6 +62,19 @@ const showHomeRequestError = (message?: string) => {
         localization.t('common.errorHappened'),
         message || localization.t('common.somethingWentWrong'),
     );
+};
+
+const getHomeSectionsListParams = async (): Promise<IHomeSectionsListParams | undefined> => {
+    const location = await getCurrentLocationPayload();
+
+    if (!location) {
+        return undefined;
+    }
+
+    return {
+        lat: location.latitude,
+        lon: location.longitude,
+    };
 };
 
 const getSortedSections = (sections: IHomeSection[]) => {
@@ -251,6 +266,12 @@ export const useHomeView = (locale: string) => {
     const hasConfiguredSections = activeVisibleSections.length > 0;
     const canConfigurePlacement = hasVisibleSections && !isPlacementEditMode;
 
+    const requestHomeSections = useCallback(async () => {
+        const params = await getHomeSectionsListParams();
+
+        return homeSectionsService.list(params);
+    }, []);
+
     const onRemovePlacementSection = useCallback((key: HomeSectionKey) => {
         setPlacementSections(currentSections => currentSections.map(section => {
             if (section.key !== key) {
@@ -303,7 +324,7 @@ export const useHomeView = (locale: string) => {
         setIsError(false);
         setIsLoading(true);
 
-        const response = await homeSectionsService.list();
+        const response = await requestHomeSections();
 
         if (!isMountedRef.current) {
             return;
@@ -314,11 +335,11 @@ export const useHomeView = (locale: string) => {
         }
 
         setIsLoading(false);
-    }, []);
+    }, [requestHomeSections]);
 
     useEffect(() => {
         const loadHomeSections = async () => {
-            const response = await homeSectionsService.list();
+            const response = await requestHomeSections();
 
             if (!isMountedRef.current) {
                 return;
@@ -332,19 +353,19 @@ export const useHomeView = (locale: string) => {
         };
 
         loadHomeSections();
-    }, []);
+    }, [requestHomeSections]);
 
     const onRefresh = useCallback(async () => {
         setIsRefreshing(true);
 
-        const response = await homeSectionsService.list();
+        const response = await requestHomeSections();
 
         if (response.isError) {
             showHomeRequestError(response.message);
         }
 
         setIsRefreshing(false);
-    }, []);
+    }, [requestHomeSections]);
 
     const onOpenSectionsModal = useCallback(() => {
         setDraftSections(normalizedSections);

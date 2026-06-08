@@ -8,6 +8,8 @@ import { WineListItem } from '@/UIKit/WineListItem';
 import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
 import { useSavedWineListItem } from '@/modules/wine/presenters/useSavedWineListItem';
 import { useSavedWineListItemView } from './presenters/useSavedWineListItemView';
+import { WineShareModal } from '@/UIKit/WineShareModal';
+import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 
 interface IProps {
     listId: number;
@@ -21,6 +23,13 @@ export const SavedWineListItem = ({ listId, title, onLongPress }: IProps) => {
 
     const { wines, isLoading, onWinePress, onExpand, onCollapse } = useSavedWineListItem(listId);
     const { keyExtractor, renderFooterData } = useSavedWineListItemView();
+    const {
+        isShareModalVisible,
+        onOpenShareModal,
+        onCloseShareModal,
+        onShareMessengerPress,
+        onCopyWineLinkPress,
+    } = useWineShareModal();
 
     const renderFooter = useCallback((item: IWineListItem) => {
         const lastReviewData = renderFooterData(item);
@@ -31,9 +40,9 @@ export const SavedWineListItem = ({ listId, title, onLongPress }: IProps) => {
 
     const renderItem = useCallback(
         ({ item }: { item: IWineListItem }) => (
-            <WineListItem item={item} onPress={onWinePress} showDate footer={renderFooter(item)} />
+            <WineListItem item={item} onPress={onWinePress} onSharePress={onOpenShareModal} showDate footer={renderFooter(item)} />
         ),
-        [onWinePress, renderFooter],
+        [onWinePress, onOpenShareModal, renderFooter],
     );
     const renderSeparator = useCallback(() => <View style={styles.separator} />, [styles.separator]);
 
@@ -55,6 +64,12 @@ export const SavedWineListItem = ({ listId, title, onLongPress }: IProps) => {
                     />
                 )}
             </FavoriteListDropdown>
+            <WineShareModal
+                visible={isShareModalVisible}
+                onClose={onCloseShareModal}
+                onShareMessengerPress={onShareMessengerPress}
+                onCopyLinkPress={onCopyWineLinkPress}
+            />
         </View>
     );
 };

@@ -7,9 +7,9 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { Camera, PhotoFile, TakePhotoOptions, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 import ImageResizer from 'react-native-image-resizer';
 import { IWineImage } from '@/entities/wine/types/IWineImage';
-import { wineModel } from '@/entities/wine/WineModel';
 import { isAndroid } from '@/utils';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const useScanner = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();

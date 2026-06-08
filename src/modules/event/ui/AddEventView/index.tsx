@@ -24,7 +24,7 @@ import { useEventTypeLabel } from './presenters/useEventTypeLabel';
 import { PaymentMethodsPickerModal } from './components/PaymentMethodsPickerModal';
 import { ContactInfoPickerModal } from './components/ContactInfoPickerModal';
 import { SingleSelectModal } from './components/SingleSelectModal';
-import { PickerButton } from './components/PickerButton';
+import { PickerButton } from '@/UIKit/PickerButton';
 import { CalendarModal } from '@/UIKit/CalendarModal';
 import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
 import { ClockIcon } from '@assets/icons/ClockIcon';
@@ -245,12 +245,10 @@ export const AddEventView = () => {
                             <PickerButton
                                 onPress={onOpenEventTypeModal}
                                 text={eventTypeLabel || t('event.eventType')}
-                                style={styles.pickerButton}
                             />
                             <PickerButton
                                 onPress={onOpenConfirmationRequiredModal}
                                 text={selectedConfirmationRequiredText}
-                                style={styles.pickerButton}
                             />
                             <CustomInput
                                 value={form.theme}
@@ -278,12 +276,10 @@ export const AddEventView = () => {
                                     <PickerButton
                                         onPress={onOpenSexModal}
                                         text={selectedSexText}
-                                        style={styles.pickerButton}
                                     />
                                     <PickerButton
                                         onPress={onOpenParticipationConditionModal}
                                         text={selectedParticipationConditionText}
-                                        style={styles.pickerButton}
                                     />
                                 </>
                             )}
@@ -369,7 +365,6 @@ export const AddEventView = () => {
                             <PickerButton
                                 onPress={onOpenContactInfoModal}
                                 text={selectedContactInfoText || t('contactInfo.contacts')}
-                                style={styles.pickerButton}
                             />
 
                             {isPriceFieldAvailable && (
@@ -377,14 +372,12 @@ export const AddEventView = () => {
                                     <PickerButton
                                         onPress={onOpenPaymentMethodsModal}
                                         text={selectedPaymentMethodsText || t('payments.paymentsMethods')}
-                                        style={styles.pickerButton}
                                         isDisabled={isPaymentMethodsDisabled}
                                     />
 
                                     <PickerButton
                                         onPress={currencyPicker.onOpen}
                                         text={currencyPicker.selectedText || t('event.currency')}
-                                        style={styles.pickerButton}
                                         isDisabled={isCurrencyPickerDisabled}
                                     />
                                 </>

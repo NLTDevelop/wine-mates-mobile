@@ -1,4 +1,5 @@
-import { wineService } from "@/entities/wine/WineService";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { wineService } from "@/entities/wine/services/WineService";
 import { toastService } from "@/libs/toast/toastService";
 import { localization } from "@/UIProvider/localization/Localization";
 import { useCallback, useEffect, useState } from "react";

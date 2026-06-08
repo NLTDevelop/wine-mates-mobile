@@ -1,14 +1,14 @@
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
-import { wineService } from '@/entities/wine/WineService';
-import { myWineService } from '@/entities/wine/MyWineService';
+import { wineService } from '@/entities/wine/services/WineService';
+import { myWineService } from '@/entities/wine/services/MyWineService';
 import { toastService } from '@/libs/toast/toastService';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { localization } from '@/UIProvider/localization/Localization';
 import { CommonActions, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 import { NONE_VINTAGE_DROPDOWN_VALUE } from './useVintageDropdown';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { clearWineReviewsListModel } from '@/entities/wine/services/WineModelService';
 
 export const useWineDetails = () => {
     const navigation = useNavigation();
@@ -107,7 +107,7 @@ export const useWineDetails = () => {
                     topWinePeaks: [],
                 },
             });
-            wineReviewsListModel.clear();
+            clearWineReviewsListModel();
         }
     }, [details, getDetails]);
 
