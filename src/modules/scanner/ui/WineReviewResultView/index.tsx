@@ -8,7 +8,6 @@ import { Button } from '@/UIKit/Button';
 import { observer } from 'mobx-react-lite';
 import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { Notes } from '../../../../UIKit/Notes';
-import { wineModel } from '@/entities/wine/WineModel';
 import { useWineReviewResult } from './presenters/useWineReviewResult';
 import { Loader } from '@/UIKit/Loader';
 import { Typography } from '@/UIKit/Typography';
@@ -16,6 +15,7 @@ import { FoodPairing } from '@/UIKit/FoodPairing';
 import { RateThisWine } from '@/UIKit/RateThisWine';
 import { TastingNote } from '@/UIKit/TastingNote';
 import { WineSnackCuisinePickerModal } from '@/UIKit/WineSnackCuisinePickerModal';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();

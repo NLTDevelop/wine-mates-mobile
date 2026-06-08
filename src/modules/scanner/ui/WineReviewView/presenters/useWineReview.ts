@@ -1,4 +1,3 @@
-import { wineModel } from '@/entities/wine/WineModel';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useState } from 'react';
@@ -7,6 +6,7 @@ import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { Keyboard } from 'react-native';
 import { runInAction } from 'mobx';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 type WineReviewRouteParams = {
     isFullTastingReview?: boolean;

@@ -45,6 +45,12 @@ export interface ILinks {
     myWine: string;
     tasteProfile: string;
     wineRecommendations: string;
+    wineChooser: string;
+    wineChooserCountries: string;
+    wineChooserRegions: string;
+    wineChooserGrapeVarieties: string;
+    wineChooserPrefill: string;
+    wineChooserAromasFlavors: string;
     faq: string;
     me: string;
     favoriteWineLists: string;
@@ -62,6 +68,7 @@ export interface ILinks {
     guestsStatuses: string;
     eventTastingDraft: string;
     eventTastingSaveDraft: string;
+    userLocation: string;
 }
 
 class Links implements ILinks {
@@ -98,6 +105,12 @@ class Links implements ILinks {
         myWine: 'myWine',
         tasteProfile: 'users/taste-profile',
         wineRecommendations: 'users/taste-profile/wine-recommendations',
+        wineChooser: 'wine-chooser',
+        wineChooserCountries: 'wine-chooser/countries',
+        wineChooserRegions: 'wine-chooser/regions',
+        wineChooserGrapeVarieties: 'wine-chooser/grape-varieties',
+        wineChooserPrefill: 'wine-chooser/prefill',
+        wineChooserAromasFlavors: 'wine-chooser/aromas-flavors',
         faq: 'faq/topics',
         me: 'users/me',
         favoriteWineLists: 'favorite/wine-lists',
@@ -115,6 +128,7 @@ class Links implements ILinks {
         guestsStatuses: 'event-bookings',
         eventTastingDraft: 'event-tasting/draft',
         eventTastingSaveDraft: 'event-tasting/save-draft',
+        userLocation: 'users/location',
     };
 
     private buildDomain() {
@@ -225,6 +239,24 @@ class Links implements ILinks {
     public get wineRecommendations() {
         return `${this._domain}${this._links.wineRecommendations}`;
     }
+    public get wineChooser() {
+        return `${this._domain}${this._links.wineChooser}`;
+    }
+    public get wineChooserCountries() {
+        return `${this._domain}${this._links.wineChooserCountries}`;
+    }
+    public get wineChooserRegions() {
+        return `${this._domain}${this._links.wineChooserRegions}`;
+    }
+    public get wineChooserGrapeVarieties() {
+        return `${this._domain}${this._links.wineChooserGrapeVarieties}`;
+    }
+    public get wineChooserPrefill() {
+        return `${this._domain}${this._links.wineChooserPrefill}`;
+    }
+    public get wineChooserAromasFlavors() {
+        return `${this._domain}${this._links.wineChooserAromasFlavors}`;
+    }
     public get faq() {
         return `${this._domain}${this._links.faq}`;
     }
@@ -275,6 +307,9 @@ class Links implements ILinks {
     }
     public get eventTastingSaveDraft() {
         return `${this._domain}${this._links.eventTastingSaveDraft}`;
+    }
+    public get userLocation() {
+        return `${this._domain}${this._links.userLocation}`;
     }
 }
 

@@ -1,10 +1,10 @@
 import { IRequester, IResponse, requester } from '@/libs/requester';
 import { ILinks, links } from '@/Links';
-import { IList } from '../IList';
-import { IWineListItem } from './types/IWineListItem';
-import { AddWineToFavoriteListDto } from './dto/AddWineToFavoriteList.dto';
-import { IFavoriteWineListParams } from './params/IFavoriteWineListParams';
-import { favoriteWinesListModel } from './FavoriteWineListsModel';
+import { IList } from '../../IList';
+import { IWineListItem } from '../types/IWineListItem';
+import { AddWineToFavoriteListDto } from '../dto/AddWineToFavoriteList.dto';
+import { IFavoriteWineListParams } from '../params/IFavoriteWineListParams';
+import { favoriteWinesListModel } from '../models/FavoriteWineListsModel';
 
 class FavoriteWineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -24,7 +24,7 @@ class FavoriteWineService {
                 if (params.offset === 0) {
                     favoriteWinesListModel.currentListWines = response.data;
                 } else {
-                    favoriteWinesListModel.append(response.data);
+                    favoriteWinesListModel.appened(response.data);
                 }
             }
 

@@ -6,7 +6,7 @@ const TRACK_HEIGHT = scaleVertical(8);
 const THUMB_SIZE = scaleHorizontal(20);
 const TOUCH_SIZE = scaleHorizontal(40);
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (colors: IColors, activeColor?: string, inactiveColor?: string) => {
     const styles = StyleSheet.create({
         container: {
             width: '100%',
@@ -24,15 +24,22 @@ export const getStyles = (colors: IColors) => {
         },
         track: {
             height: TRACK_HEIGHT,
-            backgroundColor: '#F4E3E0',
+            backgroundColor: inactiveColor || '#F4E3E0',
             borderRadius: TRACK_HEIGHT / 2,
             width: '100%',
         },
         activeTrack: {
             height: TRACK_HEIGHT,
-            backgroundColor: colors.primary,
+            backgroundColor: activeColor || colors.primary,
             borderRadius: TRACK_HEIGHT / 2,
             position: 'absolute',
+        },
+        trackDivider: {
+            position: 'absolute',
+            width: scaleHorizontal(2),
+            height: TRACK_HEIGHT,
+            backgroundColor: colors.background,
+            zIndex: 2,
         },
         thumbWrapper: {
             position: 'absolute',

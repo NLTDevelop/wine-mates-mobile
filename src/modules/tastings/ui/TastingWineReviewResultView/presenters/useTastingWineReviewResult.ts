@@ -2,8 +2,7 @@
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { eventTastingService } from '@/entities/events/EventTastingService';
 import { userModel } from '@/entities/users/UserModel';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
@@ -19,11 +18,13 @@ import {
     IWineSnackCuisineCacheItem,
     setWineSnackCuisinesCache,
 } from '@/libs/storage/cacheUtils';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
 import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
 import { snackService } from '@/entities/snacks/SnackService';
 import { IWineSnackCuisine } from '@/entities/snacks/types/IWineSnackCuisine';
 import { IWineSnackCuisineOption } from '@/entities/snacks/types/IWineSnackCuisineOption';
 import { useFoodPairing } from '@/UIKit/FoodPairing/presenters/useFoodPairing';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 interface IRouteParams {
     eventId?: number;
@@ -472,7 +473,7 @@ export const useTastingWineReviewResult = () => {
                 resetToEventDetails();
                 clearTasteCharacteristicsCache();
                 clearWineSnackCuisinesCache();
-                wineModel.clear();
+                clearWineModel();
                 return;
             }
 
@@ -648,7 +649,7 @@ export const useTastingWineReviewResult = () => {
 
                 clearTasteCharacteristicsCache();
                 clearWineSnackCuisinesCache();
-                wineModel.clear();
+                clearWineModel();
             }
         } catch (error) {
             console.error(JSON.stringify(error, null, 2));

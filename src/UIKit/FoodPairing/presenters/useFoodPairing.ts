@@ -1,12 +1,12 @@
 import { snackService } from '@/entities/snacks/SnackService';
 import type { GenerateSnacksDto } from '@/entities/snacks/dto/GenerateSnacks.dto';
 import { ISnack } from '@/entities/snacks/types/ISnack';
-import { wineModel } from '@/entities/wine/WineModel';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useCallback, useEffect, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import { IRateContext } from '@/entities/wine/types/IRateContext';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 type SetLimits = Dispatch<SetStateAction<IRateContext | null>>;
 type OnGenerateSuccess = () => void | Promise<void>;

@@ -19,6 +19,10 @@ interface IProps {
     sliderLength?: number;
     containerStyle?: ViewStyle;
     valueSuffix?: string;
+    activeColor?: string;
+    inactiveColor?: string;
+    showValueLabels?: boolean;
+    showTrackDividers?: boolean;
 }
 
 export const RangeSlider = ({
@@ -31,9 +35,13 @@ export const RangeSlider = ({
     sliderLength,
     containerStyle,
     valueSuffix = '',
+    activeColor,
+    inactiveColor,
+    showValueLabels = true,
+    showTrackDividers = false,
 }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
+    const styles = useMemo(() => getStyles(colors, activeColor, inactiveColor), [activeColor, colors, inactiveColor]);
     const [liveValues, setLiveValues] = useState<{ min: number; max: number } | null>(null);
     const actualSliderLength = sliderLength ?? scaleHorizontal(343) - scaleHorizontal(40);
     const onRangeChange = (nextMin: number, nextMax: number) => {
@@ -62,6 +70,20 @@ export const RangeSlider = ({
     });
     const displayedMinValue = liveValues ? liveValues.min : minValue;
     const displayedMaxValue = liveValues ? liveValues.max : maxValue;
+    const trackDividerValues = useMemo(() => {
+        if (!showTrackDividers) {
+            return [];
+        }
+
+        const values: number[] = [];
+        const normalizedStep = step > 0 ? step : 1;
+
+        for (let value = min + normalizedStep; value < max; value += normalizedStep) {
+            values.push(value);
+        }
+
+        return values;
+    }, [max, min, showTrackDividers, step]);
 
     return (
         <>
@@ -75,22 +97,27 @@ export const RangeSlider = ({
                     >
                         <View style={styles.track} />
                         <Animated.View style={[styles.activeTrack, activeTrackStyle]} />
+                        {trackDividerValues.map(value => {
+                            const left = max === min ? 0 : ((value - min) / (max - min)) * 100;
+
+                            return <View key={value} style={[styles.trackDivider, { left: `${left}%` }]} />;
+                        })}
 
                         <GestureDetector gesture={minPanGesture}>
                             <Animated.View style={[styles.thumbWrapper, minThumbStyle]}>
-                                <Marker size={scaleHorizontal(20)} color={colors.primary} style={styles.marker} />
+                                <Marker size={scaleHorizontal(20)} color={activeColor || colors.primary} style={styles.marker} />
                             </Animated.View>
                         </GestureDetector>
 
                         <GestureDetector gesture={maxPanGesture}>
                             <Animated.View style={[styles.thumbWrapper, maxThumbStyle]}>
-                                <Marker size={scaleHorizontal(20)} color={colors.primary} style={styles.marker} />
+                                <Marker size={scaleHorizontal(20)} color={activeColor || colors.primary} style={styles.marker} />
                             </Animated.View>
                         </GestureDetector>
                     </Pressable>
                 </View>
             </View>
-            <View style={styles.labelsContainer}>
+            {showValueLabels ? <View style={styles.labelsContainer}>
                     <Typography
                         text={`${displayedMinValue}${valueSuffix}`}
                         variant="subtitle_12_400"
@@ -101,7 +128,7 @@ export const RangeSlider = ({
                         variant="subtitle_12_400"
                         style={styles.labelText}
                     />
-            </View>
+            </View> : null}
         </>
     );
 };

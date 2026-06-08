@@ -1,29 +1,37 @@
 import { IRequester, IResponse, requester } from '@/libs/requester';
 import { ILinks, links } from '@/Links';
-import { IList } from '../IList';
-import { IWineListItem } from './types/IWineListItem';
-import { IWineColorShade } from './types/IWineColorShade';
-import { wineModel } from './WineModel';
-import { IWineType } from './types/IWineType';
-import { IWineColor } from './types/IWineColors';
-import { IWineSmell } from './types/IWineSmell';
-import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
-import { IWineAroma } from './types/IWineAroma';
-import { IWine } from './types/IWine';
-import { ICountry } from './types/ICountry';
-import { AddRateDto } from './dto/AddRate.dto';
-import { IReviewsListParams } from './params/IReviewsListParams';
-import { IWineReviewsListItem } from './types/IWineReviewsListItem';
-import { wineReviewsListModel } from './WineReviewsListModel';
-import { IWineDetails } from './types/IWineDetails';
-import { IWineSmellSearchParams } from './params/IWIneSmellSearchParams';
-import { GenerateNoteDto } from './dto/GenerateNote.dto';
-import { IRateContext } from './types/IRateContext';
-import { IAIData } from './types/IAIData';
-import { IWineTasteGroup } from './types/IWineTatseGroup';
-import { ITasteProfile } from './types/ITasteProfile';
-import { IRecommendationWineListParams } from './params/IRecommendationWineListParams';
-import { IWineSetSearchItem } from './types/IWineSetSearchItem';
+import { IList } from '../../IList';
+import { IWineListItem } from '../types/IWineListItem';
+import { IWineColorShade } from '../types/IWineColorShade';
+import { IWineType } from '../types/IWineType';
+import { IWineColor } from '../types/IWineColors';
+import { IWineSmell } from '../types/IWineSmell';
+import { IWineTasteCharacteristic } from '../types/IWineTasteCharacteristic';
+import { IWineAroma } from '../types/IWineAroma';
+import { IWine } from '../types/IWine';
+import { ICountry } from '../types/ICountry';
+import { AddRateDto } from '../dto/AddRate.dto';
+import { IReviewsListParams } from '../params/IReviewsListParams';
+import { IWineReviewsListItem } from '../types/IWineReviewsListItem';
+import { IWineDetails } from '../types/IWineDetails';
+import { IWineSmellSearchParams } from '../params/IWIneSmellSearchParams';
+import { GenerateNoteDto } from '../dto/GenerateNote.dto';
+import { IRateContext } from '../types/IRateContext';
+import { IAIData } from '../types/IAIData';
+import { IWineTasteGroup } from '../types/IWineTatseGroup';
+import { ITasteProfile } from '../types/ITasteProfile';
+import { IRecommendationWineListParams } from '../params/IRecommendationWineListParams';
+import { IWineSetSearchItem } from '../types/IWineSetSearchItem';
+import {
+    IWineChooserGrapeVariety,
+    IWineChooserList,
+    IWineChooserOption,
+    IWineChooserPrefill,
+    IWineChooserRequest,
+} from '../types/IWineChooser';
+import { wineChooserResultsModel } from '../models/WineChooserResultsModel';
+import { wineModel } from '../models/WineModel';
+import { wineReviewsListModel } from '../models/WineReviewsListModel';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -313,7 +321,7 @@ class WineService {
                 if (params.offset === 0) {
                     wineReviewsListModel.list = response.data;
                 } else {
-                    wineReviewsListModel.append(response.data);
+                    wineReviewsListModel.appened(response.data);
                 }
             }
 
@@ -338,7 +346,7 @@ class WineService {
                 if (params.offset === 0) {
                     wineReviewsListModel.list = response.data;
                 } else {
-                    wineReviewsListModel.append(response.data);
+                    wineReviewsListModel.appened(response.data);
                 }
             }
 
@@ -419,6 +427,109 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getRecommendations: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getWineChooserCountries = async (): Promise<IResponse<IWineChooserOption[]>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineChooserCountries}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getWineChooserCountries: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getWineChooserRegions = async (params: { countryId: number }): Promise<IResponse<IWineChooserOption[]>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineChooserRegions}`,
+                params,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getWineChooserRegions: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getWineChooserGrapeVarieties = async (
+        params: { limit: number; offset: number },
+    ): Promise<IResponse<IList<IWineChooserGrapeVariety>>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineChooserGrapeVarieties}`,
+                params,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getWineChooserGrapeVarieties: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getWineChooserPrefill = async (): Promise<IResponse<IWineChooserPrefill>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineChooserPrefill}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getWineChooserPrefill: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getWineChooserAromasFlavors = async (
+        params: { typeId: number; colorId: number },
+    ): Promise<IResponse<{ aromas: IWineChooserOption[]; flavors: IWineChooserOption[] }>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineChooserAromasFlavors}`,
+                params,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getWineChooserAromasFlavors: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    chooseWines = async (data: IWineChooserRequest): Promise<IResponse<IWineChooserList>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.wineChooser}`,
+                data,
+            });
+
+            if (!response.isError && response.data) {
+                if (data.offset === 0 || !wineChooserResultsModel.list) {
+                    wineChooserResultsModel.list = response.data;
+                } else {
+                    wineChooserResultsModel.list = {
+                        ...response.data,
+                        rows: [...wineChooserResultsModel.list.rows, ...response.data.rows],
+                    };
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> chooseWines: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

@@ -1,21 +1,21 @@
 import { MobXRepository } from '@/repository/MobXRepository';
-import { IWineBase } from './types/IWineBase';
-import { IWineLook } from './types/IWineLook';
-import { IWineColorShade } from './types/IWineColorShade';
-import { IWineType } from './types/IWineType';
-import { IWineColor } from './types/IWineColors';
-import { IWineSmell } from './types/IWineSmell';
-import { IWineTaste } from './types/IWineTaste';
-import { IWineTasteCharacteristic } from './types/IWineTasteCharacteristic';
-import { ITasteCharacteristicDetail } from './types/ITasteCharacteristicDetail';
-import { IWineSelectedSmell } from './types/IWineSelectedSmell';
-import { IWineReview } from './types/IWineReview';
-import { IWineImage } from './types/IWineImage';
-import { IWineAroma } from './types/IWineAroma';
-import { IWine } from './types/IWine';
-import { IWineTasteGroup } from './types/IWineTatseGroup';
-import { IVintagesItem } from './types/IWineDetails';
-import type { AddRateDto } from './dto/AddRate.dto';
+import { IWineBase } from '../types/IWineBase';
+import { IWineLook } from '../types/IWineLook';
+import { IWineColorShade } from '../types/IWineColorShade';
+import { IWineType } from '../types/IWineType';
+import { IWineColor } from '../types/IWineColors';
+import { IWineSmell } from '../types/IWineSmell';
+import { IWineTaste } from '../types/IWineTaste';
+import { IWineTasteCharacteristic } from '../types/IWineTasteCharacteristic';
+import { ITasteCharacteristicDetail } from '../types/ITasteCharacteristicDetail';
+import { IWineSelectedSmell } from '../types/IWineSelectedSmell';
+import { IWineReview } from '../types/IWineReview';
+import { IWineImage } from '../types/IWineImage';
+import { IWineAroma } from '../types/IWineAroma';
+import { IWine } from '../types/IWine';
+import { IWineTasteGroup } from '../types/IWineTatseGroup';
+import { IVintagesItem } from '../types/IWineDetails';
+import type { AddRateDto } from '../dto/AddRate.dto';
 
 export interface IWineListModel {
     wine: IWine | null;
@@ -38,7 +38,6 @@ export interface IWineListModel {
     tasteCharacteristicDetails: ITasteCharacteristicDetail[] | null;
     winePeak: number | null;
     review: IWineReview | null;
-    clear: () => void;
 }
 
 class WineModel implements IWineListModel {
@@ -223,27 +222,6 @@ class WineModel implements IWineListModel {
         this.reviewRepository.save(value);
     }
 
-    public clear() {
-        this.wine = null;
-        this.selectedWineId = null;
-        this.vintages = null;
-        this.customVintage = null;
-        this.image = null;
-        this.base = null;
-        this.look = null;
-        this.colors = null;
-        this.colorsShades = null;
-        this.smells = null;
-        this.searchedAroma = null;
-        this.selectedSmells = null;
-        this.tastes = null;
-        this.selectedTastes = null;
-        this.tasteCharacteristics = null;
-        this.draftTasteCharacteristics = null;
-        this.tasteCharacteristicDetails = null;
-        this.winePeak = null;
-        this.review = null;
-    }
 }
 
 export const wineModel = new WineModel();

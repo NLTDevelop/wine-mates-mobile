@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { IWineDetails, IVintage } from '@/entities/wine/types/IWineDetails';
-import { wineService } from '@/entities/wine/WineService';
-import { myWineService } from '@/entities/wine/MyWineService';
+import { wineService } from '@/entities/wine/services/WineService';
+import { myWineService } from '@/entities/wine/services/MyWineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useRoute, useIsFocused } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
-import { wineModel } from '@/entities/wine/WineModel';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 interface IEventVintageResponse extends IVintage {
     avgExpertRating?: number | null;

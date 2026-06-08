@@ -1,14 +1,13 @@
 import { MobXRepository } from '@/repository/MobXRepository';
-import { IFavoriteWineList } from './types/IFavoriteWineList';
-import { IList } from '../IList';
-import { IWineListItem } from './types/IWineListItem';
+import { IFavoriteWineList } from '../types/IFavoriteWineList';
+import { IWineListItem } from '../types/IWineListItem';
+import { IList } from '@/entities/IList';
 
 export interface IFavoriteWinesListModel {
     lists: IFavoriteWineList[] | null;
     currentListId: number | null;
     currentListWines: IList<IWineListItem> | null;
-    append: (value: IList<IWineListItem>) => void;
-    clear: () => void;
+    appened: (value: IList<IWineListItem>) => void;
 }
 
 class FavoriteWinesListModel implements IFavoriteWinesListModel {
@@ -40,19 +39,13 @@ class FavoriteWinesListModel implements IFavoriteWinesListModel {
         this.currentListWinesRepository.save(value);
     }
 
-    public append(value: IList<IWineListItem>) {
+    public appened(value: IList<IWineListItem>) {
         if (this.currentListWines) {
             this.currentListWines = {
                 ...this.currentListWines,
                 rows: [...this.currentListWines.rows, ...value.rows],
             };
         }
-    }
-
-    public clear() {
-        this.lists = null;
-        this.currentListId = null;
-        this.currentListWines = null;
     }
 }
 

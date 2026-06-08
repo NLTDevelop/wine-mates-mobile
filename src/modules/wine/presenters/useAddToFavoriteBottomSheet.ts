@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useFavoriteWineLists } from './useFavoriteWineLists';
-import { favoriteWineService } from '@/entities/wine/FavoriteWineService';
+import { favoriteWineService } from '@/entities/wine/services/FavoriteWineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { IFavoriteItem } from '../types/IFavoriteItem';

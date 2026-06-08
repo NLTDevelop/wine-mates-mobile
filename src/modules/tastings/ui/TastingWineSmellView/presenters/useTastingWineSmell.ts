@@ -1,7 +1,6 @@
 import { IWineSelectedSmell } from '@/entities/wine/types/IWineSelectedSmell';
 import { IAroma, ISmellSubgroup, IWineSmell } from '@/entities/wine/types/IWineSmell';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { eventTastingService } from '@/entities/events/EventTastingService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -10,6 +9,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard } from 'react-native';
 import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 interface IRouteParams {
     source?: string;

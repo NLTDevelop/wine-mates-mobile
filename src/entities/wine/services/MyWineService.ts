@@ -1,11 +1,11 @@
 import { IRequester, IResponse, requester } from '@/libs/requester';
 import { ILinks, links } from '@/Links';
-import { IWineListItem } from './types/IWineListItem';
-import { wineListsModel } from './WineListsModel';
-import { IList } from '../IList';
-import { IMyWineListParams } from './params/IMyWineListParams';
-import { IWineFilters } from './types/IWineFilters';
-import { IWineDetails } from './types/IWineDetails';
+import { IWineListItem } from '../types/IWineListItem';
+import { IList } from '../../IList';
+import { IMyWineListParams } from '../params/IMyWineListParams';
+import { IWineFilters } from '../types/IWineFilters';
+import { IWineDetails } from '../types/IWineDetails';
+import { wineListsModel } from '../models/WineListsModel';
 
 class MyWineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -22,7 +22,7 @@ class MyWineService {
                 if (params.offset === 0) {
                     wineListsModel.list = response.data;
                 } else {
-                    wineListsModel.append(response.data);
+                    wineListsModel.appened(response.data);
                 }
             }
          

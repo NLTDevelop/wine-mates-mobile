@@ -1,9 +1,9 @@
 import { useMemo, useCallback, useRef } from 'react';
 import { IVintage, IVintagesItem } from '@/entities/wine/types/IWineDetails';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
-import { wineModel } from '@/entities/wine/WineModel';
 import { localization } from '@/UIProvider/localization/Localization';
 import { IVintageDropdownItem } from '../ui/components/VintageDropdown/types/IVintageDropdownItem';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const NONE_VINTAGE_DROPDOWN_VALUE = '__NONE_VINTAGE__';
 

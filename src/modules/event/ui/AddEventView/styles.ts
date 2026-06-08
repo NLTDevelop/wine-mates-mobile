@@ -50,17 +50,6 @@ export const getStyles = (colors: IColors) => {
             paddingBottom: scaleVertical(12),
             paddingTop: scaleVertical(8),
         },
-        pickerButton: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: colors.background,
-            borderRadius: 12,
-            borderWidth: scaleHorizontal(1),
-            borderColor: colors.border,
-            height: scaleVertical(48),
-            paddingHorizontal: scaleHorizontal(16),
-        },
         row: {
             flexDirection: 'row',
             gap: scaleHorizontal(8),
