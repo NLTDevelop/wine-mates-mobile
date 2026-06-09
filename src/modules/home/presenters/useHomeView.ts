@@ -64,17 +64,25 @@ const showHomeRequestError = (message?: string) => {
     );
 };
 
-const getHomeSectionsListParams = async (): Promise<IHomeSectionsListParams | undefined> => {
-    const location = await getCurrentLocationPayload();
+const getHomeSectionsListParams = async (): Promise<IHomeSectionsListParams> => {
+    try {
+        const location = await getCurrentLocationPayload();
 
-    if (!location) {
-        return undefined;
+        if (!location) {
+            const message = localization.t('permissions.locationUnavailable');
+
+            showHomeRequestError(message);
+            throw new Error(message);
+        }
+
+        return {
+            lat: location.latitude,
+            lon: location.longitude,
+        };
+    } catch (error) {
+        console.warn('useHomeView -> getHomeSectionsListParams: ', error);
+        throw error;
     }
-
-    return {
-        lat: location.latitude,
-        lon: location.longitude,
-    };
 };
 
 const getSortedSections = (sections: IHomeSection[]) => {
@@ -324,21 +332,7 @@ export const useHomeView = (locale: string) => {
         setIsError(false);
         setIsLoading(true);
 
-        const response = await requestHomeSections();
-
-        if (!isMountedRef.current) {
-            return;
-        }
-
-        if (response.isError) {
-            setIsError(true);
-        }
-
-        setIsLoading(false);
-    }, [requestHomeSections]);
-
-    useEffect(() => {
-        const loadHomeSections = async () => {
+        try {
             const response = await requestHomeSections();
 
             if (!isMountedRef.current) {
@@ -348,8 +342,48 @@ export const useHomeView = (locale: string) => {
             if (response.isError) {
                 setIsError(true);
             }
+        } catch (error) {
+            console.warn('useHomeView -> getHomeSections: ', error);
 
-            setIsLoading(false);
+            if (isMountedRef.current) {
+                setIsError(true);
+                if (!(error instanceof Error) || error.message !== localization.t('permissions.locationUnavailable')) {
+                    showHomeRequestError(error instanceof Error ? error.message : undefined);
+                }
+            }
+        } finally {
+            if (isMountedRef.current) {
+                setIsLoading(false);
+            }
+        }
+    }, [requestHomeSections]);
+
+    useEffect(() => {
+        const loadHomeSections = async () => {
+            try {
+                const response = await requestHomeSections();
+
+                if (!isMountedRef.current) {
+                    return;
+                }
+
+                if (response.isError) {
+                    setIsError(true);
+                }
+            } catch (error) {
+                console.warn('useHomeView -> loadHomeSections: ', error);
+
+                if (isMountedRef.current) {
+                    setIsError(true);
+                    if (!(error instanceof Error) || error.message !== localization.t('permissions.locationUnavailable')) {
+                        showHomeRequestError(error instanceof Error ? error.message : undefined);
+                    }
+                }
+            } finally {
+                if (isMountedRef.current) {
+                    setIsLoading(false);
+                }
+            }
         };
 
         loadHomeSections();
@@ -358,13 +392,20 @@ export const useHomeView = (locale: string) => {
     const onRefresh = useCallback(async () => {
         setIsRefreshing(true);
 
-        const response = await requestHomeSections();
+        try {
+            const response = await requestHomeSections();
 
-        if (response.isError) {
-            showHomeRequestError(response.message);
+            if (response.isError) {
+                showHomeRequestError(response.message);
+            }
+        } catch (error) {
+            console.warn('useHomeView -> onRefresh: ', error);
+            if (!(error instanceof Error) || error.message !== localization.t('permissions.locationUnavailable')) {
+                showHomeRequestError(error instanceof Error ? error.message : undefined);
+            }
+        } finally {
+            setIsRefreshing(false);
         }
-
-        setIsRefreshing(false);
     }, [requestHomeSections]);
 
     const onOpenSectionsModal = useCallback(() => {

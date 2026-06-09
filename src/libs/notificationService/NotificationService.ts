@@ -12,6 +12,7 @@ class NotificationService {
     private _messaging?: IMessaging;
     private _unsubscribeForeground?: () => void;
     private _unsubscribeTokenRefresh?: () => void;
+    private _registeredToken?: string;
 
     constructor(
         private _requester: IRequester = requester,
@@ -60,12 +61,16 @@ class NotificationService {
             return null;
         }
 
+        if (token === this._registeredToken) {
+            return null;
+        }
+
         if (__DEV__) {
             console.info('NotificationService -> FCM token: ', token);
         }
 
         try {
-            return this._requester.request({
+            const response = await this._requester.request({
                 method: 'POST',
                 url: this._links.device,
                 data: {
@@ -73,6 +78,12 @@ class NotificationService {
                     deviceType: Platform.OS,
                 },
             });
+
+            if (!response.isError) {
+                this._registeredToken = token;
+            }
+
+            return response;
         } catch (error) {
             console.warn('NotificationService -> registerToken: ', error);
             return null;
@@ -118,7 +129,11 @@ class NotificationService {
     unregisterCurrentDevice = async () => {
         const token = await this.getToken();
 
-        return this.unregisterToken(token);
+        const response = await this.unregisterToken(token);
+
+        this._registeredToken = undefined;
+
+        return response;
     };
 
     subscribeForeground = () => {

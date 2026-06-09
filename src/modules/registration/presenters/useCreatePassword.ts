@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
 import { registerUserModel } from '@/entities/users/RegisterUserModel';
+import { completeAuthorization } from '@/modules/authentication/presenters/completeAuthorization';
 
 export const useCreatePassword = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -30,7 +31,7 @@ export const useCreatePassword = () => {
         setIsError({ status: false, errorText: '' });
     }, []);
 
-    const handleSavePress = useCallback(async () => {
+    const onSavePress = useCallback(async () => {
         try {
             if (!registerUserModel.user) return;
 
@@ -70,17 +71,17 @@ export const useCreatePassword = () => {
                     setIsError({ status: true, errorText: '' });
                 }
             } else {
-                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
+                await completeAuthorization(navigation);
             }
         } finally {
             setIsLoading(false);
         }
     }, [form, navigation]);
 
-    const handleRetry = useCallback(() => {
+    const onRetry = useCallback(() => {
         setIsError({ status: false, errorText: '' });
-        handleSavePress();
-    }, [handleSavePress]);
+        onSavePress();
+    }, [onSavePress]);
 
-    return { form, onChangePassword, onChangeConfirmPassword, isLoading, handleSavePress, isError, handleRetry, isDisabled };
+    return { form, onChangePassword, onChangeConfirmPassword, isLoading, onSavePress, isError, onRetry, isDisabled };
 };
