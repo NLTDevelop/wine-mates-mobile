@@ -600,6 +600,7 @@
     "permissions": {
         "locationTitle": "Location Permission",
         "locationMessage": "The app needs access to your location to show events near you",
+        "locationUnavailable": "Unable to get your location. Please check location permissions and try again.",
         "askLater": "Ask later",
         "cancel": "Cancel",
         "ok": "OK"

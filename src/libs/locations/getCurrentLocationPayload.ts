@@ -2,7 +2,7 @@ import { PermissionsAndroid } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import type { GeolocationResponse } from '@react-native-community/geolocation';
 import * as RNLocalize from 'react-native-localize';
-import { isAndroid, isIOS } from '@/utils';
+import { isAndroid } from '@/utils';
 import { LocationDto } from '@/entities/users/dto/Location.dto';
 
 const GEOLOCATION_ERROR_CODES = {
@@ -20,19 +20,6 @@ const GEOLOCATION_MAXIMUM_AGE = {
 };
 
 const requestLocationPermission = async () => {
-    if (isIOS) {
-        return new Promise<boolean>((resolve) => {
-            Geolocation.requestAuthorization(
-                () => {
-                    resolve(true);
-                },
-                () => {
-                    resolve(false);
-                },
-            );
-        });
-    }
-
     if (isAndroid) {
         const granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -41,13 +28,25 @@ const requestLocationPermission = async () => {
         return granted === PermissionsAndroid.RESULTS.GRANTED;
     }
 
-    return false;
+    return true;
 };
 
 const getCurrentPosition = (highAccuracy: boolean) => {
     return new Promise<GeolocationResponse>((resolve, reject) => {
+        console.log('getCurrentLocationPayload -> getCurrentPosition start', {
+            highAccuracy,
+        });
+
         Geolocation.getCurrentPosition(
-            resolve,
+            (position) => {
+                console.log('getCurrentLocationPayload -> getCurrentPosition success', {
+                    highAccuracy,
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    accuracy: position.coords.accuracy,
+                });
+                resolve(position);
+            },
             reject,
             {
                 enableHighAccuracy: highAccuracy,
@@ -68,22 +67,32 @@ export const getCurrentLocationPayload = async (): Promise<LocationDto | null> =
     try {
         const position = await getCurrentPosition(false);
 
-        return {
+        const payload = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             timezone: RNLocalize.getTimeZone(),
         };
+
+        console.log('getCurrentLocationPayload -> standard payload', payload);
+
+        return payload;
     } catch (error: any) {
         if (error?.code !== GEOLOCATION_ERROR_CODES.TIMEOUT) {
             return null;
         }
 
-        const position = await getCurrentPosition(true);
+        try {
+            const position = await getCurrentPosition(true);
 
-        return {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            timezone: RNLocalize.getTimeZone(),
-        };
+            const payload = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                timezone: RNLocalize.getTimeZone(),
+            };
+
+            return payload;
+        } catch {
+            return null;
+        }
     }
 };
