@@ -14,6 +14,7 @@ export const usePeopleTalkingSection = (data: IHomePeopleTalking[]) => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [carouselHeight, setCarouselHeight] = useState(DEFAULT_CAROUSEL_HEIGHT);
     const itemsCount = data.length;
+    const hasItems = itemsCount > 0;
 
     const onConfigurePanGesture = useCallback((panGesture: PanGesture) => {
         panGesture.activeOffsetX([-12, 12]);
@@ -53,6 +54,7 @@ export const usePeopleTalkingSection = (data: IHomePeopleTalking[]) => {
         carouselRef,
         activeIndex,
         carouselHeight,
+        hasItems,
         onProgressChange,
         onCardLayout,
         onConfigurePanGesture,

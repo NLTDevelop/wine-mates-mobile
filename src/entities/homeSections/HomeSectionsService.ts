@@ -27,12 +27,16 @@ class HomeSectionsService {
         }
     };
 
-    update = async (data: UpdateHomeSectionsDto): Promise<IResponse<IHomeSection[]>> => {
+    update = async (
+        data: UpdateHomeSectionsDto,
+        params?: IHomeSectionsListParams,
+    ): Promise<IResponse<IHomeSection[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'PATCH',
                 url: this._links.homeSections,
                 data,
+                params,
             });
 
             if (!response.isError && Array.isArray(response.data)) {

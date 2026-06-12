@@ -138,7 +138,7 @@ const createHomeEvents = (section: IHomeSection): IEvent[] => {
 
     const data = section.data;
     if (!Array.isArray(data) || !data.length) {
-        return [emptyEvent];
+        return [];
     }
 
     return data.map(item => ({
@@ -209,16 +209,7 @@ const createPeopleTalking = (section: IHomeSection, locale: string) => {
 
     const data = section.data;
     if (!Array.isArray(data) || !data.length) {
-        return [{
-            authorName: EMPTY_FIELD,
-            authorAvatar: null,
-            text: EMPTY_FIELD,
-            likesCount: 0,
-            commentsCount: 0,
-            hasLikes: false,
-            hasComments: false,
-            createdAtLabel: EMPTY_FIELD,
-        }];
+        return [];
     }
 
     return data.map(item => {
@@ -523,24 +514,27 @@ export const useHomeView = (locale: string) => {
 
         setIsSaving(true);
 
-        const normalizedDraft = getNormalizedSections(draftSections);
-        const payloadSections = getSectionPayload(normalizedDraft);
+        try {
+            const params = await getHomeSectionsListParams();
+            const normalizedDraft = getNormalizedSections(draftSections);
+            const payloadSections = getSectionPayload(normalizedDraft);
 
-        const response = await homeSectionsService.update({
-            sections: payloadSections,
-        });
+            const response = await homeSectionsService.update({
+                sections: payloadSections,
+            }, params);
 
-        if (!response.isError) {
-            if (!Array.isArray(response.data)) {
-                homeSectionsModel.sections = getOrderedSections(normalizedDraft);
+            if (!response.isError) {
+                if (!Array.isArray(response.data)) {
+                    homeSectionsModel.sections = getOrderedSections(normalizedDraft);
+                }
+
+                setIsSectionsModalVisible(false);
+            } else {
+                showHomeRequestError(response.message);
             }
-
-            setIsSectionsModalVisible(false);
-        } else {
-            showHomeRequestError(response.message);
+        } finally {
+            setIsSaving(false);
         }
-
-        setIsSaving(false);
     }, [draftSections, isSaving]);
 
     const onSavePlacementSections = useCallback(async () => {
@@ -550,23 +544,26 @@ export const useHomeView = (locale: string) => {
 
         setIsSaving(true);
 
-        const normalizedPlacementSections = getNormalizedSections(placementSections);
-        const payloadSections = getSectionPayload(normalizedPlacementSections);
-        const response = await homeSectionsService.update({
-            sections: payloadSections,
-        });
+        try {
+            const params = await getHomeSectionsListParams();
+            const normalizedPlacementSections = getNormalizedSections(placementSections);
+            const payloadSections = getSectionPayload(normalizedPlacementSections);
+            const response = await homeSectionsService.update({
+                sections: payloadSections,
+            }, params);
 
-        if (!response.isError) {
-            if (!Array.isArray(response.data)) {
-                homeSectionsModel.sections = getOrderedSections(normalizedPlacementSections);
+            if (!response.isError) {
+                if (!Array.isArray(response.data)) {
+                    homeSectionsModel.sections = getOrderedSections(normalizedPlacementSections);
+                }
+
+                setIsPlacementEditMode(false);
+            } else {
+                showHomeRequestError(response.message);
             }
-
-            setIsPlacementEditMode(false);
-        } else {
-            showHomeRequestError(response.message);
+        } finally {
+            setIsSaving(false);
         }
-
-        setIsSaving(false);
     }, [isSaving, placementSections]);
 
     return {
