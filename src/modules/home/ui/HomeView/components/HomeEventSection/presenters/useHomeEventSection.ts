@@ -69,6 +69,7 @@ export const useHomeEventSection = (events: IEvent[]) => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [carouselHeight, setCarouselHeight] = useState(DEFAULT_CAROUSEL_HEIGHT);
     const itemsCount = events.length;
+    const hasEvents = itemsCount > 0;
 
     const onArrowPress = useCallback(() => {
         navigation.navigate('EventListView');
@@ -203,6 +204,7 @@ export const useHomeEventSection = (events: IEvent[]) => {
         carouselRef,
         activeIndex,
         carouselHeight,
+        hasEvents,
         onProgressChange,
         onCardLayout,
         onArrowPress,

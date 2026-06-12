@@ -47,6 +47,7 @@ export const ChooseWineFiltersView = observer(() => {
         isLoverRating,
         constants,
         visibleTasteItems,
+        shouldShowTasteCharacteristicsToggle,
         applyTasteCharacteristics,
         onSelectMyselfMode,
         onSelectFriendMode,
@@ -212,17 +213,19 @@ export const ChooseWineFiltersView = observer(() => {
                             onPress={onOpenGrapePicker}
                         />
 
-                        <TouchableOpacity onPress={onToggleTasteCharacteristics} style={styles.checkboxRow}>
-                            <Checkbox
-                                isChecked={applyTasteCharacteristics}
-                                onPress={onToggleTasteCharacteristics}
-                            />
-                            <Typography
-                                variant="h6"
-                                text={t('chooseWine.applyTasteCharacteristics')}
-                                style={styles.checkboxText}
-                            />
-                        </TouchableOpacity>
+                        {shouldShowTasteCharacteristicsToggle && (
+                            <TouchableOpacity onPress={onToggleTasteCharacteristics} style={styles.checkboxRow}>
+                                <Checkbox
+                                    isChecked={applyTasteCharacteristics}
+                                    onPress={onToggleTasteCharacteristics}
+                                />
+                                <Typography
+                                    variant="h6"
+                                    text={t('chooseWine.applyTasteCharacteristics')}
+                                    style={styles.checkboxText}
+                                />
+                            </TouchableOpacity>
+                        )}
 
                         <FlatList
                             data={visibleTasteItems}

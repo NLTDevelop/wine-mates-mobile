@@ -22,13 +22,14 @@ export const HomeEventSection = ({
     events,
     carouselHorizontalOffset = 32,
 }: IProps) => {
-    const { colors } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { width } = useWindowDimensions();
     const {
         carouselRef,
         activeIndex,
         carouselHeight,
+        hasEvents,
         onProgressChange,
         onCardLayout,
         onArrowPress,
@@ -61,17 +62,29 @@ export const HomeEventSection = ({
                     <ArrowRightIcon />
                 </TouchableOpacity>
             </View>
-            <Carousel
-                ref={carouselRef}
-                loop={false}
-                width={carouselWidth}
-                height={carouselHeight}
-                data={events}
-                onProgressChange={onProgressChange}
-                renderItem={renderItem}
-                onConfigurePanGesture={onConfigurePanGesture}
-            />
-            <CarouselDots count={events.length} activeIndex={activeIndex} />
+            {hasEvents ? (
+                <>
+                    <Carousel
+                        ref={carouselRef}
+                        loop={false}
+                        width={carouselWidth}
+                        height={carouselHeight}
+                        data={events}
+                        onProgressChange={onProgressChange}
+                        renderItem={renderItem}
+                        onConfigurePanGesture={onConfigurePanGesture}
+                    />
+                    <CarouselDots count={events.length} activeIndex={activeIndex} />
+                </>
+            ) : (
+                <View style={styles.emptyContainer}>
+                    <Typography
+                        variant="body_400"
+                        text={t('home.eventsEmptyDescription')}
+                        style={styles.emptyText}
+                    />
+                </View>
+            )}
         </View>
     );
 };

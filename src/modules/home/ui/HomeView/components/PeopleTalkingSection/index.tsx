@@ -24,13 +24,14 @@ export const PeopleTalkingSection = ({
     data,
     carouselHorizontalOffset = 32,
 }: IProps) => {
-    const { colors } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { width } = useWindowDimensions();
     const {
         carouselRef,
         activeIndex,
         carouselHeight,
+        hasItems,
         onProgressChange,
         onCardLayout,
         onConfigurePanGesture,
@@ -76,17 +77,29 @@ export const PeopleTalkingSection = ({
                     <ArrowRightIcon />
                 </View>
             </View>
-            <Carousel
-                ref={carouselRef}
-                loop={false}
-                width={carouselWidth}
-                height={carouselHeight}
-                data={data}
-                onProgressChange={onProgressChange}
-                renderItem={renderItem}
-                onConfigurePanGesture={onConfigurePanGesture}
-            />
-            <CarouselDots count={data.length} activeIndex={activeIndex} />
+            {hasItems ? (
+                <>
+                    <Carousel
+                        ref={carouselRef}
+                        loop={false}
+                        width={carouselWidth}
+                        height={carouselHeight}
+                        data={data}
+                        onProgressChange={onProgressChange}
+                        renderItem={renderItem}
+                        onConfigurePanGesture={onConfigurePanGesture}
+                    />
+                    <CarouselDots count={data.length} activeIndex={activeIndex} />
+                </>
+            ) : (
+                <View style={styles.emptyContainer}>
+                    <Typography
+                        variant="body_400"
+                        text={t('home.peopleTalkingEmptyDescription')}
+                        style={styles.emptyText}
+                    />
+                </View>
+            )}
         </View>
     );
 };
