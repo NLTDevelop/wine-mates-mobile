@@ -119,7 +119,7 @@
         "myLevelInWine": "My level in wine",
         "myLevelDescription": "Pick your role in the wine world and connect with those who share your passion",
         "wineLover": "Wine lover",
-        "wineExpert": "Wine expert",
+        "wineExpert": "Wine pro",
         "winemaker": "Winemaker",
         "getStarted": "Let’s get started",
         "email": "E-mail",
@@ -147,7 +147,7 @@
     },
     "wineLevel": {
         "lover": "Wine lover",
-        "expert": "Wine expert",
+        "expert": "Wine pro",
         "creator": "Winemaker"
     },
     "muse": {
