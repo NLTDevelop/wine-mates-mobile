@@ -7,6 +7,7 @@ import { Button } from '@/UIKit/Button';
 import { Checkbox } from '@/UIKit/Checkbox';
 import { IUniversalPickerOption } from '@/UIKit/UniversalPickerModal/types/IUniversalPickerOption';
 import { getStyles } from './styles';
+import { useUniversalPickerBottomModal } from './presenters/useUniversalPickerBottomModal';
 
 interface IProps {
     visible: boolean;
@@ -36,50 +37,49 @@ export const UniversalPickerBottomModal = ({
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
+    const { isFullScreen } = useUniversalPickerBottomModal({
+        optionsCount: options.length,
+        isLoading,
+    });
+
     const keyExtractor = useCallback((item: IUniversalPickerOption) => {
         return item.id;
     }, []);
 
-    const renderItem = useCallback(({ item }: { item: IUniversalPickerOption }) => {
-        return (
-            <TouchableOpacity onPress={item.onPress} style={styles.option}>
-                <View style={styles.optionTextContainer}>
-                    <Typography variant="h6" text={item.title} style={styles.optionText} />
-                    {item.subtitle ? (
-                        <Typography variant="subtitle_12_400" text={item.subtitle} style={styles.optionSubtitle} />
-                    ) : null}
-                </View>
-                <Checkbox isChecked={item.isSelected} onPress={item.onPress} isRound={selectionMode === 'single'} />
-            </TouchableOpacity>
-        );
-    }, [selectionMode, styles]);
+    const renderItem = useCallback(
+        ({ item }: { item: IUniversalPickerOption }) => {
+            return (
+                <TouchableOpacity onPress={item.onPress} style={styles.option} activeOpacity={0.7}>
+                    <View style={styles.optionTextContainer}>
+                        <Typography variant="h6" text={item.title} style={styles.optionText} />
+
+                        {item.subtitle ? (
+                            <Typography variant="subtitle_12_400" text={item.subtitle} style={styles.optionSubtitle} />
+                        ) : null}
+                    </View>
+
+                    <Checkbox isChecked={item.isSelected} onPress={item.onPress} isRound={selectionMode === 'single'} />
+                </TouchableOpacity>
+            );
+        },
+        [selectionMode, styles],
+    );
 
     const renderSeparator = useCallback(() => {
         return <View style={styles.separator} />;
     }, [styles]);
 
-    return (
-        <BottomModal visible={visible} onClose={onClose} title={title}>
-            <View style={styles.container}>
-                {isLoading ? (
-                    <View style={styles.stateContainer}>
-                        <ActivityIndicator color={colors.primary} />
-                    </View>
-                ) : (
-                    <FlatList
-                        data={options}
-                        keyExtractor={keyExtractor}
-                        renderItem={renderItem}
-                        ItemSeparatorComponent={renderSeparator}
-                        style={styles.list}
-                        ListEmptyComponent={
-                            <View style={styles.stateContainer}>
-                                <Typography variant="h5" text={emptyText} style={styles.emptyText} />
-                            </View>
-                        }
-                        showsVerticalScrollIndicator={false}
-                    />
-                )}
+    const renderEmpty = useCallback(() => {
+        return (
+            <View style={styles.emptyContainer}>
+                <Typography variant="h5" text={emptyText} style={styles.emptyText} />
+            </View>
+        );
+    }, [emptyText, styles]);
+
+    const renderFooter = useCallback(() => {
+        return (
+            <View style={styles.footer}>
                 <Button
                     text={confirmText}
                     onPress={onConfirm}
@@ -89,6 +89,69 @@ export const UniversalPickerBottomModal = ({
                     containerStyle={styles.confirmButton}
                 />
             </View>
+        );
+    }, [confirmText, isConfirming, isLoading, onConfirm, styles]);
+
+    if (isFullScreen) {
+        return (
+            <BottomModal visible={visible} onClose={onClose} title={title} isFullScreen>
+                <View style={styles.fullScreenContainer}>
+                    {isLoading ? (
+                        <View style={styles.fullScreenStateContainer}>
+                            <ActivityIndicator color={colors.primary} />
+                        </View>
+                    ) : (
+                        <FlatList
+                            data={options}
+                            keyExtractor={keyExtractor}
+                            renderItem={renderItem}
+                            ItemSeparatorComponent={renderSeparator}
+                            style={styles.fullScreenList}
+                            contentContainerStyle={[
+                                styles.fullScreenListContentContainer,
+                                options.length === 0 && styles.fullScreenEmptyListContentContainer,
+                            ]}
+                            nestedScrollEnabled
+                            bounces={false}
+                            overScrollMode="never"
+                            keyboardShouldPersistTaps="handled"
+                            showsVerticalScrollIndicator={false}
+                            ListEmptyComponent={renderEmpty}
+                        />
+                    )}
+
+                    {renderFooter()}
+                </View>
+            </BottomModal>
+        );
+    }
+
+    return (
+        <BottomModal visible={visible} onClose={onClose} title={title}>
+            {isLoading ? (
+                <View style={styles.regularStateContainer}>
+                    <ActivityIndicator color={colors.primary} />
+                </View>
+            ) : (
+                <FlatList
+                    data={options}
+                    keyExtractor={keyExtractor}
+                    renderItem={renderItem}
+                    ItemSeparatorComponent={renderSeparator}
+                    style={styles.regularList}
+                    contentContainerStyle={[
+                        styles.regularListContentContainer,
+                        options.length === 0 && styles.regularEmptyListContentContainer,
+                    ]}
+                    nestedScrollEnabled
+                    bounces={false}
+                    overScrollMode="never"
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                    ListEmptyComponent={renderEmpty}
+                />
+            )}
+            {renderFooter()}
         </BottomModal>
     );
 };

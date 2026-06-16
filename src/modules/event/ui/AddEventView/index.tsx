@@ -20,6 +20,7 @@ import { useConfirmationRequiredModal } from './presenters/useConfirmationRequir
 import { usePaymentMethodsModal } from './presenters/usePaymentMethodsModal';
 import { useContactInfoModal } from './presenters/useContactInfoModal';
 import { useEventDateTimeFormatter } from './presenters/useEventDateTimeFormatter';
+import { useEventDateRangeFormatter } from './presenters/useEventDateRangeFormatter';
 import { useEventTypeLabel } from './presenters/useEventTypeLabel';
 import { PaymentMethodsPickerModal } from './components/PaymentMethodsPickerModal';
 import { ContactInfoPickerModal } from './components/ContactInfoPickerModal';
@@ -56,8 +57,7 @@ export const AddEventView = () => {
         onChangeDescription,
         onChangeRestaurantName,
         onChangeSpeakerName,
-        onStartDateSelect,
-        onEndDateSelect,
+        onDateRangeSelect,
         onStartTimeSelect,
         onEndTimeSelect,
         onChangePrice,
@@ -91,19 +91,18 @@ export const AddEventView = () => {
         mode,
         pickerDate,
         minimumDate,
-        openStartDatePicker,
-        openEndDatePicker,
+        openDateRangePicker,
         openStartTimePicker,
         openEndTimePicker,
         onCloseCalendar,
         onCloseTimePicker,
+        onConfirmCalendar,
         onConfirm,
         onDateChange,
         onDayPress,
         onMonthChange,
     } = useDateTimePicker({
-        onStartDateSelect,
-        onEndDateSelect,
+        onDateRangeSelect,
         onStartTimeSelect,
         onEndTimeSelect,
         selectedEventStartDate: form.eventStartDate,
@@ -113,11 +112,11 @@ export const AddEventView = () => {
         t,
     });
 
-    const { formattedValue: formattedStartDate } = useEventDateTimeFormatter({
-        value: form.eventStartDate,
-        mode: 'date',
+    const { formattedValue: formattedEventDateRange } = useEventDateRangeFormatter({
+        startDate: form.eventStartDate,
+        endDate: form.eventEndDate,
+        t,
     });
-    const { formattedValue: formattedEndDate } = useEventDateTimeFormatter({ value: form.eventEndDate, mode: 'date' });
     const { formattedValue: formattedStartTime } = useEventDateTimeFormatter({
         value: form.eventStartTime,
         mode: 'time',
@@ -313,25 +312,14 @@ export const AddEventView = () => {
                                 <MapLocationIcon color={colors.text} />
                             </TouchableOpacity>
 
-                            <View style={styles.row}>
-                                <TouchableOpacity
-                                    onPress={openStartDatePicker}
-                                    onPressIn={Keyboard.dismiss}
-                                    style={styles.inlinePickerButton}
-                                >
-                                    <Typography variant="h6" text={formattedStartDate || t('event.eventStartDate')} />
-                                    <CalendarIcon color={colors.text_light} />
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    onPress={openEndDatePicker}
-                                    onPressIn={Keyboard.dismiss}
-                                    style={styles.inlinePickerButton}
-                                >
-                                    <Typography variant="h6" text={formattedEndDate || t('event.eventEndDate')} />
-                                    <CalendarIcon color={colors.text_light} />
-                                </TouchableOpacity>
-                            </View>
+                            <TouchableOpacity
+                                onPress={openDateRangePicker}
+                                onPressIn={Keyboard.dismiss}
+                                style={styles.pickerButton}
+                            >
+                                <Typography variant="h6" text={formattedEventDateRange} />
+                                <CalendarIcon color={colors.text_light} />
+                            </TouchableOpacity>
                             <View style={styles.row}>
                                 <TouchableOpacity
                                     onPress={openStartTimePicker}
@@ -453,7 +441,9 @@ export const AddEventView = () => {
                     markedDates={markedDates}
                     minDate={calendarMinDate}
                     maxDate={calendarMaxDate}
+                    confirmText={t('common.confirm')}
                     onClose={onCloseCalendar}
+                    onConfirm={onConfirmCalendar}
                     onDayPress={onDayPress}
                     onMonthChange={onMonthChange}
                 />

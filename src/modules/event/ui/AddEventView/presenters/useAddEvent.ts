@@ -289,14 +289,16 @@ export const useAddEvent = () => {
         [],
     );
 
-    const onStartDateSelect = useCallback((date: Date) => {
-        const dateStr = formatDateToLocalApi(date);
-        setForm(prev => ({ ...prev, eventStartDate: dateStr }));
-    }, []);
+    const onDateRangeSelect = useCallback((startDate: Date, endDate: Date) => {
+        const startDateStr = formatDateToLocalApi(startDate);
+        const endDateStr = formatDateToLocalApi(endDate);
 
-    const onEndDateSelect = useCallback((date: Date) => {
-        const dateStr = formatDateToLocalApi(date);
-        setForm(prev => ({ ...prev, eventEndDate: dateStr, eventEndTime: '' }));
+        setForm(prev => ({
+            ...prev,
+            eventStartDate: startDateStr,
+            eventEndDate: endDateStr,
+            eventEndTime: prev.eventEndDate === endDateStr ? prev.eventEndTime : '',
+        }));
     }, []);
 
     const onStartTimeSelect = useCallback((date: Date) => {
@@ -544,8 +546,7 @@ export const useAddEvent = () => {
         onChangeTheme,
         onChangeDescription,
         onChangeRestaurantName,
-        onStartDateSelect,
-        onEndDateSelect,
+        onDateRangeSelect,
         onStartTimeSelect,
         onEndTimeSelect,
         onChangePrice,

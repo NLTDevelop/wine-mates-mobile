@@ -5,14 +5,12 @@ import { ILocalization } from '@/UIProvider/localization/ILocalization';
 import { toastService } from '@/libs/toast/toastService';
 
 type ActiveModal = 'calendar' | 'time' | null;
-type CalendarField = 'startDate' | 'endDate';
 type TimeField = 'startTime' | 'endTime';
 
 const MIN_START_TIME_OFFSET_MINUTES = 5;
 
 interface IUseDateTimePickerProps {
-    onStartDateSelect: (date: Date) => void;
-    onEndDateSelect: (date: Date) => void;
+    onDateRangeSelect: (startDate: Date, endDate: Date) => void;
     onStartTimeSelect: (date: Date) => void;
     onEndTimeSelect: (date: Date) => void;
     selectedEventStartDate: string;
@@ -163,8 +161,7 @@ const getRangeMarkedDates = (startDate: string, endDate: string): MarkedDates =>
 };
 
 export const useDateTimePicker = ({
-    onStartDateSelect,
-    onEndDateSelect,
+    onDateRangeSelect,
     onStartTimeSelect,
     onEndTimeSelect,
     selectedEventStartDate,
@@ -174,7 +171,9 @@ export const useDateTimePicker = ({
     t,
 }: IUseDateTimePickerProps) => {
     const [activeModal, setActiveModal] = useState<ActiveModal>(null);
-    const [calendarField, setCalendarField] = useState<CalendarField>('startDate');
+    const [pendingRangeStartDate, setPendingRangeStartDate] = useState<string | null>(null);
+    const [draftStartDate, setDraftStartDate] = useState('');
+    const [draftEndDate, setDraftEndDate] = useState('');
     const [timeField, setTimeField] = useState<TimeField>('startTime');
     const [pickerDate, setPickerDate] = useState(new Date());
     const [currentMonth, setCurrentMonth] = useState(formatDateToLocalApi(new Date()));
@@ -182,18 +181,12 @@ export const useDateTimePicker = ({
     const isEndTimePickerDisabled = !selectedEventEndDate;
     const todayKey = formatDateToLocalApi(getStartOfToday());
 
-    const openStartDatePicker = useCallback(() => {
+    const openDateRangePicker = useCallback(() => {
         const initialDate = selectedEventStartDate || todayKey;
 
-        setCalendarField('startDate');
-        setCurrentMonth(initialDate);
-        setActiveModal('calendar');
-    }, [selectedEventStartDate, todayKey]);
-
-    const openEndDatePicker = useCallback(() => {
-        const initialDate = selectedEventEndDate || selectedEventStartDate || todayKey;
-
-        setCalendarField('endDate');
+        setPendingRangeStartDate(null);
+        setDraftStartDate(selectedEventStartDate);
+        setDraftEndDate(selectedEventEndDate);
         setCurrentMonth(initialDate);
         setActiveModal('calendar');
     }, [selectedEventEndDate, selectedEventStartDate, todayKey]);
@@ -229,6 +222,9 @@ export const useDateTimePicker = ({
     const onCloseCalendar = useCallback(() => {
         setActiveModal((previousValue) => {
             if (previousValue === 'calendar') {
+                setPendingRangeStartDate(null);
+                setDraftStartDate('');
+                setDraftEndDate('');
                 return null;
             }
 
@@ -252,32 +248,26 @@ export const useDateTimePicker = ({
             return;
         }
 
-        const selectedDate = getDateFromSavedDate(item.dateString);
-
-        if (calendarField === 'startDate') {
-            if (selectedEventEndDate && isFirstDateAfterSecondDate(item.dateString, selectedEventEndDate)) {
-                toastService.showError(t('event.invalidStartDateError'));
-                return;
-            }
-
-            onStartDateSelect(selectedDate);
-        } else {
-            if (selectedEventStartDate && isFirstDateAfterSecondDate(selectedEventStartDate, item.dateString)) {
-                toastService.showError(t('event.invalidEndDateError'));
-                return;
-            }
-
-            onEndDateSelect(selectedDate);
+        if (!pendingRangeStartDate) {
+            setDraftStartDate(item.dateString);
+            setDraftEndDate(item.dateString);
+            setPendingRangeStartDate(item.dateString);
+            setCurrentMonth(item.dateString);
+            return;
         }
 
+        if (isFirstDateAfterSecondDate(pendingRangeStartDate, item.dateString)) {
+            setDraftStartDate(item.dateString);
+            setDraftEndDate(pendingRangeStartDate);
+        } else {
+            setDraftStartDate(pendingRangeStartDate);
+            setDraftEndDate(item.dateString);
+        }
+
+        setPendingRangeStartDate(null);
         setCurrentMonth(item.dateString);
-        setActiveModal(null);
     }, [
-        calendarField,
-        onEndDateSelect,
-        onStartDateSelect,
-        selectedEventEndDate,
-        selectedEventStartDate,
+        pendingRangeStartDate,
         t,
         todayKey,
     ]);
@@ -335,29 +325,24 @@ export const useDateTimePicker = ({
         setPickerDate(date);
     }, []);
 
-    const calendarMinDate = useMemo(() => {
-        if (calendarField === 'endDate') {
-            return selectedEventStartDate || todayKey;
+    const onConfirmCalendar = useCallback(() => {
+        const startDate = draftStartDate || selectedEventStartDate;
+        const endDate = draftEndDate || selectedEventEndDate || startDate;
+
+        if (!startDate) {
+            setActiveModal(null);
+            return;
         }
 
-        return todayKey;
-    }, [calendarField, selectedEventStartDate, todayKey]);
+        onDateRangeSelect(getDateFromSavedDate(startDate), getDateFromSavedDate(endDate));
+        setPendingRangeStartDate(null);
+        setDraftStartDate('');
+        setDraftEndDate('');
+        setActiveModal(null);
+    }, [draftEndDate, draftStartDate, onDateRangeSelect, selectedEventEndDate, selectedEventStartDate]);
 
-    const calendarMaxDate = useMemo(() => {
-        if (calendarField === 'startDate') {
-            return selectedEventEndDate || undefined;
-        }
-
-        return undefined;
-    }, [calendarField, selectedEventEndDate]);
-
-    const calendarTitle = useMemo(() => {
-        if (calendarField === 'startDate') {
-            return t('event.eventStartDate');
-        }
-
-        return t('event.eventEndDate');
-    }, [calendarField, t]);
+    const calendarMinDate = todayKey;
+    const calendarTitle = t('event.eventDate');
 
     const timePickerTitle = useMemo(() => {
         if (timeField === 'startTime') {
@@ -380,8 +365,12 @@ export const useDateTimePicker = ({
     }, [selectedEventEndDate, selectedEventStartDate, timeField]);
 
     const markedDates = useMemo(() => {
+        if (activeModal === 'calendar') {
+            return getRangeMarkedDates(draftStartDate, draftEndDate);
+        }
+
         return getRangeMarkedDates(selectedEventStartDate, selectedEventEndDate);
-    }, [selectedEventEndDate, selectedEventStartDate]);
+    }, [activeModal, draftEndDate, draftStartDate, selectedEventEndDate, selectedEventStartDate]);
 
     return {
         isCalendarVisible: activeModal === 'calendar',
@@ -391,18 +380,18 @@ export const useDateTimePicker = ({
         currentMonth,
         markedDates,
         calendarMinDate,
-        calendarMaxDate,
+        calendarMaxDate: undefined,
         calendarTitle,
         timePickerTitle,
         mode: 'time' as const,
         pickerDate,
         minimumDate,
-        openStartDatePicker,
-        openEndDatePicker,
+        openDateRangePicker,
         openStartTimePicker,
         openEndTimePicker,
         onCloseCalendar,
         onCloseTimePicker,
+        onConfirmCalendar,
         onConfirm,
         onDateChange,
         onDayPress,

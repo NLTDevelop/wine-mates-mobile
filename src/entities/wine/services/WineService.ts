@@ -28,6 +28,7 @@ import {
     IWineChooserOption,
     IWineChooserPrefill,
     IWineChooserRequest,
+    IWineChooserVintage,
 } from '../types/IWineChooser';
 import { wineChooserResultsModel } from '../models/WineChooserResultsModel';
 import { wineModel } from '../models/WineModel';
@@ -477,6 +478,20 @@ class WineService {
         }
     };
 
+    getWineChooserVintages = async (): Promise<IResponse<IWineChooserVintage[]>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineChooserVintages}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getWineChooserVintages: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
     getWineChooserPrefill = async (): Promise<IResponse<IWineChooserPrefill>> => {
         try {
             const response = await this._requester.request({
@@ -520,10 +535,7 @@ class WineService {
                 if (data.offset === 0 || !wineChooserResultsModel.list) {
                     wineChooserResultsModel.list = response.data;
                 } else {
-                    wineChooserResultsModel.list = {
-                        ...response.data,
-                        rows: [...wineChooserResultsModel.list.rows, ...response.data.rows],
-                    };
+                    wineChooserResultsModel.append(response.data);
                 }
             }
 

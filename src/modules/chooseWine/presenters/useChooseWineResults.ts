@@ -19,6 +19,11 @@ type RouteParams = {
     };
 };
 
+type LegacyWineChooserFilters = IWineChooserFilters & {
+    vintageMin?: number | null;
+    vintageMax?: number | null;
+};
+
 const LIST_LIMIT = 10;
 const SEARCH_DEBOUNCE_MS = 350;
 
@@ -39,12 +44,15 @@ const saveModeFilters = (mode: WineChooserMode, filters: IWineChooserFilters) =>
 };
 
 const prepareRequestFilters = (filters: IWineChooserFilters): IWineChooserFilters => {
+    const restFilters = { ...filters } as LegacyWineChooserFilters;
+    delete restFilters.vintageMin;
+    delete restFilters.vintageMax;
+
     return {
-        ...filters,
+        ...restFilters,
         ageMin: filters.ageMin || null,
         ageMax: filters.ageMax || null,
-        vintageMin: filters.vintageMin || null,
-        vintageMax: filters.vintageMax || null,
+        vintages: filters.vintages || [],
     };
 };
 
@@ -98,7 +106,7 @@ const getAppliedFiltersCount = (filters: IWineChooserFilters) => {
         count += 1;
     }
 
-    if (filters.vintageMin || filters.vintageMax) {
+    if ((filters.vintages || []).length > 0) {
         count += 1;
     }
 
@@ -117,12 +125,10 @@ export const useChooseWineResults = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
-    const [page, setPage] = useState(0);
     const requestIdRef = useRef(0);
 
     const wines = wineChooserResultsModel.list?.rows || [];
-    const totalPages = wineChooserResultsModel.list?.totalPages || 0;
-    const hasMore = totalPages === 0 ? false : page + 1 < totalPages;
+    const hasMore = !!wineChooserResultsModel.list && wineChooserResultsModel.list.count > wines.length;
     const appliedFiltersCount = useMemo(() => {
         return getAppliedFiltersCount(filters);
     }, [filters]);
@@ -165,7 +171,6 @@ export const useChooseWineResults = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             saveModeFilters(mode, filters);
-            setPage(0);
             loadWines(0, filters, false);
         }, SEARCH_DEBOUNCE_MS);
 
@@ -190,7 +195,6 @@ export const useChooseWineResults = () => {
 
     const onRefresh = useCallback(() => {
         setIsRefreshing(true);
-        setPage(0);
         loadWines(0, filters, false);
     }, [filters, loadWines]);
 
@@ -199,10 +203,8 @@ export const useChooseWineResults = () => {
             return;
         }
 
-        const nextPage = page + 1;
-        setPage(nextPage);
-        loadWines(nextPage * LIST_LIMIT, filters, true);
-    }, [filters, hasMore, isLoading, isLoadingMore, loadWines, page]);
+        loadWines(wines.length, filters, true);
+    }, [filters, hasMore, isLoading, isLoadingMore, loadWines, wines.length]);
 
     const onWinePress = useCallback((item: IWineListItem) => {
         navigation.navigate('WineDetailsView', { wineId: item.id });

@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { IContactsListItem } from '@/entities/contacts/types/IContactsListItem';
+import { getContactTitle, getContactType } from '@/entities/contacts/presenters/useContactType';
 import { IContactInfoOption } from '@/modules/event/types/IContactInfoOption';
 
 interface IProps {
@@ -24,6 +25,12 @@ const getUrlPath = (value: string) => {
 };
 
 const getContactLabel = (item: IContactsListItem) => {
+    const contactType = getContactType(item.name, item.value);
+
+    if (contactType === 'website') {
+        return getContactTitle(item.name, item.value, contactType);
+    }
+
     const trimmedValue = item.value.trim();
 
     if (trimmedValue.startsWith('@')) {

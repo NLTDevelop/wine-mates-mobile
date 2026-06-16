@@ -11,4 +11,5 @@ export type ContactType =
     | 'x'
     | 'linkedin'
     | 'snapchat'
+    | 'website'
     | 'phone';

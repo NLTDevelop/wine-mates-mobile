@@ -72,7 +72,7 @@ export const useHomeEventSection = (events: IEvent[]) => {
     const hasEvents = itemsCount > 0;
 
     const onArrowPress = useCallback(() => {
-        navigation.navigate('EventListView');
+        navigation.navigate('EventStack', { screen: 'EventMapView' });
     }, [navigation]);
 
     const onReadMorePress = useCallback((eventId: number) => {

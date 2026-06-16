@@ -11,13 +11,12 @@ export const EMPTY_WINE_CHOOSER_FILTERS: IWineChooserFilters = {
     typeIds: [],
     colorIds: [],
     minUserRating: 0,
-    minExpertRating: 0,
+    minExpertRating: 70,
     maxExpertRating: 100,
     countryIds: [],
     regionIds: [],
     grapeVarieties: [],
-    vintageMin: null,
-    vintageMax: null,
+    vintages: [],
     tasteFilters: [],
 };
 
