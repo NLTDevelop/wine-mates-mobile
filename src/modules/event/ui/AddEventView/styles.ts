@@ -66,6 +66,17 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(48),
             paddingHorizontal: scaleHorizontal(12),
         },
+        pickerButton: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: colors.background,
+            borderRadius: 12,
+            borderWidth: scaleHorizontal(1),
+            borderColor: colors.border,
+            height: scaleVertical(48),
+            paddingHorizontal: scaleHorizontal(12),
+        },
         disabledPickerButton: {
             opacity: 0.5,
         },
