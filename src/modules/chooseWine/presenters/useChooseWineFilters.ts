@@ -15,8 +15,6 @@ import {
     WineChooserGender,
     WineChooserMode,
 } from '@/entities/wine/types/IWineChooser';
-import { IWineType } from '@/entities/wine/types/IWineType';
-import { IWineColor } from '@/entities/wine/types/IWineColors';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { IUniversalPickerOption } from '@/UIKit/UniversalPickerModal/types/IUniversalPickerOption';
 import { toastService } from '@/libs/toast/toastService';
@@ -25,6 +23,13 @@ import { IWineChooserPickerState, WineChooserPickerKey } from '../types/IWineCho
 import { IChooseWineTasteFilterLabel } from '../types/IChooseWineTasteFilterItem';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { IQuickFilterButtonItem } from '../types/IQuickFilterButtonItem';
+import { useChooseWineAromasFlavors } from './useChooseWineAromasFlavors';
+import { useChooseWineBaseOptions } from './useChooseWineBaseOptions';
+import { useChooseWineGrapeVarieties } from './useChooseWineGrapeVarieties';
+import { useChooseWineRegions } from './useChooseWineRegions';
+import { useChooseWineTasteCharacteristics } from './useChooseWineTasteCharacteristics';
+import { useChooseWineVintages } from './useChooseWineVintages';
 
 type RouteParams = {
     ChooseWineFiltersView: {
@@ -32,13 +37,16 @@ type RouteParams = {
     };
 };
 
+type LegacyWineChooserFilters = IWineChooserFilters & {
+    vintageMin?: number | null;
+    vintageMax?: number | null;
+};
+
 const AGE_MIN = 18;
 const AGE_MAX = 100;
 const RATING_MIN = 70;
 const RATING_MAX = 100;
-const VINTAGE_MIN = 1980;
-const VINTAGE_MAX = 2026;
-const GRAPE_LIMIT = 100;
+const QUICK_FILTER_LIMIT = 5;
 
 const getRatingDescription = (rating: number) => {
     if (rating >= 5) {
@@ -94,13 +102,18 @@ const cloneEmptyFilters = (): IWineChooserFilters => {
         countryIds: [],
         regionIds: [],
         grapeVarieties: [],
+        vintages: [],
         tasteFilters: [],
     };
 };
 
 const cloneFilters = (filters: IWineChooserFilters): IWineChooserFilters => {
+    const restFilters = { ...filters } as LegacyWineChooserFilters;
+    delete restFilters.vintageMin;
+    delete restFilters.vintageMax;
+
     return {
-        ...filters,
+        ...restFilters,
         aromaIds: [...filters.aromaIds],
         flavorIds: [...filters.flavorIds],
         typeIds: [...filters.typeIds],
@@ -108,6 +121,7 @@ const cloneFilters = (filters: IWineChooserFilters): IWineChooserFilters => {
         countryIds: [...filters.countryIds],
         regionIds: [...filters.regionIds],
         grapeVarieties: [...filters.grapeVarieties],
+        vintages: [...(filters.vintages || [])],
         tasteFilters: filters.tasteFilters.map(item => ({ ...item })),
     };
 };
@@ -124,8 +138,7 @@ const isFiltersPristine = (filters: IWineChooserFilters) => {
         filters.countryIds.length === 0 &&
         filters.regionIds.length === 0 &&
         filters.grapeVarieties.length === 0 &&
-        filters.vintageMin === null &&
-        filters.vintageMax === null &&
+        (filters.vintages || []).length === 0 &&
         filters.tasteFilters.length === 0 &&
         filters.minUserRating === EMPTY_WINE_CHOOSER_FILTERS.minUserRating &&
         filters.minExpertRating === EMPTY_WINE_CHOOSER_FILTERS.minExpertRating &&
@@ -148,6 +161,14 @@ const createCountSubtitle = (wineCount?: number) => {
     return localization.t('chooseWine.winesCount', { count: wineCount });
 };
 
+const createQuickFilterTitle = (name: string, wineCount?: number) => {
+    if (typeof wineCount !== 'number') {
+        return name;
+    }
+
+    return `${name} (${wineCount})`;
+};
+
 const getSelectedOptionIds = (options: IUniversalPickerOption[]) => {
     return options.filter(item => item.isSelected).map(item => item.id);
 };
@@ -160,6 +181,40 @@ const getSelectedNumberOptionIds = (options: IUniversalPickerOption[]) => {
 
 const getGrapeVarietyName = (item: IWineChooserGrapeVariety) => {
     return item.grapeVariety || item.name || '';
+};
+
+const getVintageTitle = (value: number | null) => {
+    if (value === null) {
+        return localization.t('wine.nonVintage');
+    }
+
+    return `${value}`;
+};
+
+const getPrefillGender = (value?: WineChooserGender) => {
+    if (value === 'male' || value === 'female') {
+        return value;
+    }
+
+    return null;
+};
+
+const getPrefillAge = (value?: number | null) => {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        return value;
+    }
+
+    return null;
+};
+
+const getPrefillGrapeVarieties = (value?: string | null) => {
+    const trimmedValue = value?.trim();
+
+    if (!trimmedValue) {
+        return [];
+    }
+
+    return [trimmedValue];
 };
 
 const createInactiveTrackColor = (colorHex: string) => {
@@ -214,11 +269,7 @@ export const useChooseWineFilters = () => {
     const route = useRoute<RouteProp<RouteParams, 'ChooseWineFiltersView'>>();
     const routeMode = route.params?.mode || 'friend';
     const [mode, setMode] = useState<WineChooserMode>(routeMode);
-    const baseOptionsLoadedRef = useRef(false);
     const myselfPrefillLoadedRef = useRef(false);
-    const regionsByCountryIdRef = useRef<Record<number, IWineChooserOption[]>>({});
-    const aromasFlavorsByTemplateRef = useRef<Record<string, { aromas: IWineChooserOption[]; flavors: IWineChooserOption[] }>>({});
-    const tasteCharacteristicsByTemplateRef = useRef<Record<string, IWineTasteCharacteristic[]>>({});
 
     const [filters, setFilters] = useState<IWineChooserFilters>(() => {
         const savedFilters = getModeFilters(mode);
@@ -231,14 +282,6 @@ export const useChooseWineFilters = () => {
     });
     const [isInitialLoading, setIsInitialLoading] = useState(mode === 'myself');
     const [isApplying, setIsApplying] = useState(false);
-    const [types, setTypes] = useState<IWineType[]>([]);
-    const [colors, setColors] = useState<IWineColor[]>([]);
-    const [countries, setCountries] = useState<IWineChooserOption[]>([]);
-    const [regions, setRegions] = useState<IWineChooserOption[]>([]);
-    const [grapeVarieties, setGrapeVarieties] = useState<IWineChooserGrapeVariety[]>([]);
-    const [aromas, setAromas] = useState<IWineChooserOption[]>([]);
-    const [flavors, setFlavors] = useState<IWineChooserOption[]>([]);
-    const [tasteCharacteristics, setTasteCharacteristics] = useState<IWineTasteCharacteristic[]>([]);
     const [loadingPickerKey, setLoadingPickerKey] = useState<WineChooserPickerKey | null>(null);
     const [pickerState, setPickerState] = useState<IWineChooserPickerState | null>(null);
     const [applyTasteCharacteristics, setApplyTasteCharacteristics] = useState(false);
@@ -264,33 +307,36 @@ export const useChooseWineFilters = () => {
         );
     }, []);
 
-    const loadBaseOptions = useCallback(async () => {
-        if (baseOptionsLoadedRef.current) {
-            return;
-        }
-
-        const [typeResponse, colorResponse, countryResponse] = await Promise.all([
-            wineService.getTypes(),
-            wineService.getColors(),
-            wineService.getWineChooserCountries(),
-        ]);
-
-        if (!typeResponse.isError && typeResponse.data) {
-            setTypes(typeResponse.data);
-        }
-
-        if (!colorResponse.isError && colorResponse.data) {
-            setColors(colorResponse.data);
-        }
-
-        if (!countryResponse.isError && countryResponse.data) {
-            setCountries(countryResponse.data);
-        }
-
-        if (!typeResponse.isError && !colorResponse.isError && !countryResponse.isError) {
-            baseOptionsLoadedRef.current = true;
-        }
-    }, []);
+    const { types, colors, countries, loadBaseOptions } = useChooseWineBaseOptions();
+    const { regions, setRegions, loadRegionsByCountryId } = useChooseWineRegions({
+        showLoadError,
+        setLoadingPickerKey,
+    });
+    const { grapeVarieties, loadGrapeVarieties } = useChooseWineGrapeVarieties({
+        showLoadError,
+        setLoadingPickerKey,
+    });
+    const { vintages, loadVintages } = useChooseWineVintages({
+        showLoadError,
+        setLoadingPickerKey,
+    });
+    const {
+        aromas,
+        flavors,
+        setAromas,
+        setFlavors,
+        loadAromasFlavors,
+        syncAromasFlavorsForTemplate,
+    } = useChooseWineAromasFlavors({
+        selectedTypeId,
+        selectedColorId,
+        showLoadError,
+        setLoadingPickerKey,
+    });
+    const { tasteCharacteristics, loadTasteCharacteristics } = useChooseWineTasteCharacteristics({
+        selectedTypeId,
+        selectedColorId,
+    });
 
     const loadPrefill = useCallback(async () => {
         if (mode !== 'myself') {
@@ -316,6 +362,10 @@ export const useChooseWineFilters = () => {
             countryIds: response.data.countryId ? [response.data.countryId] : [],
             typeIds: response.data.typeId ? [response.data.typeId] : [],
             colorIds: response.data.colorId ? [response.data.colorId] : [],
+            gender: getPrefillGender(response.data.gender),
+            ageMin: getPrefillAge(response.data.ageMin),
+            ageMax: getPrefillAge(response.data.ageMax),
+            grapeVarieties: getPrefillGrapeVarieties(response.data.grapeVariety),
             tasteFilters: (response.data.tasteCharacteristics || []).map(item => {
                 return {
                     characteristicId: item.characteristicId,
@@ -328,112 +378,17 @@ export const useChooseWineFilters = () => {
         return nextFilters;
     }, [mode, showLoadError]);
 
-    const loadRegionsByCountryId = useCallback(async (countryId: number) => {
-        if (!countryId) {
-            return;
-        }
-
-        const cachedRegions = regionsByCountryIdRef.current[countryId];
-
-        if (cachedRegions) {
-            setRegions(cachedRegions);
-            return;
-        }
-
-        setLoadingPickerKey('region');
-        const response = await wineService.getWineChooserRegions({ countryId });
-
-        if (response.isError || !response.data) {
-            showLoadError(response.message);
-            setRegions([]);
-        } else {
-            regionsByCountryIdRef.current[countryId] = response.data;
-            setRegions(response.data);
-        }
-
-        setLoadingPickerKey(null);
-    }, [showLoadError]);
-
-    const loadGrapeVarieties = useCallback(async () => {
-        setLoadingPickerKey('grape');
-        const response = await wineService.getWineChooserGrapeVarieties({ limit: GRAPE_LIMIT, offset: 0 });
-
-        if (response.isError || !response.data) {
-            showLoadError(response.message);
-        } else {
-            setGrapeVarieties(response.data.rows);
-        }
-
-        setLoadingPickerKey(null);
-    }, [showLoadError]);
-
-    const loadAromasFlavors = useCallback(async () => {
-        if (!selectedTypeId || !selectedColorId) {
-            return;
-        }
-
-        const cacheKey = `${selectedTypeId}:${selectedColorId}`;
-        const cachedData = aromasFlavorsByTemplateRef.current[cacheKey];
-
-        if (cachedData) {
-            setAromas(cachedData.aromas);
-            setFlavors(cachedData.flavors);
-            return;
-        }
-
-        setLoadingPickerKey('aroma');
-        const response = await wineService.getWineChooserAromasFlavors({
-            typeId: selectedTypeId,
-            colorId: selectedColorId,
-        });
-
-        if (response.isError || !response.data) {
-            showLoadError(response.message);
-        } else {
-            const nextData = {
-                aromas: response.data.aromas || [],
-                flavors: response.data.flavors || [],
-            };
-            aromasFlavorsByTemplateRef.current[cacheKey] = nextData;
-            setAromas(nextData.aromas);
-            setFlavors(nextData.flavors);
-        }
-
-        setLoadingPickerKey(null);
-    }, [selectedColorId, selectedTypeId, showLoadError]);
-
-    const loadTasteCharacteristics = useCallback(async () => {
-        if (!selectedTypeId || !selectedColorId) {
-            setTasteCharacteristics([]);
-            return;
-        }
-
-        const cacheKey = `${selectedTypeId}:${selectedColorId}`;
-        const cachedData = tasteCharacteristicsByTemplateRef.current[cacheKey];
-
-        if (cachedData) {
-            setTasteCharacteristics(cachedData);
-            return;
-        }
-
-        const response = await wineService.getTastesCharacteristics({
-            typeId: selectedTypeId,
-            colorId: selectedColorId,
-        });
-
-        if (!response.isError && response.data) {
-            tasteCharacteristicsByTemplateRef.current[cacheKey] = response.data;
-            setTasteCharacteristics(response.data);
-        }
-    }, [selectedColorId, selectedTypeId]);
-
     useEffect(() => {
         let isActive = true;
 
         const syncModeData = async () => {
             try {
                 setIsInitialLoading(true);
-                await loadBaseOptions();
+                await Promise.all([
+                    loadBaseOptions(),
+                    loadGrapeVarieties(),
+                    loadVintages(),
+                ]);
 
                 if (!isActive) {
                     return;
@@ -473,7 +428,7 @@ export const useChooseWineFilters = () => {
         return () => {
             isActive = false;
         };
-    }, [loadBaseOptions, loadPrefill, mode]);
+    }, [loadBaseOptions, loadGrapeVarieties, loadPrefill, loadVintages, mode]);
 
     useEffect(() => {
         return () => {
@@ -493,27 +448,11 @@ export const useChooseWineFilters = () => {
         }
 
         loadRegionsByCountryId(selectedCountryId);
-    }, [loadRegionsByCountryId, selectedCountryId]);
+    }, [loadRegionsByCountryId, selectedCountryId, setRegions]);
 
     useEffect(() => {
-        if (!selectedTypeId || !selectedColorId) {
-            setAromas(prevState => (prevState.length > 0 ? [] : prevState));
-            setFlavors(prevState => (prevState.length > 0 ? [] : prevState));
-            return;
-        }
-
-        const cacheKey = `${selectedTypeId}:${selectedColorId}`;
-        const cachedData = aromasFlavorsByTemplateRef.current[cacheKey];
-
-        if (cachedData) {
-            setAromas(cachedData.aromas);
-            setFlavors(cachedData.flavors);
-            return;
-        }
-
-        setAromas(prevState => (prevState.length > 0 ? [] : prevState));
-        setFlavors(prevState => (prevState.length > 0 ? [] : prevState));
-    }, [selectedColorId, selectedTypeId]);
+        syncAromasFlavorsForTemplate();
+    }, [syncAromasFlavorsForTemplate]);
 
     useEffect(() => {
         if (!selectedCountryId && filters.regionIds.length > 0) {
@@ -550,16 +489,12 @@ export const useChooseWineFilters = () => {
     }, [filters.grapeVarieties]);
 
     const selectedVintageLabel = useMemo(() => {
-        if (!filters.vintageMin || !filters.vintageMax) {
+        if (filters.vintages.length === 0) {
             return '';
         }
 
-        if (filters.vintageMin === filters.vintageMax) {
-            return `${filters.vintageMin}`;
-        }
-
-        return `${filters.vintageMin} - ${filters.vintageMax}`;
-    }, [filters.vintageMax, filters.vintageMin]);
+        return filters.vintages.map(getVintageTitle).join(', ');
+    }, [filters.vintages]);
 
     const createPickerOptionToggle = useCallback((id: string) => {
         return () => {
@@ -664,17 +599,19 @@ export const useChooseWineFilters = () => {
     }, [createPickerOptionToggle, filters.grapeVarieties, grapeVarieties]);
 
     const vintageOptions = useMemo<IUniversalPickerOption[]>(() => {
-        return Array.from({ length: VINTAGE_MAX - VINTAGE_MIN + 1 }).map((_, index) => {
-            const year = VINTAGE_MAX - index;
+        return vintages.map(item => {
+            const vintage = item.vintage;
+            const id = vintage === null ? 'null' : `${vintage}`;
 
             return {
-                id: `${year}`,
-                title: `${year}`,
-                isSelected: filters.vintageMin === year && filters.vintageMax === year,
-                onPress: createPickerOptionToggle(`${year}`),
+                id,
+                title: getVintageTitle(vintage),
+                subtitle: createCountSubtitle(item.wineCount),
+                isSelected: filters.vintages.includes(vintage),
+                onPress: createPickerOptionToggle(id),
             };
         });
-    }, [createPickerOptionToggle, filters.vintageMax, filters.vintageMin]);
+    }, [createPickerOptionToggle, filters.vintages, vintages]);
 
     const getPickerState = useCallback((key: WineChooserPickerKey): IWineChooserPickerState => {
         if (key === 'type') {
@@ -704,11 +641,11 @@ export const useChooseWineFilters = () => {
         }
 
         if (key === 'region') {
-            return { key, title: localization.t('chooseWine.region'), options: regionOptions, isLoading: loadingPickerKey === key, selectionMode: 'single', modalType: 'fullScreen' };
+            return { key, title: localization.t('chooseWine.region'), options: regionOptions, isLoading: loadingPickerKey === key, selectionMode: 'single', modalType: 'bottom' };
         }
 
         if (key === 'vintage') {
-            return { key, title: localization.t('chooseWine.vintage'), options: vintageOptions, isLoading: loadingPickerKey === key, selectionMode: 'single', modalType: 'fullScreen' };
+            return { key, title: localization.t('chooseWine.vintage'), options: vintageOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple', modalType: 'fullScreen' };
         }
 
         if (key === 'grape') {
@@ -747,6 +684,8 @@ export const useChooseWineFilters = () => {
 
         if (key === 'grape' && grapeVarieties.length === 0) {
             await loadGrapeVarieties();
+        } else if (key === 'vintage' && vintages.length === 0) {
+            await loadVintages();
         } else if ((key === 'aroma' || key === 'flavor') && aromas.length === 0 && flavors.length === 0) {
             await loadAromasFlavors();
         }
@@ -760,10 +699,12 @@ export const useChooseWineFilters = () => {
         grapeVarieties.length,
         loadAromasFlavors,
         loadGrapeVarieties,
+        loadVintages,
         regions.length,
         selectedColorId,
         selectedCountryId,
         selectedTypeId,
+        vintages.length,
     ]);
 
     const onOpenTypePicker = useCallback(() => {
@@ -797,6 +738,135 @@ export const useChooseWineFilters = () => {
     const onOpenFlavorPicker = useCallback(() => {
         openPicker('flavor');
     }, [openPicker]);
+
+    const createOnQuickCountryPress = useCallback((countryId: number) => {
+        return () => {
+            const isSelected = filters.countryIds.includes(countryId);
+            const countryIds = isSelected ? [] : [countryId];
+            const payload: Partial<IWineChooserFilters> = { countryIds };
+
+            if (filters.countryIds[0] !== countryIds[0]) {
+                payload.regionIds = [];
+                setRegions([]);
+            }
+
+            patchFilters(payload);
+        };
+    }, [filters.countryIds, patchFilters, setRegions]);
+
+    const createOnQuickGrapePress = useCallback((grapeName: string) => {
+        return () => {
+            const nextGrapeVarieties = filters.grapeVarieties.includes(grapeName)
+                ? filters.grapeVarieties.filter(item => item !== grapeName)
+                : [...filters.grapeVarieties, grapeName];
+
+            patchFilters({ grapeVarieties: nextGrapeVarieties });
+        };
+    }, [filters.grapeVarieties, patchFilters]);
+
+    const createOnQuickVintagePress = useCallback((vintage: number | null) => {
+        return () => {
+            const nextVintages = filters.vintages.includes(vintage)
+                ? filters.vintages.filter(item => item !== vintage)
+                : [...filters.vintages, vintage];
+
+            patchFilters({ vintages: nextVintages });
+        };
+    }, [filters.vintages, patchFilters]);
+
+    const onOpenQuickCountryPicker = useCallback(() => {
+        setPickerState(getPickerState('country'));
+    }, [getPickerState]);
+
+    const onOpenQuickGrapePicker = useCallback(() => {
+        if (grapeVarieties.length === 0) {
+            return;
+        }
+
+        setPickerState(getPickerState('grape'));
+    }, [getPickerState, grapeVarieties.length]);
+
+    const onOpenQuickVintagePicker = useCallback(() => {
+        if (vintages.length === 0) {
+            return;
+        }
+
+        setPickerState(getPickerState('vintage'));
+    }, [getPickerState, vintages.length]);
+
+    const quickCountryItems = useMemo<IQuickFilterButtonItem[]>(() => {
+        const items = countries.slice(0, QUICK_FILTER_LIMIT).map<IQuickFilterButtonItem>(item => {
+            return {
+                id: `country-${item.id}`,
+                title: createQuickFilterTitle(item.name, item.wineCount),
+                isSelected: filters.countryIds.includes(item.id),
+                onPress: createOnQuickCountryPress(item.id),
+            };
+        });
+
+        if (countries.length > QUICK_FILTER_LIMIT) {
+            items.push({
+                id: 'country-more',
+                title: `${localization.t('common.more')}...`,
+                isSelected: false,
+                isMore: true,
+                onPress: onOpenQuickCountryPicker,
+            });
+        }
+
+        return items;
+    }, [countries, createOnQuickCountryPress, filters.countryIds, onOpenQuickCountryPicker]);
+
+    const quickGrapeItems = useMemo<IQuickFilterButtonItem[]>(() => {
+        const items = grapeVarieties.slice(0, QUICK_FILTER_LIMIT).map<IQuickFilterButtonItem>(item => {
+            const name = getGrapeVarietyName(item);
+
+            return {
+                id: `grape-${name}`,
+                title: createQuickFilterTitle(name, item.wineCount),
+                isSelected: filters.grapeVarieties.includes(name),
+                onPress: createOnQuickGrapePress(name),
+            };
+        }).filter(item => item.title);
+
+        if (grapeVarieties.length > QUICK_FILTER_LIMIT) {
+            items.push({
+                id: 'grape-more',
+                title: `${localization.t('common.more')}...`,
+                isSelected: false,
+                isMore: true,
+                onPress: onOpenQuickGrapePicker,
+            });
+        }
+
+        return items;
+    }, [createOnQuickGrapePress, filters.grapeVarieties, grapeVarieties, onOpenQuickGrapePicker]);
+
+    const quickVintageItems = useMemo<IQuickFilterButtonItem[]>(() => {
+        const items = vintages.slice(0, QUICK_FILTER_LIMIT).map<IQuickFilterButtonItem>(item => {
+            const vintage = item.vintage;
+            const id = vintage === null ? 'null' : `${vintage}`;
+
+            return {
+                id: `vintage-${id}`,
+                title: createQuickFilterTitle(getVintageTitle(vintage), item.wineCount),
+                isSelected: filters.vintages.includes(vintage),
+                onPress: createOnQuickVintagePress(vintage),
+            };
+        });
+
+        if (vintages.length > QUICK_FILTER_LIMIT) {
+            items.push({
+                id: 'vintage-more',
+                title: `${localization.t('common.more')}...`,
+                isSelected: false,
+                isMore: true,
+                onPress: onOpenQuickVintagePicker,
+            });
+        }
+
+        return items;
+    }, [createOnQuickVintagePress, filters.vintages, onOpenQuickVintagePicker, vintages]);
 
     const openedPickerKey = pickerState?.key;
 
@@ -868,12 +938,15 @@ export const useChooseWineFilters = () => {
         }
 
         if (pickerState.key === 'vintage') {
-            const selectedYear = getSelectedNumberOptionIds(pickerState.options)[0];
-            const nextVintage = selectedYear
-                ? { vintageMin: selectedYear, vintageMax: selectedYear }
-                : { vintageMin: null, vintageMax: null };
+            const selectedVintages = getSelectedOptionIds(pickerState.options).map(item => {
+                if (item === 'null') {
+                    return null;
+                }
 
-            patchFilters(nextVintage);
+                return Number(item);
+            }).filter((item): item is number | null => item === null || Number.isFinite(item));
+
+            patchFilters({ vintages: selectedVintages });
             setPickerState(null);
             return;
         }
@@ -892,7 +965,7 @@ export const useChooseWineFilters = () => {
 
         patchFilters({ flavorIds: getSelectedNumberOptionIds(pickerState.options) });
         setPickerState(null);
-    }, [filters.colorIds, filters.countryIds, filters.typeIds, patchFilters, pickerState]);
+    }, [filters.colorIds, filters.countryIds, filters.typeIds, patchFilters, pickerState, setAromas, setFlavors, setRegions]);
 
     const onSelectFemale = useCallback(() => {
         const nextGender: WineChooserGender = filters.gender === 'female' ? null : 'female';
@@ -1029,6 +1102,9 @@ export const useChooseWineFilters = () => {
         },
         tasteItems,
         visibleTasteItems,
+        quickCountryItems,
+        quickGrapeItems,
+        quickVintageItems,
         shouldShowTasteCharacteristicsToggle,
         applyTasteCharacteristics,
         isTasteCharacteristicsLocked,

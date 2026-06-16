@@ -4,12 +4,42 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        container: {
-            maxHeight: scaleVertical(420),
+        fullScreenContainer: {
+            flex: 1,
+            minHeight: 0,
         },
-        list: {
+        fullScreenList: {
+            flex: 1,
+            minHeight: 0,
+        },
+        fullScreenListContentContainer: {
             flexGrow: 0,
         },
+        fullScreenEmptyListContentContainer: {
+            flexGrow: 1,
+        },
+        fullScreenStateContainer: {
+            flex: 1,
+            minHeight: scaleVertical(120),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+
+        regularList: {
+            maxHeight: scaleVertical(350),
+        },
+        regularListContentContainer: {
+            flexGrow: 0,
+        },
+        regularEmptyListContentContainer: {
+            flexGrow: 1,
+        },
+        regularStateContainer: {
+            minHeight: scaleVertical(120),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+
         option: {
             minHeight: scaleVertical(56),
             flexDirection: 'row',
@@ -33,7 +63,7 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(1),
             backgroundColor: colors.border,
         },
-        stateContainer: {
+        emptyContainer: {
             minHeight: scaleVertical(120),
             alignItems: 'center',
             justifyContent: 'center',
@@ -42,9 +72,11 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
             textAlign: 'center',
         },
+        footer: {
+            marginTop: scaleVertical(12),
+        },
         confirmButton: {
             width: '100%',
-            marginTop: scaleVertical(12),
         },
     });
 

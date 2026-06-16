@@ -18,6 +18,7 @@ import { getStyles } from './styles';
 import { TasteFilterItem } from './components/TasteFilterItem';
 import { IChooseWineTasteFilterItem } from '../../types/IChooseWineTasteFilterItem';
 import { RatingFilter } from './components/RatingFilter';
+import { QuickFilterSection } from './components/QuickFilterSection';
 
 export const ChooseWineFiltersView = observer(() => {
     const { colors, t } = useUiContext();
@@ -30,12 +31,9 @@ export const ChooseWineFiltersView = observer(() => {
         pickerState,
         selectedTypeText,
         selectedColorText,
-        selectedCountryText,
         selectedRegionText,
         selectedAromaText,
         selectedFlavorText,
-        selectedGrapeText,
-        selectedVintageLabel,
         isRegionDisabled,
         isAromaFlavorDisabled,
         ageMin,
@@ -47,6 +45,9 @@ export const ChooseWineFiltersView = observer(() => {
         isLoverRating,
         constants,
         visibleTasteItems,
+        quickCountryItems,
+        quickGrapeItems,
+        quickVintageItems,
         shouldShowTasteCharacteristicsToggle,
         applyTasteCharacteristics,
         onSelectMyselfMode,
@@ -59,10 +60,7 @@ export const ChooseWineFiltersView = observer(() => {
         onToggleTasteCharacteristics,
         onOpenTypePicker,
         onOpenColorPicker,
-        onOpenCountryPicker,
         onOpenRegionPicker,
-        onOpenVintagePicker,
-        onOpenGrapePicker,
         onOpenAromaPicker,
         onOpenFlavorPicker,
         onClosePicker,
@@ -87,7 +85,7 @@ export const ChooseWineFiltersView = observer(() => {
         >
             {isInitialLoading ? (
                 <View style={styles.loaderContainer}>
-                    <ActivityIndicator color={colors.primary} />
+                    <ActivityIndicator color={colors.primary} size={'large'}/>
                 </View>
             ) : (
                 <View style={styles.screen}>
@@ -187,12 +185,7 @@ export const ChooseWineFiltersView = observer(() => {
                             onUserRatingChange={onUserRatingChange}
                         />
 
-                        <PickerButton
-                            label={t('chooseWine.country')}
-                            text={selectedCountryText}
-                            placeholder={t('chooseWine.country')}
-                            onPress={onOpenCountryPicker}
-                        />
+                        <QuickFilterSection title={t('chooseWine.country')} items={quickCountryItems} />
                         <PickerButton
                             label={t('chooseWine.region')}
                             text={selectedRegionText}
@@ -200,18 +193,9 @@ export const ChooseWineFiltersView = observer(() => {
                             onPress={onOpenRegionPicker}
                             isDisabled={isRegionDisabled}
                         />
-                        <PickerButton
-                            label={t('chooseWine.vintage')}
-                            text={selectedVintageLabel}
-                            placeholder={t('chooseWine.vintage')}
-                            onPress={onOpenVintagePicker}
-                        />
-                        <PickerButton
-                            label={t('chooseWine.grapeVariety')}
-                            text={selectedGrapeText}
-                            placeholder={t('chooseWine.grapeVariety')}
-                            onPress={onOpenGrapePicker}
-                        />
+                        <QuickFilterSection title={t('chooseWine.grapeVariety')} items={quickGrapeItems} />
+                       
+                        <QuickFilterSection title={t('chooseWine.vintage')} items={quickVintageItems} />
 
                         {shouldShowTasteCharacteristicsToggle && (
                             <TouchableOpacity onPress={onToggleTasteCharacteristics} style={styles.checkboxRow}>

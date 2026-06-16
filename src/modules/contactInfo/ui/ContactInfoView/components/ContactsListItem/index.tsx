@@ -18,6 +18,7 @@ import { ThreadsIcon } from '@assets/icons/socialNetworksIcons/ThreadsIcon';
 import { XIcon } from '@assets/icons/socialNetworksIcons/XIcon';
 import { LinkedInIcon } from '@assets/icons/socialNetworksIcons/LinkedInIcon';
 import { SnapchatIcon } from '@assets/icons/socialNetworksIcons/SnapchatIcon';
+import { WebIcon } from '@assets/icons/socialNetworksIcons/WebIcon';
 import { ContactType } from '@/entities/contacts/types/ContactType';
 import { DeleteForeverIcon } from '@assets/icons/DeleteForeverIcon';
 import { DeleteContactAlert } from '../DeleteContactAlert';
@@ -76,6 +77,10 @@ const renderSocialIcon = (contactType: ContactType) => {
 
     if (contactType === 'snapchat') {
         return <SnapchatIcon width={20} height={20} />;
+    }
+
+    if (contactType === 'website') {
+        return <WebIcon width={20} height={20} />;
     }
 
     return null;

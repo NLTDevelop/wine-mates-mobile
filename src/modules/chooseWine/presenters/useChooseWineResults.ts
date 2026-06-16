@@ -19,6 +19,11 @@ type RouteParams = {
     };
 };
 
+type LegacyWineChooserFilters = IWineChooserFilters & {
+    vintageMin?: number | null;
+    vintageMax?: number | null;
+};
+
 const LIST_LIMIT = 10;
 const SEARCH_DEBOUNCE_MS = 350;
 
@@ -39,12 +44,15 @@ const saveModeFilters = (mode: WineChooserMode, filters: IWineChooserFilters) =>
 };
 
 const prepareRequestFilters = (filters: IWineChooserFilters): IWineChooserFilters => {
+    const restFilters = { ...filters } as LegacyWineChooserFilters;
+    delete restFilters.vintageMin;
+    delete restFilters.vintageMax;
+
     return {
-        ...filters,
+        ...restFilters,
         ageMin: filters.ageMin || null,
         ageMax: filters.ageMax || null,
-        vintageMin: filters.vintageMin || null,
-        vintageMax: filters.vintageMax || null,
+        vintages: filters.vintages || [],
     };
 };
 
@@ -98,7 +106,7 @@ const getAppliedFiltersCount = (filters: IWineChooserFilters) => {
         count += 1;
     }
 
-    if (filters.vintageMin || filters.vintageMax) {
+    if ((filters.vintages || []).length > 0) {
         count += 1;
     }
 

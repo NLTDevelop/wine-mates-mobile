@@ -18,6 +18,13 @@ export interface IWineChooserGrapeVariety {
     wineCount: number;
 }
 
+export interface IWineChooserVintage {
+    vintage: number | null;
+    wineCount: number;
+    avgUserRating?: number | null;
+    avgExpertRating?: number | null;
+}
+
 export interface IWineChooserTasteFilter {
     characteristicId: number;
     minSortNumber: number;
@@ -33,6 +40,10 @@ export interface IWineChooserPrefill {
     countryId?: number;
     typeId?: number;
     colorId?: number;
+    gender?: WineChooserGender;
+    ageMin?: number | null;
+    ageMax?: number | null;
+    grapeVariety?: string | null;
     tasteCharacteristics?: IWineChooserPrefillTasteCharacteristic[];
 }
 
@@ -51,8 +62,7 @@ export interface IWineChooserFilters {
     countryIds: number[];
     regionIds: number[];
     grapeVarieties: string[];
-    vintageMin: number | null;
-    vintageMax: number | null;
+    vintages: (number | null)[];
     tasteFilters: IWineChooserTasteFilter[];
 }
 
