@@ -11,6 +11,15 @@ export class WineChooserResultsModel {
     public set list(value: IWineChooserList | null) {
         this.listRepository.save(value);
     }
+
+    public append(value: IWineChooserList) {
+        if (this.list) {
+            this.list = {
+                ...value,
+                rows: [...this.list.rows, ...value.rows],
+            };
+        }
+    }
 }
 
 export const wineChooserResultsModel = new WineChooserResultsModel();

@@ -520,10 +520,7 @@ class WineService {
                 if (data.offset === 0 || !wineChooserResultsModel.list) {
                     wineChooserResultsModel.list = response.data;
                 } else {
-                    wineChooserResultsModel.list = {
-                        ...response.data,
-                        rows: [...wineChooserResultsModel.list.rows, ...response.data.rows],
-                    };
+                    wineChooserResultsModel.append(response.data);
                 }
             }
 
