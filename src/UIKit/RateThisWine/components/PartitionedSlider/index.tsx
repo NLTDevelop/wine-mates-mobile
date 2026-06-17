@@ -4,9 +4,9 @@ import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { Marker } from './components/Marker';
+import { Marker } from '../Marker/Marker';
 import { usePartitionedSliderGesture } from './presenters/usePartitionedSliderGesture';
-import { PartitionedSliderProps } from './types';
+import { PartitionedSliderProps } from './types/types';
 
 export const PartitionedSlider = memo(
     ({
@@ -27,7 +27,7 @@ export const PartitionedSlider = memo(
             tapGesture,
             thumbStyle,
             activeTrackStyle,
-            handleLayout,
+            onTrackLayout,
         } = usePartitionedSliderGesture({
             parts,
             initialValue: value,
@@ -67,7 +67,7 @@ export const PartitionedSlider = memo(
                     <GestureDetector gesture={tapGesture}>
                         <View
                             style={styles.trackContainer}
-                            onLayout={event => handleLayout(event.nativeEvent.layout.width)}
+                            onLayout={onTrackLayout}
                         >
                             <View style={styles.track} />
                             <Animated.View 

@@ -67,6 +67,7 @@ export interface ILinks {
     contacts: string;
     guests: string;
     guestsStatuses: string;
+    eventTasting: string;
     eventTastingDraft: string;
     eventTastingSaveDraft: string;
     userLocation: string;
@@ -128,6 +129,7 @@ class Links implements ILinks {
         contacts: 'users/contacts',
         guests: 'event-bookings/event',
         guestsStatuses: 'event-bookings',
+        eventTasting: 'event-tasting',
         eventTastingDraft: 'event-tasting/draft',
         eventTastingSaveDraft: 'event-tasting/save-draft',
         userLocation: 'users/location',
@@ -306,6 +308,9 @@ class Links implements ILinks {
     }
     public get guestsStatuses() {
         return `${this._domain}${this._links.guestsStatuses}`;
+    }
+    public get eventTasting() {
+        return `${this._domain}${this._links.eventTasting}`;
     }
     public get eventTastingDraft() {
         return `${this._domain}${this._links.eventTastingDraft}`;

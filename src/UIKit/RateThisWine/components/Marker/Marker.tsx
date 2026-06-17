@@ -2,13 +2,13 @@ import { View, ViewStyle } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-interface MarkerProps {
+interface IProps {
     size?: number;
     color?: string;
     style?: ViewStyle;
 }
 
-export const Marker = ({ size = 20, color, style }: MarkerProps) => {
+export const Marker = ({ size = 20, color, style }: IProps) => {
     const { colors } = useUiContext();
     const actualSize = scaleHorizontal(size);
     const actualColor = color || colors.primary;

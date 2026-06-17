@@ -47,17 +47,20 @@ export const EventDetailsTab = ({
         onEditPress,
         onDuplicatePress,
         onToggleTastingPress,
+        onDownloadReportPress,
         isOwner,
         isBookNowDisabled,
         isEditEventDisabled,
         isCancelEventDisabled,
         isBookNowInProgress,
+        isReportDownloading,
         isEventApplied,
         isBlindTasting,
         isWineSetItemPressEnabled,
         isWineSetStatusVisible,
         isTastingToggleVisible,
         isTastingToggleDisabled,
+        isReportDownloadVisible,
         tastingToggleButtonText,
         isPaymentMethodsModalVisible,
         paymentMethodOptions,
@@ -183,6 +186,16 @@ export const EventDetailsTab = ({
                                     onPress={onToggleTastingPress}
                                     disabled={isTastingToggleDisabled}
                                     inProgress={isBookNowInProgress}
+                                />
+                            )}
+                            {isReportDownloadVisible && (
+                                <Button
+                                    type="secondary"
+                                    containerStyle={styles.bookNowButton}
+                                    text={t('eventDetails.downloadReport')}
+                                    onPress={onDownloadReportPress}
+                                    disabled={isReportDownloading}
+                                    inProgress={isReportDownloading}
                                 />
                             )}
                             <View style={styles.footerRow}>

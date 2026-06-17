@@ -35,8 +35,21 @@ class AxiosRequester implements IRequester {
             config.headers = this.getHeaders(config.headers, isFormData);
             console.log('AxiosRequester -> request: ', config);
             const response = await axios(config);
-            console.log('AxiosRequester -> request response: ', response);
-            loggerModel.add('response', `AxiosRequester -> request -> ${config.url}: `, JSON.stringify(response, null, 3));
+            const isBinaryResponse = config.responseType === 'arraybuffer' || config.responseType === 'blob';
+            if (isBinaryResponse) {
+                console.log('AxiosRequester -> request response: ', {
+                    status: response.status,
+                    url: config.url,
+                    responseType: config.responseType,
+                });
+                loggerModel.add('response', `AxiosRequester -> request -> ${config.url}: `, JSON.stringify({
+                    status: response.status,
+                    responseType: config.responseType,
+                }, null, 3));
+            } else {
+                console.log('AxiosRequester -> request response: ', response);
+                loggerModel.add('response', `AxiosRequester -> request -> ${config.url}: `, JSON.stringify(response, null, 3));
+            }
             return this.processingResponse({
                 data: response.data,
                 status: response.status,

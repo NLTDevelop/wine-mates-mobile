@@ -62,7 +62,13 @@ export const TastingWineTasteCharacteristicsView = observer(() => {
                         />
                 );
             }
-            return <WinePeakPicker value={winePeak} onChange={onWinePeakChange} />;
+            return (
+                <WinePeakPicker
+                    value={winePeak}
+                    onChange={onWinePeakChange}
+                    isPremiumLockEnabled={false}
+                />
+            );
         },
         [createOnSliderChange, sliderValues, isPremiumUser, winePeak, onWinePeakChange],
     );

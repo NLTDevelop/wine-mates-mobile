@@ -7,6 +7,7 @@ import { IWineSetItem } from './IWineSetItem';
 import { RepeatRuleConfig } from './RepeatRuleConfig';
 import { IEventParticipant } from './IEventParticipant';
 import { SavedEventStatus } from '../enums/SavedEventStatus';
+import { EventTastingStatus } from '../enums/EventTastingStatus';
 
 export interface IEvent {
     id: number;
@@ -14,6 +15,7 @@ export interface IEvent {
     isActive?: boolean;
     isApplied?: boolean;
     isTastingStarted?: boolean;
+    tastingStatus?: EventTastingStatus | string;
     status?: SavedEventStatus | string;
     theme: string;
     eventDate?: string;
@@ -70,6 +72,7 @@ export interface IEventDetail {
     isActive?: boolean;
     isApplied?: boolean;
     isTastingStarted?: boolean;
+    tastingStatus?: EventTastingStatus | string;
     status?: SavedEventStatus | string;
     latitude: number;
     longitude: number;

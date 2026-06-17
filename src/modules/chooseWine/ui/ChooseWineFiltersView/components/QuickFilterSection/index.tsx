@@ -25,7 +25,7 @@ export const QuickFilterSection = ({ title, items }: IProps) => {
                 style={[
                     styles.button,
                     item.isSelected ? styles.buttonActive : undefined,
-                    item.isMore ? styles.moreButton : undefined,
+                    // item.isMore ? styles.moreButton : undefined,
                 ]}
             >
                 <Typography

@@ -25,11 +25,14 @@ import { IWineSnackCuisine } from '@/entities/snacks/types/IWineSnackCuisine';
 import { IWineSnackCuisineOption } from '@/entities/snacks/types/IWineSnackCuisineOption';
 import { useFoodPairing } from '@/UIKit/FoodPairing/presenters/useFoodPairing';
 import { wineModel } from '@/entities/wine/models/WineModel';
+import { WineSetTastingStatus } from '@/entities/events/types/IWineSetItem';
+import { useSaveEventTastingDraftOnBlur } from '@/modules/tastings/presenters/useSaveEventTastingDraftOnBlur';
 
 interface IRouteParams {
     eventId?: number;
     wineId?: number;
     isBlindTasting?: boolean;
+    tastingStatus?: WineSetTastingStatus;
 }
 
 export const useTastingWineReviewResult = () => {
@@ -38,6 +41,7 @@ export const useTastingWineReviewResult = () => {
     const routeParams = (navigationRoute.params as IRouteParams | undefined) || {};
     const eventId = routeParams.eventId;
     const wineId = routeParams.wineId;
+    const isEditingFinishedTasting = routeParams.tastingStatus === 'tasted';
     const cuisineCacheWineId = wineModel.wine?.id ?? wineId;
     const { buildEventTastingDraftPayload } = useEventTastingDraft();
     const [isLoadingLimits, setIsLoadingLimits] = useState(true);
@@ -170,7 +174,7 @@ export const useTastingWineReviewResult = () => {
             eventId,
             wineId,
             data: buildEventTastingDraftPayload(wineId),
-            isFinal: false,
+            isFinal: isEditingFinishedTasting,
         });
 
         if (response.isError) {
@@ -179,7 +183,14 @@ export const useTastingWineReviewResult = () => {
                 response.message || localization.t('common.somethingWentWrong'),
             );
         }
-    }, [buildEventTastingDraftPayload, eventId, wineId]);
+    }, [buildEventTastingDraftPayload, eventId, isEditingFinishedTasting, wineId]);
+
+    const { skipNextBlurSave } = useSaveEventTastingDraftOnBlur({
+        eventId,
+        wineId,
+        buildPayload: buildEventTastingDraftPayload,
+        isFinal: isEditingFinishedTasting,
+    });
 
     const selectedCuisineIds = useMemo(() => {
         return selectedCuisineItems.map(item => item.id);
@@ -470,6 +481,7 @@ export const useTastingWineReviewResult = () => {
                     return;
                 }
 
+                skipNextBlurSave();
                 resetToEventDetails();
                 clearTasteCharacteristicsCache();
                 clearWineSnackCuisinesCache();
@@ -570,6 +582,7 @@ export const useTastingWineReviewResult = () => {
                     response.message || localization.t('common.somethingWentWrong'),
                 );
             } else {
+                skipNextBlurSave();
                 const state = navigation.getState();
                 const hasDetailsScreen = state.routes.some(route => route.name === 'WineDetailsView');
                 const wineDetailsParams = { wineId: wineModel.wine?.id };
@@ -656,7 +669,7 @@ export const useTastingWineReviewResult = () => {
         } finally {
             setIsSaving(false);
         }
-    }, [buildEventTastingDraftPayload, eventId, isPremiumUser, isNoteEditing, navigation, resetToEventDetails, wineId]);
+    }, [buildEventTastingDraftPayload, eventId, isPremiumUser, isNoteEditing, navigation, resetToEventDetails, skipNextBlurSave, wineId]);
 
     const onNoteEditingChange = useCallback(
         (isEditing: boolean) => {

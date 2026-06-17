@@ -13,7 +13,6 @@ import { IEvent } from '@/entities/events/types/IEvent';
 import { useEventCard } from './presenters/useEventCard';
 import { getStyles } from './styles';
 import { ISavedEvent } from '@/entities/events/types/ISavedEvent';
-import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
 import { EditButton } from '../EditButton';
 import { ShareIcon } from '@assets/icons/ShareIcon';
 import { EventParticipantsPreview } from '@/UIKit/EventParticipantsPreview';
@@ -54,6 +53,7 @@ export const EventCard = ({
         eventTypeLabel,
         isAllSpotsFull,
         eventStatusLabel,
+        eventStatusType,
         appliedEventStatusLabel,
         isPartyEvent,
         isCardPressed,
@@ -111,12 +111,12 @@ export const EventCard = ({
                 </TouchableOpacity>
             </View>
 
-            {('status' in event && event.status !== null) || appliedEventStatus ? (
+            {eventStatusType || appliedEventStatus ? (
                 <View style={styles.statusRow}>
-                    {'status' in event && event.status !== null && (
+                    {eventStatusType && (
                         <View
                             style={
-                                event.status === SavedEventStatus.FINISHED
+                                eventStatusType === 'finished'
                                     ? styles.eventStatusFinished
                                     : styles.eventStatusCanceled
                             }

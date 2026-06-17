@@ -74,7 +74,7 @@ export const useWineSetItem = ({
     const status = getWineSetStatus(item);
     const statusBadgeData = getStatusBadgeData(status, isStatusVisible, t);
     const wineId = item.wineId || item.wine.id;
-    const isEventTastingStatus = status === 'not_started' || status === 'in_progress';
+    const isEventTastingStatus = status === 'not_started' || status === 'in_progress' || status === 'tasted';
     const userRating = item.avgUserRating ?? null;
     const expertRating = item.avgExpertRating ?? null;
     const hasUserRating = userRating !== null;
