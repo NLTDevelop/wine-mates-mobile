@@ -14,6 +14,7 @@ import type { SortableGridDragEndParams } from 'react-native-sortables';
 import { toastService } from '@/libs/toast/toastService';
 import { getCurrentLocationPayload } from '@/libs/locations/getCurrentLocationPayload';
 import { IHomeSectionsListParams } from '@/entities/homeSections/params/IHomeSectionsListParams';
+import { locationModel } from '@/entities/location/LocationModel';
 
 const EMPTY_FIELD = '-';
 
@@ -64,24 +65,48 @@ const showHomeRequestError = (message?: string) => {
     );
 };
 
-const getHomeSectionsListParams = async (): Promise<IHomeSectionsListParams> => {
+const throwLocationUnavailableError = (): never => {
+    const message = localization.t('permissions.locationUnavailable');
+
+    showHomeRequestError(message);
+    throw new Error(message);
+};
+
+const getHomeSectionsListParams = async (shouldRecheckLocation = false): Promise<IHomeSectionsListParams> => {
     try {
-        const location = await getCurrentLocationPayload();
-
-        if (!location) {
-            const message = localization.t('permissions.locationUnavailable');
-
-            showHomeRequestError(message);
-            throw new Error(message);
+        if (locationModel.userLocation) {
+            return {
+                lat: locationModel.userLocation.latitude,
+                lon: locationModel.userLocation.longitude,
+            };
         }
 
-        return {
-            lat: location.latitude,
-            lon: location.longitude,
-        };
+        if (!shouldRecheckLocation && !locationModel.hasPermission && !locationModel.isLoading) {
+            throwLocationUnavailableError();
+        }
+
+        locationModel.setIsLoading(true);
+        const location = await getCurrentLocationPayload();
+        locationModel.setHasPermission(!!location);
+
+        if (location) {
+            locationModel.setUserLocation({
+                latitude: location.latitude,
+                longitude: location.longitude,
+            });
+
+            return {
+                lat: location.latitude,
+                lon: location.longitude,
+            };
+        }
+
+        return throwLocationUnavailableError();
     } catch (error) {
         console.warn('useHomeView -> getHomeSectionsListParams: ', error);
         throw error;
+    } finally {
+        locationModel.setIsLoading(false);
     }
 };
 
@@ -265,8 +290,8 @@ export const useHomeView = (locale: string) => {
     const hasConfiguredSections = activeVisibleSections.length > 0;
     const canConfigurePlacement = hasVisibleSections && !isPlacementEditMode;
 
-    const requestHomeSections = useCallback(async () => {
-        const params = await getHomeSectionsListParams();
+    const requestHomeSections = useCallback(async (shouldRecheckLocation = false) => {
+        const params = await getHomeSectionsListParams(shouldRecheckLocation);
 
         return homeSectionsService.list(params);
     }, []);
@@ -324,7 +349,7 @@ export const useHomeView = (locale: string) => {
         setIsLoading(true);
 
         try {
-            const response = await requestHomeSections();
+            const response = await requestHomeSections(true);
 
             if (!isMountedRef.current) {
                 return;
@@ -384,7 +409,7 @@ export const useHomeView = (locale: string) => {
         setIsRefreshing(true);
 
         try {
-            const response = await requestHomeSections();
+            const response = await requestHomeSections(true);
 
             if (response.isError) {
                 showHomeRequestError(response.message);
@@ -515,7 +540,7 @@ export const useHomeView = (locale: string) => {
         setIsSaving(true);
 
         try {
-            const params = await getHomeSectionsListParams();
+            const params = await getHomeSectionsListParams(true);
             const normalizedDraft = getNormalizedSections(draftSections);
             const payloadSections = getSectionPayload(normalizedDraft);
 
@@ -545,7 +570,7 @@ export const useHomeView = (locale: string) => {
         setIsSaving(true);
 
         try {
-            const params = await getHomeSectionsListParams();
+            const params = await getHomeSectionsListParams(true);
             const normalizedPlacementSections = getNormalizedSections(placementSections);
             const payloadSections = getSectionPayload(normalizedPlacementSections);
             const response = await homeSectionsService.update({

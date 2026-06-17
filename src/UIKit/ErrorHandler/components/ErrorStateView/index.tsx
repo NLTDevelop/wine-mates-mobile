@@ -14,9 +14,10 @@ interface IProps {
     type: ErrorTypeEnum;
     onRetry: () => void;
     isLoading?: boolean;
+    showHeader?: boolean;
 }
 
-export const ErrorStateView = ({ type, onRetry, isLoading = false }: IProps) => {
+export const ErrorStateView = ({ type, onRetry, isLoading = false, showHeader = true }: IProps) => {
     const { colors, t } = useUiContext();
     const { bottom, top } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom, top), [colors, bottom, top]);
@@ -42,7 +43,7 @@ export const ErrorStateView = ({ type, onRetry, isLoading = false }: IProps) => 
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
-                <HeaderWithBackButton />
+                {showHeader && <HeaderWithBackButton />}
             </View>
             <View style={styles.mainContainer}>
                 {icon}
