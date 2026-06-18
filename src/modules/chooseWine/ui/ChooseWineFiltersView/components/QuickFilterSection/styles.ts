@@ -30,14 +30,6 @@ export const getStyles = (colors: IColors) => {
         buttonActive: {
             borderColor: colors.primary,
         },
-        moreButton: {
-            borderColor: 'transparent',
-            backgroundColor: 'transparent',
-            alignItems: 'flex-start',
-            justifyContent: 'flex-end',
-            paddingHorizontal: 0,
-            paddingVertical: 0,
-        },
         buttonText: {
             color: colors.text,
             textAlign: 'center',

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { View } from 'react-native';
 import { Typography } from '@/UIKit/Typography';
-import { PartitionedSlider } from '@/UIKit/PartitionedSlider';
+import { PartitionedSlider } from '@/UIKit/RateThisWine/components/PartitionedSlider';
 import StarRating, { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
@@ -19,9 +19,21 @@ interface IProps {
     disabled?: boolean;
     hasChangedRating?: boolean;
     isFullTastingReview?: boolean;
+    ratingSliderKey?: number;
+    ratingStarsKey?: number;
 }
 
-export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false, hasChangedRating = false, isFullTastingReview }: IProps) => {
+const EXPERT_RATING_PARTS: [number, number][] = [
+    [70, 76],
+    [76, 81],
+    [81, 86],
+    [86, 91],
+    [91, 97],
+    [97, 100],
+];
+const PRECISE_STAR_STEP = 0.1 as unknown as 'quarter';
+
+export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStarRateChange, disabled = false, hasChangedRating = false, isFullTastingReview, ratingSliderKey, ratingStarsKey }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -70,14 +82,8 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                 ) : (
                     <>
                         <PartitionedSlider
-                            parts={[
-                                [70, 76],
-                                [76, 81],
-                                [81, 86],
-                                [86, 91],
-                                [91, 97],
-                                [97, 100],
-                            ]}
+                            key={ratingSliderKey}
+                            parts={EXPERT_RATING_PARTS}
                             value={sliderValue}
                             onChange={handleSliderChange}
                             selectedStyle={{ backgroundColor: colors.selectedSlider }}
@@ -93,8 +99,9 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
             ) : disabled ? (
                 <View style={styles.starsContainer}>
                     <StarRatingDisplay
+                        key={ratingStarsKey}
                         rating={starRate}
-                        step={0.1}
+                        step={PRECISE_STAR_STEP}
                         StarIconComponent={StarIconComponent}
                         starSize={36}
                         starStyle={styles.star}
@@ -104,9 +111,10 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
             ) : (
                 <View style={styles.starsContainer}>
                     <StarRating
+                        key={ratingStarsKey}
                         rating={starRate}
                         onChange={onStarRateChange ?? (() => {})}
-                        step={0.1}
+                        step={PRECISE_STAR_STEP}
                         StarIconComponent={StarIconComponent}
                         starSize={36}
                         starStyle={styles.star}

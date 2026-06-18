@@ -1,25 +1,15 @@
-import { useSharedValue, useAnimatedStyle, withSpring, useAnimatedReaction, runOnJS } from 'react-native-reanimated';
+/* eslint-disable react-hooks/immutability */
+import { useSharedValue, useAnimatedStyle, withSpring, useAnimatedReaction } from 'react-native-reanimated';
 import { Gesture } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
-import { SliderPart } from '../types';
+import { SliderPart, UsePartitionedSliderGestureReturn } from '../types/types';
+import { LayoutChangeEvent } from 'react-native';
 
 interface UsePartitionedSliderGestureProps {
     parts: SliderPart[];
     initialValue: number;
     onChange?: (value: number) => void;
     decoratorCount?: number;
-}
-
-type AnimatedStyleReturn = ReturnType<typeof useAnimatedStyle>;
-type PanGestureType = ReturnType<typeof Gesture.Pan>;
-type TapGestureType = ReturnType<typeof Gesture.Tap>;
-
-export interface UsePartitionedSliderGestureReturn {
-    panGesture: PanGestureType;
-    tapGesture: TapGestureType;
-    thumbStyle: AnimatedStyleReturn;
-    activeTrackStyle: AnimatedStyleReturn;
-    handleLayout: (width: number) => void;
 }
 
 export const usePartitionedSliderGesture = ({
@@ -161,10 +151,14 @@ export const usePartitionedSliderGesture = ({
         return { width };
     });
 
-    const handleLayout = (width: number) => {
+    const onLayout = (width: number) => {
         sliderWidth.value = width;
         const initialPos = valueToPosition(initialValue);
         position.value = initialPos;
+    };
+
+    const onTrackLayout = (event: LayoutChangeEvent) => {
+        onLayout(event.nativeEvent.layout.width);
     };
 
     return {
@@ -172,6 +166,7 @@ export const usePartitionedSliderGesture = ({
         tapGesture,
         thumbStyle,
         activeTrackStyle,
-        handleLayout,
+        onLayout,
+        onTrackLayout,
     };
 };

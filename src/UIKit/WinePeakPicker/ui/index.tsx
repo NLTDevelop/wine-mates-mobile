@@ -14,12 +14,14 @@ import { LockContainer } from '@/UIKit/LockContainer';
 interface IProps {
     value: number | null;
     onChange: (year: number | null) => void;
+    isPremiumLockEnabled?: boolean;
 }
 
-export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
+export const WinePeakPicker = observer(({ value, onChange, isPremiumLockEnabled = true }: IProps) => {
     const { colors, t } = useUiContext();
     const isPremiumUser = userModel.user?.hasPremium || false;
-    const styles = useMemo(() => getStyles(colors, isPremiumUser), [colors, isPremiumUser]);
+    const hasAccess = !isPremiumLockEnabled || isPremiumUser;
+    const styles = useMemo(() => getStyles(colors, hasAccess), [colors, hasAccess]);
 
     const {
         selectedYear,
@@ -44,7 +46,7 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                     <TouchableOpacity
                         onPress={onOpen}
                         style={styles.pickerButton}
-                        disabled={!isPremiumUser}
+                        disabled={!hasAccess}
                         activeOpacity={0.75}
                     >
                         <Typography
@@ -52,14 +54,14 @@ export const WinePeakPicker = observer(({ value, onChange }: IProps) => {
                             variant="h6"
                             style={styles.pickerText}
                         />
-                        {!isPremiumUser && (
+                        {!hasAccess && (
                             <View style={styles.crownIconContainer}>
                                 <CrownIcon />
                             </View>
                         )}
-                        {!isPremiumUser && <LockContainer/>}
+                        {!hasAccess && <LockContainer/>}
                     </TouchableOpacity>
-                    {value && isPremiumUser && (
+                    {value && hasAccess && (
                         <TouchableOpacity onPress={onReset} style={styles.resetButton} activeOpacity={0.75}>
                             <CrossIcon width={20} height={20} color={colors.icon_inverted} />
                         </TouchableOpacity>

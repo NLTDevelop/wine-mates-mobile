@@ -553,6 +553,8 @@
         "stopEvent": "Завершити подію",
         "contactForBooking": "Контакт для бронювання",
         "callToReserve": "Зателефонувати для бронювання",
+        "downloadReport": "Завантажити звіт",
+        "reportSaved": "Звіт збережено",
         "duplicate": "Дублювати"
     },
     "eventGuests": {

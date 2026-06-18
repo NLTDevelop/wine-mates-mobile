@@ -1,11 +1,13 @@
 import notifee, {
     AndroidImportance,
     AndroidStyle,
+    EventType,
     NotificationAndroid,
     Notification,
 } from '@notifee/react-native';
 import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { isIOS } from '../../../utils';
+import { INotificationData } from '../types/INotificationData';
 
 const DEFAULT_CHANNEL_ID = 'default';
 const DEFAULT_SOUND = 'default';
@@ -122,6 +124,26 @@ class NotificationHandler {
     removeAllDeliveredNotifications = async (): Promise<void> => {
         await notifee.setBadgeCount(0);
         await notifee.cancelAllNotifications();
+    };
+
+    getInitialPressData = async (): Promise<INotificationData | null> => {
+        const initialNotification = await notifee.getInitialNotification();
+
+        return initialNotification?.notification.data ?? null;
+    };
+
+    subscribePressEvents = (onPress: (data: INotificationData) => void) => {
+        return notifee.onForegroundEvent(({ type, detail }) => {
+            if (type !== EventType.PRESS) {
+                return;
+            }
+
+            if (!detail.notification?.data) {
+                return;
+            }
+
+            onPress(detail.notification.data);
+        });
     };
 }
 

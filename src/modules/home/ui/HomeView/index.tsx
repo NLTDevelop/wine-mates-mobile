@@ -36,7 +36,7 @@ export const HomeView = observer(() => {
     } = useHomeView(locale);
 
     return (
-        <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getHomeSections} isLoading={isLoading}>
+        <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getHomeSections} isLoading={isLoading} showHeader={false}>
             <ScreenContainer edges={[]} scrollEnabled={false}>
                 <View style={styles.container}>
                     {isLoading && !hasVisibleSections ? (

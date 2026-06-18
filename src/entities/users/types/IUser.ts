@@ -31,4 +31,5 @@ export interface IUser {
     isConfirmed: true;
     hasPremium: boolean;
     selectedCurrency: string | null;
+    language?: string;
 }

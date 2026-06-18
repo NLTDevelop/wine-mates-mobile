@@ -549,6 +549,8 @@
         "stopEvent": "Stop event",
         "contactForBooking": "Contact for booking",
         "callToReserve": "Call to reserve",
+        "downloadReport": "Download report",
+        "reportSaved": "Report saved",
         "duplicate": "Duplicate"
     },
     "eventGuests": {
