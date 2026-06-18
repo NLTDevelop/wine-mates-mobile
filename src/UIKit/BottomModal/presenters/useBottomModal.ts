@@ -1,5 +1,13 @@
 import { useCallback, useMemo } from 'react';
-import { Animated, PanResponder, useWindowDimensions, ViewStyle } from 'react-native';
+import {
+    Animated,
+    Keyboard,
+    PanResponder,
+    useWindowDimensions,
+    ViewStyle,
+} from 'react-native';
+import { Easing, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { useAnimatedKeyboard } from 'react-native-keyboard-controller';
 import { useBottomModalInsets } from './useBottomModalInsets';
 
 interface IUseBottomModalProps {
@@ -20,8 +28,31 @@ export const useBottomModal = ({ onClose, isFullScreen = false }: IUseBottomModa
     const { topInset, bottomInset } = useBottomModalInsets();
     const translateY = useMemo(() => new Animated.Value(height), [height]);
     const backdropOpacity = useMemo(() => new Animated.Value(0), []);
+    const { height: keyboardHeight } = useAnimatedKeyboard();
 
     const maxHeight = height - topInset;
+
+    const animatedKeyboardContainerStyle = useAnimatedStyle(() => {
+        const target = Math.max(keyboardHeight.value - bottomInset, 0);
+
+        return {
+            marginBottom: withTiming(target, {
+                duration: 120,
+                easing: Easing.out(Easing.cubic),
+            }),
+        };
+    });
+
+    const animatedKeyboardBackgroundStyle = useAnimatedStyle(() => {
+        const target = Math.max(keyboardHeight.value - bottomInset, 0);
+
+        return {
+            height: withTiming(target, {
+                duration: 120,
+                easing: Easing.out(Easing.cubic),
+            }),
+        };
+    });
 
     const modalContentStyle = useMemo<ViewStyle>(() => {
         const baseStyle = {
@@ -40,6 +71,8 @@ export const useBottomModal = ({ onClose, isFullScreen = false }: IUseBottomModa
     }, [isFullScreen, maxHeight, translateY]);
 
     const onCloseAnimated = useCallback((shouldNotify = true) => {
+        Keyboard.dismiss();
+
         Animated.parallel([
             Animated.timing(translateY, {
                 toValue: height,
@@ -112,5 +145,7 @@ export const useBottomModal = ({ onClose, isFullScreen = false }: IUseBottomModa
         onClosePress,
         onShow,
         panHandlers: panResponder.panHandlers,
+        animatedKeyboardContainerStyle,
+        animatedKeyboardBackgroundStyle,
     };
 };

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Keyboard } from 'react-native';
-import { favoriteWineListService } from '@/entities/wine/FavoriteWineListService';
+import { favoriteWineListService } from '@/entities/wine/services/FavoriteWineListService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 
@@ -39,7 +39,7 @@ export const useCreateListBottomSheet = () => {
                 onClose();
             }
         } catch (error) {
-            console.error('onCreate error: ', JSON.stringify(error, null, 2));
+            console.error('onCreate error: ', error);
             toastService.showError(
                 localization.t('common.errorHappened'),
                 localization.t('common.somethingWentWrong'),

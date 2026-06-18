@@ -546,7 +546,8 @@ export const useHomeView = (locale: string) => {
 
             const response = await homeSectionsService.update({
                 sections: payloadSections,
-            }, params);
+                ...params,
+            });
 
             if (!response.isError) {
                 if (!Array.isArray(response.data)) {
@@ -575,7 +576,8 @@ export const useHomeView = (locale: string) => {
             const payloadSections = getSectionPayload(normalizedPlacementSections);
             const response = await homeSectionsService.update({
                 sections: payloadSections,
-            }, params);
+                ...params,
+            });
 
             if (!response.isError) {
                 if (!Array.isArray(response.data)) {
