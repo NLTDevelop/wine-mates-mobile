@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
 import { IList } from '@/entities/IList';
@@ -12,6 +12,7 @@ import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { IMedia } from '@/entities/media/types/IMedia';
+import { IEventListViewParams } from '../types/IEventListViewParams';
 
 interface IRoute {
     key: 'created' | 'saved' | 'applied';
@@ -26,6 +27,23 @@ interface IProps {
 }
 
 type Navigation = NativeStackNavigationProp<Record<string, object | undefined>>;
+
+interface IEventListRouteParams {
+    [key: string]: object | undefined;
+    EventListView: IEventListViewParams | undefined;
+}
+
+const getInitialScreenIndex = (initialTab?: IEventListViewParams['initialTab']) => {
+    if (initialTab === 'saved') {
+        return 1;
+    }
+
+    if (initialTab === 'applied') {
+        return 2;
+    }
+
+    return 0;
+};
 
 const mapWineImageToMedia = (
     image?: { smallUrl?: string; mediumUrl?: string; originalUrl?: string } | null,
@@ -47,7 +65,8 @@ const mapWineImageToMedia = (
 
 export const useEventListView = ({ t, createdEvents, savedEvents, appliedEvents }: IProps) => {
     const navigation = useNavigation<Navigation>();
-    const [screenIndex, setScreenIndex] = useState(0);
+    const route = useRoute<RouteProp<IEventListRouteParams, 'EventListView'>>();
+    const [screenIndex, setScreenIndex] = useState(getInitialScreenIndex(route.params?.initialTab));
     const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
 

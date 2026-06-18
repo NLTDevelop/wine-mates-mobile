@@ -80,6 +80,7 @@ export const EventListView = observer(() => {
                 onFavoritePress={onFavoritePress}
                 onCardPress={onCardPress}
                 onEditPress={onEditPress}
+                eventStatusSource="tastingStatus"
             />
         ),
         [onCardPress, onEditPress, onFavoritePress, onReadMorePress],

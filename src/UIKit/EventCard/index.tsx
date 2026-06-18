@@ -17,6 +17,7 @@ import { EditButton } from '../EditButton';
 import { ShareIcon } from '@assets/icons/ShareIcon';
 import { EventParticipantsPreview } from '@/UIKit/EventParticipantsPreview';
 import { QR_CODE_SHARE_SIZE } from '@/utils';
+import { EventStatusSource } from './types/EventStatusSource';
 
 interface IProps {
     event: IEvent | ISavedEvent;
@@ -29,6 +30,7 @@ interface IProps {
     showDescription?: boolean;
     showFooter?: boolean;
     appliedEventStatus?: string | null;
+    eventStatusSource?: EventStatusSource;
 }
 
 export const EventCard = ({
@@ -42,6 +44,7 @@ export const EventCard = ({
     showDescription = true,
     showFooter = true,
     appliedEventStatus = null,
+    eventStatusSource = 'default',
 }: IProps) => {
     const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -79,6 +82,7 @@ export const EventCard = ({
         onEditPress,
         onCardPress,
         locale,
+        eventStatusSource,
     });
 
     const canPressCard = !isModalContent && Boolean(onCardPress);

@@ -19,6 +19,7 @@ import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
 import { useEventQrCodeShare } from '@/modules/event/presenters/useEventQrCodeShare';
 import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
 import { getIsEventEditDisabled } from '@/modules/event/utils/getIsEventEditDisabled';
+import { EventStatusSource } from '../types/EventStatusSource';
 
 interface IUseEventCardProps {
     event: IEvent;
@@ -28,6 +29,7 @@ interface IUseEventCardProps {
     onEditPress?: (eventId: number) => void;
     onCardPress?: (eventId: number) => void;
     locale?: string;
+    eventStatusSource?: EventStatusSource;
 }
 
 const STATIC_MAP_SIZE = '720x320';
@@ -52,6 +54,7 @@ export const useEventCard = ({
     onEditPress,
     onCardPress,
     locale,
+    eventStatusSource = 'default',
 }: IUseEventCardProps) => {
     const currentLocale = locale || localization.locale || 'en';
     const [currentTime] = useState(() => new Date());
@@ -184,6 +187,14 @@ export const useEventCard = ({
     }, [currentTime, endDateValue, endTimeValue]);
 
     const eventStatusType = useMemo<EventStatusType | null>(() => {
+        if (eventStatusSource === 'tastingStatus') {
+            if (event.isActive === false) {
+                return 'canceled';
+            }
+
+            return event.tastingStatus === EventTastingStatus.FINISHED ? 'finished' : null;
+        }
+
         if ('status' in event && (event.status === SavedEventStatus.CANCELED || event.status === 'cancelled')) {
             return 'canceled';
         }
@@ -197,7 +208,7 @@ export const useEventCard = ({
         }
 
         return null;
-    }, [event, hasEventEnded]);
+    }, [event, eventStatusSource, hasEventEnded]);
 
     const eventStatusLabel = useMemo(() => {
         if (eventStatusType === 'finished') {
