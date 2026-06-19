@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
+import { IEventDetailsViewParams } from '../types/IEventDetailsViewParams';
 
 interface IRoute {
     key: 'eventDetails' | 'guests';
@@ -13,27 +15,39 @@ interface IProps {
 
 interface IEventDetailsRouteParams {
     [key: string]: object | undefined;
-    EventDetailsView: {
-        eventId: number;
-        openedFromDeepLink?: boolean;
-    };
+    EventDetailsView: IEventDetailsViewParams;
 }
 
-export const useEventDetailsView = ({ t }: IProps) => {
-    const navigation = useNavigation();
-    const route = useRoute<RouteProp<IEventDetailsRouteParams, 'EventDetailsView'>>();
-    const [screenIndex, setScreenIndex] = useState(0);
-    const isResettingRef = useRef(false);
-    const { eventId, openedFromDeepLink } = route.params;
+type Navigation = NativeStackNavigationProp<IEventDetailsRouteParams, 'EventDetailsView'>;
 
-    const routes: IRoute[] = [
-        { key: 'eventDetails', title: t('eventDetails.eventDetailsTab') },
-        { key: 'guests', title: t('eventDetails.guestsTab') },
-    ];
+const getInitialScreenIndex = (initialTab?: IEventDetailsViewParams['initialTab']) => {
+    if (initialTab === 'guests') {
+        return 1;
+    }
+
+    return 0;
+};
+
+export const useEventDetailsView = ({ t }: IProps) => {
+    const navigation = useNavigation<Navigation>();
+    const route = useRoute<RouteProp<IEventDetailsRouteParams, 'EventDetailsView'>>();
+    const isResettingRef = useRef(false);
+    const { eventId, openedFromDeepLink, initialTab } = route.params;
+
+    const routes: IRoute[] = useMemo(() => {
+        return [
+            { key: 'eventDetails', title: t('eventDetails.eventDetailsTab') },
+            { key: 'guests', title: t('eventDetails.guestsTab') },
+        ];
+    }, [t]);
+
+    const screenIndex = getInitialScreenIndex(initialTab);
 
     const onIndexChange = useCallback((index: number) => {
-        setScreenIndex(index);
-    }, []);
+        navigation.setParams({
+            initialTab: routes[index]?.key || 'eventDetails',
+        });
+    }, [navigation, routes]);
 
     const resetToHome = useCallback(() => {
         isResettingRef.current = true;

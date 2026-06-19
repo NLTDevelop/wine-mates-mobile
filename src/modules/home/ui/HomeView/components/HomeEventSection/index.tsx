@@ -27,6 +27,8 @@ export const HomeEventSection = ({
     const { width } = useWindowDimensions();
     const {
         carouselRef,
+        carouselKey,
+        carouselDefaultIndex,
         activeIndex,
         carouselHeight,
         hasEvents,
@@ -65,8 +67,10 @@ export const HomeEventSection = ({
             {hasEvents ? (
                 <>
                     <Carousel
+                        key={carouselKey}
                         ref={carouselRef}
                         loop={false}
+                        defaultIndex={carouselDefaultIndex}
                         width={carouselWidth}
                         height={carouselHeight}
                         data={events}

@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { LayoutChangeEvent } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import type { ICarouselInstance } from 'react-native-reanimated-carousel';
 import type { PanGesture } from 'react-native-gesture-handler';
 import { scaleVertical } from '@/utils';
@@ -8,6 +9,7 @@ import { IHomePeopleTalking } from '../../../types/IHomeVisibleSection';
 const DEFAULT_CAROUSEL_HEIGHT = scaleVertical(150);
 
 export const usePeopleTalkingSection = (data: IHomePeopleTalking[]) => {
+    const isFocused = useIsFocused();
     const carouselRef = useRef<ICarouselInstance>(null);
     const dataRef = useRef(data);
     const maxCardHeightRef = useRef(0);
@@ -15,6 +17,8 @@ export const usePeopleTalkingSection = (data: IHomePeopleTalking[]) => {
     const [carouselHeight, setCarouselHeight] = useState(DEFAULT_CAROUSEL_HEIGHT);
     const itemsCount = data.length;
     const hasItems = itemsCount > 0;
+    const carouselKey = isFocused ? 'focused' : 'blurred';
+    const carouselDefaultIndex = Math.min(activeIndex, Math.max(0, itemsCount - 1));
 
     const onConfigurePanGesture = useCallback((panGesture: PanGesture) => {
         panGesture.activeOffsetX([-12, 12]);
@@ -52,6 +56,8 @@ export const usePeopleTalkingSection = (data: IHomePeopleTalking[]) => {
 
     return {
         carouselRef,
+        carouselKey,
+        carouselDefaultIndex,
         activeIndex,
         carouselHeight,
         hasItems,

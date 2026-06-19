@@ -83,7 +83,7 @@ class NotificationNavigationHandler {
 
         if (notificationType === NotificationType.EventParticipationRequest) {
             if (eventId !== null) {
-                this.navigate('EventDetailsView', { eventId });
+                this.navigate('EventDetailsView', { eventId, initialTab: 'guests' });
                 return;
             }
 
