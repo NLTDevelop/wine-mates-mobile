@@ -1,25 +1,17 @@
 import { RefObject, useCallback, useMemo } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, TextInput, View } from 'react-native';
 import Animated from 'react-native-reanimated';
-import {
-    BottomSheetBackdrop,
-    BottomSheetBackdropProps,
-    BottomSheetFlatList,
-    BottomSheetModal,
-} from '@gorhom/bottom-sheet';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { SearchBar } from '@/UIKit/SearchBar';
-import { Typography } from '@/UIKit/Typography';
-import { CrossIcon } from '@assets/icons/CrossIcon';
 import { IWineSearchResultViewItem } from '@/modules/event/types/IWineSetViewItem';
 import { WineSearchResultRow } from '../WineSearchResultRow';
 import { WineSearchEmptyState } from '../WineSearchEmptyState';
 import { getStyles } from './styles';
 import { useWineSearchBottomSheet } from './presenters/useWineSearchBottomSheet';
+import { BottomModal } from '@/UIKit/BottomModal/ui';
 
 interface IProps {
-    modalRef: RefObject<BottomSheetModal | null>;
+    visible: boolean;
     searchInputRef: RefObject<TextInput | null>;
     value: string;
     data: IWineSearchResultViewItem[];
@@ -27,12 +19,11 @@ interface IProps {
     emptyText: string;
     onChangeText: (value: string) => void;
     onClose: () => void;
-    onDismiss: () => void;
     onLoadMore: () => void;
 }
 
 export const WineSearchBottomSheet = ({
-    modalRef,
+    visible,
     searchInputRef,
     value,
     data,
@@ -40,19 +31,11 @@ export const WineSearchBottomSheet = ({
     emptyText,
     onChangeText,
     onClose,
-    onDismiss,
     onLoadMore,
 }: IProps) => {
     const { colors, t } = useUiContext();
-    const { top } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { animatedListContainerStyle, snapPoints } = useWineSearchBottomSheet({
-        modalRef,
-    });
-
-    const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
-        return <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />;
-    }, []);
+    const { animatedListContainerStyle } = useWineSearchBottomSheet();
 
     const keyExtractor = useCallback((item: IWineSearchResultViewItem) => {
         return `${item.id}`;
@@ -76,29 +59,8 @@ export const WineSearchBottomSheet = ({
     }, [emptyText, isLoading]);
 
     return (
-        <BottomSheetModal
-            ref={modalRef}
-            backgroundStyle={styles.bottomSheetContainer}
-            handleComponent={null}
-            enableDynamicSizing={false}
-            snapPoints={snapPoints}
-            topInset={top}
-            enablePanDownToClose={false}
-            onDismiss={onDismiss}
-            backdropComponent={renderBackdrop}
-            keyboardBehavior="interactive"
-            keyboardBlurBehavior="restore"
-            enableHandlePanningGesture={false}
-        >
+        <BottomModal visible={visible} onClose={onClose} title={t('event.addWine')} isFullScreen shouldAvoidKeyboard={false}>
             <View style={styles.container}>
-                <View style={styles.header}>
-                    <View style={styles.headerSpacer} />
-                    <Typography variant="h4" text={t('event.addWine')} />
-                    <TouchableOpacity style={styles.closeButton} onPress={onClose} hitSlop={20}>
-                        <CrossIcon />
-                    </TouchableOpacity>
-                </View>
-
                 <SearchBar
                     ref={searchInputRef}
                     value={value}
@@ -108,10 +70,11 @@ export const WineSearchBottomSheet = ({
                 />
 
                 <Animated.View style={[styles.listContainer, animatedListContainerStyle]}>
-                    <BottomSheetFlatList
+                    <FlatList
                         data={data}
                         keyExtractor={keyExtractor}
                         renderItem={renderItem}
+                        style={styles.list}
                         keyboardShouldPersistTaps="handled"
                         contentContainerStyle={styles.listContent}
                         ItemSeparatorComponent={renderItemSeparator}
@@ -123,6 +86,6 @@ export const WineSearchBottomSheet = ({
                     />
                 </Animated.View>
             </View>
-        </BottomSheetModal>
+        </BottomModal>
     );
 };

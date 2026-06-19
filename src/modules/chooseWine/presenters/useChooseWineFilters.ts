@@ -16,7 +16,7 @@ import {
     WineChooserMode,
 } from '@/entities/wine/types/IWineChooser';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
-import { IUniversalPickerOption } from '@/UIKit/UniversalPickerModal/types/IUniversalPickerOption';
+import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { IWineChooserPickerState, WineChooserPickerKey } from '../types/IWineChooserPicker';
@@ -229,6 +229,20 @@ const createInactiveTrackColor = (colorHex: string) => {
     return colorHex;
 };
 
+const getAllowedTasteFilters = (
+    filters: IWineChooserFilters,
+    shouldApplyTasteCharacteristics: boolean,
+): IWineChooserFilters => {
+    if (shouldApplyTasteCharacteristics) {
+        return filters;
+    }
+
+    return {
+        ...filters,
+        tasteFilters: [],
+    };
+};
+
 const getTasteDisplayLabelIndices = (levelsLength: number, isTriple: boolean) => {
     const firstIndex = 0;
     const lastIndex = Math.max(levelsLength - 1, 0);
@@ -366,17 +380,19 @@ export const useChooseWineFilters = () => {
             ageMin: getPrefillAge(response.data.ageMin),
             ageMax: getPrefillAge(response.data.ageMax),
             grapeVarieties: getPrefillGrapeVarieties(response.data.grapeVariety),
-            tasteFilters: (response.data.tasteCharacteristics || []).map(item => {
-                return {
-                    characteristicId: item.characteristicId,
-                    minSortNumber: Math.max(1, item.avgSortNumber - 1),
-                    maxSortNumber: Math.min(5, item.avgSortNumber + 1),
-                };
-            }),
+            tasteFilters: isPremiumUser
+                ? (response.data.tasteCharacteristics || []).map(item => {
+                    return {
+                        characteristicId: item.characteristicId,
+                        minSortNumber: Math.max(1, item.avgSortNumber - 1),
+                        maxSortNumber: Math.min(5, item.avgSortNumber + 1),
+                    };
+                })
+                : [],
         };
 
         return nextFilters;
-    }, [mode, showLoadError]);
+    }, [isPremiumUser, mode, showLoadError]);
 
     useEffect(() => {
         let isActive = true;
@@ -621,7 +637,6 @@ export const useChooseWineFilters = () => {
                 options: typeOptions,
                 isLoading: loadingPickerKey === key,
                 selectionMode: 'single',
-                modalType: 'bottom',
             };
         }
 
@@ -632,31 +647,30 @@ export const useChooseWineFilters = () => {
                 options: colorOptions,
                 isLoading: loadingPickerKey === key,
                 selectionMode: 'single',
-                modalType: 'bottom',
             };
         }
 
         if (key === 'country') {
-            return { key, title: localization.t('chooseWine.country'), options: countryOptions, isLoading: loadingPickerKey === key, selectionMode: 'single', modalType: 'fullScreen' };
+            return { key, title: localization.t('chooseWine.country'), options: countryOptions, isLoading: loadingPickerKey === key, selectionMode: 'single' };
         }
 
         if (key === 'region') {
-            return { key, title: localization.t('chooseWine.region'), options: regionOptions, isLoading: loadingPickerKey === key, selectionMode: 'single', modalType: 'bottom' };
+            return { key, title: localization.t('chooseWine.region'), options: regionOptions, isLoading: loadingPickerKey === key, selectionMode: 'single' };
         }
 
         if (key === 'vintage') {
-            return { key, title: localization.t('chooseWine.vintage'), options: vintageOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple', modalType: 'fullScreen' };
+            return { key, title: localization.t('chooseWine.vintage'), options: vintageOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple' };
         }
 
         if (key === 'grape') {
-            return { key, title: localization.t('chooseWine.grapeVariety'), options: grapeOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple', modalType: 'fullScreen' };
+            return { key, title: localization.t('chooseWine.grapeVariety'), options: grapeOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple' };
         }
 
         if (key === 'aroma') {
-            return { key, title: localization.t('chooseWine.aroma'), options: aromaOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple', modalType: 'fullScreen' };
+            return { key, title: localization.t('chooseWine.aroma'), options: aromaOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple' };
         }
 
-        return { key, title: localization.t('chooseWine.taste'), options: flavorOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple', modalType: 'fullScreen' };
+        return { key, title: localization.t('chooseWine.taste'), options: flavorOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple' };
     }, [
         aromaOptions,
         colorOptions,
@@ -1055,7 +1069,8 @@ export const useChooseWineFilters = () => {
     const onApplyPress = useCallback(() => {
         setIsApplying(true);
         const shouldApplyTasteFilters = applyTasteCharacteristics && !isTasteCharacteristicsLocked;
-        const nextFilters = shouldApplyTasteFilters ? filters : { ...filters, tasteFilters: [] };
+        const nextFilters = getAllowedTasteFilters(filters, shouldApplyTasteFilters);
+        setFilters(nextFilters);
         saveModeFilters(mode, nextFilters);
         navigation.navigate('ChooseWineResultsView', { mode });
         setIsApplying(false);

@@ -31,21 +31,6 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
             marginTop: scaleVertical(4),
         },
-        locationButton: {
-            minHeight: scaleVertical(48),
-            borderWidth: scaleHorizontal(1),
-            borderColor: colors.border,
-            borderRadius: 12,
-            paddingHorizontal: scaleHorizontal(16),
-            paddingVertical: scaleVertical(13),
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: colors.background,
-        },
-        locationText: {
-            color: colors.text,
-        },
         buttonContainer: {
             paddingBottom: scaleVertical(12),
             paddingTop: scaleVertical(8),
@@ -54,34 +39,8 @@ export const getStyles = (colors: IColors) => {
             flexDirection: 'row',
             gap: scaleHorizontal(8),
         },
-        inlinePickerButton: {
+        inlinePickerContainer: {
             flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: colors.background,
-            borderRadius: 12,
-            borderWidth: scaleHorizontal(1),
-            borderColor: colors.border,
-            height: scaleVertical(48),
-            paddingHorizontal: scaleHorizontal(12),
-        },
-        pickerButton: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: colors.background,
-            borderRadius: 12,
-            borderWidth: scaleHorizontal(1),
-            borderColor: colors.border,
-            height: scaleVertical(48),
-            paddingHorizontal: scaleHorizontal(12),
-        },
-        disabledPickerButton: {
-            opacity: 0.5,
-        },
-        placeholderText: {
-            color: colors.text_light,
         },
     });
     return styles;

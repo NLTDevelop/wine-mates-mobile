@@ -44,6 +44,7 @@ const CustomRepeatEventIntervalComponent = ({
                     selectedValue={repeatInterval}
                     onPress={onSelectInterval}
                     containerStyle={styles.intervalDropdown}
+                    dropdownContainerStyle={styles.dropdownMenu}
                     fixAndroidDropdownGap
                 />
                 <CustomDropdown
@@ -52,6 +53,7 @@ const CustomRepeatEventIntervalComponent = ({
                     selectedValue={frequency}
                     onPress={onSelectFrequency}
                     containerStyle={styles.frequencyDropdown}
+                    dropdownContainerStyle={styles.dropdownMenu}
                     fixAndroidDropdownGap
                 />
             </View>

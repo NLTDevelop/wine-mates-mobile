@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
-import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { PlusIcon } from '@assets/icons/PlusIcon';
 import { TickIcon } from '@assets/icons/TickIcon';
 import { getStyles } from './styles';
 import { useWineSetListFooter } from './presenters/useWineSetListFooter';
 import { Switch } from 'react-native-switch';
+import { PickerButton } from '@/UIKit/PickerButton';
 
 interface IProps {
     repeatRuleLabel: string;
@@ -87,10 +87,7 @@ export const WineSetListFooter = ({
                 />
             </View>
             {isRepeatEnabled && (
-                <TouchableOpacity style={styles.repeatButton} onPress={onOpenRepeatModal}>
-                    <Typography variant="h6" text={repeatValueText} style={styles.repeatButtonText} numberOfLines={1} />
-                    <ArrowDownIcon />
-                </TouchableOpacity>
+                <PickerButton text={repeatValueText} onPress={onOpenRepeatModal} />
             )}
             <Button
                 text={isEditMode ? t('event.updateEvent') : t('event.createEvent')}

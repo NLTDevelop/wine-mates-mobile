@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { SearchIcon } from '@assets/icons/SearchIcon';
 import { getStyles } from './styles';
+import { PickerButton } from '@/UIKit/PickerButton';
 
 interface IProps {
     tastingTypeLabel: string;
@@ -26,10 +26,9 @@ export const WineSetListHeader = ({
                 <SearchIcon />
                 <Typography variant="body_400" text={t('common.search')} style={styles.searchButtonText} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.tastingTypeButton} onPress={onOpenTastingTypeModal}>
-                <Typography variant="h6" text={tastingTypeLabel} style={styles.tastingTypeButtonText} />
-                <ArrowDownIcon />
-            </TouchableOpacity>
+            <View style={styles.tastingTypePickerContainer}>
+                <PickerButton text={tastingTypeLabel} onPress={onOpenTastingTypeModal} />
+            </View>
         </View>
     );
 };

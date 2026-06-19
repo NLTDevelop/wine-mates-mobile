@@ -1,16 +1,16 @@
 import { Button } from '@/UIKit/Button';
 import { useUiContext } from '@/UIProvider';
 import { memo, useMemo } from 'react';
-import { Dimensions, View } from 'react-native';
-import Modal from 'react-native-modal';
+import { View } from 'react-native';
+import { isIOS } from '@/utils';
 import { getStyles } from './styles';
 import { RepeatRuleConfig } from '@/entities/events/types/RepeatRuleConfig';
 import { useCustomRepeatEventModal } from './presenters/useCustomRepeatEventModal';
 import { CalendarModal } from '@/UIKit/CalendarModal';
-import { CustomRepeatEventHeader } from './components/CustomRepeatEventHeader';
 import { CustomRepeatEventInterval } from './components/CustomRepeatEventInterval';
 import { CustomRepeatEventDaysRepetition } from './components/CustomRepeatEventDaysRepetition';
 import { CustomRepeatEventEndCondition } from './components/CustomRepeatEventEndCondition';
+import { BottomModal } from '@/UIKit/BottomModal/ui';
 
 interface IProps {
     visible: boolean;
@@ -55,25 +55,8 @@ const CustomRepeatEventModalComponent = ({ visible, onClose, onConfirm }: IProps
 
     return (
         <>
-            <Modal
-                isVisible={visible}
-                onBackdropPress={onClose}
-                onBackButtonPress={onClose}
-                backdropTransitionOutTiming={400}
-                animationInTiming={400}
-                animationOutTiming={400}
-                backdropOpacity={0.35}
-                style={styles.modal}
-                deviceHeight={Dimensions.get('screen').height}
-                deviceWidth={Dimensions.get('screen').width}
-                useNativeDriver
-                useNativeDriverForBackdrop
-                hideModalContentWhileAnimating
-                statusBarTranslucent
-            >
-                <View style={styles.modalContent}>
-                    <CustomRepeatEventHeader onClose={onClose} />
-
+            <BottomModal visible={visible && (!isIOS || !isCalendarVisible)} onClose={onClose} title={t('repeatEvent.title')}>
+                <View>
                     <CustomRepeatEventInterval
                         intervalItems={intervalItems}
                         repeatInterval={repeatInterval}
@@ -105,7 +88,7 @@ const CustomRepeatEventModalComponent = ({ visible, onClose, onConfirm }: IProps
                         containerStyle={styles.saveButton}
                     />
                 </View>
-            </Modal>
+            </BottomModal>
             {isCalendarVisible && (
                 <CalendarModal
                     visible={isCalendarVisible}

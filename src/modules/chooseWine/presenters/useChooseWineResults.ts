@@ -12,6 +12,7 @@ import { IWineChooserFilters, WineChooserMode } from '@/entities/wine/types/IWin
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
+import { userModel } from '@/entities/users/UserModel';
 
 type RouteParams = {
     ChooseWineResultsView: {
@@ -47,17 +48,20 @@ const prepareRequestFilters = (filters: IWineChooserFilters): IWineChooserFilter
     const restFilters = { ...filters } as LegacyWineChooserFilters;
     delete restFilters.vintageMin;
     delete restFilters.vintageMax;
+    const canApplyTasteFilters = userModel.user?.hasPremium || false;
 
     return {
         ...restFilters,
         ageMin: filters.ageMin || null,
         ageMax: filters.ageMax || null,
         vintages: filters.vintages || [],
+        tasteFilters: canApplyTasteFilters ? filters.tasteFilters : [],
     };
 };
 
 const getAppliedFiltersCount = (filters: IWineChooserFilters) => {
     let count = 0;
+    const canApplyTasteFilters = userModel.user?.hasPremium || false;
 
     if (filters.aromaIds.length > 0) {
         count += 1;
@@ -110,7 +114,7 @@ const getAppliedFiltersCount = (filters: IWineChooserFilters) => {
         count += 1;
     }
 
-    if (filters.tasteFilters.length > 0) {
+    if (canApplyTasteFilters && filters.tasteFilters.length > 0) {
         count += 1;
     }
 

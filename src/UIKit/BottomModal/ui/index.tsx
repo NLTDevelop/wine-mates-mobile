@@ -25,6 +25,7 @@ interface IProps {
     customHeader?: ReactNode;
     contentContainerStyle?: StyleProp<ViewStyle>;
     isFullScreen?: boolean;
+    shouldAvoidKeyboard?: boolean;
     children: ReactNode;
 }
 
@@ -36,6 +37,7 @@ export const BottomModal = ({
     customHeader,
     contentContainerStyle,
     isFullScreen = false,
+    shouldAvoidKeyboard = true,
     children,
 }: IProps) => {
     const { colors } = useUiContext();
@@ -49,7 +51,7 @@ export const BottomModal = ({
         backdropOpacity,
         animatedKeyboardContainerStyle,
         animatedKeyboardBackgroundStyle,
-    } = useBottomModal({ onClose, isFullScreen });
+    } = useBottomModal({ onClose, isFullScreen, shouldAvoidKeyboard });
 
     const styles = useMemo(() => getStyles(colors, bottomInset), [colors, bottomInset]);
 

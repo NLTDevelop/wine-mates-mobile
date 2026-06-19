@@ -1,12 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { TastingType, TASTING_TYPES } from '@/entities/events/enums/TastingType';
-
-interface ITastingTypeModalItem {
-    value: TastingType;
-    label: string;
-    onPress: () => void;
-}
+import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 
 interface IProps {
     value: TastingType;
@@ -45,17 +40,18 @@ export const useTastingTypeModal = ({ value, onChange }: IProps) => {
         };
     }, []);
 
-    const items = useMemo<ITastingTypeModalItem[]>(() => {
+    const items = useMemo<IUniversalPickerOption[]>(() => {
         return TASTING_TYPES.map((currentValue) => {
             const tastingValue = currentValue as TastingType;
 
             return {
-                value: tastingValue,
-                label: localization.t(TASTING_TYPE_LABEL_KEYS[tastingValue]),
+                id: tastingValue,
+                title: localization.t(TASTING_TYPE_LABEL_KEYS[tastingValue]),
+                isSelected: draft === tastingValue,
                 onPress: createOnSelect(tastingValue),
             };
         });
-    }, [createOnSelect]);
+    }, [createOnSelect, draft]);
 
     const selectedText = useMemo(() => {
         return localization.t(TASTING_TYPE_LABEL_KEYS[value]);

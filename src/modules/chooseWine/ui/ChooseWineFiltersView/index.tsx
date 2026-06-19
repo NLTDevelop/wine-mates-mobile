@@ -8,7 +8,6 @@ import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { RangeSlider } from '@/UIKit/RangeSlider';
 import { Checkbox } from '@/UIKit/Checkbox';
-import { UniversalPickerModal } from '@/UIKit/UniversalPickerModal';
 import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 import { UserIcon } from '@assets/icons/UserIcon';
 import { PeopleIcon } from '@assets/icons/PeopleIcon';
@@ -225,31 +224,17 @@ export const ChooseWineFiltersView = observer(() => {
                 </View>
             )}
             {pickerState ? (
-                pickerState.modalType === 'bottom' ? (
-                    <UniversalPickerBottomModal
-                        visible={!!pickerState}
-                        title={pickerState.title}
-                        options={pickerState.options}
-                        isLoading={pickerState.isLoading}
-                        selectionMode={pickerState.selectionMode}
-                        emptyText={t('common.nothingFoundTitle')}
-                        confirmText={t('common.choose')}
-                        onClose={onClosePicker}
-                        onConfirm={onConfirmPicker}
-                    />
-                ) : (
-                    <UniversalPickerModal
-                        visible={!!pickerState}
-                        title={pickerState.title}
-                        options={pickerState.options}
-                        isLoading={pickerState.isLoading}
-                        selectionMode={pickerState.selectionMode}
-                        emptyText={t('common.nothingFoundTitle')}
-                        confirmText={t('common.choose')}
-                        onClose={onClosePicker}
-                        onConfirm={onConfirmPicker}
-                    />
-                )
+                <UniversalPickerBottomModal
+                    visible={!!pickerState}
+                    title={pickerState.title}
+                    options={pickerState.options}
+                    isLoading={pickerState.isLoading}
+                    selectionMode={pickerState.selectionMode}
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.choose')}
+                    onClose={onClosePicker}
+                    onConfirm={onConfirmPicker}
+                />
             ) : null}
         </ScreenContainer>
     );

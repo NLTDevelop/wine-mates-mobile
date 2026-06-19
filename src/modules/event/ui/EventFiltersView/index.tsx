@@ -12,7 +12,7 @@ import { CalendarIcon } from '@assets/icons/CalendarIcon';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { RangeSlider } from '@/UIKit/RangeSlider';
 import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
-import { SingleSelectModal } from '../AddEventView/components/SingleSelectModal';
+import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 
 interface IProps {}
 
@@ -151,11 +151,15 @@ export const EventFiltersView = ({}: IProps) => {
             />
 
             {isSexPickerVisible && (
-                <SingleSelectModal
+                <UniversalPickerBottomModal
                     visible={isSexPickerVisible}
                     title={sexModalTitle}
+                    options={sexPickerItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
                     onClose={onCloseSexPicker}
-                    items={sexPickerItems}
                     onConfirm={onConfirmSex}
                 />
             )}

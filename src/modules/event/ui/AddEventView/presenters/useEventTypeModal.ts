@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { EventType } from '@/entities/events/enums/EventType';
-import { ISingleSelectModalItem } from '../types/ISingleSelectModalItem';
+import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 
 interface IProps {
     value: EventType;
@@ -37,17 +37,17 @@ export const useEventTypeModal = ({ value, onChange }: IProps) => {
         setDraft(EventType.Parties);
     }, []);
 
-    const items = useMemo<ISingleSelectModalItem[]>(() => {
+    const items = useMemo<IUniversalPickerOption[]>(() => {
         return [
             {
-                key: EventType.Tastings,
-                label: localization.t('event.tastings'),
+                id: EventType.Tastings,
+                title: localization.t('event.tastings'),
                 isSelected: draft === EventType.Tastings,
                 onPress: onSelectTastings,
             },
             {
-                key: EventType.Parties,
-                label: localization.t('event.parties'),
+                id: EventType.Parties,
+                title: localization.t('event.parties'),
                 isSelected: draft === EventType.Parties,
                 onPress: onSelectParties,
             },

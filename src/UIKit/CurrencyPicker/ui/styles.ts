@@ -2,49 +2,22 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors, bottomInset: number) => {
+export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        bottomSheetContainer: {
-            backgroundColor: colors.background,
-            borderTopLeftRadius: scaleVertical(20),
-            borderTopRightRadius: scaleVertical(20),
-        },
-        header: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            paddingHorizontal: scaleHorizontal(16),
-            paddingTop: scaleVertical(16),
-            minHeight: scaleVertical(56),
-            position: 'relative',
-        },
-        titleContainer: {
-            position: 'absolute',
-            left: scaleHorizontal(16),
-            right: scaleHorizontal(16),
-            top: scaleVertical(16),
-            height: scaleHorizontal(40),
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        closeButton: {
-            width: scaleHorizontal(40),
-            height: scaleHorizontal(40),
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        title: {
-            textAlign: 'center',
-            color: colors.text,
+        container: {
+            flex: 1,
+            minHeight: 0,
         },
         searchContainer: {
-            marginHorizontal: scaleHorizontal(16),
             marginTop: scaleVertical(12),
             marginBottom: scaleVertical(16),
         },
         listContentContainer: {
-            paddingHorizontal: scaleHorizontal(16),
             paddingBottom: scaleVertical(16),
+        },
+        list: {
+            flex: 1,
+            minHeight: 0,
         },
         option: {
             minHeight: scaleVertical(48),
@@ -78,9 +51,7 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
             textAlign: 'center',
         },
         footer: {
-            paddingHorizontal: scaleHorizontal(16),
             paddingTop: scaleVertical(12),
-            paddingBottom: bottomInset + scaleVertical(16),
             backgroundColor: colors.background,
         },
         confirmButton: {

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, TouchableOpacity, Keyboard } from 'react-native';
+import { View } from 'react-native';
 import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
@@ -9,8 +9,6 @@ import { CustomInput } from '@/UIKit/CustomInput';
 import { Button } from '@/UIKit/Button';
 import { Typography } from '@/UIKit/Typography';
 import { useAddEvent } from './presenters/useAddEvent';
-import { MapLocationIcon } from '@assets/icons/MapLocationIcon';
-import { CalendarIcon } from '@assets/icons/CalendarIcon';
 import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
 import { useDateTimePicker } from './presenters/useDateTimePicker';
 import { useEventTypeModal } from './presenters/useEventTypeModal';
@@ -22,13 +20,12 @@ import { useContactInfoModal } from './presenters/useContactInfoModal';
 import { useEventDateTimeFormatter } from './presenters/useEventDateTimeFormatter';
 import { useEventDateRangeFormatter } from './presenters/useEventDateRangeFormatter';
 import { useEventTypeLabel } from './presenters/useEventTypeLabel';
+import { PickerButton } from '@/UIKit/PickerButton';
+import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 import { PaymentMethodsPickerModal } from './components/PaymentMethodsPickerModal';
 import { ContactInfoPickerModal } from './components/ContactInfoPickerModal';
-import { SingleSelectModal } from './components/SingleSelectModal';
-import { PickerButton } from '@/UIKit/PickerButton';
 import { CalendarModal } from '@/UIKit/CalendarModal';
 import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
-import { ClockIcon } from '@assets/icons/ClockIcon';
 import { RangeSlider } from '@/UIKit/RangeSlider';
 import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
 import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCurrencyPickerModal';
@@ -303,49 +300,34 @@ export const AddEventView = () => {
                                 placeholder={t('event.meetingPlaceName')}
                             />
 
-                            <TouchableOpacity onPress={onLocationPress} style={styles.locationButton}>
-                                <Typography
-                                    text={form.locationLabel || t('event.selectLocation')}
-                                    variant="h6"
-                                    style={styles.locationText}
-                                />
-                                <MapLocationIcon color={colors.text} />
-                            </TouchableOpacity>
+                            <PickerButton
+                                onPress={onLocationPress}
+                                text={form.locationLabel}
+                                placeholder={t('event.selectLocation')}
+                            />
 
-                            <TouchableOpacity
+                            <PickerButton
                                 onPress={openDateRangePicker}
-                                onPressIn={Keyboard.dismiss}
-                                style={styles.pickerButton}
-                            >
-                                <Typography variant="h6" text={formattedEventDateRange} />
-                                <CalendarIcon color={colors.text_light} />
-                            </TouchableOpacity>
+                                text={formattedEventDateRange}
+                            />
                             <View style={styles.row}>
-                                <TouchableOpacity
-                                    onPress={openStartTimePicker}
-                                    onPressIn={Keyboard.dismiss}
-                                    disabled={isStartTimePickerDisabled}
-                                    style={[
-                                        styles.inlinePickerButton,
-                                        isStartTimePickerDisabled ? styles.disabledPickerButton : undefined,
-                                    ]}
-                                >
-                                    <Typography variant="h6" text={formattedStartTime || t('event.eventStartTime')} />
-                                    <ClockIcon />
-                                </TouchableOpacity>
+                                <View style={styles.inlinePickerContainer}>
+                                    <PickerButton
+                                        onPress={openStartTimePicker}
+                                        text={formattedStartTime}
+                                        placeholder={t('event.eventStartTime')}
+                                        isDisabled={isStartTimePickerDisabled}
+                                    />
+                                </View>
 
-                                <TouchableOpacity
-                                    onPress={openEndTimePicker}
-                                    onPressIn={Keyboard.dismiss}
-                                    disabled={isEndTimePickerDisabled}
-                                    style={[
-                                        styles.inlinePickerButton,
-                                        isEndTimePickerDisabled ? styles.disabledPickerButton : undefined,
-                                    ]}
-                                >
-                                    <Typography variant="h6" text={formattedEndTime || t('event.eventEndTime')} />
-                                    <ClockIcon />
-                                </TouchableOpacity>
+                                <View style={styles.inlinePickerContainer}>
+                                    <PickerButton
+                                        onPress={openEndTimePicker}
+                                        text={formattedEndTime}
+                                        placeholder={t('event.eventEndTime')}
+                                        isDisabled={isEndTimePickerDisabled}
+                                    />
+                                </View>
                             </View>
 
                             <Typography variant="h4" text={t('event.bookingAndDetails')} />
@@ -449,29 +431,41 @@ export const AddEventView = () => {
                 />
             )}
             {isEventTypeModalVisible && (
-                <SingleSelectModal
+                <UniversalPickerBottomModal
                     visible={isEventTypeModalVisible}
                     title={eventTypeModalTitle}
+                    options={eventTypeItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
                     onClose={onCloseEventTypeModal}
-                    items={eventTypeItems}
                     onConfirm={onConfirmEventType}
                 />
             )}
             {isSexModalVisible && (
-                <SingleSelectModal
+                <UniversalPickerBottomModal
                     visible={isSexModalVisible}
                     title={sexModalTitle}
+                    options={sexItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
                     onClose={onCloseSexModal}
-                    items={sexItems}
                     onConfirm={onConfirmSex}
                 />
             )}
             {isParticipationConditionModalVisible && (
-                <SingleSelectModal
+                <UniversalPickerBottomModal
                     visible={isParticipationConditionModalVisible}
                     title={participationConditionModalTitle}
+                    options={participationConditionItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
                     onClose={onCloseParticipationConditionModal}
-                    items={participationConditionItems}
                     onConfirm={onConfirmParticipationCondition}
                 />
             )}
@@ -496,11 +490,15 @@ export const AddEventView = () => {
                 />
             )}
             {isConfirmationRequiredModalVisible && (
-                <SingleSelectModal
+                <UniversalPickerBottomModal
                     visible={isConfirmationRequiredModalVisible}
                     title={confirmationRequiredModalTitle}
+                    options={confirmationRequiredItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
                     onClose={onCloseConfirmationRequiredModal}
-                    items={confirmationRequiredItems}
                     onConfirm={onConfirmConfirmationRequired}
                 />
             )}
