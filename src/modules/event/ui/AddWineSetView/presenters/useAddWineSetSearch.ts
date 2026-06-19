@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, TextInput } from 'react-native';
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { wineService } from '@/entities/wine/services/WineService';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 
@@ -10,13 +9,13 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 export const useAddWineSetSearch = () => {
     const searchInputRef = useRef<TextInput>(null);
-    const searchModalRef = useRef<BottomSheetModal | null>(null);
     const activeRequestKeysRef = useRef(new Set<string>());
     const loadedPageKeysRef = useRef(new Set<string>());
     const latestSearchQueryRef = useRef('');
     const nextOffsetRef = useRef(0);
 
     const [searchQuery, setSearchQuery] = useState('');
+    const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
     const [isSearchListVisible, setIsSearchListVisible] = useState(false);
     const [isSearchingWines, setIsSearchingWines] = useState(false);
     const [isInitialSearchFinished, setIsInitialSearchFinished] = useState(false);
@@ -144,8 +143,8 @@ export const useAddWineSetSearch = () => {
     const onOpenSearchModal = useCallback(() => {
         clearSearchResults();
         setSearchQuery('');
+        setIsSearchModalVisible(true);
         setIsSearchListVisible(true);
-        searchModalRef.current?.present();
 
         setTimeout(() => {
             searchInputRef.current?.focus();
@@ -154,11 +153,7 @@ export const useAddWineSetSearch = () => {
 
     const onCloseSearchModal = useCallback(() => {
         Keyboard.dismiss();
-        searchModalRef.current?.dismiss();
-    }, []);
-
-    const onDismissSearchModal = useCallback(() => {
-        Keyboard.dismiss();
+        setIsSearchModalVisible(false);
         setIsSearchListVisible(false);
         setIsSearchingWines(false);
     }, []);
@@ -173,10 +168,10 @@ export const useAddWineSetSearch = () => {
 
     const onResetSearch = useCallback(() => {
         setSearchQuery('');
+        setIsSearchModalVisible(false);
         setIsSearchListVisible(false);
         setIsSearchingWines(false);
         clearSearchResults();
-        searchModalRef.current?.dismiss();
     }, [clearSearchResults]);
 
     useEffect(() => {
@@ -197,8 +192,8 @@ export const useAddWineSetSearch = () => {
 
     return useMemo(() => ({
         searchInputRef,
-        searchModalRef,
         searchQuery,
+        isSearchModalVisible,
         isSearchListVisible,
         isSearchingWines,
         isInitialSearchFinished,
@@ -207,17 +202,16 @@ export const useAddWineSetSearch = () => {
         onChangeSearchQuery,
         onOpenSearchModal,
         onCloseSearchModal,
-        onDismissSearchModal,
         onLoadMoreSearchResults,
         onResetSearch,
     }), [
         isInitialSearchFinished,
+        isSearchModalVisible,
         isSearchListVisible,
         isSearchingWines,
         isSearchListEndReached,
         onChangeSearchQuery,
         onCloseSearchModal,
-        onDismissSearchModal,
         onLoadMoreSearchResults,
         onOpenSearchModal,
         onResetSearch,

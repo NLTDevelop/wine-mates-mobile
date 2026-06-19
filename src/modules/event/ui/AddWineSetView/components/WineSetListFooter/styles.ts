@@ -21,21 +21,6 @@ export const getStyles = (colors: IColors) => {
         repeatLabel: {
             color: colors.text,
         },
-        repeatButton: {
-            height: scaleVertical(40),
-            borderWidth: scaleHorizontal(1),
-            borderColor: colors.border,
-            borderRadius: 12,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: scaleHorizontal(12),
-            backgroundColor: colors.background,
-            justifyContent: 'space-between',
-        },
-        repeatButtonText: {
-            color: colors.text_middle,
-            flex: 1,
-        },
         switchInnerCircle: {
             width: scaleHorizontal(22),
             height: scaleVertical(18),

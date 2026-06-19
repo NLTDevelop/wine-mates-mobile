@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
-import { ISingleSelectModalItem } from '../types/ISingleSelectModalItem';
+import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 
 interface IProps {
     value?: boolean;
@@ -36,17 +36,17 @@ export const useConfirmationRequiredModal = ({ value, onChange }: IProps) => {
         setDraft(false);
     }, []);
 
-    const items = useMemo<ISingleSelectModalItem[]>(() => {
+    const items = useMemo<IUniversalPickerOption[]>(() => {
         return [
             {
-                key: 'confirmation-required',
-                label: localization.t('eventDetails.confirmationRequired'),
+                id: 'confirmation-required',
+                title: localization.t('eventDetails.confirmationRequired'),
                 isSelected: draft === true,
                 onPress: onSelectConfirmationRequired,
             },
             {
-                key: 'no-confirmation',
-                label: localization.t('eventDetails.noConfirmation'),
+                id: 'no-confirmation',
+                title: localization.t('eventDetails.noConfirmation'),
                 isSelected: draft === false,
                 onPress: onSelectNoConfirmation,
             },

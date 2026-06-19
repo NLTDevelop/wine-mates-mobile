@@ -9,8 +9,6 @@ import { useAddWineSetView } from './presenters/useAddWineSetView';
 import { useAddWineSetSearch } from './presenters/useAddWineSetSearch';
 import { getStyles } from './styles';
 import { WineSetItemRow } from './components/WineSetItemRow';
-import { RepeatRuleModal } from './components/RepeatRuleModal';
-import { TastingTypeModal } from './components/TastingTypeModal';
 import { EventCreatedAlert } from './components/EventCreatedAlert';
 import { IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
 import { WineSetListHeader } from './components/WineSetListHeader';
@@ -20,14 +18,15 @@ import { useRepeatRuleModal } from './presenters/useRepeatRuleModal';
 import { useTastingTypeModal } from './presenters/useTastingTypeModal';
 import { useWineSetSortableList } from './presenters/useWineSetSortableList';
 import { CustomRepeatEventModal } from './components/CustomRepeatEventModal';
+import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 
 export const AddWineSetView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
         searchInputRef,
-        searchModalRef,
         searchQuery,
+        isSearchModalVisible,
         isSearchListVisible,
         isSearchingWines,
         isInitialSearchFinished,
@@ -36,7 +35,6 @@ export const AddWineSetView = () => {
         onChangeSearchQuery,
         onOpenSearchModal,
         onCloseSearchModal,
-        onDismissSearchModal,
         onLoadMoreSearchResults,
         onResetSearch,
     } = useAddWineSetSearch();
@@ -76,7 +74,6 @@ export const AddWineSetView = () => {
 
     const {
         isVisible: isRepeatModalVisible,
-        draft: repeatRuleDraft,
         selectedText: repeatRuleLabel,
         items: repeatRuleItems,
         isRepeatEnabled,
@@ -94,7 +91,6 @@ export const AddWineSetView = () => {
 
     const {
         isVisible: isTastingTypeModalVisible,
-        draft: tastingTypeDraft,
         selectedText: tastingTypeLabel,
         items: tastingTypeItems,
         onOpen: onOpenTastingTypeModal,
@@ -185,11 +181,15 @@ export const AddWineSetView = () => {
             </View>
 
             {isRepeatModalVisible && (
-                <RepeatRuleModal
+                <UniversalPickerBottomModal
                     visible={isRepeatModalVisible}
+                    title={t('event.repeat')}
+                    options={repeatRuleItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
                     onClose={onCloseRepeatModal}
-                    items={repeatRuleItems}
-                    selectedValue={repeatRuleDraft}
                     onConfirm={onConfirmRepeatRule}
                 />
             )}
@@ -201,16 +201,20 @@ export const AddWineSetView = () => {
                 />
             )}
             {isTastingTypeModalVisible && (
-                <TastingTypeModal
+                <UniversalPickerBottomModal
                     visible={isTastingTypeModalVisible}
+                    title={t('event.tastingType')}
+                    options={tastingTypeItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
                     onClose={onCloseTastingTypeModal}
-                    items={tastingTypeItems}
-                    selectedValue={tastingTypeDraft}
                     onConfirm={onConfirmTastingType}
                 />
             )}
             <WineSearchBottomSheet
-                modalRef={searchModalRef}
+                visible={isSearchModalVisible}
                 searchInputRef={searchInputRef}
                 value={searchQuery}
                 data={wineSearchResultItems}
@@ -218,7 +222,6 @@ export const AddWineSetView = () => {
                 emptyText={wineSearchEmptyText}
                 onChangeText={onChangeSearchQuery}
                 onClose={onCloseSearchModal}
-                onDismiss={onDismissSearchModal}
                 onLoadMore={onLoadMoreSearchResults}
             />
             <EventCreatedAlert

@@ -38,6 +38,9 @@ export const getStyles = (colors: IColors) => {
         endConditionDropdownDisabled: {
             opacity: 0.5,
         },
+        dropdownMenu: {
+            maxHeight: scaleVertical(144),
+        },
         dateButtonText: {
             color: colors.text,
         },

@@ -10,6 +10,7 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
+import Reanimated from 'react-native-reanimated';
 import { useUiContext } from '@/UIProvider';
 import { TitleVariant, Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
@@ -24,6 +25,7 @@ interface IProps {
     customHeader?: ReactNode;
     contentContainerStyle?: StyleProp<ViewStyle>;
     isFullScreen?: boolean;
+    shouldAvoidKeyboard?: boolean;
     children: ReactNode;
 }
 
@@ -35,14 +37,21 @@ export const BottomModal = ({
     customHeader,
     contentContainerStyle,
     isFullScreen = false,
+    shouldAvoidKeyboard = true,
     children,
 }: IProps) => {
     const { colors } = useUiContext();
 
-    const { bottomInset, modalContentStyle, onClosePress, onShow, panHandlers, backdropOpacity } = useBottomModal({
-        onClose,
-        isFullScreen,
-    });
+    const {
+        bottomInset,
+        modalContentStyle,
+        onClosePress,
+        onShow,
+        panHandlers,
+        backdropOpacity,
+        animatedKeyboardContainerStyle,
+        animatedKeyboardBackgroundStyle,
+    } = useBottomModal({ onClose, isFullScreen, shouldAvoidKeyboard });
 
     const styles = useMemo(() => getStyles(colors, bottomInset), [colors, bottomInset]);
 
@@ -68,44 +77,55 @@ export const BottomModal = ({
                         },
                     ]}
                 />
+                <Reanimated.View style={[styles.keyboardBackground, animatedKeyboardBackgroundStyle]} />
 
                 <Pressable style={StyleSheet.absoluteFill} onPress={onClosePress} />
 
-                <Animated.View style={[styles.modalContent, modalContentStyle]}>
-                    <View style={[styles.container, isFullScreen && styles.fullScreenContainer]}>
-                        <View {...panHandlers}>
-                            <TouchableWithoutFeedback>
-                                {customHeader ? (
-                                    <View>{customHeader}</View>
-                                ) : (
-                                    <View style={styles.header}>
-                                        <View style={styles.closeButton} />
+                <Reanimated.View style={animatedKeyboardContainerStyle}>
+                    <Animated.View style={[styles.modalContent, modalContentStyle]}>
+                        <View style={[styles.container, isFullScreen && styles.fullScreenContainer]}>
+                            <View {...panHandlers}>
+                                <TouchableWithoutFeedback>
+                                    {customHeader ? (
+                                        <View>{customHeader}</View>
+                                    ) : (
+                                        <View style={styles.header}>
+                                            <View style={styles.closeButton} />
 
-                                        {title ? (
-                                            <View style={styles.titleContainer} pointerEvents="none">
-                                                <Typography text={title} variant={titleVariant} style={styles.title} />
-                                            </View>
-                                        ) : null}
+                                            {title ? (
+                                                <View style={styles.titleContainer} pointerEvents="none">
+                                                    <Typography
+                                                        text={title}
+                                                        variant={titleVariant}
+                                                        style={styles.title}
+                                                    />
+                                                </View>
+                                            ) : null}
 
-                                        <TouchableOpacity onPress={onClosePress} style={styles.closeButton} hitSlop={8}>
-                                            <CrossIcon />
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
-                            </TouchableWithoutFeedback>
+                                            <TouchableOpacity
+                                                onPress={onClosePress}
+                                                style={styles.closeButton}
+                                                hitSlop={8}
+                                            >
+                                                <CrossIcon />
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                </TouchableWithoutFeedback>
+                            </View>
+
+                            <View
+                                style={[
+                                    styles.contentContainer,
+                                    isFullScreen && styles.fullScreenContentContainer,
+                                    contentContainerStyle,
+                                ]}
+                            >
+                                {children}
+                            </View>
                         </View>
-
-                        <View
-                            style={[
-                                styles.contentContainer,
-                                isFullScreen && styles.fullScreenContentContainer,
-                                contentContainerStyle,
-                            ]}
-                        >
-                            {children}
-                        </View>
-                    </View>
-                </Animated.View>
+                    </Animated.View>
+                </Reanimated.View>
             </View>
         </Modal>
     );

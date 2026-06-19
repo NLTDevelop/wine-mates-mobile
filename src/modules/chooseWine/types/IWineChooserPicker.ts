@@ -1,4 +1,4 @@
-import { IUniversalPickerOption } from '@/UIKit/UniversalPickerModal/types/IUniversalPickerOption';
+import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 
 export type WineChooserPickerKey =
     | 'type'
@@ -16,5 +16,4 @@ export interface IWineChooserPickerState {
     options: IUniversalPickerOption[];
     isLoading: boolean;
     selectionMode: 'single' | 'multiple';
-    modalType: 'fullScreen' | 'bottom';
 }

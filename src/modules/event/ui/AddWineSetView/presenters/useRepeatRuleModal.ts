@@ -4,8 +4,8 @@ import { RepeatRule } from '@/entities/events/enums/RepeatRule';
 import { RepeatRuleConfig } from '@/entities/events/types/RepeatRuleConfig';
 import { RepeatRuleFrequency } from '@/entities/events/enums/RepeatRuleFrequency';
 import { RepeatRuleEndConditionType } from '@/entities/events/enums/RepeatRuleEndConditionType';
-import { IRepeatRuleModalItem } from '@/modules/event/types/IRepeatRuleModalItem';
 import { getRepeatRuleDescription } from '@/modules/event/utils/repeatRuleFormatter';
+import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 
 interface IProps {
     value: RepeatRuleConfig | null;
@@ -170,15 +170,16 @@ export const useRepeatRuleModal = ({ value, onChange }: IProps) => {
         [onChange],
     );
 
-    const items = useMemo<IRepeatRuleModalItem[]>(() => {
+    const items = useMemo<IUniversalPickerOption[]>(() => {
         return REPEAT_RULE_MODAL_VALUES.map(ruleValue => {
             return {
-                value: ruleValue,
-                label: localization.t(REPEAT_RULE_LABEL_KEYS[ruleValue]),
+                id: ruleValue,
+                title: localization.t(REPEAT_RULE_LABEL_KEYS[ruleValue]),
+                isSelected: draft === ruleValue,
                 onPress: createOnSelect(ruleValue),
             };
         });
-    }, [createOnSelect]);
+    }, [createOnSelect, draft]);
 
     const selectedText = useMemo(() => {
         if (!value) {

@@ -5,9 +5,9 @@ import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { Checkbox } from '@/UIKit/Checkbox';
-import { IUniversalPickerOption } from '@/UIKit/UniversalPickerModal/types/IUniversalPickerOption';
 import { getStyles } from './styles';
 import { useUniversalPickerBottomModal } from './presenters/useUniversalPickerBottomModal';
+import { IUniversalPickerOption } from './types/IUniversalPickerOption';
 
 interface IProps {
     visible: boolean;
@@ -77,21 +77,6 @@ export const UniversalPickerBottomModal = ({
         );
     }, [emptyText, styles]);
 
-    const renderFooter = useCallback(() => {
-        return (
-            <View style={styles.footer}>
-                <Button
-                    text={confirmText}
-                    onPress={onConfirm}
-                    type="main"
-                    disabled={isLoading || isConfirming}
-                    inProgress={isConfirming}
-                    containerStyle={styles.confirmButton}
-                />
-            </View>
-        );
-    }, [confirmText, isConfirming, isLoading, onConfirm, styles]);
-
     if (isFullScreen) {
         return (
             <BottomModal visible={visible} onClose={onClose} title={title} isFullScreen>
@@ -120,7 +105,16 @@ export const UniversalPickerBottomModal = ({
                         />
                     )}
 
-                    {renderFooter()}
+                    <View style={styles.footer}>
+                        <Button
+                            text={confirmText}
+                            onPress={onConfirm}
+                            type="main"
+                            disabled={isLoading || isConfirming}
+                            inProgress={isConfirming}
+                            containerStyle={styles.confirmButton}
+                        />
+                    </View>
                 </View>
             </BottomModal>
         );
@@ -151,7 +145,16 @@ export const UniversalPickerBottomModal = ({
                     ListEmptyComponent={renderEmpty}
                 />
             )}
-            {renderFooter()}
+            <View style={styles.footer}>
+                <Button
+                    text={confirmText}
+                    onPress={onConfirm}
+                    type="main"
+                    disabled={isLoading || isConfirming}
+                    inProgress={isConfirming}
+                    containerStyle={styles.confirmButton}
+                />
+            </View>
         </BottomModal>
     );
 };

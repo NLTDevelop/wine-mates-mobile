@@ -1,18 +1,15 @@
 import { memo, useCallback, useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
-import { BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FlatList, TouchableOpacity, View } from 'react-native';
+import Reanimated from 'react-native-reanimated';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { Button } from '@/UIKit/Button';
 import { SearchBar } from '@/UIKit/SearchBar';
-import { useBottomModalState } from '@/UIKit/BottomModal/presenters/useBottomModalState';
-import { CrossIcon } from '@assets/icons/CrossIcon';
 import { getStyles } from './styles';
 import { ICurrencyOption } from '../types/ICurrencyOption';
 import { useCurrencyPickerSearch } from '../presenters/useCurrencyPickerSearch';
-
-const SNAP_POINTS = ['90%'];
+import { BottomModal } from '@/UIKit/BottomModal/ui';
+import { useCurrencyPickerKeyboardInset } from '../presenters/useCurrencyPickerKeyboardInset';
 
 interface IProps {
     visible: boolean;
@@ -25,13 +22,9 @@ interface IProps {
 
 const CurrencyPickerBottomSheetComponent = ({ visible, title, onClose, items, selectedValue, onConfirm }: IProps) => {
     const { colors, t } = useUiContext();
-    const { top, bottom } = useSafeAreaInsets();
-    const styles = useMemo(() => getStyles(colors, bottom), [bottom, colors]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
     const { search, filteredItems, onChangeSearch } = useCurrencyPickerSearch({ items });
-    const { modalRef, onRenderBackdrop, onRenderHandle, onDismiss, onClosePress } = useBottomModalState({
-        visible,
-        onClose,
-    });
+    const { keyboardSpacerStyle } = useCurrencyPickerKeyboardInset();
 
     const keyExtractor = useCallback((item: ICurrencyOption) => {
         return item.value;
@@ -68,59 +61,41 @@ const CurrencyPickerBottomSheetComponent = ({ visible, title, onClose, items, se
     }, [styles, t]);
 
     return (
-        <BottomSheetModal
-            ref={modalRef}
-            index={0}
-            snapPoints={SNAP_POINTS}
-            enableDynamicSizing={false}
-            topInset={top}
-            enablePanDownToClose
-            backdropComponent={onRenderBackdrop}
-            handleComponent={onRenderHandle}
-            onDismiss={onDismiss}
-            backgroundStyle={styles.bottomSheetContainer}
-            keyboardBehavior="interactive"
-            keyboardBlurBehavior="restore"
-        >
-            <View style={styles.header}>
-                <View style={styles.closeButton} />
-                <View style={styles.titleContainer} pointerEvents="none">
-                    <Typography text={title} variant="h4" style={styles.title} />
-                </View>
-                <TouchableOpacity onPress={onClosePress} style={styles.closeButton} hitSlop={8}>
-                    <CrossIcon />
-                </TouchableOpacity>
-            </View>
-            <SearchBar
-                value={search}
-                onChangeText={onChangeSearch}
-                placeholder={t('common.search')}
-                containerStyle={styles.searchContainer}
-            />
-            <BottomSheetFlatList
-                data={filteredItems}
-                keyExtractor={keyExtractor}
-                renderItem={renderItem}
-                ItemSeparatorComponent={renderSeparator}
-                ListEmptyComponent={listEmptyComponent}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.listContentContainer}
-                keyboardShouldPersistTaps="handled"
-                nestedScrollEnabled
-                initialNumToRender={30}
-                windowSize={30}
-                maxToRenderPerBatch={60}
-                removeClippedSubviews
-            />
-            <View style={styles.footer}>
-                <Button
-                    text={t('common.confirm')}
-                    onPress={onConfirm}
-                    type="main"
-                    containerStyle={styles.confirmButton}
+        <BottomModal visible={visible} onClose={onClose} title={title} isFullScreen shouldAvoidKeyboard={false}>
+            <View style={styles.container}>
+                <SearchBar
+                    value={search}
+                    onChangeText={onChangeSearch}
+                    placeholder={t('common.search')}
+                    containerStyle={styles.searchContainer}
                 />
+                <FlatList
+                    data={filteredItems}
+                    keyExtractor={keyExtractor}
+                    renderItem={renderItem}
+                    style={styles.list}
+                    ItemSeparatorComponent={renderSeparator}
+                    ListEmptyComponent={listEmptyComponent}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.listContentContainer}
+                    keyboardShouldPersistTaps="handled"
+                    nestedScrollEnabled
+                    initialNumToRender={30}
+                    windowSize={30}
+                    maxToRenderPerBatch={60}
+                    removeClippedSubviews
+                />
+                <View style={styles.footer}>
+                    <Button
+                        text={t('common.confirm')}
+                        onPress={onConfirm}
+                        type="main"
+                        containerStyle={styles.confirmButton}
+                    />
+                </View>
+                <Reanimated.View style={keyboardSpacerStyle} />
             </View>
-        </BottomSheetModal>
+        </BottomModal>
     );
 };
 

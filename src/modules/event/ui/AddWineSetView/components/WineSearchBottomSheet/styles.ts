@@ -1,37 +1,24 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { isIOS, scaleHorizontal, scaleVertical } from '@/utils';
+import { isIOS, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        bottomSheetContainer: {
-            backgroundColor: colors.background,
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-        },
         container: {
             flex: 1,
-            paddingHorizontal: scaleHorizontal(16),
+            minHeight: 0,
             gap: scaleVertical(16),
-        },
-        header: {
-            marginTop: scaleVertical(15),
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-        },
-        headerSpacer: {
-            width: scaleVertical(24),
-        },
-        closeButton: {
-            width: scaleVertical(24),
-            height: scaleVertical(24),
         },
         searchContainer: {
             marginBottom: scaleVertical(8),
         },
         listContainer: {
             flex: 1,
+            minHeight: 0,
+        },
+        list: {
+            flex: 1,
+            minHeight: 0,
         },
         listContent: {
             flexGrow: 1,

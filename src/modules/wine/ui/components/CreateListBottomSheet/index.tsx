@@ -4,7 +4,7 @@ import { useUiContext } from '@/UIProvider';
 import { Button } from '@/UIKit/Button';
 import { getStyles } from './styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BottomSheetInput } from '@/UIKit/BottomSheetInput';
+import { CustomInput } from '@/UIKit/CustomInput';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 
 interface IProps {
@@ -24,7 +24,7 @@ export const CreateListBottomSheet = ({ isVisible, value, onChangeValue, onCreat
     return (
         <BottomModal visible={isVisible} onClose={onClose} title={t('savedWine.createList')}>
             <View style={styles.container}>
-                <BottomSheetInput
+                <CustomInput
                     value={value}
                     onChangeText={onChangeValue}
                     placeholder={t('savedWine.listName')}
