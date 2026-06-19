@@ -72,13 +72,23 @@ const throwLocationUnavailableError = (): never => {
     throw new Error(message);
 };
 
+const getCachedLocationParams = (): IHomeSectionsListParams | null => {
+    if (!locationModel.userLocation) {
+        return null;
+    }
+
+    return {
+        lat: locationModel.userLocation.latitude,
+        lon: locationModel.userLocation.longitude,
+    };
+};
+
 const getHomeSectionsListParams = async (shouldRecheckLocation = false): Promise<IHomeSectionsListParams> => {
     try {
-        if (locationModel.userLocation) {
-            return {
-                lat: locationModel.userLocation.latitude,
-                lon: locationModel.userLocation.longitude,
-            };
+        const cachedLocationParams = getCachedLocationParams();
+
+        if (cachedLocationParams && !shouldRecheckLocation) {
+            return cachedLocationParams;
         }
 
         if (!shouldRecheckLocation && !locationModel.hasPermission && !locationModel.isLoading) {
@@ -99,6 +109,10 @@ const getHomeSectionsListParams = async (shouldRecheckLocation = false): Promise
                 lat: location.latitude,
                 lon: location.longitude,
             };
+        }
+
+        if (cachedLocationParams) {
+            return cachedLocationParams;
         }
 
         return throwLocationUnavailableError();

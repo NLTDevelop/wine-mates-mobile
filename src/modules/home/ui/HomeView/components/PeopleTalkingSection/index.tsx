@@ -29,6 +29,8 @@ export const PeopleTalkingSection = ({
     const { width } = useWindowDimensions();
     const {
         carouselRef,
+        carouselKey,
+        carouselDefaultIndex,
         activeIndex,
         carouselHeight,
         hasItems,
@@ -80,8 +82,10 @@ export const PeopleTalkingSection = ({
             {hasItems ? (
                 <>
                     <Carousel
+                        key={carouselKey}
                         ref={carouselRef}
                         loop={false}
+                        defaultIndex={carouselDefaultIndex}
                         width={carouselWidth}
                         height={carouselHeight}
                         data={data}
