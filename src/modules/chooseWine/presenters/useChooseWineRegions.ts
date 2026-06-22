@@ -9,15 +9,17 @@ interface IProps {
 }
 
 export const useChooseWineRegions = ({ showLoadError, setLoadingPickerKey }: IProps) => {
-    const regionsByCountryIdRef = useRef<Record<number, IWineChooserOption[]>>({});
+    const regionsByCountryIdsRef = useRef<Record<string, IWineChooserOption[]>>({});
     const [regions, setRegions] = useState<IWineChooserOption[]>([]);
 
-    const loadRegionsByCountryId = useCallback(async (countryId: number) => {
-        if (!countryId) {
+    const loadRegionsByCountryIds = useCallback(async (countryIds: number[]) => {
+        if (countryIds.length === 0) {
             return;
         }
 
-        const cachedRegions = regionsByCountryIdRef.current[countryId];
+        const regionCountryIds = [...countryIds].sort((leftId, rightId) => leftId - rightId);
+        const regionCountryIdsKey = regionCountryIds.join(',');
+        const cachedRegions = regionsByCountryIdsRef.current[regionCountryIdsKey];
 
         if (cachedRegions) {
             setRegions(cachedRegions);
@@ -25,13 +27,13 @@ export const useChooseWineRegions = ({ showLoadError, setLoadingPickerKey }: IPr
         }
 
         setLoadingPickerKey('region');
-        const response = await wineService.getWineChooserRegions({ countryId });
+        const response = await wineService.getWineChooserRegions({ countryIds: regionCountryIdsKey });
 
         if (response.isError || !response.data) {
             showLoadError(response.message);
             setRegions([]);
         } else {
-            regionsByCountryIdRef.current[countryId] = response.data;
+            regionsByCountryIdsRef.current[regionCountryIdsKey] = response.data;
             setRegions(response.data);
         }
 
@@ -41,6 +43,6 @@ export const useChooseWineRegions = ({ showLoadError, setLoadingPickerKey }: IPr
     return {
         regions,
         setRegions,
-        loadRegionsByCountryId,
+        loadRegionsByCountryIds,
     };
 };
