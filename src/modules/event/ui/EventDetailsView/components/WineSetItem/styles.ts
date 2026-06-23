@@ -26,6 +26,10 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
             flex: 1,
         },
+        rightContent: {
+            alignItems: 'flex-end',
+            gap: scaleVertical(6),
+        },
         ratingContainer: {
             flexDirection: 'row',
             alignItems: 'center',

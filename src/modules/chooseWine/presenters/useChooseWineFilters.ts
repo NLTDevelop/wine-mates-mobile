@@ -169,6 +169,14 @@ const createQuickFilterTitle = (name: string, wineCount?: number) => {
     return `${name} (${wineCount})`;
 };
 
+const areNumberArraysEqual = (leftItems: number[], rightItems: number[]) => {
+    if (leftItems.length !== rightItems.length) {
+        return false;
+    }
+
+    return leftItems.every(item => rightItems.includes(item));
+};
+
 const getSelectedOptionIds = (options: IUniversalPickerOption[]) => {
     return options.filter(item => item.isSelected).map(item => item.id);
 };
@@ -304,7 +312,7 @@ export const useChooseWineFilters = () => {
 
     const selectedTypeId = filters.typeIds[0];
     const selectedColorId = filters.colorIds[0];
-    const selectedCountryId = filters.countryIds[0];
+    const hasSelectedCountries = filters.countryIds.length > 0;
 
     const patchFilters = useCallback((payload: Partial<IWineChooserFilters>) => {
         setFilters(prevState => {
@@ -322,7 +330,7 @@ export const useChooseWineFilters = () => {
     }, []);
 
     const { types, colors, countries, loadBaseOptions } = useChooseWineBaseOptions();
-    const { regions, setRegions, loadRegionsByCountryId } = useChooseWineRegions({
+    const { regions, setRegions, loadRegionsByCountryIds } = useChooseWineRegions({
         showLoadError,
         setLoadingPickerKey,
     });
@@ -458,23 +466,23 @@ export const useChooseWineFilters = () => {
     }, [loadTasteCharacteristics]);
 
     useEffect(() => {
-        if (!selectedCountryId) {
+        if (!hasSelectedCountries) {
             setRegions(prevState => (prevState.length > 0 ? [] : prevState));
             return;
         }
 
-        loadRegionsByCountryId(selectedCountryId);
-    }, [loadRegionsByCountryId, selectedCountryId, setRegions]);
+        loadRegionsByCountryIds(filters.countryIds);
+    }, [filters.countryIds, hasSelectedCountries, loadRegionsByCountryIds, setRegions]);
 
     useEffect(() => {
         syncAromasFlavorsForTemplate();
     }, [syncAromasFlavorsForTemplate]);
 
     useEffect(() => {
-        if (!selectedCountryId && filters.regionIds.length > 0) {
+        if (!hasSelectedCountries && filters.regionIds.length > 0) {
             patchFilters({ regionIds: [] });
         }
-    }, [filters.regionIds.length, patchFilters, selectedCountryId]);
+    }, [filters.regionIds.length, hasSelectedCountries, patchFilters]);
 
     const selectedTypes = useMemo(() => {
         return types.filter(item => filters.typeIds.includes(item.id));
@@ -651,11 +659,11 @@ export const useChooseWineFilters = () => {
         }
 
         if (key === 'country') {
-            return { key, title: localization.t('chooseWine.country'), options: countryOptions, isLoading: loadingPickerKey === key, selectionMode: 'single' };
+            return { key, title: localization.t('chooseWine.country'), options: countryOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple' };
         }
 
         if (key === 'region') {
-            return { key, title: localization.t('chooseWine.region'), options: regionOptions, isLoading: loadingPickerKey === key, selectionMode: 'single' };
+            return { key, title: localization.t('chooseWine.region'), options: regionOptions, isLoading: loadingPickerKey === key, selectionMode: 'multiple' };
         }
 
         if (key === 'vintage') {
@@ -684,7 +692,7 @@ export const useChooseWineFilters = () => {
     ]);
 
     const openPicker = useCallback(async (key: WineChooserPickerKey) => {
-        if (key === 'region' && !selectedCountryId) {
+        if (key === 'region' && !hasSelectedCountries) {
             return;
         }
 
@@ -716,7 +724,7 @@ export const useChooseWineFilters = () => {
         loadVintages,
         regions.length,
         selectedColorId,
-        selectedCountryId,
+        hasSelectedCountries,
         selectedTypeId,
         vintages.length,
     ]);
@@ -756,10 +764,12 @@ export const useChooseWineFilters = () => {
     const createOnQuickCountryPress = useCallback((countryId: number) => {
         return () => {
             const isSelected = filters.countryIds.includes(countryId);
-            const countryIds = isSelected ? [] : [countryId];
+            const countryIds = isSelected
+                ? filters.countryIds.filter(item => item !== countryId)
+                : [...filters.countryIds, countryId];
             const payload: Partial<IWineChooserFilters> = { countryIds };
 
-            if (filters.countryIds[0] !== countryIds[0]) {
+            if (!areNumberArraysEqual(filters.countryIds, countryIds)) {
                 payload.regionIds = [];
                 setRegions([]);
             }
@@ -935,7 +945,7 @@ export const useChooseWineFilters = () => {
             const countryIds = getSelectedNumberOptionIds(pickerState.options);
             const payload: Partial<IWineChooserFilters> = { countryIds };
 
-            if (filters.countryIds[0] !== countryIds[0]) {
+            if (!areNumberArraysEqual(filters.countryIds, countryIds)) {
                 payload.regionIds = [];
                 setRegions([]);
             }
@@ -1100,7 +1110,7 @@ export const useChooseWineFilters = () => {
         selectedFlavorText: formatSelectedNames(selectedFlavors),
         selectedGrapeText: formatSelectedNames(selectedGrapeVarieties),
         selectedVintageLabel,
-        isRegionDisabled: !selectedCountryId || loadingPickerKey === 'region' || regions.length === 0,
+        isRegionDisabled: !hasSelectedCountries || loadingPickerKey === 'region' || regions.length === 0,
         isAromaFlavorDisabled: !selectedTypeId || !selectedColorId,
         ageMin: filters.ageMin || AGE_MIN,
         ageMax: filters.ageMax || AGE_MAX,

@@ -446,7 +446,7 @@ class WineService {
         }
     };
 
-    getWineChooserRegions = async (params: { countryId: number }): Promise<IResponse<IWineChooserOption[]>> => {
+    getWineChooserRegions = async (params: { countryIds: string }): Promise<IResponse<IWineChooserOption[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',

@@ -89,16 +89,16 @@ export const useWineSetItem = ({
                   showExpertRating: hasExpertRating,
               }
             : null;
-    const isOwnerPressAvailable = isOwner && !!ratingData;
-    const isParticipantPressAvailable = !isOwner && isPressEnabled && isEventTastingStatus;
-    const isPressAvailable = isOwnerPressAvailable || isParticipantPressAvailable;
+    const isTastingPressAvailable = isPressEnabled && isEventTastingStatus;
+    const isOwnerDetailsPressAvailable = isOwner && !!ratingData;
+    const isPressAvailable = isTastingPressAvailable || isOwnerDetailsPressAvailable;
 
     const onPress = useCallback(() => {
         if (!isPressAvailable) {
             return;
         }
 
-        if (isParticipantPressAvailable) {
+        if (isTastingPressAvailable) {
             clearWineSnackCuisinesCache();
             navigation.navigate('TastingWineReviewView', {
                 eventId,
@@ -113,7 +113,7 @@ export const useWineSetItem = ({
             eventId,
             wineId,
         });
-    }, [eventId, isBlindTasting, isParticipantPressAvailable, isPressAvailable, navigation, status, wineId]);
+    }, [eventId, isBlindTasting, isPressAvailable, isTastingPressAvailable, navigation, status, wineId]);
 
     return {
         title,

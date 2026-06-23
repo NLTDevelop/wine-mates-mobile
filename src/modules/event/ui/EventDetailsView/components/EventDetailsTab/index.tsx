@@ -53,6 +53,7 @@ export const EventDetailsTab = ({
         isEditEventDisabled,
         isCancelEventDisabled,
         isBookNowInProgress,
+        isCancelEventInProgress,
         isReportDownloading,
         isEventApplied,
         isBlindTasting,
@@ -212,8 +213,8 @@ export const EventDetailsTab = ({
                                 containerStyle={styles.bookNowButton}
                                 text={t('eventDetails.cancel')}
                                 onPress={onCancelEventPress}
-                                disabled={isCancelEventDisabled}
-                                inProgress={isBookNowInProgress}
+                                disabled={isCancelEventDisabled || isCancelEventInProgress}
+                                inProgress={isCancelEventInProgress}
                             />
                         </>
                     ) : (
