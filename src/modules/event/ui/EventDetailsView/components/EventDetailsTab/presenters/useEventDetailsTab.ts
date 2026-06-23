@@ -146,6 +146,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<EventStackParamList>>();
     const { detailsData, wineSetItems, contactItems, cardPreviewData } = useEventDetailsData(eventDetail);
     const [isBookNowInProgress, setIsBookNowInProgress] = useState(false);
+    const [isCancelEventInProgress, setIsCancelEventInProgress] = useState(false);
     const [currentTime, setCurrentTime] = useState(() => new Date());
     const [isPaymentMethodsModalVisible, setIsPaymentMethodsModalVisible] = useState(false);
     const [isSelectedPaymentMethodModalVisible, setIsSelectedPaymentMethodModalVisible] = useState(false);
@@ -245,15 +246,14 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         isBookNowInProgress || isEventInactive || isEventCanceled || isEventFinished || isTastingFinished;
     const isReportDownloadVisible = isOwner && isTastingFinished && !isEventCanceled;
     const isWineSetAccessAvailable = (isTastingInProgress || isWineAccessTimeAvailable) && !isTastingFinished;
+    const isWineSetStatusAvailable = isWineSetAccessAvailable || isTastingFinished;
     const isWineSetStatusVisible = Boolean(
-        eventDetail && !isOwner && isEventApplied && isBookingAccepted && isWineSetAccessAvailable,
+        eventDetail && isWineSetStatusAvailable && (isOwner || (isEventApplied && isBookingAccepted)),
     );
     const isWineSetItemPressEnabled = Boolean(
         eventDetail &&
-        !isOwner &&
-        isEventApplied &&
-        isBookingAccepted &&
         isWineSetAccessAvailable &&
+        (isOwner || (isEventApplied && isBookingAccepted)) &&
         !isEventInactive &&
         !isEventCanceled,
     );
@@ -386,11 +386,11 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
     }, [eventDetail, setEventDetail]);
 
     const onCancelEventPress = useCallback(async () => {
-        if (!eventDetail || isCancelEventDisabled || isBookNowInProgress) {
+        if (!eventDetail || isCancelEventDisabled || isCancelEventInProgress) {
             return;
         }
 
-        setIsBookNowInProgress(true);
+        setIsCancelEventInProgress(true);
         try {
             const response = await eventsService.updateEvent(eventDetail.id, { isActive: false });
             if (response.isError) {
@@ -401,17 +401,16 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
                 return;
             }
 
-            setEventDetail({
-                ...eventDetail,
-                isActive: false,
-            });
+            if (response.data) {
+                setEventDetail(response.data);
+            }
         } catch (error) {
             console.warn('useEventDetailsTab -> onCancelEventPress: ', error);
             toastService.showError(localization.t('common.errorHappened'), localization.t('common.somethingWentWrong'));
         } finally {
-            setIsBookNowInProgress(false);
+            setIsCancelEventInProgress(false);
         }
-    }, [eventDetail, isBookNowInProgress, isCancelEventDisabled, setEventDetail]);
+    }, [eventDetail, isCancelEventDisabled, isCancelEventInProgress, setEventDetail]);
 
     const onToggleTastingPress = useCallback(async () => {
         if (!eventDetail || !isTastingToggleVisible || isTastingToggleDisabled) {
@@ -436,14 +435,9 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
                 return;
             }
 
-            const responseFields: Partial<IEventDetail> =
-                response.data && typeof response.data === 'object' ? response.data : {};
-            setEventDetail({
-                ...eventDetail,
-                ...responseFields,
-                tastingStatus: nextTastingStatus,
-                isTastingStarted: nextTastingStatus === EventTastingStatus.IN_PROGRESS,
-            });
+            if (response.data) {
+                setEventDetail(response.data);
+            }
         } catch (error) {
             console.warn('useEventDetailsTab -> onToggleTastingPress: ', error);
             toastService.showError(localization.t('common.errorHappened'), localization.t('common.somethingWentWrong'));
@@ -625,6 +619,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         isEditEventDisabled,
         isCancelEventDisabled,
         isBookNowInProgress,
+        isCancelEventInProgress,
         isReportDownloading,
         isEventApplied,
         isBlindTasting,

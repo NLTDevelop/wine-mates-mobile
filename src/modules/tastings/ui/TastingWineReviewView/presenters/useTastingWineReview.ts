@@ -3,7 +3,7 @@ import { eventTastingService } from '@/entities/events/EventTastingService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
-import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
+import { CommonActions, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
 import { wineService } from '@/entities/wine/services/WineService';
@@ -102,6 +102,23 @@ export const useTastingWineReview = () => {
         wineModel.winePeak = typeof draftReview.winePeak === 'number' ? draftReview.winePeak : wineModel.winePeak;
     }, []);
 
+    const syncReviewFromModel = useCallback(() => {
+        const nextReview = wineModel.review?.review ?? '';
+        const nextSliderValue = wineModel.review?.rate ?? 70;
+        const nextStarRate = wineModel.review?.starRate ?? 0;
+        const nextHasChangedRate = wineModel.review?.hasChangedRate ?? false;
+        const nextHasChangedStarRate = wineModel.review?.hasChangedStarRate ?? false;
+
+        setReview(nextReview);
+        setSliderValue(nextSliderValue);
+        setStarRate(nextStarRate);
+        setHasChangedRate(nextHasChangedRate);
+        setHasChangedStarRate(nextHasChangedStarRate);
+        setWinePeak(wineModel.winePeak);
+        setRatingSliderKey(prevState => prevState + 1);
+        setRatingStarsKey(prevState => prevState + 1);
+    }, []);
+
     const getEventTastingDraft = useCallback(async () => {
         if (isFullTastingReview) return;
         if (!eventId || !wineId) return;
@@ -153,19 +170,39 @@ export const useTastingWineReview = () => {
         getEventTastingDraft();
     }, [getEventTastingDraft]);
 
+    useFocusEffect(
+        useCallback(() => {
+            syncReviewFromModel();
+        }, [syncReviewFromModel]),
+    );
+
     const onSliderChange = useCallback((value: number) => {
         setSliderValue(value);
         setHasChangedRate(true);
+        wineModel.review = {
+            ...(wineModel.review || { review: '' }),
+            rate: value,
+            hasChangedRate: true,
+        };
     }, []);
 
     const onChangeReview = useCallback((text: string) => {
         setReview(text);
+        wineModel.review = {
+            ...(wineModel.review || { review: '' }),
+            review: text,
+        };
     }, []);
 
     const onStarRateChange = useCallback((value: number) => {
         const newValue = Number(value.toFixed(1));
         setStarRate(prev => prev === newValue ? prev : newValue);
         setHasChangedStarRate(true);
+        wineModel.review = {
+            ...(wineModel.review || { review: '' }),
+            starRate: newValue,
+            hasChangedStarRate: true,
+        };
     }, []);
 
     const onWinePeakChange = useCallback((year: number | null) => {

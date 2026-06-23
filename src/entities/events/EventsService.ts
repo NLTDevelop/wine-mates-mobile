@@ -301,14 +301,8 @@ class EventsService {
                 data,
             });
 
-            if (!response.isError) {
-                const responseFields = response.data && typeof response.data === 'object' ? response.data : {};
-                const updatedFields = {
-                    ...data,
-                    ...responseFields,
-                };
-
-                this.updateEventInModels(id, updatedFields);
+            if (!response.isError && response.data) {
+                this.updateEventInModels(id, response.data);
             }
 
             return response;
