@@ -16,13 +16,13 @@ import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 export const CreateNewPasswordView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { form, onChangePassword, onChangeConfirmPassword, isLoading, handleSavePress, isError, handleRetry,
+    const { form, onChangePassword, onChangeConfirmPassword, isLoading, onSavePress, isError, onRetry,
         isDisabled, isFromSettings } = useCreateNewPassword();
 
     return (
         <WithErrorHandler
             error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null}
-            onRetry={handleRetry}
+            onRetry={onRetry}
         >
             <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding>
                 <View style={styles.container}>
@@ -55,7 +55,7 @@ export const CreateNewPasswordView = () => {
                     <View>
                         <Button
                             text={t('common.save')}
-                            onPress={handleSavePress}
+                            onPress={onSavePress}
                             type="secondary"
                             inProgress={isLoading}
                             disabled={isDisabled}

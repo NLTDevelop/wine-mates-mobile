@@ -1,7 +1,7 @@
-import { wineModel } from '@/entities/wine/WineModel';
 import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
 
 type NavigationSource = 'scanner' | 'wineDetails';
 
@@ -10,11 +10,10 @@ export const useCloseButton = () => {
     const route = useRoute();
     const params = route.params as { source?: NavigationSource; wineId?: number } | undefined;
     const source = params?.source ?? 'scanner';
-    const wineId = params?.wineId;
 
     const onPress = () => {
         clearTasteCharacteristicsCache();
-        wineModel.clear();
+        clearWineModel();
 
         if (source === 'wineDetails') {
             const wineId = (route.params as { wineId?: number } | undefined)?.wineId;

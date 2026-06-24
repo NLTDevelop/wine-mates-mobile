@@ -1,10 +1,12 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useState } from 'react';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
-import { wineService } from '@/entities/wine/WineService';
-import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
+import { wineService } from '@/entities/wine/services/WineService';
 import { useIsFocused } from '@react-navigation/native';
 import { IWineReviewsListItem } from '@/entities/wine/types/IWineReviewsListItem';
+import { wineReviewsListModel } from '@/entities/wine/models/WineReviewsListModel';
+import { clearWineReviewsListModel } from '@/entities/wine/services/WineModelService';
 
 const LIMIT = 10;
 const OFFSET = 0;
@@ -75,13 +77,13 @@ export const useWineReviewsList = (
         }
         
         if (isFocused && wineId) {
-            wineReviewsListModel.clear();
+            clearWineReviewsListModel();
             getList(OFFSET, wineId);
         }
     }, [isFocused, getList, wineId, isAllVintagesSelected, isPreloadedData]);
 
     useEffect(() => {
-        return () => wineReviewsListModel.clear();
+        return () => clearWineReviewsListModel();
     }, []);
 
     return { data, isReviewsLoading, onRefresh, onEndReached };

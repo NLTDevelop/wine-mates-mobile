@@ -16,6 +16,7 @@ import { ShareIcon } from '@assets/icons/ShareIcon';
 interface IProps {
     item: IWineListItem | IWineDetails;
     onPress?: (item: IWineListItem) => void;
+    onSharePress?: (item: IWineListItem | IWineDetails) => void;
     showSimilarity?: boolean;
     footer?: ReactNode;
     removeCardStyles?: boolean;
@@ -28,7 +29,7 @@ interface IProps {
     hideDate?: boolean;
 }
 
-export const WineListItem = ({ item, onPress, showSimilarity = false, footer, removeCardStyles = false,
+export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = false, footer, removeCardStyles = false,
     showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent, showExpertRatingWithoutPremium = false, hideDate = false }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
@@ -47,21 +48,20 @@ export const WineListItem = ({ item, onPress, showSimilarity = false, footer, re
         showUserReviewCount,
         showExpertReviewCount,
         expertReviewLabel,
-        onSharePress,
-    } = useWineListItem({ item, onPress, removeCardStyles, isMyWine });
+        onPressShareButton,
+    } = useWineListItem({ item, onPress, onSharePress, removeCardStyles, isMyWine });
     const { description } = useWineDescription({ item, showVintage, showNonVintage });
     const getContainerStyle = useCallback(
         ({ pressed }: { pressed: boolean }) => [styles.container, pressed && styles.pressed],
         [styles.container, styles.pressed],
     );
-
     return (
         <Pressable
             style={getContainerStyle}
             onPress={onItemPress}
             disabled={!onPress}
         >
-            <TouchableOpacity style={styles.shareButton} onPress={onSharePress} hitSlop={12}>
+            <TouchableOpacity style={styles.shareButton} onPress={onPressShareButton} hitSlop={12}>
                 <ShareIcon width={20} height={20} color={colors.text} />
             </TouchableOpacity>
             <View style={styles.content}>

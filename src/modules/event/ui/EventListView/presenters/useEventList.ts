@@ -11,10 +11,9 @@ const LIMIT = 10;
 export const useEventsList = () => {
     const isFocused = useIsFocused();
 
-    const [isLoading, setIsLoading] = useState(true, );
+    const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const hasAutoLoadedOnFocusRef = useRef(false);
-    const lastLoadedFiltersKeyRef = useRef('');
 
     const savedEvents = eventsModel.savedEvents;
     const createdEvents = eventsModel.createdEvents;
@@ -38,16 +37,13 @@ export const useEventsList = () => {
     }, [createdEvents]);
 
     const loadEvents = useCallback(async (offset: number, _type: 'saved' | 'created' | 'none') => {
-        
-
         if (offset === OFFSET) {
             setIsLoading(true);
         } else {
-             setIsRefreshing(true);
+            setIsRefreshing(true);
         }
 
         try {
-
             const params:IGetEventsParams = {
                 offset,
                 limit: LIMIT,
@@ -69,7 +65,7 @@ export const useEventsList = () => {
                         eventsService.getAppliedEvents(),
                     ]);
 
-                    if (createdResult.isError || createdResult.data !== null || savedResult.isError || savedResult.data !== null || appliedResult.isError || appliedResult.data !== null) {
+                    if (createdResult.isError || !createdResult.data || savedResult.isError || !savedResult.data || appliedResult.isError || !appliedResult.data) {
                         return;
                     }
             }
@@ -108,24 +104,18 @@ export const useEventsList = () => {
 
 
     useEffect(() => {
-
         if (!isFocused) {
             hasAutoLoadedOnFocusRef.current = false;
-            lastLoadedFiltersKeyRef.current = '';
             return;
         }
-        const timer = setTimeout(() => {
-            const isNeedToLoad = (appliedEvents.length === 0 && (savedEvents?.rows ?? 0) === 0 && (createdEvents?.rows ?? 0) === 0); 
-            
-            if(isNeedToLoad){
-                onRefresh(OFFSET);
-            }
-        }, 150);
 
+        if (hasAutoLoadedOnFocusRef.current) {
+            return;
+        }
 
-       return () => clearTimeout(timer);
-       
-    }, [ isFocused, onRefresh, createdEvents, appliedEvents, savedEvents]);
+        hasAutoLoadedOnFocusRef.current = true;
+        onRefresh(OFFSET);
+    }, [ isFocused, onRefresh]);
 
 
     useEffect(() => {

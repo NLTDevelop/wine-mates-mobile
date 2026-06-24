@@ -1,5 +1,6 @@
 import { ContactType } from '@/entities/contacts/types/ContactType';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { localization } from '@/UIProvider/localization/Localization';
 
 interface IContactConfigItem {
     type: ContactType;
@@ -36,6 +37,25 @@ const getUrlPath = (value: string) => {
     return withoutProtocol.slice(pathStartIndex + 1);
 };
 
+const getUrlHost = (value: string) => {
+    const trimmedValue = value.trim();
+
+    if (!trimmedValue) {
+        return '';
+    }
+
+    const normalizedValue = trimmedValue.startsWith('http://') || trimmedValue.startsWith('https://')
+        ? trimmedValue
+        : `https://${trimmedValue}`;
+
+    try {
+        const url = new URL(normalizedValue);
+        return url.hostname.replace(/^www\./, '');
+    } catch {
+        return '';
+    }
+};
+
 const getQueryParam = (value: string, paramName: string) => {
     const queryStartIndex = value.indexOf('?');
 
@@ -64,6 +84,18 @@ const normalizeUsername = (value: string) => {
     return trimmed;
 };
 
+const isWebsiteValue = (value: string) => {
+    const host = getUrlHost(value);
+
+    if (!host.includes('.')) {
+        return false;
+    }
+
+    const hostParts = host.split('.').filter(Boolean);
+
+    return hostParts.length >= 2;
+};
+
 const getContactConfig = (contactType: ContactType) => {
     return CONTACT_CONFIG.find((item) => item.type === contactType) || null;
 };
@@ -79,6 +111,10 @@ export const getContactType = (name: string, value: string): ContactType => {
         return matchedConfig.type;
     }
 
+    if (isWebsiteValue(value)) {
+        return 'website';
+    }
+
     return 'phone';
 };
 
@@ -86,6 +122,10 @@ export const getContactName = (value: string) => {
     const trimmedValue = value.trim();
     const type = getContactType('', trimmedValue);
     const contactConfig = getContactConfig(type);
+
+    if (type === 'website') {
+        return localization.t('contactInfo.website');
+    }
 
     if (!contactConfig) {
         return trimmedValue;
@@ -99,6 +139,14 @@ export const getContactUrl = (value: string, contactType: ContactType) => {
 
     if (contactType === 'phone') {
         return `tel:${trimmedValue.replace(/[^+0-9]/g, '')}`;
+    }
+
+    if (contactType === 'website') {
+        if (trimmedValue.startsWith('http://') || trimmedValue.startsWith('https://')) {
+            return trimmedValue;
+        }
+
+        return `https://${trimmedValue}`;
     }
 
     if (trimmedValue.startsWith('http://') || trimmedValue.startsWith('https://')) {
@@ -125,6 +173,10 @@ export const getContactTitle = (name: string, value: string, contactType: Contac
     }
 
     const trimmedValue = value.trim();
+
+    if (contactType === 'website') {
+        return getUrlHost(trimmedValue) || trimmedValue;
+    }
 
     if (trimmedValue.startsWith('@')) {
         return trimmedValue.slice(1);

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { wineListsModel, ISelectedFilters } from '@/entities/wine/WineListsModel';
 import { computed } from 'mobx';
+import { ISelectedFilters, wineListsModel } from '@/entities/wine/models/WineListsModel';
 
 export const useMyWineFiltersBottomSheet = () => {
     const appliedFilters = wineListsModel.filters;
@@ -57,9 +57,7 @@ export const useMyWineFiltersBottomSheet = () => {
     }, []);
 
     const onApply = useCallback(() => {
-        wineListsModel.setSort(tempFilters.sort);
-        wineListsModel.setColors(tempFilters.colors);
-        wineListsModel.setTypes(tempFilters.types);
+        wineListsModel.filters = tempFilters;
     }, [tempFilters]);
 
     return { 

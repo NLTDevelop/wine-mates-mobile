@@ -35,6 +35,8 @@ export const TastingWineReviewView = observer(() => {
         isSelectedParametersVisible,
         isFullTastingReview,
         isWinePeakPickerVisible,
+        ratingSliderKey,
+        ratingStarsKey,
     } = useTastingWineReview();
 
     return (
@@ -53,9 +55,17 @@ export const TastingWineReviewView = observer(() => {
                         starRate={starRate}
                         onStarRateChange={onStarRateChange}
                         isFullTastingReview={isFullTastingReview}
+                        ratingSliderKey={ratingSliderKey}
+                        ratingStarsKey={ratingStarsKey}
                     />
                     {isFullTastingReview ? <Notes /> : null}
-                    {isWinePeakPickerVisible ? <WinePeakPicker value={winePeak} onChange={onWinePeakChange} /> : null}
+                    {isWinePeakPickerVisible ? (
+                        <WinePeakPicker
+                            value={winePeak}
+                            onChange={onWinePeakChange}
+                            isPremiumLockEnabled={false}
+                        />
+                    ) : null}
                     <Typography text={t('wine.review')} variant="subtitle_20_500" style={styles.title} />
                     <CustomInput
                         value={review}

@@ -1,21 +1,23 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { IWineTaste } from '@/entities/wine/types/IWineTaste';
 import { IWineTasteGroup } from '@/entities/wine/types/IWineTatseGroup';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
-import { eventTastingService } from '@/entities/events/EventTastingService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { WineSetTastingStatus } from '@/entities/events/types/IWineSetItem';
+import { useSaveEventTastingDraftOnBlur } from '@/modules/tastings/presenters/useSaveEventTastingDraftOnBlur';
 
 interface IRouteParams {
     source?: string;
     wineId?: number;
     eventId?: number;
     isBlindTasting?: boolean;
+    tastingStatus?: WineSetTastingStatus;
 }
 
 const filterGroups = (groups: IWineTasteGroup[], selected: IWineTaste[]) =>
@@ -56,6 +58,8 @@ export const useTastingWineTaste = (onHide?: () => void) => {
     const source = routeParams.source ?? 'eventTasting';
     const wineId = routeParams.wineId;
     const eventId = routeParams.eventId;
+    const tastingStatus = routeParams.tastingStatus ?? 'not_started';
+    const isEditingFinishedTasting = tastingStatus === 'tasted';
     const isSelectedParametersVisible = !routeParams.isBlindTasting;
     const { buildEventTastingDraftPayload } = useEventTastingDraft();
 
@@ -70,7 +74,7 @@ export const useTastingWineTaste = (onHide?: () => void) => {
     const initialDataRef = useRef<IWineTasteGroup[]>([]);
     const selectedRef = useRef<IWineTaste[]>(initialSelected);
     const initialData = wineModel.tastes;
-    const [isSaving, setIsSaving] = useState(false);
+    const isSaving = false;
 
     const getTastes = useCallback(async () => {
         try {
@@ -184,55 +188,39 @@ export const useTastingWineTaste = (onHide?: () => void) => {
         return newId;
     }, []);
 
-    const onPressNext = useCallback(async () => {
+    const saveSelectedTastesToModel = useCallback(() => {
         wineModel.selectedTastes = selected;
+    }, [selected]);
 
+    useSaveEventTastingDraftOnBlur({
+        eventId,
+        wineId,
+        buildPayload: buildEventTastingDraftPayload,
+        isFinal: isEditingFinishedTasting,
+        onBeforeSave: saveSelectedTastesToModel,
+    });
+
+    const onPressNext = useCallback(() => {
+        saveSelectedTastesToModel();
         if (eventId && wineId) {
-            setIsSaving(true);
-
-            try {
-                const response = await eventTastingService.saveDraft({
-                    eventId,
-                    wineId,
-                    data: buildEventTastingDraftPayload(wineId),
-                    isFinal: false,
-                });
-
-                if (response.isError) {
-                    toastService.showError(
-                        localization.t('common.errorHappened'),
-                        response.message || localization.t('common.somethingWentWrong'),
-                    );
-                    return;
-                }
-            } catch (error) {
-                console.error(JSON.stringify(error, null, 2));
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    localization.t('common.somethingWentWrong'),
-                );
-                return;
-            } finally {
-                setIsSaving(false);
-            }
-
             navigation.navigate('TastingWineTasteCharacteristicsView', {
                 source,
                 wineId,
                 eventId,
                 isBlindTasting: routeParams.isBlindTasting,
+                tastingStatus,
             });
             return;
         }
 
         navigation.navigate('WineTasteCharacteristicsView', { source, wineId });
     }, [
-        buildEventTastingDraftPayload,
         eventId,
         navigation,
         routeParams.isBlindTasting,
-        selected,
+        saveSelectedTastesToModel,
         source,
+        tastingStatus,
         wineId,
     ]);
 

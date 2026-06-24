@@ -4,6 +4,8 @@ import { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { Platform } from 'react-native';
 import { IRequester, requester } from '../requester';
 import { ILinks, links } from '@/Links';
+import { notificationNavigationHandler } from './notificationRouting/NotificationNavigationHandler';
+import { INotificationData } from './types/INotificationData';
 
 class NotificationService {
     private static instance: NotificationService;
@@ -12,6 +14,9 @@ class NotificationService {
     private _messaging?: IMessaging;
     private _unsubscribeForeground?: () => void;
     private _unsubscribeTokenRefresh?: () => void;
+    private _unsubscribeNotificationPress?: () => void;
+    private _registeredToken?: string;
+    private _registerPromise?: Promise<unknown>;
 
     constructor(
         private _requester: IRequester = requester,
@@ -60,12 +65,16 @@ class NotificationService {
             return null;
         }
 
+        if (token === this._registeredToken) {
+            return null;
+        }
+
         if (__DEV__) {
             console.info('NotificationService -> FCM token: ', token);
         }
 
         try {
-            return this._requester.request({
+            const response = await this._requester.request({
                 method: 'POST',
                 url: this._links.device,
                 data: {
@@ -73,6 +82,12 @@ class NotificationService {
                     deviceType: Platform.OS,
                 },
             });
+
+            if (!response.isError) {
+                this._registeredToken = token;
+            }
+
+            return response;
         } catch (error) {
             console.warn('NotificationService -> registerToken: ', error);
             return null;
@@ -99,16 +114,26 @@ class NotificationService {
     };
 
     register = async () => {
-        await this.messaging.registerAppWithFCM();
-
-        const token = await this.getToken();
-
-        if (__DEV__) {
-            const APNSToken = await this.messaging.getAPNSToken();
-            console.info('NotificationService -> APNs token: ', APNSToken);
+        if (this._registerPromise) {
+            return this._registerPromise;
         }
 
-        return this.registerToken(token);
+        this._registerPromise = (async () => {
+            await this.messaging.registerAppWithFCM();
+
+            const token = await this.getToken();
+
+            if (__DEV__) {
+                const APNSToken = await this.messaging.getAPNSToken();
+                console.info('NotificationService -> APNs token: ', APNSToken);
+            }
+
+            return this.registerToken(token);
+        })().finally(() => {
+            this._registerPromise = undefined;
+        });
+
+        return this._registerPromise;
     };
 
     deleteToken = async () => {
@@ -118,7 +143,11 @@ class NotificationService {
     unregisterCurrentDevice = async () => {
         const token = await this.getToken();
 
-        return this.unregisterToken(token);
+        const response = await this.unregisterToken(token);
+
+        this._registeredToken = undefined;
+
+        return response;
     };
 
     subscribeForeground = () => {
@@ -135,6 +164,17 @@ class NotificationService {
         }
 
         this._unsubscribeForeground = this.subscribeForeground();
+    };
+
+    startNotificationPressSubscription = () => {
+        if (this._unsubscribeNotificationPress) {
+            return;
+        }
+
+        this._unsubscribeNotificationPress = this._notificationHandler.subscribePressEvents(this.onNotificationPress);
+        this._notificationHandler.getInitialPressData().then(data => {
+            this.onNotificationPress(data);
+        });
     };
 
     stopForegroundSubscription = () => {
@@ -163,12 +203,21 @@ class NotificationService {
         this._unsubscribeTokenRefresh = undefined;
     };
 
+    stopNotificationPressSubscription = () => {
+        if (!this._unsubscribeNotificationPress) {
+            return;
+        }
+
+        this._unsubscribeNotificationPress();
+        this._unsubscribeNotificationPress = undefined;
+    };
+
     subscribeBackground = () => {
         this.messaging.subscribeAppOnBackgroundMessages(this.onBackgroundNotification);
     };
 
-    private onTokenRefresh = async (token: string) => {
-        await this.registerToken(token);
+    private onTokenRefresh = async () => {
+        return null;
     };
 
     private onBackgroundNotification = async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
@@ -177,13 +226,20 @@ class NotificationService {
         }
     };
 
+    private onNotificationPress = (data?: INotificationData | null) => {
+        notificationNavigationHandler.handle(data);
+    };
+
     onReceiveNotification = async (
         remoteMessage: FirebaseMessagingTypes.RemoteMessage,
         type: string,
     ) => {
         if (type === 'onMessage') {
             await this._notificationHandler.createLocalNotification(remoteMessage);
+            return;
         }
+
+        notificationNavigationHandler.handle(remoteMessage.data);
     };
 }
 

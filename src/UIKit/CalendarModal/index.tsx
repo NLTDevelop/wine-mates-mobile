@@ -17,7 +17,9 @@ interface IProps {
     markedDates: MarkedDates;
     minDate?: string;
     maxDate?: string;
+    confirmText?: string;
     onClose: () => void;
+    onConfirm?: () => void;
     onDayPress: (item: DateData) => void;
     onMonthChange: (month: DateData) => void;
 }
@@ -30,12 +32,16 @@ export const CalendarModal = ({
     markedDates,
     minDate,
     maxDate,
+    confirmText,
     onClose,
+    onConfirm,
     onDayPress,
     onMonthChange,
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const actionText = confirmText || closeText;
+    const onActionPress = onConfirm || onClose;
 
     return (
         <Modal
@@ -68,8 +74,8 @@ export const CalendarModal = ({
                     />
 
                     <Button
-                        text={closeText}
-                        onPress={onClose}
+                        text={actionText}
+                        onPress={onActionPress}
                         type="main"
                         containerStyle={styles.closeActionButton}
                     />

@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { ICarouselInstance } from 'react-native-reanimated-carousel';
 import type { PanGesture } from 'react-native-gesture-handler';
@@ -63,15 +63,19 @@ const mapWineImageToMedia = (
 
 export const useHomeEventSection = (events: IEvent[]) => {
     const navigation = useNavigation<NavigationProp>();
+    const isFocused = useIsFocused();
     const carouselRef = useRef<ICarouselInstance>(null);
     const eventsRef = useRef(events);
     const maxCardHeightRef = useRef(0);
     const [activeIndex, setActiveIndex] = useState(0);
     const [carouselHeight, setCarouselHeight] = useState(DEFAULT_CAROUSEL_HEIGHT);
     const itemsCount = events.length;
+    const hasEvents = itemsCount > 0;
+    const carouselKey = isFocused ? 'focused' : 'blurred';
+    const carouselDefaultIndex = Math.min(activeIndex, Math.max(0, itemsCount - 1));
 
     const onArrowPress = useCallback(() => {
-        navigation.navigate('EventListView');
+        navigation.navigate('EventStack', { screen: 'EventMapView' });
     }, [navigation]);
 
     const onReadMorePress = useCallback((eventId: number) => {
@@ -201,8 +205,11 @@ export const useHomeEventSection = (events: IEvent[]) => {
 
     return {
         carouselRef,
+        carouselKey,
+        carouselDefaultIndex,
         activeIndex,
         carouselHeight,
+        hasEvents,
         onProgressChange,
         onCardLayout,
         onArrowPress,

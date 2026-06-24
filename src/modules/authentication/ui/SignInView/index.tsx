@@ -23,8 +23,8 @@ export const SignInView = () => {
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { form, isError, disabled, onChangeEmail, onChangePassword, onAuthorize, forgotPasswordPress, isLoading, 
         retrySignIn } = useSignIn();
-    const { isGoogleLoginLoading, handleGoogleSignIn } = useGoogleSignIn();
-    const { isAppleLoginLoading, handleAppleSignIn } = useAppleIdSignIn();
+    const { isGoogleLoginLoading, onGoogleSignIn } = useGoogleSignIn();
+    const { isAppleLoginLoading, onAppleSignIn } = useAppleIdSignIn();
 
     return (
         <WithErrorHandler
@@ -74,7 +74,7 @@ export const SignInView = () => {
                         </View>
                         <Button
                             text={t('authentication.continueWithGoogle')}
-                            onPress={handleGoogleSignIn}
+                            onPress={onGoogleSignIn}
                             LeftAccessory={<GoogleIcon height={scaleVertical(24)} width={scaleVertical(24)} />}
                             RightAccessory={<View style={styles.empty} />}
                             containerStyle={styles.googleButton}
@@ -83,7 +83,7 @@ export const SignInView = () => {
                         />
                         {isIOS && <Button
                             text={t('authentication.continueWithApple')}
-                            onPress={handleAppleSignIn}
+                            onPress={onAppleSignIn}
                             LeftAccessory={<AppleIcon height={scaleVertical(24)} width={scaleVertical(24)} />}
                             RightAccessory={<View style={styles.empty} />}
                             inProgress={isAppleLoginLoading}

@@ -13,6 +13,8 @@ import { ISavedEvent } from './types/ISavedEvent';
 import { IAppliedEvent } from './types/IAppliedEvent';
 import { IUserCurrencies } from '../users/types/IUserCurrencies';
 
+const EVENT_TASTING_REPORT_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
 class EventsService {
     constructor(
         private _requester: IRequester,
@@ -74,6 +76,24 @@ class EventsService {
             return response;
         } catch (error) {
             console.warn('EventsService -> getById: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    exportTastingReport = async (eventId: number): Promise<IResponse<ArrayBuffer>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.eventTasting}/${eventId}/export`,
+                responseType: 'arraybuffer',
+                headers: {
+                    Accept: EVENT_TASTING_REPORT_MIME_TYPE,
+                },
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> exportTastingReport: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
@@ -281,14 +301,8 @@ class EventsService {
                 data,
             });
 
-            if (!response.isError) {
-                const responseFields = response.data && typeof response.data === 'object' ? response.data : {};
-                const updatedFields = {
-                    ...data,
-                    ...responseFields,
-                };
-
-                this.updateEventInModels(id, updatedFields);
+            if (!response.isError && response.data) {
+                this.updateEventInModels(id, response.data);
             }
 
             return response;

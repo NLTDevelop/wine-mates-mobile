@@ -7,7 +7,6 @@ import { declOfWord } from '@/utils';
 import { TasteCharacteristicItem } from '@/UIKit/TasteCharacteristicItem';
 import { IStatistic, IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
-import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
 import { userModel } from '@/entities/users/UserModel';
 import { useColorShades } from '@/modules/wine/presenters/useColorShades';
 import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
@@ -15,6 +14,7 @@ import { FoodPairing } from '@/UIKit/FoodPairing';
 import { StatisticCard } from '../../../components/StatisticCard';
 import { TastingNote } from '../../../components/TastingNote';
 import { TastingResultHeader } from '../TastingResultHeader';
+import { wineReviewsListModel } from '@/entities/wine/models/WineReviewsListModel';
 
 interface IProps {
     data: IWineDetails;

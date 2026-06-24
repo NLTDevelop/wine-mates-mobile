@@ -1,4 +1,5 @@
 import { HomeSectionKey } from '../types/HomeSectionKey';
+import { IHomeSectionsListParams } from '../params/IHomeSectionsListParams';
 
 export interface IUpdateHomeSectionItemDto {
     key: HomeSectionKey;
@@ -6,6 +7,6 @@ export interface IUpdateHomeSectionItemDto {
     isVisible: boolean;
 }
 
-export interface UpdateHomeSectionsDto {
+export interface UpdateHomeSectionsDto extends IHomeSectionsListParams {
     sections: IUpdateHomeSectionItemDto[];
 }

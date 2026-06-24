@@ -17,13 +17,13 @@ import { registerUserModel } from '@/entities/users/RegisterUserModel';
 export const CreatePasswordView = () => {
     const { t, colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { form, onChangePassword, onChangeConfirmPassword, isLoading, handleSavePress, isError, handleRetry,
+    const { form, onChangePassword, onChangeConfirmPassword, isLoading, onSavePress, isError, onRetry,
         isDisabled } = useCreatePassword();
 
     return (
         <WithErrorHandler
             error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null}
-            onRetry={handleRetry}
+            onRetry={onRetry}
         >
             <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding>
                 <View style={styles.container}>
@@ -61,7 +61,7 @@ export const CreatePasswordView = () => {
                     <View style={styles.footer}>
                         <Button
                             text={t('authentication.signUp')}
-                            onPress={handleSavePress}
+                            onPress={onSavePress}
                             type="secondary"
                             inProgress={isLoading}
                             disabled={isDisabled}

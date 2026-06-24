@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
-import { BottomSheetInput } from '@/UIKit/BottomSheetInput';
+import { CustomInput } from '@/UIKit/CustomInput';
 import { Button } from '@/UIKit/Button';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
@@ -34,7 +34,7 @@ export const ContactInfoModal = ({
     return (
         <BottomModal visible={isVisible} onClose={onClose} title={title}>
             <View style={styles.container}>
-                <BottomSheetInput
+                <CustomInput
                     value={value}
                     onChangeText={onChangeValue}
                     placeholder={t('contactInfo.contactValue')}

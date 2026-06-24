@@ -74,7 +74,7 @@ export const useWineSetItem = ({
     const status = getWineSetStatus(item);
     const statusBadgeData = getStatusBadgeData(status, isStatusVisible, t);
     const wineId = item.wineId || item.wine.id;
-    const isEventTastingStatus = status === 'not_started' || status === 'in_progress';
+    const isEventTastingStatus = status === 'not_started' || status === 'in_progress' || status === 'tasted';
     const userRating = item.avgUserRating ?? null;
     const expertRating = item.avgExpertRating ?? null;
     const hasUserRating = userRating !== null;
@@ -89,16 +89,16 @@ export const useWineSetItem = ({
                   showExpertRating: hasExpertRating,
               }
             : null;
-    const isOwnerPressAvailable = isOwner && !!ratingData;
-    const isParticipantPressAvailable = !isOwner && isPressEnabled && isEventTastingStatus;
-    const isPressAvailable = isOwnerPressAvailable || isParticipantPressAvailable;
+    const isTastingPressAvailable = isPressEnabled && isEventTastingStatus;
+    const isOwnerDetailsPressAvailable = isOwner && !!ratingData;
+    const isPressAvailable = isTastingPressAvailable || isOwnerDetailsPressAvailable;
 
     const onPress = useCallback(() => {
         if (!isPressAvailable) {
             return;
         }
 
-        if (isParticipantPressAvailable) {
+        if (isTastingPressAvailable) {
             clearWineSnackCuisinesCache();
             navigation.navigate('TastingWineReviewView', {
                 eventId,
@@ -113,7 +113,7 @@ export const useWineSetItem = ({
             eventId,
             wineId,
         });
-    }, [eventId, isBlindTasting, isParticipantPressAvailable, isPressAvailable, navigation, status, wineId]);
+    }, [eventId, isBlindTasting, isPressAvailable, isTastingPressAvailable, navigation, status, wineId]);
 
     return {
         title,

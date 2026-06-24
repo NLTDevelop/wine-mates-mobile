@@ -2,8 +2,8 @@ import { CommonActions, StackActions, useFocusEffect, useNavigation, useRoute } 
 import { useCallback } from 'react';
 import { BackHandler } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { wineModel } from '@/entities/wine/WineModel';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
 
 export const useAddWineBackButton = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -14,7 +14,7 @@ export const useAddWineBackButton = () => {
     const onPressBack = useCallback(() => {
         const addWineSetScannerState = wineSetScannerModel.state;
 
-        wineModel.clear();
+        clearWineModel();
 
         if (addWineSetScannerState) {
             wineSetScannerModel.clear();

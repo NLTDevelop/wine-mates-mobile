@@ -8,8 +8,8 @@ import { Sex } from '@/entities/events/enums/Sex';
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
 import { IRadiusOption } from '@/modules/event/ui/EventFiltersView/types/IRadiusOption';
-import { ISingleSelectModalItem } from '@/modules/event/ui/AddEventView/types/ISingleSelectModalItem';
 import { getCurrencySymbol } from '@/modules/event/utils/formatEventPrice';
+import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 
 const DATE_API_FORMAT = 'yyyy-MM-dd';
 const DATE_DISPLAY_FORMAT = 'dd.MM.yyyy';
@@ -272,23 +272,23 @@ export const useEventFiltersView = ({ t }: IProps) => {
         setSelectedSexDraft(Sex.Women);
     }, []);
 
-    const sexPickerItems = useMemo<ISingleSelectModalItem[]>(() => {
+    const sexPickerItems = useMemo<IUniversalPickerOption[]>(() => {
         return [
             {
-                key: Sex.All,
-                label: t('eventFilters.all'),
+                id: Sex.All,
+                title: t('eventFilters.all'),
                 isSelected: selectedSexDraft === Sex.All,
                 onPress: onSelectSexAll,
             },
             {
-                key: Sex.Men,
-                label: t('eventFilters.men'),
+                id: Sex.Men,
+                title: t('eventFilters.men'),
                 isSelected: selectedSexDraft === Sex.Men,
                 onPress: onSelectSexMen,
             },
             {
-                key: Sex.Women,
-                label: t('eventFilters.women'),
+                id: Sex.Women,
+                title: t('eventFilters.women'),
                 isSelected: selectedSexDraft === Sex.Women,
                 onPress: onSelectSexWomen,
             },

@@ -37,7 +37,7 @@ class GuestListService {
                 if (params.offset === 0) {
                     guestListModel.guests = normalizedList;
                 } else {
-                    guestListModel.appened(normalizedList);
+                    guestListModel.append(normalizedList);
                 }
 
                 return {

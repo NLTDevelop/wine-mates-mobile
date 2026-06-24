@@ -1,4 +1,3 @@
-import { featuresService } from '@/entities/features/FeaturesService';
 import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -6,12 +5,13 @@ import { appleAuth } from '@invertase/react-native-apple-authentication';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
+import { completeAuthorization } from './completeAuthorization';
 
 export const useAppleIdSignIn = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isAppleLoginLoading, setIsAppleLoginLoading] = useState(false);
 
-    const handleAppleSignIn = async () => {
+    const onAppleSignIn = async () => {
         try {
             setIsAppleLoginLoading(true);
 
@@ -36,8 +36,7 @@ export const useAppleIdSignIn = () => {
                     return;
                 }
 
-                featuresService.list();
-                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
+                await completeAuthorization(navigation);
             } else {
                 toastService.showError(
                     localization.t('common.errorHappened'),
@@ -45,11 +44,11 @@ export const useAppleIdSignIn = () => {
                 );
             }
         } catch (error: any) {
-            console.warn('Error in handleAppleSignIn: ', JSON.stringify(error));
+            console.warn('Error in onAppleSignIn: ', JSON.stringify(error));
         } finally {
             setIsAppleLoginLoading(false);
         }
     };
 
-    return { handleAppleSignIn, isAppleLoginLoading };
+    return { onAppleSignIn, isAppleLoginLoading };
 };

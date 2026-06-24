@@ -10,9 +10,10 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 interface IProps {
     item: IWineListItem;
     onPress?: (item: IWineListItem) => void;
+    onSharePress?: (item: IWineListItem) => void;
 }
 
-export const CarouselWineCard = ({ item, onPress }: IProps) => {
+export const CarouselWineCard = ({ item, onPress, onSharePress }: IProps) => {
     const { colors } = useUiContext();
     const { styles } = useMemo(() => getStyles(colors), [colors]);
 
@@ -20,6 +21,7 @@ export const CarouselWineCard = ({ item, onPress }: IProps) => {
         <WineListItem
             item={item}
             onPress={onPress}
+            onSharePress={onSharePress}
             removeCardStyles={true}
             footer={
                 item.lastReview && item.lastReview.review ? (

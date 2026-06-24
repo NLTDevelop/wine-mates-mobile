@@ -4,7 +4,7 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
-import { featuresService } from '@/entities/features/FeaturesService';
+import { completeAuthorization } from './completeAuthorization';
 
 export const useCreateNewPassword = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -31,7 +31,7 @@ export const useCreateNewPassword = () => {
         setIsError({ status: false, errorText: '' });
     }, []);
 
-    const handleSavePress = useCallback(async () => {
+    const onSavePress = useCallback(async () => {
         try {
             if (form.password.length === 0) {
                 return setIsError({ status: true, errorText: localization.t('authentication.newPasswordIsRequired') });
@@ -64,21 +64,20 @@ export const useCreateNewPassword = () => {
                     setIsError({ status: true, errorText: '' });
                 }
             } else {
-                featuresService.list();
-                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
+                await completeAuthorization(navigation);
             }
         } finally {
             setIsLoading(false);
         }
     }, [email, form, navigation, token]);
 
-    const handleRetry = useCallback(() => {
+    const onRetry = useCallback(() => {
         setIsError({ status: false, errorText: '' });
-        handleSavePress();
-    }, [handleSavePress]);
+        onSavePress();
+    }, [onSavePress]);
 
     return { 
-        form, onChangePassword, onChangeConfirmPassword, isLoading, handleSavePress, isError, handleRetry, isDisabled,
+        form, onChangePassword, onChangeConfirmPassword, isLoading, onSavePress, isError, onRetry, isDisabled,
         isFromSettings
     };
 };

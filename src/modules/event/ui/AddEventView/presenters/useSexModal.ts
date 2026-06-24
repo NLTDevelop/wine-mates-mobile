@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { Sex } from '@/entities/events/enums/Sex';
-import { ISingleSelectModalItem } from '../types/ISingleSelectModalItem';
+import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 
 interface IProps {
     value?: Sex;
@@ -41,23 +41,23 @@ export const useSexModal = ({ value, onChange }: IProps) => {
         setDraft(Sex.Women);
     }, []);
 
-    const items = useMemo<ISingleSelectModalItem[]>(() => {
+    const items = useMemo<IUniversalPickerOption[]>(() => {
         return [
             {
-                key: Sex.All,
-                label: localization.t('eventFilters.all'),
+                id: Sex.All,
+                title: localization.t('eventFilters.all'),
                 isSelected: draft === Sex.All,
                 onPress: onSelectAll,
             },
             {
-                key: Sex.Men,
-                label: localization.t('eventFilters.men'),
+                id: Sex.Men,
+                title: localization.t('eventFilters.men'),
                 isSelected: draft === Sex.Men,
                 onPress: onSelectMen,
             },
             {
-                key: Sex.Women,
-                label: localization.t('eventFilters.women'),
+                id: Sex.Women,
+                title: localization.t('eventFilters.women'),
                 isSelected: draft === Sex.Women,
                 onPress: onSelectWomen,
             },

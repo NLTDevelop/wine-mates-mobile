@@ -16,21 +16,29 @@ import { CarouselDots } from '../CarouselDots';
 interface IProps {
     title: string;
     data: IHomePeopleTalking[];
+    carouselHorizontalOffset?: number;
 }
 
-export const PeopleTalkingSection = ({ title, data }: IProps) => {
-    const { colors } = useUiContext();
+export const PeopleTalkingSection = ({
+    title,
+    data,
+    carouselHorizontalOffset = 32,
+}: IProps) => {
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { width } = useWindowDimensions();
     const {
         carouselRef,
+        carouselKey,
+        carouselDefaultIndex,
         activeIndex,
         carouselHeight,
+        hasItems,
         onProgressChange,
         onCardLayout,
         onConfigurePanGesture,
     } = usePeopleTalkingSection(data);
-    const carouselWidth = width - scaleHorizontal(32);
+    const carouselWidth = width - scaleHorizontal(carouselHorizontalOffset);
 
     const renderItem = useCallback(({ item }: { item: IHomePeopleTalking }) => {
         return (
@@ -71,17 +79,31 @@ export const PeopleTalkingSection = ({ title, data }: IProps) => {
                     <ArrowRightIcon />
                 </View>
             </View>
-            <Carousel
-                ref={carouselRef}
-                loop={false}
-                width={carouselWidth}
-                height={carouselHeight}
-                data={data}
-                onProgressChange={onProgressChange}
-                renderItem={renderItem}
-                onConfigurePanGesture={onConfigurePanGesture}
-            />
-            <CarouselDots count={data.length} activeIndex={activeIndex} />
+            {hasItems ? (
+                <>
+                    <Carousel
+                        key={carouselKey}
+                        ref={carouselRef}
+                        loop={false}
+                        defaultIndex={carouselDefaultIndex}
+                        width={carouselWidth}
+                        height={carouselHeight}
+                        data={data}
+                        onProgressChange={onProgressChange}
+                        renderItem={renderItem}
+                        onConfigurePanGesture={onConfigurePanGesture}
+                    />
+                    <CarouselDots count={data.length} activeIndex={activeIndex} />
+                </>
+            ) : (
+                <View style={styles.emptyContainer}>
+                    <Typography
+                        variant="body_400"
+                        text={t('home.peopleTalkingEmptyDescription')}
+                        style={styles.emptyText}
+                    />
+                </View>
+            )}
         </View>
     );
 };

@@ -21,21 +21,8 @@ export const getStyles = (colors: IColors) => {
         searchButtonText: {
             color: colors.text_light,
         },
-        tastingTypeButton: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            height: scaleVertical(48),
-            borderWidth: scaleHorizontal(1),
-            borderColor: colors.border,
-            borderRadius: 12,
-            gap: scaleHorizontal(8),
-            paddingHorizontal: scaleHorizontal(12),
-            backgroundColor: colors.background,
+        tastingTypePickerContainer: {
             marginBottom: scaleVertical(16),
-        },
-        tastingTypeButtonText: {
-            color: colors.text,
         },
     });
 

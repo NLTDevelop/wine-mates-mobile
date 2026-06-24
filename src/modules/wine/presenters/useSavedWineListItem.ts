@@ -1,4 +1,4 @@
-import { favoriteWineService } from '@/entities/wine/FavoriteWineService';
+import { favoriteWineService } from '@/entities/wine/services/FavoriteWineService';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';

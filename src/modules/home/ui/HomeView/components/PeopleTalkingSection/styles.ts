@@ -66,6 +66,22 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             gap: scaleHorizontal(6),
         },
+        emptyContainer: {
+            minHeight: scaleVertical(120),
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingHorizontal: scaleHorizontal(24),
+            paddingVertical: scaleVertical(24),
+            borderWidth: scaleVertical(1),
+            borderColor: colors.border,
+            borderRadius: 16,
+            backgroundColor: colors.background,
+        },
+        emptyText: {
+            textAlign: 'center',
+            color: '#757575',
+            lineHeight: scaleVertical(22),
+        },
     });
 
     return styles;

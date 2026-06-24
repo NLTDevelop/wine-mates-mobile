@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import { wineModel } from '@/entities/wine/WineModel';
 import { useUiContext } from '@/UIProvider';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const useSelectedParameters = () => {
     const { t } = useUiContext();

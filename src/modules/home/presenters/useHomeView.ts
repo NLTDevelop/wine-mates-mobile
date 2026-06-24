@@ -12,6 +12,9 @@ import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import type { SortableGridDragEndParams } from 'react-native-sortables';
 import { toastService } from '@/libs/toast/toastService';
+import { getCurrentLocationPayload } from '@/libs/locations/getCurrentLocationPayload';
+import { IHomeSectionsListParams } from '@/entities/homeSections/params/IHomeSectionsListParams';
+import { locationModel } from '@/entities/location/LocationModel';
 
 const EMPTY_FIELD = '-';
 
@@ -60,6 +63,65 @@ const showHomeRequestError = (message?: string) => {
         localization.t('common.errorHappened'),
         message || localization.t('common.somethingWentWrong'),
     );
+};
+
+const throwLocationUnavailableError = (): never => {
+    const message = localization.t('permissions.locationUnavailable');
+
+    showHomeRequestError(message);
+    throw new Error(message);
+};
+
+const getCachedLocationParams = (): IHomeSectionsListParams | null => {
+    if (!locationModel.userLocation) {
+        return null;
+    }
+
+    return {
+        lat: locationModel.userLocation.latitude,
+        lon: locationModel.userLocation.longitude,
+    };
+};
+
+const getHomeSectionsListParams = async (shouldRecheckLocation = false): Promise<IHomeSectionsListParams> => {
+    try {
+        const cachedLocationParams = getCachedLocationParams();
+
+        if (cachedLocationParams && !shouldRecheckLocation) {
+            return cachedLocationParams;
+        }
+
+        if (!shouldRecheckLocation && !locationModel.hasPermission && !locationModel.isLoading) {
+            throwLocationUnavailableError();
+        }
+
+        locationModel.setIsLoading(true);
+        const location = await getCurrentLocationPayload();
+        locationModel.setHasPermission(!!location);
+
+        if (location) {
+            locationModel.setUserLocation({
+                latitude: location.latitude,
+                longitude: location.longitude,
+            });
+
+            return {
+                lat: location.latitude,
+                lon: location.longitude,
+            };
+        }
+
+        if (cachedLocationParams) {
+            return cachedLocationParams;
+        }
+
+        return throwLocationUnavailableError();
+    } catch (error) {
+        console.warn('useHomeView -> getHomeSectionsListParams: ', error);
+        throw error;
+    } finally {
+        locationModel.setIsLoading(false);
+    }
 };
 
 const getSortedSections = (sections: IHomeSection[]) => {
@@ -115,7 +177,7 @@ const createHomeEvents = (section: IHomeSection): IEvent[] => {
 
     const data = section.data;
     if (!Array.isArray(data) || !data.length) {
-        return [emptyEvent];
+        return [];
     }
 
     return data.map(item => ({
@@ -186,16 +248,7 @@ const createPeopleTalking = (section: IHomeSection, locale: string) => {
 
     const data = section.data;
     if (!Array.isArray(data) || !data.length) {
-        return [{
-            authorName: EMPTY_FIELD,
-            authorAvatar: null,
-            text: EMPTY_FIELD,
-            likesCount: 0,
-            commentsCount: 0,
-            hasLikes: false,
-            hasComments: false,
-            createdAtLabel: EMPTY_FIELD,
-        }];
+        return [];
     }
 
     return data.map(item => {
@@ -251,6 +304,12 @@ export const useHomeView = (locale: string) => {
     const hasConfiguredSections = activeVisibleSections.length > 0;
     const canConfigurePlacement = hasVisibleSections && !isPlacementEditMode;
 
+    const requestHomeSections = useCallback(async (shouldRecheckLocation = false) => {
+        const params = await getHomeSectionsListParams(shouldRecheckLocation);
+
+        return homeSectionsService.list(params);
+    }, []);
+
     const onRemovePlacementSection = useCallback((key: HomeSectionKey) => {
         setPlacementSections(currentSections => currentSections.map(section => {
             if (section.key !== key) {
@@ -303,22 +362,8 @@ export const useHomeView = (locale: string) => {
         setIsError(false);
         setIsLoading(true);
 
-        const response = await homeSectionsService.list();
-
-        if (!isMountedRef.current) {
-            return;
-        }
-
-        if (response.isError) {
-            setIsError(true);
-        }
-
-        setIsLoading(false);
-    }, []);
-
-    useEffect(() => {
-        const loadHomeSections = async () => {
-            const response = await homeSectionsService.list();
+        try {
+            const response = await requestHomeSections(true);
 
             if (!isMountedRef.current) {
                 return;
@@ -327,24 +372,71 @@ export const useHomeView = (locale: string) => {
             if (response.isError) {
                 setIsError(true);
             }
+        } catch (error) {
+            console.warn('useHomeView -> getHomeSections: ', error);
 
-            setIsLoading(false);
+            if (isMountedRef.current) {
+                setIsError(true);
+                if (!(error instanceof Error) || error.message !== localization.t('permissions.locationUnavailable')) {
+                    showHomeRequestError(error instanceof Error ? error.message : undefined);
+                }
+            }
+        } finally {
+            if (isMountedRef.current) {
+                setIsLoading(false);
+            }
+        }
+    }, [requestHomeSections]);
+
+    useEffect(() => {
+        const loadHomeSections = async () => {
+            try {
+                const response = await requestHomeSections();
+
+                if (!isMountedRef.current) {
+                    return;
+                }
+
+                if (response.isError) {
+                    setIsError(true);
+                }
+            } catch (error) {
+                console.warn('useHomeView -> loadHomeSections: ', error);
+
+                if (isMountedRef.current) {
+                    setIsError(true);
+                    if (!(error instanceof Error) || error.message !== localization.t('permissions.locationUnavailable')) {
+                        showHomeRequestError(error instanceof Error ? error.message : undefined);
+                    }
+                }
+            } finally {
+                if (isMountedRef.current) {
+                    setIsLoading(false);
+                }
+            }
         };
 
         loadHomeSections();
-    }, []);
+    }, [requestHomeSections]);
 
     const onRefresh = useCallback(async () => {
         setIsRefreshing(true);
 
-        const response = await homeSectionsService.list();
+        try {
+            const response = await requestHomeSections(true);
 
-        if (response.isError) {
-            showHomeRequestError(response.message);
+            if (response.isError) {
+                showHomeRequestError(response.message);
+            }
+        } catch (error) {
+            console.warn('useHomeView -> onRefresh: ', error);
+            if (!(error instanceof Error) || error.message !== localization.t('permissions.locationUnavailable')) {
+                showHomeRequestError(error instanceof Error ? error.message : undefined);
+            }
+        } finally {
+            setIsRefreshing(false);
         }
-
-        setIsRefreshing(false);
-    }, []);
+    }, [requestHomeSections]);
 
     const onOpenSectionsModal = useCallback(() => {
         setDraftSections(normalizedSections);
@@ -461,24 +553,28 @@ export const useHomeView = (locale: string) => {
 
         setIsSaving(true);
 
-        const normalizedDraft = getNormalizedSections(draftSections);
-        const payloadSections = getSectionPayload(normalizedDraft);
+        try {
+            const params = await getHomeSectionsListParams(true);
+            const normalizedDraft = getNormalizedSections(draftSections);
+            const payloadSections = getSectionPayload(normalizedDraft);
 
-        const response = await homeSectionsService.update({
-            sections: payloadSections,
-        });
+            const response = await homeSectionsService.update({
+                sections: payloadSections,
+                ...params,
+            });
 
-        if (!response.isError) {
-            if (!Array.isArray(response.data)) {
-                homeSectionsModel.sections = getOrderedSections(normalizedDraft);
+            if (!response.isError) {
+                if (!Array.isArray(response.data)) {
+                    homeSectionsModel.sections = getOrderedSections(normalizedDraft);
+                }
+
+                setIsSectionsModalVisible(false);
+            } else {
+                showHomeRequestError(response.message);
             }
-
-            setIsSectionsModalVisible(false);
-        } else {
-            showHomeRequestError(response.message);
+        } finally {
+            setIsSaving(false);
         }
-
-        setIsSaving(false);
     }, [draftSections, isSaving]);
 
     const onSavePlacementSections = useCallback(async () => {
@@ -488,23 +584,27 @@ export const useHomeView = (locale: string) => {
 
         setIsSaving(true);
 
-        const normalizedPlacementSections = getNormalizedSections(placementSections);
-        const payloadSections = getSectionPayload(normalizedPlacementSections);
-        const response = await homeSectionsService.update({
-            sections: payloadSections,
-        });
+        try {
+            const params = await getHomeSectionsListParams(true);
+            const normalizedPlacementSections = getNormalizedSections(placementSections);
+            const payloadSections = getSectionPayload(normalizedPlacementSections);
+            const response = await homeSectionsService.update({
+                sections: payloadSections,
+                ...params,
+            });
 
-        if (!response.isError) {
-            if (!Array.isArray(response.data)) {
-                homeSectionsModel.sections = getOrderedSections(normalizedPlacementSections);
+            if (!response.isError) {
+                if (!Array.isArray(response.data)) {
+                    homeSectionsModel.sections = getOrderedSections(normalizedPlacementSections);
+                }
+
+                setIsPlacementEditMode(false);
+            } else {
+                showHomeRequestError(response.message);
             }
-
-            setIsPlacementEditMode(false);
-        } else {
-            showHomeRequestError(response.message);
+        } finally {
+            setIsSaving(false);
         }
-
-        setIsSaving(false);
     }, [isSaving, placementSections]);
 
     return {

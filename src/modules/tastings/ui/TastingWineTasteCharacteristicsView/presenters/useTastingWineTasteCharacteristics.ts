@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { userModel } from '@/entities/users/UserModel';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { eventTastingService } from '@/entities/events/EventTastingService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -14,12 +13,16 @@ import { ITasteCharacteristicDetail } from '@/entities/wine/types/ITasteCharacte
 import { runInAction } from 'mobx';
 import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
 import type { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { WineSetTastingStatus } from '@/entities/events/types/IWineSetItem';
+import { useSaveEventTastingDraftOnBlur } from '@/modules/tastings/presenters/useSaveEventTastingDraftOnBlur';
 
 interface IRouteParams {
     source?: string;
     wineId?: number;
     eventId?: number;
     isBlindTasting?: boolean;
+    tastingStatus?: WineSetTastingStatus;
 }
 
 const getInitialSliderValues = () => {
@@ -52,13 +55,16 @@ export const useTastingWineTasteCharacteristics = () => {
     const source = routeParams.source ?? 'eventTasting';
     const wineId = routeParams.wineId;
     const eventId = routeParams.eventId;
+    const tastingStatus = routeParams.tastingStatus ?? 'not_started';
+    const isEditingFinishedTasting = tastingStatus === 'tasted';
+    const nextTastingStatus: WineSetTastingStatus = isEditingFinishedTasting ? 'tasted' : 'in_progress';
     const isSelectedParametersVisible = !routeParams.isBlindTasting;
     const { buildEventTastingDraftPayload, getEventTastingDraftData } = useEventTastingDraft();
 
     const [isLoading, setIsLoading] = useState(() => !wineModel.tasteCharacteristics?.length);
     const [isDraftLoading, setIsDraftLoading] = useState(() => Boolean(eventId && wineId && !wineModel.draftTasteCharacteristics?.length));
     const [isError, setIsError] = useState(false);
-    const [isSaving, setIsSaving] = useState(false);
+    const isSaving = false;
     const [sliderValues, setSliderValues] = useState<Record<number, number>>(getInitialSliderValues);
     const [hasHydratedSliderValues, setHasHydratedSliderValues] = useState(() => {
         return Object.keys(getInitialSliderValues()).length > 0;
@@ -290,56 +296,38 @@ export const useTastingWineTasteCharacteristics = () => {
         Keyboard.dismiss();
     }, []);
 
-    const onPressNext = useCallback(async () => {
+    const saveTasteCharacteristicsToModel = useCallback(() => {
         runInAction(() => {
             if (data) {
                 wineModel.tasteCharacteristics = data.map(item => ({
                     ...item,
                     selectedIndex: sliderValues[item.id] ?? 0,
                 }));
+                wineModel.draftTasteCharacteristics = getDraftTasteCharacteristicsFromSliderValues(sliderValues);
             }
 
-            if (winePeak) {
-                wineModel.winePeak = winePeak;
-            }
+            wineModel.winePeak = winePeak;
         });
+    }, [data, getDraftTasteCharacteristicsFromSliderValues, sliderValues, winePeak]);
 
+    useSaveEventTastingDraftOnBlur({
+        eventId,
+        wineId,
+        buildPayload: buildEventTastingDraftPayload,
+        isFinal: isEditingFinishedTasting,
+        onBeforeSave: saveTasteCharacteristicsToModel,
+    });
+
+    const onPressNext = useCallback(() => {
+        saveTasteCharacteristicsToModel();
         if (eventId && wineId) {
-            setIsSaving(true);
-
-            try {
-                const response = await eventTastingService.saveDraft({
-                    eventId,
-                    wineId,
-                    data: buildEventTastingDraftPayload(wineId),
-                    isFinal: false,
-                });
-
-                if (response.isError) {
-                    toastService.showError(
-                        localization.t('common.errorHappened'),
-                        response.message || localization.t('common.somethingWentWrong'),
-                    );
-                    return;
-                }
-            } catch (error) {
-                console.error(JSON.stringify(error, null, 2));
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    localization.t('common.somethingWentWrong'),
-                );
-                return;
-            } finally {
-                setIsSaving(false);
-            }
-
             navigation.navigate('TastingWineReviewView', {
                 source,
                 wineId,
                 eventId,
                 isBlindTasting: routeParams.isBlindTasting,
                 isFullTastingReview: true,
-                tastingStatus: 'in_progress',
+                tastingStatus: nextTastingStatus,
             });
             Keyboard.dismiss();
             return;
@@ -348,15 +336,13 @@ export const useTastingWineTasteCharacteristics = () => {
         navigation.navigate('WineReviewView');
         Keyboard.dismiss();
     }, [
-        buildEventTastingDraftPayload,
-        data,
         eventId,
         navigation,
         routeParams.isBlindTasting,
-        sliderValues,
+        saveTasteCharacteristicsToModel,
         source,
+        nextTastingStatus,
         wineId,
-        winePeak,
     ]);
 
     return {

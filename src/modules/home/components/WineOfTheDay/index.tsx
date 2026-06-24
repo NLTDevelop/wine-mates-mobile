@@ -1,11 +1,10 @@
-import { useMemo } from 'react';
-import { getStyles } from './styles';
-import { useUiContext } from '@/UIProvider';
 import { TitledContent } from '@/UIKit/TitledContent';
 import { WineListItem } from '@/UIKit/WineListItem';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
-import { WineOfTheDayFooter, WineOfTheDayMarquee, WineOfTheDayButton } from '@/modules/home/components/WineOfTheDay/components';
+import { WineOfTheDayMarquee } from '@/modules/home/components/WineOfTheDay/components';
 import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
+import { WineShareModal } from '@/UIKit/WineShareModal';
+import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 
 const MOCK_WINE: IWineListItem = {
     "id": 4,
@@ -46,6 +45,13 @@ interface IProps {
 export const WineOfTheDay = ({ onArrowPress, onWinePress }: IProps) => {
 
     const wine = MOCK_WINE;
+    const {
+        isShareModalVisible,
+        onOpenShareModal,
+        onCloseShareModal,
+        onShareMessengerPress,
+        onCopyWineLinkPress,
+    } = useWineShareModal();
     //TODO: remove if will not use
     // const { colors } = useUiContext();
     // const styles = useMemo(() => getStyles(colors), [colors]);
@@ -59,6 +65,13 @@ export const WineOfTheDay = ({ onArrowPress, onWinePress }: IProps) => {
                 customBottomComponent={<WineOfTheDayMarquee />}
                 footer={lastReviewData ? <WineReviewBlock user={lastReviewData.user} review={lastReviewData.review} /> : null}
                 onPress={onWinePress}
+                onSharePress={onOpenShareModal}
+            />
+            <WineShareModal
+                visible={isShareModalVisible}
+                onClose={onCloseShareModal}
+                onShareMessengerPress={onShareMessengerPress}
+                onCopyLinkPress={onCopyWineLinkPress}
             />
         </TitledContent>
     );

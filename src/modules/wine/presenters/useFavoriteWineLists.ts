@@ -1,5 +1,6 @@
-import { favoriteWineListService } from '@/entities/wine/FavoriteWineListService';
-import { favoriteWinesListModel } from '@/entities/wine/FavoriteWineListsModel';
+/* eslint-disable react-hooks/set-state-in-effect */
+import { favoriteWinesListModel } from '@/entities/wine/models/FavoriteWineListsModel';
+import { favoriteWineListService } from '@/entities/wine/services/FavoriteWineListService';
 import { useCallback, useEffect, useState } from 'react';
 
 export const useFavoriteWineLists = () => {

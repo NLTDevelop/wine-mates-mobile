@@ -11,8 +11,21 @@ export const getStyles = (_colors: IColors) => {
             paddingBottom: scaleVertical(16),
             gap: scaleVertical(16),
         },
+        placementContentContainer: {
+            flexGrow: 1,
+            paddingHorizontal: scaleHorizontal(16),
+            paddingTop: scaleVertical(16),
+            paddingBottom: scaleVertical(16),
+        },
+        placementListContainer: {
+            flexGrow: 1,
+        },
+        listFooterContainer: {
+            marginTop: 'auto',
+        },
         footer: {
-            paddingTop: scaleVertical(4),
+            marginTop: 'auto',
+            paddingTop: scaleVertical(16),
             gap: scaleVertical(8),
         },
     });

@@ -11,13 +11,13 @@ import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
-import { wineModel } from '@/entities/wine/WineModel';
 import { SmoothSlider } from '@/UIKit/SmoothSlider';
 import { ScrollViewIndicator } from '@fanchenbao/react-native-scroll-indicator';
 import { ShadeSelector } from '@/UIKit/ShadeSelector';
 import { SelectedParameters } from '@/UIKit/SelectedParameters';
 import { useTastingWineLook } from './presenters/useTastingWineLook';
 import { ColorSelector } from '@/UIKit/ColorSelector';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const TastingWineLookView = observer(() => {
     const { colors, t } = useUiContext();

@@ -1,0 +1,227 @@
+import { MobXRepository } from '@/repository/MobXRepository';
+import { IWineBase } from '../types/IWineBase';
+import { IWineLook } from '../types/IWineLook';
+import { IWineColorShade } from '../types/IWineColorShade';
+import { IWineType } from '../types/IWineType';
+import { IWineColor } from '../types/IWineColors';
+import { IWineSmell } from '../types/IWineSmell';
+import { IWineTaste } from '../types/IWineTaste';
+import { IWineTasteCharacteristic } from '../types/IWineTasteCharacteristic';
+import { ITasteCharacteristicDetail } from '../types/ITasteCharacteristicDetail';
+import { IWineSelectedSmell } from '../types/IWineSelectedSmell';
+import { IWineReview } from '../types/IWineReview';
+import { IWineImage } from '../types/IWineImage';
+import { IWineAroma } from '../types/IWineAroma';
+import { IWine } from '../types/IWine';
+import { IWineTasteGroup } from '../types/IWineTatseGroup';
+import { IVintagesItem } from '../types/IWineDetails';
+import type { AddRateDto } from '../dto/AddRate.dto';
+
+export interface IWineListModel {
+    wine: IWine | null;
+    selectedWineId: number | null;
+    vintages: IVintagesItem[] | null;
+    customVintage: number | null;
+    image: IWineImage | null;
+    base: IWineBase | null;
+    look: IWineLook | null;
+    colorsShades: IWineColorShade[] | null;
+    smells: IWineSmell[] | null;
+    searchedAroma: IWineAroma[] | null;
+    selectedSmells: IWineSelectedSmell[] | null;
+    wineTypes: IWineType[] | null;
+    colors: IWineColor[] | null;
+    tastes: IWineTasteGroup[] | null;
+    selectedTastes: IWineTaste[] | null;
+    tasteCharacteristics: IWineTasteCharacteristic[] | null;
+    draftTasteCharacteristics: AddRateDto['tasteCharacteristics'] | null;
+    tasteCharacteristicDetails: ITasteCharacteristicDetail[] | null;
+    winePeak: number | null;
+    review: IWineReview | null;
+}
+
+class WineModel implements IWineListModel {
+    private wineRepository = new MobXRepository<IWine | null>(null);
+    private selectedWineIdRepository = new MobXRepository<number | null>(null);
+    private vintagesRepository = new MobXRepository<IVintagesItem[] | null >(null);
+    private customVintageRepository = new MobXRepository<number | null>(null);
+    private imageRepository = new MobXRepository<IWineImage | null>(null);
+    private baseRepository = new MobXRepository<IWineBase | null>(null);
+    private lookRepository = new MobXRepository<IWineLook | null>(null);
+    private colorsShadesRepository = new MobXRepository<IWineColorShade[] | null>(null);
+    private typesRepository = new MobXRepository<IWineType[] | null>(null);
+    private colorsRepository = new MobXRepository<IWineColor[] | null>(null);
+    private smellsRepository = new MobXRepository<IWineSmell[] | null>(null);
+    private searchedAromasRepository = new MobXRepository<IWineAroma[] | null>(null);
+    private selectedSmellsRepository = new MobXRepository<IWineSelectedSmell[] | null>(null);
+    private tastesRepository = new MobXRepository<IWineTasteGroup[] | null>(null);
+    private selectedTastesRepository = new MobXRepository<IWineTaste[] | null>(null);
+    private tasteCharacteristicsRepository = new MobXRepository<IWineTasteCharacteristic[] | null>(null);
+    private draftTasteCharacteristicsRepository = new MobXRepository<AddRateDto['tasteCharacteristics'] | null>(null);
+    private tasteCharacteristicDetailsRepository = new MobXRepository<ITasteCharacteristicDetail[] | null>(null);
+    private winePeakRepository = new MobXRepository<number | null>(null);
+    private reviewRepository = new MobXRepository<IWineReview | null>(null);
+
+    public get wine() {
+        return this.wineRepository.data;
+    }
+
+    public set wine(value: IWine | null) {
+        this.wineRepository.save(value);
+    }
+
+    public get selectedWineId() {
+        return this.selectedWineIdRepository.data;
+    }
+
+    public set selectedWineId(value: number | null) {
+        this.selectedWineIdRepository.save(value);
+    }
+
+    public get vintages() {
+        return this.vintagesRepository.data || [];
+    }
+
+    public set vintages(value: IVintagesItem[] | null) {
+        this.vintagesRepository.save(value);
+    }
+
+    public get customVintage() {
+        return this.customVintageRepository.data;
+    }
+
+    public set customVintage(value: number | null) {
+        this.customVintageRepository.save(value);
+    }
+
+    public get image() {
+        return this.imageRepository.data;
+    }
+
+    public set image(value: IWineImage | null) {
+        this.imageRepository.save(value);
+    }
+
+    public get base() {
+        return this.baseRepository.data;
+    }
+
+    public set base(value: IWineBase | null) {
+        this.baseRepository.save(value);
+    }
+
+    public get look() {
+        return this.lookRepository.data;
+    }
+
+    public set look(value: IWineLook | null) {
+        this.lookRepository.save(value);
+    }
+
+    public get wineTypes() {
+        return this.typesRepository.data;
+    }
+
+    public set wineTypes(value: IWineType[] | null) {
+        this.typesRepository.save(value);
+    }
+
+    public get colors() {
+        return this.colorsRepository.data;
+    }
+
+    public set colors(value: IWineColor[] | null) {
+        this.colorsRepository.save(value);
+    }
+
+    public get colorsShades() {
+        return this.colorsShadesRepository.data;
+    }
+
+    public set colorsShades(value: IWineColorShade[] | null) {
+        this.colorsShadesRepository.save(value);
+    }
+
+    public get smells() {
+        return this.smellsRepository.data;
+    }
+
+    public set smells(value: IWineSmell[] | null) {
+        this.smellsRepository.save(value);
+    }
+
+    public get searchedAroma() {
+        return this.searchedAromasRepository.data;
+    }
+
+    public set searchedAroma(value: IWineAroma[] | null) {
+        this.searchedAromasRepository.save(value);
+    }
+
+    public get selectedSmells() {
+        return this.selectedSmellsRepository.data;
+    }
+
+    public set selectedSmells(value: IWineSelectedSmell[] | null) {
+        this.selectedSmellsRepository.save(value);
+    }
+
+    public get tastes() {
+        return this.tastesRepository.data;
+    }
+
+    public set tastes(value: IWineTasteGroup[] | null) {
+        this.tastesRepository.save(value);
+    }
+
+    public get selectedTastes() {
+        return this.selectedTastesRepository.data;
+    }
+
+    public set selectedTastes(value: IWineTaste[] | null) {
+        this.selectedTastesRepository.save(value);
+    }
+
+    public get tasteCharacteristics() {
+        return this.tasteCharacteristicsRepository.data;
+    }
+
+    public set tasteCharacteristics(value: IWineTasteCharacteristic[] | null) {
+        this.tasteCharacteristicsRepository.save(value);
+    }
+
+    public get draftTasteCharacteristics() {
+        return this.draftTasteCharacteristicsRepository.data;
+    }
+
+    public set draftTasteCharacteristics(value: AddRateDto['tasteCharacteristics'] | null) {
+        this.draftTasteCharacteristicsRepository.save(value);
+    }
+
+    public get tasteCharacteristicDetails() {
+        return this.tasteCharacteristicDetailsRepository.data;
+    }
+
+    public set tasteCharacteristicDetails(value: ITasteCharacteristicDetail[] | null) {
+        this.tasteCharacteristicDetailsRepository.save(value);
+    }
+
+    public get winePeak() {
+        return this.winePeakRepository.data;
+    }
+
+    public set winePeak(value: number | null) {
+        this.winePeakRepository.save(value);
+    }
+
+    public get review() {
+        return this.reviewRepository.data;
+    }
+
+    public set review(value: IWineReview | null) {
+        this.reviewRepository.save(value);
+    }
+
+}
+
+export const wineModel = new WineModel();

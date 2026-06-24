@@ -15,10 +15,10 @@ import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
-import { wineModel } from '@/entities/wine/WineModel';
 import { SmoothSlider } from '@/UIKit/SmoothSlider';
 import { ScrollViewIndicator } from '@fanchenbao/react-native-scroll-indicator';
 import { ShadeSelector } from '@/UIKit/ShadeSelector';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const WineLookView = observer(() => {
     const { colors, t } = useUiContext();
@@ -37,11 +37,11 @@ export const WineLookView = observer(() => {
         getColorsWithShades,
         isLoading,
         onSelectColor,
-        handlePressNext,
+        onPressNext,
         appearance,
         setAppearance,
         shadeSelectorKey,
-        handleShadeAnimationEnd,
+        onShadeAnimationEnd,
         getSparklingSliderData,
         currentColor,
     } = useWineLook({ t, styles });
@@ -96,7 +96,7 @@ export const WineLookView = observer(() => {
                                 value={shade}
                                 onChange={setShade}
                                 colorShades={selectedColor}
-                                onAnimationEnd={handleShadeAnimationEnd}
+                                onAnimationEnd={onShadeAnimationEnd}
                             />
 
                             {wineModel.base?.typeOfWine.isSparkling && (
@@ -156,7 +156,7 @@ export const WineLookView = observer(() => {
                         </ScrollViewIndicator>
                         <Button
                             text={t('wine.letsSmell')}
-                            onPress={handlePressNext}
+                            onPress={onPressNext}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}
                         />

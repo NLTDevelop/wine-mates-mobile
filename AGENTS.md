@@ -495,12 +495,12 @@ export const getStyles = (colors: IColors) => {
 **Required:**
 - models must not contain business logic, calculations, handlers, or data transformation logic
 - models must be used for data structure only
-- the only allowed method in a model is pagination append method with exact name `appened`
+- the only allowed method in a model is pagination append method with exact name `append`
 
 **Forbidden:**
 - placing logic in models
 - creating custom methods in models for business scenarios
-- naming pagination append method as anything except `appened` (for example `appenedMediaList`)
+- naming pagination append method as anything except `append` (for example `appendMediaList`)
 
 **Principle:**
 - Presenter = logic
@@ -588,7 +588,7 @@ export const getStyles = (colors: IColors) => {
 
 **Required:**
 - models are data containers only
-- only one model method is allowed: `appened`
+- only one model method is allowed: `append`
 
 **Forbidden:**
 - any additional methods in models

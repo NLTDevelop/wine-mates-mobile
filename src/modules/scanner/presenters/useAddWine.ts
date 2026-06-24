@@ -1,16 +1,17 @@
 import { StackActions, useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { wineModel } from '@/entities/wine/WineModel';
 import { IWineBase, IWineBaseValue } from '@/entities/wine/types/IWineBase';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { IAIData } from '@/entities/wine/types/IAIData';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 import { clearTasteCharacteristicsCache, clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
 
 const createValue = (): IWineBaseValue => ({ id: null, value: '' });
 
@@ -106,7 +107,7 @@ export const useAddWine = () => {
     useEffect(() => {
         return () => {
             clearTasteCharacteristicsCache();
-            wineModel.clear();
+            clearWineModel();
         };
     }, []);
 
@@ -180,7 +181,7 @@ export const useAddWine = () => {
                         const addWineSetScannerState = wineSetScannerModel.state;
                         wineSetScannerModel.clear();
                         clearTasteCharacteristicsCache();
-                        wineModel.clear();
+                        clearWineModel();
 
                         if (addWineSetScannerState) {
                             navigation.dispatch(
@@ -198,7 +199,7 @@ export const useAddWine = () => {
 
                     const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
                     clearTasteCharacteristicsCache();
-                    wineModel.clear();
+                    clearWineModel();
                     wineModel.wine = {
                         id: wineId,
                         vintage: Number(form.vintageYear.value),
@@ -227,7 +228,7 @@ export const useAddWine = () => {
                     const addWineSetScannerState = wineSetScannerModel.state;
                     wineSetScannerModel.clear();
                     clearTasteCharacteristicsCache();
-                    wineModel.clear();
+                    clearWineModel();
 
                     if (addWineSetScannerState) {
                         navigation.dispatch(
@@ -245,7 +246,7 @@ export const useAddWine = () => {
 
                 const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
                 clearTasteCharacteristicsCache();
-                wineModel.clear();
+                clearWineModel();
                 wineModel.base = {
                     ...form,
                     typeOfWine: {

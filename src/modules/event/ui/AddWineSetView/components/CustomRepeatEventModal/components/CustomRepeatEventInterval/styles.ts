@@ -30,6 +30,9 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(48),
             paddingHorizontal: scaleHorizontal(12),
         },
+        dropdownMenu: {
+            maxHeight: scaleVertical(144),
+        },
     });
 
     return styles;

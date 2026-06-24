@@ -1,4 +1,4 @@
-import { favoriteWineListService } from '@/entities/wine/FavoriteWineListService';
+import { favoriteWineListService } from '@/entities/wine/services/FavoriteWineListService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useCallback, useState } from 'react';
@@ -34,7 +34,7 @@ export const useDeleteFavoriteList = () => {
                 onCloseAlert();
             }
         } catch (error) {
-            console.error('onConfirmDelete error: ', JSON.stringify(error, null, 2));
+            console.error('onConfirmDelete error: ', error);
             toastService.showError(
                 localization.t('common.errorHappened'),
                 localization.t('common.somethingWentWrong'),

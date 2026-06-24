@@ -14,16 +14,24 @@ import { CarouselDots } from '../CarouselDots';
 interface IProps {
     title: string;
     events: IEvent[];
+    carouselHorizontalOffset?: number;
 }
 
-export const HomeEventSection = ({ title, events }: IProps) => {
-    const { colors } = useUiContext();
+export const HomeEventSection = ({
+    title,
+    events,
+    carouselHorizontalOffset = 32,
+}: IProps) => {
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { width } = useWindowDimensions();
     const {
         carouselRef,
+        carouselKey,
+        carouselDefaultIndex,
         activeIndex,
         carouselHeight,
+        hasEvents,
         onProgressChange,
         onCardLayout,
         onArrowPress,
@@ -32,7 +40,7 @@ export const HomeEventSection = ({ title, events }: IProps) => {
         onEditPress,
         onConfigurePanGesture,
     } = useHomeEventSection(events);
-    const carouselWidth = width - scaleHorizontal(32);
+    const carouselWidth = width - scaleHorizontal(carouselHorizontalOffset);
 
     const renderItem = useCallback(({ item }: { item: IEvent }) => {
         return (
@@ -56,17 +64,31 @@ export const HomeEventSection = ({ title, events }: IProps) => {
                     <ArrowRightIcon />
                 </TouchableOpacity>
             </View>
-            <Carousel
-                ref={carouselRef}
-                loop={false}
-                width={carouselWidth}
-                height={carouselHeight}
-                data={events}
-                onProgressChange={onProgressChange}
-                renderItem={renderItem}
-                onConfigurePanGesture={onConfigurePanGesture}
-            />
-            <CarouselDots count={events.length} activeIndex={activeIndex} />
+            {hasEvents ? (
+                <>
+                    <Carousel
+                        key={carouselKey}
+                        ref={carouselRef}
+                        loop={false}
+                        defaultIndex={carouselDefaultIndex}
+                        width={carouselWidth}
+                        height={carouselHeight}
+                        data={events}
+                        onProgressChange={onProgressChange}
+                        renderItem={renderItem}
+                        onConfigurePanGesture={onConfigurePanGesture}
+                    />
+                    <CarouselDots count={events.length} activeIndex={activeIndex} />
+                </>
+            ) : (
+                <View style={styles.emptyContainer}>
+                    <Typography
+                        variant="body_400"
+                        text={t('home.eventsEmptyDescription')}
+                        style={styles.emptyText}
+                    />
+                </View>
+            )}
         </View>
     );
 };

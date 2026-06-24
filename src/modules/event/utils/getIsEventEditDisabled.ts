@@ -1,4 +1,5 @@
 import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
+import { EventTastingStatus } from '@/entities/events/enums/EventTastingStatus';
 import { getUtcEventDateTime } from '@/modules/event/utils/eventDateTimeUtc';
 
 interface IEventEditAvailabilitySource {
@@ -7,6 +8,8 @@ interface IEventEditAvailabilitySource {
     eventStartTime?: string | null;
     eventTime?: string | null;
     status?: string | null;
+    tastingStatus?: string | null;
+    isTastingStarted?: boolean | null;
     isActive?: boolean | null;
 }
 
@@ -29,6 +32,10 @@ export const getIsEventEditDisabled = (
     const isEventFinished = status === SavedEventStatus.FINISHED;
     const isEventCanceled = status === SavedEventStatus.CANCELED || status === 'cancelled';
     const isEventInactive = event.isActive === false;
+    const tastingStatus = String(event.tastingStatus || '').toLowerCase();
+    const isTastingStarted =
+        event.isTastingStarted ||
+        tastingStatus === EventTastingStatus.IN_PROGRESS || tastingStatus === EventTastingStatus.FINISHED;
 
-    return hasEventStarted || isEventInactive || isEventFinished || isEventCanceled;
+    return hasEventStarted || isTastingStarted || isEventInactive || isEventFinished || isEventCanceled;
 };

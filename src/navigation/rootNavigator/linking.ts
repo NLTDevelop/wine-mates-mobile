@@ -5,6 +5,7 @@ import {
     type PartialState,
 } from '@react-navigation/native';
 import { AppState, Linking } from 'react-native';
+import { IEventDetailsViewParams } from '@/modules/event/ui/EventDetailsView/types/IEventDetailsViewParams';
 
 type TabDeepLinkParamList = {
     EventStack: undefined;
@@ -12,10 +13,7 @@ type TabDeepLinkParamList = {
 
 export type RootDeepLinkParamList = {
     TabNavigator: NavigatorScreenParams<TabDeepLinkParamList>;
-    EventDetailsView: {
-        eventId: number;
-        openedFromDeepLink?: boolean;
-    };
+    EventDetailsView: IEventDetailsViewParams;
     WineDetailsView: {
         wineId: number;
         openedFromDeepLink?: boolean;

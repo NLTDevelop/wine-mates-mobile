@@ -13,11 +13,11 @@ import { IEvent } from '@/entities/events/types/IEvent';
 import { useEventCard } from './presenters/useEventCard';
 import { getStyles } from './styles';
 import { ISavedEvent } from '@/entities/events/types/ISavedEvent';
-import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
 import { EditButton } from '../EditButton';
 import { ShareIcon } from '@assets/icons/ShareIcon';
 import { EventParticipantsPreview } from '@/UIKit/EventParticipantsPreview';
 import { QR_CODE_SHARE_SIZE } from '@/utils';
+import { EventStatusSource } from './types/EventStatusSource';
 
 interface IProps {
     event: IEvent | ISavedEvent;
@@ -30,6 +30,7 @@ interface IProps {
     showDescription?: boolean;
     showFooter?: boolean;
     appliedEventStatus?: string | null;
+    eventStatusSource?: EventStatusSource;
 }
 
 export const EventCard = ({
@@ -43,6 +44,7 @@ export const EventCard = ({
     showDescription = true,
     showFooter = true,
     appliedEventStatus = null,
+    eventStatusSource = 'default',
 }: IProps) => {
     const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -54,6 +56,7 @@ export const EventCard = ({
         eventTypeLabel,
         isAllSpotsFull,
         eventStatusLabel,
+        eventStatusType,
         appliedEventStatusLabel,
         isPartyEvent,
         isCardPressed,
@@ -79,6 +82,7 @@ export const EventCard = ({
         onEditPress,
         onCardPress,
         locale,
+        eventStatusSource,
     });
 
     const canPressCard = !isModalContent && Boolean(onCardPress);
@@ -111,12 +115,12 @@ export const EventCard = ({
                 </TouchableOpacity>
             </View>
 
-            {('status' in event && event.status !== null) || appliedEventStatus ? (
+            {eventStatusType || appliedEventStatus ? (
                 <View style={styles.statusRow}>
-                    {'status' in event && event.status !== null && (
+                    {eventStatusType && (
                         <View
                             style={
-                                event.status === SavedEventStatus.FINISHED
+                                eventStatusType === 'finished'
                                     ? styles.eventStatusFinished
                                     : styles.eventStatusCanceled
                             }

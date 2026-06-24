@@ -13,6 +13,7 @@ import { IUserData } from './types/IUserData';
 import { IUser } from './types/IUser';
 import { IUserCurrency } from './types/IUserCurrency';
 import { IUserCurrencies } from './types/IUserCurrencies';
+import { LocationDto } from './dto/Location.dto';
 
 class UserService {
     constructor(
@@ -41,6 +42,14 @@ class UserService {
         return user as IUser;
     };
 
+    private syncUserLanguage = (user: IUser) => {
+        if (!user.language) {
+            return;
+        }
+
+        localization.setLocale(user.language);
+    };
+
     me = async (): Promise<IResponse<IUser>> => {
         try {
             const response = await this._requester.request({
@@ -52,6 +61,7 @@ class UserService {
                 const user = this.extractUser(response.data);
                 if (user) {
                     userModel.user = user;
+                    this.syncUserLanguage(user);
                 }
             }
 
@@ -275,6 +285,50 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> updateCurrency: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    updateLanguage = async (language: string): Promise<IResponse<IUser>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'PATCH',
+                url: `${this._links.me}`,
+                data: {
+                    language,
+                },
+            });
+
+            if (!response.isError) {
+                const user = this.extractUser(response.data);
+                if (user) {
+                    userModel.user = user;
+                } else if (userModel.user) {
+                    userModel.user = {
+                        ...userModel.user,
+                        language,
+                    };
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> updateLanguage: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    location = async (data: LocationDto): Promise<{}> => {
+        try {
+            const response = await this._requester.request({
+                method: 'PATCH',
+                url: `${this._links.userLocation}`,
+                data,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> location: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

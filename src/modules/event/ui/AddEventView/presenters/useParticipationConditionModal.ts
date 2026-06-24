@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { localization } from '@/UIProvider/localization/Localization';
 import { PARTICIPATION_CONDITIONS, ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
-import { ISingleSelectModalItem } from '../types/ISingleSelectModalItem';
 import { PriceInputParticipationCondition } from '@/entities/events/types/PriceInputParticipationCondition';
+import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 
 interface IProps {
     value?: ParticipationCondition;
@@ -84,11 +84,11 @@ export const useParticipationConditionModal = ({ value, onChange }: IProps) => {
         };
     }, []);
 
-    const items = useMemo<ISingleSelectModalItem[]>(() => {
+    const items = useMemo<IUniversalPickerOption[]>(() => {
         return PARTICIPATION_CONDITIONS.map(itemValue => {
             return {
-                key: itemValue,
-                label: getParticipationConditionLabel(itemValue),
+                id: itemValue,
+                title: getParticipationConditionLabel(itemValue),
                 isSelected: draft === itemValue,
                 onPress: createOnSelect(itemValue),
             };

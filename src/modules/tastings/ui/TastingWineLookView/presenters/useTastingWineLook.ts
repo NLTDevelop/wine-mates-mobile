@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { IWineColorShade } from '@/entities/wine/types/IWineColorShade';
-import { wineModel } from '@/entities/wine/WineModel';
 import { IWineLook } from '@/entities/wine/types/IWineLook';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { eventTastingService } from '@/entities/events/EventTastingService';
 import { WineSetTastingStatus } from '@/entities/events/types/IWineSetItem';
 import { toastService } from '@/libs/toast/toastService';
@@ -12,6 +11,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
+import { useSaveEventTastingDraftOnBlur } from '@/modules/tastings/presenters/useSaveEventTastingDraftOnBlur';
 
 interface IUseWineLookArgs {
     t: (key: string, params?: Record<string, any> | undefined) => string;
@@ -41,9 +43,10 @@ export const useTastingWineLook = ({ t, styles }: IUseWineLookArgs) => {
     const wineId = routeParams.wineId;
     const eventId = routeParams.eventId;
     const tastingStatus = routeParams.tastingStatus ?? 'not_started';
+    const isEditingFinishedTasting = tastingStatus === 'tasted';
     const isSelectedParametersVisible = !routeParams.isBlindTasting;
     const [isLoading, setIsLoading] = useState(true);
-    const [isSaving, setIsSaving] = useState(false);
+    const isSaving = false;
     const [perlage, setPerlage] = useState(0);
     const [appearance, setAppearance] = useState(0);
     const [mousse, setMousse] = useState(0);
@@ -149,10 +152,10 @@ export const useTastingWineLook = ({ t, styles }: IUseWineLookArgs) => {
                 return;
             }
 
-            wineModel.clear();
+            clearWineModel();
             applyWineDetailsToTastingModel(wineResponse.data);
 
-            if (tastingStatus === 'in_progress') {
+            if (tastingStatus === 'in_progress' || isEditingFinishedTasting) {
                 const draftResponse = await eventTastingService.getDraft({ eventId, wineId });
 
                 if (draftResponse.isError) {
@@ -186,6 +189,7 @@ export const useTastingWineLook = ({ t, styles }: IUseWineLookArgs) => {
         getColorsWithShades,
         getDefaultEventTastingDraft,
         getEventTastingDraftData,
+        isEditingFinishedTasting,
         tastingStatus,
         wineId,
     ]);
@@ -243,7 +247,7 @@ export const useTastingWineLook = ({ t, styles }: IUseWineLookArgs) => {
         setShouldResetShadeKey(false);
     }, [shouldResetShadeKey]);
 
-    const onPressNext = useCallback(async () => {
+    const saveLookToModel = useCallback(() => {
         if (!currentColor) return;
 
         if (wineModel.base?.typeOfWine.isSparkling) {
@@ -264,58 +268,38 @@ export const useTastingWineLook = ({ t, styles }: IUseWineLookArgs) => {
                 name: selectedColor?.name || '-',
             };
         }
+    }, [appearance, currentColor, mousse, perlage, selectedColor, shade]);
 
+    useSaveEventTastingDraftOnBlur({
+        eventId,
+        wineId,
+        buildPayload: buildEventTastingDraftPayload,
+        isFinal: isEditingFinishedTasting,
+        isEnabled: Boolean(currentColor),
+        onBeforeSave: saveLookToModel,
+    });
+
+    const onPressNext = useCallback(() => {
+        saveLookToModel();
         if (eventId && wineId) {
-            setIsSaving(true);
-
-            try {
-                const response = await eventTastingService.saveDraft({
-                    eventId,
-                    wineId,
-                    data: buildEventTastingDraftPayload(wineId),
-                    isFinal: false,
-                });
-
-                if (response.isError) {
-                    toastService.showError(
-                        localization.t('common.errorHappened'),
-                        response.message || localization.t('common.somethingWentWrong'),
-                    );
-                    return;
-                }
-            } catch (error) {
-                console.error(JSON.stringify(error, null, 2));
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    localization.t('common.somethingWentWrong'),
-                );
-                return;
-            } finally {
-                setIsSaving(false);
-            }
-
             navigation.navigate('TastingWineSmellView', {
                 source,
                 wineId,
                 eventId,
                 isBlindTasting: routeParams.isBlindTasting,
+                tastingStatus,
             });
             return;
         }
 
         navigation.navigate('WineSmellView', { source, wineId });
     }, [
-        appearance,
-        buildEventTastingDraftPayload,
-        currentColor,
         eventId,
-        mousse,
         navigation,
-        perlage,
         routeParams.isBlindTasting,
-        selectedColor,
-        shade,
+        saveLookToModel,
         source,
+        tastingStatus,
         wineId,
     ]);
 

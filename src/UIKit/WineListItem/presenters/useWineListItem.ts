@@ -1,39 +1,27 @@
 import { useCallback, useMemo } from 'react';
+import { GestureResponderEvent } from 'react-native';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { declOfWord } from '@/utils';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
-import { createWineDeepLink } from '@/navigation/rootNavigator/linking';
-import { prepareWineShareMessage } from '@/modules/wine/utils/prepareWineShareMessage';
-import { shareWine } from '@/modules/wine/utils/shareWine';
-import { toastService } from '@/libs/toast/toastService';
 
 interface IProps {
     item: IWineListItem | IWineDetails;
     onPress?: (item: IWineListItem) => void;
+    onSharePress?: (item: IWineListItem | IWineDetails) => void;
     hideSimilarity?: boolean;
     removeCardStyles?: boolean;
     isMyWine?: boolean;
 }
 
 const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
-    return 'similarity' in item || 'myReview' in item || 'lastReview' in item || 'lastRate' in item
+    return !('currentVintage' in item);
 };
 const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails => 'currentVintage' in item;
 
-const getWineTitle = (item: IWineListItem | IWineDetails) => {
-    const parts = [item.producer, item.name, item.vintage ? `${item.vintage}` : null].filter(Boolean);
-
-    if (parts.length) {
-        return parts.join(' ');
-    }
-
-    return `Wine #${item.id}`;
-};
-
-export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: IProps) => {
+export const useWineListItem = ({ item, onPress, onSharePress, removeCardStyles, isMyWine }: IProps) => {
     const { t } = useUiContext();
 
     const onItemPress = useCallback(() => {
@@ -41,6 +29,15 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
             onPress(item);
         }
     }, [item, onPress]);
+
+    const onShareItemPress = useCallback(() => {
+        onSharePress?.(item);
+    }, [item, onSharePress]);
+
+    const onPressShareButton = useCallback((event: GestureResponderEvent) => {
+        event.stopPropagation();
+        onShareItemPress();
+    }, [onShareItemPress]);
 
     const similarityText = useMemo(() => {
         if (!isWineListItem(item) || !item.similarity) return '-';
@@ -164,44 +161,6 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
         return t('wine.expertReview');
     }, [isCurrentUserLover, isMyWine, t]);
 
-    const wineDeepLink = useMemo(() => {
-        return createWineDeepLink(item.id);
-    }, [item.id]);
-    const wineImageUrl = item.image?.originalUrl || item.defaultImage?.originalUrl || null;
-
-    const onSharePress = useCallback(async () => {
-        try {
-            const message = prepareWineShareMessage({
-                intro: t('wine.shareWineIntro'),
-                labels: {
-                    title: t('wine.shareWineName'),
-                    producer: t('wine.shareWineProducer'),
-                    grapeVariety: t('wine.shareWineGrapeVariety'),
-                    country: t('wine.country'),
-                    region: t('wine.region'),
-                    type: t('wine.typeOfWine'),
-                },
-                title: getWineTitle(item),
-                producer: item.producer,
-                grapeVariety: item.grapeVariety,
-                country: item.country?.name,
-                region: item.region?.name,
-                type: item.type?.name,
-                link: wineDeepLink,
-            });
-
-            await shareWine({
-                filename: `wine-${item.id}`,
-                imageUrl: wineImageUrl,
-                message,
-                title: t('wine.shareWineTitle'),
-            });
-        } catch (error) {
-            console.warn('useWineListItem -> onSharePress: ', error);
-            toastService.showError(t('common.errorHappened'), t('common.somethingWentWrong'));
-        }
-    }, [item, t, wineDeepLink, wineImageUrl]);
-
     return {
         onItemPress,
         similarityText,
@@ -220,6 +179,6 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
         showUserReviewCount,
         showExpertReviewCount,
         expertReviewLabel,
-        onSharePress,
+        onPressShareButton,
     };
 };

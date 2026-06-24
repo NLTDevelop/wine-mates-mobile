@@ -5,13 +5,13 @@ import { userService } from '@/entities/users/UserService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { featuresService } from '@/entities/features/FeaturesService';
+import { completeAuthorization } from './completeAuthorization';
 
 export const useGoogleSignIn = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isGoogleLoginLoading, setIsGoogleLoginLoading] = useState<boolean>(false);
 
-    const handleGoogleSignIn = useCallback(async () => {
+    const onGoogleSignIn = useCallback(async () => {
         try {
             setIsGoogleLoginLoading(true);
             await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
@@ -32,14 +32,13 @@ export const useGoogleSignIn = () => {
                 return;
             }
 
-            featuresService.list();
-            navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
+            await completeAuthorization(navigation);
         } catch (error: any) {
-            console.warn('Error in handleGoogleSignIn: ', JSON.stringify(error));
+            console.warn('Error in onGoogleSignIn: ', JSON.stringify(error));
         } finally {
             setIsGoogleLoginLoading(false);
         }
     }, [navigation]);
 
-    return { isGoogleLoginLoading, handleGoogleSignIn };
+    return { isGoogleLoginLoading, onGoogleSignIn };
 };

@@ -5,7 +5,7 @@ import { useValidator } from '@/hooks/useValidator';
 import { userService } from '@/entities/users/UserService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { featuresService } from '@/entities/features/FeaturesService';
+import { completeAuthorization } from './completeAuthorization';
 
 export const useSignIn = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -37,8 +37,7 @@ export const useSignIn = () => {
                     setIsError({ status: true, errorText: '' });
                 }
             } else {
-                featuresService.list();
-                navigation.reset({ index: 0, routes: [{ name: 'TabNavigator' }] });
+                await completeAuthorization(navigation);
             }
         } finally {
             setIsLoading(false);

@@ -21,6 +21,7 @@ interface IProps {
     disabled?: boolean;
     selectedValue?: string | number | null;
     containerStyle?: ViewStyle;
+    dropdownContainerStyle?: ViewStyle;
     renderItem?: (item: IDropdownItem, selected?: boolean) => ReactElement | null;
     renderSelectedValue?: (item: IDropdownItem) => ReactElement | null;
     renderFooter?: () => ReactElement | null;
@@ -46,6 +47,7 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
             disabled = false,
             selectedValue = null,
             containerStyle,
+            dropdownContainerStyle,
             renderItem,
             renderSelectedValue,
             renderFooter,
@@ -163,6 +165,7 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
                             placeholderStyle={styles.placeholder}
                             containerStyle={[
                                 styles.dropdownContainer,
+                                dropdownContainerStyle,
                                 dropdownLiftOffsetTop > 0 ? { marginTop: -dropdownLiftOffsetTop } : null,
                             ]}
                             selectedTextStyle={[

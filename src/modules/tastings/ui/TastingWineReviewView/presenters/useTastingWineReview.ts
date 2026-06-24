@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { wineModel } from '@/entities/wine/WineModel';
 import { eventTastingService } from '@/entities/events/EventTastingService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useEventTastingDraft } from '@/modules/tastings/presenters/useEventTastingDraft';
-import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
+import { CommonActions, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useState } from 'react';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { WineSetTastingStatus } from '@/entities/events/types/IWineSetItem';
 import { clearTasteCharacteristicsCache } from '@/libs/storage/cacheUtils';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
@@ -15,6 +14,9 @@ import { userModel } from '@/entities/users/UserModel';
 import { AddRateDto } from '@/entities/wine/dto/AddRate.dto';
 import { Keyboard } from 'react-native';
 import { runInAction } from 'mobx';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
+import { useSaveEventTastingDraftOnBlur } from '@/modules/tastings/presenters/useSaveEventTastingDraftOnBlur';
 
 interface IRouteParams {
     source?: string;
@@ -35,6 +37,8 @@ export const useTastingWineReview = () => {
     const wineId = routeParams.wineId;
     const eventId = routeParams.eventId;
     const tastingStatus = routeParams.tastingStatus ?? 'not_started';
+    const isEditingFinishedTasting = tastingStatus === 'tasted';
+    const nextTastingStatus: WineSetTastingStatus = isEditingFinishedTasting ? 'tasted' : 'in_progress';
     const isFullTastingReview = routeParams.isFullTastingReview || false;
     const isSelectedParametersVisible = !routeParams.isBlindTasting;
     const {
@@ -52,6 +56,8 @@ export const useTastingWineReview = () => {
     const [hasChangedRate, setHasChangedRate] = useState(() => wineModel.review?.hasChangedRate ?? false);
     const [hasChangedStarRate, setHasChangedStarRate] = useState(() => wineModel.review?.hasChangedStarRate ?? false);
     const [isSaving, setIsSaving] = useState(false);
+    const [ratingSliderKey, setRatingSliderKey] = useState(0);
+    const [ratingStarsKey, setRatingStarsKey] = useState(0);
     const isExpertOrWinemaker = userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT ||
         userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR;
     const isWinePeakPickerVisible = isExpertOrWinemaker && !isFullTastingReview;
@@ -78,6 +84,12 @@ export const useTastingWineReview = () => {
         setHasChangedRate(nextHasChangedRate);
         setHasChangedStarRate(nextHasChangedStarRate);
         setWinePeak(typeof draftReview.winePeak === 'number' ? draftReview.winePeak : wineModel.winePeak);
+        if (typeof draftReview.expertRating === 'number') {
+            setRatingSliderKey(prevState => prevState + 1);
+        }
+        if (typeof draftReview.userRating === 'number') {
+            setRatingStarsKey(prevState => prevState + 1);
+        }
 
         wineModel.review = {
             ...(wineModel.review || { review: '' }),
@@ -88,6 +100,23 @@ export const useTastingWineReview = () => {
             hasChangedStarRate: nextHasChangedStarRate,
         };
         wineModel.winePeak = typeof draftReview.winePeak === 'number' ? draftReview.winePeak : wineModel.winePeak;
+    }, []);
+
+    const syncReviewFromModel = useCallback(() => {
+        const nextReview = wineModel.review?.review ?? '';
+        const nextSliderValue = wineModel.review?.rate ?? 70;
+        const nextStarRate = wineModel.review?.starRate ?? 0;
+        const nextHasChangedRate = wineModel.review?.hasChangedRate ?? false;
+        const nextHasChangedStarRate = wineModel.review?.hasChangedStarRate ?? false;
+
+        setReview(nextReview);
+        setSliderValue(nextSliderValue);
+        setStarRate(nextStarRate);
+        setHasChangedRate(nextHasChangedRate);
+        setHasChangedStarRate(nextHasChangedStarRate);
+        setWinePeak(wineModel.winePeak);
+        setRatingSliderKey(prevState => prevState + 1);
+        setRatingStarsKey(prevState => prevState + 1);
     }, []);
 
     const getEventTastingDraft = useCallback(async () => {
@@ -104,10 +133,10 @@ export const useTastingWineReview = () => {
             return;
         }
 
-        wineModel.clear();
+        clearWineModel();
         applyWineDetailsToTastingModel(wineResponse.data);
 
-        if (tastingStatus !== 'in_progress') {
+        if (tastingStatus !== 'in_progress' && tastingStatus !== 'tasted') {
             applyEventTastingDraftToModel(getDefaultEventTastingDraft(wineId), wineId);
             applyDraftReview({});
             return;
@@ -141,19 +170,39 @@ export const useTastingWineReview = () => {
         getEventTastingDraft();
     }, [getEventTastingDraft]);
 
+    useFocusEffect(
+        useCallback(() => {
+            syncReviewFromModel();
+        }, [syncReviewFromModel]),
+    );
+
     const onSliderChange = useCallback((value: number) => {
         setSliderValue(value);
         setHasChangedRate(true);
+        wineModel.review = {
+            ...(wineModel.review || { review: '' }),
+            rate: value,
+            hasChangedRate: true,
+        };
     }, []);
 
     const onChangeReview = useCallback((text: string) => {
         setReview(text);
+        wineModel.review = {
+            ...(wineModel.review || { review: '' }),
+            review: text,
+        };
     }, []);
 
     const onStarRateChange = useCallback((value: number) => {
         const newValue = Number(value.toFixed(1));
         setStarRate(prev => prev === newValue ? prev : newValue);
         setHasChangedStarRate(true);
+        wineModel.review = {
+            ...(wineModel.review || { review: '' }),
+            starRate: newValue,
+            hasChangedStarRate: true,
+        };
     }, []);
 
     const onWinePeakChange = useCallback((year: number | null) => {
@@ -175,41 +224,13 @@ export const useTastingWineReview = () => {
         };
     }, [hasChangedRate, hasChangedStarRate, review, sliderValue, starRate]);
 
-    const saveEventTastingDraft = useCallback(async (isFinal: boolean, data?: Partial<AddRateDto>) => {
-        if (!eventId || !wineId) {
-            return true;
-        }
-
-        setIsSaving(true);
-
-        try {
-            const response = await eventTastingService.saveDraft({
-                eventId,
-                wineId,
-                data: data || buildEventTastingDraftPayload(wineId),
-                isFinal,
-            });
-
-            if (response.isError) {
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    response.message || localization.t('common.somethingWentWrong'),
-                );
-                return false;
-            }
-
-            return true;
-        } catch (error) {
-            console.error(JSON.stringify(error, null, 2));
-            toastService.showError(
-                localization.t('common.errorHappened'),
-                localization.t('common.somethingWentWrong'),
-            );
-            return false;
-        } finally {
-            setIsSaving(false);
-        }
-    }, [buildEventTastingDraftPayload, eventId, wineId]);
+    const { skipNextBlurSave } = useSaveEventTastingDraftOnBlur({
+        eventId,
+        wineId,
+        buildPayload: buildEventTastingDraftPayload,
+        isFinal: isEditingFinishedTasting,
+        onBeforeSave: saveReview,
+    });
 
     const resetToEventDetails = useCallback(() => {
         if (!eventId) return;
@@ -314,30 +335,23 @@ export const useTastingWineReview = () => {
         }
     }, [buildReviewOnlyDraftPayload, eventId, wineId]);
 
-    const onContinueFullTastingPress = useCallback(async () => {
+    const onContinueFullTastingPress = useCallback(() => {
         saveReview();
-        const draftPayload = tastingStatus === 'in_progress' ? undefined : buildReviewOnlyDraftPayload();
-        const isSaved = await saveEventTastingDraft(false, draftPayload);
-        if (!isSaved) {
-            return;
-        }
 
         navigation.navigate('TastingWineLookView', {
             source,
             wineId,
             eventId,
-            tastingStatus: 'in_progress',
+            tastingStatus: nextTastingStatus,
             isBlindTasting: routeParams.isBlindTasting,
         });
     }, [
-        buildReviewOnlyDraftPayload,
         eventId,
         navigation,
         routeParams.isBlindTasting,
-        saveEventTastingDraft,
         saveReview,
         source,
-        tastingStatus,
+        nextTastingStatus,
         wineId,
     ]);
 
@@ -348,25 +362,22 @@ export const useTastingWineReview = () => {
             return;
         }
 
+        skipNextBlurSave();
         resetToEventDetails();
         clearTasteCharacteristicsCache();
-        wineModel.clear();
-    }, [resetToEventDetails, saveReview, saveReviewOnlyFinalDraft]);
+        clearWineModel();
+    }, [resetToEventDetails, saveReview, saveReviewOnlyFinalDraft, skipNextBlurSave]);
 
-    const onNextPress = useCallback(async () => {
+    const onNextPress = useCallback(() => {
         saveReview();
 
         if (eventId && wineId) {
-            const isSaved = await saveEventTastingDraft(false);
-            if (!isSaved) {
-                return;
-            }
-
             navigation.navigate('TastingWineReviewResultView', {
                 source,
                 wineId,
                 eventId,
                 isBlindTasting: routeParams.isBlindTasting,
+                tastingStatus: nextTastingStatus,
             });
             return;
         }
@@ -376,9 +387,9 @@ export const useTastingWineReview = () => {
         eventId,
         navigation,
         routeParams.isBlindTasting,
-        saveEventTastingDraft,
         saveReview,
         source,
+        nextTastingStatus,
         wineId,
     ]);
 
@@ -398,5 +409,7 @@ export const useTastingWineReview = () => {
         onFinishTastingPress,
         isFullTastingReview,
         isWinePeakPickerVisible,
+        ratingSliderKey,
+        ratingStarsKey,
     };
 };

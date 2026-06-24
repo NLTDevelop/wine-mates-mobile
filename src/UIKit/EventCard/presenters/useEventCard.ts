@@ -7,6 +7,7 @@ import { config } from '@/config';
 import { userModel } from '@/entities/users/UserModel';
 import { SavedEventStatus } from '@/entities/events/enums/SavedEventStatus';
 import { AppliedEventStatus } from '@/entities/events/enums/AppliedEventStatus';
+import { EventTastingStatus } from '@/entities/events/enums/EventTastingStatus';
 import { createEventDeepLink } from '@/navigation/rootNavigator/linking';
 import { toastService } from '@/libs/toast/toastService';
 import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
@@ -18,6 +19,7 @@ import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
 import { useEventQrCodeShare } from '@/modules/event/presenters/useEventQrCodeShare';
 import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
 import { getIsEventEditDisabled } from '@/modules/event/utils/getIsEventEditDisabled';
+import { EventStatusSource } from '../types/EventStatusSource';
 
 interface IUseEventCardProps {
     event: IEvent;
@@ -27,6 +29,7 @@ interface IUseEventCardProps {
     onEditPress?: (eventId: number) => void;
     onCardPress?: (eventId: number) => void;
     locale?: string;
+    eventStatusSource?: EventStatusSource;
 }
 
 const STATIC_MAP_SIZE = '720x320';
@@ -41,6 +44,7 @@ const STATIC_MAP_LIGHT_STYLE_PARAMS = [
     'style=feature:landscape|element:geometry|color:0xf5f5f5',
 ];
 const EMPTY_FIELD = '-';
+type EventStatusType = 'finished' | 'canceled';
 
 export const useEventCard = ({
     event,
@@ -50,6 +54,7 @@ export const useEventCard = ({
     onEditPress,
     onCardPress,
     locale,
+    eventStatusSource = 'default',
 }: IUseEventCardProps) => {
     const currentLocale = locale || localization.locale || 'en';
     const [currentTime] = useState(() => new Date());
@@ -168,21 +173,54 @@ export const useEventCard = ({
         return typeof event.seats?.left === 'number' && event.seats.left <= 0;
     }, [event.seats]);
 
-    const eventStatusLabel = useMemo(() => {
-        if (!('status' in event) || !event.status) {
-            return '';
+    const hasEventEnded = useMemo(() => {
+        if (!endDateValue) {
+            return false;
         }
 
-        if (event.status === SavedEventStatus.FINISHED) {
+        const eventEndDateTime = new Date(`${endDateValue}T${endTimeValue || '23:59:59'}`);
+        if (Number.isNaN(eventEndDateTime.getTime())) {
+            return false;
+        }
+
+        return currentTime.getTime() > eventEndDateTime.getTime();
+    }, [currentTime, endDateValue, endTimeValue]);
+
+    const eventStatusType = useMemo<EventStatusType | null>(() => {
+        if (eventStatusSource === 'tastingStatus') {
+            if (event.isActive === false) {
+                return 'canceled';
+            }
+
+            return event.tastingStatus === EventTastingStatus.FINISHED ? 'finished' : null;
+        }
+
+        if ('status' in event && (event.status === SavedEventStatus.CANCELED || event.status === 'cancelled')) {
+            return 'canceled';
+        }
+
+        if (
+            ('tastingStatus' in event && event.tastingStatus === EventTastingStatus.FINISHED) ||
+            ('status' in event && event.status === SavedEventStatus.FINISHED) ||
+            hasEventEnded
+        ) {
+            return 'finished';
+        }
+
+        return null;
+    }, [event, eventStatusSource, hasEventEnded]);
+
+    const eventStatusLabel = useMemo(() => {
+        if (eventStatusType === 'finished') {
             return localization.t('event.finished', { locale: currentLocale });
         }
 
-        if (event.status === SavedEventStatus.CANCELED) {
+        if (eventStatusType === 'canceled') {
             return localization.t('event.cancelled', { locale: currentLocale });
         }
 
-        return String(event.status);
-    }, [currentLocale, event]);
+        return '';
+    }, [currentLocale, eventStatusType]);
 
     const appliedEventStatusLabel = useMemo(() => {
         if (!appliedEventStatus) {
@@ -370,6 +408,7 @@ export const useEventCard = ({
         eventTypeLabel,
         isAllSpotsFull,
         eventStatusLabel,
+        eventStatusType,
         appliedEventStatusLabel,
         isPartyEvent,
         isCardPressed,

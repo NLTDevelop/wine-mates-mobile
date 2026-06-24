@@ -47,17 +47,21 @@ export const EventDetailsTab = ({
         onEditPress,
         onDuplicatePress,
         onToggleTastingPress,
+        onDownloadReportPress,
         isOwner,
         isBookNowDisabled,
         isEditEventDisabled,
         isCancelEventDisabled,
         isBookNowInProgress,
+        isCancelEventInProgress,
+        isReportDownloading,
         isEventApplied,
         isBlindTasting,
         isWineSetItemPressEnabled,
         isWineSetStatusVisible,
         isTastingToggleVisible,
         isTastingToggleDisabled,
+        isReportDownloadVisible,
         tastingToggleButtonText,
         isPaymentMethodsModalVisible,
         paymentMethodOptions,
@@ -185,6 +189,16 @@ export const EventDetailsTab = ({
                                     inProgress={isBookNowInProgress}
                                 />
                             )}
+                            {isReportDownloadVisible && (
+                                <Button
+                                    type="secondary"
+                                    containerStyle={styles.bookNowButton}
+                                    text={t('eventDetails.downloadReport')}
+                                    onPress={onDownloadReportPress}
+                                    disabled={isReportDownloading}
+                                    inProgress={isReportDownloading}
+                                />
+                            )}
                             <View style={styles.footerRow}>
                                 <Button
                                     type="secondary"
@@ -199,8 +213,8 @@ export const EventDetailsTab = ({
                                 containerStyle={styles.bookNowButton}
                                 text={t('eventDetails.cancel')}
                                 onPress={onCancelEventPress}
-                                disabled={isCancelEventDisabled}
-                                inProgress={isBookNowInProgress}
+                                disabled={isCancelEventDisabled || isCancelEventInProgress}
+                                inProgress={isCancelEventInProgress}
                             />
                         </>
                     ) : (
