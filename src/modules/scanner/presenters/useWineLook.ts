@@ -1,12 +1,13 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { IWineColorShade } from "@/entities/wine/types/IWineColorShade";
-import { wineModel } from "@/entities/wine/WineModel";
-import { wineService } from "@/entities/wine/WineService";
+import { wineService } from "@/entities/wine/services/WineService";
 import { toastService } from "@/libs/toast/toastService";
 import { localization } from "@/UIProvider/localization/Localization";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
+import { wineModel } from "@/entities/wine/models/WineModel";
 
 interface IUseWineLookArgs {
     t: (key: string, params?: Record<string, any> | undefined) => string;
@@ -134,13 +135,13 @@ export const useWineLook = ({t, styles}: IUseWineLookArgs) => {
         setShade(2);
     }, []);
 
-    const handleShadeAnimationEnd = useCallback(() => {
+    const onShadeAnimationEnd = useCallback(() => {
         if (!shouldResetShadeKey) return;
         setShadeSelectorKey(prev => prev + 1);
         setShouldResetShadeKey(false);
     }, [shouldResetShadeKey]);
 
-    const handlePressNext = useCallback(() => {
+    const onPressNext = useCallback(() => {
         if (!currentColor) return;
 
         if (wineModel.base?.typeOfWine.isSparkling) {
@@ -166,6 +167,6 @@ export const useWineLook = ({t, styles}: IUseWineLookArgs) => {
 
     return {
         data, selectedColor, perlage, setPerlage, mousse, setMousse, shade, setShade, isError, getColorsWithShades,
-        isLoading, onSelectColor, handlePressNext, appearance, setAppearance, shadeSelectorKey, handleShadeAnimationEnd, sliderDecorator, getSparklingSliderData, currentColor
+        isLoading, onSelectColor, onPressNext, appearance, setAppearance, shadeSelectorKey, onShadeAnimationEnd, sliderDecorator, getSparklingSliderData, currentColor
     };
 };

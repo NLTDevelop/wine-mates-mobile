@@ -1,6 +1,6 @@
 import { ReactNode, useMemo } from 'react';
 import { View } from 'react-native';
-import { Marker, MapMarkerProps } from 'react-native-maps';
+import { Marker, MapMarkerProps, LatLng } from 'react-native-maps';
 import { useUiContext } from '@/UIProvider';
 import { MapMarkerIcon } from '@assets/icons/MapMarkerIcon';
 import { PartyIcon } from '@assets/icons/PartyIcon';
@@ -9,10 +9,12 @@ import { EventType } from '@/entities/events/enums/EventType';
 import { useMapMarker } from './presenters/useMapMarker';
 import { getStyles } from './styles';
 
-interface IMapMarkerProps {
+interface IProps {
     onPress?: (id: number) => void;
     customIcon?: ReactNode;
-    markerProps: MapMarkerProps;
+    markerProps?: Partial<MapMarkerProps>;
+    coordinate?: LatLng;
+    cluster?: boolean;
     eventId: number;
     eventType?: EventType;
 }
@@ -21,16 +23,34 @@ export const MapMarker = ({
     onPress,
     customIcon,
     markerProps,
+    coordinate,
     eventId,
     eventType = EventType.Tastings,
-}: IMapMarkerProps) => {
+}: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { onPressHandler, isPartyEvent } = useMapMarker({ eventId, eventType, onPress });
+    const markerCoordinate = coordinate || markerProps?.coordinate;
+    const { onPressHandler, isPartyEvent } = useMapMarker({
+        eventId,
+        eventType,
+        onPress,
+        coordinate: markerCoordinate,
+        markerProps,
+    });
+
+    if (!markerCoordinate) {
+        return null;
+    }
 
     return (
-        <Marker {...markerProps} onPress={onPressHandler}>
+        <Marker
+            {...markerProps}
+            coordinate={markerCoordinate}
+            onPress={onPressHandler}
+            tracksViewChanges={markerProps?.tracksViewChanges}
+            identifier={`event-marker-${eventId}`}
+        >
             {customIcon ? (
                 customIcon
             ) : (

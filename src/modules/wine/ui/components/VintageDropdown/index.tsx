@@ -8,7 +8,7 @@ import { getStyles } from './styles';
 import { View } from 'react-native';
 import { StarIcon } from '@assets/icons/StartIcon';
 import { Typography } from '@/UIKit/Typography';
-import { RateMedal } from '@/modules/scanner/ui/components/RateMedal/ui';
+import { RateMedal } from '@/UIKit/RateMedal/ui';
 import { ShowLock } from '@/UIKit/ShowLock';
 import { TickIcon } from '@assets/icons/TickIcon';
 import { useUiContext } from '@/UIProvider';
@@ -24,18 +24,19 @@ interface IProps {
 }
 
 export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isAllVintagesSelected, onVintageChange }: IProps) => {
-    const { colors } = useUiContext();
+    const { colors, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const hasPremium = userModel.user?.hasPremium ?? false;
 
-    const { vintageData, existingYears, handleAddVintage, dropdownRef, onCloseDropdown, selectedValue } =
+    const { vintageData, existingYears, onAddVintage, dropdownRef, selectedValue } =
         useVintageDropdown({
             vintages,
             currentVintage,
             selectedVintage: typeof selectedVintage === 'number' ? selectedVintage : null,
             isAllVintagesSelected,
             onVintageChange,
+            locale,
         });
 
     const renderRatingInfo = useCallback((dropdownItem: IVintageDropdownItem) => {
@@ -76,21 +77,32 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isA
         );
     }, [hasPremium, styles]);
 
-    const renderVintageContent = (dropdownItem: IVintageDropdownItem) => {
+    const renderVintageContent = useCallback((dropdownItem: IVintageDropdownItem) => {
         return (
             <View style={styles.rateContainer}>
                 <Typography variant="subtitle_12_500" text={dropdownItem.label} />
                 {renderRatingInfo(dropdownItem)}
             </View>
         );
-    };
+    }, [renderRatingInfo, styles.rateContainer]);
 
-    const renderVintageItem = (dropdownItem: IVintageDropdownItem, selected?: boolean) => (
-        <View style={styles.dropdownItem}>
-            {renderVintageContent(dropdownItem)}
-            {selected ? <TickIcon /> : null}
-        </View>
-    );
+    const renderVintageItem = useCallback((dropdownItem: IVintageDropdownItem, selected?: boolean) => {
+        return (
+            <View style={styles.dropdownItem}>
+                {renderVintageContent(dropdownItem)}
+                {selected ? <TickIcon /> : null}
+            </View>
+        );
+    }, [renderVintageContent, styles.dropdownItem]);
+
+    const renderFooter = useCallback(() => {
+        return (
+            <CustomVintageFooter
+                existingYears={existingYears}
+                onAddVintage={onAddVintage}
+            />
+        );
+    }, [existingYears, onAddVintage]);
 
     return (
         <CustomDropdown
@@ -103,12 +115,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isA
             disabled={vintageData.length === 0}
             renderItem={renderVintageItem}
             renderSelectedValue={renderVintageContent}
-            renderFooter={() => (
-                <CustomVintageFooter
-                    existingYears={existingYears}
-                    onAddVintage={year => handleAddVintage(year, onCloseDropdown)}
-                />
-            )}
+            renderFooter={renderFooter}
         />
     );
 };

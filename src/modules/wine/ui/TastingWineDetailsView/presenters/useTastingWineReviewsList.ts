@@ -1,0 +1,98 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useCallback, useEffect, useState } from 'react';
+import { toastService } from '@/libs/toast/toastService';
+import { localization } from '@/UIProvider/localization/Localization';
+import { wineService } from '@/entities/wine/services/WineService';
+import { useIsFocused } from '@react-navigation/native';
+import { IWineReviewsListItem } from '@/entities/wine/types/IWineReviewsListItem';
+import { wineReviewsListModel } from '@/entities/wine/models/WineReviewsListModel';
+import { clearWineReviewsListModel } from '@/entities/wine/services/WineModelService';
+
+const LIMIT = 10;
+const OFFSET = 0;
+
+export const useTastingWineReviewsList = (
+    getDetails: (params?: { vintages?: 'All' }) => Promise<void>,
+    wineId?: number | null,
+    eventId?: number | null,
+    isAllVintagesSelected: boolean = false,
+    isPreloadedData: boolean = false,
+    myReview?: IWineReviewsListItem | null,
+) => {
+    const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+    const isFocused = useIsFocused();
+    const data = isPreloadedData && myReview ? [myReview] : (wineReviewsListModel.list?.rows || []);
+
+    const getList = useCallback(async (offset: number, targetWineId: number) => {
+        try {
+            setIsReviewsLoading(true);
+            const params = {
+                limit: LIMIT,
+                offset,
+                wineId: targetWineId,
+                ...(isAllVintagesSelected ? { vintages: 'All' as const } : {}),
+            };
+            const response = eventId
+                ? await wineService.getEventReviewsList({
+                    limit: LIMIT,
+                    offset,
+                    wineId: targetWineId,
+                    eventId,
+                })
+                : await wineService.getReviewsList(params);
+
+            if (response.isError) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    response.message || localization.t('common.somethingWentWrong'),
+                );
+            }
+        } catch(error) {
+            console.error('getList error: ', JSON.stringify(error, null, 2));
+        } finally {
+            setIsReviewsLoading(false);
+        }
+    }, [eventId, isAllVintagesSelected]);
+
+    const onRefresh = useCallback(
+        async (offset: number = OFFSET) => {
+            if (!wineId) return;
+            
+            if (isPreloadedData) {
+                await getDetails(isAllVintagesSelected ? { vintages: 'All' } : undefined);
+                return;
+            }
+            
+            await Promise.all([getDetails(isAllVintagesSelected ? { vintages: 'All' } : undefined), getList(offset, wineId)]);
+        },
+        [getList, getDetails, wineId, isAllVintagesSelected, isPreloadedData],
+    );
+
+    const onEndReached = useCallback(async () => {
+        if (isPreloadedData) {
+            return;
+        }
+        
+        const list = wineReviewsListModel.list;
+        if (!isReviewsLoading && list && list.count > list.rows.length && wineId) {
+            await getList(list.rows.length, wineId);
+        }
+    }, [isReviewsLoading, getList, wineId, isPreloadedData]);
+
+    useEffect(() => {
+        if (isPreloadedData) {
+            return;
+        }
+        
+        if (isFocused && wineId) {
+            clearWineReviewsListModel();
+            getList(OFFSET, wineId);
+        }
+    }, [isFocused, getList, wineId, isAllVintagesSelected, isPreloadedData]);
+
+    useEffect(() => {
+        return () => clearWineReviewsListModel();
+    }, []);
+
+    return { data, isReviewsLoading, onRefresh, onEndReached };
+};

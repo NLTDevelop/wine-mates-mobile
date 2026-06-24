@@ -13,7 +13,7 @@ const getAndroidNavigationInset = () => {
 };
 
 export const useBottomModalInsets = () => {
-    const { bottom } = useSafeAreaInsets();
+    const { top, bottom } = useSafeAreaInsets();
 
     const bottomInset = useMemo(() => {
         const initialBottomInset = initialWindowMetrics?.insets.bottom || 0;
@@ -23,6 +23,7 @@ export const useBottomModalInsets = () => {
     }, [bottom]);
 
     return {
+        topInset: top,
         bottomInset,
     };
 };

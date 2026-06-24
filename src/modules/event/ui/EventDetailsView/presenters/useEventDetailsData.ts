@@ -1,10 +1,45 @@
 import { IEventDetail } from '@/entities/events/types/IEvent';
+import { Linking } from 'react-native';
+import { TastingType } from '@/entities/events/enums/TastingType';
+import { EventType } from '@/entities/events/enums/EventType';
+import { Sex } from '@/entities/events/enums/Sex';
+import { ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
 import { useUiContext } from '@/UIProvider';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
+import { config } from '@/config';
+import { IEventDetailsPreviewData } from '../types/IEventDetailsPreviewData';
+import { useLocalizedLanguageOptions } from '@/libs/languagePicker/presenters/useLocalizedLanguageOptions';
+import { IEventContactOption } from '../types/IEventContactOption';
+import { getContactTitle, getContactType, getContactUrl } from '@/entities/contacts/presenters/useContactType';
+import { getRepeatRuleDescription } from '@/modules/event/utils/repeatRuleFormatter';
+import { prepareEventParticipantsPreview } from '@/modules/event/utils/prepareEventParticipantsPreview';
+import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
+import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDateTimeLabel';
+import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
+
+const STATIC_MAP_SIZE = '720x320';
+const STATIC_MAP_ZOOM = 14;
+const STATIC_MAP_LIGHT_STYLE_PARAMS = [
+    'style=element:geometry|color:0xf5f5f5',
+    'style=element:labels.icon|visibility:off',
+    'style=feature:road|element:geometry|color:0xffffff',
+    'style=feature:road.arterial|element:geometry|color:0xffffff',
+    'style=feature:water|element:geometry|color:0xc9e6ff',
+    'style=feature:poi|element:geometry|color:0xeeeeee',
+    'style=feature:landscape|element:geometry|color:0xf5f5f5',
+];
+
+interface IEventDetailWithPaymentMethods extends IEventDetail {
+    paymentMethods?: Array<{
+        name?: string;
+        isVisible?: boolean;
+    }>;
+}
 
 export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
     const { t, locale } = useUiContext();
     const { userLocation } = useLocationPermission();
+    const { languageOptions } = useLocalizedLanguageOptions();
 
     const getValueOrDash = (value?: string | number | null) => {
         if (value === null || value === undefined || value === '') {
@@ -33,7 +68,7 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
 
     const formatLocalizedTime = (value?: string) => {
         if (!value) {
-            return '';
+            return '-';
         }
 
         const [hours, minutes] = value.split(':');
@@ -54,15 +89,32 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         }
     };
 
-    const formatPrice = (price: number, currency?: string) => {
-        const symbolByCurrency: Record<string, string> = {
-            UAH: '₴',
-            USD: '$',
-            EUR: '€',
-        };
+    const formatSeats = (seats: IEventDetail['seats'], acceptedCount?: number) => {
+        if (typeof seats === 'number') {
+            return String(seats);
+        }
 
-        const symbol = symbolByCurrency[(currency || '').toUpperCase()] || '₴';
-        return `${symbol}${price}`;
+        if (!seats || typeof seats !== 'object') {
+            return '-';
+        }
+
+        const total = Number(seats.total);
+        const left = Number(seats.left);
+
+        if (!Number.isFinite(total)) {
+            return '-';
+        }
+
+        if (Number.isFinite(left)) {
+            const occupied = Math.max(0, total - left);
+            return `${occupied}/${total}`;
+        }
+
+        if (typeof acceptedCount === 'number') {
+            return `${acceptedCount}/${total}`;
+        }
+
+        return `0/${total}`;
     };
 
     const calculateDistanceKm = (
@@ -136,27 +188,113 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         return formatDistanceFallback(distance, distanceKm);
     };
 
-    const normalizeWineSetItem = (item: NonNullable<IEventDetail['wineSet']>[number]) => {
-        if (typeof item === 'string') {
-            return item;
+    const formatTastingType = (value?: TastingType) => {
+        if (!value) {
+            return '-';
         }
 
-        const directLabel = item.name || item.title || item.wineName;
-        if (directLabel) {
-            return directLabel;
+        if (value === TastingType.Blind) {
+            return t('event.tastingTypeBlind');
         }
 
-        const nestedLabel = item.wine?.name || item.wine?.title || item.wine?.wineName;
-        if (nestedLabel) {
-            return nestedLabel;
+        if (value === TastingType.Regular) {
+            return t('event.tastingTypeRegular');
         }
 
-        const id = item.wineId || item.id || item.wine?.id;
-        if (id) {
-            return `Wine #${id}`;
+        return '-';
+    };
+
+    const formatLanguage = (value?: string) => {
+        if (!value) {
+            return '-';
         }
 
-        return 'Wine';
+        const normalizedCode = value.trim().toLowerCase();
+        if (!normalizedCode) {
+            return '-';
+        }
+
+        const matchedLanguage = languageOptions.find(item => item.code === normalizedCode);
+        if (matchedLanguage) {
+            return matchedLanguage.name;
+        }
+
+        if (normalizedCode === 'uk') {
+            const matchedUkrainianAlias = languageOptions.find(item => item.code === 'ua');
+            if (matchedUkrainianAlias) {
+                return matchedUkrainianAlias.name;
+            }
+        }
+
+        return normalizedCode.toUpperCase();
+    };
+
+    const formatSex = (value?: Sex) => {
+        if (!value) {
+            return '-';
+        }
+
+        if (value === Sex.Men) {
+            return t('eventFilters.men');
+        }
+
+        if (value === Sex.Women) {
+            return t('eventFilters.women');
+        }
+
+        return t('eventFilters.all');
+    };
+
+    const formatAge = (minAge?: number, maxAge?: number) => {
+        if (typeof minAge !== 'number' || typeof maxAge !== 'number') {
+            return '-';
+        }
+
+        return `${minAge}-${maxAge}`;
+    };
+
+    const formatParticipationCondition = (value?: ParticipationCondition) => {
+        if (!value) {
+            return '-';
+        }
+
+        if (value === ParticipationCondition.FixedPrice) {
+            return t('event.participationConditionFixedPrice');
+        }
+
+        if (value === ParticipationCondition.SplitBill) {
+            return t('event.participationConditionSplitBill');
+        }
+
+        if (value === ParticipationCondition.Free) {
+            return t('event.participationConditionFree');
+        }
+
+        if (value === ParticipationCondition.Charity) {
+            return t('event.participationConditionCharity');
+        }
+
+        if (value === ParticipationCondition.Host) {
+            return t('event.participationConditionHost');
+        }
+
+        return t('event.participationConditionGuest');
+    };
+
+    const formatPaymentMethods = (value?: IEventDetailWithPaymentMethods['paymentMethods']) => {
+        if (!Array.isArray(value) || value.length === 0) {
+            return '-';
+        }
+
+        const paymentMethodNames = value
+            .filter(item => item?.isVisible !== false && !!item?.name?.trim())
+            .map(item => item.name?.trim() || '');
+
+        if (paymentMethodNames.length === 0) {
+            return '-';
+        }
+
+        return paymentMethodNames.join(', ');
     };
 
     const detailsData = (() => {
@@ -164,28 +302,99 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return [];
         }
 
-        const dateValue = eventDetail.eventDate || eventDetail.date;
-        const timeStartValue = eventDetail.eventTime || eventDetail.startTime;
-        const timeEndValue = eventDetail.endTime;
-        const formattedTimeStart = formatLocalizedTime(timeStartValue);
-        const formattedTimeEnd = formatLocalizedTime(timeEndValue);
-        const formattedTime = formattedTimeStart && formattedTimeEnd
-            ? `${formattedTimeStart} - ${formattedTimeEnd}`
-            : formattedTimeStart || '-';
-
         const confirmationValue = eventDetail.requiresConfirmation
             ? t('eventDetails.confirmationRequired')
             : t('eventDetails.noConfirmation');
+        const repeatDetails = eventDetail.repeatRule
+            ? [
+                  {
+                      key: 'repeatRule',
+                      label: t('repeatEvent.repetition'),
+                      value: getRepeatRuleDescription(eventDetail.repeatRule),
+                  },
+              ]
+            : [];
+        const paymentMethodsValue = formatPaymentMethods(
+            (eventDetail as IEventDetailWithPaymentMethods).paymentMethods,
+        );
+        const paymentMethodsDetails =
+            paymentMethodsValue !== '-'
+                ? [{ key: 'paymentMethods', label: t('payments.paymentsMethods'), value: paymentMethodsValue }]
+                : [];
+
+        const partyDetails =
+            eventDetail.eventType === EventType.Parties
+                ? [
+                      { key: 'sex', label: t('eventDetails.sex'), value: formatSex(eventDetail.sex) },
+                      {
+                          key: 'age',
+                          label: t('eventDetails.age'),
+                          value: formatAge(eventDetail.minAge, eventDetail.maxAge),
+                      },
+                      {
+                          key: 'participationCondition',
+                          label: t('eventDetails.participationCondition'),
+                          value: formatParticipationCondition(eventDetail.participationCondition),
+                      },
+                  ]
+                : [];
+        const startDateTime = convertUtcEventDateTimeToLocal(
+            eventDetail.eventStartDate || eventDetail.eventDate || eventDetail.date || '',
+            eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '',
+        );
+        const endDateTime = convertUtcEventDateTimeToLocal(
+            eventDetail.eventEndDate || eventDetail.eventDate || eventDetail.date || '',
+            eventDetail.eventEndTime || eventDetail.endTime || '',
+        );
 
         return [
             { key: 'theme', label: t('eventDetails.theme'), value: getValueOrDash(eventDetail.theme) },
-            { key: 'description', label: t('eventDetails.description'), value: getValueOrDash(eventDetail.description) },
-            { key: 'restaurant', label: t('eventDetails.restaurant'), value: getValueOrDash(eventDetail.restaurantName || eventDetail.restaurant) },
-            { key: 'location', label: t('eventDetails.location'), value: getValueOrDash(eventDetail.locationLabel || eventDetail.location) },
-            { key: 'date', label: t('eventDetails.date'), value: formatLocalizedDate(dateValue) },
-            { key: 'time', label: t('eventDetails.time'), value: formattedTime },
-            { key: 'price', label: t('eventDetails.price'), value: formatPrice(eventDetail.price, eventDetail.currency) },
-            { key: 'speaker', label: t('eventDetails.speaker'), value: getValueOrDash(eventDetail.speakerName || eventDetail.speaker) },
+            {
+                key: 'description',
+                label: t('eventDetails.description'),
+                value: getValueOrDash(eventDetail.description),
+            },
+            {
+                key: 'restaurant',
+                label: t('eventDetails.meetingPlaceName'),
+                value: getValueOrDash(eventDetail.restaurantName || eventDetail.restaurant),
+            },
+            {
+                key: 'location',
+                label: t('eventDetails.location'),
+                value: getValueOrDash(eventDetail.locationLabel || eventDetail.location),
+            },
+            {
+                key: 'eventStartDate',
+                label: t('eventDetails.startDate'),
+                value: formatLocalizedDate(startDateTime.date),
+            },
+            {
+                key: 'eventEndDate',
+                label: t('eventDetails.endDate'),
+                value: formatLocalizedDate(endDateTime.date),
+            },
+            {
+                key: 'eventStartTime',
+                label: t('eventDetails.startTime'),
+                value: formatLocalizedTime(startDateTime.time),
+            },
+            {
+                key: 'eventEndTime',
+                label: t('eventDetails.endTime'),
+                value: formatLocalizedTime(endDateTime.time),
+            },
+            { key: 'tastingType', label: t('event.tastingType'), value: formatTastingType(eventDetail.tastingType) },
+            {
+                key: 'price',
+                label: t('eventDetails.price'),
+                value: formatEventPrice(eventDetail.price, eventDetail.currency),
+            },
+            {
+                key: 'speaker',
+                label: t('eventDetails.speaker'),
+                value: getValueOrDash(eventDetail.speakerName || eventDetail.speaker),
+            },
             {
                 key: 'distance',
                 label: t('eventDetails.distance'),
@@ -196,9 +405,16 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                     eventDetail.longitude,
                 ),
             },
-            { key: 'language', label: t('eventDetails.language'), value: getValueOrDash((eventDetail.language || '').toUpperCase()) },
-            { key: 'seats', label: t('eventDetails.seats'), value: getValueOrDash(eventDetail.seats) },
+            { key: 'language', label: t('eventDetails.language'), value: formatLanguage(eventDetail.language) },
+            {
+                key: 'seats',
+                label: t('eventDetails.seats'),
+                value: formatSeats(eventDetail.seats, eventDetail.acceptedCount),
+            },
+            ...paymentMethodsDetails,
             { key: 'confirmation', label: t('eventDetails.confirmationAvailability'), value: confirmationValue },
+            ...repeatDetails,
+            ...partyDetails,
         ];
     })();
 
@@ -207,8 +423,108 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
             return [];
         }
 
-        return eventDetail.wineSet.map(normalizeWineSetItem);
+        return eventDetail.wineSet;
     })();
 
-    return { detailsData, wineSetItems };
+    const contactItems = (() => {
+        if (!eventDetail?.contacts?.length) {
+            return [];
+        }
+
+        return eventDetail.contacts
+            .map<IEventContactOption | null>(item => {
+                const contactType = getContactType(item.name, item.value);
+                if (contactType === 'phone') {
+                    return null;
+                }
+
+                const contactUrl = getContactUrl(item.value, contactType);
+
+                return {
+                    id: item.id,
+                    type: contactType,
+                    title: getContactTitle(item.name, item.value, contactType),
+                    onPress: () => {
+                        Linking.openURL(contactUrl);
+                    },
+                };
+            })
+            .filter((item): item is IEventContactOption => item !== null);
+    })();
+
+    const cardPreviewData = (() => {
+        if (!eventDetail) {
+            return null;
+        }
+
+        const rawPreviewStartDate = eventDetail.eventStartDate || eventDetail.eventDate || '';
+        const rawPreviewStartTime = eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '';
+        const rawPreviewEndDate = eventDetail.eventEndDate || eventDetail.eventDate || '';
+        const rawPreviewEndTime = eventDetail.eventEndTime || eventDetail.endTime || '';
+        const previewStartDateTime = convertUtcEventDateTimeToLocal(rawPreviewStartDate, rawPreviewStartTime);
+        const previewEndDateTime = convertUtcEventDateTimeToLocal(rawPreviewEndDate, rawPreviewEndTime);
+        const previewDate = previewStartDateTime.date;
+        const parsedDate = previewDate ? new Date(`${previewDate}T00:00:00`) : null;
+        const parsedEndDate = previewEndDateTime.date ? new Date(`${previewEndDateTime.date}T00:00:00`) : null;
+        const isDateValid = parsedDate && !Number.isNaN(parsedDate.getTime());
+        const isEndDateValid = parsedEndDate && !Number.isNaN(parsedEndDate.getTime());
+        const month = isDateValid
+            ? new Intl.DateTimeFormat(locale || 'en', { month: 'short' })
+                  .format(parsedDate)
+                  .replace('.', '')
+                  .toUpperCase()
+            : '';
+        const day = isDateValid ? new Intl.DateTimeFormat(locale || 'en', { day: 'numeric' }).format(parsedDate) : '';
+
+        const formattedDateTime = prepareEventDateTimeLabel({
+            date: isDateValid ? parsedDate : null,
+            time: previewStartDateTime.time,
+            endDate: isEndDateValid ? parsedEndDate : null,
+            endTime: previewEndDateTime.time,
+            locale,
+        });
+
+        const priceLabel = formatEventPrice(eventDetail.price || 0, eventDetail.currency);
+
+        const eventTypeLabel = eventDetail.eventType === EventType.Parties ? t('event.parties') : t('event.tastings');
+        const isPartyEvent = eventDetail.eventType === EventType.Parties;
+
+        const mapPreviewUri = (() => {
+            const params = [
+                `center=${eventDetail.latitude},${eventDetail.longitude}`,
+                `zoom=${STATIC_MAP_ZOOM}`,
+                `size=${STATIC_MAP_SIZE}`,
+                'maptype=roadmap',
+                `markers=color:red|${eventDetail.latitude},${eventDetail.longitude}`,
+                ...STATIC_MAP_LIGHT_STYLE_PARAMS,
+            ];
+
+            if (config.googlePlacesApiKey) {
+                params.push(`key=${config.googlePlacesApiKey}`);
+            }
+
+            return `https://maps.googleapis.com/maps/api/staticmap?${params.join('&')}`;
+        })();
+
+        const previewData: IEventDetailsPreviewData = {
+            month,
+            day,
+            formattedDateTime,
+            priceLabel,
+            eventTypeLabel,
+            isPartyEvent,
+            mapPreviewUri,
+            title: eventDetail.theme || '-',
+            meetingPlaceName: eventDetail.restaurantName || eventDetail.restaurant || '',
+            locationLabel: eventDetail.locationLabel || eventDetail.location || '',
+            latitude: eventDetail.latitude,
+            longitude: eventDetail.longitude,
+            tastingTypeLabel: isPartyEvent ? '' : formatTastingType(eventDetail.tastingType),
+            participantsPreviewData: prepareEventParticipantsPreview(eventDetail.participants, locale),
+        };
+
+        return previewData;
+    })();
+
+    return { detailsData, wineSetItems, contactItems, cardPreviewData };
 };

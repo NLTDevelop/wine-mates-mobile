@@ -18,7 +18,7 @@ export const ScannerView = () => {
     const styles = useMemo(() => getStyles(colors, top, bottom), [colors, top, bottom]);
     const isFocused = useIsFocused();
 
-    const { appState, torch, setTorch, handleGalleryPress, handleTakePhotoPress, handleCrossPress, handleCreatePress, cameraRef,
+    const { appState, torch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress, cameraRef,
         device, hasPermission } = useScanner();
     const torchMode = isFocused && appState === 'active' ? torch : 'off';
 
@@ -35,11 +35,11 @@ export const ScannerView = () => {
                         style={StyleSheet.absoluteFill}
                     />
                     <View style={styles.topBar}>
-                        <TouchableOpacity onPress={handleCrossPress} style={styles.button}>
+                        <TouchableOpacity onPress={onCrossPress} style={styles.button}>
                             <CrossIcon color={colors.icon} width={20} height={20} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => setTorch(torch === 'on' ? 'off' : 'on')} style={styles.button}>
+                        <TouchableOpacity onPress={onTorchPress} style={styles.button}>
                             {torch === 'on' ? (
                                 <FlashActiveIcon color={colors.icon} width={20} height={20} />
                             ) : (
@@ -48,15 +48,15 @@ export const ScannerView = () => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.bottomBar}>
-                        <TouchableOpacity onPress={handleGalleryPress} style={styles.bottomButtons}>
+                        <TouchableOpacity onPress={onGalleryPress} style={styles.bottomButtons}>
                             <GalleryIcon color={colors.icon} width={24} height={24} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={handleTakePhotoPress} style={styles.mainShotButton}>
+                        <TouchableOpacity onPress={onTakePhotoPress} style={styles.mainShotButton}>
                             <View style={styles.mainShotInner} />
                         </TouchableOpacity>
                       
-                        <TouchableOpacity onPress={handleCreatePress} style={styles.bottomButtons}>
+                        <TouchableOpacity onPress={onCreatePress} style={styles.bottomButtons}>
                             <AddFileIcon color={colors.icon} width={24} height={24} />
                         </TouchableOpacity>
                     </View>

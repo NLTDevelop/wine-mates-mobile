@@ -1,0 +1,71 @@
+import { StyleSheet } from 'react-native';
+import { IColors } from '@/UIProvider/theme/IColors';
+import { scaleHorizontal, scaleVertical } from '@/utils';
+
+export const getStyles = (colors: IColors) => {
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+        },
+        stateContainer: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        contentContainer: {
+            paddingBottom: scaleVertical(16),
+            gap: scaleVertical(16),
+        },
+        card: {
+            borderRadius: 12,
+            borderWidth: scaleHorizontal(1),
+            borderColor: colors.border,
+            padding: scaleHorizontal(16),
+            gap: scaleVertical(12),
+        },
+        rowDivider: {
+            height: scaleVertical(1),
+            backgroundColor: colors.border_light,
+            marginTop: scaleVertical(10),
+        },
+        label: {
+            color: colors.text_light,
+        },
+        value: {
+            color: colors.text,
+        },
+        wineSetListContainer: {
+            borderWidth: scaleHorizontal(1),
+            borderColor: colors.border,
+            borderRadius: 12,
+            paddingVertical: scaleVertical(12),
+            paddingHorizontal: scaleHorizontal(16),
+        },
+        wineSetItemSeparator: {
+            height: scaleVertical(10),
+        },
+        contactsSection: {
+            gap: scaleVertical(12),
+        },
+        contactsTitle: {
+            color: colors.text,
+        },
+        contactItemSeparator: {
+            height: scaleVertical(12),
+        },
+        footer: {
+            paddingVertical: scaleVertical(16),
+            backgroundColor: colors.background,
+            gap: scaleVertical(16),
+        },
+        footerRow: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(12),
+        },
+        bookNowButton: {
+            flex: 1,
+        },
+    });
+
+    return styles;
+};

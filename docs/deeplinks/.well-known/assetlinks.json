@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.winemates",
+      "sha256_cert_fingerprints": [
+        "B3:48:3F:BE:A1:62:C7:46:07:90:E1:F6:DC:89:37:54:D9:98:3E:D0:FA:D3:F1:EC:0D:84:3D:DE:F7:A7:AC:F1",
+        "FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C"
+      ]
+    }
+  }
+]

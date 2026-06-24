@@ -2,31 +2,37 @@ import { useMemo } from 'react';
 import { FlatList, ListRenderItem } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
-import { WineEventListItem } from '@/modules/event/ui/EventMapView/components/WineEventListItem';
+import { EventCard } from '@/UIKit/EventCard';
 import { IEvent } from '@/entities/events/types/IEvent';
 
-interface IWineEventListProps {
+interface IProps {
     events: IEvent[];
     selectedEventId: number | null;
     onReadMorePress: (eventId: number) => void;
     onFavoritePress: (eventId: number) => void;
+    onEditPress: (eventId: number) => void;
+    onCardPress: (eventId: number) => void;
 }
 
 export const WineEventList = ({
     events,
     selectedEventId,
     onReadMorePress,
-    onFavoritePress
-}: IWineEventListProps) => {
+    onFavoritePress,
+    onEditPress,
+    onCardPress,
+}: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const renderItem: ListRenderItem<IEvent> = ({ item }) => (
-        <WineEventListItem
+        <EventCard
             event={item}
             isSelected={selectedEventId === item.id}
             onReadMorePress={onReadMorePress}
             onFavoritePress={onFavoritePress}
+            onEditPress={onEditPress}
+            onCardPress={onCardPress}
         />
     );
 

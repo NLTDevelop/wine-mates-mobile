@@ -1,4 +1,4 @@
-import { WineExperienceLevelEnum } from "../enums/WineExperienceLevelEnum";
+import { WineExperienceLevelEnum } from '../enums/WineExperienceLevelEnum';
 
 export interface IAvatar {
     name: string;
@@ -30,4 +30,6 @@ export interface IUser {
     wineExperienceLevel: WineExperienceLevelEnum;
     isConfirmed: true;
     hasPremium: boolean;
+    selectedCurrency: string | null;
+    language?: string;
 }

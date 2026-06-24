@@ -1,0 +1,22 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": [
+          "4233RP9762.com.nltdev.winemates.dev"
+        ],
+        "components": [
+          {
+            "/": "/event/*",
+            "comment": "WineMates event details links"
+          },
+          {
+            "/": "/wineDetails/*",
+            "comment": "WineMates wine details links"
+          }
+        ]
+      }
+    ]
+  }
+}

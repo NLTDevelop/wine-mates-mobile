@@ -3,12 +3,13 @@ import { ActivityIndicator, View, ViewStyle, TouchableOpacity, TextStyle, Toucha
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { Typography } from '@/UIKit/Typography';
+import { ButtonType } from './types/ButtonType';
 
 interface IProps extends TouchableOpacityProps {
     containerStyle?: ViewStyle | ViewStyle[];
     textStyle?: TextStyle;
     text: string;
-    type?: 'main' | 'secondary' | 'auth' | 'light' | 'disabled';
+    type?: ButtonType;
     RightAccessory?: React.ReactNode;
     LeftAccessory?: React.ReactNode;
     inProgress?: boolean;

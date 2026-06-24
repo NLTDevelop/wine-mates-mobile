@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleHorizontal, scaleVertical, size } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors, bottomInset: number) => {
     const styles = StyleSheet.create({
@@ -10,14 +10,27 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
         },
         backdrop: {
             ...StyleSheet.absoluteFill,
-            backgroundColor: colors.text,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
         },
-        contentContainer: {
+        keyboardBackground: {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: colors.background,
+        },
+        modalContent: {
             backgroundColor: colors.background,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            maxHeight: size.height * 0.9,
             overflow: 'hidden',
+        },
+        container: {
+            overflow: 'hidden',
+        },
+        fullScreenContainer: {
+            flex: 1,
+            minHeight: 0,
         },
         header: {
             flexDirection: 'row',
@@ -25,7 +38,6 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
             justifyContent: 'flex-end',
             paddingHorizontal: scaleHorizontal(16),
             paddingTop: scaleVertical(16),
-            minHeight: scaleVertical(56),
             position: 'relative',
         },
         titleContainer: {
@@ -43,19 +55,19 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
             alignItems: 'center',
             justifyContent: 'center',
         },
-        closeIcon: {
-            color: colors.text,
-        },
         title: {
             textAlign: 'center',
             color: colors.text,
         },
-        scrollView: {
-        },
-        scrollContent: {
-            padding: scaleHorizontal(16),
+        contentContainer: {
+            paddingHorizontal: scaleHorizontal(16),
             paddingBottom: bottomInset + scaleVertical(16),
         },
+        fullScreenContentContainer: {
+            flex: 1,
+            minHeight: 0,
+        },
     });
+
     return styles;
 };

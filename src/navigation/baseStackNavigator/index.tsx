@@ -17,13 +17,31 @@ import { WineTasteView } from '@/modules/scanner/ui/WineTasteView';
 import { WineTasteCharacteristicsView } from '@/modules/scanner/ui/WineTasteCharacteristicsView';
 import { WineReviewView } from '@/modules/scanner/ui/WineReviewView';
 import { WineReviewResultView } from '@/modules/scanner/ui/WineReviewResultView';
+import { TastingWineLookView } from '@/modules/tastings/ui/TastingWineLookView';
+import { TastingWineSmellView } from '@/modules/tastings/ui/TastingWineSmellView';
+import { TastingWineTasteView } from '@/modules/tastings/ui/TastingWineTasteView';
+import { TastingWineTasteCharacteristicsView } from '@/modules/tastings/ui/TastingWineTasteCharacteristicsView';
+import { TastingWineReviewView } from '@/modules/tastings/ui/TastingWineReviewView';
+import { TastingWineReviewResultView } from '@/modules/tastings/ui/TastingWineReviewResultView';
 import { SavedWinesView } from '@/modules/wine/ui/SavedWinesView';
 import { FavoriteWineListView } from '@/modules/wine/ui/FavoriteWineListView';
 import { WineDetailsView } from '@/modules/wine/ui/WineDetailsView';
+import { TastingWineDetailsView } from '@/modules/wine/ui/TastingWineDetailsView';
 import { DeleteAccountView } from '@/modules/settings/ui/DeleteAccountView';
 import { ProfileDetailsView } from '@/modules/profile/ui/ProfileDetailsView';
 import { EditProfileDetailsView } from '@/modules/profile/ui/EditProfileDetailsView';
 import { AvatarCameraView } from '@/UIKit/AvatarPicker/ui/AvatarCameraView';
+import { AddEventView } from '@/modules/event/ui/AddEventView';
+import { AddWineSetView } from '@/modules/event/ui/AddWineSetView';
+import { EditEventWineView } from '@/modules/event/ui/EditEventWineView';
+import { LocationPickerView } from '@/modules/event/ui/LocationPickerView';
+import { EventListView } from '@/modules/event/ui/EventListView';
+import { EventDetailsView } from '@/modules/event/ui/EventDetailsView';
+import { PaymentsView } from '@/modules/payments/ui/PaymentsView';
+import { ContactInfoView } from '@/modules/contactInfo/ui/ContactInfoView';
+import { CreatePaymentView } from '@/modules/payments/ui/CreatePaymentView';
+import { ChooseWineFiltersView } from '@/modules/chooseWine/ui/ChooseWineFiltersView';
+import { ChooseWineResultsView } from '@/modules/chooseWine/ui/ChooseWineResultsView';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,8 +58,13 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="RegistrationView" component={RegistrationView} />
             <Stack.Screen name="PersonalDetailsView" component={PersonalDetailsView} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            <Stack.Screen name="AddEventView" component={AddEventView} />
+            <Stack.Screen name="AddWineSetView" component={AddWineSetView} />
+            <Stack.Screen name="EditEventWineView" component={EditEventWineView} />
+            <Stack.Screen name="LocationPickerView" component={LocationPickerView} />
             <Stack.Screen name="CreatePasswordView" component={CreatePasswordView} />
             <Stack.Screen name="WineDetailsView" component={WineDetailsView} />
+            <Stack.Screen name="TastingWineDetailsView" component={TastingWineDetailsView} />
             <Stack.Screen name="WineLookView" component={WineLookView} options={{ gestureEnabled: false }} />
             <Stack.Screen name="WineSmellView" component={WineSmellView} />
             <Stack.Screen name="WineTasteView" component={WineTasteView} />
@@ -52,12 +75,29 @@ export const MainStackNavigator = observer(() => {
             />
             <Stack.Screen name="WineReviewView" component={WineReviewView} options={{ gestureEnabled: false }} />
             <Stack.Screen name="WineReviewResultView" component={WineReviewResultView} />
+            <Stack.Screen name="TastingWineLookView" component={TastingWineLookView} options={{ gestureEnabled: false }} />
+            <Stack.Screen name="TastingWineSmellView" component={TastingWineSmellView} />
+            <Stack.Screen name="TastingWineTasteView" component={TastingWineTasteView} />
+            <Stack.Screen
+                name="TastingWineTasteCharacteristicsView"
+                component={TastingWineTasteCharacteristicsView}
+                options={{ gestureEnabled: false }}
+            />
+            <Stack.Screen name="TastingWineReviewView" component={TastingWineReviewView} options={{ gestureEnabled: false }} />
+            <Stack.Screen name="TastingWineReviewResultView" component={TastingWineReviewResultView} />
             <Stack.Screen name="SavedWinesView" component={SavedWinesView} />
             <Stack.Screen name="FavoriteWineListView" component={FavoriteWineListView} />
             <Stack.Screen name="DeleteAccountView" component={DeleteAccountView} />
             <Stack.Screen name="ProfileDetailsView" component={ProfileDetailsView} />
             <Stack.Screen name="EditProfileDetailsView" component={EditProfileDetailsView} />
             <Stack.Screen name="AvatarCameraView" component={AvatarCameraView} />
+            <Stack.Screen name="EventListView" component={EventListView} />
+            <Stack.Screen name="EventDetailsView" component={EventDetailsView} />
+            <Stack.Screen name="PaymentsView" component={PaymentsView} />
+            <Stack.Screen name="CreatePaymentView" component={CreatePaymentView} />
+            <Stack.Screen name="ContactInfoView" component={ContactInfoView} />
+            <Stack.Screen name="ChooseWineFiltersView" component={ChooseWineFiltersView} options={{ gestureEnabled: false }}/>
+            <Stack.Screen name="ChooseWineResultsView" component={ChooseWineResultsView} />
         </Stack.Navigator>
     );
 });

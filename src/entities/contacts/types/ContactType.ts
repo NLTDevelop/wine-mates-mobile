@@ -1,0 +1,15 @@
+export type ContactType =
+    | 'instagram'
+    | 'telegram'
+    | 'facebook'
+    | 'discord'
+    | 'reddit'
+    | 'pinterest'
+    | 'whatsapp'
+    | 'tiktok'
+    | 'threads'
+    | 'x'
+    | 'linkedin'
+    | 'snapchat'
+    | 'website'
+    | 'phone';

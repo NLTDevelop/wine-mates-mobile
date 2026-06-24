@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
+import { scaleHorizontal } from '@/utils';
 
 export const getStyles = (_colors: IColors) => {
 
@@ -14,6 +15,13 @@ export const getStyles = (_colors: IColors) => {
             right: 0,
             bottom: 0,
             left: 0,
+        },
+        clusterContainer: {
+            width: scaleHorizontal(50),
+            height: scaleHorizontal(50),
+            borderRadius: scaleHorizontal(25),
+            alignItems: 'center',
+            justifyContent: 'center',
         },
     });
 

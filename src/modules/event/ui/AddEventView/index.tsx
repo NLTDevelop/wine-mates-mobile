@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { View, TouchableOpacity, Keyboard } from 'react-native';
+import { View } from 'react-native';
+import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -7,15 +8,28 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { Button } from '@/UIKit/Button';
 import { Typography } from '@/UIKit/Typography';
-import { useAddEvent } from '../../presenters/useAddEvent';
-import { MapLocationIcon } from '@assets/icons/MapLocationIcon';
-import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
-import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
-import { DateTimePickerModal } from './components/DateTimePickerModal';
-import { useDateTimePicker } from './components/DateTimePickerModal/presenters/useDateTimePicker';
-import { useEventDateTimeFormatter } from '../../presenters/useEventDateTimeFormatter';
-import { useEventTypeLabel } from '../../presenters/useEventTypeLabel';
-import { EventTypePickerModal } from './components/EventTypePickerModal';
+import { useAddEvent } from './presenters/useAddEvent';
+import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
+import { useDateTimePicker } from './presenters/useDateTimePicker';
+import { useEventTypeModal } from './presenters/useEventTypeModal';
+import { useSexModal } from './presenters/useSexModal';
+import { useParticipationConditionModal } from './presenters/useParticipationConditionModal';
+import { useConfirmationRequiredModal } from './presenters/useConfirmationRequiredModal';
+import { usePaymentMethodsModal } from './presenters/usePaymentMethodsModal';
+import { useContactInfoModal } from './presenters/useContactInfoModal';
+import { useEventDateTimeFormatter } from './presenters/useEventDateTimeFormatter';
+import { useEventDateRangeFormatter } from './presenters/useEventDateRangeFormatter';
+import { useEventTypeLabel } from './presenters/useEventTypeLabel';
+import { PickerButton } from '@/UIKit/PickerButton';
+import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
+import { PaymentMethodsPickerModal } from './components/PaymentMethodsPickerModal';
+import { ContactInfoPickerModal } from './components/ContactInfoPickerModal';
+import { CalendarModal } from '@/UIKit/CalendarModal';
+import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
+import { RangeSlider } from '@/UIKit/RangeSlider';
+import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
+import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCurrencyPickerModal';
+import { useKeyboardStickyLayout } from '@/hooks/useKeyboardStickyLayout';
 
 export const AddEventView = () => {
     const { colors, t } = useUiContext();
@@ -23,171 +37,481 @@ export const AddEventView = () => {
 
     const {
         form,
+        headerTitleKey,
         isLoading,
-        isEventTypeModalVisible,
+        isPaymentMethodsLoading,
+        isContactInfoLoading,
+        isPartyEventType,
+        paymentMethods,
+        contacts,
+        currencies,
+        isPaymentMethodsDisabled,
+        isCurrencyDisabled,
+        isPriceFieldAvailable,
+        isSeatsError,
         disabled,
         onChangeTheme,
         onChangeDescription,
         onChangeRestaurantName,
         onChangeSpeakerName,
-        onDateSelect,
-        onTimeSelect,
-        onChangePhoneNumber,
+        onDateRangeSelect,
+        onStartTimeSelect,
+        onEndTimeSelect,
         onChangePrice,
         onChangeLanguage,
         onChangeSeats,
-        onOpenEventTypeModal,
-        onCloseEventTypeModal,
-        onSelectEventType,
+        onAgeRangeChange,
+        onChangeEventType,
+        onChangeSex,
+        onChangeParticipationCondition,
+        onChangeCurrency,
+        onChangeRequiresConfirmation,
+        onChangePaymentMethodIds,
+        onChangeContactInfoIds,
         onLocationPress,
+        onOpenPaymentsPress,
+        onOpenContactsPress,
         onSubmit,
     } = useAddEvent();
 
     const {
-        isVisible,
+        isCalendarVisible,
+        isTimePickerVisible,
+        isStartTimePickerDisabled,
+        isEndTimePickerDisabled,
+        currentMonth,
+        markedDates,
+        calendarMinDate,
+        calendarMaxDate,
+        calendarTitle,
+        timePickerTitle,
         mode,
         pickerDate,
-        openDatePicker,
-        openTimePicker,
-        onClose,
+        minimumDate,
+        openDateRangePicker,
+        openStartTimePicker,
+        openEndTimePicker,
+        onCloseCalendar,
+        onCloseTimePicker,
+        onConfirmCalendar,
         onConfirm,
         onDateChange,
-    } = useDateTimePicker({ onDateSelect, onTimeSelect });
-
-    const { formattedDate, formattedTime } = useEventDateTimeFormatter({
-        eventDate: form.eventDate,
-        eventTime: form.eventTime,
+        onDayPress,
+        onMonthChange,
+    } = useDateTimePicker({
+        onDateRangeSelect,
+        onStartTimeSelect,
+        onEndTimeSelect,
+        selectedEventStartDate: form.eventStartDate,
+        selectedEventEndDate: form.eventEndDate,
+        selectedEventStartTime: form.eventStartTime,
+        selectedEventEndTime: form.eventEndTime,
+        t,
     });
+
+    const { formattedValue: formattedEventDateRange } = useEventDateRangeFormatter({
+        startDate: form.eventStartDate,
+        endDate: form.eventEndDate,
+        t,
+    });
+    const { formattedValue: formattedStartTime } = useEventDateTimeFormatter({
+        value: form.eventStartTime,
+        mode: 'time',
+    });
+    const { formattedValue: formattedEndTime } = useEventDateTimeFormatter({ value: form.eventEndTime, mode: 'time' });
     const eventTypeLabel = useEventTypeLabel({ eventType: form.eventType, t });
+
+    const {
+        isVisible: isEventTypeModalVisible,
+        title: eventTypeModalTitle,
+        items: eventTypeItems,
+        onOpen: onOpenEventTypeModal,
+        onClose: onCloseEventTypeModal,
+        onConfirm: onConfirmEventType,
+    } = useEventTypeModal({
+        value: form.eventType,
+        onChange: onChangeEventType,
+    });
+
+    const {
+        isVisible: isSexModalVisible,
+        title: sexModalTitle,
+        selectedText: selectedSexText,
+        items: sexItems,
+        onOpen: onOpenSexModal,
+        onClose: onCloseSexModal,
+        onConfirm: onConfirmSex,
+    } = useSexModal({
+        value: form.sex,
+        onChange: onChangeSex,
+    });
+
+    const {
+        isVisible: isParticipationConditionModalVisible,
+        title: participationConditionModalTitle,
+        items: participationConditionItems,
+        selectedText: selectedParticipationConditionText,
+        onOpen: onOpenParticipationConditionModal,
+        onClose: onCloseParticipationConditionModal,
+        onConfirm: onConfirmParticipationCondition,
+        priceInputHelperText,
+    } = useParticipationConditionModal({
+        value: form.participationCondition,
+        onChange: onChangeParticipationCondition,
+    });
+
+    const {
+        isVisible: isConfirmationRequiredModalVisible,
+        title: confirmationRequiredModalTitle,
+        items: confirmationRequiredItems,
+        selectedText: selectedConfirmationRequiredText,
+        onOpen: onOpenConfirmationRequiredModal,
+        onClose: onCloseConfirmationRequiredModal,
+        onConfirm: onConfirmConfirmationRequired,
+    } = useConfirmationRequiredModal({
+        value: form.requiresConfirmation,
+        onChange: onChangeRequiresConfirmation,
+    });
+
+    const isCurrencyPickerDisabled = isCurrencyDisabled || !currencies.length;
+    const { scrollBottomOffset, extraKeyboardSpace, stickyOpenedOffset, onStickyLayout } = useKeyboardStickyLayout();
+
+    const currencyPicker = useCurrencyPickerModal({
+        value: form.currency,
+        currencies,
+        onChange: onChangeCurrency,
+        isDisabled: isCurrencyPickerDisabled,
+    });
+
+    const {
+        isVisible: isPaymentMethodsModalVisible,
+        options: paymentMethodOptions,
+        selectedText: selectedPaymentMethodsText,
+        onOpen: onOpenPaymentMethodsModal,
+        onClose: onClosePaymentMethodsModal,
+        onConfirm: onConfirmPaymentMethods,
+        onOpenPayments: onOpenPaymentsFromModal,
+    } = usePaymentMethodsModal({
+        value: form.paymentMethodIds,
+        paymentMethods,
+        onChange: onChangePaymentMethodIds,
+        onOpenPaymentsPress,
+        isDisabled: isPaymentMethodsDisabled,
+    });
+
+    const {
+        isVisible: isContactInfoModalVisible,
+        options: contactInfoOptions,
+        selectedText: selectedContactInfoText,
+        onOpen: onOpenContactInfoModal,
+        onClose: onCloseContactInfoModal,
+        onConfirm: onConfirmContactInfo,
+        onOpenContacts: onOpenContactsFromModal,
+    } = useContactInfoModal({
+        value: form.contactIds,
+        contacts,
+        onChange: onChangeContactInfoIds,
+        onOpenContactsPress,
+    });
 
     return (
         <>
             <ScreenContainer
-                edges={['top']}
-                scrollEnabled
-                headerComponent={<HeaderWithBackButton title={t('event.addEvent')} isCentered={false} />}
-                isKeyboardAvoiding
+                edges={['top', 'bottom']}
+                headerComponent={
+                    <HeaderWithBackButton
+                        title={t(headerTitleKey)}
+                        isCentered={true}
+                    />
+                }
+                withGradient
             >
-            <View style={styles.contentContainerStyle}>
-                <CustomInput
-                    value={form.theme}
-                    containerStyle={styles.inputContainerStyle}
-                    onChangeText={onChangeTheme}
-                    placeholder={t('event.tastingTheme')}
-                    maxLength={300}
-                />
+                <View style={styles.container}>
+                    <KeyboardAwareScrollView
+                        style={styles.scroll}
+                        contentContainerStyle={styles.contentContainerStyle}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
+                        bottomOffset={scrollBottomOffset}
+                        extraKeyboardSpace={extraKeyboardSpace}
+                    >
+                        <View style={styles.content}>
+                            <Typography variant="h4" text={t('event.basicInfo')} />
 
-                <CustomInput
-                    value={form.restaurantName}
-                    containerStyle={styles.inputContainerStyle}
-                    onChangeText={onChangeRestaurantName}
-                    placeholder={t('event.restaurant')}
-                />
+                            <PickerButton
+                                onPress={onOpenEventTypeModal}
+                                text={eventTypeLabel || t('event.eventType')}
+                            />
+                            <PickerButton
+                                onPress={onOpenConfirmationRequiredModal}
+                                text={selectedConfirmationRequiredText}
+                            />
+                            <CustomInput
+                                value={form.theme}
+                                containerStyle={styles.inputContainerStyle}
+                                onChangeText={onChangeTheme}
+                                placeholder={t('event.tastingTheme')}
+                                maxLength={300}
+                            />
+                            <CustomInput
+                                value={form.speakerName}
+                                containerStyle={styles.inputContainerStyle}
+                                onChangeText={onChangeSpeakerName}
+                                placeholder={t('event.speakerName')}
+                            />
+                            {isPartyEventType && (
+                                <>
+                                    <Typography variant="h6" text={t('eventFilters.age')} />
+                                    <RangeSlider
+                                        min={18}
+                                        max={100}
+                                        minValue={form.minAge}
+                                        maxValue={form.maxAge}
+                                        onChange={onAgeRangeChange}
+                                    />
+                                    <PickerButton
+                                        onPress={onOpenSexModal}
+                                        text={selectedSexText}
+                                    />
+                                    <PickerButton
+                                        onPress={onOpenParticipationConditionModal}
+                                        text={selectedParticipationConditionText}
+                                    />
+                                </>
+                            )}
 
-                <CustomInput
-                    value={form.speakerName}
-                    containerStyle={styles.inputContainerStyle}
-                    onChangeText={onChangeSpeakerName}
-                    placeholder={t('event.speakerName')}
-                />
+                            <LanguageSelector value={form.language} onChange={onChangeLanguage} />
 
-                <CustomInput
-                    value={form.description}
-                    containerStyle={styles.inputContainerStyle}
-                    inputContainerStyle={styles.descriptionInputContainerStyle}
-                    onChangeText={onChangeDescription}
-                    placeholder={t('event.shortDescription')}
-                    multiline
-                    maxLength={300}
-                />
+                            <CustomInput
+                                value={form.description}
+                                containerStyle={styles.inputContainerStyle}
+                                inputContainerStyle={styles.descriptionInputContainerStyle}
+                                onChangeText={onChangeDescription}
+                                placeholder={t('event.description')}
+                                multiline
+                                maxLength={300}
+                            />
 
-                <TouchableOpacity onPress={onLocationPress} style={styles.locationButton}>
-                    <Typography
-                        text={form.locationLabel || t('event.selectLocation')}
-                        variant="h6"
-                        style={styles.locationText}
-                    />
-                    <MapLocationIcon color={colors.text} />
-                </TouchableOpacity>
+                            <Typography variant="h4" text={t('event.locationAndSchedule')} />
+                            <CustomInput
+                                value={form.restaurantName}
+                                containerStyle={styles.inputContainerStyle}
+                                onChangeText={onChangeRestaurantName}
+                                placeholder={t('event.meetingPlaceName')}
+                            />
 
-                <TouchableOpacity onPress={openDatePicker} onPressIn={Keyboard.dismiss} style={styles.pickerButton}>
-                    <Typography
-                        variant="h6"
-                        text={formattedDate || t('event.eventDate')}
-                        style={!formattedDate ? styles.placeholderText : undefined}
-                    />
-                    <ArrowDownIcon />
-                </TouchableOpacity>
+                            <PickerButton
+                                onPress={onLocationPress}
+                                text={form.locationLabel}
+                                placeholder={t('event.selectLocation')}
+                            />
 
-                <TouchableOpacity onPress={openTimePicker} onPressIn={Keyboard.dismiss} style={styles.pickerButton}>
-                    <Typography
-                        variant="h6"
-                        text={formattedTime || t('event.eventTime')}
-                        style={!formattedTime ? styles.placeholderText : undefined}
-                    />
-                    <ArrowDownIcon />
-                </TouchableOpacity>
+                            <PickerButton
+                                onPress={openDateRangePicker}
+                                text={formattedEventDateRange}
+                            />
+                            <View style={styles.row}>
+                                <View style={styles.inlinePickerContainer}>
+                                    <PickerButton
+                                        onPress={openStartTimePicker}
+                                        text={formattedStartTime}
+                                        placeholder={t('event.eventStartTime')}
+                                        isDisabled={isStartTimePickerDisabled}
+                                    />
+                                </View>
 
-                <PhoneInputField
-                    value={form.phoneNumber}
-                    onChangeText={onChangePhoneNumber}
-                    placeholder={t('event.phoneNumber')}
-                />
+                                <View style={styles.inlinePickerContainer}>
+                                    <PickerButton
+                                        onPress={openEndTimePicker}
+                                        text={formattedEndTime}
+                                        placeholder={t('event.eventEndTime')}
+                                        isDisabled={isEndTimePickerDisabled}
+                                    />
+                                </View>
+                            </View>
 
-                <CustomInput
-                    value={form.price}
-                    containerStyle={styles.inputContainerStyle}
-                    onChangeText={onChangePrice}
-                    placeholder={t('event.price')}
-                    keyboardType="numeric"
-                />
+                            <Typography variant="h4" text={t('event.bookingAndDetails')} />
 
-                <CustomInput
-                    value={form.language}
-                    containerStyle={styles.inputContainerStyle}
-                    onChangeText={onChangeLanguage}
-                    placeholder={t('event.eventLanguage')}
-                />
+                            <PickerButton
+                                onPress={onOpenContactInfoModal}
+                                text={selectedContactInfoText || t('contactInfo.contacts')}
+                            />
 
-                <CustomInput
-                    value={form.seats}
-                    containerStyle={styles.inputContainerStyle}
-                    onChangeText={onChangeSeats}
-                    placeholder={t('event.numberOfSeats')}
-                    keyboardType="numeric"
-                />
+                            {isPriceFieldAvailable && (
+                                <>
+                                    <PickerButton
+                                        onPress={onOpenPaymentMethodsModal}
+                                        text={selectedPaymentMethodsText || t('payments.paymentsMethods')}
+                                        isDisabled={isPaymentMethodsDisabled}
+                                    />
 
-                <TouchableOpacity onPress={onOpenEventTypeModal} onPressIn={Keyboard.dismiss} style={styles.pickerButton}>
-                    <Typography variant="h6" text={eventTypeLabel || t('event.eventType')} />
-                    <ArrowDownIcon />
-                </TouchableOpacity>
+                                    <PickerButton
+                                        onPress={currencyPicker.onOpen}
+                                        text={currencyPicker.selectedText || t('event.currency')}
+                                        isDisabled={isCurrencyPickerDisabled}
+                                    />
+                                </>
+                            )}
 
-                <Button
-                    text={t('event.createEvent')}
-                    onPress={onSubmit}
-                    type="secondary"
-                    disabled={disabled}
-                    inProgress={isLoading}
-                    containerStyle={styles.submitButton}
-                />
-            </View>
+                            {isPriceFieldAvailable && (
+                                <View>
+                                    <CustomInput
+                                        value={form.price}
+                                        containerStyle={styles.inputContainerStyle}
+                                        onChangeText={onChangePrice}
+                                        placeholder={t('event.price')}
+                                        keyboardType="numeric"
+                                    />
+                                    {!!priceInputHelperText && (
+                                        <Typography
+                                            variant="subtitle_12_400"
+                                            text={priceInputHelperText}
+                                            style={styles.priceInputHelperText}
+                                        />
+                                    )}
+                                </View>
+                            )}
 
+                            <CustomInput
+                                value={form.seats}
+                                containerStyle={styles.inputContainerStyle}
+                                onChangeText={onChangeSeats}
+                                placeholder={t('event.numberOfSeats')}
+                                keyboardType="numeric"
+                                error={isSeatsError}
+                            />
+                        </View>
+                    </KeyboardAwareScrollView>
+
+                    <KeyboardStickyView
+                        offset={{
+                            closed: 0,
+                            opened: stickyOpenedOffset,
+                        }}
+                    >
+                        <View style={styles.buttonContainer} onLayout={onStickyLayout}>
+                            <Button
+                                text={t('common.continue')}
+                                onPress={onSubmit}
+                                type="main"
+                                disabled={disabled}
+                                inProgress={isLoading}
+                            />
+                        </View>
+                    </KeyboardStickyView>
+                </View>
             </ScreenContainer>
 
-            <DateTimePickerModal
-                visible={isVisible}
-                mode={mode}
-                date={pickerDate}
-                onClose={onClose}
-                onConfirm={onConfirm}
-                onDateChange={onDateChange}
-            />
-            <EventTypePickerModal
-                visible={isEventTypeModalVisible}
-                selectedType={form.eventType}
-                onClose={onCloseEventTypeModal}
-                onSelectType={onSelectEventType}
-            />
+            {isTimePickerVisible && (
+                <DateTimePickerModal
+                    visible={isTimePickerVisible}
+                    mode={mode}
+                    date={pickerDate}
+                    minimumDate={minimumDate}
+                    title={timePickerTitle}
+                    onClose={onCloseTimePicker}
+                    onConfirm={onConfirm}
+                    onDateChange={onDateChange}
+                />
+            )}
+            {isCalendarVisible && (
+                <CalendarModal
+                    visible={isCalendarVisible}
+                    title={calendarTitle}
+                    closeText={t('eventFilters.close')}
+                    currentMonth={currentMonth}
+                    markedDates={markedDates}
+                    minDate={calendarMinDate}
+                    maxDate={calendarMaxDate}
+                    confirmText={t('common.confirm')}
+                    onClose={onCloseCalendar}
+                    onConfirm={onConfirmCalendar}
+                    onDayPress={onDayPress}
+                    onMonthChange={onMonthChange}
+                />
+            )}
+            {isEventTypeModalVisible && (
+                <UniversalPickerBottomModal
+                    visible={isEventTypeModalVisible}
+                    title={eventTypeModalTitle}
+                    options={eventTypeItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={onCloseEventTypeModal}
+                    onConfirm={onConfirmEventType}
+                />
+            )}
+            {isSexModalVisible && (
+                <UniversalPickerBottomModal
+                    visible={isSexModalVisible}
+                    title={sexModalTitle}
+                    options={sexItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={onCloseSexModal}
+                    onConfirm={onConfirmSex}
+                />
+            )}
+            {isParticipationConditionModalVisible && (
+                <UniversalPickerBottomModal
+                    visible={isParticipationConditionModalVisible}
+                    title={participationConditionModalTitle}
+                    options={participationConditionItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={onCloseParticipationConditionModal}
+                    onConfirm={onConfirmParticipationCondition}
+                />
+            )}
+            {isPaymentMethodsModalVisible && (
+                <PaymentMethodsPickerModal
+                    visible={isPaymentMethodsModalVisible}
+                    options={paymentMethodOptions}
+                    isLoading={isPaymentMethodsLoading}
+                    onClose={onClosePaymentMethodsModal}
+                    onConfirm={onConfirmPaymentMethods}
+                    onOpenPaymentsPress={onOpenPaymentsFromModal}
+                />
+            )}
+            {isContactInfoModalVisible && (
+                <ContactInfoPickerModal
+                    visible={isContactInfoModalVisible}
+                    options={contactInfoOptions}
+                    isLoading={isContactInfoLoading}
+                    onClose={onCloseContactInfoModal}
+                    onConfirm={onConfirmContactInfo}
+                    onOpenContactsPress={onOpenContactsFromModal}
+                />
+            )}
+            {isConfirmationRequiredModalVisible && (
+                <UniversalPickerBottomModal
+                    visible={isConfirmationRequiredModalVisible}
+                    title={confirmationRequiredModalTitle}
+                    options={confirmationRequiredItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={onCloseConfirmationRequiredModal}
+                    onConfirm={onConfirmConfirmationRequired}
+                />
+            )}
+            {currencyPicker.isVisible && (
+                <CurrencyPickerBottomSheet
+                    visible={currencyPicker.isVisible}
+                    onClose={currencyPicker.onClose}
+                    items={currencyPicker.items}
+                    selectedValue={currencyPicker.draft}
+                    onConfirm={currencyPicker.onConfirm}
+                    title={t('event.currency')}
+                />
+            )}
         </>
     );
 };

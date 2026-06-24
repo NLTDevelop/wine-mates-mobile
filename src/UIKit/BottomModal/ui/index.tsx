@@ -1,11 +1,21 @@
-import { useMemo, ReactNode } from 'react';
-import { View, Modal, TouchableWithoutFeedback, Animated, ScrollView, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
+import { ReactNode, useMemo } from 'react';
+import {
+    Animated,
+    Modal,
+    Pressable,
+    StyleProp,
+    StyleSheet,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
+    ViewStyle,
+} from 'react-native';
+import Reanimated from 'react-native-reanimated';
 import { useUiContext } from '@/UIProvider';
 import { TitleVariant, Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
-import { useBottomModalState } from '@/UIKit/BottomModal/presenters/useBottomModalState';
-import { useBottomModalInsets } from '@/UIKit/BottomModal/presenters/useBottomModalInsets';
 import { CrossIcon } from '@assets/icons/CrossIcon';
+import { useBottomModal } from '@/UIKit/BottomModal/presenters/useBottomModal';
 
 interface IProps {
     visible: boolean;
@@ -14,9 +24,10 @@ interface IProps {
     titleVariant?: TitleVariant;
     customHeader?: ReactNode;
     contentContainerStyle?: StyleProp<ViewStyle>;
+    isFullScreen?: boolean;
+    shouldAvoidKeyboard?: boolean;
     children: ReactNode;
 }
-
 
 export const BottomModal = ({
     visible,
@@ -25,76 +36,96 @@ export const BottomModal = ({
     titleVariant = 'h4',
     customHeader,
     contentContainerStyle,
-    children
+    isFullScreen = false,
+    shouldAvoidKeyboard = true,
+    children,
 }: IProps) => {
     const { colors } = useUiContext();
-    const { bottomInset } = useBottomModalInsets();
+
+    const {
+        bottomInset,
+        modalContentStyle,
+        onClosePress,
+        onShow,
+        panHandlers,
+        backdropOpacity,
+        animatedKeyboardContainerStyle,
+        animatedKeyboardBackgroundStyle,
+    } = useBottomModal({ onClose, isFullScreen, shouldAvoidKeyboard });
+
     const styles = useMemo(() => getStyles(colors, bottomInset), [colors, bottomInset]);
-    const { isVisible, backdropOpacity, slideAnim, handleClose } = useBottomModalState({ visible, onClose });
-
-    const renderHeader = () => {
-        if (customHeader) {
-            return customHeader;
-        }
-
-        return (
-            <View style={styles.header}>
-                <View style={styles.closeButton} />
-                {title && (
-                    <View style={styles.titleContainer} pointerEvents="none">
-                        <Typography text={title} variant={titleVariant} style={styles.title} />
-                    </View>
-                )}
-                <TouchableOpacity onPress={onClose} style={styles.closeButton} hitSlop={8}>
-                    <CrossIcon/>
-                </TouchableOpacity>
-            </View>
-        );
-    };
-
-    if (!isVisible) {
-        return null;
-    }
 
     return (
         <Modal
-            visible={isVisible}
+            visible={visible}
             transparent
             animationType="none"
             statusBarTranslucent
-            navigationBarTranslucent
-            onRequestClose={handleClose}
+            onRequestClose={onClosePress}
+            onShow={onShow}
         >
             <View style={styles.modalContainer}>
-                <TouchableWithoutFeedback onPress={onClose}>
-                    <Animated.View
-                        style={[
-                            styles.backdrop,
-                            {
-                                opacity: backdropOpacity,
-                            },
-                        ]}
-                    />
-                </TouchableWithoutFeedback>
-
                 <Animated.View
+                    pointerEvents="box-none"
                     style={[
-                        styles.contentContainer,
+                        styles.backdrop,
                         {
-                            transform: [{ translateY: slideAnim }],
+                            opacity: backdropOpacity.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [0, 0.5],
+                            }),
                         },
                     ]}
-                >
-                    {renderHeader()}
-                    <ScrollView
-                        style={styles.scrollView}
-                        contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
-                        showsVerticalScrollIndicator={false}
-                        bounces={false}
-                    >
-                        {children}
-                    </ScrollView>
-                </Animated.View>
+                />
+                <Reanimated.View style={[styles.keyboardBackground, animatedKeyboardBackgroundStyle]} />
+
+                <Pressable style={StyleSheet.absoluteFill} onPress={onClosePress} />
+
+                <Reanimated.View style={animatedKeyboardContainerStyle}>
+                    <Animated.View style={[styles.modalContent, modalContentStyle]}>
+                        <View style={[styles.container, isFullScreen && styles.fullScreenContainer]}>
+                            <View {...panHandlers}>
+                                <TouchableWithoutFeedback>
+                                    {customHeader ? (
+                                        <View>{customHeader}</View>
+                                    ) : (
+                                        <View style={styles.header}>
+                                            <View style={styles.closeButton} />
+
+                                            {title ? (
+                                                <View style={styles.titleContainer} pointerEvents="none">
+                                                    <Typography
+                                                        text={title}
+                                                        variant={titleVariant}
+                                                        style={styles.title}
+                                                    />
+                                                </View>
+                                            ) : null}
+
+                                            <TouchableOpacity
+                                                onPress={onClosePress}
+                                                style={styles.closeButton}
+                                                hitSlop={8}
+                                            >
+                                                <CrossIcon />
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                </TouchableWithoutFeedback>
+                            </View>
+
+                            <View
+                                style={[
+                                    styles.contentContainer,
+                                    isFullScreen && styles.fullScreenContentContainer,
+                                    contentContainerStyle,
+                                ]}
+                            >
+                                {children}
+                            </View>
+                        </View>
+                    </Animated.View>
+                </Reanimated.View>
             </View>
         </Modal>
     );

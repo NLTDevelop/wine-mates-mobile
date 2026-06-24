@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { GestureResponderEvent } from 'react-native';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { declOfWord } from '@/utils';
@@ -9,17 +10,18 @@ import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLe
 interface IProps {
     item: IWineListItem | IWineDetails;
     onPress?: (item: IWineListItem) => void;
+    onSharePress?: (item: IWineListItem | IWineDetails) => void;
     hideSimilarity?: boolean;
     removeCardStyles?: boolean;
     isMyWine?: boolean;
 }
 
 const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
-    return 'similarity' in item || 'myReview' in item || 'lastReview' in item || 'lastRate' in item
+    return !('currentVintage' in item);
 };
 const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails => 'currentVintage' in item;
 
-export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: IProps) => {
+export const useWineListItem = ({ item, onPress, onSharePress, removeCardStyles, isMyWine }: IProps) => {
     const { t } = useUiContext();
 
     const onItemPress = useCallback(() => {
@@ -27,6 +29,15 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
             onPress(item);
         }
     }, [item, onPress]);
+
+    const onShareItemPress = useCallback(() => {
+        onSharePress?.(item);
+    }, [item, onSharePress]);
+
+    const onPressShareButton = useCallback((event: GestureResponderEvent) => {
+        event.stopPropagation();
+        onShareItemPress();
+    }, [onShareItemPress]);
 
     const similarityText = useMemo(() => {
         if (!isWineListItem(item) || !item.similarity) return '-';
@@ -97,6 +108,7 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
     const hasPremium = useMemo(() => userModel.user?.hasPremium ?? false, []);
 
     const userId = useMemo(() => userModel.user?.id ?? null, []);
+    const currentUserWineExperienceLevel = userModel.user?.wineExperienceLevel;
 
     const shouldReviewShow = useMemo(() => {
         if (!isWineListItem(item)) return false;
@@ -122,8 +134,8 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
     }, [shouldReviewShow, expertRating]);
 
     const isCurrentUserLover = useMemo(() => {
-        return userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER;
-    }, [userModel.user?.wineExperienceLevel]);
+        return currentUserWineExperienceLevel === WineExperienceLevelEnum.LOVER;
+    }, [currentUserWineExperienceLevel]);
 
     const showExpertReviewCount = useMemo(() => {
         if (!isMyWine) {
@@ -141,6 +153,14 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
         return !isCurrentUserLover;
     }, [isCurrentUserLover, isMyWine]);
 
+    const expertReviewLabel = useMemo(() => {
+        if (isMyWine && !isCurrentUserLover) {
+            return t('wine.myReview');
+        }
+
+        return t('wine.expertReview');
+    }, [isCurrentUserLover, isMyWine, t]);
+
     return {
         onItemPress,
         similarityText,
@@ -157,6 +177,8 @@ export const useWineListItem = ({ item, onPress, removeCardStyles, isMyWine }: I
         expertRating,
         showMedal,
         showUserReviewCount,
-        showExpertReviewCount
+        showExpertReviewCount,
+        expertReviewLabel,
+        onPressShareButton,
     };
 };

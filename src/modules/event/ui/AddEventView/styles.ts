@@ -4,50 +4,43 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        contentContainerStyle: {
-            paddingBottom: scaleVertical(16),
+        container: {
+            flex: 1,
             paddingHorizontal: scaleHorizontal(16),
-            flexGrow: 1,
+        },
+        scroll: {
+            flex: 1,
+        },
+        contentContainerStyle: {
+            paddingTop: scaleVertical(8),
+            paddingBottom: scaleVertical(16),
+        },
+        content: {
             gap: scaleVertical(16),
+            flexGrow: 1,
         },
         inputContainerStyle: {
-          marginBottom: 0,
+            marginBottom: 0,
+            backgroundColor: colors.background,
         },
         descriptionInputContainerStyle: {
             minHeight: scaleVertical(115),
             alignItems: 'stretch',
         },
-        locationButton: {
-            minHeight: scaleVertical(48),
-            borderWidth: 1,
-            borderColor: colors.border,
-            borderRadius: 12,
-            paddingHorizontal: scaleHorizontal(16),
-            paddingVertical: scaleVertical(13),
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: colors.background,
-        },
-        locationText: {
-            color: colors.text,
-        },
-        submitButton: {
-            marginTop: scaleVertical(8),
-        },
-        pickerButton: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: colors.background,
-            borderRadius: 12,
-            borderWidth: 1,
-            borderColor: colors.border,
-            height: scaleVertical(48),
-            paddingHorizontal: scaleHorizontal(16),
-        },
-        placeholderText: {
+        priceInputHelperText: {
             color: colors.text_light,
+            marginTop: scaleVertical(4),
+        },
+        buttonContainer: {
+            paddingBottom: scaleVertical(12),
+            paddingTop: scaleVertical(8),
+        },
+        row: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(8),
+        },
+        inlinePickerContainer: {
+            flex: 1,
         },
     });
     return styles;

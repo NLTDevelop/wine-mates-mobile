@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { getBundleId } from 'react-native-device-info';
 import { IPlaceSuggestion } from './types/IPlaceSuggestion';
 import { IRequester, requester } from '@/libs/requester';
-import { IPlaceAutocomplete, IPlaceDetails } from './types/IPlaceAutocomplete';
+import { IPlaceAutocomplete, IPlaceDetails, IReverseGeocodeDetails } from './types/IPlaceAutocomplete';
 
 const GOOGLE_PLACES_AUTOCOMPLETE_URL = 'https://places.googleapis.com/v1/places:autocomplete';
 const GOOGLE_PLACES_DETAILS_URL = 'https://places.googleapis.com/v1/places';
@@ -71,7 +71,7 @@ class LocationService {
         return cityName.trim();
     };
 
-    private getCountryFromAddressComponents = (addressComponents: any[]) => {
+    private getCountryCodeFromAddressComponents = (addressComponents: any[]) => {
         if (!Array.isArray(addressComponents)) {
             return '';
         }
@@ -85,13 +85,21 @@ class LocationService {
             return '';
         }
 
-        return (
-            countryComponent.longText ||
-            countryComponent.long_name ||
-            countryComponent.shortText ||
-            countryComponent.short_name ||
-            ''
-        );
+        return (countryComponent.shortText || countryComponent.short_name || '').toUpperCase();
+    };
+
+    private getReverseGeocodeDetailsFromResponse = (data: any): IReverseGeocodeDetails | null => {
+        const results = Array.isArray(data?.results) ? data.results : [];
+        if (!results.length) {
+            return null;
+        }
+
+        const result = results[0];
+
+        return {
+            address: result?.formattedAddress || '',
+            countryCode: this.getCountryCodeFromAddressComponents(result?.addressComponents),
+        };
     };
 
     private fetchAutocomplete = async ({
@@ -338,11 +346,9 @@ class LocationService {
 
     getPlaceDetails = async ({
         placeId,
-        language,
         sessionToken,
     }: {
         placeId: string;
-        language: string;
         sessionToken?: string;
     }): Promise<IPlaceDetails | null> => {
         if (!placeId || !config.googlePlacesApiKey) {
@@ -350,13 +356,12 @@ class LocationService {
         }
 
         try {
-            const normalizedLanguage = this.normalizeLanguageCode(language);
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${GOOGLE_PLACES_DETAILS_URL}/${placeId}`,
                 headers: this.getAuthHeaders('id,location,formattedAddress,addressComponents.longText,addressComponents.shortText,addressComponents.types'),
                 params: {
-                    languageCode: normalizedLanguage,
+                    languageCode: 'en',
                     sessionToken,
                 },
             });
@@ -370,7 +375,7 @@ class LocationService {
                 latitude: place.location.latitude,
                 longitude: place.location.longitude,
                 address: place.formattedAddress || '',
-                country: this.getCountryFromAddressComponents(place.addressComponents),
+                countryCode: this.getCountryCodeFromAddressComponents(place.addressComponents),
             };
         } catch {
             return null;
@@ -391,11 +396,35 @@ class LocationService {
         }
 
         try {
+            const details = await this.reverseGeocodeDetails({ latitude, longitude, language });
+
+            return details?.address || null;
+        } catch {
+            return null;
+        }
+    };
+
+    reverseGeocodeDetails = async ({
+        latitude,
+        longitude,
+        language,
+    }: {
+        latitude: number;
+        longitude: number;
+        language: string;
+    }): Promise<IReverseGeocodeDetails | null> => {
+        if (!config.googlePlacesApiKey) {
+            return null;
+        }
+
+        try {
             const normalizedLanguage = this.normalizeLanguageCode(language);
             const response = await this._requester.request({
                 method: 'GET',
                 url: GOOGLE_GEOCODE_URL,
-                headers: this.getAuthHeaders('results.formattedAddress'),
+                headers: this.getAuthHeaders(
+                    'results.formattedAddress,results.addressComponents.longText,results.addressComponents.shortText,results.addressComponents.types',
+                ),
                 params: {
                     languageCode: normalizedLanguage,
                     'location.latitude': latitude,
@@ -403,12 +432,11 @@ class LocationService {
                 },
             });
 
-            const results = Array.isArray(response?.data?.results) ? response.data.results : [];
-            if (response?.isError || !results.length) {
+            if (response?.isError) {
                 return null;
             }
 
-            return results[0]?.formattedAddress || null;
+            return this.getReverseGeocodeDetailsFromResponse(response?.data);
         } catch {
             return null;
         }

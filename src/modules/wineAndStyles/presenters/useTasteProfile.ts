@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useState } from 'react';
-import { wineService } from '@/entities/wine/WineService';
-import { wineAndStylesModel } from '@/entities/wine/WineAndStylesModel';
+import { wineService } from '@/entities/wine/services/WineService';
+import { wineAndStylesModel } from '@/entities/wine/models/WineAndStylesModel';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
+import { getRecommendationKey, setRecommendations } from '@/entities/wine/services/WineModelService';
 
 export const useTasteProfile = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -14,14 +16,14 @@ export const useTasteProfile = () => {
 
         await Promise.all(
             profiles.map(async (profile) => {
-                const key = wineAndStylesModel.getRecommendationKey(profile.type.id, profile.color.id);
+                const key = getRecommendationKey(profile.type.id, profile.color.id);
                 const response = await wineService.getRecommendations({
                     typeId: profile.type.id,
                     colorId: profile.color.id,
                 });
 
                 if (!response.isError && response.data) {
-                    wineAndStylesModel.setRecommendations(key, response.data.rows, 1, response.data.totalPages);
+                    setRecommendations(key, response.data.rows, 1, response.data.totalPages);
                 }
             })
         );
@@ -38,7 +40,7 @@ export const useTasteProfile = () => {
                     response.message || localization.t('common.somethingWentWrong'),
                 );
             } else {
-                wineAndStylesModel.setTasteProfiles(response.data);
+                wineAndStylesModel.tasteProfiles = response.data;
                 await fetchRecommendations();
             }
         } catch (error) {

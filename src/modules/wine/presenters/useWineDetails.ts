@@ -1,24 +1,26 @@
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
-import { wineService } from '@/entities/wine/WineService';
-import { myWineService } from '@/entities/wine/MyWineService';
+import { wineService } from '@/entities/wine/services/WineService';
+import { myWineService } from '@/entities/wine/services/MyWineService';
 import { toastService } from '@/libs/toast/toastService';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { localization } from '@/UIProvider/localization/Localization';
-import { useRoute, useIsFocused } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
-import { wineModel } from '@/entities/wine/WineModel';
-import { wineReviewsListModel } from '@/entities/wine/WineReviewsListModel';
+import { CommonActions, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { NONE_VINTAGE_DROPDOWN_VALUE } from './useVintageDropdown';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { clearWineReviewsListModel } from '@/entities/wine/services/WineModelService';
 
 export const useWineDetails = () => {
+    const navigation = useNavigation();
     const route = useRoute();
-    const { wineId, fromScanner, wineDetailsData } = (route.params as { wineId?: number; fromScanner?: boolean; wineDetailsData?: IWineDetails }) || { wineId: null, fromScanner: false, wineDetailsData: undefined };
+    const { wineId, fromScanner, wineDetailsData, openedFromDeepLink } = (route.params as { wineId?: number; fromScanner?: boolean; wineDetailsData?: IWineDetails; openedFromDeepLink?: boolean }) || { wineId: null, fromScanner: false, wineDetailsData: undefined, openedFromDeepLink: false };
     const isFocused = useIsFocused();
     const [details, setDetails] = useState<IWineDetails | null>(null);
     const [isError, setIsError] = useState(false);
     const [isAllVintagesSelected, setIsAllVintagesSelected] = useState(false);
     const [localIsSaved, setLocalIsSaved] = useState<boolean | undefined>(undefined);
     const [rateId, setRateId] = useState<number | null>(null);
+    const isResettingRef = useRef(false);
 
     const getDetails = useCallback(async (params?: { vintages?: 'All' }) => {
         try {
@@ -105,29 +107,35 @@ export const useWineDetails = () => {
                     topWinePeaks: [],
                 },
             });
-            wineReviewsListModel.clear();
+            clearWineReviewsListModel();
         }
     }, [details, getDetails]);
 
     useEffect(() => {
         if (!isFocused) return;
 
-        if (wineDetailsData) {
+        const frameId = requestAnimationFrame(() => {
+            if (wineDetailsData) {
+                setIsAllVintagesSelected(false);
+                wineModel.selectedWineId = wineDetailsData.id;
+                setDetails(wineDetailsData);
+                wineModel.vintages = wineDetailsData.vintages;
+                setLocalIsSaved(wineDetailsData.isSaved);
+                setRateId(wineDetailsData.myReview?.id ?? null);
+                setIsError(false);
+                return;
+            }
+
+            if (!wineId) return;
+
             setIsAllVintagesSelected(false);
-            wineModel.selectedWineId = wineDetailsData.id;
-            setDetails(wineDetailsData);
-            wineModel.vintages = wineDetailsData.vintages;
-            setLocalIsSaved(wineDetailsData.isSaved);
-            setRateId(wineDetailsData.myReview?.id ?? null);
-            setIsError(false);
-            return;
-        }
+            wineModel.selectedWineId = wineId;
+            getDetails();
+        });
 
-        if (!wineId) return;
-
-        setIsAllVintagesSelected(false);
-        wineModel.selectedWineId = wineId;
-        getDetails();
+        return () => {
+            cancelAnimationFrame(frameId);
+        };
     }, [wineId, wineDetailsData, isFocused, getDetails]);
 
     const hasCurrentVintageData = !!details?.currentVintage && typeof details.currentVintage === 'object';
@@ -140,6 +148,60 @@ export const useWineDetails = () => {
     const onUpdateIsSaved = useCallback((isSaved: boolean) => {
         setLocalIsSaved(isSaved);
     }, []);
+
+    const resetToHome = useCallback(() => {
+        isResettingRef.current = true;
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: 'TabNavigator',
+                        state: {
+                            index: 0,
+                            routes: [
+                                {
+                                    name: 'HomeStack',
+                                    state: {
+                                        index: 0,
+                                        routes: [{ name: 'HomeView' }],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                ],
+            }),
+        );
+    }, [navigation]);
+
+    const onPressBack = useCallback(() => {
+        if (openedFromDeepLink && !navigation.canGoBack()) {
+            resetToHome();
+            return;
+        }
+
+        navigation.goBack();
+    }, [navigation, openedFromDeepLink, resetToHome]);
+
+    useEffect(() => {
+        if (!openedFromDeepLink) {
+            return undefined;
+        }
+
+        return navigation.addListener('beforeRemove', (event) => {
+            if (isResettingRef.current) {
+                return;
+            }
+
+            if (navigation.canGoBack()) {
+                return;
+            }
+
+            event.preventDefault();
+            resetToHome();
+        });
+    }, [navigation, openedFromDeepLink, resetToHome]);
 
     return {
         details: detailsWithLocalIsSaved,
@@ -155,5 +217,6 @@ export const useWineDetails = () => {
         onUpdateIsSaved,
         isPreloadedData: !!wineDetailsData,
         myReview: details?.myReview ?? null,
+        onPressBack,
     };
 };

@@ -1,23 +1,22 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Keyboard } from 'react-native';
-import { favoriteWineListService } from '@/entities/wine/FavoriteWineListService';
+import { favoriteWineListService } from '@/entities/wine/services/FavoriteWineListService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 
 export const useCreateListBottomSheet = () => {
     const [listName, setListName] = useState('');
     const [isCreating, setIsCreating] = useState(false);
-    const createListModalRef = useRef<BottomSheetModal | null>(null);
+    const [isVisible, setIsVisible] = useState(false);
 
     const onClose = useCallback(() => {
-        createListModalRef.current?.dismiss();
+        setIsVisible(false);
         setListName('');
     }, []);
 
     const onOpen = useCallback(() => {
         setListName('');
-        createListModalRef.current?.present();
+        setIsVisible(true);
     }, []);
 
     const onCreate = useCallback(async () => {
@@ -40,7 +39,7 @@ export const useCreateListBottomSheet = () => {
                 onClose();
             }
         } catch (error) {
-            console.error('onCreate error: ', JSON.stringify(error, null, 2));
+            console.error('onCreate error: ', error);
             toastService.showError(
                 localization.t('common.errorHappened'),
                 localization.t('common.somethingWentWrong'),
@@ -49,5 +48,5 @@ export const useCreateListBottomSheet = () => {
         }
     }, [listName, onClose, isCreating]);
 
-    return { createListModalRef, listName, setListName, onClose, onOpen, onCreate, isCreating };
+    return { isVisible, listName, setListName, onClose, onOpen, onCreate, isCreating };
 };

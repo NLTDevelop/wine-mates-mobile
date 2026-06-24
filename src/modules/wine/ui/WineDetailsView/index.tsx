@@ -6,7 +6,7 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { FlatList } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { ResultListHeader } from '../components/ResultListHeader';
-import { ReviewListItem } from '../components/ReviewListItem';
+import { ReviewListItem } from '../../../../UIKit/ReviewListItem';
 import { useRefresh } from '@/hooks/useRefresh';
 import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 import { IWineReviewsListItem } from '@/entities/wine/types/IWineReviewsListItem';
@@ -23,7 +23,7 @@ export const WineDetailsView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
-        selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, myReview } = useWineDetails();
+        selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, myReview, onPressBack } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
         selectedWineId ?? wineId,
@@ -32,7 +32,16 @@ export const WineDetailsView = observer(() => {
         myReview,
     );
     const { refreshControl } = useRefresh(onRefresh);
-    const { favoriteData, addToFavoriteModalRef, onItemPress, onClose, onOpen, onSave, isLoading, isSaving } = useAddToFavoriteBottomSheet(details?.id, onUpdateIsSaved);
+    const {
+        favoriteData,
+        isVisible: isAddToFavoriteModalVisible,
+        onItemPress,
+        onClose,
+        onOpen,
+        onSave,
+        isLoading,
+        isSaving,
+    } = useAddToFavoriteBottomSheet(details?.id, onUpdateIsSaved);
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
     const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);
@@ -42,7 +51,7 @@ export const WineDetailsView = observer(() => {
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton title={t('wine.result')} isCentered={false} />}
+                headerComponent={<HeaderWithBackButton title={t('wine.result')} isCentered={false} onPressBack={onPressBack} />}
             >
                 {!details ? (
                     <Loader />
@@ -69,15 +78,17 @@ export const WineDetailsView = observer(() => {
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
                     />
                 )}
-                <AddToFavoriteBottomSheet
-                    modalRef={addToFavoriteModalRef}
-                    data={favoriteData}
-                    onItemPress={onItemPress}
-                    onClose={onClose}
-                    onSave={onSave}
-                    isLoading={isLoading}
-                    isSaving={isSaving}
-                />
+                {isAddToFavoriteModalVisible && (
+                    <AddToFavoriteBottomSheet
+                        isVisible={isAddToFavoriteModalVisible}
+                        data={favoriteData}
+                        onItemPress={onItemPress}
+                        onClose={onClose}
+                        onSave={onSave}
+                        isLoading={isLoading}
+                        isSaving={isSaving}
+                    />
+                )}
             </ScreenContainer>
         </WithErrorHandler>
     );

@@ -6,19 +6,19 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
-import { ColorSelector } from './components/ColorSelector';
+import { ColorSelector } from '../../../../UIKit/ColorSelector';
 import { useWineLook } from '../../presenters/useWineLook';
-import { ShadeSelector } from '../components/ShadeSelector';
 import { CloseButton } from '../components/CloseButton';
-import { SelectedParameters } from '../components/SelectedParameters';
+import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
-import { wineModel } from '@/entities/wine/WineModel';
 import { SmoothSlider } from '@/UIKit/SmoothSlider';
 import { ScrollViewIndicator } from '@fanchenbao/react-native-scroll-indicator';
+import { ShadeSelector } from '@/UIKit/ShadeSelector';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const WineLookView = observer(() => {
     const { colors, t } = useUiContext();
@@ -37,11 +37,11 @@ export const WineLookView = observer(() => {
         getColorsWithShades,
         isLoading,
         onSelectColor,
-        handlePressNext,
+        onPressNext,
         appearance,
         setAppearance,
         shadeSelectorKey,
-        handleShadeAnimationEnd,
+        onShadeAnimationEnd,
         getSparklingSliderData,
         currentColor,
     } = useWineLook({ t, styles });
@@ -96,13 +96,14 @@ export const WineLookView = observer(() => {
                                 value={shade}
                                 onChange={setShade}
                                 colorShades={selectedColor}
-                                onAnimationEnd={handleShadeAnimationEnd}
+                                onAnimationEnd={onShadeAnimationEnd}
                             />
 
                             {wineModel.base?.typeOfWine.isSparkling && (
                                 <View style={styles.sliderContainer}>
                                     <View>
-                                        <Typography text={t('wine.selectMousse')} variant="h4" style={styles.label} />
+                                        <Typography text={t('wine.selectMousse')} variant="h4" style={styles.sparklingLabel} />
+                                        <Typography text={t('muse.description')} variant="subtitle_12_400" style={styles.sparklingDescription} />
                                         <SmoothSlider
                                             value={mousse}
                                             onChange={setMousse}
@@ -117,7 +118,8 @@ export const WineLookView = observer(() => {
                                         />
                                     </View>
                                     <View>
-                                        <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.label} />
+                                        <Typography text={t('wine.selectPerlage')} variant="h4" style={styles.sparklingLabel} />
+                                        <Typography text={t('perlage.description')} variant="subtitle_12_400" style={styles.sparklingDescription} />
                                         <SmoothSlider
                                             value={perlage}
                                             onChange={setPerlage}
@@ -132,7 +134,8 @@ export const WineLookView = observer(() => {
                                         />
                                     </View>
                                     <View>
-                                        <Typography text={t('wine.selectAppearance')} variant="h4" style={styles.label} />
+                                        <Typography text={t('wine.selectAppearance')} variant="h4" style={styles.sparklingLabel} />
+                                        <Typography text={t('wineView.description')} variant="subtitle_12_400" style={styles.sparklingDescription} />
                                         <SmoothSlider
                                             value={appearance}
                                             onChange={setAppearance}
@@ -153,7 +156,7 @@ export const WineLookView = observer(() => {
                         </ScrollViewIndicator>
                         <Button
                             text={t('wine.letsSmell')}
-                            onPress={handlePressNext}
+                            onPress={onPressNext}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}
                         />

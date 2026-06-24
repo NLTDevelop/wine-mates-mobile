@@ -6,15 +6,16 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
 import { observer } from 'mobx-react-lite';
-import { SelectedParameters } from '../components/SelectedParameters';
-import { RateThisWine } from '../components/RateThisWine';
-import { Notes } from '../components/Notes';
-import { wineModel } from '@/entities/wine/WineModel';
-import { useWineReviewResult } from '../../presenters/useWineReviewResult';
-import { TastingNote } from '../components/TastingNote';
+import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
+import { Notes } from '../../../../UIKit/Notes';
+import { useWineReviewResult } from './presenters/useWineReviewResult';
 import { Loader } from '@/UIKit/Loader';
 import { Typography } from '@/UIKit/Typography';
 import { FoodPairing } from '@/UIKit/FoodPairing';
+import { RateThisWine } from '@/UIKit/RateThisWine';
+import { TastingNote } from '@/UIKit/TastingNote';
+import { WineSnackCuisinePickerModal } from '@/UIKit/WineSnackCuisinePickerModal';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const WineReviewResultView = observer(() => {
     const { colors, t } = useUiContext();
@@ -33,6 +34,17 @@ export const WineReviewResultView = observer(() => {
         noteValidationError,
         onNoteEditingChange,
         onInvalidNoteEditingComplete,
+        onSubscribePress,
+        isCuisineModalVisible,
+        isLoadingCuisines,
+        cuisineOptions,
+        cuisineSelectButtonText,
+        onOpenCuisinePickerPress,
+        onCloseCuisinePicker,
+        onConfirmCuisineSelection,
+        snacks,
+        isGeneratingSnacks,
+        onGenerateSnacksPress,
     } = useWineReviewResult();
 
     return (
@@ -62,7 +74,7 @@ export const WineReviewResultView = observer(() => {
                                     <Typography text={t('aiAttempts.label4')} />
                                     <Button
                                         text={t('aiAttempts.subscribe')}
-                                        onPress={() => {}}
+                                        onPress={onSubscribePress}
                                         containerStyle={styles.subscribeButton}
                                     />
                                 </>
@@ -78,7 +90,15 @@ export const WineReviewResultView = observer(() => {
                                 </Typography>
                             )}
                         </View>
-                        <FoodPairing setLimits={setLimits} generatedSnacks={wineModel.review?.aiSnacks || undefined} />
+                        <FoodPairing
+                            setLimits={setLimits}
+                            generatedSnacks={wineModel.review?.aiSnacks || undefined}
+                            snacks={snacks}
+                            isGenerating={isGeneratingSnacks}
+                            onGeneratePress={onGenerateSnacksPress}
+                            cuisineSelectButtonText={cuisineSelectButtonText}
+                            onCuisineSelectPress={onOpenCuisinePickerPress}
+                        />
                         <TastingNote
                             note={note}
                             isLoading={isLoading}
@@ -98,6 +118,16 @@ export const WineReviewResultView = observer(() => {
                         inProgress={isSaving}
                     />
                 </View>
+            )}
+            {isCuisineModalVisible && (
+                <WineSnackCuisinePickerModal
+                    visible={isCuisineModalVisible}
+                    options={cuisineOptions}
+                    isLoading={isLoadingCuisines}
+                    isConfirming={isGeneratingSnacks}
+                    onClose={onCloseCuisinePicker}
+                    onConfirm={onConfirmCuisineSelection}
+                />
             )}
         </ScreenContainer>
     );

@@ -1,23 +1,47 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useCallback, useRef } from 'react';
+import { useCallback, useState } from 'react';
 import { useUiContext } from '@/UIProvider';
+import { userService } from '@/entities/users/UserService';
+import { toastService } from '@/libs/toast/toastService';
+import { localization } from '@/UIProvider/localization/Localization';
 
 export const useSelectLanguageBottomSheet = () => {
-    const { setLocale } = useUiContext();
-    const selectLanguageModalRef = useRef<BottomSheetModal | null>(null);
+    const { locale, setLocale } = useUiContext();
+    const [isVisible, setIsVisible] = useState(false);
 
     const onClose = useCallback(() => {
-        selectLanguageModalRef.current?.dismiss();
+        setIsVisible(false);
     }, []);
 
     const onOpen = useCallback(() => {
-        selectLanguageModalRef.current?.present();
+        setIsVisible(true);
     }, []);
 
-    const onItemPress = useCallback((item: string) => {
-        setLocale(item);
-        selectLanguageModalRef.current?.dismiss();
-    }, [setLocale]);
+    const onItemPress = useCallback(async (item: string) => {
+        if (item === locale) {
+            setIsVisible(false);
+            return;
+        }
 
-    return { selectLanguageModalRef, onItemPress, onClose, onOpen };
+        setLocale(item);
+        setIsVisible(false);
+        try {
+            const response = await userService.updateLanguage(item);
+
+            if (response.isError) {
+                setLocale(locale);
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    response.message || localization.t('common.somethingWentWrong'),
+                );
+            }
+        } catch {
+            setLocale(locale);
+            toastService.showError(
+                localization.t('common.errorHappened'),
+                localization.t('common.somethingWentWrong'),
+            );
+        }
+    }, [locale, setLocale]);
+
+    return { isVisible, onItemPress, onClose, onOpen };
 };

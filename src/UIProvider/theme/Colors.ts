@@ -33,6 +33,8 @@ export const COLORS: { light: IColors } = {
         unselectedSlider: '#E2E2E2',
         selectedSlider: '#E03130',
 
+        finishStatus: '#002CEE',
+
         primary: '#910D0D',
         primary_secondary: '#FDEFEE',
         error: '#C20E0E',

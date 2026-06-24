@@ -7,6 +7,8 @@ import { useResultHeader } from '@/modules/wine/presenters/useResultHeader';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { WineListItem } from '@/UIKit/WineListItem';
 import { ResultHeaderFooter } from '../ResultHeaderFooter';
+import { WineShareModal } from '@/UIKit/WineShareModal';
+import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 
 interface IProps {
     item: IWineDetails;
@@ -22,11 +24,19 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { onPress, isCreating } = useResultHeader(item, fromScanner);
+    const {
+        isShareModalVisible,
+        onOpenShareModal,
+        onCloseShareModal,
+        onShareMessengerPress,
+        onCopyWineLinkPress,
+    } = useWineShareModal();
 
     return (
         <View style={styles.cardWrapper}>
             <WineListItem
                 item={item}
+                onSharePress={onOpenShareModal}
                 footer={ <ResultHeaderFooter
                     item={item}
                     vintages={vintages}
@@ -39,6 +49,13 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
                 />}
                 removeCardStyles
                 showExpertRatingWithoutPremium={false}
+                hideDate
+            />
+            <WineShareModal
+                visible={isShareModalVisible}
+                onClose={onCloseShareModal}
+                onShareMessengerPress={onShareMessengerPress}
+                onCopyLinkPress={onCopyWineLinkPress}
             />
         </View>
     );

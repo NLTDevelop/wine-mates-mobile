@@ -7,11 +7,16 @@ export const getStyles = (colors: IColors) => {
         container: {
             flex: 1,
             marginHorizontal: scaleHorizontal(16),
-            justifyContent: 'space-between',
+        },
+        scroll: {
+            flex: 1,
+        },
+        contentContainer: {
+            paddingTop: scaleVertical(8),
+            paddingBottom: scaleVertical(0),
         },
         content: {
-            flex: 1,
-            paddingTop: scaleVertical(8),
+            flexGrow: 1,
         },
         roleContainer: {
             flexDirection: 'row',
@@ -42,7 +47,7 @@ export const getStyles = (colors: IColors) => {
         expertiseRow: {
             minHeight: scaleVertical(48),
             borderRadius: scaleVertical(12),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             backgroundColor: colors.background,
             flexDirection: 'row',
@@ -65,20 +70,16 @@ export const getStyles = (colors: IColors) => {
             marginLeft: scaleHorizontal(16),
         },
         buttonContainer: {
-            paddingBottom: scaleVertical(24),
+            paddingBottom: scaleVertical(12),
+            paddingTop: scaleVertical(8),
         },
         editButton: {
             width: scaleVertical(40),
             height: scaleVertical(40),
             borderRadius: scaleVertical(22),
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.border,
             backgroundColor: colors.background,
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        calendarContainer: {
-            flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
         },
@@ -91,16 +92,6 @@ export const getStyles = (colors: IColors) => {
         },
         alertButton: {
             width: '100%',
-        },
-        birthdayModalHeader: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: scaleHorizontal(16),
-            paddingTop: scaleVertical(16),
-        },
-        birthdayModalButton: {
-            padding: scaleVertical(8),
         },
     });
     return styles;

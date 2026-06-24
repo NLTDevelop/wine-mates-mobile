@@ -6,33 +6,50 @@ interface IUseEventMapHeaderProps {
     onTabChange: (tab: 'all' | 'tastings' | 'parties') => void;
 }
 
+interface ITabItem {
+    value: 'all' | 'tastings' | 'parties';
+    label: string;
+    isActive: boolean;
+    onPress: () => void;
+}
+
 export const useEventMapHeader = ({ selectedTab, onTabChange }: IUseEventMapHeaderProps) => {
     const { t } = useUiContext();
 
-    const tabs = [
+    const onPressAllTab = useCallback(() => {
+        onTabChange('all');
+    }, [onTabChange]);
+
+    const onPressTastingsTab = useCallback(() => {
+        onTabChange('tastings');
+    }, [onTabChange]);
+
+    const onPressPartiesTab = useCallback(() => {
+        onTabChange('parties');
+    }, [onTabChange]);
+
+    const tabs: ITabItem[] = [
         {
-            value: 'all' as const,
+            value: 'all',
             label: t('eventMap.all'),
             isActive: selectedTab === 'all',
+            onPress: onPressAllTab,
         },
         {
-            value: 'tastings' as const,
+            value: 'tastings',
             label: t('event.tastings'),
             isActive: selectedTab === 'tastings',
+            onPress: onPressTastingsTab,
         },
         {
-            value: 'parties' as const,
+            value: 'parties',
             label: t('event.parties'),
             isActive: selectedTab === 'parties',
+            onPress: onPressPartiesTab,
         },
     ];
 
-    const onTabPress = useCallback((tab: 'all' | 'tastings' | 'parties') => {
-        onTabChange(tab);
-    }, [onTabChange]);
-
     return {
         tabs,
-        onTabPress,
     };
 };

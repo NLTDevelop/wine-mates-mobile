@@ -1,10 +1,12 @@
 import { useCallback, useRef } from 'react';
-import { wineAndStylesModel } from '@/entities/wine/WineAndStylesModel';
-import { wineService } from '@/entities/wine/WineService';
+import { wineAndStylesModel } from '@/entities/wine/models/WineAndStylesModel';
+import { wineService } from '@/entities/wine/services/WineService';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import type { ICarouselInstance } from 'react-native-reanimated-carousel';
+import type { PanGesture } from 'react-native-gesture-handler';
+import { appendRecommendations, getRecommendationKey } from '@/entities/wine/services/WineModelService';
 
 const LIMIT = 10;
 const PREFETCH_THRESHOLD = 8;
@@ -19,7 +21,7 @@ export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecom
     const carouselRef = useRef<ICarouselInstance>(null);
     const isFetchingRef = useRef(false);
 
-    const key = wineAndStylesModel.getRecommendationKey(typeId, colorId);
+    const key = getRecommendationKey(typeId, colorId);
     const wines = wineAndStylesModel.recommendations[key] ?? [];
     const pagination = wineAndStylesModel.recommendationsPagination[key];
 
@@ -48,7 +50,7 @@ export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecom
         });
 
         if (!response.isError && response.data) {
-            wineAndStylesModel.appendRecommendations(key, response.data.rows, nextPage);
+            appendRecommendations(key, response.data.rows, nextPage);
         }
 
         isFetchingRef.current = false;
@@ -68,12 +70,18 @@ export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecom
         carouselRef.current?.prev();
     }, []);
 
+    const onConfigurePanGesture = useCallback((panGesture: PanGesture) => {
+        panGesture.activeOffsetX([-12, 12]);
+        panGesture.failOffsetY([-8, 8]);
+    }, []);
+
     return {
         wines,
         carouselRef,
         onSnapToItem,
         onWinePress,
         onNext,
-        onPrevious
+        onPrevious,
+        onConfigurePanGesture,
     };
 };

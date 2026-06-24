@@ -138,6 +138,7 @@ A `components` folder inside a component is allowed **only in UIKit**.
 **Required:**
 - render functions must be declared inside the component
 - render functions should be used only when really necessary
+- render functions inside components must be arrow functions memoized with `useCallback`
 
 **Allowed:**
 - `renderItem`
@@ -149,6 +150,8 @@ A `components` folder inside a component is allowed **only in UIKit**.
 - moving render functions to a presenter
 - creating a separate hook only for a render function
 - using render functions as a regular UI decomposition pattern
+- declaring render functions as `function renderItem(...)`
+- declaring render functions as non-memoized arrows, for example `const renderItem = (...) => ...`
 
 **Principle:**
 - if regular JSX can be used, regular JSX must be used
@@ -492,12 +495,12 @@ export const getStyles = (colors: IColors) => {
 **Required:**
 - models must not contain business logic, calculations, handlers, or data transformation logic
 - models must be used for data structure only
-- the only allowed method in a model is pagination append method with exact name `appened`
+- the only allowed method in a model is pagination append method with exact name `append`
 
 **Forbidden:**
 - placing logic in models
 - creating custom methods in models for business scenarios
-- naming pagination append method as anything except `appened` (for example `appenedMediaList`)
+- naming pagination append method as anything except `append` (for example `appendMediaList`)
 
 **Principle:**
 - Presenter = logic
@@ -517,3 +520,102 @@ export const getStyles = (colors: IColors) => {
 **Principle:**
 - one consistent branching style across the project
 - simpler readability and less boilerplate
+
+---
+
+## 20. Scale is required for size and spacing style values
+
+**Required:**
+- in styles, all non-zero values for size and spacing properties must be passed through a function whose name starts with `scale`
+- this applies to paddings, margins, width/height, top/left/right/bottom and related size-position properties
+- any `scale*` function is allowed (`scaleHorizontal`, `scaleVertical`, and others with `scale` prefix)
+
+**Allowed:**
+- value `0` without scaling
+- using any scale function regardless of axis naming (strict binding to vertical/horizontal is not required)
+- raw numeric values for `borderRadius`, `borderTopLeftRadius`, `borderTopRightRadius`, `borderBottomLeftRadius`, `borderBottomRightRadius` without `scale*`
+
+**Forbidden:**
+- raw non-zero numeric values in size and spacing style properties without `scale*`
+
+**Principle:**
+- avoid unscaled hardcoded dimensions in UI styles
+- keep scaling approach consistent across the project
+
+---
+
+## 21. `getStyles` template is mandatory in `styles.ts`
+
+**Required:**
+- in `styles.ts`, `getStyles` must follow the template:
+  - `const styles = StyleSheet.create(...)`
+  - `return styles`
+
+**Forbidden:**
+- `return StyleSheet.create(...)` directly
+- any other `getStyles` structure that skips `const styles` variable
+
+---
+
+## 22. `keyExtractor` is forbidden in presenters
+
+**Required:**
+- keep `keyExtractor` inside UI component
+
+**Forbidden:**
+- declaring or returning `keyExtractor` in any presenter
+
+---
+
+## 23. Data preparation in UI components is forbidden
+
+**Required:**
+- data preparation must be moved to presenters/hooks
+- inside UI component, only `useMemo(() => getStyles(...), [...])` is allowed for styles
+
+**Forbidden:**
+- `map`, `filter`, `reduce` for data preparation inside UI component
+- `useCallback` inside UI component
+- `useMemo` inside UI component for anything except style creation through `getStyles`
+
+**Exception:**
+- `useCallback` is allowed inside UI component only for render callbacks required by library APIs
+- `useCallback` is allowed for `keyExtractor` because `keyExtractor` must stay inside the component
+
+---
+
+## 24. Business logic is forbidden in models
+
+**Required:**
+- models are data containers only
+- only one model method is allowed: `append`
+
+**Forbidden:**
+- any additional methods in models
+- handlers in models
+- transformation logic in models
+
+---
+
+## 25. Exported shared types in UI files are forbidden
+
+**Required:**
+- move shared exported `type/interface/enum` from UI files to `types/` and `enums/`
+
+**Allowed:**
+- local non-exported types that are used only inside the same UI file
+
+---
+
+## 26. Render function abuse is forbidden
+
+**Required:**
+- use render functions only when required by library API
+
+**Allowed:**
+- `renderItem`
+- `renderLeftActions`
+- `renderRightActions`
+
+**Forbidden:**
+- arbitrary render helpers like `renderHeader`, `renderContent`, `renderFooter` and similar without strict API need

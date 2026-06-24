@@ -1,130 +1,232 @@
-import { useMemo } from 'react';
-import { FlatList, ListRenderItem, TouchableOpacity, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { View } from 'react-native';
+import Animated from 'react-native-reanimated';
+import Sortable, { SortableGridRenderItem } from 'react-native-sortables';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
-import { SearchBar } from '@/UIKit/SearchBar';
-import { Typography } from '@/UIKit/Typography';
-import { Button } from '@/UIKit/Button';
-import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
-import { PlusIcon } from '@assets/icons/PlusIcon';
 import { useAddWineSetView } from './presenters/useAddWineSetView';
+import { useAddWineSetSearch } from './presenters/useAddWineSetSearch';
 import { getStyles } from './styles';
 import { WineSetItemRow } from './components/WineSetItemRow';
-import { RepeatRuleModal } from './components/RepeatRuleModal';
-import { TastingTypeModal } from './components/TastingTypeModal';
 import { EventCreatedAlert } from './components/EventCreatedAlert';
-import { IWineSetViewItem } from '@/modules/event/types/IWineSetMockItem';
+import { IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
+import { WineSetListHeader } from './components/WineSetListHeader';
+import { WineSetListFooter } from './components/WineSetListFooter';
+import { WineSearchBottomSheet } from './components/WineSearchBottomSheet';
+import { useRepeatRuleModal } from './presenters/useRepeatRuleModal';
+import { useTastingTypeModal } from './presenters/useTastingTypeModal';
+import { useWineSetSortableList } from './presenters/useWineSetSortableList';
+import { CustomRepeatEventModal } from './components/CustomRepeatEventModal';
+import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 
 export const AddWineSetView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const {
+        searchInputRef,
+        searchQuery,
+        isSearchModalVisible,
+        isSearchListVisible,
+        isSearchingWines,
+        isInitialSearchFinished,
+        hasMoreSearchResults,
+        wineSearchResults,
+        onChangeSearchQuery,
+        onOpenSearchModal,
+        onCloseSearchModal,
+        onLoadMoreSearchResults,
+        onResetSearch,
+    } = useAddWineSetSearch();
 
     const {
-        searchQuery,
         tastingType,
-        tastingTypeLabel,
-        tastingTypeItems,
         repeatRule,
-        repeatRuleLabel,
-        repeatRuleItems,
-        isTastingTypeModalVisible,
         wineSetViewItems,
-        isRepeatModalVisible,
+        wineSearchResultItems,
+        wineSearchEmptyText,
         isEventCreatedAlertVisible,
+        eventDeepLink,
         isCreating,
-        searchInputRef,
-        onChangeSearchQuery,
-        onOpenTastingTypeModal,
-        onOpenRepeatModal,
-        onCloseTastingTypeModal,
-        onCloseRepeatModal,
+        isCreateEventDisabled,
+        isEditMode,
+        headerTitleKey,
+        onChangeRepeatRule,
+        onChangeTastingType,
         onCloseEventCreatedAlert,
         onCheckEventPress,
         onShareQrPress,
         onAddWinePress,
+        onOpenScannerPress,
+        onReorderWineSet,
         onCreateEventPress,
-    } = useAddWineSetView();
+    } = useAddWineSetView({
+        searchQuery,
+        isSearchListVisible,
+        isSearchingWines,
+        isInitialSearchFinished,
+        hasMoreSearchResults,
+        wineSearchResults,
+        onResetSearch,
+        onOpenSearchModal,
+        onLoadMoreSearchResults,
+    });
 
+    const {
+        isVisible: isRepeatModalVisible,
+        selectedText: repeatRuleLabel,
+        items: repeatRuleItems,
+        isRepeatEnabled,
+        onOpen: onOpenRepeatModal,
+        onClose: onCloseRepeatModal,
+        onConfirm: onConfirmRepeatRule,
+        onChangeSwitch: onChangeRepeatSwitch,
+        isCustomRepeatVisible,
+        onCloseCustomRepeat,
+        onConfirmCustomRepeat,
+    } = useRepeatRuleModal({
+        value: repeatRule,
+        onChange: onChangeRepeatRule,
+    });
+
+    const {
+        isVisible: isTastingTypeModalVisible,
+        selectedText: tastingTypeLabel,
+        items: tastingTypeItems,
+        onOpen: onOpenTastingTypeModal,
+        onClose: onCloseTastingTypeModal,
+        onConfirm: onConfirmTastingType,
+    } = useTastingTypeModal({
+        value: tastingType,
+        onChange: onChangeTastingType,
+    });
+    const {
+        autoScrollActivationOffset,
+        autoScrollMaxVelocity,
+        dragActivationDelay,
+        onDismissKeyboard,
+        rowGap,
+        scrollableRef,
+    } = useWineSetSortableList();
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
 
-    const renderWineItem: ListRenderItem<IWineSetViewItem> = function renderWineItem({ item }) {
-        return <WineSetItemRow title={item.title} onEditPress={item.onEditPress} />;
-    };
-
-    const renderListDivider = function renderListDivider() {
-        return <View style={styles.listDivider} />;
-    };
+    const renderWineItem: SortableGridRenderItem<IWineSetViewItem> = useCallback(({ item }) => {
+        return <WineSetItemRow title={item.title} onEditPress={item.onEditPress} onDeletePress={item.onDeletePress} />;
+    }, []);
 
     return (
         <>
-            <ScreenContainer
-                edges={['top']}
-                scrollEnabled
-                headerComponent={<HeaderWithBackButton title={t('event.listWineEvent')} isCentered />}
-            >
-                <View style={styles.container}>
-                    <SearchBar
-                        ref={searchInputRef}
-                        value={searchQuery}
-                        onChangeText={onChangeSearchQuery}
-                        placeholder={t('common.search')}
-                        containerStyle={styles.searchBar}
-                    />
-                    <TouchableOpacity style={styles.tastingTypeButton} onPress={onOpenTastingTypeModal}>
-                        <Typography variant="h6" text={tastingTypeLabel} style={styles.tastingTypeButtonText} />
-                        <ArrowDownIcon />
-                    </TouchableOpacity>
+            <View style={styles.screen}>
+                <ScreenContainer
+                    edges={['top', 'bottom']}
+                    scrollEnabled={false}
+                    headerComponent={<HeaderWithBackButton title={t(headerTitleKey)} isCentered />}
+                >
+                    <Sortable.PortalProvider>
+                        <Animated.ScrollView
+                            ref={scrollableRef}
+                            contentContainerStyle={styles.container}
+                            keyboardShouldPersistTaps="always"
+                            nestedScrollEnabled
+                            showsVerticalScrollIndicator={false}
+                            style={styles.scroll}
+                            onScrollBeginDrag={onDismissKeyboard}
+                        >
+                            <WineSetListHeader
+                                tastingTypeLabel={tastingTypeLabel}
+                                onOpenSearchModal={onOpenSearchModal}
+                                onOpenTastingTypeModal={onOpenTastingTypeModal}
+                            />
+                            <View onTouchStart={onDismissKeyboard}>
+                                <Sortable.Grid
+                                    activeItemOpacity={0.96}
+                                    activeItemScale={1.02}
+                                    activeItemShadowOpacity={0.28}
+                                    autoScrollActivationOffset={autoScrollActivationOffset}
+                                    autoScrollMaxVelocity={autoScrollMaxVelocity}
+                                    columns={1}
+                                    data={wineSetViewItems}
+                                    dimensionsAnimationType="none"
+                                    dragActivationDelay={dragActivationDelay}
+                                    inactiveItemOpacity={0.78}
+                                    inactiveItemScale={1}
+                                    itemEntering={null}
+                                    itemExiting={null}
+                                    itemsLayoutTransitionMode="reorder"
+                                    keyExtractor={keyExtractor}
+                                    overDrag="vertical"
+                                    renderItem={renderWineItem}
+                                    reorderTriggerOrigin="touch"
+                                    rowGap={rowGap}
+                                    scrollableRef={scrollableRef}
+                                    onDragStart={onDismissKeyboard}
+                                    onDragEnd={onReorderWineSet}
+                                />
+                            </View>
+                            <WineSetListFooter
+                                repeatRuleLabel={repeatRuleLabel}
+                                isRepeatEnabled={isRepeatEnabled}
+                                isCreating={isCreating}
+                                isCreateEventDisabled={isCreateEventDisabled}
+                                isEditMode={isEditMode}
+                                onOpenScannerPress={onOpenScannerPress}
+                                onAddWinePress={onAddWinePress}
+                                onOpenRepeatModal={onOpenRepeatModal}
+                                onChangeRepeatSwitch={onChangeRepeatSwitch}
+                                onCreateEventPress={onCreateEventPress}
+                            />
+                        </Animated.ScrollView>
+                    </Sortable.PortalProvider>
+                </ScreenContainer>
+            </View>
 
-                    <View style={styles.dropdownContent}>
-                        <FlatList
-                            data={wineSetViewItems}
-                            keyExtractor={keyExtractor}
-                            renderItem={renderWineItem}
-                            scrollEnabled={false}
-                            ItemSeparatorComponent={renderListDivider}
-                        />
-                    </View>
-
-                    <Button
-                        text={t('event.addWine')}
-                        onPress={onAddWinePress}
-                        type="secondary"
-                        LeftAccessory={<PlusIcon color={colors.text} width={20} height={20} />}
-                    />
-                    <View style={styles.divider} />
-                    <View style={styles.repeatRow}>
-                        <Typography variant="h6" text={`${t('event.repeat')}:`} style={styles.repeatLabel} />
-                        <TouchableOpacity style={styles.repeatButton} onPress={onOpenRepeatModal}>
-                            <Typography variant="h6" text={repeatRuleLabel} style={styles.repeatButtonText} />
-                            <ArrowDownIcon />
-                        </TouchableOpacity>
-                    </View>
-
-                    <Button
-                        text={t('event.createEvent')}
-                        type="main"
-                        onPress={onCreateEventPress}
-                        inProgress={isCreating}
-                        containerStyle={styles.createButton}
-                    />
-                </View>
-            </ScreenContainer>
-
-            <RepeatRuleModal
-                visible={isRepeatModalVisible}
-                onClose={onCloseRepeatModal}
-                items={repeatRuleItems}
-                selectedValue={repeatRule}
-            />
-            <TastingTypeModal
-                visible={isTastingTypeModalVisible}
-                onClose={onCloseTastingTypeModal}
-                items={tastingTypeItems}
-                selectedValue={tastingType}
+            {isRepeatModalVisible && (
+                <UniversalPickerBottomModal
+                    visible={isRepeatModalVisible}
+                    title={t('event.repeat')}
+                    options={repeatRuleItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={onCloseRepeatModal}
+                    onConfirm={onConfirmRepeatRule}
+                />
+            )}
+            {isCustomRepeatVisible && (
+                <CustomRepeatEventModal
+                    visible={isCustomRepeatVisible}
+                    onClose={onCloseCustomRepeat}
+                    onConfirm={onConfirmCustomRepeat}
+                />
+            )}
+            {isTastingTypeModalVisible && (
+                <UniversalPickerBottomModal
+                    visible={isTastingTypeModalVisible}
+                    title={t('event.tastingType')}
+                    options={tastingTypeItems}
+                    isLoading={false}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={onCloseTastingTypeModal}
+                    onConfirm={onConfirmTastingType}
+                />
+            )}
+            <WineSearchBottomSheet
+                visible={isSearchModalVisible}
+                searchInputRef={searchInputRef}
+                value={searchQuery}
+                data={wineSearchResultItems}
+                isLoading={isSearchingWines}
+                emptyText={wineSearchEmptyText}
+                onChangeText={onChangeSearchQuery}
+                onClose={onCloseSearchModal}
+                onLoadMore={onLoadMoreSearchResults}
             />
             <EventCreatedAlert
                 visible={isEventCreatedAlertVisible}
+                qrCodeValue={eventDeepLink}
                 onClose={onCloseEventCreatedAlert}
                 onCheckEventPress={onCheckEventPress}
                 onShareQrPress={onShareQrPress}

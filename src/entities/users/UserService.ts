@@ -11,9 +11,15 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { EmailValidation } from './dto/EmailValidation.dto';
 import { IUserData } from './types/IUserData';
 import { IUser } from './types/IUser';
+import { IUserCurrency } from './types/IUserCurrency';
+import { IUserCurrencies } from './types/IUserCurrencies';
+import { LocationDto } from './dto/Location.dto';
 
 class UserService {
-    constructor(private _requester: IRequester, private _links: ILinks) {}
+    constructor(
+        private _requester: IRequester,
+        private _links: ILinks,
+    ) {}
 
     private extractUser = (data: any): IUser | null => {
         if (!data) return null;
@@ -36,6 +42,14 @@ class UserService {
         return user as IUser;
     };
 
+    private syncUserLanguage = (user: IUser) => {
+        if (!user.language) {
+            return;
+        }
+
+        localization.setLocale(user.language);
+    };
+
     me = async (): Promise<IResponse<IUser>> => {
         try {
             const response = await this._requester.request({
@@ -47,6 +61,7 @@ class UserService {
                 const user = this.extractUser(response.data);
                 if (user) {
                     userModel.user = user;
+                    this.syncUserLanguage(user);
                 }
             }
 
@@ -178,10 +193,10 @@ class UserService {
         try {
             const response = await this._requester.request({
                 headers: {
-                    'Accept': 'application/json',
+                    Accept: 'application/json',
                     'Content-Type': 'application/json',
                     'Accept-Language': localization.locale,
-                    'Authorization': `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 method: 'POST',
                 url: `${this._links.resetPassword}/confirm`,
@@ -232,6 +247,88 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> update: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getCurrencies = async (): Promise<IResponse<IUserCurrencies>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.userCurrencies}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> getCurrencies: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    updateCurrency = async (currency: string): Promise<IResponse<IUserCurrency>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'PATCH',
+                url: `${this._links.userCurrencies}`,
+                data: {
+                    currency,
+                },
+            });
+
+            if (!response.isError && userModel.user) {
+                userModel.user = {
+                    ...userModel.user,
+                    selectedCurrency: currency,
+                };
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> updateCurrency: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    updateLanguage = async (language: string): Promise<IResponse<IUser>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'PATCH',
+                url: `${this._links.me}`,
+                data: {
+                    language,
+                },
+            });
+
+            if (!response.isError) {
+                const user = this.extractUser(response.data);
+                if (user) {
+                    userModel.user = user;
+                } else if (userModel.user) {
+                    userModel.user = {
+                        ...userModel.user,
+                        language,
+                    };
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> updateLanguage: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    location = async (data: LocationDto): Promise<{}> => {
+        try {
+            const response = await this._requester.request({
+                method: 'PATCH',
+                url: `${this._links.userLocation}`,
+                data,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> location: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

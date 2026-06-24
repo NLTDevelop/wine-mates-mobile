@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
-import { wineModel } from '@/entities/wine/WineModel';
+import { useState, useMemo, useCallback } from 'react';
+import { LayoutChangeEvent } from 'react-native';
 import { useUiContext } from '@/UIProvider';
+import { wineModel } from '@/entities/wine/models/WineModel';
 
 export const useSelectedParameters = () => {
     const { t } = useUiContext();
@@ -22,9 +23,13 @@ export const useSelectedParameters = () => {
         { key: 'wineName', label: t('wine.wineName'), value: wineModel.base?.wineName?.value || '–', isBold: true },
     ], [t]);
 
-    const handleLabelLayout = (width: number) => {
+    const onLabelLayoutWidthChange = useCallback((width: number) => {
         setMaxLabelWidth(prev => Math.max(prev, width));
-    };
+    }, []);
 
-    return { isOpened, onPress, parameters, maxLabelWidth, handleLabelLayout };
+    const onLabelLayout = useCallback((event: LayoutChangeEvent) => {
+        onLabelLayoutWidthChange(event.nativeEvent.layout.width);
+    }, [onLabelLayoutWidthChange]);
+
+    return { isOpened, onPress, parameters, maxLabelWidth, onLabelLayout };
 };

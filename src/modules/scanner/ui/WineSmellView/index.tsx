@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { getStyles } from './styles';
 import { Keyboard, Pressable, View } from 'react-native';
 import { FlatListIndicator } from '@fanchenbao/react-native-scroll-indicator';
@@ -8,61 +8,92 @@ import { Typography } from '@/UIKit/Typography';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Button } from '@/UIKit/Button';
 import { CloseButton } from '../components/CloseButton';
-import { SelectedParameters } from '../components/SelectedParameters';
+import { SelectedParameters } from '../../../../UIKit/SelectedParameters';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { Loader } from '@/UIKit/Loader';
 import { observer } from 'mobx-react-lite';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
-import { useWineSmell } from '../../presenters/useWineSmell';
 import { SearchBar } from '@/UIKit/SearchBar';
-import { SelectedItemsList } from '../components/SelectedItemsList';
-import { SmellGroupSelector } from '../components/SmellGroupSelector';
+import { SmellGroupSelector } from '../../../../UIKit/SmellGroupSelector';
 import { ISmellSubgroup, IWineSmell } from '@/entities/wine/types/IWineSmell';
-import { SmellListItem } from '../components/SmellListItem';
+import { SmellListItem } from '../../../../UIKit/SmellListItem';
 import { CustomInput } from '@/UIKit/CustomInput';
-import { useAddItem } from '../../presenters/useAddItem';
 import { AddButton } from '../components/AddButton';
-import { useSelectModal } from '../../presenters/useSelectModal';
-import { SelectModal } from '../components/SelectModal';
+import { SelectModal } from '../../../../UIKit/SelectModal';
 import { IWineAroma } from '@/entities/wine/types/IWineAroma';
-import { useWineSmellSearch } from '../../presenters/useWineSmellSearch';
-import { useAnimatedItemAdd } from '../../presenters/useAnimatedItemAdd';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { scaleVertical } from '@/utils';
+import { useWineSmellViewPressHandlers } from './presenters/useWineSmellViewPressHandlers';
+import { useWineSmellViewContentState } from './presenters/useWineSmellViewContentState';
+import { useSelectModal } from '../../presenters/useSelectModal';
+import { useWineSmell } from './presenters/useWineSmell';
+import { useAnimatedItemAdd } from '../../presenters/useAnimatedItemAdd';
+import { useAddItem } from '../../presenters/useAddItem';
+import { useWineSmellSearch } from '../../presenters/useWineSmellSearch';
+import { SelectedItemsList } from '@/UIKit/SelectedItemsList';
 
 export const WineSmellView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { isVisible, onShowModal, onHide, selectData, selectedSubgroup, groupId } = useSelectModal();
-    const { data, selected, isError, getSmells, isLoading, isOpened, onItemPress: originalOnItemPress, toggleList, onSelectedItemPress, visibleSubgroups,
-        selectedIndex, handleLeftPress, handleRightPress, handleAddCustomSmell: originalHandleAddCustomSmell, handleNextPress, handleGroupPress } = useWineSmell(onHide);
-
+    const {
+        data,
+        selected,
+        isError,
+        getSmells,
+        isLoading,
+        isOpened,
+        onItemPress: originalOnItemPress,
+        toggleList,
+        onSelectedItemPress,
+        visibleSubgroups,
+        selectedIndex,
+        onLeftPress,
+        onRightPress,
+        onAddCustomSmell: originalOnAddCustomSmell,
+        onNextPress,
+        onGroupPress,
+        onSubgroupPress,
+    } = useWineSmell(onHide);
     const [onItemPress, selectedListRef] = useAnimatedItemAdd(originalOnItemPress);
-    const [handleAddCustomSmell] = useAnimatedItemAdd(originalHandleAddCustomSmell);
+    const [onAddCustomSmell] = useAnimatedItemAdd(originalOnAddCustomSmell);
+    const { text, setText, handleAddPress } = useAddItem(onAddCustomSmell);
+    const { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress, searchInputRef } =
+        useWineSmellSearch({ data, selected, onItemPress, onSelectedItemPress });
 
-    const { text, setText, handleAddPress } = useAddItem(handleAddCustomSmell);
-    const { isSearching, isDebouncing, searchedAromas, search, onSearchTextChange, onSearchItemPress, searchInputRef } = useWineSmellSearch({
-        data, selected, onItemPress, onSelectedItemPress });
+    const { shouldShowLoader, shouldShowEmptyState, shouldShowContent } = useWineSmellViewContentState({
+        isLoading,
+        groupsCount: data.length,
+    });
 
-    const visibleGroups = useMemo(
-        () => data.filter(group => group.subgroups.some(subgroup => subgroup.aromas.length > 0)),
-        [data],
-    );
-    const keyExtractor = useCallback((item: ISmellSubgroup | IWineAroma | IWineSmell) => item.id.toString(), []);
-    const renderItem = useCallback(({ item }: { item: ISmellSubgroup }) => (
-        <SmellListItem item={item} onPress={() => onShowModal(data[selectedIndex].id, item)} />
-    ), [data, onShowModal, selectedIndex]);
-    const renderGroupItem = useCallback(({ item }: { item: IWineSmell }) => (
-        <SmellListItem item={item} onPress={() => handleGroupPress(item.id)} />
-    ), [handleGroupPress]);
+    const { onSubgroupListItemPress, onGroupListItemPress, onSearchListItemPress } = useWineSmellViewPressHandlers({
+        data,
+        selectedIndex,
+        onSubgroupPress,
+        onShowModal,
+        onGroupPress,
+        onSearchItemPress,
+    });
 
-    const renderSearchItem = useCallback(({ item }: { item: IWineAroma }) => {
+    function keyExtractor(item: ISmellSubgroup | IWineAroma | IWineSmell) {
+        return item.id.toString();
+    }
+
+    function renderItem({ item }: { item: ISmellSubgroup }) {
+        return <SmellListItem item={item} onPress={onSubgroupListItemPress(item)} />;
+    }
+
+    function renderGroupItem({ item }: { item: IWineSmell }) {
+        return <SmellListItem item={item} onPress={onGroupListItemPress(item)} />;
+    }
+
+    function renderSearchItem({ item }: { item: IWineAroma }) {
         const isSelected = selected.some(smell => smell.id === item.id);
-        return <SmellListItem item={item} onPress={() => onSearchItemPress(item)} isSelected={isSelected} />;
-    }, [onSearchItemPress, selected]);
+        return <SmellListItem item={item} onPress={onSearchListItemPress(item)} isSelected={isSelected} />;
+    }
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getSmells} isLoading={isLoading}>
@@ -71,16 +102,18 @@ export const WineSmellView = observer(() => {
                 withGradient
                 headerComponent={<HeaderWithBackButton title={t('wine.smell')} rightComponent={<CloseButton />} />}
             >
-                {isLoading ? (
+                {shouldShowLoader ? (
                     <Loader />
-                ) : !data || data.length === 0 ? (
+                ) : null}
+                {shouldShowEmptyState ? (
                     <View style={styles.container}>
                         <View>
                             <Typography text={t('wine.smellDescription')} variant="body_400" style={styles.title} />
                             <EmptyListView isNothingFound={true} />
                         </View>
                     </View>
-                ) : (
+                ) : null}
+                {shouldShowContent ? (
                     <View style={styles.container}>
                         <KeyboardAwareScrollView
                             style={styles.mainContainer}
@@ -128,8 +161,8 @@ export const WineSmellView = observer(() => {
                                                     isOpened={isOpened}
                                                     selectedIndex={selectedIndex}
                                                     onPress={toggleList}
-                                                    handleLeftPress={handleLeftPress}
-                                                    handleRightPress={handleRightPress}
+                                                    onLeftPress={onLeftPress}
+                                                    onRightPress={onRightPress}
                                                 />
                                                 {visibleSubgroups.length > 0 && (
                                                     <FlatListIndicator
@@ -150,7 +183,7 @@ export const WineSmellView = observer(() => {
                                         ) : (
                                             <FlatListIndicator
                                                 flatListProps={{
-                                                    data: visibleGroups,
+                                                    data,
                                                     keyExtractor,
                                                     renderItem: renderGroupItem,
                                                     style: styles.list,
@@ -178,13 +211,13 @@ export const WineSmellView = observer(() => {
                         </KeyboardAwareScrollView>
                         <Button
                             text={t('wine.letsTaste')}
-                            onPress={handleNextPress}
+                            onPress={onNextPress}
                             containerStyle={styles.button}
                             RightAccessory={<NextLongArrowIcon />}
                             disabled={!selected.length}
                         />
                     </View>
-                )}
+                ) : null}
                 <SelectModal
                     isVisible={isVisible}
                     onHide={onHide}

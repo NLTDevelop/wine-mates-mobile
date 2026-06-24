@@ -12,6 +12,8 @@ import { observer } from 'mobx-react-lite';
 import { MyWineSearchBar } from '../MyWineSearchBar';
 import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
 import { WineListItem } from '@/UIKit/WineListItem';
+import { WineShareModal } from '@/UIKit/WineShareModal';
+import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 
 export const MyWine = observer(() => {
     const { colors , t } = useUiContext();
@@ -19,6 +21,13 @@ export const MyWine = observer(() => {
 
     const { data, onRefresh, onEndReached, onItemPress, isLoading, getList, listRef, scrollToTop } = useMyWine();
     const { refreshControl } = useRefresh(onRefresh);
+    const {
+        isShareModalVisible,
+        onOpenShareModal,
+        onCloseShareModal,
+        onShareMessengerPress,
+        onCopyWineLinkPress,
+    } = useWineShareModal();
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
 
@@ -29,8 +38,8 @@ export const MyWine = observer(() => {
     }, []);
 
     const renderItem = useCallback(({ item }: { item: IWineListItem; index: number }) => {
-        return <WineListItem item={item} onPress={onItemPress} showDate showVintage showNonVintage isMyWine footer={renderFooter(item)} showExpertRatingWithoutPremium />;
-    }, [onItemPress, renderFooter]);
+        return <WineListItem item={item} onPress={onItemPress} onSharePress={onOpenShareModal} showDate showVintage showNonVintage isMyWine footer={renderFooter(item)} showExpertRatingWithoutPremium />;
+    }, [onItemPress, onOpenShareModal, renderFooter]);
 
     return (
         <View style={styles.container}>
@@ -55,6 +64,12 @@ export const MyWine = observer(() => {
                         text={t('common.nothingFoundTitle')}
                     />
                 }
+            />
+            <WineShareModal
+                visible={isShareModalVisible}
+                onClose={onCloseShareModal}
+                onShareMessengerPress={onShareMessengerPress}
+                onCopyLinkPress={onCopyWineLinkPress}
             />
         </View>
     );

@@ -22,11 +22,6 @@ export const getStyles = (_colors: IColors) => {
             alignItems: 'center',
             gap: scaleHorizontal(4),
         },
-        actionsWrapper: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: scaleHorizontal(12),
-        }
     });
     return styles;
 };

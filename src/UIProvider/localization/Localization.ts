@@ -1,5 +1,6 @@
 import { I18n } from 'i18n-js';
 import * as RNLocalize from 'react-native-localize';
+import { LocaleConfig } from 'react-native-calendars';
 import uk from './translations/uk.json';
 import en from './translations/en.json';
 import { IRepository } from '@/repository/IRepository';
@@ -9,6 +10,7 @@ import { ILocalization } from './ILocalization';
 
 class Localization implements ILocalization {
     private i18n: I18n;
+    private calendarLanguages = ['en', 'fr', 'es', 'de', 'it', 'pt', 'uk'];
 
     constructor(private localizationStore: IRepository<string>, private _storage: IStorage) {
         this.i18n = new I18n();
@@ -45,12 +47,14 @@ class Localization implements ILocalization {
                 this.i18n.translations = translations;
             }
             
-            this.i18n.locale = finalLanguage;
+            this.i18n.locale = finalLanguage || 'en';
             this.localizationStore.save(finalLanguage);
+            this.syncCalendarLocale(finalLanguage || 'en');
         } catch (error) {
             console.warn('Localization -> load: ', error);
             this.localizationStore.save('en');
             this.i18n.locale = 'en';
+            this.syncCalendarLocale('en');
         }
     };
 
@@ -66,6 +70,14 @@ class Localization implements ILocalization {
         if (data) {
             this._storage.set('TRANSLATIONS', data);
         }
+    };
+
+    private syncCalendarLocale = (value: string) => {
+        const normalizedLocale = (value || '').toLowerCase().split(/[-_]/)[0];
+        const resolvedLocale = normalizedLocale === 'ua' ? 'uk' : normalizedLocale;
+        const calendarLocale = this.calendarLanguages.includes(resolvedLocale) ? resolvedLocale : 'en';
+
+        LocaleConfig.defaultLocale = calendarLocale;
     };
 
     get locales() {
@@ -99,6 +111,7 @@ class Localization implements ILocalization {
         this.persistLanguage(supported);
 
         this.i18n.locale = supported;
+        this.syncCalendarLocale(supported);
     };
 }
 

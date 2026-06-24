@@ -1,12 +1,10 @@
-import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { useCallback, useRef, useState } from 'react';
-import { wineListsModel } from '@/entities/wine/WineListsModel';
+import { useCallback, useState } from 'react';
 import { computed } from 'mobx';
-import { ISelectedFilters } from '@/entities/wine/WineListsModel';
+import { ISelectedFilters, wineListsModel } from '@/entities/wine/models/WineListsModel';
 
 export const useMyWineFiltersBottomSheet = () => {
-    const filtersModalRef = useRef<BottomSheetModal | null>(null);
     const appliedFilters = wineListsModel.filters;
+    const [isVisible, setIsVisible] = useState(false);
     
     const [tempFilters, setTempFilters] = useState<ISelectedFilters>({
         sort: [...appliedFilters.sort],
@@ -26,7 +24,7 @@ export const useMyWineFiltersBottomSheet = () => {
             colors: [...appliedFilters.colors],
             types: [...appliedFilters.types],
         });
-        filtersModalRef.current?.dismiss();
+        setIsVisible(false);
     }, [appliedFilters]);
 
     const onOpen = useCallback(() => {
@@ -35,7 +33,7 @@ export const useMyWineFiltersBottomSheet = () => {
             colors: [...appliedFilters.colors],
             types: [...appliedFilters.types],
         });
-        filtersModalRef.current?.present();
+        setIsVisible(true);
     }, [appliedFilters]);
 
     const onClear = useCallback(() => {
@@ -59,13 +57,11 @@ export const useMyWineFiltersBottomSheet = () => {
     }, []);
 
     const onApply = useCallback(() => {
-        wineListsModel.setSort(tempFilters.sort);
-        wineListsModel.setColors(tempFilters.colors);
-        wineListsModel.setTypes(tempFilters.types);
+        wineListsModel.filters = tempFilters;
     }, [tempFilters]);
 
     return { 
-        filtersModalRef, 
+        isVisible,
         onClose, 
         onOpen, 
         hasFilters, 

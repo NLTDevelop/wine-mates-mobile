@@ -1,4 +1,5 @@
 import { userModel } from '@/entities/users/UserModel';
+import { notificationService } from '@/libs/notificationService/NotificationService';
 import { useCallback, useState } from 'react';
 
 export const useLogoutModal = () => {
@@ -12,7 +13,8 @@ export const useLogoutModal = () => {
         setIsVisible(false);
     }, []);
 
-    const onLogout = useCallback(() => {
+    const onLogout = useCallback(async () => {
+        await notificationService.unregisterCurrentDevice().catch(() => {});
         userModel.token = null;
     }, []);
 

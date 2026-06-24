@@ -28,6 +28,7 @@ export type IColors = {
     icon: string;
     icon_inverted: string;
     icon_primary: string;
+    finishStatus: string;
 
     unselectedSlider: string;
     selectedSlider: string;

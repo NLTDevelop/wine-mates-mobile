@@ -8,9 +8,9 @@ import { HomeIcon } from '@assets/icons/HomeIcon';
 import { SettingsIcon } from '@assets/icons/SettingsIcon';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
-export const useProfile = () => {
+export const useProfile = (locale: string) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const onWineAndStylePress = useCallback(() => {
@@ -18,7 +18,7 @@ export const useProfile = () => {
     }, [navigation]);
 
     const onEventsPress = useCallback(() => {
-        navigation.navigate('');
+        navigation.navigate('EventListView');
     }, [navigation]);
 
     const onFollowersPress = useCallback(() => {
@@ -37,44 +37,55 @@ export const useProfile = () => {
         navigation.navigate('SettingsView');
     }, [navigation]);
 
-    const BUTTONS = [
-        {
-            id: 1,
-            text: localization.t('profile.winesAndStyles'),
-            icon: <HomeIcon width={24} height={24} color={colorTheme.colors.icon} />,
-            onPress: onWineAndStylePress,
-        },
-        {
-            id: 2,
-            text: localization.t('profile.events'),
-            icon: <EventsIcon />,
-            onPress: onEventsPress,
-        },
-        {
-            id: 3,
-            text: localization.t('profile.followers'),
-            icon: <FollowersIcon />,
-            onPress: onFollowersPress,
-        },
-        {
-            id: 4,
-            text: localization.t('profile.savedWines'),
-            icon: <FavoriteIcon width={24} height={24} color={colorTheme.colors.icon} />,
-            onPress: onSavedWinePress,
-        },
-        {
-            id: 5,
-            text: localization.t('profile.chemicalAnalysis'),
-            icon: <ChemicalIcon />,
-            onPress: onChemicalAnalysisPress,
-        },
-        {
-            id: 6,
-            text: localization.t('profile.settings'),
-            icon: <SettingsIcon />,
-            onPress: onSettingsPress,
-        },
-    ];
+    const BUTTONS = useMemo(
+        () => [
+            {
+                id: 1,
+                text: localization.t('profile.winesAndStyles', { locale }),
+                icon: <HomeIcon width={24} height={24} color={colorTheme.colors.icon} />,
+                onPress: onWineAndStylePress,
+            },
+            {
+                id: 2,
+                text: localization.t('profile.events', { locale }),
+                icon: <EventsIcon />,
+                onPress: onEventsPress,
+            },
+            {
+                id: 3,
+                text: localization.t('profile.followers', { locale }),
+                icon: <FollowersIcon />,
+                onPress: onFollowersPress,
+            },
+            {
+                id: 4,
+                text: localization.t('profile.savedWines', { locale }),
+                icon: <FavoriteIcon width={24} height={24} color={colorTheme.colors.icon} />,
+                onPress: onSavedWinePress,
+            },
+            {
+                id: 5,
+                text: localization.t('profile.chemicalAnalysis', { locale }),
+                icon: <ChemicalIcon />,
+                onPress: onChemicalAnalysisPress,
+            },
+            {
+                id: 6,
+                text: localization.t('profile.settings', { locale }),
+                icon: <SettingsIcon />,
+                onPress: onSettingsPress,
+            },
+        ],
+        [
+            onChemicalAnalysisPress,
+            onEventsPress,
+            onFollowersPress,
+            locale,
+            onSavedWinePress,
+            onSettingsPress,
+            onWineAndStylePress,
+        ],
+    );
 
     return { BUTTONS };
 };

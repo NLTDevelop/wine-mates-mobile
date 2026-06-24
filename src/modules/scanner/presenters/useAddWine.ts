@@ -1,13 +1,17 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { StackActions, useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { wineModel } from '@/entities/wine/WineModel';
 import { IWineBase, IWineBaseValue } from '@/entities/wine/types/IWineBase';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
-import { wineService } from '@/entities/wine/WineService';
+import { wineService } from '@/entities/wine/services/WineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { IAIData } from '@/entities/wine/types/IAIData';
+import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
+import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
+import { clearTasteCharacteristicsCache, clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
+import { wineModel } from '@/entities/wine/models/WineModel';
+import { clearWineModel } from '@/entities/wine/services/WineModelService';
 
 const createValue = (): IWineBaseValue => ({ id: null, value: '' });
 
@@ -66,6 +70,19 @@ const fromDropdown = (item?: IDropdownItem | null): IWineBaseValue => {
     };
 };
 
+const getWineSetSearchItem = (id: number, form: IWineBase): IWineSetSearchItem => {
+    return {
+        id,
+        name: form.wineName.value || '',
+        producer: form.producer.value,
+        vintage: form.vintageYear.value ? Number(form.vintageYear.value) : null,
+        grapeVariety: form.grapeVariety.value,
+        country: form.country.value,
+        region: form.region.value,
+        image: null,
+    };
+};
+
 export const useAddWine = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
@@ -73,6 +90,7 @@ export const useAddWine = () => {
     const [form, setForm] = useState<IWineBase>(() => createInitialForm(aiData));
     const [inProgress, setInProgress] = useState(false);
     const [isVintageError, setIsVintageError] = useState({status: false, errorText: ''});
+    const isAddingWineToEvent = Boolean(wineSetScannerModel.state);
     const isDisabled = useMemo(() => {
         const baseRequired = [
             form.typeOfWine.value,
@@ -87,7 +105,10 @@ export const useAddWine = () => {
     }, [form]);
 
     useEffect(() => {
-        return () => wineModel.clear();
+        return () => {
+            clearTasteCharacteristicsCache();
+            clearWineModel();
+        };
     }, []);
 
     const onChangeType = useCallback((item: IDropdownItem) => {
@@ -124,7 +145,7 @@ export const useAddWine = () => {
         setForm(prev => ({ ...prev, wineName: { ...prev.wineName, value } }));
     }, []);
 
-    const handleNextPress = useCallback(async () => {
+    const onNextPress = useCallback(async () => {
         try {
             if (!form.typeOfWine.id || !form.colorOfWine.id) return;
 
@@ -154,10 +175,33 @@ export const useAddWine = () => {
 
             if (response.isError || !response.data) {
                 if (response.status === 409) {
+                    const wineId = Number(response.errors.wineId || 0);
+
+                    if (isAddingWineToEvent && wineId) {
+                        const addWineSetScannerState = wineSetScannerModel.state;
+                        wineSetScannerModel.clear();
+                        clearTasteCharacteristicsCache();
+                        clearWineModel();
+
+                        if (addWineSetScannerState) {
+                            navigation.dispatch(
+                                StackActions.popTo('AddWineSetView', {
+                                    draft: addWineSetScannerState.draft,
+                                    initialSelectedWines: addWineSetScannerState.selectedWines,
+                                    editEventId: addWineSetScannerState.editEventId,
+                                    isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
+                                    selectedWine: getWineSetSearchItem(wineId, form),
+                                }),
+                            );
+                        }
+                        return;
+                    }
+
                     const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
-                    wineModel.clear();
+                    clearTasteCharacteristicsCache();
+                    clearWineModel();
                     wineModel.wine = {
-                        id: Number(response.errors.wineId || 0),
+                        id: wineId,
                         vintage: Number(form.vintageYear.value),
                         name: form.wineName.value || '',
                     };
@@ -169,7 +213,8 @@ export const useAddWine = () => {
                         },
                     };
 
-                    navigation.navigate('WineLookView', { source: 'scanner' });
+                    clearWineSnackCuisinesCache();
+                    navigation.navigate('WineReviewView', { source: 'scanner' });
                 } else if (response?.errors?.errors?.vintage) {
                     setIsVintageError({status: true, errorText: response.errors.errors.vintage[0]});
                 } else {
@@ -179,8 +224,29 @@ export const useAddWine = () => {
                     );
                 }
             } else {
+                if (isAddingWineToEvent) {
+                    const addWineSetScannerState = wineSetScannerModel.state;
+                    wineSetScannerModel.clear();
+                    clearTasteCharacteristicsCache();
+                    clearWineModel();
+
+                    if (addWineSetScannerState) {
+                        navigation.dispatch(
+                            StackActions.popTo('AddWineSetView', {
+                                draft: addWineSetScannerState.draft,
+                                initialSelectedWines: addWineSetScannerState.selectedWines,
+                                editEventId: addWineSetScannerState.editEventId,
+                                isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
+                                selectedWine: getWineSetSearchItem(response.data.id, form),
+                            }),
+                        );
+                    }
+                    return;
+                }
+
                 const selectedType = wineModel.wineTypes?.find(type => type.id === form.typeOfWine.id);
-                wineModel.clear();
+                clearTasteCharacteristicsCache();
+                clearWineModel();
                 wineModel.base = {
                     ...form,
                     typeOfWine: {
@@ -193,17 +259,30 @@ export const useAddWine = () => {
                     name: response.data.name,
                     vintage: response.data.vintage,
                 };
-                navigation.navigate('WineLookView', { source: 'scanner' });
+                clearWineSnackCuisinesCache();
+                navigation.navigate('WineReviewView', { source: 'scanner' });
             }
         } catch (error) {
             console.error('Add wine error: ', JSON.stringify(error, null, 2));
         } finally {
             setInProgress(false);
         }
-    }, [navigation, form]);
+    }, [navigation, form, isAddingWineToEvent]);
 
     return {
-        form, onChangeWinery, onChangeGrapeVariety, onChangeVintageYear, onChangeWineName, handleNextPress,
-        isDisabled, onChangeType, onChangeColor, onChangeCountry, onChangeRegion, inProgress, isVintageError
+        form,
+        onChangeWinery,
+        onChangeGrapeVariety,
+        onChangeVintageYear,
+        onChangeWineName,
+        onNextPress,
+        isDisabled,
+        onChangeType,
+        onChangeColor,
+        onChangeCountry,
+        onChangeRegion,
+        inProgress,
+        isVintageError,
+        isAddingWineToEvent,
     };
 };

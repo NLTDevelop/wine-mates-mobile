@@ -1,5 +1,5 @@
 import { useMemo, useRef, forwardRef, useImperativeHandle, type ReactElement, useCallback } from 'react';
-import { Animated, TouchableWithoutFeedback, View, type ViewStyle } from 'react-native';
+import { Animated, StatusBar, TouchableWithoutFeedback, View, type ViewStyle } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -10,6 +10,7 @@ import { useCustomDropdown } from '../presenters/useCustomDropdown';
 import { SearchBar } from '@/UIKit/SearchBar';
 import { IDropdownItem } from '../types/IDropdownItem';
 import { useCustomDropdownAnimation } from '../presenters/useCustomDropdownAnimation';
+import { isAndroid } from '@/utils';
 
 interface IProps {
     placeholder: string;
@@ -20,12 +21,14 @@ interface IProps {
     disabled?: boolean;
     selectedValue?: string | number | null;
     containerStyle?: ViewStyle;
+    dropdownContainerStyle?: ViewStyle;
     renderItem?: (item: IDropdownItem, selected?: boolean) => ReactElement | null;
     renderSelectedValue?: (item: IDropdownItem) => ReactElement | null;
     renderFooter?: () => ReactElement | null;
     emptyStateLabel?: string;
     onSearchChange?: (value: string) => void;
     disableLocalFilter?: boolean;
+    fixAndroidDropdownGap?: boolean;
 }
 
 export interface ICustomDropdownRef {
@@ -44,12 +47,14 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
             disabled = false,
             selectedValue = null,
             containerStyle,
+            dropdownContainerStyle,
             renderItem,
             renderSelectedValue,
             renderFooter,
             emptyStateLabel,
             onSearchChange,
             disableLocalFilter = false,
+            fixAndroidDropdownGap = false,
         },
         ref,
     ) => {
@@ -57,10 +62,35 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
         const styles = useMemo(() => getStyles(colors), [colors]);
         const dropdownRef = useRef<any>(null);
 
-        const { value, isOpen, search, filteredData, selectedItem, triggerContainerRef, dropdownLiftOffset, shouldShowSearch,
-            setSearch, handleSelect, onBlurDropdown, onPressDropdown, onCloseDropdown, onOpenDropdown, handleOpen,
-        } = useCustomDropdown({ onPress, data, onSelect, selectedValue, emptyStateLabel, withSearch, disableLocalFilter, onSearchChange });
+        const {
+            value,
+            isOpen,
+            search,
+            filteredData,
+            selectedItem,
+            triggerContainerRef,
+            dropdownLiftOffset,
+            shouldShowSearch,
+            setSearch,
+            handleSelect,
+            onBlurDropdown,
+            onPressDropdown,
+            onCloseDropdown,
+            onOpenDropdown,
+            handleOpen,
+        } = useCustomDropdown({
+            onPress,
+            data,
+            onSelect,
+            selectedValue,
+            emptyStateLabel,
+            withSearch,
+            disableLocalFilter,
+            onSearchChange,
+        });
         const { animatedArrowStyle, animatedLiftOffset } = useCustomDropdownAnimation({ isOpen, dropdownLiftOffset });
+        const androidStatusBarOffset = fixAndroidDropdownGap && isAndroid ? StatusBar.currentHeight || 0 : 0;
+        const dropdownLiftOffsetTop = animatedLiftOffset + androidStatusBarOffset;
 
         useImperativeHandle(ref, () => ({
             close: () => {
@@ -75,10 +105,13 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
             onPressDropdown(disabled, dropdownRef.current);
         }, [disabled, onPressDropdown]);
 
-        const onSearchTextChange = useCallback((text: string) => {
-            setSearch(text);
-            onSearchChange?.(text);
-        }, [setSearch, onSearchChange]);
+        const onSearchTextChange = useCallback(
+            (text: string) => {
+                setSearch(text);
+                onSearchChange?.(text);
+            },
+            [setSearch, onSearchChange],
+        );
 
         const renderInputSearch = useCallback(() => {
             if (!shouldShowSearch) {
@@ -95,11 +128,14 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
             );
         }, [search, onSearchTextChange, shouldShowSearch, styles.searchContainer, t]);
 
-        const renderRightIcon = useCallback(() => (
-            <Animated.View style={animatedArrowStyle}>
-                <ArrowDownIcon rotate={0} />
-            </Animated.View>
-        ), [animatedArrowStyle]);
+        const renderRightIcon = useCallback(
+            () => (
+                <Animated.View style={animatedArrowStyle}>
+                    <ArrowDownIcon rotate={0} />
+                </Animated.View>
+            ),
+            [animatedArrowStyle],
+        );
 
         const renderDropdownItem = useCallback(
             (item: unknown, selected?: boolean) => {
@@ -129,7 +165,8 @@ export const CustomDropdown = forwardRef<ICustomDropdownRef, IProps>(
                             placeholderStyle={styles.placeholder}
                             containerStyle={[
                                 styles.dropdownContainer,
-                                animatedLiftOffset > 0 ? { marginTop: -animatedLiftOffset } : null,
+                                dropdownContainerStyle,
+                                dropdownLiftOffsetTop > 0 ? { marginTop: -dropdownLiftOffsetTop } : null,
                             ]}
                             selectedTextStyle={[
                                 styles.selectedText,

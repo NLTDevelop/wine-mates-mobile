@@ -95,3 +95,51 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+## Secrets Setup
+
+Google Maps/Places keys must not be stored in git.
+
+### 1. JS layer key (used by Places/Static Maps requests)
+
+Create local override file:
+
+```sh
+cp src/config.local.example.ts src/config.local.ts
+```
+
+Then put your real key in `src/config.local.ts`.
+
+### 2. Android native key (Google Maps SDK)
+
+Create local file `android/local.properties` (this file is ignored by git):
+
+```sh
+cp android/local.properties.example android/local.properties
+```
+
+Set:
+
+```text
+GOOGLE_MAPS_API_KEY=YOUR_REAL_KEY
+```
+
+### 3. iOS native key (Google Maps SDK)
+
+Create local iOS secrets file:
+
+```sh
+cp ios/Configs/Secrets.xcconfig.example ios/Configs/Secrets.xcconfig
+```
+
+Set:
+
+```text
+GOOGLE_MAPS_API_KEY=YOUR_REAL_KEY
+```
+
+Alternative: pass key via env var before iOS build/run:
+
+```sh
+GOOGLE_MAPS_API_KEY=YOUR_REAL_KEY npm run ios
+```

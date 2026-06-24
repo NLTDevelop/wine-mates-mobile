@@ -1,0 +1,71 @@
+import { StyleSheet } from 'react-native';
+import { IColors } from '@/UIProvider/theme/IColors';
+import { QR_CODE_SHARE_SIZE, scaleFontSize, scaleHorizontal, scaleVertical } from '@/utils';
+
+export const getStyles = (colors: IColors) => {
+    const styles = StyleSheet.create({
+        container: {
+            gap: scaleVertical(12),
+        },
+        metaRow: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: scaleHorizontal(8),
+        },
+        metaBadgesRow: {
+            flexDirection: 'row',
+            gap: scaleHorizontal(8),
+            flexShrink: 1,
+        },
+        metaBadge: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderRadius: scaleHorizontal(6),
+            paddingHorizontal: scaleHorizontal(8),
+            paddingVertical: scaleVertical(6),
+            gap: scaleHorizontal(6),
+            backgroundColor: colors.background_middle,
+        },
+        metaText: {
+            color: colors.text,
+        },
+        shareButton: {
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        hiddenQrCodeContainer: {
+            position: 'absolute',
+            width: scaleHorizontal(QR_CODE_SHARE_SIZE),
+            height: scaleHorizontal(QR_CODE_SHARE_SIZE),
+            opacity: 0,
+            overflow: 'hidden',
+        },
+        header: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: scaleHorizontal(12),
+        },
+        headerContent: {
+            gap: scaleVertical(2),
+        },
+        title: {
+            color: colors.text,
+            maxWidth: scaleHorizontal(255),
+        },
+        timeText: {
+            color: colors.text_light,
+            fontSize: scaleFontSize(16),
+        },
+        mapContainer: {
+            height: scaleVertical(98),
+            borderRadius: scaleHorizontal(14),
+            overflow: 'hidden',
+        },
+        map: {
+            ...StyleSheet.absoluteFill,
+        },
+    });
+
+    return styles;
+};

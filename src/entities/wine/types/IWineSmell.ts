@@ -10,6 +10,7 @@ export interface ISmellSubgroup {
     name: string;
     colorHex: string;
     sortNumber: number;
+    hiddenItemId?: number;
     aromas: IAroma[];
 }
 
