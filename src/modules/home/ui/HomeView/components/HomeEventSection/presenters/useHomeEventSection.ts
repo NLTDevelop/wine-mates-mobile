@@ -18,6 +18,7 @@ import { IMedia } from '@/entities/media/types/IMedia';
 type NavigationProp = NativeStackNavigationProp<Record<string, object | undefined>>;
 
 const DEFAULT_CAROUSEL_HEIGHT = scaleVertical(360);
+const CAROUSEL_HEIGHT_BUFFER = scaleVertical(4);
 
 const updateHomeEventFavoriteState = (eventId: number, isSaved: boolean) => {
     homeSectionsModel.sections = homeSectionsModel.sections.map(section => {
@@ -73,6 +74,7 @@ export const useHomeEventSection = (events: IEvent[]) => {
     const hasEvents = itemsCount > 0;
     const carouselKey = isFocused ? 'focused' : 'blurred';
     const carouselDefaultIndex = Math.min(activeIndex, Math.max(0, itemsCount - 1));
+    const measuredEvent = events[carouselDefaultIndex] || null;
 
     const onArrowPress = useCallback(() => {
         navigation.navigate('EventStack', { screen: 'EventMapView' });
@@ -193,7 +195,7 @@ export const useHomeEventSection = (events: IEvent[]) => {
             maxCardHeightRef.current = 0;
         }
 
-        const nextHeight = Math.ceil(event.nativeEvent.layout.height);
+        const nextHeight = Math.ceil(event.nativeEvent.layout.height + CAROUSEL_HEIGHT_BUFFER);
 
         if (nextHeight <= 0 || nextHeight <= maxCardHeightRef.current) {
             return;
@@ -207,6 +209,7 @@ export const useHomeEventSection = (events: IEvent[]) => {
         carouselRef,
         carouselKey,
         carouselDefaultIndex,
+        measuredEvent,
         activeIndex,
         carouselHeight,
         hasEvents,

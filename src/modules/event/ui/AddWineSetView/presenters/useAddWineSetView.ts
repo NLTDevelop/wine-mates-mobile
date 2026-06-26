@@ -58,6 +58,10 @@ const getWineSubtitle = (wine: IWineSetSearchItem) => {
     return parts.join(' / ');
 };
 
+const getWineImageUrl = (wine: IWineSetSearchItem) => {
+    return wine.image?.smallUrl || wine.image?.mediumUrl || wine.image?.originalUrl || '';
+};
+
 interface IProps {
     searchQuery: string;
     isSearchListVisible: boolean;
@@ -67,6 +71,7 @@ interface IProps {
     wineSearchResults: IWineSetSearchItem[];
     onResetSearch: () => void;
     onOpenSearchModal: () => void;
+    onCloseSearchModal: () => void;
     onLoadMoreSearchResults: () => void;
 }
 
@@ -79,6 +84,7 @@ export const useAddWineSetView = ({
     wineSearchResults,
     onResetSearch,
     onOpenSearchModal,
+    onCloseSearchModal,
     onLoadMoreSearchResults,
 }: IProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -256,6 +262,8 @@ export const useAddWineSetView = ({
         return selectedWines.map(item => ({
             id: item.id,
             title: getWineTitle(item),
+            subtitle: getWineSubtitle(item),
+            imageUrl: getWineImageUrl(item),
             onEditPress: createOnEditWinePress(item),
             onDeletePress: createOnDeleteWinePress(item.id),
         }));
@@ -339,6 +347,7 @@ export const useAddWineSetView = ({
             isDuplicateEvent: route.params?.isDuplicateEvent,
         });
         onResetSearch();
+        onCloseSearchModal();
 
         navigation.navigate('TabNavigator', {
             screen: 'ScannerStack',
@@ -346,7 +355,15 @@ export const useAddWineSetView = ({
                 screen: 'ScannerView',
             },
         });
-    }, [currentDraft, editEventId, navigation, onResetSearch, route.params?.isDuplicateEvent, selectedWines]);
+    }, [
+        currentDraft,
+        editEventId,
+        navigation,
+        onCloseSearchModal,
+        onResetSearch,
+        route.params?.isDuplicateEvent,
+        selectedWines,
+    ]);
 
     const onGetCreatedEventId = useCallback((data: unknown): number | null => {
         if (!data || typeof data !== 'object') {

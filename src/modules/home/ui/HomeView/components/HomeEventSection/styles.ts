@@ -26,6 +26,13 @@ export const getStyles = (colors: IColors) => {
         cardContainer: {
             paddingHorizontal: scaleHorizontal(4),
         },
+        measureContainer: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            opacity: 0,
+            zIndex: -1,
+        },
         emptyContainer: {
             minHeight: scaleVertical(120),
             alignItems: 'center',

@@ -201,7 +201,7 @@ export const useAddEvent = () => {
             return false;
         }
 
-        return Number(normalizedPrice) > 0;
+        return Number(normalizedPrice) >= 0;
     }, [form.price, isPriceRequired]);
     const isPaymentMethodsDisabled = !isPriceFieldAvailable;
     const isCurrencyDisabled = !isPriceFieldAvailable;
@@ -317,12 +317,10 @@ export const useAddEvent = () => {
 
     const onChangePrice = useCallback((value: string) => {
         const numericValue = value.replace(/[^0-9]/g, '');
-        const isZeroPrice = numericValue !== '' && Number(numericValue) === 0;
 
         setForm(prev => ({
             ...prev,
             price: numericValue,
-            paymentMethodIds: isZeroPrice ? [] : prev.paymentMethodIds,
         }));
     }, []);
 

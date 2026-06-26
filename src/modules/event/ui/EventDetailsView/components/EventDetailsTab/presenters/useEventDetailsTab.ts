@@ -24,7 +24,11 @@ import { getIsEventEditDisabled } from '@/modules/event/utils/getIsEventEditDisa
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import { errorCodes, isErrorWithCode, saveDocuments } from '@react-native-documents/picker';
-import { viewDocument } from '@react-native-documents/viewer';
+import {
+    errorCodes as viewerErrorCodes,
+    isErrorWithCode as isViewerErrorWithCode,
+    viewDocument,
+} from '@react-native-documents/viewer';
 
 interface IProps {
     eventDetail: IEventDetail | null;
@@ -89,6 +93,10 @@ const writeEventTastingReportFile = async (eventId: number, data: ArrayBuffer) =
         fileName,
         sourceUri: `file://${filePath}`,
     };
+};
+
+const getIsUnableToOpenReportFile = (error: unknown) => {
+    return isViewerErrorWithCode(error) && error.code === viewerErrorCodes.UNABLE_TO_OPEN_FILE_TYPE;
 };
 
 const mapWineImageToMedia = (
@@ -485,6 +493,14 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
             toastService.showSuccess(localization.t('common.success'), localization.t('eventDetails.reportSaved'));
         } catch (error) {
             if (isErrorWithCode(error) && error.code === errorCodes.OPERATION_CANCELED) {
+                return;
+            }
+
+            if (getIsUnableToOpenReportFile(error)) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('eventDetails.noReportViewerApp'),
+                );
                 return;
             }
 
