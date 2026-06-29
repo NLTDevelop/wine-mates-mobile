@@ -65,11 +65,11 @@ export const getWineSetDisplayTitle = (wine: IWineSetDisplayWine) => {
 export const getWineSetDisplaySubtitle = (wine: IWineSetDisplayWine, locale?: string) => {
     const parts = [
         wine.grapeVariety,
-        wine.producer,
-        wine.country,
-        wine.region,
         wine.type,
         wine.color,
+        wine.country,
+        wine.region,
+        wine.producer,
     ]
         .map(item => getWineSetText(item, locale))
         .filter(Boolean);
