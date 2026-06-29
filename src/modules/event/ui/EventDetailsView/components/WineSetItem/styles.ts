@@ -4,30 +4,51 @@ import { colorOpacity, scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
+        container: {
+            gap: scaleVertical(8),
+        },
         row: {
             flexDirection: 'row',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             justifyContent: 'space-between',
             gap: scaleHorizontal(8),
         },
+        headerRow: {
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: scaleHorizontal(8),
+        },
+        imageMetaRow: {
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            gap: scaleHorizontal(8),
+            flex: 1,
+        },
         leftContent: {
             flexDirection: 'row',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             flex: 1,
             gap: scaleHorizontal(8),
         },
         image: {
-            width: scaleVertical(32),
-            height: scaleVertical(32),
+            width: scaleHorizontal(42),
+            height: scaleVertical(60),
             borderRadius: 8,
             backgroundColor: colors.background_light,
         },
         title: {
             color: colors.text,
+        },
+        textContainer: {
             flex: 1,
+            gap: scaleVertical(2),
+        },
+        subtitle: {
+            color: colors.text_light,
         },
         rightContent: {
-            alignItems: 'flex-end',
+            alignItems: 'flex-start',
             gap: scaleVertical(6),
         },
         ratingContainer: {

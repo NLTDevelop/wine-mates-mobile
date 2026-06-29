@@ -16,10 +16,8 @@ export const WineSearchResultRow = ({ title, subtitle, onPress }: IProps) => {
 
     return (
         <TouchableOpacity onPress={onPress} style={styles.container}>
-            <Typography variant="h6" text={title} numberOfLines={1} style={styles.title} />
-            {!!subtitle && (
-                <Typography variant="body_400" text={subtitle} numberOfLines={1} style={styles.subtitle} />
-            )}
+            <Typography variant="h6" text={title} style={styles.title} />
+            {!!subtitle && <Typography variant="body_400" text={subtitle} style={styles.subtitle} />}
         </TouchableOpacity>
     );
 };

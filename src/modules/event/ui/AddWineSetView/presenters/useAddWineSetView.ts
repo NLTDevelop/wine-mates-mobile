@@ -20,6 +20,8 @@ import { prepareEventDateTimeLabel } from '@/modules/event/utils/prepareEventDat
 import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
 import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
 import { addEventWineSetDraftModel } from '@/entities/events/AddEventWineSetDraftModel';
+import { addEventCreateDraftCacheModel } from '@/entities/events/AddEventCreateDraftCacheModel';
+import { getWineSetDisplaySubtitle, getWineSetDisplayTitle } from '@/modules/event/utils/wineSetDisplayFormatter';
 
 interface IWineSetDragEndPayload {
     data: IWineSetViewItem[];
@@ -29,33 +31,8 @@ type Route = RouteProp<EventStackParamList, 'AddWineSetView'>;
 
 const DEFAULT_TASTING_TYPE = TASTING_TYPES[0] as TastingType;
 
-const getWineTitle = (wine: IWineSetSearchItem) => {
-    const name = wine.name?.trim();
-    const vintage = wine.vintage ? ` ${wine.vintage}` : '';
-
-    if (name) {
-        return `${name}${vintage}`;
-    }
-
-    return `Wine #${wine.id}`;
-};
-
-const getSearchText = (value?: string | { name?: string | null } | null) => {
-    if (!value) {
-        return '';
-    }
-
-    if (typeof value === 'string') {
-        return value.trim();
-    }
-
-    return value.name?.trim() || '';
-};
-
-const getWineSubtitle = (wine: IWineSetSearchItem) => {
-    const parts = [wine.producer, wine.grapeVariety, wine.country, wine.region].map(getSearchText).filter(Boolean);
-
-    return parts.join(' / ');
+const getWineImageUrl = (wine: IWineSetSearchItem) => {
+    return wine.image?.smallUrl || wine.image?.mediumUrl || wine.image?.originalUrl || '';
 };
 
 interface IProps {
@@ -67,6 +44,7 @@ interface IProps {
     wineSearchResults: IWineSetSearchItem[];
     onResetSearch: () => void;
     onOpenSearchModal: () => void;
+    onCloseSearchModal: () => void;
     onLoadMoreSearchResults: () => void;
 }
 
@@ -79,6 +57,7 @@ export const useAddWineSetView = ({
     wineSearchResults,
     onResetSearch,
     onOpenSearchModal,
+    onCloseSearchModal,
     onLoadMoreSearchResults,
 }: IProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -88,7 +67,10 @@ export const useAddWineSetView = ({
     const editEventId = route.params?.editEventId;
     const isDuplicateMode = route.params?.isDuplicateEvent === true;
     const isEditMode = typeof editEventId === 'number';
-    const savedWineSetDraft = addEventWineSetDraftModel.state;
+    const isCreateMode = !isEditMode && !isDuplicateMode;
+    addEventCreateDraftCacheModel.syncUser();
+    const cachedCreateWineSetDraft = isCreateMode ? addEventCreateDraftCacheModel.state?.wineSet : null;
+    const savedWineSetDraft = addEventWineSetDraftModel.state || cachedCreateWineSetDraft;
     const headerTitleKey = useMemo(() => {
         if (isDuplicateMode) {
             return 'event.duplicateEvent';
@@ -133,7 +115,23 @@ export const useAddWineSetView = ({
             repeatRule,
             tastingType,
         };
-    }, [repeatRule, selectedWines, tastingType]);
+
+        if (!isCreateMode || !draft) {
+            return;
+        }
+
+        addEventCreateDraftCacheModel.state = {
+            form: addEventCreateDraftCacheModel.state?.form || {
+                ...draft,
+                locationCountry: draft.locationCountry || '',
+            },
+            wineSet: {
+                selectedWines,
+                repeatRule,
+                tastingType,
+            },
+        };
+    }, [draft, isCreateMode, repeatRule, selectedWines, tastingType]);
 
     useEffect(() => {
         const selectedWine = route.params?.selectedWine;
@@ -255,11 +253,13 @@ export const useAddWineSetView = ({
     const wineSetViewItems = useMemo<IWineSetViewItem[]>(() => {
         return selectedWines.map(item => ({
             id: item.id,
-            title: getWineTitle(item),
+            title: getWineSetDisplayTitle(item),
+            subtitle: getWineSetDisplaySubtitle(item, locale),
+            imageUrl: getWineImageUrl(item),
             onEditPress: createOnEditWinePress(item),
             onDeletePress: createOnDeleteWinePress(item.id),
         }));
-    }, [createOnDeleteWinePress, createOnEditWinePress, selectedWines]);
+    }, [createOnDeleteWinePress, createOnEditWinePress, locale, selectedWines]);
 
     const onReorderWineSet = useCallback(({ data }: IWineSetDragEndPayload) => {
         setSelectedWines(prev => {
@@ -288,11 +288,11 @@ export const useAddWineSetView = ({
             .filter(item => !selectedWines.some(wine => wine.id === item.id))
             .map(item => ({
                 ...item,
-                title: getWineTitle(item),
-                subtitle: getWineSubtitle(item),
+                title: getWineSetDisplayTitle(item),
+                subtitle: getWineSetDisplaySubtitle(item, locale),
                 onPress: createOnSelectWinePress(item),
             }));
-    }, [createOnSelectWinePress, isSearchListVisible, selectedWines, wineSearchResults]);
+    }, [createOnSelectWinePress, isSearchListVisible, locale, selectedWines, wineSearchResults]);
 
     useEffect(() => {
         const shouldLoadMoreFilteredResults =
@@ -339,6 +339,7 @@ export const useAddWineSetView = ({
             isDuplicateEvent: route.params?.isDuplicateEvent,
         });
         onResetSearch();
+        onCloseSearchModal();
 
         navigation.navigate('TabNavigator', {
             screen: 'ScannerStack',
@@ -346,7 +347,15 @@ export const useAddWineSetView = ({
                 screen: 'ScannerView',
             },
         });
-    }, [currentDraft, editEventId, navigation, onResetSearch, route.params?.isDuplicateEvent, selectedWines]);
+    }, [
+        currentDraft,
+        editEventId,
+        navigation,
+        onCloseSearchModal,
+        onResetSearch,
+        route.params?.isDuplicateEvent,
+        selectedWines,
+    ]);
 
     const onGetCreatedEventId = useCallback((data: unknown): number | null => {
         if (!data || typeof data !== 'object') {
@@ -408,7 +417,6 @@ export const useAddWineSetView = ({
                           minAge: draft.minAge,
                           maxAge: draft.maxAge,
                           sex: draft.sex,
-                          participationCondition: draft.participationCondition,
                       }
                     : {};
             const startDateTime = convertLocalEventDateTimeToUtc(draft.eventStartDate, draft.eventStartTime);
@@ -434,6 +442,7 @@ export const useAddWineSetView = ({
                 seats: Number(draft.seats),
                 eventType: draft.eventType,
                 tastingType,
+                participationCondition: draft.participationCondition,
                 requiresConfirmation: draft.requiresConfirmation,
                 repeatRule,
                 wineSet,
@@ -479,6 +488,7 @@ export const useAddWineSetView = ({
             if (!response.isError) {
                 const eventId = onGetCreatedEventId(response.data);
                 addEventWineSetDraftModel.state = null;
+                addEventCreateDraftCacheModel.clear();
                 setCreatedEventId(eventId);
                 setIsEventCreatedAlertVisible(true);
                 return;

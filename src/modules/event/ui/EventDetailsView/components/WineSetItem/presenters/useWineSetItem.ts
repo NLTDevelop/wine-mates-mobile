@@ -3,6 +3,7 @@ import { IWineSetItem, WineSetTastingStatus } from '@/entities/events/types/IWin
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
+import { getWineSetDisplaySubtitle, getWineSetDisplayTitle } from '@/modules/event/utils/wineSetDisplayFormatter';
 
 type WineSetStatusBadgeType = 'notStarted' | 'inProgress' | 'tasted' | 'missed';
 type TTranslate = (key: string, options?: Record<string, unknown>) => string;
@@ -15,6 +16,7 @@ interface IUseWineSetItemProps {
     isOwner: boolean;
     isPressEnabled: boolean;
     isStatusVisible: boolean;
+    locale: string;
     t: TTranslate;
 }
 
@@ -54,12 +56,12 @@ export const useWineSetItem = ({
     isOwner,
     isPressEnabled,
     isStatusVisible,
+    locale,
     t,
 }: IUseWineSetItemProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const producerPrefix = item.wine.producer ? `${item.wine.producer}, ` : '';
-    const vintageSuffix = item.wine.vintage ? ` ${item.wine.vintage}` : '';
-    const defaultTitle = `${producerPrefix}${item.wine.name}${vintageSuffix}`;
+    const defaultTitle = getWineSetDisplayTitle(item.wine);
+    const defaultSubtitle = getWineSetDisplaySubtitle(item.wine, locale);
     const defaultImageUrl =
         item.wine.image?.smallUrl ||
         item.wine.image?.mediumUrl ||
@@ -69,6 +71,7 @@ export const useWineSetItem = ({
         item.wine.defaultImage?.originalUrl ||
         '';
     const title = isBlindTasting ? t('wine.blindTastingWineTitle', { order: wineOrder }) : defaultTitle;
+    const subtitle = isBlindTasting ? '' : defaultSubtitle;
     const imageUrl = isBlindTasting ? '' : defaultImageUrl;
     const isImageVisible = !isBlindTasting;
     const status = getWineSetStatus(item);
@@ -92,6 +95,7 @@ export const useWineSetItem = ({
     const isTastingPressAvailable = isPressEnabled && isEventTastingStatus;
     const isOwnerDetailsPressAvailable = isOwner && !!ratingData;
     const isPressAvailable = isTastingPressAvailable || isOwnerDetailsPressAvailable;
+    const isMetaVisible = Boolean(statusBadgeData || ratingData);
 
     const onPress = useCallback(() => {
         if (!isPressAvailable) {
@@ -117,10 +121,12 @@ export const useWineSetItem = ({
 
     return {
         title,
+        subtitle,
         imageUrl,
         isImageVisible,
         statusBadgeData,
         ratingData,
+        isMetaVisible,
         isPressAvailable,
         onPress,
     };

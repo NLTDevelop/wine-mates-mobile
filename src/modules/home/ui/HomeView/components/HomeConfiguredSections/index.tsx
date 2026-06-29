@@ -151,7 +151,7 @@ export const HomeConfiguredSections = ({
                             <HomeEmptyState />
                         )}
                     </View>
-                    <View style={styles.footer}>
+                    <View style={styles.placementFooter}>
                         <Button
                             text={saveText}
                             type="main"

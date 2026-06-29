@@ -14,10 +14,15 @@ import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { IMedia } from '@/entities/media/types/IMedia';
+import {
+    getEventDraftContactIds,
+    getEventDraftPaymentMethodIds,
+} from '@/modules/event/utils/getEventDraftContactPaymentIds';
 
 type NavigationProp = NativeStackNavigationProp<Record<string, object | undefined>>;
 
 const DEFAULT_CAROUSEL_HEIGHT = scaleVertical(360);
+const CAROUSEL_HEIGHT_BUFFER = scaleVertical(4);
 
 const updateHomeEventFavoriteState = (eventId: number, isSaved: boolean) => {
     homeSectionsModel.sections = homeSectionsModel.sections.map(section => {
@@ -73,6 +78,7 @@ export const useHomeEventSection = (events: IEvent[]) => {
     const hasEvents = itemsCount > 0;
     const carouselKey = isFocused ? 'focused' : 'blurred';
     const carouselDefaultIndex = Math.min(activeIndex, Math.max(0, itemsCount - 1));
+    const measuredEvent = events[carouselDefaultIndex] || null;
 
     const onArrowPress = useCallback(() => {
         navigation.navigate('EventStack', { screen: 'EventMapView' });
@@ -132,8 +138,8 @@ export const useHomeEventSection = (events: IEvent[]) => {
                 eventEndDate: eventDetail.eventEndDate || eventDetail.eventDate || '',
                 eventStartTime: eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '',
                 eventEndTime: eventDetail.eventEndTime || eventDetail.endTime || '',
-                paymentMethodIds: [],
-                contactIds: [],
+                paymentMethodIds: getEventDraftPaymentMethodIds(eventDetail),
+                contactIds: getEventDraftContactIds(eventDetail),
                 price: String(eventDetail.price || ''),
                 currency: eventDetail.currency ? String(eventDetail.currency) : '',
                 speakerName: eventDetail.speakerName || eventDetail.speaker || '',
@@ -154,10 +160,12 @@ export const useHomeEventSection = (events: IEvent[]) => {
                 name: item.wine.name,
                 producer: item.wine.producer || '',
                 vintage: item.wine.vintage || null,
-                image: mapWineImageToMedia(item.wine.image),
-                grapeVariety: null,
-                country: null,
-                region: null,
+                image: mapWineImageToMedia(item.wine.image || item.wine.defaultImage),
+                grapeVariety: item.wine.grapeVariety || null,
+                country: item.wine.country || null,
+                region: item.wine.region || null,
+                type: item.wine.type || null,
+                color: item.wine.color || null,
             }));
 
             navigation.navigate('AddEventView', {
@@ -193,7 +201,7 @@ export const useHomeEventSection = (events: IEvent[]) => {
             maxCardHeightRef.current = 0;
         }
 
-        const nextHeight = Math.ceil(event.nativeEvent.layout.height);
+        const nextHeight = Math.ceil(event.nativeEvent.layout.height + CAROUSEL_HEIGHT_BUFFER);
 
         if (nextHeight <= 0 || nextHeight <= maxCardHeightRef.current) {
             return;
@@ -207,6 +215,7 @@ export const useHomeEventSection = (events: IEvent[]) => {
         carouselRef,
         carouselKey,
         carouselDefaultIndex,
+        measuredEvent,
         activeIndex,
         carouselHeight,
         hasEvents,

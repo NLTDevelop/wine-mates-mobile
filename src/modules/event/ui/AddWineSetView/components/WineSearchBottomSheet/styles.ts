@@ -12,6 +12,9 @@ export const getStyles = (colors: IColors) => {
         searchContainer: {
             marginBottom: scaleVertical(8),
         },
+        scanButton: {
+            marginBottom: scaleVertical(8),
+        },
         listContainer: {
             flex: 1,
             minHeight: 0,
