@@ -8,7 +8,6 @@ import { useUiContext } from '@/UIProvider';
 import { useLocationPermission } from '@/hooks/useLocationPermission';
 import { config } from '@/config';
 import { IEventDetailsPreviewData } from '../types/IEventDetailsPreviewData';
-import { useLocalizedLanguageOptions } from '@/libs/languagePicker/presenters/useLocalizedLanguageOptions';
 import { IEventContactOption } from '../types/IEventContactOption';
 import { getContactTitle, getContactType, getContactUrl } from '@/entities/contacts/presenters/useContactType';
 import { getRepeatRuleDescription } from '@/modules/event/utils/repeatRuleFormatter';
@@ -39,7 +38,6 @@ interface IEventDetailWithPaymentMethods extends IEventDetail {
 export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
     const { t, locale } = useUiContext();
     const { userLocation } = useLocationPermission();
-    const { languageOptions } = useLocalizedLanguageOptions();
 
     const getValueOrDash = (value?: string | number | null) => {
         if (value === null || value === undefined || value === '') {
@@ -204,31 +202,6 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
         return '-';
     };
 
-    const formatLanguage = (value?: string) => {
-        if (!value) {
-            return '-';
-        }
-
-        const normalizedCode = value.trim().toLowerCase();
-        if (!normalizedCode) {
-            return '-';
-        }
-
-        const matchedLanguage = languageOptions.find(item => item.code === normalizedCode);
-        if (matchedLanguage) {
-            return matchedLanguage.name;
-        }
-
-        if (normalizedCode === 'uk') {
-            const matchedUkrainianAlias = languageOptions.find(item => item.code === 'ua');
-            if (matchedUkrainianAlias) {
-                return matchedUkrainianAlias.name;
-            }
-        }
-
-        return normalizedCode.toUpperCase();
-    };
-
     const formatSex = (value?: Sex) => {
         if (!value) {
             return '-';
@@ -331,11 +304,6 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                           label: t('eventDetails.age'),
                           value: formatAge(eventDetail.minAge, eventDetail.maxAge),
                       },
-                      {
-                          key: 'participationCondition',
-                          label: t('eventDetails.participationCondition'),
-                          value: formatParticipationCondition(eventDetail.participationCondition),
-                      },
                   ]
                 : [];
         const startDateTime = convertUtcEventDateTimeToLocal(
@@ -405,7 +373,11 @@ export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
                     eventDetail.longitude,
                 ),
             },
-            { key: 'language', label: t('eventDetails.language'), value: formatLanguage(eventDetail.language) },
+            {
+                key: 'participationCondition',
+                label: t('eventDetails.participationCondition'),
+                value: formatParticipationCondition(eventDetail.participationCondition),
+            },
             {
                 key: 'seats',
                 label: t('eventDetails.seats'),

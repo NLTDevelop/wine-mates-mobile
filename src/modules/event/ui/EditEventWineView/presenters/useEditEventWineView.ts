@@ -13,13 +13,29 @@ type Route = RouteProp<EventStackParamList, 'EditEventWineView'>;
 
 const createValue = (): IWineBaseValue => ({ id: null, value: '' });
 
+const getWineLocationName = (value: IWineSetSearchItem['country']) => {
+    if (!value) {
+        return '';
+    }
+
+    if (typeof value === 'string') {
+        return value;
+    }
+
+    if (Array.isArray(value.name)) {
+        return value.name.find(item => item.value?.trim())?.value || '';
+    }
+
+    return value.name || '';
+};
+
 const createInitialForm = (wine: IWineSetSearchItem): IWineBase => {
-    const countryName = typeof wine.country === 'string' ? wine.country : wine.country?.name || '';
-    const regionName = typeof wine.region === 'string' ? wine.region : wine.region?.name || '';
+    const countryName = getWineLocationName(wine.country);
+    const regionName = getWineLocationName(wine.region);
 
     return {
-        typeOfWine: createValue(),
-        colorOfWine: createValue(),
+        typeOfWine: { id: wine.type?.id ?? null, value: wine.type?.name || '' },
+        colorOfWine: { id: wine.color?.id ?? null, value: wine.color?.name || '' },
         country: { id: null, value: countryName || '' },
         region: { id: null, value: regionName || '' },
         producer: { id: null, value: wine.producer || '' },
@@ -87,6 +103,14 @@ const getWineSetSearchItem = (id: number, form: IWineBase): IWineSetSearchItem =
         grapeVariety: form.grapeVariety.value,
         country: form.country.value,
         region: form.region.value,
+        type: {
+            id: form.typeOfWine.id || undefined,
+            name: form.typeOfWine.value,
+        },
+        color: {
+            id: form.colorOfWine.id || undefined,
+            name: form.colorOfWine.value,
+        },
         image: null,
     };
 };

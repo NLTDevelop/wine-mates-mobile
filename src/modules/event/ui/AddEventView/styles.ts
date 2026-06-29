@@ -23,6 +23,17 @@ export const getStyles = (colors: IColors) => {
             marginBottom: 0,
             backgroundColor: colors.background,
         },
+        inputLabelStyle: {
+            marginBottom: scaleVertical(6),
+        },
+        pickerContainerStyle: {
+            marginTop: 0,
+        },
+        sectionTitle: {
+            marginBottom: scaleVertical(-8),
+            color: colors.text_primary,
+            alignSelf: 'center'
+        },
         descriptionInputContainerStyle: {
             minHeight: scaleVertical(115),
             alignItems: 'stretch',

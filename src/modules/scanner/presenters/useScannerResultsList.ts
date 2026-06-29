@@ -20,6 +20,8 @@ const getWineSetSearchItem = (item: IWineListItem): IWineSetSearchItem => {
         grapeVariety: item.grapeVariety,
         country: item.country,
         region: item.region,
+        type: item.type,
+        color: item.color,
         image: item.image || item.defaultImage,
     };
 };

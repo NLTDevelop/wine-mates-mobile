@@ -1,4 +1,4 @@
-import { Keyboard, TouchableOpacity, View } from 'react-native';
+import { Keyboard, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useMemo } from 'react';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -11,9 +11,10 @@ interface IProps {
     isDisabled?: boolean;
     label?: string;
     placeholder?: string;
+    containerStyle?: ViewStyle;
 }
 
-export const PickerButton = ({ text, onPress, isDisabled = false, label, placeholder = '' }: IProps) => {
+export const PickerButton = ({ text, onPress, isDisabled = false, label, placeholder = '', containerStyle }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const displayedText = text || placeholder;
@@ -21,7 +22,7 @@ export const PickerButton = ({ text, onPress, isDisabled = false, label, placeho
     const textColor = isDisabled || isPlaceholder ? colors.text_light : colors.text;
 
     return (
-        <View style={label ? styles.containerWithLabel : undefined}>
+        <View style={label ? [styles.containerWithLabel, containerStyle] : containerStyle}>
             {label ? <Typography variant="h6" text={label} style={styles.label} /> : null}
             <TouchableOpacity
                 onPress={onPress}
