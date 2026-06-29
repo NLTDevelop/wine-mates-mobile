@@ -21,6 +21,10 @@ import { eventsModel } from '@/entities/events/EventsModel';
 import { IEventDetail } from '@/entities/events/types/IEvent';
 import { getUtcEventDateTime } from '@/modules/event/utils/eventDateTimeUtc';
 import { getIsEventEditDisabled } from '@/modules/event/utils/getIsEventEditDisabled';
+import {
+    getEventDraftContactIds,
+    getEventDraftPaymentMethodIds,
+} from '@/modules/event/utils/getEventDraftContactPaymentIds';
 import RNFS from 'react-native-fs';
 import { Buffer } from 'buffer';
 import { errorCodes, isErrorWithCode, saveDocuments } from '@react-native-documents/picker';
@@ -530,8 +534,8 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
             eventEndDate: eventDetail.eventEndDate || eventDetail.eventDate || '',
             eventStartTime: eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '',
             eventEndTime: eventDetail.eventEndTime || eventDetail.endTime || '',
-            paymentMethodIds: [],
-            contactIds: [],
+            paymentMethodIds: getEventDraftPaymentMethodIds(eventDetail),
+            contactIds: getEventDraftContactIds(eventDetail),
             price: String(eventDetail.price || ''),
             currency: eventDetail.currency ? String(eventDetail.currency) : '',
             speakerName: eventDetail.speakerName || eventDetail.speaker || '',
@@ -552,10 +556,12 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
             name: item.wine.name,
             producer: item.wine.producer || '',
             vintage: item.wine.vintage || null,
-            image: mapWineImageToMedia(item.wine.image),
-            grapeVariety: null,
-            country: null,
-            region: null,
+            image: mapWineImageToMedia(item.wine.image || item.wine.defaultImage),
+            grapeVariety: item.wine.grapeVariety || null,
+            country: item.wine.country || null,
+            region: item.wine.region || null,
+            type: item.wine.type || null,
+            color: item.wine.color || null,
         }));
 
         navigation.navigate('AddEventView', {
@@ -583,8 +589,8 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
             eventEndDate: '',
             eventStartTime: '',
             eventEndTime: '',
-            paymentMethodIds: [],
-            contactIds: [],
+            paymentMethodIds: getEventDraftPaymentMethodIds(eventDetail),
+            contactIds: getEventDraftContactIds(eventDetail),
             price: String(eventDetail.price || ''),
             currency: eventDetail.currency ? String(eventDetail.currency) : '',
             speakerName: eventDetail.speakerName || eventDetail.speaker || '',
@@ -605,10 +611,12 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
             name: item.wine.name,
             producer: item.wine.producer || '',
             vintage: item.wine.vintage || null,
-            image: mapWineImageToMedia(item.wine.image),
-            grapeVariety: null,
-            country: null,
-            region: null,
+            image: mapWineImageToMedia(item.wine.image || item.wine.defaultImage),
+            grapeVariety: item.wine.grapeVariety || null,
+            country: item.wine.country || null,
+            region: item.wine.region || null,
+            type: item.wine.type || null,
+            color: item.wine.color || null,
         }));
 
         navigation.navigate('AddEventView', {

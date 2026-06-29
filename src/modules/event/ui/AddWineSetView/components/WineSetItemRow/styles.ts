@@ -25,19 +25,18 @@ export const getStyles = (colors: IColors) => {
             borderRadius: 12,
             paddingHorizontal: scaleHorizontal(12),
             paddingVertical: scaleVertical(12),
-            gap: scaleHorizontal(8),
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-           
+            gap: scaleVertical(2),
             backgroundColor: colors.background,
         },
-        textContainer: {
-            flex: 1,
-            marginRight: scaleHorizontal(8),
-            gap: scaleVertical(4),
+        headerRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: scaleHorizontal(8),
         },
         title: {
             color: colors.text,
+            flex: 1,
         },
         subtitle: {
             color: colors.text_light,

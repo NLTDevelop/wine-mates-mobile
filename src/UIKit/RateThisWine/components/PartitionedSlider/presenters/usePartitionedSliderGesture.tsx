@@ -101,11 +101,27 @@ export const usePartitionedSliderGesture = ({
         return pos;
     };
 
+    const getSnapPosition = (pos: number) => {
+        'worklet';
+
+        const displayedValue = Math.round(positionToValue(pos));
+        const displayedValuePosition = valueToPosition(displayedValue);
+        const decoratorPosition = snapToNearestDecorator(pos);
+        const decoratorValue = Math.round(positionToValue(decoratorPosition));
+
+        if (decoratorValue === displayedValue) {
+            return decoratorPosition;
+        }
+
+        return displayedValuePosition;
+    };
+
     const snapToValue = (pos: number) => {
         'worklet';
-        
-        const snappedPos = snapToNearestDecorator(pos);
-        
+
+        const displayedValue = Math.round(positionToValue(pos));
+        const snappedPos = getSnapPosition(pos);
+
         position.value = withSpring(snappedPos, {
             damping: 10,
             stiffness: 100,
@@ -113,8 +129,7 @@ export const usePartitionedSliderGesture = ({
         }, (finished) => {
             'worklet';
             if (finished && onChange) {
-                const finalValue = positionToValue(snappedPos);
-                scheduleOnRN(onChange, Math.round(finalValue));
+                scheduleOnRN(onChange, displayedValue);
             }
         });
     };

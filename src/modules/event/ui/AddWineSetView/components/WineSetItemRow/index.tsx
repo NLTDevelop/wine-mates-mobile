@@ -25,22 +25,19 @@ const WineSetItemRowComponent = ({ title, subtitle, onEditPress, onDeletePress }
                 <DragIcon color={colors.text_light} />
             </View>
             <View style={styles.content}>
-                <View style={styles.textContainer}>
-                    <Typography variant="body_400" text={title} style={styles.title} />
+                <View style={styles.headerRow}>
+                    <Typography variant="body_500" text={title} style={styles.title} />
+                    <View style={styles.actions}>
+                        <Sortable.Touchable onTap={onEditPress} style={styles.actionButton}>
+                            <EditIcon color={colors.text} />
+                        </Sortable.Touchable>
+                        <Sortable.Touchable onTap={onDeletePress} style={styles.actionButton}>
+                            <DeleteForeverIcon width={20} height={20} color={colors.primary} />
+                        </Sortable.Touchable>
+                    </View>
+                </View>
                 {!!subtitle && <Typography variant="body_400" text={subtitle} style={styles.subtitle} />}
-                </View>
-                <View style={styles.actions}>
-                    <Sortable.Touchable onTap={onEditPress} style={styles.actionButton}>
-                        <EditIcon color={colors.text} />
-                    </Sortable.Touchable>
-                    <Sortable.Touchable onTap={onDeletePress} style={styles.actionButton}>
-                        <DeleteForeverIcon width={20} height={20} color={colors.primary} />
-                    </Sortable.Touchable>
-                </View>
-
-
             </View>
-            
         </View>
     );
 };
