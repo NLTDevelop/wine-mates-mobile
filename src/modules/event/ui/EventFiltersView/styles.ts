@@ -10,6 +10,12 @@ export const getStyles = (colors: IColors) => {
             paddingBottom: scaleVertical(16),
             gap: scaleVertical(16),
         },
+        loaderContainer: {
+            flex: 1,
+            minHeight: scaleVertical(240),
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
         resetButton: {
             minWidth: scaleHorizontal(44),
             alignItems: 'flex-end',
@@ -37,6 +43,12 @@ export const getStyles = (colors: IColors) => {
         },
         dateText: {
             color: colors.text,
+        },
+        disabledControl: {
+            opacity: 0.5,
+        },
+        disabledText: {
+            color: colors.text_light,
         },
         sexButton: {
             height: scaleVertical(48),

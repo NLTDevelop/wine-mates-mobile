@@ -36,20 +36,22 @@ export const TasteFilterItem = ({ item }: IProps) => {
                     containerStyle={styles.slider}
                 />
             </View>
-            <View style={styles.labelsRow}>
-                {item.labels.map(label => (
-                    <Typography
-                        key={label.id}
-                        variant="subtitle_12_400"
-                        text={label.name}
-                        style={[
-                            styles.labelText,
-                            label.sortNumber === item.minValue ? styles.leftLabelText : undefined,
-                            label.sortNumber === item.maxValue ? styles.rightLabelText : undefined,
-                        ]}
-                    />
-                ))}
-            </View>
+            {item.labels.length > 0 ? (
+                <View style={styles.labelsRow}>
+                    {item.labels.map(label => (
+                        <Typography
+                            key={label.id}
+                            variant="subtitle_12_400"
+                            text={label.name}
+                            style={[
+                                styles.labelText,
+                                label.sortNumber === item.minValue ? styles.leftLabelText : undefined,
+                                label.sortNumber === item.maxValue ? styles.rightLabelText : undefined,
+                            ]}
+                        />
+                    ))}
+                </View>
+            ) : null}
             {item.isLocked ? (
                 <View pointerEvents="none" style={styles.lockIconContainer}>
                     <LockIcon />

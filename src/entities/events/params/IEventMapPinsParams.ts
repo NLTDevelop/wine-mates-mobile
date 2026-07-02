@@ -6,8 +6,8 @@ export interface IEventMapPinsParams {
     longitude: number;
     radiusKm?: number;
     eventType?: EventType;
-    eventDate?: string;
-    language?: string;
+    eventStartDate?: string;
+    eventEndDate?: string;
     minPrice?: number;
     maxPrice?: number;
     sex?: Sex;

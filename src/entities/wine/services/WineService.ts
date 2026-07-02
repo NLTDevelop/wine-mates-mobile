@@ -24,6 +24,8 @@ import { IRecommendationWineListParams } from '../params/IRecommendationWineList
 import { IWineSetSearchItem } from '../types/IWineSetSearchItem';
 import {
     IWineChooserGrapeVariety,
+    IWineChooserFilterOptions,
+    IWineChooserFilterOptionsRequest,
     IWineChooserList,
     IWineChooserOption,
     IWineChooserPrefill,
@@ -519,6 +521,23 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getWineChooserAromasFlavors: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getWineChooserFilterOptions = async (
+        data: IWineChooserFilterOptionsRequest,
+    ): Promise<IResponse<IWineChooserFilterOptions>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.wineChooserFilterOptions}`,
+                data,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getWineChooserFilterOptions: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

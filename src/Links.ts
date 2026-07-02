@@ -52,6 +52,7 @@ export interface ILinks {
     wineChooserVintages: string;
     wineChooserPrefill: string;
     wineChooserAromasFlavors: string;
+    wineChooserFilterOptions: string;
     faq: string;
     me: string;
     favoriteWineLists: string;
@@ -59,6 +60,7 @@ export interface ILinks {
     events: string;
     eventMapPins: string;
     eventPriceRange: string;
+    eventFilterOptions: string;
     createdEvents: string;
     appliedEvents: string;
     eventBookings: string;
@@ -114,6 +116,7 @@ class Links implements ILinks {
         wineChooserVintages: 'wine-chooser/vintages',
         wineChooserPrefill: 'wine-chooser/prefill',
         wineChooserAromasFlavors: 'wine-chooser/aromas-flavors',
+        wineChooserFilterOptions: 'wine-chooser/filter-options',
         faq: 'faq/topics',
         me: 'users/me',
         favoriteWineLists: 'favorite/wine-lists',
@@ -121,6 +124,7 @@ class Links implements ILinks {
         events: 'events',
         eventMapPins: 'events/map-pins',
         eventPriceRange: 'events/price-range',
+        eventFilterOptions: 'events/filter-options',
         createdEvents: 'events/my',
         appliedEvents: 'event-bookings/my',
         eventBookings: 'event-bookings',
@@ -264,6 +268,9 @@ class Links implements ILinks {
     public get wineChooserAromasFlavors() {
         return `${this._domain}${this._links.wineChooserAromasFlavors}`;
     }
+    public get wineChooserFilterOptions() {
+        return `${this._domain}${this._links.wineChooserFilterOptions}`;
+    }
     public get faq() {
         return `${this._domain}${this._links.faq}`;
     }
@@ -284,6 +291,9 @@ class Links implements ILinks {
     }
     public get eventPriceRange() {
         return `${this._domain}${this._links.eventPriceRange}`;
+    }
+    public get eventFilterOptions() {
+        return `${this._domain}${this._links.eventFilterOptions}`;
     }
     public get createdEvents() {
         return `${this._domain}${this._links.createdEvents}`;

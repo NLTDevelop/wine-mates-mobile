@@ -12,10 +12,11 @@ export const getStyles = (colors: IColors) => {
             marginBottom: scaleVertical(8),
         },
         row: {
-            justifyContent: 'space-between',
+            justifyContent: 'flex-start',
+            columnGap: scaleHorizontal(10),
         },
         button: {
-            width: '31.5%',
+            width: '31%',
             minHeight: scaleVertical(44),
             borderRadius: scaleVertical(12),
             borderWidth: scaleHorizontal(1),
@@ -30,9 +31,15 @@ export const getStyles = (colors: IColors) => {
         buttonActive: {
             borderColor: colors.primary,
         },
+        buttonDisabled: {
+            opacity: 0.5,
+        },
         buttonText: {
             color: colors.text,
             textAlign: 'center',
+        },
+        buttonTextDisabled: {
+            color: colors.text_light,
         },
         moreButtonText: {
             color: colors.primary,

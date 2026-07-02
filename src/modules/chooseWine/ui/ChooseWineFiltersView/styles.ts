@@ -16,6 +16,13 @@ export const getStyles = (colors: IColors) => {
             paddingHorizontal: scaleHorizontal(16),
             paddingBottom: scaleVertical(24),
         },
+        resetButton: {
+            minWidth: scaleHorizontal(44),
+            alignItems: 'flex-end',
+        },
+        resetText: {
+            color: colors.text_primary,
+        },
         modeRow: {
             flexDirection: 'row',
             gap: scaleHorizontal(8),
@@ -69,9 +76,15 @@ export const getStyles = (colors: IColors) => {
             borderColor: colors.primary,
             backgroundColor: colors.background,
         },
+        segmentButtonDisabled: {
+            opacity: 0.45,
+        },
         segmentText: {
             color: colors.text,
             textAlign: 'center',
+        },
+        segmentTextDisabled: {
+            color: colors.text_light,
         },
         checkboxRow: {
             flexDirection: 'row',
