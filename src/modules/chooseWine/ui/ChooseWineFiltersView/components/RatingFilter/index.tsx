@@ -18,8 +18,12 @@ interface IProps {
     userRatingHintText: string;
     expertRatingMin: number;
     expertRatingMax: number;
+    allowedExpertRatingMin: number;
+    allowedExpertRatingMax: number;
+    isExpertRatingDisabled: boolean;
     onExpertRatingRangeChange: (minValue: number, maxValue: number) => void;
     onUserRatingChange: (value: number) => void;
+    onUserRatingEnd: (value: number) => void;
 }
 
 const DecimalStarRating = StarRating as unknown as (
@@ -34,8 +38,12 @@ export const RatingFilter = ({
     userRatingHintText,
     expertRatingMin,
     expertRatingMax,
+    allowedExpertRatingMin,
+    allowedExpertRatingMax,
+    isExpertRatingDisabled,
     onExpertRatingRangeChange,
     onUserRatingChange,
+    onUserRatingEnd,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -61,6 +69,7 @@ export const RatingFilter = ({
                     <DecimalStarRating
                         rating={userRating}
                         onChange={onUserRatingChange}
+                        onRatingEnd={onUserRatingEnd}
                         step={0.1}
                         StarIconComponent={StarIconComponent}
                         starSize={40}
@@ -76,7 +85,10 @@ export const RatingFilter = ({
                     max={ratingMax}
                     minValue={expertRatingMin}
                     maxValue={expertRatingMax}
+                    allowedMin={allowedExpertRatingMin}
+                    allowedMax={allowedExpertRatingMax}
                     onChange={onExpertRatingRangeChange}
+                    isDisabled={isExpertRatingDisabled}
                 />
             )}
         </>

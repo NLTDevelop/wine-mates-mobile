@@ -30,21 +30,33 @@ export const ChooseWineFiltersView = observer(() => {
         pickerState,
         selectedTypeText,
         selectedColorText,
-        selectedRegionText,
         selectedAromaText,
         selectedFlavorText,
-        isRegionDisabled,
-        isAromaFlavorDisabled,
+        isTypeDisabled,
+        isColorDisabled,
+        isAromaDisabled,
+        isFlavorDisabled,
+        isAgeDisabled,
+        isFemaleGenderDisabled,
+        isMaleGenderDisabled,
+        femaleGenderTitle,
+        maleGenderTitle,
         ageMin,
         ageMax,
+        allowedAgeMin,
+        allowedAgeMax,
         ratingMin,
         ratingMax,
+        allowedRatingMin,
+        allowedRatingMax,
         userRating,
         userRatingHintText,
+        isExpertRatingDisabled,
         isLoverRating,
         constants,
         visibleTasteItems,
         quickCountryItems,
+        quickRegionItems,
         quickGrapeItems,
         quickVintageItems,
         shouldShowTasteCharacteristicsToggle,
@@ -56,15 +68,16 @@ export const ChooseWineFiltersView = observer(() => {
         onAgeRangeChange,
         onExpertRatingRangeChange,
         onUserRatingChange,
+        onUserRatingEnd,
         onToggleTasteCharacteristics,
         onOpenTypePicker,
         onOpenColorPicker,
-        onOpenRegionPicker,
         onOpenAromaPicker,
         onOpenFlavorPicker,
         onClosePicker,
         onConfirmPicker,
         onApplyPress,
+        onResetPress,
     } = useChooseWineFilters();
 
     const keyExtractor = useCallback((item: IChooseWineTasteFilterItem) => {
@@ -79,7 +92,20 @@ export const ChooseWineFiltersView = observer(() => {
         <ScreenContainer
             edges={['top', 'bottom']}
             withGradient
-            headerComponent={<HeaderWithBackButton title={t('common.filters')} />}
+            headerComponent={
+                <HeaderWithBackButton
+                    title={t('common.filters')}
+                    rightComponent={
+                        <TouchableOpacity onPress={onResetPress} style={styles.resetButton}>
+                            <Typography
+                                text={t('common.reset')}
+                                variant="body_500"
+                                style={styles.resetText}
+                            />
+                        </TouchableOpacity>
+                    }
+                />
+            }
             containerStyle={styles.screen}
         >
             {isInitialLoading ? (
@@ -124,15 +150,39 @@ export const ChooseWineFiltersView = observer(() => {
                         <View style={styles.segmentRow}>
                             <TouchableOpacity
                                 onPress={onSelectFemale}
-                                style={[styles.segmentButton, filters.gender === 'female' ? styles.segmentButtonActive : undefined]}
+                                disabled={isFemaleGenderDisabled}
+                                style={[
+                                    styles.segmentButton,
+                                    filters.gender === 'female' ? styles.segmentButtonActive : undefined,
+                                    isFemaleGenderDisabled ? styles.segmentButtonDisabled : undefined,
+                                ]}
                             >
-                                <Typography variant="h6" text={t('chooseWine.women')} style={styles.segmentText} />
+                                <Typography
+                                    variant="h6"
+                                    text={femaleGenderTitle}
+                                    style={[
+                                        styles.segmentText,
+                                        isFemaleGenderDisabled ? styles.segmentTextDisabled : undefined,
+                                    ]}
+                                />
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={onSelectMale}
-                                style={[styles.segmentButton, filters.gender === 'male' ? styles.segmentButtonActive : undefined]}
+                                disabled={isMaleGenderDisabled}
+                                style={[
+                                    styles.segmentButton,
+                                    filters.gender === 'male' ? styles.segmentButtonActive : undefined,
+                                    isMaleGenderDisabled ? styles.segmentButtonDisabled : undefined,
+                                ]}
                             >
-                                <Typography variant="h6" text={t('chooseWine.men')} style={styles.segmentText} />
+                                <Typography
+                                    variant="h6"
+                                    text={maleGenderTitle}
+                                    style={[
+                                        styles.segmentText,
+                                        isMaleGenderDisabled ? styles.segmentTextDisabled : undefined,
+                                    ]}
+                                />
                             </TouchableOpacity>
                         </View>
 
@@ -142,7 +192,10 @@ export const ChooseWineFiltersView = observer(() => {
                             max={constants.AGE_MAX}
                             minValue={ageMin}
                             maxValue={ageMax}
+                            allowedMin={allowedAgeMin}
+                            allowedMax={allowedAgeMax}
                             onChange={onAgeRangeChange}
+                            isDisabled={isAgeDisabled}
                         />
 
                         <PickerButton
@@ -150,26 +203,28 @@ export const ChooseWineFiltersView = observer(() => {
                             text={selectedTypeText}
                             placeholder={t('chooseWine.typeWine')}
                             onPress={onOpenTypePicker}
+                            isDisabled={isTypeDisabled}
                         />
                         <PickerButton
                             label={t('chooseWine.colorWine')}
                             text={selectedColorText}
                             placeholder={t('chooseWine.colorWine')}
                             onPress={onOpenColorPicker}
+                            isDisabled={isColorDisabled}
                         />
                         <PickerButton
                             label={t('chooseWine.aroma')}
                             text={selectedAromaText}
                             placeholder={t('chooseWine.aroma')}
                             onPress={onOpenAromaPicker}
-                            isDisabled={isAromaFlavorDisabled}
+                            isDisabled={isAromaDisabled}
                         />
                         <PickerButton
                             label={t('chooseWine.taste')}
                             text={selectedFlavorText}
                             placeholder={t('chooseWine.taste')}
                             onPress={onOpenFlavorPicker}
-                            isDisabled={isAromaFlavorDisabled}
+                            isDisabled={isFlavorDisabled}
                         />
 
                         <RatingFilter
@@ -180,18 +235,16 @@ export const ChooseWineFiltersView = observer(() => {
                             userRatingHintText={userRatingHintText}
                             expertRatingMin={ratingMin}
                             expertRatingMax={ratingMax}
+                            allowedExpertRatingMin={allowedRatingMin}
+                            allowedExpertRatingMax={allowedRatingMax}
+                            isExpertRatingDisabled={isExpertRatingDisabled}
                             onExpertRatingRangeChange={onExpertRatingRangeChange}
                             onUserRatingChange={onUserRatingChange}
+                            onUserRatingEnd={onUserRatingEnd}
                         />
 
                         <QuickFilterSection title={t('chooseWine.country')} items={quickCountryItems} />
-                        <PickerButton
-                            label={t('chooseWine.region')}
-                            text={selectedRegionText}
-                            placeholder={t('chooseWine.region')}
-                            onPress={onOpenRegionPicker}
-                            isDisabled={isRegionDisabled}
-                        />
+                        <QuickFilterSection title={t('chooseWine.region')} items={quickRegionItems} />
                         <QuickFilterSection title={t('chooseWine.grapeVariety')} items={quickGrapeItems} />
                        
                         <QuickFilterSection title={t('chooseWine.vintage')} items={quickVintageItems} />

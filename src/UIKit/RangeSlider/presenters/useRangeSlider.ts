@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { useCallback, useEffect, useRef } from 'react';
 import { LayoutChangeEvent, GestureResponderEvent, View } from 'react-native';
 import { Gesture } from 'react-native-gesture-handler';
@@ -11,6 +12,8 @@ interface IProps {
     maxValue: number;
     onChange: (minValue: number, maxValue: number) => void;
     step: number;
+    allowedMin?: number;
+    allowedMax?: number;
     onValuesLive?: (minValue: number, maxValue: number) => void;
 }
 
@@ -21,13 +24,16 @@ export const useRangeSlider = ({
     maxValue,
     onChange,
     step,
+    allowedMin,
+    allowedMax,
     onValuesLive,
 }: IProps) => {
     const LOW_THUMB_Z_INDEX = 3;
     const HIGH_THUMB_Z_INDEX = 4;
     const normalizedStep = step > 0 ? step : 1;
-    const rangeSize = max - min;
-    const minGap = Math.min(Math.max(1, normalizedStep), Math.max(0, rangeSize));
+    const lowerLimit = Math.max(min, Math.min(max, allowedMin ?? min));
+    const upperLimit = Math.max(lowerLimit, Math.min(max, allowedMax ?? max));
+    const minGap = Math.min(Math.max(1, normalizedStep), Math.max(0, upperLimit - lowerLimit));
     const minPosition = useSharedValue(minValue);
     const maxPosition = useSharedValue(maxValue);
     const minStartPosition = useSharedValue(minValue);
@@ -39,26 +45,26 @@ export const useRangeSlider = ({
 
     const clampAndSnap = useCallback((value: number) => {
         'worklet';
-        const clamped = Math.max(min, Math.min(max, value));
+        const clamped = Math.max(lowerLimit, Math.min(upperLimit, value));
         const snapped = Math.round((clamped - min) / normalizedStep) * normalizedStep + min;
-        return Math.max(min, Math.min(max, snapped));
-    }, [max, min, normalizedStep]);
+        return Math.max(lowerLimit, Math.min(upperLimit, snapped));
+    }, [lowerLimit, min, normalizedStep, upperLimit]);
 
     useEffect(() => {
         let nextMin = clampAndSnap(minValue);
         let nextMax = clampAndSnap(maxValue);
 
         if (nextMax - nextMin < minGap) {
-            if (nextMin + minGap <= max) {
+            if (nextMin + minGap <= upperLimit) {
                 nextMax = nextMin + minGap;
-            } else if (nextMax - minGap >= min) {
+            } else if (nextMax - minGap >= lowerLimit) {
                 nextMin = nextMax - minGap;
             }
         }
 
         minPosition.value = nextMin;
         maxPosition.value = nextMax;
-    }, [clampAndSnap, max, maxValue, maxPosition, min, minGap, minPosition, minValue]);
+    }, [clampAndSnap, lowerLimit, maxValue, maxPosition, minGap, minPosition, minValue, upperLimit]);
 
     const minPanGesture = Gesture.Pan()
         .onStart(() => {
@@ -70,7 +76,7 @@ export const useRangeSlider = ({
             const stepSize = range > 0 ? sliderWidth.value / range : 1;
             const delta = event.translationX / stepSize;
             const updatedPosition = minStartPosition.value + delta;
-            const clampedPosition = Math.max(min, Math.min(maxPosition.value - minGap, updatedPosition));
+            const clampedPosition = Math.max(lowerLimit, Math.min(maxPosition.value - minGap, updatedPosition));
             minPosition.value = clampedPosition;
             if (onValuesLive) {
                 scheduleOnRN(onValuesLive, clampAndSnap(clampedPosition), clampAndSnap(maxPosition.value));
@@ -99,7 +105,7 @@ export const useRangeSlider = ({
             const stepSize = range > 0 ? sliderWidth.value / range : 1;
             const delta = event.translationX / stepSize;
             const updatedPosition = maxStartPosition.value + delta;
-            const clampedPosition = Math.min(max, Math.max(minPosition.value + minGap, updatedPosition));
+            const clampedPosition = Math.min(upperLimit, Math.max(minPosition.value + minGap, updatedPosition));
             maxPosition.value = clampedPosition;
             if (onValuesLive) {
                 scheduleOnRN(onValuesLive, clampAndSnap(minPosition.value), clampAndSnap(clampedPosition));
@@ -178,7 +184,7 @@ export const useRangeSlider = ({
 
         if (minDistance <= maxDistance) {
             isMinThumbOnTop.value = true;
-            const nextMin = Math.max(min, Math.min(snappedPressedValue, currentMax - minGap));
+            const nextMin = Math.max(lowerLimit, Math.min(snappedPressedValue, currentMax - minGap));
             minPosition.value = withSpring(nextMin, {
                 damping: 10,
                 stiffness: 100,
@@ -192,7 +198,7 @@ export const useRangeSlider = ({
         }
 
         isMinThumbOnTop.value = false;
-        const nextMax = Math.min(max, Math.max(snappedPressedValue, currentMin + minGap));
+        const nextMax = Math.min(upperLimit, Math.max(snappedPressedValue, currentMin + minGap));
         maxPosition.value = withSpring(nextMax, {
             damping: 10,
             stiffness: 100,

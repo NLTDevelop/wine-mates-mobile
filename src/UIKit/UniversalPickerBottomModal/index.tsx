@@ -37,8 +37,8 @@ export const UniversalPickerBottomModal = ({
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { isFullScreen } = useUniversalPickerBottomModal({
-        optionsCount: options.length,
+    const { isFullScreen, regularListHeight, isRegularListScrollEnabled } = useUniversalPickerBottomModal({
+        options,
         isLoading,
     });
 
@@ -132,12 +132,13 @@ export const UniversalPickerBottomModal = ({
                     keyExtractor={keyExtractor}
                     renderItem={renderItem}
                     ItemSeparatorComponent={renderSeparator}
-                    style={styles.regularList}
+                    style={[styles.regularList, { maxHeight: regularListHeight }]}
                     contentContainerStyle={[
                         styles.regularListContentContainer,
                         options.length === 0 && styles.regularEmptyListContentContainer,
                     ]}
-                    nestedScrollEnabled
+                    nestedScrollEnabled={isRegularListScrollEnabled}
+                    scrollEnabled={isRegularListScrollEnabled}
                     bounces={false}
                     overScrollMode="never"
                     keyboardShouldPersistTaps="handled"

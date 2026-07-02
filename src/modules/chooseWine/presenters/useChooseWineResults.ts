@@ -44,24 +44,101 @@ const saveModeFilters = (mode: WineChooserMode, filters: IWineChooserFilters) =>
     getFilterModel(mode).filters = filters;
 };
 
-const prepareRequestFilters = (filters: IWineChooserFilters): IWineChooserFilters => {
+const removeEmptyFiltersFromRequest = (
+    request: Partial<IWineChooserFilters>,
+): Partial<IWineChooserFilters> => {
+    const nextRequest = { ...request };
+
+    if (!nextRequest.searchQuery) {
+        delete nextRequest.searchQuery;
+    }
+
+    if (nextRequest.gender === null) {
+        delete nextRequest.gender;
+    }
+
+    if (nextRequest.ageMin === null) {
+        delete nextRequest.ageMin;
+    }
+
+    if (nextRequest.ageMax === null) {
+        delete nextRequest.ageMax;
+    }
+
+    if (nextRequest.minUserRating !== undefined && nextRequest.minUserRating <= EMPTY_WINE_CHOOSER_FILTERS.minUserRating) {
+        delete nextRequest.minUserRating;
+    }
+
+    if (nextRequest.aromaIds?.length === 0) {
+        delete nextRequest.aromaIds;
+    }
+
+    if (nextRequest.flavorIds?.length === 0) {
+        delete nextRequest.flavorIds;
+    }
+
+    if (nextRequest.typeIds?.length === 0) {
+        delete nextRequest.typeIds;
+    }
+
+    if (nextRequest.colorIds?.length === 0) {
+        delete nextRequest.colorIds;
+    }
+
+    if (nextRequest.countryIds?.length === 0) {
+        delete nextRequest.countryIds;
+    }
+
+    if (nextRequest.regionIds?.length === 0) {
+        delete nextRequest.regionIds;
+    }
+
+    if (nextRequest.grapeVarieties?.length === 0) {
+        delete nextRequest.grapeVarieties;
+    }
+
+    if (nextRequest.vintages?.length === 0) {
+        delete nextRequest.vintages;
+    }
+
+    if (nextRequest.tasteFilters?.length === 0) {
+        delete nextRequest.tasteFilters;
+    }
+
+    return nextRequest;
+};
+
+const prepareRequestFilters = (filters: IWineChooserFilters): Partial<IWineChooserFilters> => {
     const restFilters = { ...filters } as LegacyWineChooserFilters;
     delete restFilters.vintageMin;
     delete restFilters.vintageMax;
     const canApplyTasteFilters = userModel.user?.hasPremium || false;
-
-    return {
+    const canApplyExpertRating = filters.minExpertRating >= EMPTY_WINE_CHOOSER_FILTERS.minExpertRating &&
+        filters.maxExpertRating <= EMPTY_WINE_CHOOSER_FILTERS.maxExpertRating &&
+        filters.maxExpertRating >= filters.minExpertRating;
+    const isExpertRatingSelected = canApplyExpertRating && (
+        filters.minExpertRating !== EMPTY_WINE_CHOOSER_FILTERS.minExpertRating ||
+        filters.maxExpertRating !== EMPTY_WINE_CHOOSER_FILTERS.maxExpertRating
+    );
+    const request = {
         ...restFilters,
-        ageMin: filters.ageMin || null,
-        ageMax: filters.ageMax || null,
-        vintages: filters.vintages || [],
         tasteFilters: canApplyTasteFilters ? filters.tasteFilters : [],
     };
+
+    if (!isExpertRatingSelected) {
+        delete request.minExpertRating;
+        delete request.maxExpertRating;
+    }
+
+    return removeEmptyFiltersFromRequest(request);
 };
 
 const getAppliedFiltersCount = (filters: IWineChooserFilters) => {
     let count = 0;
     const canApplyTasteFilters = userModel.user?.hasPremium || false;
+    const canApplyExpertRating = filters.minExpertRating >= EMPTY_WINE_CHOOSER_FILTERS.minExpertRating &&
+        filters.maxExpertRating <= EMPTY_WINE_CHOOSER_FILTERS.maxExpertRating &&
+        filters.maxExpertRating >= filters.minExpertRating;
 
     if (filters.aromaIds.length > 0) {
         count += 1;
@@ -91,10 +168,10 @@ const getAppliedFiltersCount = (filters: IWineChooserFilters) => {
         count += 1;
     }
 
-    if (
+    if (canApplyExpertRating && (
         filters.minExpertRating !== EMPTY_WINE_CHOOSER_FILTERS.minExpertRating ||
         filters.maxExpertRating !== EMPTY_WINE_CHOOSER_FILTERS.maxExpertRating
-    ) {
+    )) {
         count += 1;
     }
 

@@ -52,6 +52,7 @@ export interface ILinks {
     wineChooserVintages: string;
     wineChooserPrefill: string;
     wineChooserAromasFlavors: string;
+    wineChooserFilterOptions: string;
     faq: string;
     me: string;
     favoriteWineLists: string;
@@ -114,6 +115,7 @@ class Links implements ILinks {
         wineChooserVintages: 'wine-chooser/vintages',
         wineChooserPrefill: 'wine-chooser/prefill',
         wineChooserAromasFlavors: 'wine-chooser/aromas-flavors',
+        wineChooserFilterOptions: 'wine-chooser/filter-options',
         faq: 'faq/topics',
         me: 'users/me',
         favoriteWineLists: 'favorite/wine-lists',
@@ -263,6 +265,9 @@ class Links implements ILinks {
     }
     public get wineChooserAromasFlavors() {
         return `${this._domain}${this._links.wineChooserAromasFlavors}`;
+    }
+    public get wineChooserFilterOptions() {
+        return `${this._domain}${this._links.wineChooserFilterOptions}`;
     }
     public get faq() {
         return `${this._domain}${this._links.faq}`;
