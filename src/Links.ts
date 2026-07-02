@@ -60,6 +60,7 @@ export interface ILinks {
     events: string;
     eventMapPins: string;
     eventPriceRange: string;
+    eventFilterOptions: string;
     createdEvents: string;
     appliedEvents: string;
     eventBookings: string;
@@ -123,6 +124,7 @@ class Links implements ILinks {
         events: 'events',
         eventMapPins: 'events/map-pins',
         eventPriceRange: 'events/price-range',
+        eventFilterOptions: 'events/filter-options',
         createdEvents: 'events/my',
         appliedEvents: 'event-bookings/my',
         eventBookings: 'event-bookings',
@@ -289,6 +291,9 @@ class Links implements ILinks {
     }
     public get eventPriceRange() {
         return `${this._domain}${this._links.eventPriceRange}`;
+    }
+    public get eventFilterOptions() {
+        return `${this._domain}${this._links.eventFilterOptions}`;
     }
     public get createdEvents() {
         return `${this._domain}${this._links.createdEvents}`;

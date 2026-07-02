@@ -31,9 +31,15 @@ export const getStyles = (colors: IColors) => {
         buttonActive: {
             borderColor: colors.primary,
         },
+        buttonDisabled: {
+            opacity: 0.5,
+        },
         buttonText: {
             color: colors.text,
             textAlign: 'center',
+        },
+        buttonTextDisabled: {
+            color: colors.text_light,
         },
         moreButtonText: {
             color: colors.primary,

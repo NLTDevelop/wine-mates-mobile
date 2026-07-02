@@ -120,7 +120,7 @@ const prepareRequestFilters = (filters: IWineChooserFilters): Partial<IWineChoos
         filters.minExpertRating !== EMPTY_WINE_CHOOSER_FILTERS.minExpertRating ||
         filters.maxExpertRating !== EMPTY_WINE_CHOOSER_FILTERS.maxExpertRating
     );
-    const request = {
+    const request: Partial<IWineChooserFilters> = {
         ...restFilters,
         tasteFilters: canApplyTasteFilters ? filters.tasteFilters : [],
     };

@@ -5,6 +5,7 @@ import { eventsModel } from '@/entities/events/EventsModel';
 import { eventsService } from '@/entities/events/EventsService';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
+import { EventType } from '@/entities/events/enums/EventType';
 
 const KYIV_COORDINATES = {
     latitude: 50.4501,
@@ -16,7 +17,7 @@ const MAP_DELTA = {
     longitudeDelta: 0.1,
 };
 
-const DEFAULT_RADIUS_KM = 100;
+const DEFAULT_RADIUS_KM = 50;
 
 interface IProps {
     searchLocation?: IUserLocation | null;
@@ -30,6 +31,17 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoadingEvents, setIsLoadingEvents] = useState(false);
     const [selectedTab, setSelectedTab] = useState<'all' | 'tastings' | 'parties'>('all');
+    const selectedEventType = useMemo(() => {
+        if (selectedTab === 'tastings') {
+            return EventType.Tastings;
+        }
+
+        if (selectedTab === 'parties') {
+            return EventType.Parties;
+        }
+
+        return undefined;
+    }, [selectedTab]);
 
     const getTargetLocation = useCallback((location?: IUserLocation | null) => {
         return location || searchLocation || userLocation || null;
@@ -47,8 +59,9 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
                 latitude: targetLocation.latitude,
                 longitude: targetLocation.longitude,
                 radiusKm: filters?.radiusKm ?? DEFAULT_RADIUS_KM,
-                eventDate: filters?.eventDate,
-                language: filters?.language,
+                eventType: selectedEventType,
+                eventStartDate: filters?.eventStartDate,
+                eventEndDate: filters?.eventEndDate,
                 minPrice: filters?.minPrice,
                 maxPrice: filters?.maxPrice,
                 sex: filters?.sex,
@@ -60,7 +73,7 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
         } finally {
             setIsLoadingEvents(false);
         }
-    }, [filters, getTargetLocation]);
+    }, [filters, getTargetLocation, selectedEventType]);
 
     const initialRegion: Region = useMemo(() => {
         if (searchLocation) {
