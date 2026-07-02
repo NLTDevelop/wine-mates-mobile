@@ -7,7 +7,7 @@ import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
 import { EventType } from '@/entities/events/enums/EventType';
 
-const DEFAULT_RADIUS_KM = 100;
+const DEFAULT_RADIUS_KM = 50;
 const DEFAULT_LIMIT = 10;
 const OFFSET = 0;
 
@@ -53,9 +53,9 @@ export const useEventsList = ({ searchLocation, filters, selectedEventType }: IP
                 radiusKm: filters?.radiusKm ?? DEFAULT_RADIUS_KM,
                 offset,
                 limit: DEFAULT_LIMIT,
-                eventDate: filters?.eventDate,
+                eventStartDate: filters?.eventStartDate,
+                eventEndDate: filters?.eventEndDate,
                 eventType: selectedEventType,
-                language: filters?.language,
                 minPrice: filters?.minPrice,
                 maxPrice: filters?.maxPrice,
                 sex: filters?.sex,

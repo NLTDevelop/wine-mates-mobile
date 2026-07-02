@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
@@ -9,10 +9,8 @@ import { RadiusButtons } from './components/RadiusButtons';
 import { useEventFiltersView } from './presenters/useEventFiltersView';
 import { getStyles } from './styles';
 import { CalendarIcon } from '@assets/icons/CalendarIcon';
-import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { RangeSlider } from '@/UIKit/RangeSlider';
-import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
-import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
+import { QuickFilterSection } from '@/modules/chooseWine/ui/ChooseWineFiltersView/components/QuickFilterSection';
 
 interface IProps {}
 
@@ -24,10 +22,7 @@ export const EventFiltersView = ({}: IProps) => {
         currentMonth,
         markedDates,
         selectedDateText,
-        selectedSexText,
-        sexModalTitle,
-        sexPickerItems,
-        selectedLanguage,
+        sexFilterItems,
         selectedMinAge,
         selectedMaxAge,
         selectedMinPrice,
@@ -35,23 +30,28 @@ export const EventFiltersView = ({}: IProps) => {
         priceCurrencySuffix,
         minAgeLimit,
         maxAgeLimit,
+        allowedAgeMin,
+        allowedAgeMax,
         minPriceLimit,
         maxPriceLimit,
+        allowedPriceMin,
+        allowedPriceMax,
+        calendarMinDate,
+        calendarMaxDate,
         radiusOption1,
         radiusOption5,
         radiusOption10,
         radiusOption50,
         isCalendarVisible,
-        isSexPickerVisible,
         isResetDisabled,
+        isInitialLoading,
+        isDateDisabled,
+        isAgeDisabled,
+        isPriceDisabled,
         onOpenCalendar,
         onCloseCalendar,
-        onOpenSexPicker,
-        onCloseSexPicker,
         onDayPress,
         onMonthChange,
-        onConfirmSex,
-        onChangeLanguage,
         onAgeRangeChange,
         onPriceRangeChange,
         onReset,
@@ -78,91 +78,85 @@ export const EventFiltersView = ({}: IProps) => {
                     />
                 }
             >
-                <View style={styles.container}>
-                    <View>
-                        <Typography text={t('eventFilters.radius')} variant="h5" style={styles.sectionTitle} />
-                        <RadiusButtons
-                            radiusOption1={radiusOption1}
-                            radiusOption5={radiusOption5}
-                            radiusOption10={radiusOption10}
-                            radiusOption50={radiusOption50}
-                        />
+                {isInitialLoading ? (
+                    <View style={styles.loaderContainer}>
+                        <ActivityIndicator color={colors.primary} size="large" />
                     </View>
-                    <View>
-                        <Typography text={t('eventFilters.date')} variant="h5" style={styles.sectionTitle} />
-                        <TouchableOpacity style={styles.dateButton} onPress={onOpenCalendar}>
-                            <Typography
-                                text={selectedDateText || t('eventFilters.selectDate')}
-                                variant="body_400"
-                                style={styles.dateText}
+                ) : (
+                    <View style={styles.container}>
+                        <View>
+                            <Typography text={t('eventFilters.radius')} variant="h5" style={styles.sectionTitle} />
+                            <RadiusButtons
+                                radiusOption1={radiusOption1}
+                                radiusOption5={radiusOption5}
+                                radiusOption10={radiusOption10}
+                                radiusOption50={radiusOption50}
                             />
-                            <CalendarIcon color={colors.text_light} />
-                        </TouchableOpacity>
-                    </View>
-                    <View>
-                        <Typography text={t('event.eventLanguage')} variant="h5" style={styles.sectionTitle} />
-                        <LanguageSelector value={selectedLanguage} onChange={onChangeLanguage} />
-                    </View>
-
-                    <View>
-                        <Typography text={t('eventFilters.age')} variant="h5" style={styles.sectionTitle} />
-                        <RangeSlider
-                            min={minAgeLimit}
-                            max={maxAgeLimit}
-                            minValue={selectedMinAge}
-                            maxValue={selectedMaxAge}
-                            onChange={onAgeRangeChange}
-                        />
-                    </View>
-                    <View>
-                        <Typography text={t('event.price')} variant="h5" style={styles.sectionTitle} />
-                        <RangeSlider
-                            min={minPriceLimit}
-                            max={maxPriceLimit}
-                            minValue={selectedMinPrice}
-                            maxValue={selectedMaxPrice}
-                            onChange={onPriceRangeChange}
-                            valueSuffix={priceCurrencySuffix}
-                        />
-                    </View>
-                    <View>
-                        <Typography text={t('eventFilters.sex')} variant="h5" style={styles.sectionTitle} />
-                        <TouchableOpacity style={styles.sexButton} onPress={onOpenSexPicker}>
-                            <Typography
-                                text={selectedSexText || t('eventFilters.selectSex')}
-                                variant="body_400"
-                                style={styles.sexText}
+                        </View>
+                        <View>
+                            <Typography text={t('eventFilters.date')} variant="h5" style={styles.sectionTitle} />
+                            <TouchableOpacity
+                                style={[styles.dateButton, isDateDisabled ? styles.disabledControl : undefined]}
+                                onPress={onOpenCalendar}
+                                disabled={isDateDisabled}
+                            >
+                                <Typography
+                                    text={selectedDateText || t('eventFilters.selectDate')}
+                                    variant="body_400"
+                                    style={isDateDisabled ? styles.disabledText : styles.dateText}
+                                />
+                                <CalendarIcon color={colors.text_light} />
+                            </TouchableOpacity>
+                        </View>
+                        <View>
+                            <Typography text={t('eventFilters.age')} variant="h5" style={styles.sectionTitle} />
+                            <RangeSlider
+                                min={minAgeLimit}
+                                max={maxAgeLimit}
+                                minValue={selectedMinAge}
+                                maxValue={selectedMaxAge}
+                                allowedMin={allowedAgeMin}
+                                allowedMax={allowedAgeMax}
+                                onChange={onAgeRangeChange}
+                                isDisabled={isAgeDisabled}
                             />
-                            <ArrowDownIcon color={colors.text_light} width={20} height={20} />
-                        </TouchableOpacity>
+                        </View>
+                        <View>
+                            <Typography text={t('event.price')} variant="h5" style={styles.sectionTitle} />
+                            <RangeSlider
+                                min={minPriceLimit}
+                                max={maxPriceLimit}
+                                minValue={selectedMinPrice}
+                                maxValue={selectedMaxPrice}
+                                allowedMin={allowedPriceMin}
+                                allowedMax={allowedPriceMax}
+                                onChange={onPriceRangeChange}
+                                valueSuffix={priceCurrencySuffix}
+                                isDisabled={isPriceDisabled}
+                            />
+                        </View>
+                        <View>
+                            <QuickFilterSection title={t('eventFilters.sex')} items={sexFilterItems} />
+                        </View>
                     </View>
-                </View>
+                )}
             </ScreenContainer>
 
-            <CalendarModal
-                visible={isCalendarVisible}
-                title={t('eventFilters.date')}
-                closeText={t('eventFilters.close')}
-                currentMonth={currentMonth}
-                markedDates={markedDates}
-                onClose={onCloseCalendar}
-                onDayPress={onDayPress}
-                onMonthChange={onMonthChange}
-            />
-
-            {isSexPickerVisible && (
-                <UniversalPickerBottomModal
-                    visible={isSexPickerVisible}
-                    title={sexModalTitle}
-                    options={sexPickerItems}
-                    isLoading={false}
-                    selectionMode="single"
-                    emptyText={t('common.nothingFoundTitle')}
-                    confirmText={t('common.confirm')}
-                    onClose={onCloseSexPicker}
-                    onConfirm={onConfirmSex}
+            {!isInitialLoading && (
+                <CalendarModal
+                    visible={isCalendarVisible}
+                    title={t('eventFilters.date')}
+                    closeText={t('eventFilters.close')}
+                    currentMonth={currentMonth}
+                    markedDates={markedDates}
+                    minDate={calendarMinDate}
+                    maxDate={calendarMaxDate}
+                    onClose={onCloseCalendar}
+                    onDayPress={onDayPress}
+                    onMonthChange={onMonthChange}
                 />
             )}
+
         </>
     );
 };

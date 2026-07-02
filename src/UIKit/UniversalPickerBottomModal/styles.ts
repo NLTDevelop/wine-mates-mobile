@@ -25,9 +25,7 @@ export const getStyles = (colors: IColors) => {
             justifyContent: 'center',
         },
 
-        regularList: {
-            maxHeight: scaleVertical(350),
-        },
+        regularList: {},
         regularListContentContainer: {
             flexGrow: 0,
         },

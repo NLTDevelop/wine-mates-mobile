@@ -22,15 +22,21 @@ export const QuickFilterSection = ({ title, items }: IProps) => {
         return (
             <TouchableOpacity
                 onPress={item.onPress}
+                disabled={item.isDisabled}
                 style={[
                     styles.button,
                     item.isSelected ? styles.buttonActive : undefined,
+                    item.isDisabled ? styles.buttonDisabled : undefined,
                 ]}
             >
                 <Typography
                     variant={item.isMore ? 'subtitle_12_500' : 'subtitle_12_500'}
                     text={item.title}
-                    style={[styles.buttonText, item.isMore ? styles.moreButtonText : undefined]}
+                    style={[
+                        styles.buttonText,
+                        item.isMore ? styles.moreButtonText : undefined,
+                        item.isDisabled ? styles.buttonTextDisabled : undefined,
+                    ]}
                     numberOfLines={2}
                 />
             </TouchableOpacity>

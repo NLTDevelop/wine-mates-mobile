@@ -52,11 +52,10 @@ const getWineSetText = (value?: string | INamedValue | null, locale?: string) =>
 };
 
 export const getWineSetDisplayTitle = (wine: IWineSetDisplayWine) => {
-    const name = wine.name?.trim();
-    const vintage = wine.vintage ? ` ${wine.vintage}` : '';
+    const producer = wine.producer?.trim();
 
-    if (name) {
-        return `${name}${vintage}`;
+    if (producer) {
+        return `${producer}`;
     }
 
     return wine.id ? `Wine #${wine.id}` : 'Wine';
@@ -65,11 +64,12 @@ export const getWineSetDisplayTitle = (wine: IWineSetDisplayWine) => {
 export const getWineSetDisplaySubtitle = (wine: IWineSetDisplayWine, locale?: string) => {
     const parts = [
         wine.grapeVariety,
-        wine.producer,
-        wine.country,
-        wine.region,
+        wine.name,
         wine.type,
         wine.color,
+        wine.country,
+        wine.region,
+        wine.vintage?.toString(),
     ]
         .map(item => getWineSetText(item, locale))
         .filter(Boolean);

@@ -1,6 +1,7 @@
 import { EventType } from '@/entities/events/enums/EventType';
 import { IAddEventDraft } from '@/modules/event/types/IAddEventDraft';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
+import { IUserLocation } from '@/entities/location/types/IUserLocation';
 
 export type EventStackParamList = {
     EventMapView: undefined;
@@ -41,5 +42,8 @@ export type EventStackParamList = {
         eventType?: EventType;
         isDuplicateEvent?: boolean;
     };
-    EventFiltersView: undefined;
+    EventFiltersView: {
+        searchLocation?: IUserLocation | null;
+        selectedEventType?: EventType;
+    } | undefined;
 };

@@ -8,6 +8,10 @@ import { IEventMapPinsParams } from './params/IEventMapPinsParams';
 import { CreateEventDto } from './dto/CreateEvent.dto';
 import { eventsModel } from './EventsModel';
 import { IEventPriceRange } from './types/IEventPriceRange';
+import {
+    IEventFilterOptions,
+    IEventFilterOptionsRequest,
+} from './types/IEventFilterOptions';
 import { IGetEventsParams } from './params/IGetEventsParams';
 import { ISavedEvent } from './types/ISavedEvent';
 import { IAppliedEvent } from './types/IAppliedEvent';
@@ -435,6 +439,23 @@ class EventsService {
             return response;
         } catch (error) {
             console.warn('EventsService -> getPriceRange: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getFilterOptions = async (
+        data: IEventFilterOptionsRequest,
+    ): Promise<IResponse<IEventFilterOptions>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.eventFilterOptions}`,
+                data,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> getFilterOptions: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
