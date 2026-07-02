@@ -1,26 +1,53 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DateData } from 'react-native-calendars';
-import { MarkedDates } from 'react-native-calendars/src/types';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { format, isValid, parseISO } from 'date-fns';
 import { eventsModel } from '@/entities/events/EventsModel';
+import { eventsService } from '@/entities/events/EventsService';
 import { userModel } from '@/entities/users/UserModel';
+import { locationModel } from '@/entities/location/LocationModel';
 import { Sex } from '@/entities/events/enums/Sex';
+import { EventType } from '@/entities/events/enums/EventType';
+import { IEventFilterOptions, IEventFilterOptionsRequest } from '@/entities/events/types/IEventFilterOptions';
+import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
 import { IRadiusOption } from '@/modules/event/ui/EventFiltersView/types/IRadiusOption';
 import { getCurrencySymbol } from '@/modules/event/utils/formatEventPrice';
-import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
+import { getRangeMarkedDates } from '@/modules/event/utils/getRangeMarkedDates';
+import { IQuickFilterButtonItem } from '@/modules/chooseWine/types/IQuickFilterButtonItem';
+
+type RouteParams = {
+    EventFiltersView: {
+        searchLocation?: IUserLocation | null;
+        selectedEventType?: EventType;
+    };
+};
+
+interface IProps {
+    t: ILocalization['t'];
+}
 
 const DATE_API_FORMAT = 'yyyy-MM-dd';
 const DATE_DISPLAY_FORMAT = 'dd.MM.yyyy';
 const RADIUS_OPTIONS = [1, 5, 10, 50];
+const DEFAULT_RADIUS_KM = 50;
 const MIN_AGE_LIMIT = 18;
 const MAX_AGE_LIMIT = 100;
 const DEFAULT_MIN_PRICE_LIMIT = 0;
 const DEFAULT_MAX_PRICE_LIMIT = 500;
 const DEFAULT_PRICE_CURRENCY_SUFFIX = '$';
+const DEFAULT_FILTER_LOCATION = {
+    latitude: 50.4501,
+    longitude: 30.5234,
+};
 
-const parseDate = (value?: string) => {
+const EMPTY_FILTER_OPTIONS: IEventFilterOptions = {
+    eventTypes: [],
+    sexOptions: [],
+};
+
+const parseDate = (value?: string | null) => {
     if (!value) {
         return null;
     }
@@ -34,74 +61,372 @@ const parseDate = (value?: string) => {
     return parsedDate;
 };
 
-interface IProps {
-    t: ILocalization['t'];
-}
+const getDateRange = (filterOptions: IEventFilterOptions) => {
+    const minDate = filterOptions.dateRange?.minDate || undefined;
+    const maxDate = filterOptions.dateRange?.maxDate || undefined;
+
+    return {
+        minDate,
+        maxDate,
+    };
+};
+
+const isDateRangeAvailable = (filterOptions: IEventFilterOptions) => {
+    return !!filterOptions.dateRange?.minDate && !!filterOptions.dateRange?.maxDate;
+};
+
+const isAgeRangeAvailable = (filterOptions: IEventFilterOptions) => {
+    return typeof filterOptions.ageRange?.maxAge === 'number';
+};
+
+const isPriceRangeAvailable = (filterOptions: IEventFilterOptions) => {
+    return typeof filterOptions.priceRange?.minPrice === 'number' &&
+        typeof filterOptions.priceRange?.maxPrice === 'number';
+};
+
+const isSexOptionsAvailable = (filterOptions: IEventFilterOptions) => {
+    return filterOptions.sexOptions.length > 0;
+};
+
+const getRoundedAgeRange = (filterOptions: IEventFilterOptions) => {
+    const minAge = filterOptions.ageRange?.minAge;
+    const maxAge = filterOptions.ageRange?.maxAge;
+    const roundedMinAge = typeof minAge === 'number' && Number.isFinite(minAge)
+        ? Math.round(minAge)
+        : MIN_AGE_LIMIT;
+    const roundedMaxAge = typeof maxAge === 'number' && Number.isFinite(maxAge)
+        ? Math.round(maxAge)
+        : MAX_AGE_LIMIT;
+
+    return {
+        minAge: Math.min(Math.max(roundedMinAge, MIN_AGE_LIMIT), MAX_AGE_LIMIT),
+        maxAge: Math.min(Math.max(roundedMaxAge, roundedMinAge), MAX_AGE_LIMIT),
+    };
+};
+
+const getRoundedPriceRange = (filterOptions: IEventFilterOptions) => {
+    const minPrice = filterOptions.priceRange?.minPrice;
+    const maxPrice = filterOptions.priceRange?.maxPrice;
+    const roundedMinPrice = typeof minPrice === 'number' && Number.isFinite(minPrice)
+        ? Math.floor(minPrice)
+        : DEFAULT_MIN_PRICE_LIMIT;
+    const roundedMaxPrice = typeof maxPrice === 'number' && Number.isFinite(maxPrice)
+        ? Math.ceil(maxPrice)
+        : DEFAULT_MAX_PRICE_LIMIT;
+    const normalizedMinPrice = Math.max(DEFAULT_MIN_PRICE_LIMIT, roundedMinPrice);
+
+    return {
+        minPrice: normalizedMinPrice,
+        maxPrice: Math.max(normalizedMinPrice, roundedMaxPrice),
+    };
+};
+
+const getTargetLocation = (routeLocation?: IUserLocation | null) => {
+    return routeLocation || locationModel.userLocation || DEFAULT_FILTER_LOCATION;
+};
+
+const isDateInRange = (date: string, dateRange: { minDate?: string; maxDate?: string }) => {
+    if (dateRange.minDate && date < dateRange.minDate) {
+        return false;
+    }
+
+    if (dateRange.maxDate && date > dateRange.maxDate) {
+        return false;
+    }
+
+    return true;
+};
+
+const isAgeFilterSelected = (
+    filters: IEventFilters,
+    ageRange: { minAge: number; maxAge: number },
+) => {
+    if (typeof filters.minAge !== 'number' || typeof filters.maxAge !== 'number') {
+        return false;
+    }
+
+    return filters.minAge !== ageRange.minAge || filters.maxAge !== ageRange.maxAge;
+};
+
+const isPriceFilterSelected = (
+    filters: IEventFilters,
+    priceRange: { minPrice: number; maxPrice: number },
+) => {
+    if (typeof filters.minPrice !== 'number' || typeof filters.maxPrice !== 'number') {
+        return false;
+    }
+
+    return filters.minPrice !== priceRange.minPrice || filters.maxPrice !== priceRange.maxPrice;
+};
+
+const isSexOptionAvailable = (filterOptions: IEventFilterOptions, sex: Sex) => {
+    return filterOptions.sexOptions.some(item => item.value === sex);
+};
+
+const getSexTitle = (sex: Sex, t: ILocalization['t']) => {
+    if (sex === Sex.Men) {
+        return t('eventFilters.men');
+    }
+
+    if (sex === Sex.Women) {
+        return t('eventFilters.women');
+    }
+
+    return t('eventFilters.all');
+};
+
+const createCountSubtitle = (eventCount?: number) => {
+    if (typeof eventCount !== 'number') {
+        return undefined;
+    }
+
+    return `${eventCount}`;
+};
+
+const createQuickFilterTitle = (title: string, eventCount?: number) => {
+    const subtitle = createCountSubtitle(eventCount);
+
+    if (!subtitle) {
+        return title;
+    }
+
+    return `${title} (${subtitle})`;
+};
+
+const removeEmptyFiltersFromRequest = (
+    request: IEventFilterOptionsRequest,
+): IEventFilterOptionsRequest => {
+    const nextRequest = { ...request };
+
+    if (!nextRequest.eventStartDate) {
+        delete nextRequest.eventStartDate;
+    }
+
+    if (!nextRequest.eventEndDate) {
+        delete nextRequest.eventEndDate;
+    }
+
+    if (!nextRequest.sex) {
+        delete nextRequest.sex;
+    }
+
+    return nextRequest;
+};
+
+const createFilterOptionsRequest = (
+    filters: IEventFilters,
+    location: IUserLocation,
+    selectedEventType?: EventType,
+): IEventFilterOptionsRequest => {
+    return removeEmptyFiltersFromRequest({
+        latitude: location.latitude,
+        longitude: location.longitude,
+        radiusKm: filters.radiusKm ?? DEFAULT_RADIUS_KM,
+        eventStartDate: filters.eventStartDate,
+        eventEndDate: filters.eventEndDate,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        sex: filters.sex,
+        minAge: filters.minAge,
+        maxAge: filters.maxAge,
+        eventType: selectedEventType,
+    });
+};
 
 export const useEventFiltersView = ({ t }: IProps) => {
-    const modelFilters = eventsModel.eventFilters;
-    const modelPriceRange = eventsModel.eventPriceRange;
+    const route = useRoute<RouteProp<RouteParams, 'EventFiltersView'>>();
+    const routeLocation = route.params?.searchLocation;
+    const selectedEventType = route.params?.selectedEventType;
+    const targetLocation = getTargetLocation(routeLocation);
     const priceCurrencySuffix = getCurrencySymbol(userModel.user?.selectedCurrency) || DEFAULT_PRICE_CURRENCY_SUFFIX;
-    const initialFilters: IEventFilters = {
-        radiusKm: modelFilters.radiusKm,
-        eventDate: modelFilters.eventDate,
-        language: modelFilters.language,
-        sex: modelFilters.sex,
-        minAge: modelFilters.minAge,
-        maxAge: modelFilters.maxAge,
-    };
-    const initialDate = parseDate(initialFilters.eventDate);
+    const initialFilters = eventsModel.eventFilters;
+    const initialDate = parseDate(initialFilters.eventStartDate);
     const initialMinAge = initialFilters.minAge ?? MIN_AGE_LIMIT;
     const initialMaxAge = initialFilters.maxAge ?? MAX_AGE_LIMIT;
-    const initialMinPriceLimit = modelPriceRange?.minPrice ?? DEFAULT_MIN_PRICE_LIMIT;
-    const initialMaxPriceLimit = Math.max(initialMinPriceLimit, modelPriceRange?.maxPrice ?? DEFAULT_MAX_PRICE_LIMIT);
-    const initialMinPriceRaw = modelFilters.minPrice ?? initialMinPriceLimit;
-    const initialMaxPriceRaw = modelFilters.maxPrice ?? initialMaxPriceLimit;
-    const initialMinPrice = Math.min(initialMaxPriceLimit, Math.max(initialMinPriceLimit, initialMinPriceRaw));
-    const initialMaxPrice = Math.min(initialMaxPriceLimit, Math.max(initialMinPriceLimit, initialMaxPriceRaw));
+    const initialMinPrice = initialFilters.minPrice ?? DEFAULT_MIN_PRICE_LIMIT;
+    const initialMaxPrice = initialFilters.maxPrice ?? DEFAULT_MAX_PRICE_LIMIT;
+    const requestIdRef = useRef(0);
 
-    const [selectedRadiusKm, setSelectedRadiusKm] = useState<number | undefined>(initialFilters.radiusKm);
-    const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
-    const [selectedLanguage, setSelectedLanguage] = useState<string>(initialFilters.language || '');
+    const [filterOptions, setFilterOptions] = useState<IEventFilterOptions>(EMPTY_FILTER_OPTIONS);
+    const [selectedRadiusKm, setSelectedRadiusKm] = useState<number>(initialFilters.radiusKm ?? DEFAULT_RADIUS_KM);
+    const [selectedStartDate, setSelectedStartDate] = useState(initialFilters.eventStartDate || '');
+    const [selectedEndDate, setSelectedEndDate] = useState(initialFilters.eventEndDate || '');
     const [selectedSex, setSelectedSex] = useState<Sex | undefined>(initialFilters.sex);
-    const [selectedSexDraft, setSelectedSexDraft] = useState<Sex | undefined>(initialFilters.sex);
     const [selectedMinAge, setSelectedMinAge] = useState<number>(initialMinAge);
     const [selectedMaxAge, setSelectedMaxAge] = useState<number>(initialMaxAge);
-    const [minPriceLimit] = useState<number>(initialMinPriceLimit);
-    const [maxPriceLimit] = useState<number>(initialMaxPriceLimit);
     const [selectedMinPrice, setSelectedMinPrice] = useState<number>(initialMinPrice);
     const [selectedMaxPrice, setSelectedMaxPrice] = useState<number>(initialMaxPrice);
     const [isCalendarVisible, setIsCalendarVisible] = useState(false);
-    const [isSexPickerVisible, setIsSexPickerVisible] = useState(false);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
     const [currentMonth, setCurrentMonth] = useState(
         initialDate ? format(initialDate, DATE_API_FORMAT) : format(new Date(), DATE_API_FORMAT),
     );
 
-    const onSyncFilters = useCallback((nextFilters: IEventFilters) => {
-        eventsModel.setEventFilters(nextFilters);
-    }, []);
+    const ageRange = getRoundedAgeRange(filterOptions);
+    const priceRange = getRoundedPriceRange(filterOptions);
+    const dateRange = getDateRange(filterOptions);
+    const isDateDisabled = !isDateRangeAvailable(filterOptions);
+    const isAgeDisabled = !isAgeRangeAvailable(filterOptions);
+    const isPriceDisabled = !isPriceRangeAvailable(filterOptions);
+    const isSexDisabled = !isSexOptionsAvailable(filterOptions);
 
-    const onOpenCalendar = useCallback(() => {
-        setIsCalendarVisible(true);
-    }, []);
+    const loadFilterOptions = useCallback(
+        async (filters: IEventFilters) => {
+            requestIdRef.current += 1;
+            const requestId = requestIdRef.current;
+            const response = await eventsService.getFilterOptions(
+                createFilterOptionsRequest(filters, targetLocation, selectedEventType),
+            );
 
-    const onCloseCalendar = useCallback(() => {
-        setIsCalendarVisible(false);
-    }, []);
+            if (requestId !== requestIdRef.current || response.isError || !response.data) {
+                return;
+            }
 
-    const onOpenSexPicker = useCallback(() => {
-        setSelectedSexDraft(selectedSex);
-        setIsSexPickerVisible(true);
-    }, [selectedSex]);
+            const nextFilterOptions = response.data;
+            const nextAgeRange = getRoundedAgeRange(nextFilterOptions);
+            const nextPriceRange = getRoundedPriceRange(nextFilterOptions);
+            const nextDateRange = getDateRange(nextFilterOptions);
+            const isNextDateDisabled = !isDateRangeAvailable(nextFilterOptions);
+            const isNextAgeDisabled = !isAgeRangeAvailable(nextFilterOptions);
+            const isNextPriceDisabled = !isPriceRangeAvailable(nextFilterOptions);
+            const isNextSexDisabled = !isSexOptionsAvailable(nextFilterOptions);
+            const shouldKeepAgeFilter = isAgeFilterSelected(filters, nextAgeRange);
+            const shouldKeepPriceFilter = isPriceFilterSelected(filters, nextPriceRange);
+            const nextFilters = { ...filters };
 
-    const onCloseSexPicker = useCallback(() => {
-        setIsSexPickerVisible(false);
-    }, []);
+            if (isNextDateDisabled) {
+                delete nextFilters.eventStartDate;
+                delete nextFilters.eventEndDate;
+                setSelectedStartDate('');
+                setSelectedEndDate('');
+            } else if (
+                nextFilters.eventStartDate &&
+                !isDateInRange(nextFilters.eventStartDate, nextDateRange)
+            ) {
+                delete nextFilters.eventStartDate;
+                delete nextFilters.eventEndDate;
+                setSelectedStartDate('');
+                setSelectedEndDate('');
+            } else if (
+                nextFilters.eventEndDate &&
+                !isDateInRange(nextFilters.eventEndDate, nextDateRange)
+            ) {
+                delete nextFilters.eventStartDate;
+                delete nextFilters.eventEndDate;
+                setSelectedStartDate('');
+                setSelectedEndDate('');
+            } else {
+                setSelectedStartDate(nextFilters.eventStartDate || '');
+                setSelectedEndDate(nextFilters.eventEndDate || '');
+            }
+
+            if (isNextSexDisabled) {
+                delete nextFilters.sex;
+                setSelectedSex(undefined);
+            } else if (nextFilters.sex && !isSexOptionAvailable(nextFilterOptions, nextFilters.sex)) {
+                delete nextFilters.sex;
+                setSelectedSex(undefined);
+            }
+
+            if (isNextAgeDisabled) {
+                delete nextFilters.minAge;
+                delete nextFilters.maxAge;
+                setSelectedMinAge(nextAgeRange.minAge);
+                setSelectedMaxAge(nextAgeRange.maxAge);
+            } else if (shouldKeepAgeFilter) {
+                const nextMinAge = Math.min(
+                    Math.max(filters.minAge || nextAgeRange.minAge, nextAgeRange.minAge),
+                    nextAgeRange.maxAge,
+                );
+                const nextMaxAge = Math.min(
+                    Math.max(filters.maxAge || nextAgeRange.maxAge, nextMinAge),
+                    nextAgeRange.maxAge,
+                );
+
+                nextFilters.minAge = nextMinAge;
+                nextFilters.maxAge = nextMaxAge;
+                setSelectedMinAge(nextMinAge);
+                setSelectedMaxAge(nextMaxAge);
+            } else {
+                delete nextFilters.minAge;
+                delete nextFilters.maxAge;
+                setSelectedMinAge(nextAgeRange.minAge);
+                setSelectedMaxAge(nextAgeRange.maxAge);
+            }
+
+            if (isNextPriceDisabled) {
+                delete nextFilters.minPrice;
+                delete nextFilters.maxPrice;
+                setSelectedMinPrice(nextPriceRange.minPrice);
+                setSelectedMaxPrice(nextPriceRange.maxPrice);
+            } else if (shouldKeepPriceFilter) {
+                const nextMinPrice = Math.min(
+                    Math.max(filters.minPrice || nextPriceRange.minPrice, nextPriceRange.minPrice),
+                    nextPriceRange.maxPrice,
+                );
+                const nextMaxPrice = Math.min(
+                    Math.max(filters.maxPrice || nextPriceRange.maxPrice, nextMinPrice),
+                    nextPriceRange.maxPrice,
+                );
+
+                nextFilters.minPrice = nextMinPrice;
+                nextFilters.maxPrice = nextMaxPrice;
+                setSelectedMinPrice(nextMinPrice);
+                setSelectedMaxPrice(nextMaxPrice);
+            } else {
+                delete nextFilters.minPrice;
+                delete nextFilters.maxPrice;
+                setSelectedMinPrice(nextPriceRange.minPrice);
+                setSelectedMaxPrice(nextPriceRange.maxPrice);
+            }
+
+            eventsModel.setEventFilters(nextFilters);
+            setFilterOptions(nextFilterOptions);
+        },
+        [
+            selectedEventType,
+            setFilterOptions,
+            setSelectedEndDate,
+            setSelectedMaxAge,
+            setSelectedMaxPrice,
+            setSelectedMinAge,
+            setSelectedMinPrice,
+            setSelectedSex,
+            setSelectedStartDate,
+            targetLocation,
+        ],
+    );
+
+    const onSyncFilters = useCallback(
+        (nextFilters: IEventFilters) => {
+            eventsModel.setEventFilters(nextFilters);
+            loadFilterOptions(nextFilters);
+        },
+        [loadFilterOptions],
+    );
+
+    useEffect(() => {
+        let isActive = true;
+
+        const syncFilterOptions = async () => {
+            await loadFilterOptions(eventsModel.eventFilters);
+
+            if (isActive) {
+                setIsInitialLoading(false);
+            }
+        };
+
+        syncFilterOptions();
+
+        return () => {
+            isActive = false;
+        };
+    }, [loadFilterOptions]);
 
     const getPreparedFilters = useCallback((
         radiusKm?: number,
-        date?: Date | null,
-        language?: string,
+        eventStartDate?: string,
+        eventEndDate?: string,
         sex?: Sex,
         minAge?: number,
         maxAge?: number,
@@ -114,54 +439,59 @@ export const useEventFiltersView = ({ t }: IProps) => {
             nextFilters.radiusKm = radiusKm;
         }
 
-        if (date) {
-            nextFilters.eventDate = format(date, DATE_API_FORMAT);
-        }
-
-        if (language) {
-            nextFilters.language = language;
+        if (eventStartDate) {
+            nextFilters.eventStartDate = eventStartDate;
+            nextFilters.eventEndDate = eventEndDate || eventStartDate;
         }
 
         if (sex) {
             nextFilters.sex = sex;
         }
 
-        const hasAgeFilter = typeof minAge === 'number'
-            && typeof maxAge === 'number'
-            && (minAge !== MIN_AGE_LIMIT || maxAge !== MAX_AGE_LIMIT);
-
-        if (hasAgeFilter) {
+        if (typeof minAge === 'number' && typeof maxAge === 'number') {
             nextFilters.minAge = minAge;
             nextFilters.maxAge = maxAge;
         }
 
-        const hasPriceFilter = typeof minPrice === 'number'
-            && typeof maxPrice === 'number'
-            && (minPrice !== minPriceLimit || maxPrice !== maxPriceLimit);
-
-        if (hasPriceFilter) {
+        if (typeof minPrice === 'number' && typeof maxPrice === 'number') {
             nextFilters.minPrice = minPrice;
             nextFilters.maxPrice = maxPrice;
         }
 
         return nextFilters;
-    }, [maxPriceLimit, minPriceLimit]);
+    }, []);
+
+    const onOpenCalendar = useCallback(() => {
+        if (isDateDisabled) {
+            return;
+        }
+
+        setIsCalendarVisible(true);
+    }, [isDateDisabled, setIsCalendarVisible]);
+
+    const onCloseCalendar = useCallback(() => {
+        setIsCalendarVisible(false);
+    }, [setIsCalendarVisible]);
 
     const onSelectRadius = useCallback((value: number) => {
-        const nextRadiusKm = selectedRadiusKm === value ? undefined : value;
-        setSelectedRadiusKm(nextRadiusKm);
+        if (selectedRadiusKm === value) {
+            return;
+        }
+
         const nextFilters = getPreparedFilters(
-            nextRadiusKm,
-            selectedDate,
-            selectedLanguage,
+            value,
+            eventsModel.eventFilters.eventStartDate,
+            eventsModel.eventFilters.eventEndDate,
             selectedSex,
-            selectedMinAge,
-            selectedMaxAge,
-            selectedMinPrice,
-            selectedMaxPrice,
+            eventsModel.eventFilters.minAge,
+            eventsModel.eventFilters.maxAge,
+            eventsModel.eventFilters.minPrice,
+            eventsModel.eventFilters.maxPrice,
         );
+
+        setSelectedRadiusKm(value);
         onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedLanguage, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
+    }, [getPreparedFilters, onSyncFilters, selectedRadiusKm, selectedSex, setSelectedRadiusKm]);
 
     const getRadiusOption = useCallback((value: number): IRadiusOption => {
         return {
@@ -188,254 +518,245 @@ export const useEventFiltersView = ({ t }: IProps) => {
     }, [getRadiusOption]);
 
     const onDayPress = useCallback((item: DateData) => {
-        const parsedDate = parseDate(item.dateString);
+        const nextDate = item.dateString;
+        let nextStartDate = nextDate;
+        let nextEndDate = nextDate;
 
-        if (!parsedDate) {
-            return;
+        if (selectedStartDate && selectedEndDate && selectedStartDate === selectedEndDate) {
+            if (nextDate === selectedStartDate) {
+                nextStartDate = '';
+                nextEndDate = '';
+            } else if (nextDate > selectedStartDate) {
+                nextStartDate = selectedStartDate;
+            }
+        } else if (selectedStartDate && selectedEndDate) {
+            nextStartDate = nextDate;
+            nextEndDate = nextDate;
+        } else if (selectedStartDate) {
+            if (nextDate < selectedStartDate) {
+                nextStartDate = nextDate;
+                nextEndDate = selectedStartDate;
+            } else {
+                nextStartDate = selectedStartDate;
+                nextEndDate = nextDate;
+            }
         }
 
-        const selectedDateKey = selectedDate ? format(selectedDate, DATE_API_FORMAT) : '';
-        const isSameDateSelected = selectedDateKey === item.dateString;
-
-        if (isSameDateSelected) {
-            setSelectedDate(null);
-            const nextFilters = getPreparedFilters(
-                selectedRadiusKm,
-                null,
-                selectedLanguage,
-                selectedSex,
-                selectedMinAge,
-                selectedMaxAge,
-                selectedMinPrice,
-                selectedMaxPrice,
-            );
-            onSyncFilters(nextFilters);
-            return;
-        }
-
-        setCurrentMonth(item.dateString);
-        setSelectedDate(parsedDate);
         const nextFilters = getPreparedFilters(
             selectedRadiusKm,
-            parsedDate,
-            selectedLanguage,
+            nextStartDate,
+            nextEndDate,
             selectedSex,
-            selectedMinAge,
-            selectedMaxAge,
-            selectedMinPrice,
-            selectedMaxPrice,
+            eventsModel.eventFilters.minAge,
+            eventsModel.eventFilters.maxAge,
+            eventsModel.eventFilters.minPrice,
+            eventsModel.eventFilters.maxPrice,
         );
-        onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedLanguage, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
 
-    const onChangeLanguage = useCallback((language: string) => {
-        const nextLanguage = language.trim().toLowerCase();
-
-        if (selectedLanguage === nextLanguage) {
-            return;
-        }
-
-        setSelectedLanguage(nextLanguage);
-        const nextFilters = getPreparedFilters(
-            selectedRadiusKm,
-            selectedDate,
-            nextLanguage,
-            selectedSex,
-            selectedMinAge,
-            selectedMaxAge,
-            selectedMinPrice,
-            selectedMaxPrice,
-        );
+        setSelectedStartDate(nextStartDate);
+        setSelectedEndDate(nextEndDate);
+        setCurrentMonth(nextDate);
         onSyncFilters(nextFilters);
     }, [
         getPreparedFilters,
         onSyncFilters,
-        selectedDate,
-        selectedLanguage,
-        selectedMaxAge,
-        selectedMaxPrice,
-        selectedMinAge,
-        selectedMinPrice,
+        selectedEndDate,
         selectedRadiusKm,
         selectedSex,
+        selectedStartDate,
+        setCurrentMonth,
+        setSelectedEndDate,
+        setSelectedStartDate,
     ]);
 
-    const onSelectSexAll = useCallback(() => {
-        setSelectedSexDraft(Sex.All);
-    }, []);
-
-    const onSelectSexMen = useCallback(() => {
-        setSelectedSexDraft(Sex.Men);
-    }, []);
-
-    const onSelectSexWomen = useCallback(() => {
-        setSelectedSexDraft(Sex.Women);
-    }, []);
-
-    const sexPickerItems = useMemo<IUniversalPickerOption[]>(() => {
-        return [
-            {
-                id: Sex.All,
-                title: t('eventFilters.all'),
-                isSelected: selectedSexDraft === Sex.All,
-                onPress: onSelectSexAll,
-            },
-            {
-                id: Sex.Men,
-                title: t('eventFilters.men'),
-                isSelected: selectedSexDraft === Sex.Men,
-                onPress: onSelectSexMen,
-            },
-            {
-                id: Sex.Women,
-                title: t('eventFilters.women'),
-                isSelected: selectedSexDraft === Sex.Women,
-                onPress: onSelectSexWomen,
-            },
-        ];
-    }, [onSelectSexAll, onSelectSexMen, onSelectSexWomen, selectedSexDraft, t]);
-
-    const onConfirmSex = useCallback(() => {
-        if (!selectedSexDraft) {
-            setIsSexPickerVisible(false);
+    const onSelectSex = useCallback((sex: Sex) => {
+        if (isSexDisabled) {
             return;
         }
 
-        const nextSex = selectedSex === selectedSexDraft ? undefined : selectedSexDraft;
-        setSelectedSex(nextSex);
+        const nextSex = selectedSex === sex ? undefined : sex;
         const nextFilters = getPreparedFilters(
             selectedRadiusKm,
-            selectedDate,
-            selectedLanguage,
+            eventsModel.eventFilters.eventStartDate,
+            eventsModel.eventFilters.eventEndDate,
             nextSex,
-            selectedMinAge,
-            selectedMaxAge,
-            selectedMinPrice,
-            selectedMaxPrice,
+            eventsModel.eventFilters.minAge,
+            eventsModel.eventFilters.maxAge,
+            eventsModel.eventFilters.minPrice,
+            eventsModel.eventFilters.maxPrice,
         );
+
+        setSelectedSex(nextSex);
         onSyncFilters(nextFilters);
-        setIsSexPickerVisible(false);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedLanguage, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex, selectedSexDraft]);
+    }, [
+        getPreparedFilters,
+        isSexDisabled,
+        onSyncFilters,
+        selectedRadiusKm,
+        selectedSex,
+        setSelectedSex,
+    ]);
+
+    const sexFilterItems = useMemo<IQuickFilterButtonItem[]>(() => {
+        if (isSexDisabled) {
+            return [];
+        }
+
+        return filterOptions.sexOptions.map(item => {
+            return {
+                id: item.value,
+                title: createQuickFilterTitle(getSexTitle(item.value, t), item.eventCount),
+                isSelected: selectedSex === item.value,
+                onPress: () => onSelectSex(item.value),
+            };
+        });
+    }, [filterOptions.sexOptions, isSexDisabled, onSelectSex, selectedSex, t]);
 
     const onAgeRangeChange = useCallback((minAge: number, maxAge: number) => {
+        if (isAgeDisabled) {
+            return;
+        }
+
         if (selectedMinAge === minAge && selectedMaxAge === maxAge) {
             return;
         }
 
-        setSelectedMinAge(minAge);
-        setSelectedMaxAge(maxAge);
+        const nextMinAge = minAge === ageRange.minAge && maxAge === ageRange.maxAge ? undefined : minAge;
+        const nextMaxAge = minAge === ageRange.minAge && maxAge === ageRange.maxAge ? undefined : maxAge;
         const nextFilters = getPreparedFilters(
             selectedRadiusKm,
-            selectedDate,
-            selectedLanguage,
+            eventsModel.eventFilters.eventStartDate,
+            eventsModel.eventFilters.eventEndDate,
             selectedSex,
-            minAge,
-            maxAge,
-            selectedMinPrice,
-            selectedMaxPrice,
+            nextMinAge,
+            nextMaxAge,
+            eventsModel.eventFilters.minPrice,
+            eventsModel.eventFilters.maxPrice,
         );
+
+        setSelectedMinAge(minAge);
+        setSelectedMaxAge(maxAge);
         onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedLanguage, selectedMaxPrice, selectedMinPrice, selectedRadiusKm, selectedSex, selectedMaxAge, selectedMinAge]);
+    }, [
+        ageRange.maxAge,
+        ageRange.minAge,
+        getPreparedFilters,
+        isAgeDisabled,
+        onSyncFilters,
+        selectedMaxAge,
+        selectedMinAge,
+        selectedRadiusKm,
+        selectedSex,
+        setSelectedMaxAge,
+        setSelectedMinAge,
+    ]);
 
     const onPriceRangeChange = useCallback((minPrice: number, maxPrice: number) => {
+        if (isPriceDisabled) {
+            return;
+        }
+
         if (selectedMinPrice === minPrice && selectedMaxPrice === maxPrice) {
             return;
         }
 
-        setSelectedMinPrice(minPrice);
-        setSelectedMaxPrice(maxPrice);
+        const nextMinPrice = minPrice === priceRange.minPrice && maxPrice === priceRange.maxPrice ? undefined : minPrice;
+        const nextMaxPrice = minPrice === priceRange.minPrice && maxPrice === priceRange.maxPrice ? undefined : maxPrice;
         const nextFilters = getPreparedFilters(
             selectedRadiusKm,
-            selectedDate,
-            selectedLanguage,
+            eventsModel.eventFilters.eventStartDate,
+            eventsModel.eventFilters.eventEndDate,
             selectedSex,
-            selectedMinAge,
-            selectedMaxAge,
-            minPrice,
-            maxPrice,
+            eventsModel.eventFilters.minAge,
+            eventsModel.eventFilters.maxAge,
+            nextMinPrice,
+            nextMaxPrice,
         );
+
+        setSelectedMinPrice(minPrice);
+        setSelectedMaxPrice(maxPrice);
         onSyncFilters(nextFilters);
-    }, [getPreparedFilters, onSyncFilters, selectedDate, selectedLanguage, selectedMaxAge, selectedMinAge, selectedMaxPrice, selectedMinPrice, selectedRadiusKm, selectedSex]);
+    }, [
+        getPreparedFilters,
+        isPriceDisabled,
+        onSyncFilters,
+        priceRange.maxPrice,
+        priceRange.minPrice,
+        selectedMaxPrice,
+        selectedMinPrice,
+        selectedRadiusKm,
+        selectedSex,
+        setSelectedMaxPrice,
+        setSelectedMinPrice,
+    ]);
 
     const onMonthChange = useCallback((month: DateData) => {
         setCurrentMonth(month.dateString);
-    }, []);
+    }, [setCurrentMonth]);
 
     const onReset = useCallback(() => {
-        setSelectedRadiusKm(undefined);
-        setSelectedDate(null);
-        setSelectedLanguage('');
+        setSelectedRadiusKm(DEFAULT_RADIUS_KM);
+        setSelectedStartDate('');
+        setSelectedEndDate('');
         setSelectedSex(undefined);
-        setSelectedSexDraft(undefined);
-        setSelectedMinAge(MIN_AGE_LIMIT);
-        setSelectedMaxAge(MAX_AGE_LIMIT);
-        setSelectedMinPrice(minPriceLimit);
-        setSelectedMaxPrice(maxPriceLimit);
-        setIsSexPickerVisible(false);
-        setCurrentMonth(format(new Date(), DATE_API_FORMAT));
+        setSelectedMinAge(ageRange.minAge);
+        setSelectedMaxAge(ageRange.maxAge);
+        setSelectedMinPrice(priceRange.minPrice);
+        setSelectedMaxPrice(priceRange.maxPrice);
+        setCurrentMonth(dateRange.minDate || format(new Date(), DATE_API_FORMAT));
         onSyncFilters({});
-    }, [maxPriceLimit, minPriceLimit, onSyncFilters]);
+    }, [
+        ageRange.maxAge,
+        ageRange.minAge,
+        dateRange.minDate,
+        onSyncFilters,
+        priceRange.maxPrice,
+        priceRange.minPrice,
+        setCurrentMonth,
+        setSelectedEndDate,
+        setSelectedMaxAge,
+        setSelectedMaxPrice,
+        setSelectedMinAge,
+        setSelectedMinPrice,
+        setSelectedRadiusKm,
+        setSelectedSex,
+        setSelectedStartDate,
+    ]);
 
-    const markedDates = useMemo<MarkedDates>(() => {
-        if (!selectedDate) {
-            return {};
-        }
-
-        const dayKey = format(selectedDate, DATE_API_FORMAT);
-
-        return {
-            [dayKey]: {
-                selected: true,
-                startingDay: true,
-                endingDay: true,
-            },
-        };
-    }, [selectedDate]);
+    const markedDates = useMemo(() => {
+        return getRangeMarkedDates(selectedStartDate, selectedEndDate);
+    }, [selectedEndDate, selectedStartDate]);
 
     const selectedDateText = useMemo(() => {
-        if (!selectedDate) {
+        if (!selectedStartDate) {
             return '';
         }
 
-        return format(selectedDate, DATE_DISPLAY_FORMAT);
-    }, [selectedDate]);
+        const startDate = parseDate(selectedStartDate);
+        const endDate = parseDate(selectedEndDate);
+        const formattedStartDate = startDate ? format(startDate, DATE_DISPLAY_FORMAT) : selectedStartDate;
+        const formattedEndDate = endDate ? format(endDate, DATE_DISPLAY_FORMAT) : selectedEndDate;
+
+        if (!selectedEndDate || selectedEndDate === selectedStartDate) {
+            return formattedStartDate;
+        }
+
+        return `${formattedStartDate} - ${formattedEndDate}`;
+    }, [selectedEndDate, selectedStartDate]);
 
     const isResetDisabled = useMemo(() => {
-        const isAgeDefault = selectedMinAge === MIN_AGE_LIMIT && selectedMaxAge === MAX_AGE_LIMIT;
-        const isPriceDefault = selectedMinPrice === minPriceLimit && selectedMaxPrice === maxPriceLimit;
-        return !selectedDate
-            && !selectedLanguage
+        return !selectedStartDate
             && typeof selectedRadiusKm !== 'number'
             && !selectedSex
-            && isAgeDefault
-            && isPriceDefault;
-    }, [maxPriceLimit, minPriceLimit, selectedDate, selectedLanguage, selectedMaxAge, selectedMaxPrice, selectedMinAge, selectedMinPrice, selectedRadiusKm, selectedSex]);
-
-    const selectedSexText = useMemo(() => {
-        if (selectedSex === Sex.Men) {
-            return t('eventFilters.men');
-        }
-
-        if (selectedSex === Sex.Women) {
-            return t('eventFilters.women');
-        }
-
-        if (selectedSex === Sex.All) {
-            return t('eventFilters.all');
-        }
-
-        return '';
-    }, [selectedSex, t]);
+            && !isAgeFilterSelected(eventsModel.eventFilters, ageRange)
+            && !isPriceFilterSelected(eventsModel.eventFilters, priceRange);
+    }, [ageRange, priceRange, selectedRadiusKm, selectedSex, selectedStartDate]);
 
     return {
         currentMonth,
         markedDates,
         selectedDateText,
-        selectedSexText,
-        sexModalTitle: t('eventFilters.sex'),
-        sexPickerItems,
-        selectedLanguage,
-        selectedSex: selectedSexDraft,
+        sexFilterItems,
         selectedMinAge,
         selectedMaxAge,
         selectedMinPrice,
@@ -443,23 +764,29 @@ export const useEventFiltersView = ({ t }: IProps) => {
         priceCurrencySuffix,
         minAgeLimit: MIN_AGE_LIMIT,
         maxAgeLimit: MAX_AGE_LIMIT,
-        minPriceLimit,
-        maxPriceLimit,
+        allowedAgeMin: ageRange.minAge,
+        allowedAgeMax: ageRange.maxAge,
+        minPriceLimit: priceRange.minPrice,
+        maxPriceLimit: priceRange.maxPrice,
+        allowedPriceMin: priceRange.minPrice,
+        allowedPriceMax: priceRange.maxPrice,
+        calendarMinDate: dateRange.minDate,
+        calendarMaxDate: dateRange.maxDate,
         radiusOption1,
         radiusOption5,
         radiusOption10,
         radiusOption50,
         isCalendarVisible,
-        isSexPickerVisible,
         isResetDisabled,
+        isInitialLoading,
+        isDateDisabled,
+        isAgeDisabled,
+        isPriceDisabled,
+        isSexDisabled,
         onOpenCalendar,
         onCloseCalendar,
-        onOpenSexPicker,
-        onCloseSexPicker,
         onDayPress,
         onMonthChange,
-        onConfirmSex,
-        onChangeLanguage,
         onAgeRangeChange,
         onPriceRangeChange,
         onReset,

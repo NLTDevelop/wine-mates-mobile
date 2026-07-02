@@ -7,9 +7,9 @@ export interface IEventsListParams {
     radiusKm?: number;
     offset: number;
     limit: number;
-    eventDate?: string;
+    eventStartDate?: string;
+    eventEndDate?: string;
     eventType?: EventType;
-    language?: string;
     minPrice?: number;
     maxPrice?: number;
     sex?: Sex;

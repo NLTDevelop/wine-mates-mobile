@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useValidator } from '@/hooks/useValidator';
@@ -17,33 +17,10 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { useUserCurrencies } from '@/UIKit/CurrencyPicker/presenters/useUserCurrencies';
 import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateTimeUtc';
 import { addEventWineSetDraftModel } from '@/entities/events/AddEventWineSetDraftModel';
+import { addEventCreateDraftCacheModel } from '@/entities/events/AddEventCreateDraftCacheModel';
+import { IAddEventCreateFormDraft } from '@/modules/event/types/IAddEventCreateDraftCache';
 
-interface IEventForm {
-    theme: string;
-    description: string;
-    restaurantName: string;
-    locationLabel: string;
-    locationCountry: string;
-    location: { latitude: number; longitude: number } | null;
-    eventStartDate: string;
-    eventEndDate: string;
-    eventStartTime: string;
-    eventEndTime: string;
-    price: string;
-    currency: string;
-    speakerName: string;
-    language: string;
-    seats: string;
-    minAge: number;
-    maxAge: number;
-    sex?: Sex;
-    eventType: EventType;
-    tastingType: TastingType;
-    participationCondition?: ParticipationCondition;
-    requiresConfirmation?: boolean;
-    paymentMethodIds: number[];
-    contactIds: number[];
-}
+type IEventForm = IAddEventCreateFormDraft;
 
 const formatDateToLocalApi = (date: Date) => {
     const year = date.getFullYear();
@@ -78,7 +55,25 @@ const getIsPriceFieldAvailable = (value?: ParticipationCondition) => {
     );
 };
 
-const getInitialForm = (draft?: IAddEventDraft, isEditMode = false): IEventForm => {
+const getSelectedAvailableIds = (selectedIds: number[], availableIds: number[]) => {
+    if (availableIds.length === 0) {
+        return [];
+    }
+
+    const selectedAvailableIds = selectedIds.filter(id => availableIds.includes(id));
+
+    if (selectedAvailableIds.length > 0) {
+        return selectedAvailableIds;
+    }
+
+    return [availableIds[0]];
+};
+
+const getInitialForm = (
+    draft?: IAddEventDraft | IAddEventCreateFormDraft,
+    isEditMode = false,
+    shouldPreserveDraftDateTime = false,
+): IEventForm => {
     if (!draft) {
         return {
             theme: '',
@@ -100,7 +95,7 @@ const getInitialForm = (draft?: IAddEventDraft, isEditMode = false): IEventForm 
             eventType: EventType.Tastings,
             tastingType: TastingType.Regular,
             participationCondition: undefined,
-            requiresConfirmation: undefined,
+            requiresConfirmation: false,
             minAge: 18,
             maxAge: 100,
             paymentMethodIds: [],
@@ -110,10 +105,16 @@ const getInitialForm = (draft?: IAddEventDraft, isEditMode = false): IEventForm 
 
     const startDateTime = isEditMode
         ? convertUtcEventDateTimeToLocal(draft.eventStartDate, draft.eventStartTime)
-        : { date: '', time: '' };
+        : {
+              date: shouldPreserveDraftDateTime ? draft.eventStartDate : '',
+              time: shouldPreserveDraftDateTime ? draft.eventStartTime : '',
+          };
     const endDateTime = isEditMode
         ? convertUtcEventDateTimeToLocal(draft.eventEndDate, draft.eventEndTime)
-        : { date: '', time: '' };
+        : {
+              date: shouldPreserveDraftDateTime ? draft.eventEndDate : '',
+              time: shouldPreserveDraftDateTime ? draft.eventEndTime : '',
+          };
 
     return {
         theme: draft.theme,
@@ -149,6 +150,9 @@ export const useAddEvent = () => {
     const { validateEmptyString } = useValidator();
     const isEditMode = typeof route.params?.editEventId === 'number';
     const isDuplicateMode = route.params?.isDuplicateEvent === true;
+    const isCreateMode = !isEditMode && !isDuplicateMode && !route.params?.draft;
+    addEventCreateDraftCacheModel.syncUser();
+    const cachedCreateDraft = isCreateMode ? addEventCreateDraftCacheModel.state : null;
     const headerTitleKey = useMemo(() => {
         if (isEditMode) {
             return 'event.editEvent';
@@ -165,30 +169,26 @@ export const useAddEvent = () => {
     const [isContactInfoLoading, setIsContactInfoLoading] = useState(false);
     const [paymentMethods, setPaymentMethods] = useState<IPaymentsListItem[]>([]);
     const [contacts, setContacts] = useState<IContactsListItem[]>([]);
+    const hasAppliedDefaultPaymentMethodRef = useRef(false);
+    const hasAppliedDefaultContactRef = useRef(false);
     const { currencies, isCurrenciesLoading, onLoadCurrencies } = useUserCurrencies();
     const [isSeatsError, setIsSeatsError] = useState(false);
-    const [form, setForm] = useState<IEventForm>(() => getInitialForm(route.params?.draft, isEditMode));
+    const [form, setForm] = useState<IEventForm>(() => {
+        return getInitialForm(route.params?.draft || cachedCreateDraft?.form, isEditMode, !!cachedCreateDraft?.form);
+    });
 
     const isPartyEventType = form.eventType === EventType.Parties;
 
     const isPriceFieldAvailable = useMemo(() => {
-        if (!isPartyEventType) {
-            return true;
-        }
-
         return getIsPriceFieldAvailable(form.participationCondition);
-    }, [form.participationCondition, isPartyEventType]);
+    }, [form.participationCondition]);
 
     const isPriceRequired = useMemo(() => {
-        if (!isPartyEventType) {
-            return true;
-        }
-
         return (
             form.participationCondition === ParticipationCondition.FixedPrice ||
             form.participationCondition === ParticipationCondition.SplitBill
         );
-    }, [form.participationCondition, isPartyEventType]);
+    }, [form.participationCondition]);
 
     const isPriceValid = useMemo(() => {
         if (!isPriceRequired) {
@@ -201,7 +201,7 @@ export const useAddEvent = () => {
             return false;
         }
 
-        return Number(normalizedPrice) > 0;
+        return Number(normalizedPrice) >= 0;
     }, [form.price, isPriceRequired]);
     const isPaymentMethodsDisabled = !isPriceFieldAvailable;
     const isCurrencyDisabled = !isPriceFieldAvailable;
@@ -212,7 +212,35 @@ export const useAddEvent = () => {
             const response = await paymentsService.list();
 
             if (!response.isError && Array.isArray(response.data)) {
-                setPaymentMethods(response.data.filter(item => item.isVisible));
+                const visiblePaymentMethods = response.data.filter(item => item.isVisible);
+
+                setPaymentMethods(visiblePaymentMethods);
+
+                if (!hasAppliedDefaultPaymentMethodRef.current) {
+                    const availablePaymentMethodIds = visiblePaymentMethods.map(item => item.id);
+
+                    setForm(prev => {
+                        if (availablePaymentMethodIds.length === 0) {
+                            if (prev.paymentMethodIds.length === 0) {
+                                return prev;
+                            }
+
+                            return {
+                                ...prev,
+                                paymentMethodIds: [],
+                            };
+                        }
+
+                        return {
+                            ...prev,
+                            paymentMethodIds: getSelectedAvailableIds(prev.paymentMethodIds, availablePaymentMethodIds),
+                        };
+                    });
+
+                    if (availablePaymentMethodIds.length > 0) {
+                        hasAppliedDefaultPaymentMethodRef.current = true;
+                    }
+                }
             }
         } catch (error) {
             console.warn('useAddEvent -> onLoadPaymentMethods: ', error);
@@ -228,6 +256,32 @@ export const useAddEvent = () => {
 
             if (!response.isError && Array.isArray(response.data)) {
                 setContacts(response.data);
+
+                if (!hasAppliedDefaultContactRef.current) {
+                    const availableContactIds = response.data.map(item => item.id);
+
+                    setForm(prev => {
+                        if (availableContactIds.length === 0) {
+                            if (prev.contactIds.length === 0) {
+                                return prev;
+                            }
+
+                            return {
+                                ...prev,
+                                contactIds: [],
+                            };
+                        }
+
+                        return {
+                            ...prev,
+                            contactIds: getSelectedAvailableIds(prev.contactIds, availableContactIds),
+                        };
+                    });
+
+                    if (availableContactIds.length > 0) {
+                        hasAppliedDefaultContactRef.current = true;
+                    }
+                }
             }
         } catch (error) {
             console.warn('useAddEvent -> onLoadContacts: ', error);
@@ -317,27 +371,15 @@ export const useAddEvent = () => {
 
     const onChangePrice = useCallback((value: string) => {
         const numericValue = value.replace(/[^0-9]/g, '');
-        const isZeroPrice = numericValue !== '' && Number(numericValue) === 0;
 
         setForm(prev => ({
             ...prev,
             price: numericValue,
-            paymentMethodIds: isZeroPrice ? [] : prev.paymentMethodIds,
         }));
     }, []);
 
     const onChangeSpeakerName = useCallback((value: string) => {
         setForm(prev => ({ ...prev, speakerName: value }));
-    }, []);
-
-    const onChangeLanguage = useCallback((value: string) => {
-        const nextLanguage = value.trim().toLowerCase();
-
-        if (!nextLanguage) {
-            return;
-        }
-
-        setForm(prev => ({ ...prev, language: nextLanguage }));
     }, []);
 
     const onChangeSeats = useCallback((value: string) => {
@@ -429,6 +471,17 @@ export const useAddEvent = () => {
     }, []);
 
     useEffect(() => {
+        if (!isCreateMode) {
+            return;
+        }
+
+        addEventCreateDraftCacheModel.state = {
+            form,
+            wineSet: addEventCreateDraftCacheModel.state?.wineSet || null,
+        };
+    }, [form, isCreateMode]);
+
+    useEffect(() => {
         const pickedLocation = route.params?.pickedLocation;
 
         if (!pickedLocation) {
@@ -457,7 +510,8 @@ export const useAddEvent = () => {
             return;
         }
 
-        const savedWineSetDraft = addEventWineSetDraftModel.state;
+        const savedWineSetDraft =
+            addEventWineSetDraftModel.state || (isCreateMode ? addEventCreateDraftCacheModel.state?.wineSet : null);
         const seatsValue = Number(form.seats.trim());
         if (!Number.isFinite(seatsValue) || seatsValue < 1) {
             setIsSeatsError(true);
@@ -495,6 +549,13 @@ export const useAddEvent = () => {
             repeatRule: savedWineSetDraft ? savedWineSetDraft.repeatRule : route.params?.draft?.repeatRule || null,
         };
 
+        if (isCreateMode) {
+            addEventCreateDraftCacheModel.state = {
+                form,
+                wineSet: addEventCreateDraftCacheModel.state?.wineSet || null,
+            };
+        }
+
         navigation.navigate('AddWineSetView', {
             draft,
             initialSelectedWines: savedWineSetDraft?.selectedWines ?? route.params?.initialSelectedWines,
@@ -508,6 +569,7 @@ export const useAddEvent = () => {
         route.params?.isDuplicateEvent,
         route.params?.initialSelectedWines,
         route.params?.draft?.repeatRule,
+        isCreateMode,
     ]);
 
     const disabled =
@@ -523,7 +585,7 @@ export const useAddEvent = () => {
         !isPriceValid ||
         (isPriceRequired && !validateEmptyString(form.currency.trim()).isValid) ||
         (isPartyEventType && !form.sex) ||
-        (isPartyEventType && !form.participationCondition) ||
+        !form.participationCondition ||
         !validateEmptyString(form.seats.trim()).isValid;
 
     return {
@@ -551,7 +613,6 @@ export const useAddEvent = () => {
         onEndTimeSelect,
         onChangePrice,
         onChangeSpeakerName,
-        onChangeLanguage,
         onChangeSeats,
         onAgeRangeChange,
         onChangeEventType,

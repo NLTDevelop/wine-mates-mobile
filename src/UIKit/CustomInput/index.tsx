@@ -1,5 +1,5 @@
 import { memo, useMemo, forwardRef } from 'react';
-import { TextInput, View, TouchableOpacity, ViewStyle, TextInputProps } from 'react-native';
+import { TextInput, View, TouchableOpacity, ViewStyle, TextInputProps, TextStyle } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
@@ -15,18 +15,30 @@ interface IProps extends TextInputProps {
     errorText?: string;
     containerStyle?: ViewStyle;
     inputContainerStyle?: ViewStyle;
+    labelStyle?: TextStyle;
 }
 
 export const CustomInput = memo(forwardRef<TextInput, IProps>(
-    ({ label, error, errorText, RightAccessory, LeftAccessory, containerStyle, secureTextEntry, inputContainerStyle, ...props }, ref) => {
+    ({
+        label,
+        error,
+        errorText,
+        RightAccessory,
+        LeftAccessory,
+        containerStyle,
+        secureTextEntry,
+        inputContainerStyle,
+        labelStyle,
+        ...props
+    }, ref) => {
         const { colors } = useUiContext();
-        const { isFocused, isPasswordVisible, setPasswordVisible, handleFocus, handleBlur, inputRef }
+        const { isFocused, isPasswordVisible, onPasswordVisibilityPress, onInputFocus, onInputBlur, inputRef }
             = useCustomInput({ secureTextEntry, ...props }, ref);
         const styles = useMemo(() => getStyles(colors, isFocused), [colors, isFocused]);
 
         return (
             <View style={[styles.container, containerStyle]}>
-                {!!label && <Typography variant="h6" text={label} style={styles.label} />}
+                {!!label && <Typography variant="h6" text={label} style={[styles.label, labelStyle]} />}
                 <View style={[styles.inputContainer, inputContainerStyle, error && styles.inputError]}>
                     {LeftAccessory}
                     <TextInput
@@ -35,13 +47,13 @@ export const CustomInput = memo(forwardRef<TextInput, IProps>(
                         style={[styles.input, props.multiline && styles.inputMultiline, props.style]}
                         placeholderTextColor={colors.text_light}
                         secureTextEntry={secureTextEntry && isPasswordVisible}
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
+                        onFocus={onInputFocus}
+                        onBlur={onInputBlur}
                     />
                     {RightAccessory}
                     {typeof secureTextEntry === 'boolean' && (
                         <TouchableOpacity
-                            onPress={() => setPasswordVisible(!isPasswordVisible)}
+                            onPress={onPasswordVisibilityPress}
                             style={styles.iconContainer}
                             hitSlop={10}
                         >

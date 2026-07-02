@@ -69,6 +69,7 @@ export const AddWineSetView = () => {
         wineSearchResults,
         onResetSearch,
         onOpenSearchModal,
+        onCloseSearchModal,
         onLoadMoreSearchResults,
     });
 
@@ -111,7 +112,14 @@ export const AddWineSetView = () => {
     const keyExtractor = (item: IWineSetViewItem) => `${item.id}`;
 
     const renderWineItem: SortableGridRenderItem<IWineSetViewItem> = useCallback(({ item }) => {
-        return <WineSetItemRow title={item.title} onEditPress={item.onEditPress} onDeletePress={item.onDeletePress} />;
+        return (
+            <WineSetItemRow
+                title={item.title}
+                subtitle={item.subtitle}
+                onEditPress={item.onEditPress}
+                onDeletePress={item.onDeletePress}
+            />
+        );
     }, []);
 
     return (
@@ -169,7 +177,6 @@ export const AddWineSetView = () => {
                                 isCreating={isCreating}
                                 isCreateEventDisabled={isCreateEventDisabled}
                                 isEditMode={isEditMode}
-                                onOpenScannerPress={onOpenScannerPress}
                                 onAddWinePress={onAddWinePress}
                                 onOpenRepeatModal={onOpenRepeatModal}
                                 onChangeRepeatSwitch={onChangeRepeatSwitch}
@@ -221,6 +228,7 @@ export const AddWineSetView = () => {
                 isLoading={isSearchingWines}
                 emptyText={wineSearchEmptyText}
                 onChangeText={onChangeSearchQuery}
+                onOpenScannerPress={onOpenScannerPress}
                 onClose={onCloseSearchModal}
                 onLoadMore={onLoadMoreSearchResults}
             />

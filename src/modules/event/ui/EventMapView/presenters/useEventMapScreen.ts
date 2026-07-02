@@ -5,7 +5,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventType } from '@/entities/events/enums/EventType';
 import { locationModel } from '@/entities/location/LocationModel';
 import { eventsModel } from '@/entities/events/EventsModel';
-import { eventsService } from '@/entities/events/EventsService';
 import { useEventMap } from '@/modules/event/ui/EventMapView/presenters/useEventMap';
 import { useEventsList } from '@/modules/event/ui/EventMapView/presenters/useEventsList';
 import { useEventMapView } from '@/modules/event/ui/EventMapView/presenters/useEventMapView';
@@ -80,11 +79,7 @@ export const useEventMapScreen = () => {
             nextCount += 1;
         }
 
-        if (filters.eventDate) {
-            nextCount += 1;
-        }
-
-        if (filters.language) {
+        if (filters.eventStartDate || filters.eventEndDate) {
             nextCount += 1;
         }
 
@@ -101,11 +96,14 @@ export const useEventMapScreen = () => {
         }
 
         return nextCount;
-    }, [filters.eventDate, filters.language, filters.maxAge, filters.maxPrice, filters.minAge, filters.minPrice, filters.radiusKm, filters.sex]);
+    }, [filters.eventEndDate, filters.eventStartDate, filters.maxAge, filters.maxPrice, filters.minAge, filters.minPrice, filters.radiusKm, filters.sex]);
 
     const onFilterPress = useCallback(() => {
-        navigation.navigate('EventFiltersView');
-    }, [navigation]);
+        navigation.navigate('EventFiltersView', {
+            searchLocation: searchLocation || userLocation || null,
+            selectedEventType,
+        });
+    }, [navigation, searchLocation, selectedEventType, userLocation]);
 
     useEffect(() => {
         onRefetchMapPinsRef.current = onRefetchMapPins;
@@ -123,7 +121,7 @@ export const useEventMapScreen = () => {
         userLocationRef.current = userLocation;
     }, [userLocation]);
 
-    const refetchEvents = useCallback(async (location?: IUserLocation | null, withPriceRange: boolean = false) => {
+    const refetchEvents = useCallback(async (location?: IUserLocation | null) => {
         if (isRefetchingRef.current) {
             return;
         }
@@ -131,16 +129,10 @@ export const useEventMapScreen = () => {
         isRefetchingRef.current = true;
         setIsRefetching(true);
         try {
-            const requests: Promise<unknown>[] = [
+            await Promise.all([
                 onRefetchMapPinsRef.current(location),
                 onRefetchEventsRef.current(location),
-            ];
-
-            if (withPriceRange) {
-                requests.push(eventsService.getPriceRange());
-            }
-
-            await Promise.all(requests);
+            ]);
         } finally {
             isRefetchingRef.current = false;
             setIsRefetching(false);
@@ -154,6 +146,18 @@ export const useEventMapScreen = () => {
             const refreshOnFocus = async () => {
                 locationModel.setIsLoading(true);
                 try {
+                    if (!isActive) {
+                        return;
+                    }
+
+                    const currentSearchLocation = searchLocationRef.current;
+
+                    if (currentSearchLocation) {
+                        await refetchEvents(currentSearchLocation);
+                        hasFocusedLoadedRef.current = true;
+                        return;
+                    }
+
                     const locationPayload = await getCurrentLocationPayload();
                     if (!isActive) {
                         return;
@@ -164,14 +168,14 @@ export const useEventMapScreen = () => {
                             latitude: locationPayload.latitude,
                             longitude: locationPayload.longitude,
                         }
-                        : searchLocationRef.current || userLocationRef.current || null;
+                        : userLocationRef.current || null;
 
                     locationModel.setHasPermission(!!locationPayload);
                     if (locationPayload) {
                         locationModel.setUserLocation(nextLocation);
                     }
 
-                    await refetchEvents(nextLocation, true);
+                    await refetchEvents(nextLocation);
                     hasFocusedLoadedRef.current = true;
                 } finally {
                     if (isActive) {
@@ -189,7 +193,7 @@ export const useEventMapScreen = () => {
     );
 
     const onUpdateEvent = useCallback(async () => {
-        await refetchEvents(searchLocation, true);
+        await refetchEvents(searchLocation);
     }, [refetchEvents, searchLocation]);
 
     const onMapPress = useCallback(async (event: MapPressEvent) => {

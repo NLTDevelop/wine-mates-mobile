@@ -551,6 +551,7 @@
         "callToReserve": "Call to reserve",
         "downloadReport": "Download report",
         "reportSaved": "Report saved",
+        "noReportViewerApp": "There is no app on this device that can open this file type.",
         "duplicate": "Duplicate"
     },
     "eventGuests": {

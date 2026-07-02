@@ -28,70 +28,95 @@ export const WineSetItem = ({
     isPressEnabled,
     isStatusVisible,
 }: IProps) => {
-    const { colors, t } = useUiContext();
+    const { colors, locale, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { title, imageUrl, isImageVisible, statusBadgeData, ratingData, isPressAvailable, onPress } = useWineSetItem({
-        eventId,
-        item,
-        isBlindTasting,
-        wineOrder,
-        isOwner,
-        isPressEnabled,
-        isStatusVisible,
-        t,
-    });
+    const { title, subtitle, imageUrl, isImageVisible, statusBadgeData, ratingData, isMetaVisible, isPressAvailable, onPress } =
+        useWineSetItem({
+            eventId,
+            item,
+            isBlindTasting,
+            wineOrder,
+            isOwner,
+            isPressEnabled,
+            isStatusVisible,
+            locale,
+            t,
+        });
 
     const statusBadgeStyle = statusBadgeData ? styles[`${statusBadgeData.type}Badge`] : null;
     const statusBadgeTextStyle = statusBadgeData ? styles[`${statusBadgeData.type}BadgeText`] : null;
+    const wineImage = isImageVisible ? (
+        imageUrl ? (
+            <Image source={{ uri: imageUrl }} style={styles.image} />
+        ) : (
+            <View style={styles.image} />
+        )
+    ) : null;
+    const wineText = (
+        <View style={styles.textContainer}>
+            <Typography text={title} variant="body_400" style={styles.title} numberOfLines={2} />
+            {!!subtitle && <Typography text={subtitle} variant="subtitle_12_500" style={styles.subtitle} />}
+        </View>
+    );
+    const metaContent = (statusBadgeData || ratingData) && (
+        <View style={styles.rightContent}>
+            {statusBadgeData && (
+                <View style={[styles.statusBadge, statusBadgeStyle]}>
+                    <Typography
+                        text={statusBadgeData.label}
+                        variant="subtitle_12_500"
+                        style={statusBadgeTextStyle}
+                    />
+                </View>
+            )}
+            {ratingData ? (
+                <View style={styles.ratingContainer}>
+                    {ratingData.showUserRating && ratingData.userRatingText ? (
+                        <View style={styles.ratingItem}>
+                            <StarIcon />
+                            <Typography
+                                text={ratingData.userRatingText}
+                                variant="subtitle_12_500"
+                                style={styles.ratingText}
+                            />
+                        </View>
+                    ) : null}
+                    {ratingData.showExpertRating && ratingData.expertRating && ratingData.expertRatingText ? (
+                        <View style={styles.ratingItem}>
+                            <RateMedal sliderValue={ratingData.expertRating} size={18} hideText />
+                            <Typography
+                                text={ratingData.expertRatingText}
+                                variant="subtitle_12_500"
+                                style={styles.ratingText}
+                            />
+                        </View>
+                    ) : null}
+                </View>
+            ) : null}
+        </View>
+    );
+
+    if (isMetaVisible) {
+        return (
+            <TouchableOpacity style={styles.container} onPress={onPress} disabled={!isPressAvailable}>
+                <View style={styles.headerRow}>
+                    <View style={styles.imageMetaRow}>
+                        {wineImage}
+                        {metaContent}
+                    </View>
+                    {isPressAvailable && <ArrowDownIcon rotate={270} color={colors.text_light} width={20} height={20} />}
+                </View>
+                {wineText}
+            </TouchableOpacity>
+        );
+    }
 
     return (
         <TouchableOpacity style={styles.row} onPress={onPress} disabled={!isPressAvailable}>
             <View style={styles.leftContent}>
-                {isImageVisible &&
-                    (imageUrl ? (
-                        <Image source={{ uri: imageUrl }} style={styles.image} />
-                    ) : (
-                        <View style={styles.image} />
-                    ))}
-                <Typography text={title} variant="body_400" style={styles.title} numberOfLines={3} />
+                {wineImage}
+                {wineText}
             </View>
-            {(statusBadgeData || ratingData) && (
-                <View style={styles.rightContent}>
-                    {statusBadgeData && (
-                        <View style={[styles.statusBadge, statusBadgeStyle]}>
-                            <Typography
-                                text={statusBadgeData.label}
-                                variant="subtitle_12_500"
-                                style={statusBadgeTextStyle}
-                            />
-                        </View>
-                    )}
-                    {ratingData ? (
-                        <View style={styles.ratingContainer}>
-                            {ratingData.showUserRating && ratingData.userRatingText ? (
-                                <View style={styles.ratingItem}>
-                                    <StarIcon />
-                                    <Typography
-                                        text={ratingData.userRatingText}
-                                        variant="subtitle_12_500"
-                                        style={styles.ratingText}
-                                    />
-                                </View>
-                            ) : null}
-                            {ratingData.showExpertRating && ratingData.expertRating && ratingData.expertRatingText ? (
-                                <View style={styles.ratingItem}>
-                                    <RateMedal sliderValue={ratingData.expertRating} size={18} hideText />
-                                    <Typography
-                                        text={ratingData.expertRatingText}
-                                        variant="subtitle_12_500"
-                                        style={styles.ratingText}
-                                    />
-                                </View>
-                            ) : null}
-                        </View>
-                    ) : null}
-                </View>
-            )}
             {isPressAvailable && <ArrowDownIcon rotate={270} color={colors.text_light} width={20} height={20} />}
         </TouchableOpacity>
     );

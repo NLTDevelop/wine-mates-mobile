@@ -29,6 +29,7 @@ export const HomeEventSection = ({
         carouselRef,
         carouselKey,
         carouselDefaultIndex,
+        measuredEvent,
         activeIndex,
         carouselHeight,
         hasEvents,
@@ -66,6 +67,19 @@ export const HomeEventSection = ({
             </View>
             {hasEvents ? (
                 <>
+                    {measuredEvent && (
+                        <View pointerEvents="none" style={[styles.measureContainer, { width: carouselWidth }]}>
+                            <View onLayout={onCardLayout} style={styles.cardContainer}>
+                                <EventCard
+                                    event={measuredEvent}
+                                    isSelected={false}
+                                    onReadMorePress={onReadMorePress}
+                                    onFavoritePress={onFavoritePress}
+                                    onEditPress={onEditPress}
+                                />
+                            </View>
+                        </View>
+                    )}
                     <Carousel
                         key={carouselKey}
                         ref={carouselRef}

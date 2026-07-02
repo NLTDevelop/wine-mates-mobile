@@ -79,6 +79,14 @@ const getWineSetSearchItem = (id: number, form: IWineBase): IWineSetSearchItem =
         grapeVariety: form.grapeVariety.value,
         country: form.country.value,
         region: form.region.value,
+        type: {
+            id: form.typeOfWine.id || undefined,
+            name: form.typeOfWine.value,
+        },
+        color: {
+            id: form.colorOfWine.id || undefined,
+            name: form.colorOfWine.value,
+        },
         image: null,
     };
 };

@@ -16,7 +16,6 @@ interface IProps {
     isCreating: boolean;
     isCreateEventDisabled: boolean;
     isEditMode: boolean;
-    onOpenScannerPress: () => void;
     onAddWinePress: () => void;
     onOpenRepeatModal: () => void;
     onChangeRepeatSwitch: (value: boolean) => void;
@@ -29,7 +28,6 @@ export const WineSetListFooter = ({
     isCreating,
     isCreateEventDisabled,
     isEditMode,
-    onOpenScannerPress,
     onAddWinePress,
     onOpenRepeatModal,
     onChangeRepeatSwitch,
@@ -52,11 +50,6 @@ export const WineSetListFooter = ({
 
     return (
         <View style={styles.container}>
-            <Button
-                text={t('event.searchWineWithScanner')}
-                onPress={onOpenScannerPress}
-                type="secondary"
-            />
             <Button
                 text={t('event.addWine')}
                 onPress={onAddWinePress}

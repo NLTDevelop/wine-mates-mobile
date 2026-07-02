@@ -1,4 +1,4 @@
-import { useImperativeHandle, useRef, useState } from 'react';
+import { useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { type TextInput, type TextInputProps } from 'react-native';
 
 interface UseCustomInputParams extends TextInputProps {
@@ -13,15 +13,19 @@ export const useCustomInput = (props: UseCustomInputParams, ref: React.Ref<TextI
 
     useImperativeHandle(ref, () => inputRef.current as TextInput);
 
-    const handleFocus: TextInputProps['onFocus'] = e => {
+    const onInputFocus: TextInputProps['onFocus'] = e => {
         setFocused(true);
         onFocus?.(e);
     };
 
-    const handleBlur: TextInputProps['onBlur'] = e => {
+    const onInputBlur: TextInputProps['onBlur'] = e => {
         setFocused(false);
         onBlur?.(e);
     };
 
-    return { isFocused, isPasswordVisible, setPasswordVisible, handleFocus, handleBlur, inputRef };
+    const onPasswordVisibilityPress = useCallback(() => {
+        setPasswordVisible(prev => !prev);
+    }, []);
+
+    return { isFocused, isPasswordVisible, onPasswordVisibilityPress, onInputFocus, onInputBlur, inputRef };
 };

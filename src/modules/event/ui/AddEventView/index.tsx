@@ -25,7 +25,6 @@ import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 import { PaymentMethodsPickerModal } from './components/PaymentMethodsPickerModal';
 import { ContactInfoPickerModal } from './components/ContactInfoPickerModal';
 import { CalendarModal } from '@/UIKit/CalendarModal';
-import { LanguageSelector } from '@/libs/languagePicker/components/LanguageSelector';
 import { RangeSlider } from '@/UIKit/RangeSlider';
 import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
 import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCurrencyPickerModal';
@@ -58,7 +57,6 @@ export const AddEventView = () => {
         onStartTimeSelect,
         onEndTimeSelect,
         onChangePrice,
-        onChangeLanguage,
         onChangeSeats,
         onAgeRangeChange,
         onChangeEventType,
@@ -236,20 +234,26 @@ export const AddEventView = () => {
                         extraKeyboardSpace={extraKeyboardSpace}
                     >
                         <View style={styles.content}>
-                            <Typography variant="h4" text={t('event.basicInfo')} />
+                            <Typography variant="h4" text={t('event.basicInfo')} style={styles.sectionTitle} />
 
                             <PickerButton
                                 onPress={onOpenEventTypeModal}
+                                containerStyle={styles.pickerContainerStyle}
+                                label={t('event.eventType')}
                                 text={eventTypeLabel || t('event.eventType')}
                             />
                             <PickerButton
                                 onPress={onOpenConfirmationRequiredModal}
+                                containerStyle={styles.pickerContainerStyle}
+                                label={t('eventDetails.confirmationAvailability')}
                                 text={selectedConfirmationRequiredText}
                             />
                             <CustomInput
                                 value={form.theme}
                                 containerStyle={styles.inputContainerStyle}
                                 onChangeText={onChangeTheme}
+                                label={t('event.tastingTheme')}
+                                labelStyle={styles.inputLabelStyle}
                                 placeholder={t('event.tastingTheme')}
                                 maxLength={300}
                             />
@@ -257,6 +261,8 @@ export const AddEventView = () => {
                                 value={form.speakerName}
                                 containerStyle={styles.inputContainerStyle}
                                 onChangeText={onChangeSpeakerName}
+                                label={t('event.speakerName')}
+                                labelStyle={styles.inputLabelStyle}
                                 placeholder={t('event.speakerName')}
                             />
                             {isPartyEventType && (
@@ -271,49 +277,62 @@ export const AddEventView = () => {
                                     />
                                     <PickerButton
                                         onPress={onOpenSexModal}
+                                        containerStyle={styles.pickerContainerStyle}
+                                        label={t('eventFilters.sex')}
                                         text={selectedSexText}
-                                    />
-                                    <PickerButton
-                                        onPress={onOpenParticipationConditionModal}
-                                        text={selectedParticipationConditionText}
                                     />
                                 </>
                             )}
 
-                            <LanguageSelector value={form.language} onChange={onChangeLanguage} />
+                            <PickerButton
+                                onPress={onOpenParticipationConditionModal}
+                                containerStyle={styles.pickerContainerStyle}
+                                label={t('event.participationCondition')}
+                                text={selectedParticipationConditionText}
+                            />
 
                             <CustomInput
                                 value={form.description}
                                 containerStyle={styles.inputContainerStyle}
                                 inputContainerStyle={styles.descriptionInputContainerStyle}
                                 onChangeText={onChangeDescription}
+                                label={t('event.description')}
+                                labelStyle={styles.inputLabelStyle}
                                 placeholder={t('event.description')}
                                 multiline
                                 maxLength={300}
                             />
 
-                            <Typography variant="h4" text={t('event.locationAndSchedule')} />
+                            <Typography variant="h4" text={t('event.locationAndSchedule')} style={styles.sectionTitle} />
                             <CustomInput
                                 value={form.restaurantName}
                                 containerStyle={styles.inputContainerStyle}
                                 onChangeText={onChangeRestaurantName}
+                                label={t('event.meetingPlaceName')}
+                                labelStyle={styles.inputLabelStyle}
                                 placeholder={t('event.meetingPlaceName')}
                             />
 
                             <PickerButton
                                 onPress={onLocationPress}
+                                containerStyle={styles.pickerContainerStyle}
+                                label={t('event.selectLocation')}
                                 text={form.locationLabel}
                                 placeholder={t('event.selectLocation')}
                             />
 
                             <PickerButton
                                 onPress={openDateRangePicker}
+                                containerStyle={styles.pickerContainerStyle}
+                                label={t('event.eventDate')}
                                 text={formattedEventDateRange}
                             />
                             <View style={styles.row}>
                                 <View style={styles.inlinePickerContainer}>
                                     <PickerButton
                                         onPress={openStartTimePicker}
+                                        containerStyle={styles.pickerContainerStyle}
+                                        label={t('eventDetails.startTime')}
                                         text={formattedStartTime}
                                         placeholder={t('event.eventStartTime')}
                                         isDisabled={isStartTimePickerDisabled}
@@ -323,6 +342,8 @@ export const AddEventView = () => {
                                 <View style={styles.inlinePickerContainer}>
                                     <PickerButton
                                         onPress={openEndTimePicker}
+                                        containerStyle={styles.pickerContainerStyle}
+                                        label={t('eventDetails.endTime')}
                                         text={formattedEndTime}
                                         placeholder={t('event.eventEndTime')}
                                         isDisabled={isEndTimePickerDisabled}
@@ -330,10 +351,12 @@ export const AddEventView = () => {
                                 </View>
                             </View>
 
-                            <Typography variant="h4" text={t('event.bookingAndDetails')} />
+                            <Typography variant="h4" text={t('event.bookingAndDetails')} style={styles.sectionTitle} />
 
                             <PickerButton
                                 onPress={onOpenContactInfoModal}
+                                containerStyle={styles.pickerContainerStyle}
+                                label={t('contactInfo.contacts')}
                                 text={selectedContactInfoText || t('contactInfo.contacts')}
                             />
 
@@ -341,12 +364,16 @@ export const AddEventView = () => {
                                 <>
                                     <PickerButton
                                         onPress={onOpenPaymentMethodsModal}
+                                        containerStyle={styles.pickerContainerStyle}
+                                        label={t('payments.paymentsMethods')}
                                         text={selectedPaymentMethodsText || t('payments.paymentsMethods')}
                                         isDisabled={isPaymentMethodsDisabled}
                                     />
 
                                     <PickerButton
                                         onPress={currencyPicker.onOpen}
+                                        containerStyle={styles.pickerContainerStyle}
+                                        label={t('event.currency')}
                                         text={currencyPicker.selectedText || t('event.currency')}
                                         isDisabled={isCurrencyPickerDisabled}
                                     />
@@ -359,6 +386,8 @@ export const AddEventView = () => {
                                         value={form.price}
                                         containerStyle={styles.inputContainerStyle}
                                         onChangeText={onChangePrice}
+                                        label={t('event.price')}
+                                        labelStyle={styles.inputLabelStyle}
                                         placeholder={t('event.price')}
                                         keyboardType="numeric"
                                     />
@@ -376,6 +405,8 @@ export const AddEventView = () => {
                                 value={form.seats}
                                 containerStyle={styles.inputContainerStyle}
                                 onChangeText={onChangeSeats}
+                                label={t('event.numberOfSeats')}
+                                labelStyle={styles.inputLabelStyle}
                                 placeholder={t('event.numberOfSeats')}
                                 keyboardType="numeric"
                                 error={isSeatsError}

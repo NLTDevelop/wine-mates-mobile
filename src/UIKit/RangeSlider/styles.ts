@@ -11,6 +11,9 @@ export const getStyles = (colors: IColors, activeColor?: string, inactiveColor?:
         container: {
             width: '100%',
         },
+        disabledContainer: {
+            opacity: 0.5,
+        },
         sliderWrapper: {
             width: '100%',
             alignItems: 'center',

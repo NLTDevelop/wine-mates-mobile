@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { CommonActions, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { CommonActions, RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BackHandler } from 'react-native';
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
 import { IEventDetailsViewParams } from '../types/IEventDetailsViewParams';
 
@@ -76,7 +77,7 @@ export const useEventDetailsView = ({ t }: IProps) => {
     }, [navigation]);
 
     const onPressBack = useCallback(() => {
-        if (openedFromDeepLink && !navigation.canGoBack()) {
+        if (openedFromDeepLink || !navigation.canGoBack()) {
             resetToHome();
             return;
         }
@@ -85,7 +86,7 @@ export const useEventDetailsView = ({ t }: IProps) => {
     }, [navigation, openedFromDeepLink, resetToHome]);
 
     useEffect(() => {
-        if (!openedFromDeepLink) {
+        if (!openedFromDeepLink && navigation.canGoBack()) {
             return undefined;
         }
 
@@ -94,7 +95,7 @@ export const useEventDetailsView = ({ t }: IProps) => {
                 return;
             }
 
-            if (navigation.canGoBack()) {
+            if (!openedFromDeepLink && navigation.canGoBack()) {
                 return;
             }
 
@@ -102,6 +103,24 @@ export const useEventDetailsView = ({ t }: IProps) => {
             resetToHome();
         });
     }, [navigation, openedFromDeepLink, resetToHome]);
+
+    useFocusEffect(
+        useCallback(() => {
+            if (!openedFromDeepLink && navigation.canGoBack()) {
+                return undefined;
+            }
+
+            const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+                resetToHome();
+
+                return true;
+            });
+
+            return () => {
+                subscription.remove();
+            };
+        }, [navigation, openedFromDeepLink, resetToHome]),
+    );
 
     return {
         eventId,

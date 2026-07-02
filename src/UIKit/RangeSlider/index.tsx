@@ -16,6 +16,8 @@ interface IProps {
     maxValue: number;
     onChange: (minValue: number, maxValue: number) => void;
     step?: number;
+    allowedMin?: number;
+    allowedMax?: number;
     sliderLength?: number;
     containerStyle?: ViewStyle;
     valueSuffix?: string;
@@ -23,6 +25,7 @@ interface IProps {
     inactiveColor?: string;
     showValueLabels?: boolean;
     showTrackDividers?: boolean;
+    isDisabled?: boolean;
 }
 
 export const RangeSlider = ({
@@ -32,6 +35,8 @@ export const RangeSlider = ({
     maxValue,
     onChange,
     step = 1,
+    allowedMin,
+    allowedMax,
     sliderLength,
     containerStyle,
     valueSuffix = '',
@@ -39,6 +44,7 @@ export const RangeSlider = ({
     inactiveColor,
     showValueLabels = true,
     showTrackDividers = false,
+    isDisabled = false,
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors, activeColor, inactiveColor), [activeColor, colors, inactiveColor]);
@@ -64,6 +70,8 @@ export const RangeSlider = ({
         maxValue,
         onChange: onRangeChange,
         step,
+        allowedMin,
+        allowedMax,
         onValuesLive: (nextMin, nextMax) => {
             setLiveValues({ min: nextMin, max: nextMax });
         },
@@ -87,13 +95,17 @@ export const RangeSlider = ({
 
     return (
         <>
-            <View style={[styles.container, containerStyle]}>
+            <View
+                style={[styles.container, isDisabled ? styles.disabledContainer : undefined, containerStyle]}
+                pointerEvents={isDisabled ? 'none' : 'auto'}
+            >
                 <View style={styles.sliderWrapper}>
                     <Pressable
                         ref={trackRef}
                         style={[styles.trackContainer, { width: actualSliderLength }]}
                         onLayout={onTrackLayout}
                         onPress={onTrackPress}
+                        disabled={isDisabled}
                     >
                         <View style={styles.track} />
                         <Animated.View style={[styles.activeTrack, activeTrackStyle]} />

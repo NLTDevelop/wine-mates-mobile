@@ -25,6 +25,33 @@ export interface IWineChooserVintage {
     avgExpertRating?: number | null;
 }
 
+export interface IWineChooserFilterOptionVintage {
+    id: number | null;
+    wineCount?: number;
+}
+
+export interface IWineChooserFilterOptionGrapeVariety {
+    name: string;
+    wineCount?: number;
+}
+
+export interface IWineChooserFilterOptionRatings {
+    minUserRating?: number;
+    minExpertRating?: number;
+    maxExpertRating?: number;
+}
+
+export interface IWineChooserFilterOptionTasteCharacteristic {
+    id: number;
+    name: string;
+    minSortNumber: number;
+    maxSortNumber: number;
+    description?: string | null;
+    colorHex?: string;
+    isPremium: boolean;
+    qtyLevels: number;
+}
+
 export interface IWineChooserTasteFilter {
     characteristicId: number;
     minSortNumber: number;
@@ -66,9 +93,34 @@ export interface IWineChooserFilters {
     tasteFilters: IWineChooserTasteFilter[];
 }
 
-export interface IWineChooserRequest extends IWineChooserFilters {
+export type IWineChooserRequest = Partial<IWineChooserFilters> & {
     offset: number;
     limit: number;
+};
+
+export type IWineChooserFilterOptionsRequest = Partial<IWineChooserRequest>;
+
+export interface IGenderOption {
+    value: WineChooserGender;
+    wineCount: number;
+}
+
+export interface IWineChooserFilterOptions {
+    countries: IWineChooserOption[];
+    regions: IWineChooserOption[];
+    types: IWineChooserOption[];
+    colors: IWineChooserOption[];
+    vintages: IWineChooserFilterOptionVintage[];
+    grapeVarieties: IWineChooserFilterOptionGrapeVariety[];
+    aromas: IWineChooserOption[];
+    flavors: IWineChooserOption[];
+    ratings?: IWineChooserFilterOptionRatings;
+    tasteCharacteristics: IWineChooserFilterOptionTasteCharacteristic[];
+    genderOptions: IGenderOption[];
+    ageRange?: {
+        minAge: number;
+        maxAge: number;
+    };
 }
 
 export type IWineChooserList = IList<IWineListItem>;

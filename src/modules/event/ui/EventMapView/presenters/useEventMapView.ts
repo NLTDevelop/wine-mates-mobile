@@ -8,6 +8,10 @@ import { IAddEventDraft } from '@/modules/event/types/IAddEventDraft';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import { IMedia } from '@/entities/media/types/IMedia';
+import {
+    getEventDraftContactIds,
+    getEventDraftPaymentMethodIds,
+} from '@/modules/event/utils/getEventDraftContactPaymentIds';
 
 interface IUseEventMapViewProps {
     events: IEvent[];
@@ -118,8 +122,8 @@ export const useEventMapView = ({ events, onFavoritePress }: IUseEventMapViewPro
                 eventEndDate: eventDetail.eventEndDate || eventDetail.eventDate || '',
                 eventStartTime: eventDetail.eventStartTime || eventDetail.eventTime || eventDetail.startTime || '',
                 eventEndTime: eventDetail.eventEndTime || eventDetail.endTime || '',
-                paymentMethodIds: [],
-                contactIds: [],
+                paymentMethodIds: getEventDraftPaymentMethodIds(eventDetail),
+                contactIds: getEventDraftContactIds(eventDetail),
                 price: String(eventDetail.price || ''),
                 currency: eventDetail.currency ? String(eventDetail.currency) : '',
                 speakerName: eventDetail.speakerName || eventDetail.speaker || '',
@@ -140,10 +144,12 @@ export const useEventMapView = ({ events, onFavoritePress }: IUseEventMapViewPro
                 name: item.wine.name,
                 producer: item.wine.producer || '',
                 vintage: item.wine.vintage || null,
-                image: mapWineImageToMedia(item.wine.image),
-                grapeVariety: null,
-                country: null,
-                region: null,
+                image: mapWineImageToMedia(item.wine.image || item.wine.defaultImage),
+                grapeVariety: item.wine.grapeVariety || null,
+                country: item.wine.country || null,
+                region: item.wine.region || null,
+                type: item.wine.type || null,
+                color: item.wine.color || null,
             }));
 
             navigation.navigate('AddEventView', {
