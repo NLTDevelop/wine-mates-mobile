@@ -11,6 +11,7 @@ import { wineModel } from '@/entities/wine/models/WineModel';
 
 const createSuggestedItemName = (id: number) => `${id}`;
 const DRAFT_ITEM_COLOR = colorTheme.colors.background;
+const DEFAULT_EXPERT_RATING = 70;
 
 const getAromaDraftItems = (ids?: number[]): IWineSelectedSmell[] => {
     if (!ids?.length) {
@@ -221,8 +222,11 @@ export const useEventTastingDraft = () => {
             if (typeof starRate === 'number' && !Number.isNaN(starRate)) {
                 payload.userRating = Number(starRate.toFixed(1));
             }
-        } else if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
-            payload.expertRating = wineModel.review.rate;
+        } else {
+            const expertRating = wineModel.review?.rate ?? DEFAULT_EXPERT_RATING;
+            if (typeof expertRating === 'number' && !Number.isNaN(expertRating)) {
+                payload.expertRating = expertRating;
+            }
         }
 
         if (wineModel.base?.typeOfWine.isSparkling && payload.color) {
