@@ -37,7 +37,7 @@ export const LocationPickerView = () => {
 
     return (
         <ScreenContainer
-            edges={['bottom']}
+            edges={['top', 'bottom']}
             isKeyboardAvoiding
             scrollEnabled
             headerComponent={

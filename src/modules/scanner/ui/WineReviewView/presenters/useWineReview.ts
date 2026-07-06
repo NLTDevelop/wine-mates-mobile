@@ -14,6 +14,8 @@ type WineReviewRouteParams = {
     wineId?: number;
 };
 
+const DEFAULT_EXPERT_RATING = 70;
+
 export const useWineReview = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
@@ -23,7 +25,7 @@ export const useWineReview = () => {
     const wineId = params?.wineId;
     const { saveWineRate } = useWineRateSubmit();
     const [review, setReview] = useState(() => wineModel.review?.review ?? '');
-    const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? 70);
+    const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? DEFAULT_EXPERT_RATING);
     const [starRate, setStarRate] = useState(() => wineModel.review?.starRate ?? 0);
     const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
     const [hasChangedRate, setHasChangedRate] = useState(() => wineModel.review?.hasChangedRate ?? false);
@@ -62,10 +64,10 @@ export const useWineReview = () => {
             starRate,
             rate: sliderValue,
             review,
-            hasChangedRate,
+            hasChangedRate: isExpertOrWinemaker || hasChangedRate,
             hasChangedStarRate,
         };
-    }, [review, sliderValue, starRate, hasChangedRate, hasChangedStarRate]);
+    }, [hasChangedRate, hasChangedStarRate, isExpertOrWinemaker, review, sliderValue, starRate]);
 
     const onContinueFullTastingPress = useCallback(() => {
         saveReview();

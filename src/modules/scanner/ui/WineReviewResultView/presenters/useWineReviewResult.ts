@@ -20,6 +20,8 @@ import {
 } from '@/libs/storage/cacheUtils';
 import { wineModel } from '@/entities/wine/models/WineModel';
 
+const DEFAULT_EXPERT_RATING = 70;
+
 export const useWineReviewResult = () => {
     const { saveWineRate } = useWineRateSubmit();
     const cuisineCacheWineId = wineModel.wine?.id;
@@ -222,8 +224,9 @@ export const useWineReviewResult = () => {
                     payload.userRating = Number(starRate.toFixed(1));
                 }
             } else {
-                if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
-                    payload.expertRating = wineModel.review.rate;
+                const expertRating = wineModel.review?.rate ?? DEFAULT_EXPERT_RATING;
+                if (typeof expertRating === 'number' && !Number.isNaN(expertRating)) {
+                    payload.expertRating = expertRating;
                 }
             }
 

@@ -35,6 +35,8 @@ interface IRouteParams {
     tastingStatus?: WineSetTastingStatus;
 }
 
+const DEFAULT_EXPERT_RATING = 70;
+
 export const useTastingWineReviewResult = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const navigationRoute = useRoute();
@@ -107,8 +109,11 @@ export const useTastingWineReviewResult = () => {
             if (typeof starRate === 'number' && !Number.isNaN(starRate)) {
                 payload.userRating = Number(starRate.toFixed(1));
             }
-        } else if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
-            payload.expertRating = wineModel.review.rate;
+        } else {
+            const expertRating = wineModel.review?.rate ?? DEFAULT_EXPERT_RATING;
+            if (typeof expertRating === 'number' && !Number.isNaN(expertRating)) {
+                payload.expertRating = expertRating;
+            }
         }
 
         if (wineModel.base?.typeOfWine.isSparkling) {
@@ -537,8 +542,9 @@ export const useTastingWineReviewResult = () => {
                     payload.userRating = Number(starRate.toFixed(1));
                 }
             } else {
-                if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
-                    payload.expertRating = wineModel.review.rate;
+                const expertRating = wineModel.review?.rate ?? DEFAULT_EXPERT_RATING;
+                if (typeof expertRating === 'number' && !Number.isNaN(expertRating)) {
+                    payload.expertRating = expertRating;
                 }
             }
 
