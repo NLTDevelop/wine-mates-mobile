@@ -95,8 +95,8 @@ android {
         applicationId "com.winemates"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 110
-        versionName "1.8.6"
+        versionCode 111
+        versionName "1.8.7"
         manifestPlaceholders = [GOOGLE_MAPS_API_KEY: googleMapsApiKey]
 
         externalNativeBuild {

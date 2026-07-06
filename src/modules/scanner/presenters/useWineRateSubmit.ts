@@ -15,6 +15,8 @@ interface ISaveWineRateParams {
     isFullTasting?: boolean;
 }
 
+const DEFAULT_EXPERT_RATING = 70;
+
 const addRatingToPayload = (payload: Partial<AddRateDto>) => {
     if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
         const starRate = wineModel.review?.starRate ?? 0;
@@ -25,8 +27,9 @@ const addRatingToPayload = (payload: Partial<AddRateDto>) => {
         return;
     }
 
-    if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
-        payload.expertRating = wineModel.review.rate;
+    const expertRating = wineModel.review?.rate ?? DEFAULT_EXPERT_RATING;
+    if (typeof expertRating === 'number' && !Number.isNaN(expertRating)) {
+        payload.expertRating = expertRating;
     }
 };
 
