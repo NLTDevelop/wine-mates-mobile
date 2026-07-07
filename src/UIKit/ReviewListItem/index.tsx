@@ -18,7 +18,7 @@ export const ReviewListItem = ({ item, showReviewWithoutPremium = false }: IProp
     const { colors, locale, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { isJustNow, formattedDate, isLocked, isLoverLevel, formattedUserRating, formattedExpertRating } =
+    const { formattedDateTime, isLocked, isLoverLevel, formattedUserRating, formattedExpertRating } =
         useReviewListItem({
             item,
             locale,
@@ -62,7 +62,7 @@ export const ReviewListItem = ({ item, showReviewWithoutPremium = false }: IProp
                         )}
                     </View>
                 </View>
-                <Typography text={isJustNow ? t('common.now') : formattedDate} variant="body_400" style={styles.date} />
+                <Typography text={formattedDateTime} variant="body_400" style={styles.date} />
             </View>
             {item.review ? <Typography text={item.review} variant="body_400" /> : null}
             {isLocked && <LockContainer />}
