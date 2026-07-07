@@ -2,23 +2,27 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors, topInset: number) => {
+export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
             backgroundColor: colors.background,
             position: 'relative',
         },
-        headerContainer: {
+        backButton: {
             position: 'absolute',
-            top: topInset,
-            left: 0,
-            right: 0,
+            top: scaleVertical(16),
+            left: scaleHorizontal(16),
             zIndex: 2,
-        },
-        headerRightPlaceholder: {
-            width: scaleHorizontal(40),
-            height: scaleHorizontal(40),
+            elevation: 2,
+            width: scaleVertical(40),
+            height: scaleVertical(40),
+            borderRadius: scaleVertical(22),
+            backgroundColor: colors.background,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: scaleVertical(1),
+            borderColor: colors.border,
         },
         map: {
             flex: 1,
@@ -32,9 +36,7 @@ export const getStyles = (colors: IColors, topInset: number) => {
             backgroundColor: colors.background,
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16,
-            // position: 'absolute',
             zIndex: 1,
-            // bottom: 0,
             width: '100%',
             paddingBottom: scaleVertical(32),
         },

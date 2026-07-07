@@ -18,7 +18,6 @@ export const getStyles = (colors: IColors) => {
         },
         row: {
             flexDirection: 'row',
-            alignItems: 'center',
             gap: scaleHorizontal(8),
         },
         expertRateContainer: {
