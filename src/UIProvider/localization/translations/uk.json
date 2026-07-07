@@ -62,6 +62,7 @@
         "resultsFriendTitle": "Вино для друга",
         "searchWine": "Пошук вина",
         "noResults": "Нічого не знайдено",
+        "wineCount": ["вино", "вина", "вин"],
         "winesCount": "%{count} вин"
     },
     "errors": {

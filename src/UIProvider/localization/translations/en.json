@@ -62,6 +62,7 @@
         "resultsFriendTitle": "Wine for a friend",
         "searchWine": "Search wine",
         "noResults": "Nothing found",
+        "wineCount": ["wine", "wines", "wines"],
         "winesCount": "%{count} wines"
     },
     "errors": {

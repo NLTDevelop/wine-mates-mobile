@@ -47,7 +47,12 @@ export const RangeSlider = ({
     isDisabled = false,
 }: IProps) => {
     const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, activeColor, inactiveColor), [activeColor, colors, inactiveColor]);
+    const resolvedActiveColor = isDisabled ? colors.background_disabled : activeColor;
+    const resolvedInactiveColor = isDisabled ? colors.background_disabled : inactiveColor;
+    const styles = useMemo(
+        () => getStyles(colors, resolvedActiveColor, resolvedInactiveColor),
+        [colors, resolvedActiveColor, resolvedInactiveColor],
+    );
     const [liveValues, setLiveValues] = useState<{ min: number; max: number } | null>(null);
     const actualSliderLength = sliderLength ?? scaleHorizontal(343) - scaleHorizontal(40);
     const onRangeChange = (nextMin: number, nextMax: number) => {
@@ -96,7 +101,7 @@ export const RangeSlider = ({
     return (
         <>
             <View
-                style={[styles.container, isDisabled ? styles.disabledContainer : undefined, containerStyle]}
+                style={[styles.container, containerStyle]}
                 pointerEvents={isDisabled ? 'none' : 'auto'}
             >
                 <View style={styles.sliderWrapper}>
@@ -117,13 +122,13 @@ export const RangeSlider = ({
 
                         <GestureDetector gesture={minPanGesture}>
                             <Animated.View style={[styles.thumbWrapper, minThumbStyle]}>
-                                <Marker size={scaleHorizontal(20)} color={activeColor || colors.primary} style={styles.marker} />
+                                <Marker size={scaleHorizontal(20)} color={resolvedActiveColor || colors.primary} style={styles.marker} />
                             </Animated.View>
                         </GestureDetector>
 
                         <GestureDetector gesture={maxPanGesture}>
                             <Animated.View style={[styles.thumbWrapper, maxThumbStyle]}>
-                                <Marker size={scaleHorizontal(20)} color={activeColor || colors.primary} style={styles.marker} />
+                                <Marker size={scaleHorizontal(20)} color={resolvedActiveColor || colors.primary} style={styles.marker} />
                             </Animated.View>
                         </GestureDetector>
                     </Pressable>
