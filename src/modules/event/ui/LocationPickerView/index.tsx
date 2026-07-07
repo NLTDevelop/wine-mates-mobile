@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
@@ -9,13 +9,11 @@ import { useLocationPickerView } from './presenters/useLocationPickerView';
 import { LocationSearchInput } from './components/LocationSearchInput/ui';
 import { MapMarker } from '@/UIKit/MapMarker';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
-import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ArrowIcon } from '@assets/icons/ArrowIcon';
 
 export const LocationPickerView = () => {
     const { colors, t } = useUiContext();
-    const { top } = useSafeAreaInsets();
-    const styles = useMemo(() => getStyles(colors, top), [colors, top]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
     const {
         eventType,
         selectedLocation,
@@ -36,19 +34,7 @@ export const LocationPickerView = () => {
     } = useLocationPickerView();
 
     return (
-        <ScreenContainer
-            edges={['bottom']}
-            isKeyboardAvoiding
-            scrollEnabled
-            headerComponent={
-                <HeaderWithBackButton
-                    onPressBack={onPressBack}
-                    title=""
-                    rightComponent={<View style={styles.headerRightPlaceholder} />}
-                    containerStyle={styles.headerContainer}
-                />
-            }
-        >
+        <ScreenContainer edges={['top', 'bottom']} isKeyboardAvoiding scrollEnabled>
             <View style={styles.container}>
                 <MapView
                     provider={PROVIDER_GOOGLE}
@@ -79,6 +65,10 @@ export const LocationPickerView = () => {
                         />
                     )}
                 </MapView>
+
+                <TouchableOpacity style={styles.backButton} onPress={onPressBack}>
+                    <ArrowIcon width={20} height={20} />
+                </TouchableOpacity>
 
                 <View style={styles.footer}>
                     <LocationSearchInput

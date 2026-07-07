@@ -256,7 +256,7 @@ export const useEventDetailsTab = ({ eventDetail, setEventDetail }: IProps) => {
         isOwner && ((isTastingNotStarted && isBeforeStartWindow) || (isTastingInProgress && isStopWindowAvailable));
     const isTastingToggleDisabled =
         isBookNowInProgress || isEventInactive || isEventCanceled || isEventFinished || isTastingFinished;
-    const isReportDownloadVisible = isOwner && isTastingFinished && !isEventCanceled;
+    const isReportDownloadVisible = isOwner && !isTastingNotStarted;
     const isWineSetAccessAvailable = (isTastingInProgress || isWineAccessTimeAvailable) && !isTastingFinished;
     const isWineSetStatusAvailable = isWineSetAccessAvailable || isTastingFinished;
     const isWineSetStatusVisible = Boolean(

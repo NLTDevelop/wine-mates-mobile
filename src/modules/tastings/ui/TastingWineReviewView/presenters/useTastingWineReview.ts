@@ -28,6 +28,7 @@ interface IRouteParams {
 }
 
 type ReviewOnlyDraftPayload = Pick<Partial<AddRateDto>, 'wineId' | 'review' | 'userRating' | 'expertRating' | 'winePeak'>;
+const DEFAULT_EXPERT_RATING = 70;
 
 export const useTastingWineReview = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -50,7 +51,7 @@ export const useTastingWineReview = () => {
     } = useEventTastingDraft();
 
     const [review, setReview] = useState(() => wineModel.review?.review ?? '');
-    const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? 70);
+    const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? DEFAULT_EXPERT_RATING);
     const [starRate, setStarRate] = useState(() => wineModel.review?.starRate ?? 0);
     const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
     const [hasChangedRate, setHasChangedRate] = useState(() => wineModel.review?.hasChangedRate ?? false);
@@ -71,7 +72,7 @@ export const useTastingWineReview = () => {
         const nextReview = draftReview.review || '';
         const nextSliderValue = typeof draftReview.expertRating === 'number'
             ? draftReview.expertRating
-            : wineModel.review?.rate ?? 70;
+            : wineModel.review?.rate ?? DEFAULT_EXPERT_RATING;
         const nextStarRate = typeof draftReview.userRating === 'number'
             ? draftReview.userRating
             : wineModel.review?.starRate ?? 0;
@@ -104,7 +105,7 @@ export const useTastingWineReview = () => {
 
     const syncReviewFromModel = useCallback(() => {
         const nextReview = wineModel.review?.review ?? '';
-        const nextSliderValue = wineModel.review?.rate ?? 70;
+        const nextSliderValue = wineModel.review?.rate ?? DEFAULT_EXPERT_RATING;
         const nextStarRate = wineModel.review?.starRate ?? 0;
         const nextHasChangedRate = wineModel.review?.hasChangedRate ?? false;
         const nextHasChangedStarRate = wineModel.review?.hasChangedStarRate ?? false;
@@ -219,10 +220,10 @@ export const useTastingWineReview = () => {
             starRate,
             rate: sliderValue,
             review,
-            hasChangedRate,
+            hasChangedRate: isExpertOrWinemaker || hasChangedRate,
             hasChangedStarRate,
         };
-    }, [hasChangedRate, hasChangedStarRate, review, sliderValue, starRate]);
+    }, [hasChangedRate, hasChangedStarRate, isExpertOrWinemaker, review, sliderValue, starRate]);
 
     const { skipNextBlurSave } = useSaveEventTastingDraftOnBlur({
         eventId,
@@ -288,8 +289,11 @@ export const useTastingWineReview = () => {
             if (typeof nextStarRate === 'number' && !Number.isNaN(nextStarRate)) {
                 payload.userRating = Number(nextStarRate.toFixed(1));
             }
-        } else if (wineModel.review?.hasChangedRate && wineModel.review?.rate) {
-            payload.expertRating = wineModel.review.rate;
+        } else {
+            const expertRating = wineModel.review?.rate ?? DEFAULT_EXPERT_RATING;
+            if (typeof expertRating === 'number' && !Number.isNaN(expertRating)) {
+                payload.expertRating = expertRating;
+            }
         }
 
         if (wineModel.winePeak !== null) {
