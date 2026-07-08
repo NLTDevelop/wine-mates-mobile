@@ -53,7 +53,7 @@
         "vintage": "Вінтаж",
         "ratingScaleHint": "Шкала рейтингу",
         "grapeVariety": "Сорт винограду",
-        "applyTasteCharacteristics": "Застосувати фільтри смакових характеристик",
+        "applyTasteCharacteristics": "Додаткові фільтри",
         "dry": "Сухе",
         "semiDry": "Напівсухе",
         "sweet": "Солодке",
@@ -62,6 +62,7 @@
         "resultsFriendTitle": "Вино для друга",
         "searchWine": "Пошук вина",
         "noResults": "Нічого не знайдено",
+        "wineCount": ["вино", "вина", "вин"],
         "winesCount": "%{count} вин"
     },
     "errors": {
