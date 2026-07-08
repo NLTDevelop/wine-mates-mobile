@@ -45,6 +45,7 @@
         "typeWine": "Type wine",
         "colorWine": "Color wine",
         "aroma": "Aroma in wine",
+        "nonVintage": "Year not specified",
         "taste": "Wine flavor notes",
         "rating": "Wine rating",
         "country": "Country of origin",

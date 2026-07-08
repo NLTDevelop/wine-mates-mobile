@@ -149,7 +149,6 @@ export const ChooseWineFiltersView = observer(() => {
                             </TouchableOpacity>
                         </View>
 
-                        <Typography variant="h6" text={t('chooseWine.sex')} style={styles.sectionLabel} />
                         <View style={styles.segmentRow}>
                             <TouchableOpacity
                                 onPress={onSelectFemale}
