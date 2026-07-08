@@ -121,6 +121,7 @@ export interface IWineChooserFilterOptions {
         minAge: number;
         maxAge: number;
     };
+    totalWineCount?: number;
 }
 
 export type IWineChooserList = IList<IWineListItem>;

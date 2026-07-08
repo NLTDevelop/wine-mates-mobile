@@ -18,30 +18,48 @@ export const QuickFilterSection = ({ title, items }: IProps) => {
         return item.id;
     }, []);
 
-    const renderItem = useCallback<ListRenderItem<IQuickFilterButtonItem>>(({ item }) => {
-        return (
-            <TouchableOpacity
-                onPress={item.onPress}
-                disabled={item.isDisabled}
-                style={[
-                    styles.button,
-                    item.isSelected ? styles.buttonActive : undefined,
-                    item.isDisabled ? styles.buttonDisabled : undefined,
-                ]}
-            >
-                <Typography
-                    variant={item.isMore ? 'subtitle_12_500' : 'subtitle_12_500'}
-                    text={item.title}
+    const renderItem = useCallback<ListRenderItem<IQuickFilterButtonItem>>(
+        ({ item }) => {
+            return (
+                <TouchableOpacity
+                    onPress={item.onPress}
+                    disabled={item.isDisabled}
                     style={[
-                        styles.buttonText,
-                        item.isMore ? styles.moreButtonText : undefined,
-                        item.isDisabled ? styles.buttonTextDisabled : undefined,
+                        styles.button,
+                        item.isSelected ? styles.buttonActive : undefined,
+                        item.isDisabled ? styles.buttonDisabled : undefined,
                     ]}
-                    numberOfLines={2}
-                />
-            </TouchableOpacity>
-        );
-    }, [styles]);
+                >
+                    {item.isMore ? (
+                        <Typography
+                            variant="subtitle_12_500"
+                            text={item.title}
+                            style={[
+                                styles.buttonText,
+                                styles.moreButtonText,
+                                item.isDisabled ? styles.buttonTextDisabled : undefined,
+                            ]}
+                            numberOfLines={2}
+                        />
+                    ) : (
+                        <View style={styles.buttonContent}>
+                            <Typography
+                                variant="subtitle_12_500"
+                                text={`${item.title } (${item.wineCountText})`}
+                                style={[
+                                    styles.buttonText,
+                                    styles.buttonTitleText,
+                                    item.isDisabled ? styles.buttonTextDisabled : undefined,
+                                ]}
+                                numberOfLines={2}
+                            />
+                        </View>
+                    )}
+                </TouchableOpacity>
+            );
+        },
+        [styles],
+    );
 
     if (items.length === 0) {
         return null;

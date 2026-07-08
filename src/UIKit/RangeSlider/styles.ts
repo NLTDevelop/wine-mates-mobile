@@ -11,9 +11,6 @@ export const getStyles = (colors: IColors, activeColor?: string, inactiveColor?:
         container: {
             width: '100%',
         },
-        disabledContainer: {
-            opacity: 0.5,
-        },
         sliderWrapper: {
             width: '100%',
             alignItems: 'center',
@@ -46,7 +43,6 @@ export const getStyles = (colors: IColors, activeColor?: string, inactiveColor?:
         },
         thumbWrapper: {
             position: 'absolute',
-            left: -TOUCH_SIZE / 2,
             width: TOUCH_SIZE,
             height: THUMB_SIZE,
             justifyContent: 'center',

@@ -29,6 +29,7 @@ import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLe
 import { IQuickFilterButtonItem } from '../types/IQuickFilterButtonItem';
 import { useChooseWineFilterOptions } from './useChooseWineFilterOptions';
 import { useDebounce } from '@/hooks/useDebounce';
+import { declOfWord } from '@/utils';
 
 type RouteParams = {
     ChooseWineFiltersView: {
@@ -382,20 +383,24 @@ const formatSelectedNames = (items: { name: string }[], fallback = '') => {
     return items.map(item => item.name).join(', ');
 };
 
+const createWineCountText = (wineCount: number) => {
+    return declOfWord(wineCount, localization.t('chooseWine.wineCount') as unknown as Array<string>);
+};
+
 const createCountSubtitle = (wineCount?: number) => {
     if (typeof wineCount !== 'number') {
         return undefined;
     }
 
-    return localization.t('chooseWine.winesCount', { count: wineCount });
+    return createWineCountText(wineCount);
 };
 
-const createQuickFilterTitle = (name: string, wineCount?: number) => {
+const createWineCountBadgeText = (wineCount?: number) => {
     if (typeof wineCount !== 'number') {
-        return name;
+        return '';
     }
 
-    return `${name} (${wineCount})`;
+    return `(${createWineCountText(wineCount)})`;
 };
 
 const areNumberArraysEqual = (leftItems: number[], rightItems: number[]) => {
@@ -1451,7 +1456,8 @@ export const useChooseWineFilters = () => {
         const items = countriesWithSelected.slice(0, QUICK_FILTER_LIMIT).map<IQuickFilterButtonItem>(item => {
             return {
                 id: `country-${item.id}`,
-                title: createQuickFilterTitle(item.name, item.wineCount),
+                title: item.name,
+                wineCountText: `${item.wineCount || 0}`,
                 isSelected: filters.countryIds.includes(item.id),
                 onPress: createOnQuickCountryPress(item.id),
             };
@@ -1474,7 +1480,8 @@ export const useChooseWineFilters = () => {
         const items = regionsWithSelected.slice(0, QUICK_FILTER_LIMIT).map<IQuickFilterButtonItem>(item => {
             return {
                 id: `region-${item.id}`,
-                title: createQuickFilterTitle(item.name, item.wineCount),
+                title: item.name,
+                wineCountText: `${item.wineCount || 0}`,
                 isSelected: filters.regionIds.includes(item.id),
                 onPress: createOnQuickRegionPress(item.id),
             };
@@ -1501,7 +1508,8 @@ export const useChooseWineFilters = () => {
 
                 return {
                     id: `grape-${name}`,
-                    title: createQuickFilterTitle(name, item.wineCount),
+                    title: name,
+                    wineCountText: `${item.wineCount || 0}`,
                     isSelected: filters.grapeVarieties.includes(name),
                     onPress: createOnQuickGrapePress(name),
                 };
@@ -1528,7 +1536,8 @@ export const useChooseWineFilters = () => {
 
             return {
                 id: `vintage-${id}`,
-                title: createQuickFilterTitle(getVintageTitle(vintage), item.wineCount),
+                title: getVintageTitle(vintage),
+                wineCountText: `${item.wineCount || 0}`,
                 isSelected: filters.vintages.includes(vintage),
                 onPress: createOnQuickVintagePress(vintage),
             };
@@ -1863,6 +1872,9 @@ export const useChooseWineFilters = () => {
         return `${filters.minUserRating.toFixed(1)} ${getRatingDescription(filters.minUserRating)}`;
     }, [filters.minUserRating]);
     const isCurrentExpertRatingSelected = isExpertRatingSelected(filters, filterOptions);
+    const applyWineCountText = typeof filterOptions.totalWineCount === 'number'
+        ? `(${createWineCountText(filterOptions.totalWineCount)})`
+        : '';
 
     return {
         mode,
@@ -1886,8 +1898,10 @@ export const useChooseWineFilters = () => {
         isAgeDisabled,
         isFemaleGenderDisabled,
         isMaleGenderDisabled,
-        femaleGenderTitle: createQuickFilterTitle(localization.t('chooseWine.women'), femaleGenderOption?.wineCount),
-        maleGenderTitle: createQuickFilterTitle(localization.t('chooseWine.men'), maleGenderOption?.wineCount),
+        femaleGenderTitle: localization.t('chooseWine.women'),
+        femaleGenderWineCountText: createWineCountBadgeText(femaleGenderOption?.wineCount),
+        maleGenderTitle: localization.t('chooseWine.men'),
+        maleGenderWineCountText: createWineCountBadgeText(maleGenderOption?.wineCount),
         ageMin: isAgeDisabled ? AGE_MIN : filters.ageMin || ageRange.minAge,
         ageMax: isAgeDisabled ? AGE_MAX : filters.ageMax || ageRange.maxAge,
         allowedAgeMin: isAgeDisabled ? AGE_MIN : ageRange.minAge,
@@ -1916,6 +1930,7 @@ export const useChooseWineFilters = () => {
         quickRegionItems,
         quickGrapeItems,
         quickVintageItems,
+        applyWineCountText,
         shouldShowTasteCharacteristicsToggle,
         applyTasteCharacteristics,
         isTasteCharacteristicsLocked,

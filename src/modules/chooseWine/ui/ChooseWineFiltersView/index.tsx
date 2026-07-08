@@ -40,7 +40,9 @@ export const ChooseWineFiltersView = observer(() => {
         isFemaleGenderDisabled,
         isMaleGenderDisabled,
         femaleGenderTitle,
+        femaleGenderWineCountText,
         maleGenderTitle,
+        maleGenderWineCountText,
         ageMin,
         ageMax,
         allowedAgeMin,
@@ -59,6 +61,7 @@ export const ChooseWineFiltersView = observer(() => {
         quickRegionItems,
         quickGrapeItems,
         quickVintageItems,
+        applyWineCountText,
         shouldShowTasteCharacteristicsToggle,
         applyTasteCharacteristics,
         onSelectMyselfMode,
@@ -155,16 +158,30 @@ export const ChooseWineFiltersView = observer(() => {
                                     styles.segmentButton,
                                     filters.gender === 'female' ? styles.segmentButtonActive : undefined,
                                     isFemaleGenderDisabled ? styles.segmentButtonDisabled : undefined,
-                                ]}
-                            >
-                                <Typography
-                                    variant="h6"
-                                    text={femaleGenderTitle}
-                                    style={[
-                                        styles.segmentText,
-                                        isFemaleGenderDisabled ? styles.segmentTextDisabled : undefined,
-                                    ]}
-                                />
+                            ]}
+                        >
+                                <View style={styles.segmentTextRow}>
+                                    <Typography
+                                        variant="h6"
+                                        text={femaleGenderTitle}
+                                        style={[
+                                            styles.segmentText,
+                                            isFemaleGenderDisabled ? styles.segmentTextDisabled : undefined,
+                                        ]}
+                                        numberOfLines={1}
+                                    />
+                                    {femaleGenderWineCountText ? (
+                                        <Typography
+                                            variant="subtitle_12_500"
+                                            text={femaleGenderWineCountText}
+                                            style={[
+                                                styles.segmentWineCountText,
+                                                isFemaleGenderDisabled ? styles.segmentTextDisabled : undefined,
+                                            ]}
+                                            numberOfLines={1}
+                                        />
+                                    ) : null}
+                                </View>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={onSelectMale}
@@ -173,16 +190,30 @@ export const ChooseWineFiltersView = observer(() => {
                                     styles.segmentButton,
                                     filters.gender === 'male' ? styles.segmentButtonActive : undefined,
                                     isMaleGenderDisabled ? styles.segmentButtonDisabled : undefined,
-                                ]}
-                            >
-                                <Typography
-                                    variant="h6"
-                                    text={maleGenderTitle}
-                                    style={[
-                                        styles.segmentText,
-                                        isMaleGenderDisabled ? styles.segmentTextDisabled : undefined,
-                                    ]}
-                                />
+                            ]}
+                        >
+                                <View style={styles.segmentTextRow}>
+                                    <Typography
+                                        variant="h6"
+                                        text={maleGenderTitle}
+                                        style={[
+                                            styles.segmentText,
+                                            isMaleGenderDisabled ? styles.segmentTextDisabled : undefined,
+                                        ]}
+                                        numberOfLines={1}
+                                    />
+                                    {maleGenderWineCountText ? (
+                                        <Typography
+                                            variant="subtitle_12_500"
+                                            text={maleGenderWineCountText}
+                                            style={[
+                                                styles.segmentWineCountText,
+                                                isMaleGenderDisabled ? styles.segmentTextDisabled : undefined,
+                                            ]}
+                                            numberOfLines={1}
+                                        />
+                                    ) : null}
+                                </View>
                             </TouchableOpacity>
                         </View>
 
@@ -199,18 +230,18 @@ export const ChooseWineFiltersView = observer(() => {
                         />
 
                         <PickerButton
-                            label={t('chooseWine.typeWine')}
-                            text={selectedTypeText}
-                            placeholder={t('chooseWine.typeWine')}
-                            onPress={onOpenTypePicker}
-                            isDisabled={isTypeDisabled}
-                        />
-                        <PickerButton
                             label={t('chooseWine.colorWine')}
                             text={selectedColorText}
                             placeholder={t('chooseWine.colorWine')}
                             onPress={onOpenColorPicker}
                             isDisabled={isColorDisabled}
+                        />
+                        <PickerButton
+                            label={t('chooseWine.typeWine')}
+                            text={selectedTypeText}
+                            placeholder={t('chooseWine.typeWine')}
+                            onPress={onOpenTypePicker}
+                            isDisabled={isTypeDisabled}
                         />
                         <PickerButton
                             label={t('chooseWine.aroma')}
@@ -272,7 +303,29 @@ export const ChooseWineFiltersView = observer(() => {
                         />
                     </ScrollView>
                     <View style={styles.footer}>
-                        <Button text={t('chooseWine.apply')} onPress={onApplyPress} inProgress={isApplying} />
+                        <Button
+                            text={t('chooseWine.apply')}
+                            onPress={onApplyPress}
+                            inProgress={isApplying}
+                            CenterAccessory={(
+                                <View style={styles.applyTextRow}>
+                                    <Typography
+                                        variant="body_500"
+                                        text={t('chooseWine.apply')}
+                                        style={styles.applyText}
+                                        numberOfLines={1}
+                                    />
+                                    {applyWineCountText ? (
+                                        <Typography
+                                            variant="subtitle_12_500"
+                                            text={applyWineCountText}
+                                            style={styles.applyWineCountText}
+                                            numberOfLines={1}
+                                        />
+                                    ) : null}
+                                </View>
+                            )}
+                        />
                     </View>
                 </View>
             )}

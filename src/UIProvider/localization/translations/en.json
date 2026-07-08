@@ -53,7 +53,7 @@
         "vintage": "Vintage",
         "ratingScaleHint": "Rating scale",
         "grapeVariety": "Grape variety",
-        "applyTasteCharacteristics": "Apply filters taste characteristics",
+        "applyTasteCharacteristics": "Additional filters",
         "dry": "Dry",
         "semiDry": "Semi-dry",
         "sweet": "Sweet",
@@ -62,6 +62,7 @@
         "resultsFriendTitle": "Wine for a friend",
         "searchWine": "Search wine",
         "noResults": "Nothing found",
+        "wineCount": ["wine", "wines", "wines"],
         "winesCount": "%{count} wines"
     },
     "errors": {
