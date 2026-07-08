@@ -43,7 +43,6 @@ export const getStyles = (colors: IColors, activeColor?: string, inactiveColor?:
         },
         thumbWrapper: {
             position: 'absolute',
-            left: -TOUCH_SIZE / 2,
             width: TOUCH_SIZE,
             height: THUMB_SIZE,
             justifyContent: 'center',

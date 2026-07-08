@@ -55,6 +55,7 @@ export const RangeSlider = ({
     );
     const [liveValues, setLiveValues] = useState<{ min: number; max: number } | null>(null);
     const actualSliderLength = sliderLength ?? scaleHorizontal(343) - scaleHorizontal(40);
+    const thumbOffset = scaleHorizontal(20);
     const onRangeChange = (nextMin: number, nextMax: number) => {
         setLiveValues(null);
         onChange(nextMin, nextMax);
@@ -77,6 +78,7 @@ export const RangeSlider = ({
         step,
         allowedMin,
         allowedMax,
+        thumbOffset,
         onValuesLive: (nextMin, nextMax) => {
             setLiveValues({ min: nextMin, max: nextMax });
         },
