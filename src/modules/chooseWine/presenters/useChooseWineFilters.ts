@@ -427,7 +427,7 @@ const getGrapeVarietyName = (item: { grapeVariety?: string; name?: string }) => 
 
 const getVintageTitle = (value: number | null) => {
     if (value === null) {
-        return localization.t('wine.nonVintage');
+        return localization.t('chooseWine.nonVintage');
     }
 
     return `${value}`;
