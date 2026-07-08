@@ -14,6 +14,7 @@ interface IProps {
     step: number;
     allowedMin?: number;
     allowedMax?: number;
+    thumbOffset: number;
     onValuesLive?: (minValue: number, maxValue: number) => void;
 }
 
@@ -26,6 +27,7 @@ export const useRangeSlider = ({
     step,
     allowedMin,
     allowedMax,
+    thumbOffset,
     onValuesLive,
 }: IProps) => {
     const LOW_THUMB_Z_INDEX = 3;
@@ -127,20 +129,20 @@ export const useRangeSlider = ({
     const minThumbStyle = useAnimatedStyle(() => {
         const range = max - min;
         const stepSize = range > 0 ? sliderWidth.value / range : 1;
-        const translateX = (minPosition.value - min) * stepSize;
+        const left = (minPosition.value - min) * stepSize - thumbOffset;
         return {
+            left,
             zIndex: isMinThumbOnTop.value ? HIGH_THUMB_Z_INDEX : LOW_THUMB_Z_INDEX,
-            transform: [{ translateX }],
         };
     });
 
     const maxThumbStyle = useAnimatedStyle(() => {
         const range = max - min;
         const stepSize = range > 0 ? sliderWidth.value / range : 1;
-        const translateX = (maxPosition.value - min) * stepSize;
+        const left = (maxPosition.value - min) * stepSize - thumbOffset;
         return {
+            left,
             zIndex: isMinThumbOnTop.value ? LOW_THUMB_Z_INDEX : HIGH_THUMB_Z_INDEX,
-            transform: [{ translateX }],
         };
     });
 

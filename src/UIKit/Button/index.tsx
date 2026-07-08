@@ -12,11 +12,12 @@ interface IProps extends TouchableOpacityProps {
     type?: ButtonType;
     RightAccessory?: React.ReactNode;
     LeftAccessory?: React.ReactNode;
+    CenterAccessory?: React.ReactNode;
     inProgress?: boolean;
     applyDisabledStyle?: boolean;
 }
 
-export const ButtonComponent = ({ text, type = 'main', disabled, RightAccessory, LeftAccessory, containerStyle,
+export const ButtonComponent = ({ text, type = 'main', disabled, RightAccessory, LeftAccessory, CenterAccessory, containerStyle,
     textStyle, inProgress, applyDisabledStyle = true, ...props }: IProps) => {
     const resolvedType = disabled && applyDisabledStyle ? 'disabled' : type;
     const { colors } = useUiContext();
@@ -30,9 +31,13 @@ export const ButtonComponent = ({ text, type = 'main', disabled, RightAccessory,
                 </View>
             ) : (
                 <>
-                    {LeftAccessory}
-                    <Typography variant="body_500" text={text} numberOfLines={1} style={[styles.text, textStyle]} />
-                    {RightAccessory}
+                    {CenterAccessory || (
+                        <>
+                            {LeftAccessory}
+                            <Typography variant="body_500" text={text} numberOfLines={1} style={[styles.text, textStyle]} />
+                            {RightAccessory}
+                        </>
+                    )}
                 </>
             )}
         </TouchableOpacity>

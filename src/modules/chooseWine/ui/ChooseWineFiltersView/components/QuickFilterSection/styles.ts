@@ -38,6 +38,16 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
             textAlign: 'center',
         },
+        buttonContent: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            columnGap: scaleHorizontal(3),
+            maxWidth: '100%',
+        },
+        buttonTitleText: {
+            flexShrink: 1,
+        },
         buttonTextDisabled: {
             color: colors.text_light,
         },
