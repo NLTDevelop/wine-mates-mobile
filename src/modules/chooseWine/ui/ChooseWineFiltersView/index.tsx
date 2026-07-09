@@ -100,11 +100,7 @@ export const ChooseWineFiltersView = observer(() => {
                     title={t('common.filters')}
                     rightComponent={
                         <TouchableOpacity onPress={onResetPress} style={styles.resetButton}>
-                            <Typography
-                                text={t('common.reset')}
-                                variant="body_500"
-                                style={styles.resetText}
-                            />
+                            <Typography text={t('common.reset')} variant="body_500" style={styles.resetText} />
                         </TouchableOpacity>
                     }
                 />
@@ -113,7 +109,7 @@ export const ChooseWineFiltersView = observer(() => {
         >
             {isInitialLoading ? (
                 <View style={styles.loaderContainer}>
-                    <ActivityIndicator color={colors.primary} size={'large'}/>
+                    <ActivityIndicator color={colors.primary} size={'large'} />
                 </View>
             ) : (
                 <View style={styles.screen}>
@@ -128,7 +124,11 @@ export const ChooseWineFiltersView = observer(() => {
                                 style={[styles.modeCard, mode === 'myself' ? styles.modeCardActive : undefined]}
                             >
                                 <UserIcon />
-                                <Typography variant="subtitle_16_700" text={t('chooseWine.myself')} style={styles.modeTitle} />
+                                <Typography
+                                    variant="subtitle_16_700"
+                                    text={t('chooseWine.myself')}
+                                    style={styles.modeTitle}
+                                />
                                 <Typography
                                     variant="subtitle_10_400"
                                     text={t('chooseWine.myselfDescription')}
@@ -140,7 +140,11 @@ export const ChooseWineFiltersView = observer(() => {
                                 style={[styles.modeCard, mode === 'friend' ? styles.modeCardActive : undefined]}
                             >
                                 <PeopleIcon />
-                                <Typography variant="subtitle_16_700" text={t('chooseWine.friend')} style={styles.modeTitle} />
+                                <Typography
+                                    variant="subtitle_16_700"
+                                    text={t('chooseWine.friend')}
+                                    style={styles.modeTitle}
+                                />
                                 <Typography
                                     variant="subtitle_10_400"
                                     text={t('chooseWine.friendDescription')}
@@ -157,29 +161,33 @@ export const ChooseWineFiltersView = observer(() => {
                                     styles.segmentButton,
                                     filters.gender === 'female' ? styles.segmentButtonActive : undefined,
                                     isFemaleGenderDisabled ? styles.segmentButtonDisabled : undefined,
-                            ]}
-                        >
+                                ]}
+                            >
                                 <View style={styles.segmentTextRow}>
                                     <Typography
                                         variant="h6"
-                                        text={femaleGenderTitle}
+                                        numberOfLines={1}
                                         style={[
                                             styles.segmentText,
                                             isFemaleGenderDisabled ? styles.segmentTextDisabled : undefined,
                                         ]}
-                                        numberOfLines={1}
-                                    />
-                                    {femaleGenderWineCountText ? (
-                                        <Typography
-                                            variant="subtitle_12_500"
-                                            text={femaleGenderWineCountText}
-                                            style={[
-                                                styles.segmentWineCountText,
-                                                isFemaleGenderDisabled ? styles.segmentTextDisabled : undefined,
-                                            ]}
-                                            numberOfLines={1}
-                                        />
-                                    ) : null}
+                                    >
+                                        {femaleGenderTitle}
+                                        {femaleGenderWineCountText ? (
+                                            <>
+                                                {' '}
+                                                <Typography
+                                                    variant="subtitle_12_500"
+                                                    style={[
+                                                        styles.segmentWineCountText,
+                                                        isFemaleGenderDisabled ? styles.segmentTextDisabled : undefined,
+                                                    ]}
+                                                >
+                                                    {femaleGenderWineCountText}
+                                                </Typography>
+                                            </>
+                                        ) : null}
+                                    </Typography>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -189,29 +197,33 @@ export const ChooseWineFiltersView = observer(() => {
                                     styles.segmentButton,
                                     filters.gender === 'male' ? styles.segmentButtonActive : undefined,
                                     isMaleGenderDisabled ? styles.segmentButtonDisabled : undefined,
-                            ]}
-                        >
+                                ]}
+                            >
                                 <View style={styles.segmentTextRow}>
                                     <Typography
                                         variant="h6"
-                                        text={maleGenderTitle}
+                                        numberOfLines={1}
                                         style={[
                                             styles.segmentText,
                                             isMaleGenderDisabled ? styles.segmentTextDisabled : undefined,
                                         ]}
-                                        numberOfLines={1}
-                                    />
-                                    {maleGenderWineCountText ? (
-                                        <Typography
-                                            variant="subtitle_12_500"
-                                            text={maleGenderWineCountText}
-                                            style={[
-                                                styles.segmentWineCountText,
-                                                isMaleGenderDisabled ? styles.segmentTextDisabled : undefined,
-                                            ]}
-                                            numberOfLines={1}
-                                        />
-                                    ) : null}
+                                    >
+                                        {maleGenderTitle}
+                                        {maleGenderWineCountText ? (
+                                            <>
+                                                {' '}
+                                                <Typography
+                                                    variant="subtitle_12_500"
+                                                    style={[
+                                                        styles.segmentWineCountText,
+                                                        isMaleGenderDisabled ? styles.segmentTextDisabled : undefined,
+                                                    ]}
+                                                >
+                                                    {maleGenderWineCountText}
+                                                </Typography>
+                                            </>
+                                        ) : null}
+                                    </Typography>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -276,7 +288,7 @@ export const ChooseWineFiltersView = observer(() => {
                         <QuickFilterSection title={t('chooseWine.country')} items={quickCountryItems} />
                         <QuickFilterSection title={t('chooseWine.region')} items={quickRegionItems} />
                         <QuickFilterSection title={t('chooseWine.grapeVariety')} items={quickGrapeItems} />
-                       
+
                         <QuickFilterSection title={t('chooseWine.vintage')} items={quickVintageItems} />
 
                         {shouldShowTasteCharacteristicsToggle && (
@@ -306,24 +318,28 @@ export const ChooseWineFiltersView = observer(() => {
                             text={t('chooseWine.apply')}
                             onPress={onApplyPress}
                             inProgress={isApplying}
-                            CenterAccessory={(
+                            CenterAccessory={
                                 <View style={styles.applyTextRow}>
-                                    <Typography
-                                        variant="body_500"
-                                        text={t('chooseWine.apply')}
-                                        style={styles.applyText}
-                                        numberOfLines={1}
-                                    />
+                                <Typography
+                                    variant="body_500"
+                                    numberOfLines={1}
+                                    style={styles.applyText}
+                                >
+                                    {t('chooseWine.apply')}
                                     {applyWineCountText ? (
-                                        <Typography
-                                            variant="subtitle_12_500"
-                                            text={applyWineCountText}
-                                            style={styles.applyWineCountText}
-                                            numberOfLines={1}
-                                        />
+                                        <>
+                                            {' '}
+                                            <Typography
+                                                variant="subtitle_12_500"
+                                                style={styles.applyWineCountText}
+                                            >
+                                                {applyWineCountText}
+                                            </Typography>
+                                        </>
                                     ) : null}
-                                </View>
-                            )}
+                                </Typography>
+                            </View>
+                            }
                         />
                     </View>
                 </View>
