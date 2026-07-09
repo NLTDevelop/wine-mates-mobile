@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useUiContext } from '@/UIProvider';
-import { ILog } from '@/UIKit/Logger/entity/loggerModel';
+import { useLoggerItem } from '@/UIKit/Logger/presenters/useLoggerItem';
+import { ILog } from '@/UIKit/Logger/types';
 import { getStyles } from './styles';
 
 interface IProps {
@@ -9,13 +10,9 @@ interface IProps {
 }
 
 export const LoggerItem = ({ item }: IProps) => {
-    const [show, setShow] = useState(false);
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-
-    const onShow = useCallback(() => {
-        setShow(prev => !prev);
-    }, []);
+    const { show, onShow } = useLoggerItem();
 
     return (
         <View style={styles.container}>

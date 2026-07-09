@@ -1,11 +1,5 @@
 import { MobXRepository } from '@/repository/MobXRepository';
-
-export interface ILog {
-    type: 'request' | 'response' | 'error' | 'library';
-    name: string;
-    message: string;
-    id: string;
-}
+import { ILog, LoggerType } from '@/UIKit/Logger/types';
 
 interface ILoggerModel {
     isVisibleLogs: boolean;
@@ -28,7 +22,7 @@ class LoggerModel implements ILoggerModel {
         this.isVisibleLogsRepository.save(data);
     }
 
-    add = (type: 'request' | 'response' | 'error' | 'library', name: string, message: string) => {
+    add = (type: LoggerType, name: string, message: string) => {
         this.logsRepository.save([{ type, name, message, id: Date.now().toString() }, ...this.logs]);
     };
 
