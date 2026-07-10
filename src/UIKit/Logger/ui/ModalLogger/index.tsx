@@ -3,7 +3,8 @@ import { useCallback, useMemo } from 'react';
 import { FlatList, Modal, TouchableOpacity, View, Text } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { LoggerItem } from '@/UIKit/Logger/ui/LoggerItem';
-import { ILog, loggerModel } from '@/UIKit/Logger/entity/loggerModel';
+import { loggerModel } from '@/UIKit/Logger/entity/loggerModel';
+import { ILog } from '@/UIKit/Logger/types';
 import { getStyles } from './styles';
 import { useLoggerModal } from '../../presenters/useLoggerModal';
 
@@ -13,7 +14,7 @@ export const ModalLogger = observer(() => {
 
     const { onEnvironmentChange, onClose, isDevEnvironment, onTogglePremium, isPremiumEnabled } = useLoggerModal();
 
-    const renderItem = useCallback(({ item }: any) => <LoggerItem item={item} />, []);
+    const renderItem = useCallback(({ item }: { item: ILog }) => <LoggerItem item={item} />, []);
     const keyExtractor = useCallback((item: ILog) => item.id, []);
 
     return (
