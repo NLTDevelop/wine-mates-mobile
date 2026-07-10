@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { IRequester } from './IRequester/IRequester';
 import { IResponse } from './IRequester/IResponse';
 import { loggerModel } from '@/UIKit/Logger/entity/loggerModel';
+import { formatLoggerError, formatLoggerResponse, formatLoggerResponseError } from '@/UIKit/Logger/presenters/loggerFormatter';
 import { localization } from '@/UIProvider/localization/Localization';
 import { userModel } from '@/entities/users/UserModel';
 
@@ -42,22 +43,24 @@ class AxiosRequester implements IRequester {
                     url: config.url,
                     responseType: config.responseType,
                 });
-                loggerModel.add('response', `AxiosRequester -> request -> ${config.url}: `, JSON.stringify({
-                    status: response.status,
-                    responseType: config.responseType,
-                }, null, 3));
             } else {
                 console.log('AxiosRequester -> request response: ', response);
-                loggerModel.add('response', `AxiosRequester -> request -> ${config.url}: `, JSON.stringify(response, null, 3));
             }
-            return this.processingResponse({
+            const processedResponse = this.processingResponse({
                 data: response.data,
                 status: response.status,
             });
+            if (processedResponse.isError) {
+                loggerModel.add('error', `AxiosRequester -> ${config.url}: `, formatLoggerResponseError(config, response.data, response.status));
+            } else {
+                loggerModel.add('response', `AxiosRequester -> ${config.url}: `, formatLoggerResponse(config, response.data));
+            }
+
+            return processedResponse;
         } catch (error: any) {
             console.warn('AxiosRequester -> request: ', JSON.stringify(config, null, 2), error);
             console.warn('AxiosRequester -> request error: ', error?.response?.data?.message || '-----------');
-            loggerModel.add('error', `AxiosRequester -> request -> ${config.url}: `, JSON.stringify(error, null, 3));
+            loggerModel.add('error', `AxiosRequester -> ${config.url}: `, formatLoggerError(config, error));
             return {
                 isError: true,
                 message: error?.response?.data?.message,

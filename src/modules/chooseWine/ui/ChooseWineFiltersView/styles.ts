@@ -79,16 +79,16 @@ export const getStyles = (colors: IColors) => {
         segmentButtonDisabled: {
             opacity: 0.45,
         },
+        segmentTextRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: scaleHorizontal(4),
+            maxWidth: '100%',
+        },
         segmentText: {
             color: colors.text,
             textAlign: 'center',
-        },
-        segmentTextRow: {
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-            justifyContent: 'center',
-            columnGap: scaleHorizontal(4),
-            maxWidth: '100%',
         },
         segmentWineCountText: {
             color: colors.text,
@@ -114,14 +114,13 @@ export const getStyles = (colors: IColors) => {
             backgroundColor: colors.background,
         },
         applyTextRow: {
-            flexDirection: 'row',
-            alignItems: 'flex-end',
+            alignItems: 'center',
             justifyContent: 'center',
-            columnGap: scaleHorizontal(4),
             maxWidth: '100%',
         },
         applyText: {
             color: colors.text_inverted,
+            textAlign: 'center',
         },
         applyWineCountText: {
             color: colors.text_inverted,
