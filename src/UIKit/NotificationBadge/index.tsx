@@ -4,18 +4,14 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { NotificationIcon } from '@assets/icons/NotificationIcon';
 import { Typography } from '@/UIKit/Typography';
-
-interface IProps {
-    count?: number;
-    onPress?: () => void;
-}
+import { IProps } from './types/IProps';
+import { useNotificationBadge } from './presenters/useNotificationBadge';
 
 const NotificationBadgeComponent = ({ count = 0, onPress }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const showBadge = count > 0;
-    const displayCount = count > 99 ? '99+' : count.toString();
+    const { showBadge, displayCount } = useNotificationBadge(count);
 
     return (
         <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={styles.container}>

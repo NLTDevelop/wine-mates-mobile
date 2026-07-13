@@ -42,6 +42,7 @@ import { ContactInfoView } from '@/modules/contactInfo/ui/ContactInfoView';
 import { CreatePaymentView } from '@/modules/payments/ui/CreatePaymentView';
 import { ChooseWineFiltersView } from '@/modules/chooseWine/ui/ChooseWineFiltersView';
 import { ChooseWineResultsView } from '@/modules/chooseWine/ui/ChooseWineResultsView';
+import { NotificationsView } from '@/modules/notifications/ui/NotificationsView';
 
 const Stack = createNativeStackNavigator();
 
@@ -98,6 +99,7 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="ContactInfoView" component={ContactInfoView} />
             <Stack.Screen name="ChooseWineFiltersView" component={ChooseWineFiltersView} options={{ gestureEnabled: false }}/>
             <Stack.Screen name="ChooseWineResultsView" component={ChooseWineResultsView} />
+            <Stack.Screen name="NotificationsView" component={NotificationsView} />
         </Stack.Navigator>
     );
 });

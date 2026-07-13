@@ -33,6 +33,11 @@
         "takePhoto": "Take Photo",
         "chooseFromGallery": "Choose from Gallery"
     },
+    "notifications": {
+        "title": "Notifications",
+        "markAllRead": "Read all",
+        "empty": "No notifications yet"
+    },
     "chooseWine": {
         "myself": "Myself",
         "myselfDescription": "Based on your age, gender and preferences",

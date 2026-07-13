@@ -73,6 +73,7 @@ export interface ILinks {
     eventTastingDraft: string;
     eventTastingSaveDraft: string;
     userLocation: string;
+    notifications: string;
 }
 
 class Links implements ILinks {
@@ -137,6 +138,7 @@ class Links implements ILinks {
         eventTastingDraft: 'event-tasting/draft',
         eventTastingSaveDraft: 'event-tasting/save-draft',
         userLocation: 'users/location',
+        notifications: 'notifications',
     };
 
     private buildDomain() {
@@ -330,6 +332,9 @@ class Links implements ILinks {
     }
     public get userLocation() {
         return `${this._domain}${this._links.userLocation}`;
+    }
+    public get notifications() {
+        return `${this._domain}${this._links.notifications}`;
     }
 }
 

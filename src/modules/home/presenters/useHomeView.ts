@@ -12,6 +12,7 @@ import { EventType } from '@/entities/events/enums/EventType';
 import { TastingType } from '@/entities/events/enums/TastingType';
 import type { SortableGridDragEndParams } from 'react-native-sortables';
 import { toastService } from '@/libs/toast/toastService';
+import { notificationsService } from '@/entities/notifications/NotificationsService';
 import { getCurrentLocationPayload } from '@/libs/locations/getCurrentLocationPayload';
 import { IHomeSectionsListParams } from '@/entities/homeSections/params/IHomeSectionsListParams';
 import { locationModel } from '@/entities/location/LocationModel';
@@ -363,7 +364,10 @@ export const useHomeView = (locale: string) => {
         setIsLoading(true);
 
         try {
-            const response = await requestHomeSections(true);
+            const [response] = await Promise.all([
+                requestHomeSections(true),
+                notificationsService.getCount(),
+            ]);
 
             if (!isMountedRef.current) {
                 return;
@@ -423,7 +427,10 @@ export const useHomeView = (locale: string) => {
         setIsRefreshing(true);
 
         try {
-            const response = await requestHomeSections(true);
+            const [response] = await Promise.all([
+                requestHomeSections(true),
+                notificationsService.getCount(),
+            ]);
 
             if (response.isError) {
                 showHomeRequestError(response.message);

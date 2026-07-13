@@ -33,6 +33,11 @@
         "takePhoto": "Зробити фото",
         "chooseFromGallery": "Вибрати з галереї"
     },
+    "notifications": {
+        "title": "Сповіщення",
+        "markAllRead": "Прочитати всі",
+        "empty": "Сповіщень поки немає"
+    },
     "chooseWine": {
         "myself": "Для себе",
         "myselfDescription": "На основі вашого віку, статі і вподобань",
