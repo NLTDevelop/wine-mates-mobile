@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
@@ -16,20 +16,57 @@ import { observer } from 'mobx-react-lite';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
 import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { BirthdaySelector } from '../components/BirthdaySelector';
+import { useBirthdaySelector } from '../../presenters/useBirthdaySelector';
+import DatePicker from 'react-native-date-picker';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const RegistrationView = observer(() => {
-    const { t, colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
-    const { email, phone, isError, onChangeEmail, onChangePhone, clearPhone, handleNext, onChangeCountryCode,
-        onChangeCountry, country, isDisabled, isLoading, handleRetry } = useRegistration();
+    const { t, colors, locale, theme } = useUiContext();
+    const { bottom } = useSafeAreaInsets();
+    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
+    const {
+        email,
+        phone,
+        isError,
+        onChangeEmail,
+        onChangePhone,
+        clearPhone,
+        onNext,
+        onChangeCountryCode,
+        onChangeCountry,
+        country,
+        isDisabled,
+        isLoading,
+        onRetry,
+        birthday,
+        onChangeBirthday,
+        maximumBirthdayDate,
+    } = useRegistration();
+    const {
+        onPress: onBirthdayPress,
+        isOpened,
+        pickerDate,
+        setPickerDate,
+        scrollRef,
+    } = useBirthdaySelector(onChangeBirthday);
+    const isCreator = registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR;
+    const bottomInset = useMemo(() => ({ paddingBottom: isOpened ? 0 : bottom }), [bottom, isOpened]);
 
     return (
         <WithErrorHandler
             error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null}
-            onRetry={handleRetry}
+            onRetry={onRetry}
         >
-            <ScreenContainer edges={['top', 'bottom']} headerComponent={<HeaderWithBackButton />} isKeyboardAvoiding scrollEnabled>
-                <View style={styles.container}>
+            <ScreenContainer
+                edges={['top']}
+                headerComponent={<HeaderWithBackButton />}
+                isKeyboardAvoiding
+                scrollEnabled
+                scrollRef={scrollRef}
+            >
+                <View style={[styles.container, bottomInset]}>
                     <View style={styles.mainContainer}>
                         <Typography text={t('registration.getStarted')} variant="h3" style={styles.title} />
                         <Typography
@@ -55,15 +92,26 @@ export const RegistrationView = observer(() => {
                                     containerStyle={styles.input}
                                     error={isError.status}
                                 />
-                                {isError.status && <Warning warningText={isError.errorText} />}
+                                {!isCreator && isError.status && <Warning warningText={isError.errorText} />}
                             </View>
                             <CountrySelector country={country} onChangeCountry={onChangeCountry} />
+                            {isCreator && (
+                                <View>
+                                    <BirthdaySelector
+                                        date={birthday}
+                                        onPress={onBirthdayPress}
+                                        isOpened={isOpened}
+                                        isError={isError.status}
+                                    />
+                                    {isError.status && <Warning warningText={isError.errorText} />}
+                                </View>
+                            )}
                         </View>
                     </View>
                     <View style={styles.footer}>
                         <Button
                             text={t('common.continue')}
-                            onPress={handleNext}
+                            onPress={onNext}
                             type="secondary"
                             disabled={isDisabled}
                             inProgress={isLoading}
@@ -71,6 +119,21 @@ export const RegistrationView = observer(() => {
                         <SignInFooter />
                     </View>
                 </View>
+                {isOpened && (
+                    <>
+                        <View style={styles.pickerWrapper}>
+                            <DatePicker
+                                locale={locale}
+                                mode="date"
+                                date={pickerDate}
+                                onDateChange={setPickerDate}
+                                maximumDate={maximumBirthdayDate}
+                                theme={theme}
+                            />
+                        </View>
+                        <Pressable style={styles.backdrop} onPress={onBirthdayPress} />
+                    </>
+                )}
             </ScreenContainer>
         </WithErrorHandler>
     );

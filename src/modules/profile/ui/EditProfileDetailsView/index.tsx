@@ -99,22 +99,14 @@ export const EditProfileDetailsView = () => {
 
     if (!isDeferredContentReady) {
         return (
-            <ScreenContainer
-                edges={['top', 'bottom']}
-                withGradient
-                headerComponent={headerComponent}
-            >
+            <ScreenContainer edges={['top', 'bottom']} withGradient headerComponent={headerComponent}>
                 <Loader />
             </ScreenContainer>
         );
     }
 
     return (
-        <ScreenContainer
-            edges={['top', 'bottom']}
-            withGradient
-            headerComponent={headerComponent}
-        >
+        <ScreenContainer edges={['top', 'bottom']} withGradient headerComponent={headerComponent}>
             <View style={styles.container}>
                 <KeyboardAwareScrollView
                     style={styles.scroll}
@@ -205,7 +197,7 @@ export const EditProfileDetailsView = () => {
                         <View style={styles.input}>
                             <BirthdaySelector
                                 date={form.birthday}
-                                handlePress={onOpenBirthdayModal}
+                                onPress={onOpenBirthdayModal}
                                 isOpened={isBirthdayModalVisible}
                                 isError={false}
                                 displayText={birthdayDisplayText}

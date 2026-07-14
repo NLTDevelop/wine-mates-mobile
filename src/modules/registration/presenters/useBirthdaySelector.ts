@@ -22,12 +22,16 @@ export const useBirthdaySelector = (onChangeBirthdayDate: (dateISO: string) => v
             const isoString = date.toISOString();
             onChangeBirthdayDate(isoString);
         },
-        [onChangeBirthdayDate]
+        [onChangeBirthdayDate],
     );
 
-    const handlePress = useCallback(() => {
+    const onPress = useCallback(() => {
         setIsOpened(prev => !prev);
     }, []);
 
-    return { handlePress, isOpened, pickerDate, setPickerDate, scrollRef };
+    const onInputFocus = useCallback(() => {
+        setIsOpened(false);
+    }, []);
+
+    return { onPress, onInputFocus, isOpened, pickerDate, setPickerDate, scrollRef };
 };

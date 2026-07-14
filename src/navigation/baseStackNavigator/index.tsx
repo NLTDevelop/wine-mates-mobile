@@ -10,6 +10,7 @@ import { MyLevelView } from '@/modules/registration/ui/MyLevelView';
 import { RegistrationView } from '@/modules/registration/ui/RegistrationView';
 import { TabNavigator } from '../tabNavigator';
 import { PersonalDetailsView } from '@/modules/registration/ui/PersonalDetailsView';
+import { WineryDetailsView } from '@/modules/registration/ui/WineryDetailsView';
 import { CreatePasswordView } from '@/modules/registration/ui/CreatePasswordView';
 import { WineLookView } from '@/modules/scanner/ui/WineLookView';
 import { WineSmellView } from '@/modules/scanner/ui/WineSmellView';
@@ -42,6 +43,7 @@ import { ContactInfoView } from '@/modules/contactInfo/ui/ContactInfoView';
 import { CreatePaymentView } from '@/modules/payments/ui/CreatePaymentView';
 import { ChooseWineFiltersView } from '@/modules/chooseWine/ui/ChooseWineFiltersView';
 import { ChooseWineResultsView } from '@/modules/chooseWine/ui/ChooseWineResultsView';
+import { NotificationsView } from '@/modules/notifications/ui/NotificationsView';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,6 +59,7 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="MyLevelView" component={MyLevelView} />
             <Stack.Screen name="RegistrationView" component={RegistrationView} />
             <Stack.Screen name="PersonalDetailsView" component={PersonalDetailsView} />
+            <Stack.Screen name="WineryDetailsView" component={WineryDetailsView} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
             <Stack.Screen name="AddEventView" component={AddEventView} />
             <Stack.Screen name="AddWineSetView" component={AddWineSetView} />
@@ -98,6 +101,7 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="ContactInfoView" component={ContactInfoView} />
             <Stack.Screen name="ChooseWineFiltersView" component={ChooseWineFiltersView} options={{ gestureEnabled: false }}/>
             <Stack.Screen name="ChooseWineResultsView" component={ChooseWineResultsView} />
+            <Stack.Screen name="NotificationsView" component={NotificationsView} />
         </Stack.Navigator>
     );
 });

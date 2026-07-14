@@ -6,6 +6,7 @@ import { ResetPasswordRequestDto } from './dto/ResetPasswordRequest.dto';
 import { ResetPasswordVerifyDto } from './dto/ResetPasswordVerify.dto';
 import { ResetPasswordConfirmDto } from './dto/ResetPasswordConfirm.dto';
 import { IRegisterUser } from './types/IRegisterUser';
+import { IRegisterWineryUser } from './types/IRegisterWineryUser';
 import { ProvidersSignIn } from './dto/ProvidersSignIn.dto';
 import { localization } from '@/UIProvider/localization/Localization';
 import { EmailValidation } from './dto/EmailValidation.dto';
@@ -61,6 +62,7 @@ class UserService {
                 const user = this.extractUser(response.data);
                 if (user) {
                     userModel.user = user;
+                    userModel.winery = response.data.winery;
                     this.syncUserLanguage(user);
                 }
             }
@@ -155,6 +157,26 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> signUp: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    signUpWinery = async (body: IRegisterWineryUser): Promise<IResponse<IUserData>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.wineries}/register`,
+                data: body,
+            });
+
+            if (!response.isError) {
+                userModel.token = response.data?.accessToken;
+                userModel.user = response.data?.user;
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> signUpWinery: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

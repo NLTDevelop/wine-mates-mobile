@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useIsFocused } from '@react-navigation/native';
 import { Camera } from 'react-native-vision-camera';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { FlashActiveIcon } from '@assets/icons/FlashActiveIcon';
@@ -16,22 +15,18 @@ export const ScannerView = () => {
     const { colors } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, top, bottom), [colors, top, bottom]);
-    const isFocused = useIsFocused();
-
-    const { appState, torch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress, cameraRef,
-        device, hasPermission } = useScanner();
-    const torchMode = isFocused && appState === 'active' ? torch : 'off';
+    const { torch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress,
+        device, cameraOutputs, isCameraActive, torchMode, hasPermission } = useScanner();
 
     return (
         <View style={styles.container}>
             {!hasPermission || !device ? null : (
                 <>
                     <Camera
-                        ref={cameraRef}
-                        isActive={isFocused && appState === 'active'}
+                        isActive={isCameraActive}
                         device={device}
-                        torch={torchMode}
-                        photo
+                        outputs={cameraOutputs}
+                        torchMode={torchMode}
                         style={StyleSheet.absoluteFill}
                     />
                     <View style={styles.topBar}>
