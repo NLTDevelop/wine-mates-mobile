@@ -7,11 +7,11 @@ import { Typography } from '@/UIKit/Typography';
 import { IProps } from './types/IProps';
 import { useNotificationBadge } from './presenters/useNotificationBadge';
 
-const NotificationBadgeComponent = ({ count = 0, onPress }: IProps) => {
+const NotificationBadgeComponent = ({ onPress }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { showBadge, displayCount } = useNotificationBadge(count);
+    const { showBadge, displayCount } = useNotificationBadge();
 
     return (
         <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={styles.container}>

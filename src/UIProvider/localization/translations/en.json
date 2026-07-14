@@ -128,7 +128,7 @@
         "myLevelDescription": "Pick your role in the wine world and connect with those who share your passion",
         "wineLover": "Wine lover",
         "wineExpert": "Wine pro",
-        "winemaker": "Winemaker",
+        "winemaker": "Winery",
         "getStarted": "Let’s get started",
         "email": "E-mail",
         "mobileNumber": "Mobile number",
@@ -151,12 +151,18 @@
         "gender": "Gender",
         "genderMale": "Male",
         "genderFemale": "Female",
-        "placeOfWork": "Place of work"
+        "placeOfWork": "Place of work",
+        "wineryDetails": "Winery details",
+        "foundedYear": "Founded year",
+        "foundedYearError": "Enter a valid founded year.",
+        "wineryDescription": "Winery description",
+        "region": "Region",
+        "wineryLinks": "Links, separated by a comma or a new line"
     },
     "wineLevel": {
         "lover": "Wine lover",
         "expert": "Wine pro",
-        "creator": "Winemaker"
+        "creator": "Winery"
     },
     "muse": {
         "none": "None",

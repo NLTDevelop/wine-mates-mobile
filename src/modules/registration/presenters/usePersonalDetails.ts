@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { localization } from '@/UIProvider/localization/Localization';
 import { registerUserModel } from '@/entities/users/RegisterUserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 
 const MIN_AGE = 18;
 
@@ -14,9 +15,8 @@ export const usePersonalDetails = () => {
         lastName: registerUserModel.user?.lastName || '',
         birthday: registerUserModel.user?.birthday || '',
         occupation: registerUserModel.user?.occupation || '',
-        wineryName: registerUserModel.user?.wineryName || '',
         instagramLink: registerUserModel.user?.instagramLink || '',
-        placeOfWork:  registerUserModel.user?.placeOfWork || '',
+        placeOfWork: registerUserModel.user?.placeOfWork || '',
         gender: registerUserModel.user?.gender || '',
     });
     const [isError, setIsError] = useState({ status: false, errorText: '' });
@@ -24,14 +24,11 @@ export const usePersonalDetails = () => {
         const baseRequired = [form.firstName, form.lastName, form.birthday, form.gender];
         const hasEmptyBase = baseRequired.some(field => !field.trim());
         const level = registerUserModel.user?.wineExperienceLevel;
-        const requiresOccupation =
-            level === WineExperienceLevelEnum.EXPERT && !form.occupation.trim();
-        const requiresWineryName =
-            level === WineExperienceLevelEnum.CREATOR && !form.wineryName.trim();
-        const expertRequires = 
+        const requiresOccupation = level === WineExperienceLevelEnum.EXPERT && !form.occupation.trim();
+        const expertRequires =
             level !== WineExperienceLevelEnum.LOVER && !form.placeOfWork.trim() && !form.instagramLink.trim();
 
-        return hasEmptyBase || requiresOccupation || requiresWineryName || expertRequires || isError.status;
+        return hasEmptyBase || requiresOccupation || expertRequires || isError.status;
     }, [form, isError]);
 
     const onChangeFirstName = useCallback((value: string) => {
@@ -54,27 +51,22 @@ export const usePersonalDetails = () => {
         setIsError({ status: false, errorText: '' });
     }, []);
 
-    const onChangeWineryName = useCallback((value: string) => {
-        setForm(prev => ({ ...prev, wineryName: value || '' }));
-        setIsError({ status: false, errorText: '' });
-    }, []);
-
-    const onChangeInstagramLink =  useCallback((value: string) => {
+    const onChangeInstagramLink = useCallback((value: string) => {
         setForm(prev => ({ ...prev, instagramLink: value || '' }));
         setIsError({ status: false, errorText: '' });
     }, []);
 
-    const onChangeGender =  useCallback((value: string) => {
-        setForm(prev => ({ ...prev, gender: value || '' }));
+    const onChangeGender = useCallback((item: IDropdownItem) => {
+        setForm(prev => ({ ...prev, gender: item.value?.toString() || '' }));
         setIsError({ status: false, errorText: '' });
     }, []);
 
-    const onChangePlaceOfWork =  useCallback((value: string) => {
+    const onChangePlaceOfWork = useCallback((value: string) => {
         setForm(prev => ({ ...prev, placeOfWork: value || '' }));
         setIsError({ status: false, errorText: '' });
     }, []);
 
-    const handleNextPress = useCallback(async () => {
+    const onNextPress = useCallback(async () => {
         if (!registerUserModel.user) return;
 
         const birthdayDate = new Date(form.birthday);
@@ -95,7 +87,7 @@ export const usePersonalDetails = () => {
             lastName: form.lastName.trim(),
             birthday: form.birthday,
             gender: form.gender,
-        }
+        };
 
         if (registerUserModel.user.wineExperienceLevel === WineExperienceLevelEnum.EXPERT) {
             registerUserModel.user = {
@@ -103,23 +95,23 @@ export const usePersonalDetails = () => {
                 occupation: form.occupation.trim(),
                 placeOfWork: form.placeOfWork.trim(),
                 instagramLink: form.instagramLink.trim(),
-            }
-        }
-
-        if (registerUserModel.user.wineExperienceLevel === WineExperienceLevelEnum.CREATOR) {
-            registerUserModel.user = {
-                ...registerUserModel.user,
-                wineryName: form.wineryName.trim(),
-                placeOfWork: form.placeOfWork.trim(),
-                instagramLink: form.instagramLink.trim(),
-            }
+            };
         }
 
         navigation.navigate('CreatePasswordView');
     }, [navigation, form]);
 
-    return { 
-        form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
-        isError, isDisabled, onChangeInstagramLink, onChangeGender, onChangePlaceOfWork
+    return {
+        form,
+        onChangeFirstName,
+        onChangeLastName,
+        onChangeBirthday,
+        onChangeOccupation,
+        onNextPress,
+        isError,
+        isDisabled,
+        onChangeInstagramLink,
+        onChangeGender,
+        onChangePlaceOfWork,
     };
 };

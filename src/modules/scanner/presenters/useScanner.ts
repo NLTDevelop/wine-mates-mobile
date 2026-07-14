@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppState } from '@react-native-community/hooks';
 import { StackActions, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { BackHandler } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { Camera, PhotoFile, TakePhotoOptions, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
+import { useCameraDevice, useCameraPermission, usePhotoOutput } from 'react-native-vision-camera';
 import ImageResizer from 'react-native-image-resizer';
 import { IWineImage } from '@/entities/wine/types/IWineImage';
 import { isAndroid } from '@/utils';
@@ -15,10 +15,13 @@ export const useScanner = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const appState = useAppState();
     const isFocused = useIsFocused();
-    const cameraRef = useRef<Camera>(null);
     const [torch, setTorch] = useState<'on' | 'off'>('off');
     const { hasPermission, requestPermission } = useCameraPermission();
     const device = useCameraDevice('back');
+    const photoOutput = usePhotoOutput({ quality: 1, qualityPrioritization: 'quality' });
+    const cameraOutputs = useMemo(() => [photoOutput], [photoOutput]);
+    const isCameraActive = isFocused && appState === 'active';
+    const torchMode = isCameraActive ? torch : 'off';
 
     const prepareImage = async ({ uri, name, type, width, height, shouldResize }: { uri: string; name?: string | null; type?: string | null; width?: number; height?: number; shouldResize?: boolean }): Promise<IWineImage> => {
         const normalizedUri = uri.startsWith('file://') ? uri : `file://${uri}`;
@@ -96,23 +99,21 @@ export const useScanner = () => {
 
     const onTakePhotoPress = async () => {
         try {
-            const options: TakePhotoOptions & { qualityPrioritization?: 'speed' | 'balanced' | 'quality' } = {
-                flash: torch === 'on' ? 'on' : 'off',
-                qualityPrioritization: 'quality',
-            };
+            const photo = await photoOutput.capturePhoto({ flashMode: torch === 'on' ? 'on' : 'off' }, {});
 
-            const photo = await cameraRef.current?.takePhoto(options);
-
-            if (photo?.path) {
+            try {
+                const photoPath = await photo.saveToTemporaryFileAsync();
                 wineModel.image = await prepareImage({
-                    uri: photo.path,
-                    name: photo.path.split('/').pop(),
-                    type: (photo as PhotoFile & { mimeType?: string }).mimeType || 'image/jpeg',
+                    uri: photoPath,
+                    name: photoPath.split('/').pop(),
+                    type: 'image/jpeg',
                     width: photo.width,
                     height: photo.height,
                     shouldResize: true,
                 });
                 navigation.navigate('ScanResultsListView');
+            } finally {
+                photo.dispose();
             }
         } catch (error) {
             console.error('❌ Error taking photo:', JSON.stringify(error, null, 2));
@@ -163,7 +164,7 @@ export const useScanner = () => {
     }, []);
 
     return {
-        appState, torch, setTorch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress, cameraRef,
-        device, hasPermission, 
+        torch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress,
+        device, cameraOutputs, isCameraActive, torchMode, hasPermission,
     };
 };

@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors, bottomInset: number) => {
+export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -28,30 +28,13 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
         input: {
             marginBottom: 0,
         },
+        inputMultiline: {
+            minHeight: scaleVertical(170),
+        },
         footer: {
             gap: scaleVertical(24),
         },
-        contentContainer: {
-            flex: 1,
-            alignItems: 'center',
-        },
-        backdrop: {
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0)',
-            zIndex: 20,
-        },
-        pickerWrapper: {
-            width: '100%',
-            backgroundColor: colors.background_grey,
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingBottom: bottomInset,
-            zIndex: 21,
-        },
     });
+
     return styles;
 };

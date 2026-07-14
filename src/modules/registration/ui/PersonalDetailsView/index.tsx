@@ -24,18 +24,36 @@ export const PersonalDetailsView = observer(() => {
     const { t, colors, locale, theme } = useUiContext();
     const { bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
-    const genderOptions = useMemo<IDropdownItem[]>(() => ([
-        { label: t('registration.genderMale'), value: 'male' },
-        { label: t('registration.genderFemale'), value: 'female' },
-    ]), [t]);
-
-    const { form, onChangeFirstName, onChangeLastName, onChangeBirthday, onChangeOccupation, handleNextPress, onChangeWineryName,
-        isError, isDisabled, onChangeInstagramLink, onChangeGender, onChangePlaceOfWork } = usePersonalDetails();
-    const { handlePress, isOpened, pickerDate, setPickerDate, scrollRef } =  useBirthdaySelector(onChangeBirthday);
-    const bottomInset = useMemo(
-        () => ({ paddingBottom: isOpened ? 0 : bottom }),
-        [bottom, isOpened],
+    const genderOptions = useMemo<IDropdownItem[]>(
+        () => [
+            { label: t('registration.genderMale'), value: 'male' },
+            { label: t('registration.genderFemale'), value: 'female' },
+        ],
+        [t],
     );
+
+    const {
+        form,
+        onChangeFirstName,
+        onChangeLastName,
+        onChangeBirthday,
+        onChangeOccupation,
+        onNextPress,
+        isError,
+        isDisabled,
+        onChangeInstagramLink,
+        onChangeGender,
+        onChangePlaceOfWork,
+    } = usePersonalDetails();
+    const {
+        onPress: onBirthdayPress,
+        onInputFocus,
+        isOpened,
+        pickerDate,
+        setPickerDate,
+        scrollRef,
+    } = useBirthdaySelector(onChangeBirthday);
+    const bottomInset = useMemo(() => ({ paddingBottom: isOpened ? 0 : bottom }), [bottom, isOpened]);
 
     return (
         <ScreenContainer
@@ -61,7 +79,7 @@ export const PersonalDetailsView = observer(() => {
                                 onChangeText={onChangeFirstName}
                                 placeholder={t('registration.firstName')}
                                 containerStyle={styles.input}
-                                onFocus={() => isOpened && handlePress()}
+                                onFocus={onInputFocus}
                             />
                             <Typography
                                 variant="subtitle_12_400"
@@ -75,12 +93,12 @@ export const PersonalDetailsView = observer(() => {
                             onChangeText={onChangeLastName}
                             placeholder={t('registration.lastName')}
                             containerStyle={styles.input}
-                            onFocus={() => isOpened && handlePress()}
+                            onFocus={onInputFocus}
                         />
                         <View>
                             <BirthdaySelector
                                 date={form.birthday}
-                                handlePress={handlePress}
+                                onPress={onBirthdayPress}
                                 isOpened={isOpened}
                                 isError={isError.status}
                             />
@@ -89,7 +107,7 @@ export const PersonalDetailsView = observer(() => {
                         <CustomDropdown
                             data={genderOptions}
                             placeholder={t('registration.gender')}
-                            onPress={(item) => onChangeGender(item.value)}
+                            onPress={onChangeGender}
                             selectedValue={form.gender}
                             containerStyle={styles.input}
                         />
@@ -100,17 +118,7 @@ export const PersonalDetailsView = observer(() => {
                                 onChangeText={onChangeOccupation}
                                 placeholder={t('registration.occupation')}
                                 containerStyle={styles.input}
-                                onFocus={() => isOpened && handlePress()}
-                            />
-                        )}
-                        {registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR && (
-                            <CustomInput
-                                autoCapitalize="none"
-                                value={form.wineryName}
-                                onChangeText={onChangeWineryName}
-                                placeholder={t('registration.wineryName')}
-                                containerStyle={styles.input}
-                                onFocus={() => isOpened && handlePress()}
+                                onFocus={onInputFocus}
                             />
                         )}
                         {registerUserModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
@@ -120,7 +128,7 @@ export const PersonalDetailsView = observer(() => {
                                 onChangeText={onChangeInstagramLink}
                                 placeholder={t('registration.instagramLink')}
                                 containerStyle={styles.input}
-                                onFocus={() => isOpened && handlePress()}
+                                onFocus={onInputFocus}
                             />
                         )}
                         {registerUserModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
@@ -130,18 +138,13 @@ export const PersonalDetailsView = observer(() => {
                                 onChangeText={onChangePlaceOfWork}
                                 placeholder={t('registration.placeOfWork')}
                                 containerStyle={styles.input}
-                                onFocus={() => isOpened && handlePress()}
+                                onFocus={onInputFocus}
                             />
                         )}
                     </View>
                 </View>
                 <View style={styles.footer}>
-                    <Button
-                        text={t('common.continue')}
-                        onPress={handleNextPress}
-                        type="secondary"
-                        disabled={isDisabled}
-                    />
+                    <Button text={t('common.continue')} onPress={onNextPress} type="secondary" disabled={isDisabled} />
                     <SignInFooter />
                 </View>
             </View>
@@ -156,7 +159,7 @@ export const PersonalDetailsView = observer(() => {
                             theme={theme}
                         />
                     </View>
-                    <Pressable style={styles.backdrop} onPress={handlePress} />
+                    <Pressable style={styles.backdrop} onPress={onBirthdayPress} />
                 </>
             )}
         </ScreenContainer>

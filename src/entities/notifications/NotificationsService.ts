@@ -41,20 +41,6 @@ class NotificationsService {
         return response;
     };
 
-    getCount = async (): Promise<IResponse<IList<IClientNotification>>> => {
-        const response = await this._requester.request({
-            method: 'GET',
-            url: this._links.notifications,
-            params: { limit: 1, offset: 0 },
-        });
-
-        if (!response.isError && response.data) {
-            notificationsModel.notificationsCount = response.data.count;
-        }
-
-        return response;
-    };
-
     read = (id: number): Promise<IResponse<{}>> => {
         return this._requester.request({
             method: 'PATCH',

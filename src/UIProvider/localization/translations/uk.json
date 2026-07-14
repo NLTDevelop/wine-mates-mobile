@@ -128,7 +128,7 @@
         "myLevelDescription": "Оберіть свою роль у світі вина та спілкуйтеся з тими, хто поділяє вашу пристрасть",
         "wineLover": "Любитель вина",
         "wineExpert": "Винний профі",
-        "winemaker": "Винороб",
+        "winemaker": "Виноробня",
         "getStarted": "Давайте почнемо",
         "email": "Електронна пошта",
         "mobileNumber": "Номер телефону",
@@ -151,12 +151,18 @@
         "gender": "Стать",
         "genderMale": "Чоловіча",
         "genderFemale": "Жіноча",
-        "placeOfWork": "Місце роботи"
+        "placeOfWork": "Місце роботи",
+        "wineryDetails": "Дані виноробні",
+        "foundedYear": "Рік заснування",
+        "foundedYearError": "Вкажіть коректний рік заснування.",
+        "wineryDescription": "Опис виноробні",
+        "region": "Регіон",
+        "wineryLinks": "Посилання через кому або з нового рядка"
     },
     "wineLevel": {
         "lover": "Любитель вина",
         "expert": "Винний профі",
-        "creator": "Винороб"
+        "creator": "Виноробня"
     },
     "muse": {
         "none": "Відсутній",

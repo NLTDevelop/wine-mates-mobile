@@ -34,7 +34,7 @@ export const NotificationListItem = ({ item }: IProps) => {
 
     return (
         <SwipeableRow containerStyle={styles.swipeContainer} renderRightActions={renderRightActions} overshootRight={false}>
-            <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.4}>
+            <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={1}>
                 <Image source={require('@assets/images/app_icon.png')} style={styles.appIcon} />
                 <View style={styles.content}>
                     <Typography text={item.title} variant="body_500" style={styles.title} numberOfLines={2} />

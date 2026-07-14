@@ -74,6 +74,8 @@ export interface ILinks {
     eventTastingSaveDraft: string;
     userLocation: string;
     notifications: string;
+    notificationsSocket: string;
+    wineries: string;
 }
 
 class Links implements ILinks {
@@ -139,6 +141,7 @@ class Links implements ILinks {
         eventTastingSaveDraft: 'event-tasting/save-draft',
         userLocation: 'users/location',
         notifications: 'notifications',
+        wineries: 'wineries'
     };
 
     private buildDomain() {
@@ -335,6 +338,13 @@ class Links implements ILinks {
     }
     public get notifications() {
         return `${this._domain}${this._links.notifications}`;
+    }
+    public get wineries() {
+        return `${this._domain}${this._links.wineries}`;
+    }
+
+    public get notificationsSocket() {
+        return `${this._domain.replace(/\/api\/v1\/?$/, '')}/notifications`;
     }
 }
 

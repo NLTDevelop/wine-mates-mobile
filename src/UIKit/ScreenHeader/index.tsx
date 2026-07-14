@@ -16,7 +16,6 @@ export const ScreenHeader = observer(() => {
         avatarUrl,
         fullname,
         greeting,
-        notificationsCount,
         onProfilePress,
         onNotificationsPress,
     } = useScreenHeader();
@@ -34,7 +33,7 @@ export const ScreenHeader = observer(() => {
                     <NextArrowIcon height={20} width={20} color={colors.text} />
                 </View>
             </TouchableOpacity>
-            <NotificationBadge count={notificationsCount} onPress={onNotificationsPress} />
+            <NotificationBadge onPress={onNotificationsPress} />
         </View>
     );
 });

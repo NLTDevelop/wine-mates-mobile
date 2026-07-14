@@ -6,6 +6,7 @@ import { userService } from '@/entities/users/UserService';
 import { toastService } from '@/libs/toast/toastService';
 import { registerUserModel } from '@/entities/users/RegisterUserModel';
 import { completeAuthorization } from '@/modules/authentication/presenters/completeAuthorization';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 export const useCreatePassword = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -61,7 +62,20 @@ export const useCreatePassword = () => {
                 password: form.password,
             };
 
-            const response = await userService.signUp(payload);
+            const isWineryRegistration =
+                payload.wineExperienceLevel === WineExperienceLevelEnum.CREATOR && payload.winery;
+            const response = isWineryRegistration
+                ? await userService.signUpWinery({
+                      user: {
+                          email: payload.email,
+                          password: payload.password,
+                          phoneNumber: payload.phoneNumber,
+                          country: payload.country,
+                          birthday: payload.birthday,
+                      },
+                      winery: payload.winery,
+                  })
+                : await userService.signUp(payload);
 
             if (response.isError) {
                 if (response.message) {

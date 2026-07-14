@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useAppState } from '@react-native-community/hooks';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Camera, TakePhotoOptions, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
+import { useCameraDevice, useCameraPermission, usePhotoOutput } from 'react-native-vision-camera';
+import type { CameraPosition } from 'react-native-vision-camera';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { useUiContext } from '@/UIProvider';
 import { isAndroid } from '@/utils';
@@ -13,19 +14,19 @@ interface IAvatarImage {
     type: string;
 }
 
-type CameraPosition = 'front' | 'back';
-
 export const useAvatarCamera = (targetSize: number) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { colors } = useUiContext();
     const appState = useAppState();
-    useIsFocused();
-    const cameraRef = useRef<Camera>(null);
+    const isFocused = useIsFocused();
     const [cameraPosition, setCameraPosition] = useState<CameraPosition>('front');
     const { hasPermission, requestPermission } = useCameraPermission();
     const device = useCameraDevice(cameraPosition);
     const backDevice = useCameraDevice('back');
     const frontDevice = useCameraDevice('front');
+    const photoOutput = usePhotoOutput({ quality: 1, qualityPrioritization: 'quality' });
+    const cameraOutputs = useMemo(() => [photoOutput], [photoOutput]);
+    const isCameraActive = isFocused && appState === 'active';
 
     const cropperConfig = useMemo(() => ({
         width: Math.round(targetSize),
@@ -70,18 +71,14 @@ export const useAvatarCamera = (targetSize: number) => {
 
     const onTakePhotoPress = async () => {
         try {
-            const options: TakePhotoOptions & { qualityPrioritization?: 'speed' | 'balanced' | 'quality' } = {
-                flash: 'off',
-                qualityPrioritization: 'quality',
-            };
+            const photo = await photoOutput.capturePhoto({ flashMode: 'off' }, {});
 
-            const photo = await cameraRef.current?.takePhoto(options);
-
-            if (photo?.path) {
-                const photoPath = photo.path.startsWith('file://') ? photo.path : `file://${photo.path}`;
+            try {
+                const photoPath = await photo.saveToTemporaryFileAsync();
+                const normalizedPhotoPath = photoPath.startsWith('file://') ? photoPath : `file://${photoPath}`;
                 
                 const croppedImage = await ImageCropPicker.openCropper({
-                    path: photoPath,
+                    path: normalizedPhotoPath,
                     ...cropperConfig,
                 });
 
@@ -96,6 +93,8 @@ export const useAvatarCamera = (targetSize: number) => {
                 setTimeout(() => {
                     navigation.navigate('EditProfileDetailsView', { selectedAvatar: avatarImage });
                 }, 0);
+            } finally {
+                photo.dispose();
             }
         } catch (error) {
             console.error('Error taking photo or cropping:', error);
@@ -116,8 +115,9 @@ export const useAvatarCamera = (targetSize: number) => {
         onTakePhotoPress,
         onCrossPress,
         onSwitchCamera,
-        cameraRef,
         device,
+        cameraOutputs,
+        isCameraActive,
         hasPermission,
         hasBothCameras: !!frontDevice && !!backDevice,
     };

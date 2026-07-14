@@ -1,17 +1,9 @@
 import { useCallback } from 'react';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { notificationsModel } from '@/entities/notifications/NotificationsModel';
-import { notificationsService } from '@/entities/notifications/NotificationsService';
+import { useNavigation } from '@react-navigation/native';
 import { userModel } from '@/entities/users/UserModel';
 
 export const useScreenHeader = () => {
     const navigation = useNavigation<any>();
-
-    useFocusEffect(
-        useCallback(() => {
-            notificationsService.getCount();
-        }, []),
-    );
 
     const onProfilePress = useCallback(() => {
         navigation.navigate('ProfileDetailsView');
@@ -29,7 +21,6 @@ export const useScreenHeader = () => {
         avatarUrl: userModel.user?.avatarUrl ?? null,
         fullname,
         greeting,
-        notificationsCount: notificationsModel.notificationsCount,
         onProfilePress,
         onNotificationsPress,
     };
