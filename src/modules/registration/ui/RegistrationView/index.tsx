@@ -101,7 +101,7 @@ export const RegistrationView = observer(() => {
                                         date={birthday}
                                         onPress={onBirthdayPress}
                                         isOpened={isOpened}
-                                        isError={isError.status}
+                                        isError={false}
                                     />
                                     {isError.status && <Warning warningText={isError.errorText} />}
                                 </View>

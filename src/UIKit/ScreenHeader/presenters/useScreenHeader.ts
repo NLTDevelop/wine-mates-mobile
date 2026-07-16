@@ -6,7 +6,7 @@ export const useScreenHeader = () => {
     const navigation = useNavigation<any>();
 
     const onProfilePress = useCallback(() => {
-        navigation.navigate('ProfileDetailsView');
+        navigation.navigate(userModel.winery ? 'WineryProfileDetailsView' : 'ProfileDetailsView');
     }, [navigation]);
 
     const onNotificationsPress = useCallback(() => {

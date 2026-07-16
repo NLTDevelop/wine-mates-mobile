@@ -15,6 +15,7 @@ import { IUser } from './types/IUser';
 import { IUserCurrency } from './types/IUserCurrency';
 import { IUserCurrencies } from './types/IUserCurrencies';
 import { LocationDto } from './dto/Location.dto';
+import { IWinery } from '@/entities/winery/types/IWinery';
 
 class UserService {
     constructor(
@@ -269,6 +270,31 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> update: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    updateWinery = async (formData: FormData): Promise<IResponse<IWinery>> => {
+        const wineryId = userModel.winery?.id;
+        if (!wineryId) {
+            return { isError: true, data: null, message: '' } as any;
+        }
+
+        try {
+            const response = await this._requester.request({
+                method: 'PATCH',
+                url: `${this._links.wineryUpdate}/${wineryId}`,
+                data: formData,
+            });
+
+            if (!response.isError && response.data) {
+                const responseData = response.data as IWinery & { winery?: IWinery };
+                userModel.winery = responseData.winery || responseData;
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> updateWinery: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

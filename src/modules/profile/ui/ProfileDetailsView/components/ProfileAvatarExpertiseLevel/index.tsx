@@ -10,7 +10,7 @@ import { WineExpertIcon } from '@assets/icons/WineExpertIcon';
 import { WinemakerIcon } from '@assets/icons/WinemakerIcon';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
-const EXPERTISE_SIZE = scaleHorizontal(16);
+const EXPERTISE_SIZE = scaleHorizontal(24);
 
 interface IProps {
     avatarUrl: string | null;
@@ -25,9 +25,9 @@ const ProfileAvatarExpertiseLevelComponent = ({ avatarUrl, fullName, expertiseLa
 
     return (
         <View style={styles.container}>
-            <Avatar size={72} avatarUrl={avatarUrl} fullname={fullName} />
+            <Avatar size={120} avatarUrl={avatarUrl} fullname={fullName} />
             <View style={styles.roleContainer}>
-                <Typography text={expertiseLabel} variant="subtitle_12_500" style={styles.roleText} />
+                <Typography text={expertiseLabel} variant="body_500" style={styles.roleText} />
                 {expertiseLevel === WineExperienceLevelEnum.LOVER && (
                     <WineLoverIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />
                 )}

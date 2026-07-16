@@ -1,4 +1,5 @@
 export interface IMedia {
+    id?: number;
     name: string;
     originalName: string;
     mimetype: string;

@@ -31,6 +31,8 @@ import { TastingWineDetailsView } from '@/modules/wine/ui/TastingWineDetailsView
 import { DeleteAccountView } from '@/modules/settings/ui/DeleteAccountView';
 import { ProfileDetailsView } from '@/modules/profile/ui/ProfileDetailsView';
 import { EditProfileDetailsView } from '@/modules/profile/ui/EditProfileDetailsView';
+import { WineryProfileDetailsView } from '@/modules/profile/ui/WineryProfileDetailsView';
+import { EditWineryProfileDetailsView } from '@/modules/profile/ui/EditWineryProfileDetailsView';
 import { AvatarCameraView } from '@/UIKit/AvatarPicker/ui/AvatarCameraView';
 import { AddEventView } from '@/modules/event/ui/AddEventView';
 import { AddWineSetView } from '@/modules/event/ui/AddWineSetView';
@@ -93,6 +95,8 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="DeleteAccountView" component={DeleteAccountView} />
             <Stack.Screen name="ProfileDetailsView" component={ProfileDetailsView} />
             <Stack.Screen name="EditProfileDetailsView" component={EditProfileDetailsView} />
+            <Stack.Screen name="WineryProfileDetailsView" component={WineryProfileDetailsView} />
+            <Stack.Screen name="EditWineryProfileDetailsView" component={EditWineryProfileDetailsView} />
             <Stack.Screen name="AvatarCameraView" component={AvatarCameraView} />
             <Stack.Screen name="EventListView" component={EventListView} />
             <Stack.Screen name="EventDetailsView" component={EventDetailsView} />

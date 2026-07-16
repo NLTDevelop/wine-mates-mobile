@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors.ts';
-import { colorOpacity, scaleHorizontal, scaleVertical } from '@/utils';
+import { colorOpacity, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors, size: number) => {
     const styles = StyleSheet.create({
@@ -29,12 +29,14 @@ export const getStyles = (colors: IColors, size: number) => {
         },
         deleteBadge: {
             position: 'absolute',
-            top: scaleVertical(4),
-            right: scaleHorizontal(16),
-            width: size * 0.35,
-            height: size * 0.35,
-            borderRadius: (size * 0.35) / 2,
+            top: 0,
+            right: 0,
+            width: scaleVertical(24),
+            height: scaleVertical(24),
+            borderRadius: scaleVertical(24) / 2,
             backgroundColor: colors.background,
+            borderWidth: scaleVertical(1),
+            borderColor: colors.border,
             justifyContent: 'center',
             alignItems: 'center',
         },

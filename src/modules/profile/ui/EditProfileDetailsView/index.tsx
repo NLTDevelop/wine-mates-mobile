@@ -11,7 +11,6 @@ import { Typography } from '@/UIKit/Typography';
 import { useEditProfileDetails } from './presenters/useEditProfileDetails';
 import { AvatarPicker } from '@/UIKit/AvatarPicker/ui';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
-import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
 import { BirthdaySelector } from '@/modules/registration/ui/components/BirthdaySelector';
 import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
 import { InstagramIcon } from '@assets/icons/InstagramIcon';
@@ -20,16 +19,14 @@ import { ExpertiseSelectorRow } from './components/ExpertiseSelectorRow';
 import { SelectCityBottomSheet } from './components/SelectCityBottomSheet';
 import { CustomAlert } from '@/UIKit/CustomAlert/ui';
 import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
-import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum.ts';
-import { WineLoverIcon } from '@assets/icons/WineLoverIcon.tsx';
-import { WineExpertIcon } from '@assets/icons/WineExpertIcon.tsx';
-import { WinemakerIcon } from '@assets/icons/WinemakerIcon.tsx';
-import { scaleHorizontal } from '@/utils';
 import { ProfileSelectorRow } from './components/ProfileSelectorRow';
 import { useKeyboardStickyLayout } from '@/hooks/useKeyboardStickyLayout';
 import { Loader } from '@/UIKit/Loader';
+import { ProfileGallery } from '@/modules/profile/ui/components/ProfileGallery';
+import { ProfileFormField } from '@/modules/profile/ui/components/ProfileFormField';
+import { PickerButton } from '@/UIKit/PickerButton';
+import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 
-const EXPERTISE_SIZE = scaleHorizontal(16);
 
 export const EditProfileDetailsView = () => {
     const { colors, t } = useUiContext();
@@ -41,15 +38,13 @@ export const EditProfileDetailsView = () => {
         phoneInitialCca2,
         avatarUrl,
         selectedAvatarUri,
-        hasAvatar,
         isMarkedForDeletion,
         onOpenCamera,
         onRemoveAvatar,
-        onCancelDeletion,
         expertiseLevel,
         birthdayDisplayText,
-        genderOptions,
-        countryOptions,
+        countryPicker,
+        genderPicker,
         cityOptions,
         citySearch,
         cityEmptyStateText,
@@ -58,7 +53,6 @@ export const EditProfileDetailsView = () => {
         onChangeFullName,
         onChangeEmail,
         onChangePhoneNumber,
-        onChangeGender,
         onChangeOccupation,
         currencyPicker,
         isCurrencySelectorDisabled,
@@ -66,10 +60,10 @@ export const EditProfileDetailsView = () => {
         onChangeInstagramLink,
         onChangeWebsite,
         onChangeBio,
-        onChangeCountry,
         cityModalRef,
         onOpenCitySelector,
         onCloseCitySelector,
+        onDismissCitySelector,
         onSearchCityChange,
         onSelectCityOption,
         onChangeCountryCode,
@@ -90,6 +84,11 @@ export const EditProfileDetailsView = () => {
         isDeleteAvatarAlertVisible,
         onCloseDeleteAvatarAlert,
         onConfirmDeleteAvatar,
+        gallery,
+        onAddGalleryPhoto,
+        isDeleteGalleryPhotoAlertVisible,
+        onCloseDeleteGalleryPhotoAlert,
+        onConfirmDeleteGalleryPhoto,
         onEditModeBackHandler,
         isDeferredContentReady,
     } = useEditProfileDetails();
@@ -119,58 +118,40 @@ export const EditProfileDetailsView = () => {
                     <View style={styles.content}>
                         <View style={styles.avatarContainer}>
                             <AvatarPicker
-                                size={72}
+                                size={120}
                                 avatarUrl={avatarUrl}
                                 fullname={form.fullName}
                                 isEditing
                                 selectedImageUri={selectedAvatarUri}
-                                hasAvatar={hasAvatar}
                                 isMarkedForDeletion={isMarkedForDeletion}
                                 onPress={onOpenCamera}
                                 onRemove={onRemoveAvatar}
-                                onCancelDeletion={onCancelDeletion}
                             />
-                            <View style={styles.roleContainer}>
-                                <Typography
-                                    text={
-                                        expertiseLevel === 'lover'
-                                            ? t('registration.wineLover')
-                                            : expertiseLevel === 'expert'
-                                              ? t('registration.wineExpert')
-                                              : t('registration.winemaker')
-                                    }
-                                    variant="subtitle_12_500"
-                                    style={styles.roleText}
-                                />
-                                {expertiseLevel === WineExperienceLevelEnum.LOVER && (
-                                    <WineLoverIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />
-                                )}
-                                {expertiseLevel === WineExperienceLevelEnum.EXPERT && (
-                                    <WineExpertIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />
-                                )}
-                                {expertiseLevel === WineExperienceLevelEnum.CREATOR && (
-                                    <WinemakerIcon width={EXPERTISE_SIZE} height={EXPERTISE_SIZE} />
-                                )}
-                            </View>
                         </View>
+
+                        <ProfileGallery {...gallery} onAddPhoto={onAddGalleryPhoto} />
 
                         <ExpertiseSelectorRow expertiseLevel={expertiseLevel} onPress={onOpenExpertiseModal} />
 
-                        <CustomInput
-                            value={form.fullName}
-                            onChangeText={onChangeFullName}
-                            editable
-                            placeholder={t('settings.fullName')}
-                            containerStyle={styles.input}
-                        />
-                        <CustomInput
-                            value={form.email}
-                            onChangeText={onChangeEmail}
-                            editable
-                            placeholder={t('settings.email')}
-                            containerStyle={styles.input}
-                        />
-                        <View style={styles.input}>
+                        <ProfileFormField label={t('settings.fullName')}>
+                            <CustomInput
+                                value={form.fullName}
+                                onChangeText={onChangeFullName}
+                                editable
+                                placeholder={t('settings.fullName')}
+                                containerStyle={styles.inputContainer}
+                            />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.email')}>
+                            <CustomInput
+                                value={form.email}
+                                onChangeText={onChangeEmail}
+                                editable
+                                placeholder={t('settings.email')}
+                                containerStyle={styles.inputContainer}
+                            />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.phoneNumber')}>
                             <PhoneInputField
                                 value={form.phoneNumber}
                                 onChangeText={onChangePhoneNumber}
@@ -178,23 +159,24 @@ export const EditProfileDetailsView = () => {
                                 editable
                                 initialCca2={phoneInitialCca2}
                             />
-                        </View>
-                        <CustomDropdown
-                            data={countryOptions}
-                            placeholder={t('settings.country')}
-                            onPress={onChangeCountry}
-                            withSearch
-                            selectedValue={form.country}
-                            disabled={false}
-                            containerStyle={styles.input}
-                        />
-                        <ProfileSelectorRow
-                            value={form.city}
-                            placeholder={t('settings.city')}
-                            disabled={isCitySelectorDisabled}
-                            onPress={onOpenCitySelector}
-                        />
-                        <View style={styles.input}>
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.country')}>
+                            <PickerButton
+                                text={countryPicker.selectedText}
+                                placeholder={t('settings.country')}
+                                onPress={countryPicker.onOpen}
+                                isDisabled={countryPicker.isDisabled}
+                            />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.city')}>
+                            <ProfileSelectorRow
+                                value={form.city}
+                                placeholder={t('settings.city')}
+                                disabled={isCitySelectorDisabled}
+                                onPress={onOpenCitySelector}
+                            />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('registration.birthday')}>
                             <BirthdaySelector
                                 date={form.birthday}
                                 onPress={onOpenBirthdayModal}
@@ -203,64 +185,77 @@ export const EditProfileDetailsView = () => {
                                 displayText={birthdayDisplayText}
                                 disabled={false}
                             />
-                        </View>
-                        <CustomDropdown
-                            data={genderOptions}
-                            placeholder={t('settings.gender')}
-                            onPress={onChangeGender}
-                            selectedValue={form.gender}
-                            disabled={false}
-                            containerStyle={styles.input}
-                        />
-                        <CustomInput
-                            value={form.occupation}
-                            onChangeText={onChangeOccupation}
-                            editable
-                            placeholder={t('settings.occupation')}
-                            containerStyle={styles.input}
-                        />
-                        <ProfileSelectorRow
-                            value={currencyPicker.selectedText}
-                            placeholder={t('settings.selectedCurrency')}
-                            disabled={isCurrencySelectorDisabled}
-                            onPress={currencyPicker.onOpen}
-                        />
-                        <CustomInput
-                            value={form.placeOfWork}
-                            onChangeText={onChangePlaceOfWork}
-                            editable
-                            placeholder={t('settings.placeOfWork')}
-                            containerStyle={styles.input}
-                        />
-                        <CustomInput
-                            value={form.instagramLink}
-                            onChangeText={onChangeInstagramLink}
-                            editable
-                            placeholder={t('settings.instagram')}
-                            error={!!instagramLinkError}
-                            errorText={instagramLinkError || undefined}
-                            LeftAccessory={
-                                <View style={styles.instagramAccessory}>
-                                    <InstagramIcon color={colors.text} />
-                                </View>
-                            }
-                            containerStyle={styles.input}
-                        />
-                        <CustomInput
-                            value={form.website}
-                            onChangeText={onChangeWebsite}
-                            editable
-                            placeholder={t('settings.website')}
-                            containerStyle={styles.input}
-                        />
-                        <CustomInput
-                            value={form.bio}
-                            onChangeText={onChangeBio}
-                            editable
-                            placeholder={t('settings.bio')}
-                            multiline
-                            inputContainerStyle={styles.bigInput}
-                        />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.gender')}>
+                            <PickerButton
+                                text={genderPicker.selectedText}
+                                placeholder={t('settings.gender')}
+                                onPress={genderPicker.onOpen}
+                                isDisabled={genderPicker.isDisabled}
+                            />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.occupation')}>
+                            <CustomInput
+                                value={form.occupation}
+                                onChangeText={onChangeOccupation}
+                                editable
+                                placeholder={t('settings.occupation')}
+                                containerStyle={styles.inputContainer}
+                            />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.selectedCurrency')}>
+                            <ProfileSelectorRow
+                                value={currencyPicker.selectedText}
+                                placeholder={t('settings.selectedCurrency')}
+                                disabled={isCurrencySelectorDisabled}
+                                onPress={currencyPicker.onOpen}
+                            />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.placeOfWork')}>
+                            <CustomInput
+                                value={form.placeOfWork}
+                                onChangeText={onChangePlaceOfWork}
+                                editable
+                                placeholder={t('settings.placeOfWork')}
+                                containerStyle={styles.inputContainer}
+                            />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.instagramLabel')}>
+                            <CustomInput
+                                value={form.instagramLink}
+                                onChangeText={onChangeInstagramLink}
+                                editable
+                                placeholder={t('settings.instagram')}
+                                error={!!instagramLinkError}
+                                errorText={instagramLinkError || undefined}
+                                LeftAccessory={
+                                    <View style={styles.instagramAccessory}>
+                                        <InstagramIcon color={colors.text} />
+                                    </View>
+                                }
+                                containerStyle={styles.inputContainer}
+                            />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.websiteLabel')}>
+                            <CustomInput
+                                value={form.website}
+                                onChangeText={onChangeWebsite}
+                                editable
+                                placeholder={t('settings.website')}
+                                containerStyle={styles.inputContainer}
+                            />
+                        </ProfileFormField>
+                        <ProfileFormField label={t('settings.bio')}>
+                            <CustomInput
+                                value={form.bio}
+                                onChangeText={onChangeBio}
+                                editable
+                                placeholder={t('settings.bio')}
+                                multiline
+                                inputContainerStyle={styles.bigInput}
+                                containerStyle={styles.inputContainer}
+                            />
+                        </ProfileFormField>
                     </View>
                 </KeyboardAwareScrollView>
 
@@ -286,7 +281,6 @@ export const EditProfileDetailsView = () => {
                 <>
                     <SelectExpertiseBottomSheet
                         modalRef={selectExpertiseModalRef}
-                        selectedValue={expertiseLevel}
                         onSelect={onSelectExpertise}
                         onClose={onCloseExpertiseModal}
                     />
@@ -299,6 +293,7 @@ export const EditProfileDetailsView = () => {
                         onChangeText={onSearchCityChange}
                         onSelect={onSelectCityOption}
                         onClose={onCloseCitySelector}
+                        onDismiss={onDismissCitySelector}
                     />
                 </>
             )}
@@ -351,6 +346,62 @@ export const EditProfileDetailsView = () => {
                             />
                         </View>
                     }
+                />
+            )}
+            {isDeleteGalleryPhotoAlertVisible && (
+                <CustomAlert
+                    visible={isDeleteGalleryPhotoAlertVisible}
+                    onClose={onCloseDeleteGalleryPhotoAlert}
+                    header={t('settings.deleteGalleryPhotoTitle')}
+                    content={
+                        <Typography
+                            text={t('settings.deleteGalleryPhotoMessage')}
+                            variant="body_400"
+                            style={styles.alertMessage}
+                        />
+                    }
+                    footer={
+                        <View style={styles.alertFooter}>
+                            <Button
+                                text={t('settings.delete')}
+                                onPress={onConfirmDeleteGalleryPhoto}
+                                type="main"
+                                containerStyle={styles.alertButton}
+                            />
+                            <Button
+                                text={t('common.cancel')}
+                                onPress={onCloseDeleteGalleryPhotoAlert}
+                                type="secondary"
+                                containerStyle={styles.alertButton}
+                            />
+                        </View>
+                    }
+                />
+            )}
+            {countryPicker.isVisible && (
+                <UniversalPickerBottomModal
+                    visible={countryPicker.isVisible}
+                    title={countryPicker.title}
+                    options={countryPicker.options}
+                    isLoading={countryPicker.isLoading}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={countryPicker.onClose}
+                    onConfirm={countryPicker.onConfirm}
+                />
+            )}
+            {genderPicker.isVisible && (
+                <UniversalPickerBottomModal
+                    visible={genderPicker.isVisible}
+                    title={genderPicker.title}
+                    options={genderPicker.options}
+                    isLoading={genderPicker.isLoading}
+                    selectionMode="single"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={genderPicker.onClose}
+                    onConfirm={genderPicker.onConfirm}
                 />
             )}
         </ScreenContainer>
