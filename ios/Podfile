@@ -47,6 +47,11 @@ target 'WineMates' do
         if deployment_target < 13.0
           config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
         end
+
+        # Xcode 26 can crash while compiling VisionCamera in whole-module mode.
+        if target.name == 'VisionCamera' && config.name == 'Release'
+          config.build_settings['SWIFT_COMPILATION_MODE'] = 'incremental'
+        end
       end
     end
 

@@ -6,7 +6,7 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            marginHorizontal: scaleHorizontal(16),
+            paddingHorizontal: scaleHorizontal(16),
         },
         header: {
             marginTop: scaleVertical(32),

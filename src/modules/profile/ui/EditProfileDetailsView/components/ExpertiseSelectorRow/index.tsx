@@ -4,7 +4,6 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { WineLoverIcon } from '@assets/icons/WineLoverIcon';
 import { WineExpertIcon } from '@assets/icons/WineExpertIcon';
-import { WinemakerIcon } from '@assets/icons/WinemakerIcon';
 import { NextArrowIcon } from '@assets/icons/NextArrowIcon';
 import { getStyles } from './styles';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
@@ -24,7 +23,6 @@ export const ExpertiseSelectorRow = ({ expertiseLevel, onPress }: IProps) => {
             <Pressable style={styles.row} onPress={onPress}>
                 {expertiseLevel === WineExperienceLevelEnum.LOVER && <WineLoverIcon />}
                 {expertiseLevel === WineExperienceLevelEnum.EXPERT && <WineExpertIcon />}
-                {expertiseLevel === WineExperienceLevelEnum.CREATOR && <WinemakerIcon />}
                 <Typography
                     text={t(`wineLevel.${expertiseLevel}`)}
                     variant="h5"

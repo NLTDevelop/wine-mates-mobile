@@ -16,8 +16,8 @@ export const getStyles = (colors: IColors) => {
         alertContainer: {
             width: scaleHorizontal(327),
             backgroundColor: colors.background,
-            borderRadius: 12,
-            borderWidth: 1,
+            borderRadius: scaleVertical(12),
+            borderWidth: scaleVertical(1),
             borderColor: colors.border,
             overflow: 'hidden',
         },
@@ -27,21 +27,24 @@ export const getStyles = (colors: IColors) => {
             paddingBottom: scaleVertical(12),
         },
         headerWithClose: {
-            flexDirection: 'row',
+            position: 'relative',
+            minHeight: scaleVertical(28),
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
         },
         headerText: {
             color: colors.text,
-            marginLeft: scaleHorizontal(8),
+            paddingHorizontal: scaleHorizontal(36),
+            textAlign: 'center',
         },
         closeButton: {
+            position: 'absolute',
+            top: 0,
+            right: 0,
             padding: scaleVertical(4),
-            marginLeft: scaleHorizontal(8),
         },
         content: {
             paddingHorizontal: scaleHorizontal(16),
-            paddingVertical: scaleVertical(12),
         },
         footer: {
             paddingHorizontal: scaleHorizontal(16),

@@ -1,9 +1,6 @@
 import { useMemo } from 'react';
-import { Pressable, TouchableOpacity, View, Image } from 'react-native';
-import { FasterImageView } from '@rraut/react-native-faster-image';
+import { TouchableOpacity, View, Image } from 'react-native';
 import { CrossIcon } from '@assets/icons/CrossIcon';
-import { DeleteForeverIcon } from '@assets/icons/DeleteForeverIcon';
-import { CameraIcon } from '@assets/icons/CameraIcon';
 import { PlusIcon } from '@assets/icons/PlusIcon';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
@@ -15,14 +12,21 @@ interface IProps {
     fullname: string;
     isEditing: boolean;
     selectedImageUri: string | null;
-    hasAvatar: boolean;
     isMarkedForDeletion?: boolean;
     onPress: () => void;
     onRemove: () => void;
-    onCancelDeletion: () => void;
 }
 
-export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedImageUri, hasAvatar, isMarkedForDeletion = false, onPress, onRemove, onCancelDeletion }: IProps) => {
+export const AvatarPicker = ({
+    size,
+    avatarUrl,
+    fullname,
+    isEditing,
+    selectedImageUri,
+    isMarkedForDeletion = false,
+    onPress,
+    onRemove,
+}: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors, size), [colors, size]);
 
@@ -32,9 +36,13 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
     };
 
     const displayUri = selectedImageUri || avatarUrl;
-    const normalizedDisplayUri = displayUri && !displayUri.startsWith('http') && !displayUri.startsWith('file://')
-        ? `file://${displayUri}`
-        : displayUri;
+    const normalizedDisplayUri =
+        displayUri &&
+        !displayUri.startsWith('http') &&
+        !displayUri.startsWith('file://') &&
+        !displayUri.startsWith('content://')
+            ? `file://${displayUri}`
+            : displayUri;
     const initials = fullname
         .split(' ')
         .map(n => n[0])
@@ -61,7 +69,6 @@ export const AvatarPicker = ({ size, avatarUrl, fullname, isEditing, selectedIma
                         )}
                     </View>
                 )}
-
             </TouchableOpacity>
             {isEditing && displayUri && !isMarkedForDeletion && (
                 <TouchableOpacity onPress={onDeletePress} style={styles.deleteBadge}>

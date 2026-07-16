@@ -3,7 +3,6 @@ import { DimensionValue, ViewStyle, View, LayoutChangeEvent, Image } from 'react
 import { getStyle, getInitialsTextStyle } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { scaleVertical } from '@/utils';
-import { FasterImageView } from '@rraut/react-native-faster-image';
 import { Typography } from '../Typography';
 
 interface IProps {
