@@ -9,18 +9,10 @@ export const getStyles = (_colors: IColors) => {
         },
         contentContainer: {
             flexGrow: 1,
-            gap: scaleVertical(16),
+            gap: scaleVertical(12),
             paddingHorizontal: scaleHorizontal(16),
             paddingTop: scaleVertical(16),
             paddingBottom: scaleVertical(24),
-        },
-        button: {
-            marginHorizontal: scaleHorizontal(16),
-            marginBottom: scaleVertical(16),
-        },
-        plusIconContainer: {
-            alignItems: 'center',
-            justifyContent: 'center',
         },
     });
 

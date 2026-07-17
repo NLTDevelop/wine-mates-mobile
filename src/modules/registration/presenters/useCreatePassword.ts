@@ -62,8 +62,9 @@ export const useCreatePassword = () => {
                 password: form.password,
             };
 
+            const winery = payload.winery;
             const isWineryRegistration =
-                payload.wineExperienceLevel === WineExperienceLevelEnum.CREATOR && payload.winery;
+                payload.wineExperienceLevel === WineExperienceLevelEnum.CREATOR && !!winery;
             const response = isWineryRegistration
                 ? await userService.signUpWinery({
                       user: {
@@ -73,7 +74,7 @@ export const useCreatePassword = () => {
                           country: payload.country,
                           birthday: payload.birthday,
                       },
-                      winery: payload.winery,
+                      winery,
                   })
                 : await userService.signUp(payload);
 

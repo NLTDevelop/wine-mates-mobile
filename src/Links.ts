@@ -75,6 +75,8 @@ export interface ILinks {
     userLocation: string;
     notifications: string;
     notificationsSocket: string;
+    availableWineryWines: string;
+    wineryWines: string;
     wineries: string;
     wineryUpdate: string;
 }
@@ -142,6 +144,8 @@ class Links implements ILinks {
         eventTastingSaveDraft: 'event-tasting/save-draft',
         userLocation: 'users/location',
         notifications: 'notifications',
+        availableWineryWines: 'wines/winery',
+        wineryWines: 'winery-wines',
         wineries: 'wineries',
         wineryUpdate: 'wineries',
     };
@@ -340,6 +344,12 @@ class Links implements ILinks {
     }
     public get notifications() {
         return `${this._domain}${this._links.notifications}`;
+    }
+    public get availableWineryWines() {
+        return `${this._domain}${this._links.availableWineryWines}`;
+    }
+    public get wineryWines() {
+        return `${this._domain}${this._links.wineryWines}`;
     }
     public get wineries() {
         return `${this._domain}${this._links.wineries}`;

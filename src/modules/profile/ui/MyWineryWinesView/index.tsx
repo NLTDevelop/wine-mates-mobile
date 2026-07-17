@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { FlatList, ListRenderItem } from 'react-native';
+import { FlatList, ListRenderItem, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -9,20 +9,17 @@ import { EmptyListView } from '@/UIKit/EmptyListView';
 import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 import { WineShareModal } from '@/UIKit/WineShareModal';
 import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
+import { Button } from '@/UIKit/Button';
+import { PlusIcon } from '@assets/icons/PlusIcon';
 import { useMyWineryWines } from './presenters/useMyWineryWines';
 import { getStyles } from './styles';
 
 export const MyWineryWinesView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { data, isLoading, onPressBack, onItemPress } = useMyWineryWines();
-    const {
-        isShareModalVisible,
-        onOpenShareModal,
-        onCloseShareModal,
-        onShareMessengerPress,
-        onCopyWineLinkPress,
-    } = useWineShareModal();
+    const { data, isLoading, onPressBack, onItemPress, onAddWinePress } = useMyWineryWines();
+    const { isShareModalVisible, onOpenShareModal, onCloseShareModal, onShareMessengerPress, onCopyWineLinkPress } =
+        useWineShareModal();
 
     const keyExtractor = useCallback((item: IWineListItem, index: number) => `${item.id}-${index}`, []);
 
@@ -37,7 +34,7 @@ export const MyWineryWinesView = () => {
         <ScreenContainer
             edges={['top', 'bottom']}
             withGradient
-            headerComponent={<HeaderWithBackButton title={t('profile.myWineryWines')} onPressBack={onPressBack} />}
+            headerComponent={<HeaderWithBackButton title={t('profile.myWineryWines')} onPressBack={onPressBack} isCentered/>}
         >
             <FlatList
                 data={data}
@@ -53,6 +50,16 @@ export const MyWineryWinesView = () => {
                         text={t('profile.noWineryWines')}
                     />
                 }
+            />
+            <Button
+                text={t('profile.addWineToWinery')}
+                onPress={onAddWinePress}
+                LeftAccessory={
+                    <View style={styles.plusIconContainer}>
+                        <PlusIcon />
+                    </View>
+                }
+                containerStyle={styles.button}
             />
             <WineShareModal
                 visible={isShareModalVisible}

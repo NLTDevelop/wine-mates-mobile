@@ -326,6 +326,12 @@
         "chemicalAnalysis": "Хімічний аналіз",
         "myWineryWines": "Вина моєї виноробні",
         "noWineryWines": "До вашої виноробні ще не додано жодного вина",
+        "addWineToWinery": "Додати вино",
+        "availableWineryWines": "Додати вино до виноробні",
+        "noAvailableWineryWines": "Немає вин, доступних для додавання",
+        "addWineToWineryTitle": "Додати вино?",
+        "addWineToWineryMessage": "Ви впевнені, що хочете додати \"{{name}}\" до своєї виноробні?",
+        "wineAddedToWinery": "Вино додано до вашої виноробні",
         "settings": "Налаштування"
     },
     "settings": {
