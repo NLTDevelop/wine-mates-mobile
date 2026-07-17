@@ -7,9 +7,11 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { useCameraDevice, useCameraPermission, usePhotoOutput } from 'react-native-vision-camera';
 import ImageResizer from 'react-native-image-resizer';
 import { IWineImage } from '@/entities/wine/types/IWineImage';
-import { isAndroid } from '@/utils';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 import { wineModel } from '@/entities/wine/models/WineModel';
+
+const SCANNER_IMAGE_MAX_SIZE = 2048;
+const SCANNER_IMAGE_QUALITY = 85;
 
 export const useScanner = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -23,40 +25,34 @@ export const useScanner = () => {
     const isCameraActive = isFocused && appState === 'active';
     const torchMode = isCameraActive ? torch : 'off';
 
-    const prepareImage = async ({ uri, name, type, width, height, shouldResize }: { uri: string; name?: string | null; type?: string | null; width?: number; height?: number; shouldResize?: boolean }): Promise<IWineImage> => {
-        const normalizedUri = uri.startsWith('file://') ? uri : `file://${uri}`;
-        const uriName = normalizedUri.split('/').pop();
-        if (shouldResize && width && height && isAndroid) {
-            try {
-                if (ImageResizer?.createResizedImage) {
-                    const resized = await ImageResizer.createResizedImage(
-                        normalizedUri,
-                        width,
-                        height,
-                        'JPEG',
-                        100,
-                        0,
-                    );
+    const prepareCameraImage = async ({ uri, width, height }: { uri: string; width: number; height: number }): Promise<IWineImage> => {
+        const normalizedUri = uri.includes('://') ? uri : `file://${uri}`;
 
-                    return {
-                        uri: resized.uri,
-                        name: name || uriName || `photo-${Date.now()}.jpg`,
-                        type: type || 'image/jpeg',
-                    } as IWineImage;
-                } else {
-                    console.warn('⚠️ ImageResizer is not available. Using original image.');
-                }
-            } catch (error) {
-                console.error('❌ Error resizing image:', error);
-                console.warn('⚠️ Falling back to original image.');
-            }
+        if (width <= SCANNER_IMAGE_MAX_SIZE && height <= SCANNER_IMAGE_MAX_SIZE) {
+            return {
+                uri: normalizedUri,
+                name: normalizedUri.split('/').pop() || `scanner-photo-${Date.now()}.jpg`,
+                type: 'image/jpeg',
+            };
         }
 
+        const resized = await ImageResizer.createResizedImage(
+            normalizedUri,
+            SCANNER_IMAGE_MAX_SIZE,
+            SCANNER_IMAGE_MAX_SIZE,
+            'JPEG',
+            SCANNER_IMAGE_QUALITY,
+            0,
+            undefined,
+            false,
+            { mode: 'contain', onlyScaleDown: true },
+        );
+
         return {
-            uri: normalizedUri,
-            name: name || uriName || `photo-${Date.now()}.jpg`,
-            type: type || 'image/jpeg',
-        } as IWineImage;
+            uri: resized.uri,
+            name: resized.name || `scanner-photo-${Date.now()}.jpg`,
+            type: 'image/jpeg',
+        };
     };
 
     useEffect(() => {
@@ -87,11 +83,11 @@ export const useScanner = () => {
 
             const asset = response.assets?.[0];
             if (asset?.uri) {
-                wineModel.image = await prepareImage({
+                wineModel.image = {
                     uri: asset.uri,
-                    name: asset.fileName,
-                    type: asset.type,
-                });
+                    name: asset.fileName || `gallery-photo-${Date.now()}.jpg`,
+                    type: asset.type || 'image/jpeg',
+                };
                 navigation.navigate('ScanResultsListView');
             }
         });
@@ -103,13 +99,10 @@ export const useScanner = () => {
 
             try {
                 const photoPath = await photo.saveToTemporaryFileAsync();
-                wineModel.image = await prepareImage({
+                wineModel.image = await prepareCameraImage({
                     uri: photoPath,
-                    name: photoPath.split('/').pop(),
-                    type: 'image/jpeg',
                     width: photo.width,
                     height: photo.height,
-                    shouldResize: true,
                 });
                 navigation.navigate('ScanResultsListView');
             } finally {

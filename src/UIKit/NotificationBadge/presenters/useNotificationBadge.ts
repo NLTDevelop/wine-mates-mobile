@@ -8,7 +8,7 @@ interface INotificationCountUpdatedPayload {
 }
 
 const SOCKET_LOG_PREFIX = '[NotificationsSocket]';
-const IS_NOTIFICATIONS_SOCKET_ENABLED = false;
+const IS_NOTIFICATIONS_SOCKET_ENABLED = true;
 
 export const useNotificationBadge = () => {
     const token = userModel.token;

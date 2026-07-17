@@ -322,6 +322,12 @@
         "chemicalAnalysis": "Chemical analysis",
         "myWineryWines": "My winery wines",
         "noWineryWines": "No wines have been added to your winery yet",
+        "addWineToWinery": "Add wine",
+        "availableWineryWines": "Add wine to winery",
+        "noAvailableWineryWines": "No wines available to add",
+        "addWineToWineryTitle": "Add wine?",
+        "addWineToWineryMessage": "Are you sure you want to add \"{{name}}\" to your winery?",
+        "wineAddedToWinery": "Wine added to your winery",
         "settings": "Settings"
     },
     "settings": {

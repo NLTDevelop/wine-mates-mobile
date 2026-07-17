@@ -19,10 +19,15 @@ export const useMyWineryWines = () => {
         [navigation],
     );
 
+    const onAddWinePress = useCallback(() => {
+        navigation.navigate('AddWineryWinesView');
+    }, [navigation]);
+
     return {
         data: WINERY_WINES,
         isLoading: false,
         onPressBack,
         onItemPress,
+        onAddWinePress,
     };
 };

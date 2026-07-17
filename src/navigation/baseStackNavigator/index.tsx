@@ -46,6 +46,8 @@ import { CreatePaymentView } from '@/modules/payments/ui/CreatePaymentView';
 import { ChooseWineFiltersView } from '@/modules/chooseWine/ui/ChooseWineFiltersView';
 import { ChooseWineResultsView } from '@/modules/chooseWine/ui/ChooseWineResultsView';
 import { NotificationsView } from '@/modules/notifications/ui/NotificationsView';
+import { MyWineryWinesView } from '@/modules/profile/ui/MyWineryWinesView';
+import { AddWineryWinesView } from '@/modules/profile/ui/AddWineryWinesView';
 
 const Stack = createNativeStackNavigator();
 
@@ -106,6 +108,8 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="ChooseWineFiltersView" component={ChooseWineFiltersView} options={{ gestureEnabled: false }}/>
             <Stack.Screen name="ChooseWineResultsView" component={ChooseWineResultsView} />
             <Stack.Screen name="NotificationsView" component={NotificationsView} />
+            <Stack.Screen name="MyWineryWinesView" component={MyWineryWinesView} />
+            <Stack.Screen name="AddWineryWinesView" component={AddWineryWinesView} />
         </Stack.Navigator>
     );
 });
