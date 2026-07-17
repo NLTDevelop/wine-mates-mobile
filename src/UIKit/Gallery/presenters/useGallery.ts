@@ -1,19 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
-import { IProfileGalleryItem, IProfileGalleryPhoto } from '../types/IProfileGalleryPhoto';
+import { IGalleryItem, IGalleryPhoto } from '../types/IGalleryPhoto';
 
 interface IProps {
-    photos: IProfileGalleryPhoto[];
+    photos: IGalleryPhoto[];
     onDeletePhoto?: (id: string) => void;
 }
 
-export const useProfileGallery = ({ photos, onDeletePhoto }: IProps) => {
+export const useGallery = ({ photos, onDeletePhoto }: IProps) => {
     const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
 
     const onCloseViewer = useCallback(() => {
         setSelectedPhotoId(null);
     }, []);
 
-    const items = useMemo<IProfileGalleryItem[]>(() => {
+    const items = useMemo<IGalleryItem[]>(() => {
         return photos.map(photo => ({
             ...photo,
             onPress: () => {
@@ -37,7 +37,7 @@ export const useProfileGallery = ({ photos, onDeletePhoto }: IProps) => {
         items,
         hasPhotos: items.length > 0,
         selectedPhotoIndex,
-        viewerKey: selectedPhotoId || 'profile-gallery-viewer',
+        viewerKey: selectedPhotoId || 'gallery-viewer',
         isViewerVisible: !!selectedPhotoId,
         onCloseViewer,
     };

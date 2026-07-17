@@ -21,12 +21,6 @@ export const useRegistration = () => {
     const [country, setCountry] = useState<ICountry | null>(null);
     const [birthday, setBirthday] = useState('');
     const [isError, setIsError] = useState({ status: false, errorText: '' });
-    const maximumBirthdayDate = useMemo(() => {
-        const date = new Date();
-        date.setFullYear(date.getFullYear() - MIN_AGE);
-
-        return date;
-    }, []);
     const isDisabled = useMemo(() => {
         const hasPhone = phone.trim().length > 0;
         const hasEmail = email.trim().length > 0;
@@ -138,6 +132,5 @@ export const useRegistration = () => {
         onRetry,
         birthday,
         onChangeBirthday,
-        maximumBirthdayDate,
     };
 };

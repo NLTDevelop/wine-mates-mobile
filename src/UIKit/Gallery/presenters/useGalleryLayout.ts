@@ -3,7 +3,7 @@ import { useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scaleVertical } from '@/utils';
 
-export const useProfileGalleryLayout = () => {
+export const useGalleryLayout = () => {
     const { width: viewerWidth } = useWindowDimensions();
     const insets = useSafeAreaInsets();
 

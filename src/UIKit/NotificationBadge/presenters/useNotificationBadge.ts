@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { io } from 'socket.io-client';
 import { links } from '@/Links';
+import { notificationsModel } from '@/entities/notifications/NotificationsModel';
 import { userModel } from '@/entities/users/UserModel';
 
 interface INotificationCountUpdatedPayload {
@@ -8,19 +9,13 @@ interface INotificationCountUpdatedPayload {
 }
 
 const SOCKET_LOG_PREFIX = '[NotificationsSocket]';
-const IS_NOTIFICATIONS_SOCKET_ENABLED = true;
 
 export const useNotificationBadge = () => {
     const token = userModel.token;
-    const [notificationState, setNotificationState] = useState({ token, count: 0 });
+    const notificationState = notificationsModel.notificationsCountState;
     const count = notificationState.token === token ? notificationState.count : 0;
 
     useEffect(() => {
-        if (!IS_NOTIFICATIONS_SOCKET_ENABLED) {
-            console.log(`${SOCKET_LOG_PREFIX} temporarily disabled`);
-            return;
-        }
-
         if (!token) {
             console.log(`${SOCKET_LOG_PREFIX} connection skipped: token is missing`);
             return;
@@ -63,7 +58,7 @@ export const useNotificationBadge = () => {
         };
         const onNotificationCountUpdated = ({ count: updatedCount }: INotificationCountUpdatedPayload) => {
             console.log(`${SOCKET_LOG_PREFIX} notification_count_updated`, { count: updatedCount });
-            setNotificationState({ token, count: updatedCount });
+            notificationsModel.notificationsCountState = { token, count: updatedCount };
         };
 
         socket.on('connect', onConnect);

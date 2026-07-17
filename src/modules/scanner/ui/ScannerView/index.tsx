@@ -16,7 +16,8 @@ export const ScannerView = () => {
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, top, bottom), [colors, top, bottom]);
     const { torch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress,
-        device, cameraOutputs, isCameraActive, torchMode, hasPermission } = useScanner();
+        onPreviewStarted, onPreviewStopped, device, cameraOutputs, isCameraActive, torchMode,
+        isTorchDisabled, hasPermission } = useScanner();
 
     return (
         <View style={styles.container}>
@@ -27,6 +28,8 @@ export const ScannerView = () => {
                         device={device}
                         outputs={cameraOutputs}
                         torchMode={torchMode}
+                        onPreviewStarted={onPreviewStarted}
+                        onPreviewStopped={onPreviewStopped}
                         style={StyleSheet.absoluteFill}
                     />
                     <View style={styles.topBar}>
@@ -34,7 +37,7 @@ export const ScannerView = () => {
                             <CrossIcon color={colors.icon} width={20} height={20} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={onTorchPress} style={styles.button}>
+                        <TouchableOpacity onPress={onTorchPress} style={styles.button} disabled={isTorchDisabled}>
                             {torch === 'on' ? (
                                 <FlashActiveIcon color={colors.icon} width={20} height={20} />
                             ) : (

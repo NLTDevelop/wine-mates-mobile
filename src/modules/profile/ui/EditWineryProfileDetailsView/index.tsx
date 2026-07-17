@@ -8,7 +8,7 @@ import { Typography } from '@/UIKit/Typography';
 import { CustomInput } from '@/UIKit/CustomInput';
 import { Button } from '@/UIKit/Button';
 import { CustomAlert } from '@/UIKit/CustomAlert/ui';
-import { ProfileGallery } from '@/modules/profile/ui/components/ProfileGallery';
+import { Gallery } from '@/UIKit/Gallery';
 import { useEditWineryProfileDetails } from './presenters/useEditWineryProfileDetails';
 import { getStyles } from './styles';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
@@ -85,7 +85,7 @@ export const EditWineryProfileDetailsView = () => {
                         onRemove={onRequestDeleteMainPhoto}
                     />
                 </View>
-                <ProfileGallery {...gallery} onAddPhoto={onAddGalleryPhoto} />
+                <Gallery title={t('settings.photoGallery')} {...gallery} onAddPhoto={onAddGalleryPhoto} />
                 <ProfileFormField label={t('registration.wineryName')}>
                     <CustomInput
                         value={form.name}
@@ -221,6 +221,7 @@ export const EditWineryProfileDetailsView = () => {
             <DateTimePickerModal
                 visible={isBirthdayModalVisible}
                 mode="date"
+                title={t('registration.birthday')}
                 date={pickerDate}
                 maximumDate={maximumBirthdayDate}
                 onClose={onCloseBirthdayModal}

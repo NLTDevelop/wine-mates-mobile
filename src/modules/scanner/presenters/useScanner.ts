@@ -18,12 +18,14 @@ export const useScanner = () => {
     const appState = useAppState();
     const isFocused = useIsFocused();
     const [torch, setTorch] = useState<'on' | 'off'>('off');
+    const [isPreviewStarted, setIsPreviewStarted] = useState(false);
     const { hasPermission, requestPermission } = useCameraPermission();
     const device = useCameraDevice('back');
     const photoOutput = usePhotoOutput({ quality: 1, qualityPrioritization: 'quality' });
     const cameraOutputs = useMemo(() => [photoOutput], [photoOutput]);
     const isCameraActive = isFocused && appState === 'active';
-    const torchMode = isCameraActive ? torch : 'off';
+    const torchMode = isCameraActive && isPreviewStarted ? torch : undefined;
+    const isTorchDisabled = !isCameraActive || !isPreviewStarted;
 
     const prepareCameraImage = async ({ uri, width, height }: { uri: string; width: number; height: number }): Promise<IWineImage> => {
         const normalizedUri = uri.includes('://') ? uri : `file://${uri}`;
@@ -73,8 +75,13 @@ export const useScanner = () => {
         }
     }, [appState, isFocused]);
 
-    useEffect(() => {
-        return () => setTorch('off');
+    const onPreviewStarted = useCallback(() => {
+        setIsPreviewStarted(true);
+    }, []);
+
+    const onPreviewStopped = useCallback(() => {
+        setIsPreviewStarted(false);
+        setTorch('off');
     }, []);
 
     const onGalleryPress = () => {
@@ -94,6 +101,10 @@ export const useScanner = () => {
     };
 
     const onTakePhotoPress = async () => {
+        if (!isCameraActive || !isPreviewStarted) {
+            return;
+        }
+
         try {
             const photo = await photoOutput.capturePhoto({ flashMode: torch === 'on' ? 'on' : 'off' }, {});
 
@@ -153,11 +164,16 @@ export const useScanner = () => {
     };
 
     const onTorchPress = useCallback(() => {
+        if (!isCameraActive || !isPreviewStarted) {
+            return;
+        }
+
         setTorch(prev => (prev === 'on' ? 'off' : 'on'));
-    }, []);
+    }, [isCameraActive, isPreviewStarted]);
 
     return {
         torch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress,
-        device, cameraOutputs, isCameraActive, torchMode, hasPermission,
+        onPreviewStarted, onPreviewStopped, device, cameraOutputs, isCameraActive, torchMode,
+        isTorchDisabled, hasPermission,
     };
 };

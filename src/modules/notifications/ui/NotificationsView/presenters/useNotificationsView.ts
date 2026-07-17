@@ -80,13 +80,19 @@ export const useNotificationsView = () => {
                 })),
             };
         }
-        notificationsModel.notificationsCount = 0;
+        notificationsModel.notificationsCountState = {
+            ...notificationsModel.notificationsCountState,
+            count: 0,
+        };
 
         try {
             const response = await notificationsService.markAllRead();
 
             if (response.isError) {
-                notificationsModel.notificationsCount = previousNotificationsCount;
+                notificationsModel.notificationsCountState = {
+                    ...notificationsModel.notificationsCountState,
+                    count: previousNotificationsCount,
+                };
 
                 if (notificationsModel.notifications) {
                     notificationsModel.notifications = {

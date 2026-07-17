@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
@@ -19,13 +19,13 @@ import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { BirthdaySelector } from '../components/BirthdaySelector';
 import { useBirthdaySelector } from '../../presenters/useBirthdaySelector';
-import DatePicker from 'react-native-date-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
 
 export const RegistrationView = observer(() => {
-    const { t, colors, locale, theme } = useUiContext();
+    const { t, colors } = useUiContext();
     const { bottom } = useSafeAreaInsets();
-    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
     const {
         email,
         phone,
@@ -42,99 +42,98 @@ export const RegistrationView = observer(() => {
         onRetry,
         birthday,
         onChangeBirthday,
-        maximumBirthdayDate,
     } = useRegistration();
     const {
         onPress: onBirthdayPress,
+        onClose: onCloseBirthdayModal,
+        onConfirm: onConfirmBirthday,
+        onDateChange: onChangeBirthdayDate,
         isOpened,
         pickerDate,
-        setPickerDate,
-        scrollRef,
-    } = useBirthdaySelector(onChangeBirthday);
+        maximumBirthdayDate,
+    } = useBirthdaySelector(birthday, onChangeBirthday);
     const isCreator = registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR;
-    const bottomInset = useMemo(() => ({ paddingBottom: isOpened ? 0 : bottom }), [bottom, isOpened]);
+    const bottomInset = useMemo(() => ({ paddingBottom: bottom }), [bottom]);
 
     return (
         <WithErrorHandler
             error={isError.status && isError.errorText === '' ? ErrorTypeEnum.ERROR : null}
             onRetry={onRetry}
         >
-            <ScreenContainer
-                edges={['top']}
-                headerComponent={<HeaderWithBackButton />}
-                isKeyboardAvoiding
-                scrollEnabled
-                scrollRef={scrollRef}
-            >
-                <View style={[styles.container, bottomInset]}>
-                    <View style={styles.mainContainer}>
-                        <Typography text={t('registration.getStarted')} variant="h3" style={styles.title} />
-                        <Typography
-                            text={t(`wineLevel.${registerUserModel.user?.wineExperienceLevel}`)}
-                            variant="body_500"
-                            style={styles.role}
-                        />
-                        <View style={styles.formContainer}>
-                            <PhoneInputField
-                                value={phone}
-                                onChangeText={onChangePhone}
-                                placeholder={t('registration.mobileNumber')}
-                                clearPhone={clearPhone}
-                                onChangeCountryCode={onChangeCountryCode}
+            <>
+                <ScreenContainer
+                    edges={['top']}
+                    headerComponent={<HeaderWithBackButton />}
+                    isKeyboardAvoiding
+                    scrollEnabled
+                >
+                    <View style={[styles.container, bottomInset]}>
+                        <View style={styles.mainContainer}>
+                            <Typography text={t('registration.getStarted')} variant="h3" style={styles.title} />
+                            <Typography
+                                text={t(`wineLevel.${registerUserModel.user?.wineExperienceLevel}`)}
+                                variant="body_500"
+                                style={styles.role}
                             />
-                            <View>
-                                <CustomInput
-                                    autoCapitalize="none"
-                                    value={email}
-                                    onChangeText={onChangeEmail}
-                                    keyboardType="email-address"
-                                    placeholder={t('registration.email')}
-                                    containerStyle={styles.input}
-                                    error={isError.status}
+                            <View style={styles.formContainer}>
+                                <PhoneInputField
+                                    value={phone}
+                                    onChangeText={onChangePhone}
+                                    placeholder={t('registration.mobileNumber')}
+                                    clearPhone={clearPhone}
+                                    onChangeCountryCode={onChangeCountryCode}
                                 />
-                                {!isCreator && isError.status && <Warning warningText={isError.errorText} />}
-                            </View>
-                            <CountrySelector country={country} onChangeCountry={onChangeCountry} />
-                            {isCreator && (
                                 <View>
-                                    <BirthdaySelector
-                                        date={birthday}
-                                        onPress={onBirthdayPress}
-                                        isOpened={isOpened}
-                                        isError={false}
+                                    <CustomInput
+                                        autoCapitalize="none"
+                                        value={email}
+                                        onChangeText={onChangeEmail}
+                                        keyboardType="email-address"
+                                        placeholder={t('registration.email')}
+                                        containerStyle={styles.input}
+                                        error={isError.status}
                                     />
-                                    {isError.status && <Warning warningText={isError.errorText} />}
+                                    {!isCreator && isError.status && <Warning warningText={isError.errorText} />}
                                 </View>
-                            )}
+                                <CountrySelector country={country} onChangeCountry={onChangeCountry} />
+                                {isCreator && (
+                                    <View>
+                                        <BirthdaySelector
+                                            date={birthday}
+                                            onPress={onBirthdayPress}
+                                            isOpened={isOpened}
+                                            isError={false}
+                                        />
+                                        {isError.status && <Warning warningText={isError.errorText} />}
+                                    </View>
+                                )}
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.footer}>
-                        <Button
-                            text={t('common.continue')}
-                            onPress={onNext}
-                            type="secondary"
-                            disabled={isDisabled}
-                            inProgress={isLoading}
-                        />
-                        <SignInFooter />
-                    </View>
-                </View>
-                {isOpened && (
-                    <>
-                        <View style={styles.pickerWrapper}>
-                            <DatePicker
-                                locale={locale}
-                                mode="date"
-                                date={pickerDate}
-                                onDateChange={setPickerDate}
-                                maximumDate={maximumBirthdayDate}
-                                theme={theme}
+                        <View style={styles.footer}>
+                            <Button
+                                text={t('common.continue')}
+                                onPress={onNext}
+                                type="secondary"
+                                disabled={isDisabled}
+                                inProgress={isLoading}
                             />
+                            <SignInFooter />
                         </View>
-                        <Pressable style={styles.backdrop} onPress={onBirthdayPress} />
-                    </>
+                    </View>
+                </ScreenContainer>
+                {isOpened && (
+                    <DateTimePickerModal
+                        visible={isOpened}
+                        mode="date"
+                        title={t('registration.birthday')}
+                        date={pickerDate}
+                        maximumDate={maximumBirthdayDate}
+                        onClose={onCloseBirthdayModal}
+                        onConfirm={onConfirmBirthday}
+                        onDateChange={onChangeBirthdayDate}
+                    />
                 )}
-            </ScreenContainer>
+            </>
         </WithErrorHandler>
     );
 });

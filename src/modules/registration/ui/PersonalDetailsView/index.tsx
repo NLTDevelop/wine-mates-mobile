@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, Pressable } from 'react-native';
+import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
@@ -12,18 +12,18 @@ import { registerUserModel } from '@/entities/users/RegisterUserModel';
 import { observer } from 'mobx-react-lite';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { BirthdaySelector } from '../components/BirthdaySelector';
-import DatePicker from 'react-native-date-picker';
 import { useBirthdaySelector } from '../../presenters/useBirthdaySelector';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Warning } from '@/modules/authentication/ui/components/Warning';
 import { getStyles } from './styles';
 import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
+import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
 
 export const PersonalDetailsView = observer(() => {
-    const { t, colors, locale, theme } = useUiContext();
+    const { t, colors } = useUiContext();
     const { bottom } = useSafeAreaInsets();
-    const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
     const genderOptions = useMemo<IDropdownItem[]>(
         () => [
             { label: t('registration.genderMale'), value: 'male' },
@@ -47,121 +47,127 @@ export const PersonalDetailsView = observer(() => {
     } = usePersonalDetails();
     const {
         onPress: onBirthdayPress,
+        onClose: onCloseBirthdayModal,
+        onConfirm: onConfirmBirthday,
         onInputFocus,
+        onDateChange: onChangeBirthdayDate,
         isOpened,
         pickerDate,
-        setPickerDate,
-        scrollRef,
-    } = useBirthdaySelector(onChangeBirthday);
-    const bottomInset = useMemo(() => ({ paddingBottom: isOpened ? 0 : bottom }), [bottom, isOpened]);
+        maximumBirthdayDate,
+    } = useBirthdaySelector(form.birthday, onChangeBirthday);
+    const bottomInset = useMemo(() => ({ paddingBottom: bottom }), [bottom]);
 
     return (
-        <ScreenContainer
-            edges={['top']}
-            headerComponent={<HeaderWithBackButton />}
-            scrollEnabled
-            isKeyboardAvoiding
-            scrollRef={scrollRef}
-        >
-            <View style={[styles.container, bottomInset]}>
-                <View style={styles.mainContainer}>
-                    <Typography text={t('registration.personalDetails')} variant="h3" style={styles.title} />
-                    <Typography
-                        text={t(`wineLevel.${registerUserModel.user?.wineExperienceLevel}`)}
-                        variant="body_500"
-                        style={styles.role}
-                    />
-                    <View style={styles.formContainer}>
-                        <View>
-                            <CustomInput
-                                autoCapitalize="none"
-                                value={form.firstName}
-                                onChangeText={onChangeFirstName}
-                                placeholder={t('registration.firstName')}
-                                containerStyle={styles.input}
-                                onFocus={onInputFocus}
-                            />
-                            <Typography
-                                variant="subtitle_12_400"
-                                text={t('registration.firstNameExample')}
-                                style={styles.exampleText}
-                            />
-                        </View>
-                        <CustomInput
-                            autoCapitalize="none"
-                            value={form.lastName}
-                            onChangeText={onChangeLastName}
-                            placeholder={t('registration.lastName')}
-                            containerStyle={styles.input}
-                            onFocus={onInputFocus}
+        <>
+            <ScreenContainer
+                edges={['top']}
+                headerComponent={<HeaderWithBackButton />}
+                scrollEnabled
+                isKeyboardAvoiding
+            >
+                <View style={[styles.container, bottomInset]}>
+                    <View style={styles.mainContainer}>
+                        <Typography text={t('registration.personalDetails')} variant="h3" style={styles.title} />
+                        <Typography
+                            text={t(`wineLevel.${registerUserModel.user?.wineExperienceLevel}`)}
+                            variant="body_500"
+                            style={styles.role}
                         />
-                        <View>
-                            <BirthdaySelector
-                                date={form.birthday}
-                                onPress={onBirthdayPress}
-                                isOpened={isOpened}
-                                isError={isError.status}
+                        <View style={styles.formContainer}>
+                            <View>
+                                <CustomInput
+                                    autoCapitalize="none"
+                                    value={form.firstName}
+                                    onChangeText={onChangeFirstName}
+                                    placeholder={t('registration.firstName')}
+                                    containerStyle={styles.input}
+                                    onFocus={onInputFocus}
+                                />
+                                <Typography
+                                    variant="subtitle_12_400"
+                                    text={t('registration.firstNameExample')}
+                                    style={styles.exampleText}
+                                />
+                            </View>
+                            <CustomInput
+                                autoCapitalize="none"
+                                value={form.lastName}
+                                onChangeText={onChangeLastName}
+                                placeholder={t('registration.lastName')}
+                                containerStyle={styles.input}
+                                onFocus={onInputFocus}
                             />
-                            {isError.status && <Warning warningText={isError.errorText} />}
+                            <View>
+                                <BirthdaySelector
+                                    date={form.birthday}
+                                    onPress={onBirthdayPress}
+                                    isOpened={isOpened}
+                                    isError={isError.status}
+                                />
+                                {isError.status && <Warning warningText={isError.errorText} />}
+                            </View>
+                            <CustomDropdown
+                                data={genderOptions}
+                                placeholder={t('registration.gender')}
+                                onPress={onChangeGender}
+                                selectedValue={form.gender}
+                                containerStyle={styles.input}
+                            />
+                            {registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT && (
+                                <CustomInput
+                                    autoCapitalize="none"
+                                    value={form.occupation}
+                                    onChangeText={onChangeOccupation}
+                                    placeholder={t('registration.occupation')}
+                                    containerStyle={styles.input}
+                                    onFocus={onInputFocus}
+                                />
+                            )}
+                            {registerUserModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
+                                <CustomInput
+                                    autoCapitalize="none"
+                                    value={form.instagramLink}
+                                    onChangeText={onChangeInstagramLink}
+                                    placeholder={t('registration.instagramLink')}
+                                    containerStyle={styles.input}
+                                    onFocus={onInputFocus}
+                                />
+                            )}
+                            {registerUserModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
+                                <CustomInput
+                                    autoCapitalize="none"
+                                    value={form.placeOfWork}
+                                    onChangeText={onChangePlaceOfWork}
+                                    placeholder={t('registration.placeOfWork')}
+                                    containerStyle={styles.input}
+                                    onFocus={onInputFocus}
+                                />
+                            )}
                         </View>
-                        <CustomDropdown
-                            data={genderOptions}
-                            placeholder={t('registration.gender')}
-                            onPress={onChangeGender}
-                            selectedValue={form.gender}
-                            containerStyle={styles.input}
+                    </View>
+                    <View style={styles.footer}>
+                        <Button
+                            text={t('common.continue')}
+                            onPress={onNextPress}
+                            type="secondary"
+                            disabled={isDisabled}
                         />
-                        {registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT && (
-                            <CustomInput
-                                autoCapitalize="none"
-                                value={form.occupation}
-                                onChangeText={onChangeOccupation}
-                                placeholder={t('registration.occupation')}
-                                containerStyle={styles.input}
-                                onFocus={onInputFocus}
-                            />
-                        )}
-                        {registerUserModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
-                            <CustomInput
-                                autoCapitalize="none"
-                                value={form.instagramLink}
-                                onChangeText={onChangeInstagramLink}
-                                placeholder={t('registration.instagramLink')}
-                                containerStyle={styles.input}
-                                onFocus={onInputFocus}
-                            />
-                        )}
-                        {registerUserModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
-                            <CustomInput
-                                autoCapitalize="none"
-                                value={form.placeOfWork}
-                                onChangeText={onChangePlaceOfWork}
-                                placeholder={t('registration.placeOfWork')}
-                                containerStyle={styles.input}
-                                onFocus={onInputFocus}
-                            />
-                        )}
+                        <SignInFooter />
                     </View>
                 </View>
-                <View style={styles.footer}>
-                    <Button text={t('common.continue')} onPress={onNextPress} type="secondary" disabled={isDisabled} />
-                    <SignInFooter />
-                </View>
-            </View>
+            </ScreenContainer>
             {isOpened && (
-                <>
-                    <View style={styles.pickerWrapper}>
-                        <DatePicker
-                            locale={locale}
-                            mode="date"
-                            date={pickerDate}
-                            onDateChange={setPickerDate}
-                            theme={theme}
-                        />
-                    </View>
-                    <Pressable style={styles.backdrop} onPress={onBirthdayPress} />
-                </>
+                <DateTimePickerModal
+                    visible={isOpened}
+                    mode="date"
+                    title={t('registration.birthday')}
+                    date={pickerDate}
+                    maximumDate={maximumBirthdayDate}
+                    onClose={onCloseBirthdayModal}
+                    onConfirm={onConfirmBirthday}
+                    onDateChange={onChangeBirthdayDate}
+                />
             )}
-        </ScreenContainer>
+        </>
     );
 });

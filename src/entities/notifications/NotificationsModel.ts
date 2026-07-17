@@ -2,15 +2,21 @@ import { IList } from '@/entities/IList';
 import { MobXRepository } from '@/repository/MobXRepository';
 import { IClientNotification } from './types/IClientNotification';
 
+interface INotificationsCountState {
+    token: string | null;
+    count: number;
+}
+
 export interface INotificationsModel {
     notifications: IList<IClientNotification> | null;
-    notificationsCount: number;
+    readonly notificationsCount: number;
+    notificationsCountState: INotificationsCountState;
     append: (value: IList<IClientNotification>) => void;
 }
 
 class NotificationsModel implements INotificationsModel {
     private notificationsRepository = new MobXRepository<IList<IClientNotification> | null>(null);
-    private notificationsCountRepository = new MobXRepository<number>(0);
+    private notificationsCountRepository = new MobXRepository<INotificationsCountState>({ token: null, count: 0 });
 
     public get notifications() {
         return this.notificationsRepository.data;
@@ -21,10 +27,14 @@ class NotificationsModel implements INotificationsModel {
     }
 
     public get notificationsCount() {
-        return this.notificationsCountRepository.data || 0;
+        return this.notificationsCountRepository.data?.count || 0;
     }
 
-    public set notificationsCount(value: number) {
+    public get notificationsCountState() {
+        return this.notificationsCountRepository.data || { token: null, count: 0 };
+    }
+
+    public set notificationsCountState(value: INotificationsCountState) {
         this.notificationsCountRepository.save(value);
     }
 

@@ -19,9 +19,9 @@ import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCur
 import { useUserCurrencies } from '@/UIKit/CurrencyPicker/presenters/useUserCurrencies';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { getProfileGalleryPhotos } from '@/modules/profile/utils/getProfileGalleryPhotos';
-import { useProfileGallery } from '@/modules/profile/presenters/useProfileGallery';
+import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
 import { PROFILE_GALLERY_MAX_PHOTOS } from '@/modules/profile/constants/profileGallery';
-import { IProfileGalleryFile } from '@/modules/profile/types/IProfileGalleryPhoto';
+import { IGalleryFile } from '@/UIKit/Gallery/types/IGalleryPhoto';
 import { useProfileSinglePicker } from '@/modules/profile/presenters/useProfileSinglePicker';
 
 interface IProfileForm {
@@ -567,8 +567,8 @@ export const useEditProfileDetails = () => {
         [getCallingCodeFromUser],
     );
 
-    const galleryFiles = useMemo<IProfileGalleryFile[]>(() => {
-        return galleryPhotos.reduce<IProfileGalleryFile[]>((files, photo) => {
+    const galleryFiles = useMemo<IGalleryFile[]>(() => {
+        return galleryPhotos.reduce<IGalleryFile[]>((files, photo) => {
             if (photo.file) {
                 files.push(photo.file);
             }
@@ -933,7 +933,7 @@ export const useEditProfileDetails = () => {
         setGalleryPhotoIdToDelete(null);
     }, [galleryPhotoIdToDelete, galleryPhotos]);
 
-    const gallery = useProfileGallery({
+    const gallery = useGallery({
         photos: galleryPhotos,
         onDeletePhoto: onRequestDeleteGalleryPhoto,
     });
@@ -982,8 +982,7 @@ export const useEditProfileDetails = () => {
         onCloseDeleteAvatarAlert,
         onConfirmDeleteAvatar,
         gallery,
-        onAddGalleryPhoto:
-            galleryPhotos.length < PROFILE_GALLERY_MAX_PHOTOS ? onAddGalleryPhoto : undefined,
+        onAddGalleryPhoto: galleryPhotos.length < PROFILE_GALLERY_MAX_PHOTOS ? onAddGalleryPhoto : undefined,
         isDeleteGalleryPhotoAlertVisible: !!galleryPhotoIdToDelete,
         onCloseDeleteGalleryPhotoAlert,
         onConfirmDeleteGalleryPhoto,

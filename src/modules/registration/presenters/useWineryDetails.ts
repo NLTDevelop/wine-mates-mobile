@@ -50,7 +50,14 @@ export const useWineryDetails = () => {
     const { regions } = useWineRegion(form.country?.id);
 
     const isDisabled = useMemo(() => {
-        return !form.name.trim() || !form.country || isError.status || isCountriesLoadingError;
+        return (
+            !form.name.trim() ||
+            !form.foundedYear.trim() ||
+            !form.description.trim() ||
+            !form.country ||
+            isError.status ||
+            isCountriesLoadingError
+        );
     }, [form, isCountriesLoadingError, isError.status]);
 
     useEffect(() => {
@@ -106,30 +113,27 @@ export const useWineryDetails = () => {
     }, []);
 
     const onNextPress = useCallback(() => {
-        if (!registerUserModel.user || !form.country?.id) {
+        const foundedYearValue = form.foundedYear.trim();
+        const description = form.description.trim();
+
+        if (!registerUserModel.user || !form.country?.id || !foundedYearValue || !description) {
             return;
         }
 
-        const foundedYearValue = form.foundedYear.trim();
-        const foundedYear = foundedYearValue ? Number(foundedYearValue) : undefined;
+        const foundedYear = Number(foundedYearValue);
         const currentYear = new Date().getFullYear();
 
-        if (
-            foundedYear !== undefined &&
-            (!Number.isInteger(foundedYear) || foundedYear < MIN_FOUNDED_YEAR || foundedYear > currentYear)
-        ) {
+        if (!Number.isInteger(foundedYear) || foundedYear < MIN_FOUNDED_YEAR || foundedYear > currentYear) {
             setIsError({ status: true, errorText: localization.t('registration.foundedYearError') });
             return;
         }
-
-        const description = form.description.trim();
 
         registerUserModel.user = {
             ...registerUserModel.user,
             winery: {
                 name: form.name.trim(),
-                ...(foundedYear !== undefined && { foundedYear }),
-                ...(description && { description }),
+                foundedYear,
+                description,
                 countryId: form.country.id,
                 regionId: form.regionId,
                 links: form.links

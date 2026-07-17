@@ -2,10 +2,10 @@ import { useMemo } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { useUiContext } from '@/UIProvider';
-import { IProfileGalleryItem } from '@/modules/profile/types/IProfileGalleryPhoto';
+import { IGalleryItem } from '../../types/IGalleryPhoto';
 import { getStyles } from './styles';
 
-interface IProps extends IProfileGalleryItem {}
+interface IProps extends IGalleryItem {}
 
 export const GalleryPhoto = ({ uri, onPress, onDelete }: IProps) => {
     const { colors } = useUiContext();

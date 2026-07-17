@@ -14,12 +14,15 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
         },
         name: {
-            marginTop: scaleVertical(16),
+            marginTop: scaleVertical(8),
             marginBottom: scaleVertical(4),
         },
         expertLevel: {
             color: colors.text_primary,
         },
+        list: {
+            flexGrow: 1,
+        }
     });
     return styles;
 };

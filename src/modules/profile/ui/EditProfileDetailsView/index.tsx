@@ -22,11 +22,10 @@ import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
 import { ProfileSelectorRow } from './components/ProfileSelectorRow';
 import { useKeyboardStickyLayout } from '@/hooks/useKeyboardStickyLayout';
 import { Loader } from '@/UIKit/Loader';
-import { ProfileGallery } from '@/modules/profile/ui/components/ProfileGallery';
+import { Gallery } from '@/UIKit/Gallery';
 import { ProfileFormField } from '@/modules/profile/ui/components/ProfileFormField';
 import { PickerButton } from '@/UIKit/PickerButton';
 import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
-
 
 export const EditProfileDetailsView = () => {
     const { colors, t } = useUiContext();
@@ -129,7 +128,7 @@ export const EditProfileDetailsView = () => {
                             />
                         </View>
 
-                        <ProfileGallery {...gallery} onAddPhoto={onAddGalleryPhoto} />
+                        <Gallery title={t('settings.photoGallery')} {...gallery} onAddPhoto={onAddGalleryPhoto} />
 
                         <ExpertiseSelectorRow expertiseLevel={expertiseLevel} onPress={onOpenExpertiseModal} />
 

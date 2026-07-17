@@ -79,6 +79,7 @@ export interface ILinks {
     wineryWines: string;
     wineries: string;
     wineryUpdate: string;
+    appeals: string;
 }
 
 class Links implements ILinks {
@@ -148,6 +149,7 @@ class Links implements ILinks {
         wineryWines: 'winery-wines',
         wineries: 'wineries',
         wineryUpdate: 'wineries',
+        appeals: 'appeals',
     };
 
     private buildDomain() {
@@ -356,6 +358,9 @@ class Links implements ILinks {
     }
     public get wineryUpdate() {
         return `${this._domain}${this._links.wineryUpdate}`;
+    }
+    public get appeals() {
+        return `${this._domain}${this._links.appeals}`;
     }
 
     public get notificationsSocket() {
