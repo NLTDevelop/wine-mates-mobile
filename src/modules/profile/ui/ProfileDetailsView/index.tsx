@@ -10,22 +10,14 @@ import { useProfileDetails } from './presenters/useProfileDetails';
 import { ProfileAvatarExpertiseLevel } from './components/ProfileAvatarExpertiseLevel';
 import { ProfileDetailsField } from './components/ProfileDetailsField';
 import { Typography } from '@/UIKit/Typography';
-import { ProfileGallery } from '@/modules/profile/ui/components/ProfileGallery';
+import { Gallery } from '@/UIKit/Gallery';
 
 export const ProfileDetailsView = observer(() => {
     const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const {
-        avatarUrl,
-        fullName,
-        expertiseLevel,
-        expertiseLabel,
-        fields,
-        gallery,
-        onPressBack,
-        onPressEdit,
-    } = useProfileDetails(locale);
+    const { avatarUrl, fullName, expertiseLevel, expertiseLabel, fields, gallery, onPressBack, onPressEdit } =
+        useProfileDetails(locale);
 
     return (
         <ScreenContainer
@@ -52,7 +44,7 @@ export const ProfileDetailsView = observer(() => {
                     expertiseLevel={expertiseLevel}
                 />
 
-                {gallery.hasPhotos && <ProfileGallery {...gallery} />}
+                {gallery.hasPhotos && <Gallery title={t('settings.photoGallery')} {...gallery} />}
 
                 <View style={styles.fieldsContainer}>
                     <ProfileDetailsField {...fields.fullName} />

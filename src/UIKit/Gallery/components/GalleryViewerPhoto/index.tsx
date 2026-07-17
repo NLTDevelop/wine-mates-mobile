@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { Image, View, ViewStyle } from 'react-native';
 import { useUiContext } from '@/UIProvider';
-import { IProfileGalleryItem } from '@/modules/profile/types/IProfileGalleryPhoto';
+import { IGalleryItem } from '../../types/IGalleryPhoto';
 import { getStyles } from './styles';
 
 interface IProps {
-    item: IProfileGalleryItem;
+    item: IGalleryItem;
     containerStyle: ViewStyle;
 }
 

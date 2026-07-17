@@ -1,25 +1,28 @@
 import { useCallback, useMemo } from 'react';
-import { FlatList, ListRenderItem, Modal, TouchableOpacity, View } from 'react-native';
+import { FlatList, ListRenderItem, Modal, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { IProfileGalleryItem } from '@/modules/profile/types/IProfileGalleryPhoto';
+import { IGalleryItem } from './types/IGalleryPhoto';
 import { getStyles } from './styles';
-import { useProfileGalleryLayout } from './presenters/useProfileGalleryLayout';
+import { useGalleryLayout } from './presenters/useGalleryLayout';
 import { GalleryPhoto } from './components/GalleryPhoto';
 import { GalleryViewerPhoto } from './components/GalleryViewerPhoto';
 
 interface IProps {
-    items: IProfileGalleryItem[];
+    title: string;
+    items: IGalleryItem[];
     hasPhotos: boolean;
     selectedPhotoIndex: number;
     viewerKey: string;
     isViewerVisible: boolean;
     onCloseViewer: () => void;
     onAddPhoto?: () => void;
+    containerStyle?: StyleProp<ViewStyle>;
 }
 
-export const ProfileGallery = ({
+export const Gallery = ({
+    title,
     items,
     hasPhotos,
     selectedPhotoIndex,
@@ -27,18 +30,19 @@ export const ProfileGallery = ({
     isViewerVisible,
     onCloseViewer,
     onAddPhoto,
+    containerStyle,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { viewerWidth, viewerPhotoStyle, closeViewerButtonInsetStyle } = useProfileGalleryLayout();
+    const { viewerWidth, viewerPhotoStyle, closeViewerButtonInsetStyle } = useGalleryLayout();
 
-    const renderItem = useCallback<ListRenderItem<IProfileGalleryItem>>(({ item }) => {
+    const renderItem = useCallback<ListRenderItem<IGalleryItem>>(({ item }) => {
         return <GalleryPhoto {...item} />;
     }, []);
 
-    const keyExtractor = useCallback((item: IProfileGalleryItem) => item.id, []);
+    const keyExtractor = useCallback((item: IGalleryItem) => item.id, []);
 
-    const renderViewerItem = useCallback<ListRenderItem<IProfileGalleryItem>>(
+    const renderViewerItem = useCallback<ListRenderItem<IGalleryItem>>(
         ({ item }) => {
             return <GalleryViewerPhoto item={item} containerStyle={viewerPhotoStyle} />;
         },
@@ -46,7 +50,7 @@ export const ProfileGallery = ({
     );
 
     const getViewerItemLayout = useCallback(
-        (_data: ArrayLike<IProfileGalleryItem> | null | undefined, index: number) => {
+        (_data: ArrayLike<IGalleryItem> | null | undefined, index: number) => {
             return {
                 length: viewerWidth,
                 offset: viewerWidth * index,
@@ -57,12 +61,16 @@ export const ProfileGallery = ({
     );
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, containerStyle]}>
             <View style={styles.header}>
-                <Typography text={t('settings.photoGallery')} variant="body_500" style={styles.title} />
+                <Typography text={title} variant="body_500" style={styles.title} />
                 {!!onAddPhoto && (
                     <TouchableOpacity onPress={onAddPhoto} style={styles.addButton}>
-                        <Typography text={t('settings.addPhoto')} variant="subtitle_12_500" style={styles.addButtonText} />
+                        <Typography
+                            text={t('settings.addPhoto')}
+                            variant="subtitle_12_500"
+                            style={styles.addButtonText}
+                        />
                     </TouchableOpacity>
                 )}
             </View>
@@ -76,12 +84,7 @@ export const ProfileGallery = ({
                     showsHorizontalScrollIndicator={false}
                 />
             )}
-            <Modal
-                visible={isViewerVisible}
-                animationType="fade"
-                statusBarTranslucent
-                onRequestClose={onCloseViewer}
-            >
+            <Modal visible={isViewerVisible} animationType="fade" statusBarTranslucent onRequestClose={onCloseViewer}>
                 <View style={styles.viewer}>
                     <FlatList
                         key={viewerKey}

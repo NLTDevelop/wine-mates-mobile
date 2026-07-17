@@ -1,5 +1,6 @@
-import { memo, useMemo } from 'react';
+import { useMemo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
+import { observer } from 'mobx-react-lite';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { NotificationIcon } from '@assets/icons/NotificationIcon';
@@ -25,4 +26,6 @@ const NotificationBadgeComponent = ({ onPress }: IProps) => {
     );
 };
 
-export const NotificationBadge = memo(NotificationBadgeComponent);
+export const NotificationBadge = observer(NotificationBadgeComponent);
+
+NotificationBadge.displayName = 'NotificationBadge';

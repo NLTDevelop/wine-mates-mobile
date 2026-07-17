@@ -6,7 +6,7 @@ import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { Avatar } from '@/UIKit/Avatar';
 import { Typography } from '@/UIKit/Typography';
-import { ProfileGallery } from '@/modules/profile/ui/components/ProfileGallery';
+import { Gallery } from '@/UIKit/Gallery';
 import { ProfileDetailsField } from '@/modules/profile/ui/ProfileDetailsView/components/ProfileDetailsField';
 import { useWineryProfileDetails } from './presenters/useWineryProfileDetails';
 import { getStyles } from './styles';
@@ -15,7 +15,8 @@ import { WineryLinksList } from './components/WineryLinksList';
 export const WineryProfileDetailsView = observer(() => {
     const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { name, mainPhotoUrl, fields, linkItems, gallery, onPressBack, onPressEdit } = useWineryProfileDetails(locale);
+    const { name, mainPhotoUrl, fields, linkItems, gallery, onPressBack, onPressEdit } =
+        useWineryProfileDetails(locale);
 
     return (
         <ScreenContainer
@@ -39,7 +40,7 @@ export const WineryProfileDetailsView = observer(() => {
                     <Avatar size={96} avatarUrl={mainPhotoUrl} fullname={name} />
                     <Typography text={name} variant="h4" style={styles.name} />
                 </View>
-                {gallery.hasPhotos && <ProfileGallery {...gallery} />}
+                {gallery.hasPhotos && <Gallery title={t('settings.photoGallery')} {...gallery} />}
                 <View style={styles.fields}>
                     <ProfileDetailsField {...fields.name} />
                     <ProfileDetailsField {...fields.foundedYear} />
@@ -49,9 +50,7 @@ export const WineryProfileDetailsView = observer(() => {
                     <ProfileDetailsField {...fields.userCountry} />
                     <ProfileDetailsField {...fields.phone} />
                     <ProfileDetailsField {...fields.birthday} />
-                    {!!linkItems.length && (
-                        <WineryLinksList label={t('settings.wineryLinks')} items={linkItems} />
-                    )}
+                    {!!linkItems.length && <WineryLinksList label={t('settings.wineryLinks')} items={linkItems} />}
                 </View>
             </View>
         </ScreenContainer>

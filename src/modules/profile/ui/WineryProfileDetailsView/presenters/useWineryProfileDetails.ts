@@ -6,7 +6,7 @@ import { userModel } from '@/entities/users/UserModel';
 import { userService } from '@/entities/users/UserService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { getProfileGalleryPhotos } from '@/modules/profile/utils/getProfileGalleryPhotos';
-import { useProfileGallery } from '@/modules/profile/presenters/useProfileGallery';
+import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
 import { getContactTitle, getContactType } from '@/entities/contacts/presenters/useContactType';
 import { getProfileBirthdayText, getProfileCountryName } from '@/modules/profile/utils/profileUserFields';
 
@@ -23,7 +23,7 @@ export const useWineryProfileDetails = (locale: string) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const winery = userModel.winery;
     const user = userModel.user;
-    const gallery = useProfileGallery({ photos: getProfileGalleryPhotos() });
+    const gallery = useGallery({ photos: getProfileGalleryPhotos() });
 
     useFocusEffect(
         useCallback(() => {
@@ -52,10 +52,7 @@ export const useWineryProfileDetails = (locale: string) => {
     const fields = {
         name: getLabeledField(winery?.name, localization.t('registration.wineryName', { locale })),
         foundedYear: getLabeledField(winery?.foundedYear, localization.t('registration.foundedYear', { locale })),
-        description: getLabeledField(
-            winery?.description,
-            localization.t('registration.wineryDescription', { locale }),
-        ),
+        description: getLabeledField(winery?.description, localization.t('registration.wineryDescription', { locale })),
         wineryCountry: getLabeledField(winery?.country?.name, localization.t('settings.wineryCountry', { locale })),
         region: getLabeledField(winery?.region?.name, localization.t('registration.region', { locale })),
         userCountry: getLabeledField(

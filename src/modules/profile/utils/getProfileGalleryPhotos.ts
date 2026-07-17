@@ -1,18 +1,18 @@
 import { userModel } from '@/entities/users/UserModel';
 import { IMedia } from '@/entities/media/types/IMedia';
-import { IProfileGalleryPhoto } from '../types/IProfileGalleryPhoto';
+import { IGalleryPhoto } from '@/UIKit/Gallery/types/IGalleryPhoto';
 import { PROFILE_GALLERY_MAX_PHOTOS } from '../constants/profileGallery';
 
 const getMediaUri = (media: IMedia) => {
     return media.originalUrl || media.mediumUrl || media.smallUrl;
 };
 
-export const getProfileGalleryPhotos = (): IProfileGalleryPhoto[] => {
+export const getProfileGalleryPhotos = (): IGalleryPhoto[] => {
     const wineryGallery = userModel.winery?.gallery || [];
     const userGallery = userModel.user?.gallery || [];
     const gallery = userModel.winery ? wineryGallery : userGallery;
 
-    return gallery.slice(0, PROFILE_GALLERY_MAX_PHOTOS).reduce<IProfileGalleryPhoto[]>((photos, media, index) => {
+    return gallery.slice(0, PROFILE_GALLERY_MAX_PHOTOS).reduce<IGalleryPhoto[]>((photos, media, index) => {
         const uri = getMediaUri(media);
         if (!uri) {
             return photos;

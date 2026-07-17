@@ -54,6 +54,7 @@ export const ProfileView = observer(() => {
                     renderItem={renderItem}
                     keyExtractor={keyExtractor}
                     showsVerticalScrollIndicator={false}
+                    style={styles.list}
                 />
             </View>
         </ScreenContainer>

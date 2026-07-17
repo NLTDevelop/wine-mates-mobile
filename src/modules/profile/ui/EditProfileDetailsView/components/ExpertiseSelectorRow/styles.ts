@@ -29,4 +29,3 @@ export const getStyles = (colors: IColors) => {
 
     return styles;
 };
-

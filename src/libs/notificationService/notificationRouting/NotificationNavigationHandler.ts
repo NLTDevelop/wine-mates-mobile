@@ -2,16 +2,13 @@ import { navigationRef } from '@/navigation/rootNavigator';
 import { NotificationType } from '../enums/NotificationType';
 import { INotificationData } from '../types/INotificationData';
 
-const NOTIFICATION_TYPE_KEYS = [
-    'notificationType',
-    'notification_type',
-    'type',
-];
+const NOTIFICATION_TYPE_KEYS = ['notificationType', 'notification_type', 'type'];
 
 const NOTIFICATION_TYPES = Object.values(NotificationType) as string[];
 
 class NotificationNavigationHandler {
     private pendingData: INotificationData | null = null;
+    private pendingFromNotificationsView = false;
     private pendingTimer: ReturnType<typeof setTimeout> | null = null;
 
     private getStringValue = (value: unknown) => {
@@ -62,11 +59,16 @@ class NotificationNavigationHandler {
         });
     };
 
-    private route = (data: INotificationData) => {
+    private route = (data: INotificationData, fromNotificationsView: boolean = false) => {
         const notificationType = this.getNotificationType(data);
         const eventId = this.getEventId(data);
 
         if (notificationType === NotificationType.ScanWineReminder) {
+            if (fromNotificationsView) {
+                this.navigate('NotificationScannerStack');
+                return;
+            }
+
             this.navigateToTab('ScannerStack', 'ScannerView');
             return;
         }
@@ -124,8 +126,10 @@ class NotificationNavigationHandler {
         }
 
         const data = this.pendingData;
+        const fromNotificationsView = this.pendingFromNotificationsView;
         this.pendingData = null;
-        this.route(data);
+        this.pendingFromNotificationsView = false;
+        this.route(data, fromNotificationsView);
     };
 
     private schedulePendingFlush = () => {
@@ -136,18 +140,19 @@ class NotificationNavigationHandler {
         this.pendingTimer = setTimeout(this.flushPendingData, 300);
     };
 
-    handle = (data?: INotificationData | null) => {
+    handle = (data?: INotificationData | null, fromNotificationsView: boolean = false) => {
         if (!data) {
             return;
         }
 
         if (!navigationRef.isReady()) {
             this.pendingData = data;
+            this.pendingFromNotificationsView = fromNotificationsView;
             this.schedulePendingFlush();
             return;
         }
 
-        this.route(data);
+        this.route(data, fromNotificationsView);
     };
 }
 

@@ -12,7 +12,6 @@ export const getStyles = (colors: IColors) => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: scaleVertical(8),
         },
         title: {
             color: colors.text,
@@ -31,6 +30,7 @@ export const getStyles = (colors: IColors) => {
         },
         listContent: {
             gap: scaleHorizontal(8),
+            marginTop: scaleVertical(8),
         },
         viewer: {
             flex: 1,

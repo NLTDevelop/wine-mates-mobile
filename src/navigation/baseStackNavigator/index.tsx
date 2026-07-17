@@ -48,6 +48,10 @@ import { ChooseWineResultsView } from '@/modules/chooseWine/ui/ChooseWineResults
 import { NotificationsView } from '@/modules/notifications/ui/NotificationsView';
 import { MyWineryWinesView } from '@/modules/profile/ui/MyWineryWinesView';
 import { AddWineryWinesView } from '@/modules/profile/ui/AddWineryWinesView';
+import { AppealsListView } from '@/modules/appeals/ui/AppealsListView';
+import { CreateAppealView } from '@/modules/appeals/ui/CreateAppealView';
+import { AppealDetailsView } from '@/modules/appeals/ui/AppealDetailsView';
+import { ScannerStack } from '@/navigation/scannerStackNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -82,7 +86,11 @@ export const MainStackNavigator = observer(() => {
             />
             <Stack.Screen name="WineReviewView" component={WineReviewView} options={{ gestureEnabled: false }} />
             <Stack.Screen name="WineReviewResultView" component={WineReviewResultView} />
-            <Stack.Screen name="TastingWineLookView" component={TastingWineLookView} options={{ gestureEnabled: false }} />
+            <Stack.Screen
+                name="TastingWineLookView"
+                component={TastingWineLookView}
+                options={{ gestureEnabled: false }}
+            />
             <Stack.Screen name="TastingWineSmellView" component={TastingWineSmellView} />
             <Stack.Screen name="TastingWineTasteView" component={TastingWineTasteView} />
             <Stack.Screen
@@ -90,7 +98,11 @@ export const MainStackNavigator = observer(() => {
                 component={TastingWineTasteCharacteristicsView}
                 options={{ gestureEnabled: false }}
             />
-            <Stack.Screen name="TastingWineReviewView" component={TastingWineReviewView} options={{ gestureEnabled: false }} />
+            <Stack.Screen
+                name="TastingWineReviewView"
+                component={TastingWineReviewView}
+                options={{ gestureEnabled: false }}
+            />
             <Stack.Screen name="TastingWineReviewResultView" component={TastingWineReviewResultView} />
             <Stack.Screen name="SavedWinesView" component={SavedWinesView} />
             <Stack.Screen name="FavoriteWineListView" component={FavoriteWineListView} />
@@ -105,11 +117,19 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="PaymentsView" component={PaymentsView} />
             <Stack.Screen name="CreatePaymentView" component={CreatePaymentView} />
             <Stack.Screen name="ContactInfoView" component={ContactInfoView} />
-            <Stack.Screen name="ChooseWineFiltersView" component={ChooseWineFiltersView} options={{ gestureEnabled: false }}/>
+            <Stack.Screen
+                name="ChooseWineFiltersView"
+                component={ChooseWineFiltersView}
+                options={{ gestureEnabled: false }}
+            />
             <Stack.Screen name="ChooseWineResultsView" component={ChooseWineResultsView} />
             <Stack.Screen name="NotificationsView" component={NotificationsView} />
             <Stack.Screen name="MyWineryWinesView" component={MyWineryWinesView} />
             <Stack.Screen name="AddWineryWinesView" component={AddWineryWinesView} />
+            <Stack.Screen name="AppealsListView" component={AppealsListView} />
+            <Stack.Screen name="CreateAppealView" component={CreateAppealView} />
+            <Stack.Screen name="AppealDetailsView" component={AppealDetailsView} />
+            <Stack.Screen name="NotificationScannerStack" component={ScannerStack} />
         </Stack.Navigator>
     );
 });

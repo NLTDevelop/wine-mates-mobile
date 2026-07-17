@@ -5,9 +5,13 @@ import { notificationNavigationHandler } from '@/libs/notificationService/notifi
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { formatRelativeDate, isLessThanMinuteFromNow } from '@/utils';
-import { INotificationListItemProps } from '../../../types/INotificationListItemProps';
+import { IClientNotification } from '@/entities/notifications/types/IClientNotification';
 
-export const useNotificationListItem = ({ item }: INotificationListItemProps) => {
+interface IProps {
+    item: IClientNotification;
+}
+
+export const useNotificationListItem = ({ item }: IProps) => {
     const [isDeleting, setIsDeleting] = useState(false);
     const locale = localization.locale;
     const sentAt = useMemo(() => {
@@ -33,14 +37,20 @@ export const useNotificationListItem = ({ item }: INotificationListItemProps) =>
                     return notification;
                 }),
             };
-            notificationsModel.notificationsCount = Math.max(0, previousNotificationsCount - 1);
+            notificationsModel.notificationsCountState = {
+                ...notificationsModel.notificationsCountState,
+                count: Math.max(0, previousNotificationsCount - 1),
+            };
 
-            notificationNavigationHandler.handle({ type: item.type, ...(item.data || {}) });
+            notificationNavigationHandler.handle({ type: item.type, ...(item.data || {}) }, true);
 
             const response = await notificationsService.read(item.id);
 
             if (response.isError) {
-                notificationsModel.notificationsCount = previousNotificationsCount;
+                notificationsModel.notificationsCountState = {
+                    ...notificationsModel.notificationsCountState,
+                    count: previousNotificationsCount,
+                };
 
                 if (notificationsModel.notifications) {
                     notificationsModel.notifications = {
@@ -61,7 +71,7 @@ export const useNotificationListItem = ({ item }: INotificationListItemProps) =>
             return;
         }
 
-        notificationNavigationHandler.handle({ type: item.type, ...(item.data || {}) });
+        notificationNavigationHandler.handle({ type: item.type, ...(item.data || {}) }, true);
     }, [item]);
 
     const onDeletePress = useCallback(async () => {

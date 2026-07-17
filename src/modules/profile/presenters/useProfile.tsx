@@ -13,6 +13,7 @@ import { userModel } from '@/entities/users/UserModel';
 import { WineryStatusEnum } from '@/entities/winery/enums/WineryStatusEnum';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
 import { IProfileButton } from '../types/IProfileButton';
+import { CommentIcon } from '@assets/icons/CommentIcon';
 
 export const useProfile = (locale: string) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -49,6 +50,10 @@ export const useProfile = (locale: string) => {
 
     const onSettingsPress = useCallback(() => {
         navigation.navigate('SettingsView');
+    }, [navigation]);
+
+    const onAppealsPress = useCallback(() => {
+        navigation.navigate('AppealsListView');
     }, [navigation]);
 
     const onMyWineryWinesPress = useCallback(() => {
@@ -99,6 +104,12 @@ export const useProfile = (locale: string) => {
                 disabled: !isWineryApproved,
             },
             {
+                id: 8,
+                text: localization.t('profile.appeals', { locale }),
+                icon: <CommentIcon width={24} height={24} color={colorTheme.colors.icon} />,
+                onPress: onAppealsPress,
+            },
+            {
                 id: 7,
                 text: localization.t('profile.settings', { locale }),
                 icon: <SettingsIcon />,
@@ -111,6 +122,7 @@ export const useProfile = (locale: string) => {
             // onFollowersPress,
             locale,
             onSavedWinePress,
+            onAppealsPress,
             onSettingsPress,
             onWineAndStylePress,
             onMyWineryWinesPress,

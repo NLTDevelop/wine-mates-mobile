@@ -10,9 +10,9 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { useWineRegion } from '@/modules/scanner/presenters/useWineRegion';
 import { getProfileGalleryPhotos } from '@/modules/profile/utils/getProfileGalleryPhotos';
-import { useProfileGallery } from '@/modules/profile/presenters/useProfileGallery';
+import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
 import { PROFILE_GALLERY_MAX_PHOTOS } from '@/modules/profile/constants/profileGallery';
-import { IProfileGalleryFile } from '@/modules/profile/types/IProfileGalleryPhoto';
+import { IGalleryFile } from '@/UIKit/Gallery/types/IGalleryPhoto';
 import countries from 'world-countries';
 import {
     getProfileBirthdayText,
@@ -85,7 +85,7 @@ export const useEditWineryProfileDetails = () => {
     const [wineryCountryOptions, setWineryCountryOptions] = useState<IDropdownItem[]>([]);
     const [isWineryCountriesLoading, setIsWineryCountriesLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedMainPhoto, setSelectedMainPhoto] = useState<IProfileGalleryFile | null>(null);
+    const [selectedMainPhoto, setSelectedMainPhoto] = useState<IGalleryFile | null>(null);
     const [removeMainPhoto, setRemoveMainPhoto] = useState(false);
     const [isDeleteMainPhotoAlertVisible, setIsDeleteMainPhotoAlertVisible] = useState(false);
     const [galleryPhotos, setGalleryPhotos] = useState(getProfileGalleryPhotos);
@@ -141,14 +141,8 @@ export const useEditWineryProfileDetails = () => {
     }, []);
 
     const onChangeName = useCallback((value: string) => onChangeField('name', value), [onChangeField]);
-    const onChangeFoundedYear = useCallback(
-        (value: string) => onChangeField('foundedYear', value),
-        [onChangeField],
-    );
-    const onChangeDescription = useCallback(
-        (value: string) => onChangeField('description', value),
-        [onChangeField],
-    );
+    const onChangeFoundedYear = useCallback((value: string) => onChangeField('foundedYear', value), [onChangeField]);
+    const onChangeDescription = useCallback((value: string) => onChangeField('description', value), [onChangeField]);
     const onChangeLink = useCallback((index: number, value: string) => {
         setForm(currentForm => ({
             ...currentForm,
@@ -275,8 +269,9 @@ export const useEditWineryProfileDetails = () => {
 
         launchImageLibrary({ mediaType: 'photo', selectionLimit: remainingSlots, quality: 1 }, response => {
             const timestamp = Date.now();
-            const selectedPhotos = (response.assets || []).slice(0, remainingSlots).reduce<typeof galleryPhotos>(
-                (photos, asset, index) => {
+            const selectedPhotos = (response.assets || [])
+                .slice(0, remainingSlots)
+                .reduce<typeof galleryPhotos>((photos, asset, index) => {
                     if (!asset.uri) {
                         return photos;
                     }
@@ -289,9 +284,7 @@ export const useEditWineryProfileDetails = () => {
                     photos.push({ id: `local-${timestamp}-${index}`, uri: asset.uri, file });
 
                     return photos;
-                },
-                [],
-            );
+                }, []);
 
             setGalleryPhotos(currentPhotos => [...currentPhotos, ...selectedPhotos]);
         });
@@ -308,9 +301,9 @@ export const useEditWineryProfileDetails = () => {
         setGalleryPhotoIdToDelete(null);
     }, [galleryPhotoIdToDelete, galleryPhotos]);
 
-    const gallery = useProfileGallery({ photos: galleryPhotos, onDeletePhoto: onRequestDeleteGalleryPhoto });
-    const galleryFiles = useMemo<IProfileGalleryFile[]>(() => {
-        return galleryPhotos.reduce<IProfileGalleryFile[]>((files, photo) => {
+    const gallery = useGallery({ photos: galleryPhotos, onDeletePhoto: onRequestDeleteGalleryPhoto });
+    const galleryFiles = useMemo<IGalleryFile[]>(() => {
+        return galleryPhotos.reduce<IGalleryFile[]>((files, photo) => {
             if (photo.file) files.push(photo.file);
             return files;
         }, []);
@@ -405,7 +398,23 @@ export const useEditWineryProfileDetails = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [changedFields, changedUserFields, form, foundedYear, galleryFiles, hasUserChanges, hasWineryChanges, isDisabled, navigation, phoneCountryCode, phoneCountryCodeChanged, removeGalleryFileIds, removeMainPhoto, selectedMainPhoto, userForm]);
+    }, [
+        changedFields,
+        changedUserFields,
+        form,
+        foundedYear,
+        galleryFiles,
+        hasUserChanges,
+        hasWineryChanges,
+        isDisabled,
+        navigation,
+        phoneCountryCode,
+        phoneCountryCodeChanged,
+        removeGalleryFileIds,
+        removeMainPhoto,
+        selectedMainPhoto,
+        userForm,
+    ]);
 
     const onPressBack = useCallback(() => navigation.goBack(), [navigation]);
     const mainPhotoUrl = userModel.winery?.mainPhoto?.mediumUrl || userModel.winery?.mainPhoto?.originalUrl || null;

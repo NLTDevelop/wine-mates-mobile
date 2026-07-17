@@ -33,4 +33,3 @@ export const ExpertiseSelectorRow = ({ expertiseLevel, onPress }: IProps) => {
         </View>
     );
 };
-

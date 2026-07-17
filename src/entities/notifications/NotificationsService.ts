@@ -2,6 +2,7 @@ import { IList } from '@/entities/IList';
 import { ILinks, links } from '@/Links';
 import { IRequester, IResponse, requester } from '@/libs/requester';
 import { notificationsModel } from './NotificationsModel';
+import { userModel } from '@/entities/users/UserModel';
 import { IGetNotificationsParams } from './params/IGetNotificationsParams';
 import { IClientNotification } from './types/IClientNotification';
 
@@ -20,7 +21,10 @@ class NotificationsService {
 
         if (!response.isError && response.data) {
             const list = response.data as IList<IClientNotification>;
-            notificationsModel.notificationsCount = list.count;
+            notificationsModel.notificationsCountState = {
+                token: userModel.token,
+                count: list.count,
+            };
             const normalizedList = {
                 ...list,
                 totalPages: list.totalPages ?? Math.ceil(list.count / params.limit),
