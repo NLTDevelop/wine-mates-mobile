@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { getStyles } from './styles';
 import { GuestTabsView } from './components/guestsTabsView';
 import { ActivityIndicator, FlatList, View } from 'react-native';
@@ -22,25 +22,26 @@ export const GuestsTab = ({ eventId, requiresConfirmation }: IProps) => {
         requiresConfirmation,
     });
 
-    const renderItem = ({ item }: { item: IPreparedEventGuest }) => {
+    const renderItem = useCallback(({ item }: { item: IPreparedEventGuest }) => {
         return (
             <GuestItemView
                 fullName={item.fullName}
                 avatarUrl={item.avatarUrl}
                 ageText={item.ageText}
+                onUserPress={item.onUserPress}
                 primaryAction={item.primaryAction}
                 secondaryAction={item.secondaryAction}
             />
         );
-    };
+    }, []);
 
-    const keyExtractor = (item: IPreparedEventGuest) => {
+    const keyExtractor = useCallback((item: IPreparedEventGuest) => {
         return `${item.id}`;
-    };
+    }, []);
 
-    const renderItemSeparator = () => {
+    const renderItemSeparator = useCallback(() => {
         return <View style={styles.itemSeparator} />;
-    };
+    }, [styles.itemSeparator]);
 
     if (isLoading) {
         return (

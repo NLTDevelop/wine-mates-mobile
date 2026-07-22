@@ -7,6 +7,7 @@ import { IPreparedEventGuest } from '@/modules/event/ui/EventDetailsView/types/I
 import { useCallback, useMemo, useState } from 'react';
 import { useEventGuestsTabDetails } from './useEventGuestsTabDetails';
 import { useUiContext } from '@/UIProvider';
+import { useProfileNavigation } from '@/hooks/useProfileNavigation';
 
 interface IProps {
     eventId: number;
@@ -45,6 +46,7 @@ const getAge = (birthday: string) => {
 
 export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => {
     const { t } = useUiContext();
+    const { onUserPressById } = useProfileNavigation();
     const [selectedTab, setSelectedTab] = useState<GuestTabs>(GuestTabs.ALL);
 
     const onPressAllTab = useCallback(() => {
@@ -91,15 +93,16 @@ export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => 
 
     const eventGuests: IPreparedEventGuest[] = useMemo(() => {
         return guestsTabDetails.eventGuests.map(guest => {
-            const fullName = `${guest.user.firstName} ${guest.user.lastName}`.trim();
-            const age = getAge(guest.user.birthday);
+            const fullName = `${guest.user?.firstName ?? '-'} ${guest.user?.lastName ?? '-'}`.trim();
+            const age = getAge(guest.user?.birthday);
             const ageText = age === null ? '' : `${age} ${t('eventGuests.age')}`;
             const isUpdating = updatingGuestId === guest.id;
             const preparedGuest = {
                 id: guest.id,
                 fullName,
                 ageText,
-                avatarUrl: guest.user.avatar?.smallUrl || null,
+                avatarUrl: guest.user?.avatar?.smallUrl || null,
+                onUserPress: () => onUserPressById(guest.user.id),
             };
 
             const confirmAction: IGuestAction = {
@@ -162,6 +165,7 @@ export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => 
         guestsTabDetails.eventGuests,
         onAcceptGuest,
         onRejectGuest,
+        onUserPressById,
         selectedTab,
         t,
         updatingGuestId,

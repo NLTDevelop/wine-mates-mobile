@@ -15,18 +15,17 @@ import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLe
 import { LevelButton } from '@/modules/registration/ui/components/LevelButton';
 import { WineLoverIcon } from '@assets/icons/WineLoverIcon';
 import { WineExpertIcon } from '@assets/icons/WineExpertIcon';
-import { WinemakerIcon } from '@assets/icons/WinemakerIcon';
+// import { WinemakerIcon } from '@assets/icons/WinemakerIcon';
 
 const windowHeight = Dimensions.get('window').height;
 
 interface IProps {
     modalRef: React.RefObject<BottomSheetModal | null>;
-    selectedValue: WineExperienceLevelEnum;
     onSelect: (value: WineExperienceLevelEnum) => void;
     onClose: () => void;
 }
 
-export const SelectExpertiseBottomSheet = ({ modalRef, selectedValue, onSelect, onClose }: IProps) => {
+export const SelectExpertiseBottomSheet = ({ modalRef, onSelect, onClose }: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom, top), [colors, bottom, top]);
@@ -49,9 +48,9 @@ export const SelectExpertiseBottomSheet = ({ modalRef, selectedValue, onSelect, 
         onSelect(WineExperienceLevelEnum.EXPERT);
     }, [onSelect]);
 
-    const onSelectCreator = useCallback(() => {
-        onSelect(WineExperienceLevelEnum.CREATOR);
-    }, [onSelect]);
+    // const onSelectCreator = useCallback(() => {
+    //     onSelect(WineExperienceLevelEnum.CREATOR);
+    // }, [onSelect]);
 
     return (
         <BottomSheetModal
@@ -63,20 +62,12 @@ export const SelectExpertiseBottomSheet = ({ modalRef, selectedValue, onSelect, 
             handleComponent={renderHandle}
             backdropComponent={renderBackdrop}
             backgroundStyle={styles.bottomSheetContainer}
-            onDismiss={onClose}
         >
             <BottomSheetView style={styles.container}>
                 <View style={styles.header}>
                     <View style={styles.headerSpacer} />
                     <Typography variant="h4" text={t('settings.expertise')} />
                     <View style={styles.headerRight}>
-                        <Typography
-                            variant="body_400"
-                            text={t(`wineLevel.${selectedValue}`)}
-                            style={styles.selectedText}
-                            numberOfLines={1}
-                        />
-                        <View style={styles.headerIconSpacer} />
                         <Pressable style={styles.closeButton} onPress={onClose} hitSlop={20}>
                             <CrossIcon />
                         </Pressable>
@@ -94,11 +85,11 @@ export const SelectExpertiseBottomSheet = ({ modalRef, selectedValue, onSelect, 
                         typeIcon={<WineExpertIcon />}
                         onPress={onSelectExpert}
                     />
-                    <LevelButton
+                    {/* <LevelButton
                         text={t('wineLevel.creator')}
                         typeIcon={<WinemakerIcon />}
                         onPress={onSelectCreator}
-                    />
+                    /> */}
                 </View>
             </BottomSheetView>
         </BottomSheetModal>

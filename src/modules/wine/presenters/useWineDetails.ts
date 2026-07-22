@@ -9,11 +9,63 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { NONE_VINTAGE_DROPDOWN_VALUE } from './useVintageDropdown';
 import { wineModel } from '@/entities/wine/models/WineModel';
 import { clearWineReviewsListModel } from '@/entities/wine/services/WineModelService';
+import { IRateDetails } from '@/entities/wine/types/IRateDetails';
+
+const getRateColorStatistics = (rateDetails: IRateDetails): IWineDetails['statistics']['topColors'] => {
+    if (!rateDetails.color?.tone) {
+        return [];
+    }
+
+    const emptyShade = {
+        colorHex: rateDetails.color.colorHex,
+        userCount: 0,
+    };
+    const selectedShade = {
+        colorHex: rateDetails.color.colorHex,
+        userCount: 1,
+    };
+
+    return [{
+        id: rateDetails.color.id,
+        colorHex: rateDetails.color.colorHex,
+        name: rateDetails.color.name,
+        pale: rateDetails.color.tone === 'pale' ? selectedShade : emptyShade,
+        medium: rateDetails.color.tone === 'medium' ? selectedShade : emptyShade,
+        deep: rateDetails.color.tone === 'deep' ? selectedShade : emptyShade,
+    }];
+};
+
+const mergeRateDetails = (wineDetails: IWineDetails, rateDetails: IRateDetails): IWineDetails => {
+    return {
+        ...wineDetails,
+        averageUserRating: rateDetails.userRating,
+        averageExpertRating: rateDetails.expertRating,
+        countUserRating: rateDetails.userRating === null ? 0 : 1,
+        countExpertRating: rateDetails.expertRating === null ? 0 : 1,
+        totalReviews: 1,
+        isTasted: true,
+        myReview: {
+            id: rateDetails.id,
+            userRating: rateDetails.userRating,
+            expertRating: rateDetails.expertRating,
+            review: rateDetails.review,
+            createdAt: rateDetails.createdAt,
+            user: rateDetails.user,
+        },
+        statistics: {
+            topColors: getRateColorStatistics(rateDetails),
+            topAromas: rateDetails.aromas.map(item => ({ ...item, userCount: 1 })),
+            topFlavors: rateDetails.flavors.map(item => ({ ...item, userCount: 1 })),
+            tasteCharacteristics: rateDetails.tasteCharacteristics,
+            topWinePeaks: rateDetails.winePeak === null ? [] : [{ year: rateDetails.winePeak, userCount: 1 }],
+        },
+    };
+};
 
 export const useWineDetails = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const { wineId, fromScanner, wineDetailsData, openedFromDeepLink } = (route.params as { wineId?: number; fromScanner?: boolean; wineDetailsData?: IWineDetails; openedFromDeepLink?: boolean }) || { wineId: null, fromScanner: false, wineDetailsData: undefined, openedFromDeepLink: false };
+    const { wineId, fromScanner, wineDetailsData, openedFromDeepLink, notificationRateId } = (route.params as { wineId?: number; fromScanner?: boolean; wineDetailsData?: IWineDetails; openedFromDeepLink?: boolean; notificationRateId?: number }) || { wineId: null, fromScanner: false, wineDetailsData: undefined, openedFromDeepLink: false, notificationRateId: undefined };
     const isFocused = useIsFocused();
     const [details, setDetails] = useState<IWineDetails | null>(null);
     const [isError, setIsError] = useState(false);
@@ -24,6 +76,38 @@ export const useWineDetails = () => {
 
     const getDetails = useCallback(async (params?: { vintages?: 'All' }) => {
         try {
+            if (notificationRateId) {
+                const rateResponse = await wineService.getRateDetails(notificationRateId);
+
+                if (rateResponse.isError || !rateResponse.data) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        rateResponse.message || localization.t('common.somethingWentWrong'),
+                    );
+                    setIsError(true);
+                    return;
+                }
+
+                const wineResponse = await wineService.getById(rateResponse.data.wineId, params);
+
+                if (wineResponse.isError || !wineResponse.data) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        wineResponse.message || localization.t('common.somethingWentWrong'),
+                    );
+                    setIsError(true);
+                    return;
+                }
+
+                const notificationDetails = mergeRateDetails(wineResponse.data, rateResponse.data);
+                wineModel.selectedWineId = rateResponse.data.wineId;
+                setDetails(notificationDetails);
+                wineModel.vintages = notificationDetails.vintages;
+                setLocalIsSaved(notificationDetails.isSaved);
+                setIsError(false);
+                return;
+            }
+
             if (!wineModel.selectedWineId) return;
 
             const detailsParams = {
@@ -52,7 +136,7 @@ export const useWineDetails = () => {
         } finally {
             
         }
-    }, [rateId]);
+    }, [notificationRateId, rateId]);
 
     const onVintageChange = useCallback(async (item: IDropdownItem) => {
         const isNoneVintage = item.value === NONE_VINTAGE_DROPDOWN_VALUE;
@@ -126,17 +210,19 @@ export const useWineDetails = () => {
                 return;
             }
 
-            if (!wineId) return;
+            if (!wineId && !notificationRateId) return;
 
             setIsAllVintagesSelected(false);
-            wineModel.selectedWineId = wineId;
+            if (wineId) {
+                wineModel.selectedWineId = wineId;
+            }
             getDetails();
         });
 
         return () => {
             cancelAnimationFrame(frameId);
         };
-    }, [wineId, wineDetailsData, isFocused, getDetails]);
+    }, [wineId, wineDetailsData, notificationRateId, isFocused, getDetails]);
 
     const hasCurrentVintageData = !!details?.currentVintage && typeof details.currentVintage === 'object';
 
@@ -215,7 +301,8 @@ export const useWineDetails = () => {
         selectedWineId: wineModel.selectedWineId,
         fromScanner,
         onUpdateIsSaved,
-        isPreloadedData: !!wineDetailsData,
+        isPreloadedData: Boolean(wineDetailsData || notificationRateId),
+        isResultHeaderFooterVisible: !notificationRateId,
         myReview: details?.myReview ?? null,
         onPressBack,
     };

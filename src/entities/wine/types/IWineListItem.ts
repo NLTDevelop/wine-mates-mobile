@@ -11,7 +11,7 @@ export interface IWineListItem {
     createdAt: string;
     image: IMedia | null;
     defaultImage: IMedia | null;
-    averageUserRating: number;
+    averageUserRating: number | null;
     countUserRating: number | null;
     averageExpertRating: number | null;
     countExpertRating: number | null;
@@ -26,8 +26,9 @@ export interface IWineListItem {
         name: string;
     } | null;
     lastReview?: {
-        review: string;
-        createdAt: string;
+        id: number;
+        review: string | null;
+        createdAt?: string;
         user: {
             id?: number;
             firstName: string;

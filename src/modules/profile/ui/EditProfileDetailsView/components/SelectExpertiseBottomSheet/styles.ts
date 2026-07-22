@@ -33,12 +33,6 @@ export const getStyles = (colors: IColors, bottomInset: number, topInset: number
             alignItems: 'center',
             maxWidth: scaleHorizontal(170),
         },
-        selectedText: {
-            color: colors.text_light,
-        },
-        headerIconSpacer: {
-            width: scaleHorizontal(12),
-        },
         closeButton: {
             width: scaleVertical(24),
             height: scaleVertical(24),

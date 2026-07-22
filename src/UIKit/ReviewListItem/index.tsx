@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -18,7 +18,7 @@ export const ReviewListItem = ({ item, showReviewWithoutPremium = false }: IProp
     const { colors, locale, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { formattedDateTime, isLocked, isLoverLevel, formattedUserRating, formattedExpertRating } =
+    const { formattedDateTime, isLocked, isLoverLevel, formattedUserRating, formattedExpertRating, onUserPress } =
         useReviewListItem({
             item,
             locale,
@@ -27,7 +27,7 @@ export const ReviewListItem = ({ item, showReviewWithoutPremium = false }: IProp
 
     return (
         <View style={styles.container}>
-            <View style={styles.row}>
+            <TouchableOpacity style={styles.row} onPress={onUserPress} activeOpacity={0.8}>
                 <Avatar
                     avatarUrl={item.user.avatar?.smallUrl || item.user.image?.smallUrl || null}
                     fullname={`${item.user.firstName} ${item.user.lastName}`}
@@ -63,7 +63,7 @@ export const ReviewListItem = ({ item, showReviewWithoutPremium = false }: IProp
                     </View>
                 </View>
                 <Typography text={formattedDateTime} variant="body_400" style={styles.date} />
-            </View>
+            </TouchableOpacity>
             {item.review ? <Typography text={item.review} variant="body_400" /> : null}
             {isLocked && <LockContainer />}
         </View>

@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useIsFocused } from '@react-navigation/native';
 import { Camera } from 'react-native-vision-camera';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { GalleryIcon } from '@assets/icons/GalleryIcon';
@@ -18,19 +17,16 @@ export const AvatarCameraView = () => {
     const { colors } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, top, bottom), [colors, top, bottom]);
-    const isFocused = useIsFocused();
-
-    const { appState, onGalleryPress, onTakePhotoPress, onCrossPress, onSwitchCamera, cameraRef, device, hasPermission, hasBothCameras } = useAvatarCamera(CIRCLE_SIZE);
+    const { onGalleryPress, onTakePhotoPress, onCrossPress, onSwitchCamera, device, cameraOutputs, isCameraActive, hasPermission, hasBothCameras } = useAvatarCamera(CIRCLE_SIZE);
 
     return (
         <View style={styles.container}>
             {!hasPermission || !device ? null : (
                 <>
                     <Camera
-                        ref={cameraRef}
-                        isActive={isFocused && appState === 'active'}
+                        isActive={isCameraActive}
                         device={device}
-                        photo
+                        outputs={cameraOutputs}
                         style={StyleSheet.absoluteFill}
                     />
                     <CameraMask circleSize={CIRCLE_SIZE} />

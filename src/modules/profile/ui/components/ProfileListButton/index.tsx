@@ -9,14 +9,19 @@ interface IProps {
     text: string;
     icon: ReactElement;
     onPress: () => void;
+    disabled?: boolean;
 }
 
-export const ProfileListButton = ({ text, icon, onPress }: IProps) => {
+export const ProfileListButton = ({ text, icon, onPress, disabled = false }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
-        <TouchableOpacity style={styles.container} onPress={onPress}>
+        <TouchableOpacity
+            style={[styles.container, disabled && styles.disabledContainer]}
+            onPress={onPress}
+            disabled={disabled}
+        >
             <View style={styles.row}>
                 {icon}
                 <Typography variant="h6" text={text} />

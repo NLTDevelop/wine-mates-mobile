@@ -9,14 +9,16 @@ import { useCountrySelector } from '@/libs/countryCodePicker/presenters/useCount
 import { ICountry } from '@/libs/countryCodePicker/types/ICountry';
 
 interface IProps {
-    country: ICountry | null
-    onChangeCountry: (country: ICountry) => void
+    country: ICountry | null;
+    onChangeCountry: (country: ICountry) => void;
+    countries?: ICountry[];
 }
 
-export const CountrySelector = ({ country, onChangeCountry }: IProps) => {
+export const CountrySelector = ({ country, onChangeCountry, countries }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { countryModalRef, onClose, onDismiss, onPress, isMounted, isOpened, onCountryPress } = useCountrySelector(onChangeCountry);
+    const { countryModalRef, onClose, onDismiss, onPress, isMounted, isOpened, onCountryPress } =
+        useCountrySelector(onChangeCountry);
 
     return (
         <>
@@ -30,6 +32,7 @@ export const CountrySelector = ({ country, onChangeCountry }: IProps) => {
                     onCountryPress={onCountryPress}
                     onClose={onClose}
                     onDismiss={onDismiss}
+                    countries={countries}
                 />
             )}
         </>

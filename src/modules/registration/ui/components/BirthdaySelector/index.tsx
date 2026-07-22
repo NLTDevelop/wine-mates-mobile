@@ -8,14 +8,14 @@ import { format } from 'date-fns';
 
 interface IProps {
     date: string | null;
-    handlePress: () => void;
+    onPress: () => void;
     isOpened: boolean;
     isError: boolean;
     displayText?: string;
     disabled?: boolean;
 }
 
-export const BirthdaySelector = ({ date, handlePress, isOpened, isError, displayText, disabled = false }: IProps) => {
+export const BirthdaySelector = ({ date, onPress, isOpened, isError, displayText, disabled = false }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const formattedDate = useMemo(() => {
@@ -32,7 +32,7 @@ export const BirthdaySelector = ({ date, handlePress, isOpened, isError, display
     return (
         <TouchableOpacity
             style={isError ? styles.containerError : styles.container}
-            onPress={handlePress}
+            onPress={onPress}
             onPressIn={Keyboard.dismiss}
             disabled={disabled}
             activeOpacity={disabled ? 1 : 0.2}

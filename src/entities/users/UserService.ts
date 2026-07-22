@@ -6,6 +6,7 @@ import { ResetPasswordRequestDto } from './dto/ResetPasswordRequest.dto';
 import { ResetPasswordVerifyDto } from './dto/ResetPasswordVerify.dto';
 import { ResetPasswordConfirmDto } from './dto/ResetPasswordConfirm.dto';
 import { IRegisterUser } from './types/IRegisterUser';
+import { IRegisterWineryUser } from './types/IRegisterWineryUser';
 import { ProvidersSignIn } from './dto/ProvidersSignIn.dto';
 import { localization } from '@/UIProvider/localization/Localization';
 import { EmailValidation } from './dto/EmailValidation.dto';
@@ -14,6 +15,8 @@ import { IUser } from './types/IUser';
 import { IUserCurrency } from './types/IUserCurrency';
 import { IUserCurrencies } from './types/IUserCurrencies';
 import { LocationDto } from './dto/Location.dto';
+import { IWinery } from '@/entities/winery/types/IWinery';
+import { IPublicProfile } from './types/IPublicProfile';
 
 class UserService {
     constructor(
@@ -61,6 +64,7 @@ class UserService {
                 const user = this.extractUser(response.data);
                 if (user) {
                     userModel.user = user;
+                    userModel.winery = response.data.winery;
                     this.syncUserLanguage(user);
                 }
             }
@@ -69,6 +73,18 @@ class UserService {
         } catch (error) {
             console.warn('UserService -> me: ', error);
             return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getPublicProfile = async (userId: number): Promise<IResponse<IPublicProfile>> => {
+        try {
+            return await this._requester.request({
+                method: 'GET',
+                url: `${this._links.users}/${userId}`,
+            });
+        } catch (error) {
+            console.warn('UserService -> getPublicProfile: ', error);
+            return { isError: true, message: '' };
         }
     };
 
@@ -155,6 +171,26 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> signUp: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    signUpWinery = async (body: IRegisterWineryUser): Promise<IResponse<IUserData>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'POST',
+                url: `${this._links.wineries}/register`,
+                data: body,
+            });
+
+            if (!response.isError) {
+                userModel.token = response.data?.accessToken;
+                userModel.user = response.data?.user;
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> signUpWinery: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
@@ -247,6 +283,31 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> update: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    updateWinery = async (formData: FormData): Promise<IResponse<IWinery>> => {
+        const wineryId = userModel.winery?.id;
+        if (!wineryId) {
+            return { isError: true, data: null, message: '' } as any;
+        }
+
+        try {
+            const response = await this._requester.request({
+                method: 'PATCH',
+                url: `${this._links.wineryUpdate}/${wineryId}`,
+                data: formData,
+            });
+
+            if (!response.isError && response.data) {
+                const responseData = response.data as IWinery & { winery?: IWinery };
+                userModel.winery = responseData.winery || responseData;
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('UserService -> updateWinery: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
