@@ -13,6 +13,8 @@ import {
     IEventFilterOptionsRequest,
 } from './types/IEventFilterOptions';
 import { IGetEventsParams } from './params/IGetEventsParams';
+import { IUserEventsParams } from './params/IUserEventsParams';
+import { userEventsModel } from './UserEventsModel';
 import { ISavedEvent } from './types/ISavedEvent';
 import { IAppliedEvent } from './types/IAppliedEvent';
 import { IUserCurrencies } from '../users/types/IUserCurrencies';
@@ -491,6 +493,41 @@ class EventsService {
         } catch (error) {
             console.warn('EventsService -> getCreatedEvents: ', error);
             return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getUserEvents = async (params: IUserEventsParams): Promise<IResponse<IList<IEvent>>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: this._links.userEvents,
+                params,
+            });
+
+            if (!response.isError && response.data) {
+                const rows = response.data.rows || response.data.items || [];
+                const normalizedList: IList<IEvent> = {
+                    rows: Array.isArray(rows) ? rows : [],
+                    count: typeof response.data.count === 'number' ? response.data.count : rows.length,
+                    totalPages: 0,
+                };
+
+                if (params.offset === 0) {
+                    userEventsModel.list = normalizedList;
+                } else {
+                    userEventsModel.append(normalizedList);
+                }
+
+                return {
+                    ...response,
+                    data: normalizedList,
+                };
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('EventsService -> getUserEvents: ', error);
+            return { isError: true, message: '' };
         }
     };
 

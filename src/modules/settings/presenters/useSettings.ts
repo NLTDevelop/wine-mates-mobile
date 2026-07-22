@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback } from 'react';
 
-export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void, locale: string) => {
+export const useSettings = (onShowLogoutAlert: () => void, onOpen: () => void, locale: string) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const onNotificationPress = useCallback(() => {
@@ -111,7 +111,7 @@ export const useSettings = (onShowLogoutModal: () => void, onOpen: () => void, l
         {
             id: 2,
             text: localization.t('settings.logOut', { locale }),
-            onPress: onShowLogoutModal,
+            onPress: onShowLogoutAlert,
             hideIcon: true,
         },
         {

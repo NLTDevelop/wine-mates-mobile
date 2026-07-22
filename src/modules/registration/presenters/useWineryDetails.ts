@@ -10,6 +10,7 @@ import { localization } from '@/UIProvider/localization/Localization';
 import countriesData from 'world-countries';
 import { CountryCode } from 'libphonenumber-js';
 import { useWineRegion } from '@/modules/scanner/presenters/useWineRegion';
+import { useRegistrationLinks } from '@/modules/registration/presenters/useRegistrationLinks';
 
 const MIN_FOUNDED_YEAR = 1000;
 
@@ -45,8 +46,10 @@ export const useWineryDetails = () => {
         description: registerUserModel.user?.winery?.description || '',
         country: null as ICountryPicker | null,
         regionId: registerUserModel.user?.winery?.regionId || null,
-        links: registerUserModel.user?.winery?.links.join('\n') || '',
     });
+    const { editableLinks, normalizedLinks, onAddLink } = useRegistrationLinks(
+        registerUserModel.user?.winery?.links,
+    );
     const { regions } = useWineRegion(form.country?.id);
 
     const isDisabled = useMemo(() => {
@@ -98,11 +101,6 @@ export const useWineryDetails = () => {
         setIsError({ status: false, errorText: '' });
     }, []);
 
-    const onChangeLinks = useCallback((links: string) => {
-        setForm(previous => ({ ...previous, links }));
-        setIsError({ status: false, errorText: '' });
-    }, []);
-
     const onChangeCountry = useCallback((country: ICountryPicker) => {
         setForm(previous => ({ ...previous, country, regionId: null }));
         setIsError({ status: false, errorText: '' });
@@ -136,14 +134,11 @@ export const useWineryDetails = () => {
                 description,
                 countryId: form.country.id,
                 regionId: form.regionId,
-                links: form.links
-                    .split(/[\n,]/)
-                    .map(link => link.trim())
-                    .filter(Boolean),
+                links: normalizedLinks,
             },
         };
         navigation.navigate('CreatePasswordView');
-    }, [form, navigation]);
+    }, [form, navigation, normalizedLinks]);
 
     return {
         form,
@@ -155,7 +150,8 @@ export const useWineryDetails = () => {
         onChangeName,
         onChangeFoundedYear,
         onChangeDescription,
-        onChangeLinks,
+        editableLinks,
+        onAddLink,
         onChangeCountry,
         onChangeRegion,
         onNextPress,

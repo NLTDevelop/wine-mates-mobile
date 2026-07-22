@@ -5,6 +5,7 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { registerUserModel } from '@/entities/users/RegisterUserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
+import { useRegistrationLinks } from '@/modules/registration/presenters/useRegistrationLinks';
 
 const MIN_AGE = 18;
 
@@ -15,10 +16,15 @@ export const usePersonalDetails = () => {
         lastName: registerUserModel.user?.lastName || '',
         birthday: registerUserModel.user?.birthday || '',
         occupation: registerUserModel.user?.occupation || '',
-        instagramLink: registerUserModel.user?.instagramLink || '',
         placeOfWork: registerUserModel.user?.placeOfWork || '',
         gender: registerUserModel.user?.gender || '',
     });
+    const initialLinks = registerUserModel.user?.links?.length
+        ? registerUserModel.user.links
+        : registerUserModel.user?.instagramLink
+          ? [registerUserModel.user.instagramLink]
+          : undefined;
+    const { editableLinks, normalizedLinks, onAddLink } = useRegistrationLinks(initialLinks);
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const isDisabled = useMemo(() => {
         const baseRequired = [form.firstName, form.lastName, form.birthday, form.gender];
@@ -26,10 +32,10 @@ export const usePersonalDetails = () => {
         const level = registerUserModel.user?.wineExperienceLevel;
         const requiresOccupation = level === WineExperienceLevelEnum.EXPERT && !form.occupation.trim();
         const expertRequires =
-            level !== WineExperienceLevelEnum.LOVER && !form.placeOfWork.trim() && !form.instagramLink.trim();
+            level !== WineExperienceLevelEnum.LOVER && !form.placeOfWork.trim() && normalizedLinks.length === 0;
 
         return hasEmptyBase || requiresOccupation || expertRequires || isError.status;
-    }, [form, isError]);
+    }, [form, isError, normalizedLinks.length]);
 
     const onChangeFirstName = useCallback((value: string) => {
         setForm(prev => ({ ...prev, firstName: value || '' }));
@@ -48,11 +54,6 @@ export const usePersonalDetails = () => {
 
     const onChangeOccupation = useCallback((value: string) => {
         setForm(prev => ({ ...prev, occupation: value || '' }));
-        setIsError({ status: false, errorText: '' });
-    }, []);
-
-    const onChangeInstagramLink = useCallback((value: string) => {
-        setForm(prev => ({ ...prev, instagramLink: value || '' }));
         setIsError({ status: false, errorText: '' });
     }, []);
 
@@ -87,6 +88,7 @@ export const usePersonalDetails = () => {
             lastName: form.lastName.trim(),
             birthday: form.birthday,
             gender: form.gender,
+            links: normalizedLinks,
         };
 
         if (registerUserModel.user.wineExperienceLevel === WineExperienceLevelEnum.EXPERT) {
@@ -94,12 +96,11 @@ export const usePersonalDetails = () => {
                 ...registerUserModel.user,
                 occupation: form.occupation.trim(),
                 placeOfWork: form.placeOfWork.trim(),
-                instagramLink: form.instagramLink.trim(),
             };
         }
 
         navigation.navigate('CreatePasswordView');
-    }, [navigation, form]);
+    }, [navigation, form, normalizedLinks]);
 
     return {
         form,
@@ -110,7 +111,8 @@ export const usePersonalDetails = () => {
         onNextPress,
         isError,
         isDisabled,
-        onChangeInstagramLink,
+        editableLinks,
+        onAddLink,
         onChangeGender,
         onChangePlaceOfWork,
     };

@@ -52,6 +52,8 @@ import { AppealsListView } from '@/modules/appeals/ui/AppealsListView';
 import { CreateAppealView } from '@/modules/appeals/ui/CreateAppealView';
 import { AppealDetailsView } from '@/modules/appeals/ui/AppealDetailsView';
 import { ScannerStack } from '@/navigation/scannerStackNavigator';
+import { PublicUserProfileView } from '@/modules/profile/ui/PublicUserProfileView';
+import { PublicWineryProfileView } from '@/modules/profile/ui/PublicWineryProfileView';
 
 const Stack = createNativeStackNavigator();
 
@@ -126,6 +128,8 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="NotificationsView" component={NotificationsView} />
             <Stack.Screen name="MyWineryWinesView" component={MyWineryWinesView} />
             <Stack.Screen name="AddWineryWinesView" component={AddWineryWinesView} />
+            <Stack.Screen name="PublicUserProfileView" component={PublicUserProfileView} />
+            <Stack.Screen name="PublicWineryProfileView" component={PublicWineryProfileView} />
             <Stack.Screen name="AppealsListView" component={AppealsListView} />
             <Stack.Screen name="CreateAppealView" component={CreateAppealView} />
             <Stack.Screen name="AppealDetailsView" component={AppealDetailsView} />

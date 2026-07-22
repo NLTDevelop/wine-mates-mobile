@@ -8,6 +8,7 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { getProfileGalleryPhotos } from '@/modules/profile/utils/getProfileGalleryPhotos';
 import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
 import { getProfileBirthdayText, getProfileCountryName } from '@/modules/profile/utils/profileUserFields';
+import { getProfileLinkItems } from '@/modules/profile/utils/getProfileLinkItems';
 
 const getProfileField = (value: string | undefined | null, placeholder: string) => {
     const text = value || placeholder;
@@ -51,10 +52,14 @@ export const useProfileDetails = (locale: string) => {
               : '';
     const occupation = userModel.user?.occupation || '';
     const placeOfWork = userModel.user?.wineryName || '';
-    const instagramLink = userModel.user?.instagramLink || '';
-    const website = userModel.user?.website || '';
     const bio = userModel.user?.bio || '';
     const selectedCurrency = userModel.user?.selectedCurrency || '';
+    const links = Array.isArray(userModel.user?.links)
+        ? userModel.user.links.map(link => link.trim()).filter(Boolean)
+        : [userModel.user?.website, userModel.user?.instagramLink]
+              .map(link => link?.trim() || '')
+              .filter(Boolean);
+    const linkItems = getProfileLinkItems([...new Set(links)]);
 
     const fields = {
         fullName: {
@@ -97,14 +102,6 @@ export const useProfileDetails = (locale: string) => {
             ...getProfileField(selectedCurrency, localization.t('settings.selectedCurrency', { locale })),
             label: localization.t('settings.selectedCurrency', { locale }),
         },
-        instagram: {
-            ...getProfileField(instagramLink, localization.t('settings.instagram', { locale })),
-            label: localization.t('settings.instagramLabel', { locale }),
-        },
-        website: {
-            ...getProfileField(website, localization.t('settings.website', { locale })),
-            label: localization.t('settings.websiteLabel', { locale }),
-        },
         bio: {
             ...getProfileField(bio, localization.t('settings.bio', { locale })),
             label: localization.t('settings.bio', { locale }),
@@ -125,6 +122,7 @@ export const useProfileDetails = (locale: string) => {
         expertiseLevel,
         expertiseLabel,
         fields,
+        linkItems,
         gallery,
         onPressBack,
         onPressEdit,

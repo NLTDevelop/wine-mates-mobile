@@ -6,6 +6,7 @@ import { declOfWord } from '@/utils';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { useProfileNavigation } from '@/hooks/useProfileNavigation';
 
 interface IProps {
     item: IWineListItem | IWineDetails;
@@ -23,6 +24,8 @@ const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails
 
 export const useWineListItem = ({ item, onPress, onSharePress, removeCardStyles, isMyWine }: IProps) => {
     const { t } = useUiContext();
+    const wineryUserId = isWineDetails(item) ? item.wineryUserId : null;
+    const { onUserPressById } = useProfileNavigation();
 
     const onItemPress = useCallback(() => {
         if (onPress && isWineListItem(item)) {
@@ -38,6 +41,21 @@ export const useWineListItem = ({ item, onPress, onSharePress, removeCardStyles,
         event.stopPropagation();
         onShareItemPress();
     }, [onShareItemPress]);
+
+    const onWineryPress = useCallback(
+        (event: GestureResponderEvent) => {
+            event.stopPropagation();
+
+            if (typeof wineryUserId !== 'number') {
+                return;
+            }
+
+            onUserPressById(wineryUserId);
+        },
+        [onUserPressById, wineryUserId],
+    );
+
+    const isWineryLink = typeof wineryUserId === 'number';
 
     const similarityText = useMemo(() => {
         if (!isWineListItem(item) || !item.similarity) return '-';
@@ -180,5 +198,7 @@ export const useWineListItem = ({ item, onPress, onSharePress, removeCardStyles,
         showExpertReviewCount,
         expertReviewLabel,
         onPressShareButton,
+        onWineryPress,
+        isWineryLink,
     };
 };

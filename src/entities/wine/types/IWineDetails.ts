@@ -74,6 +74,7 @@ export interface IWineDetails {
     };
     type: { id: number; isSparkling: boolean; name: string };
     userId: number;
+    wineryUserId: number | null;
     vintage: number | null;
     vintages: IVintagesItem[];
     totalReviews: number;

@@ -1,30 +1,7 @@
-import { IMedia } from '@/entities/media/types/IMedia';
+import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 
-export interface IAvailableWineryWine {
-    id: number;
+export interface IAvailableWineryWine extends IWineListItem {
     name: string;
-    vintage: number | null;
-    producer: string | null;
-    grapeVariety: string | null;
-    color: {
-        id: number;
-        name: string;
-        colorHex: string;
-    };
-    type: {
-        id: number;
-        name: string;
-        isSparkling: boolean;
-    };
-    country: {
-        id: number;
-        name: string;
-    };
-    region: {
-        id: number;
-        name: string;
-    } | null;
-    image: IMedia | null;
 }
 
 export interface IAvailableWineryWineList {

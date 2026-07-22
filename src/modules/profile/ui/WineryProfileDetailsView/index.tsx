@@ -10,7 +10,7 @@ import { Gallery } from '@/UIKit/Gallery';
 import { ProfileDetailsField } from '@/modules/profile/ui/ProfileDetailsView/components/ProfileDetailsField';
 import { useWineryProfileDetails } from './presenters/useWineryProfileDetails';
 import { getStyles } from './styles';
-import { WineryLinksList } from './components/WineryLinksList';
+import { ProfileLinksList } from '@/modules/profile/ui/components/ProfileLinksList';
 
 export const WineryProfileDetailsView = observer(() => {
     const { colors, t, locale } = useUiContext();
@@ -50,7 +50,7 @@ export const WineryProfileDetailsView = observer(() => {
                     <ProfileDetailsField {...fields.userCountry} />
                     <ProfileDetailsField {...fields.phone} />
                     <ProfileDetailsField {...fields.birthday} />
-                    {!!linkItems.length && <WineryLinksList label={t('settings.wineryLinks')} items={linkItems} />}
+                    {!!linkItems.length && <ProfileLinksList label={t('settings.wineryLinks')} items={linkItems} />}
                 </View>
             </View>
         </ScreenContainer>

@@ -33,7 +33,7 @@ export interface IEvent {
     description: string;
     latitude: number;
     longitude: number;
-    distanceKm: string | number | null;
+    distanceKm?: string | number | null;
     acceptedCount?: number;
     participants?: IEventParticipant[];
     isSaved?: boolean;

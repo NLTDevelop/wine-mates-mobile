@@ -18,9 +18,10 @@ interface IProps {
     hasCurrentVintageData: boolean;
     isAllVintagesSelected: boolean;
     fromScanner?: boolean;
+    isResultHeaderFooterVisible: boolean;
 }
 
-export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner }: IProps) => {
+export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, isResultHeaderFooterVisible }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { onPress, isCreating } = useResultHeader(item, fromScanner);
@@ -37,16 +38,18 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
             <WineListItem
                 item={item}
                 onSharePress={onOpenShareModal}
-                footer={ <ResultHeaderFooter
-                    item={item}
-                    vintages={vintages}
-                    onVintageChange={onVintageChange}
-                    onFavoritePress={onFavoritePress}
-                    hasCurrentVintageData={hasCurrentVintageData}
-                    isAllVintagesSelected={isAllVintagesSelected}
-                    onPress={onPress}
-                    isCreating={isCreating}
-                />}
+                footer={isResultHeaderFooterVisible ? (
+                    <ResultHeaderFooter
+                        item={item}
+                        vintages={vintages}
+                        onVintageChange={onVintageChange}
+                        onFavoritePress={onFavoritePress}
+                        hasCurrentVintageData={hasCurrentVintageData}
+                        isAllVintagesSelected={isAllVintagesSelected}
+                        onPress={onPress}
+                        isCreating={isCreating}
+                    />
+                ) : undefined}
                 removeCardStyles
                 showExpertRatingWithoutPremium={false}
                 hideDate

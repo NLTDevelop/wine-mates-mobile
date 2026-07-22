@@ -16,6 +16,7 @@ import { IUserCurrency } from './types/IUserCurrency';
 import { IUserCurrencies } from './types/IUserCurrencies';
 import { LocationDto } from './dto/Location.dto';
 import { IWinery } from '@/entities/winery/types/IWinery';
+import { IPublicProfile } from './types/IPublicProfile';
 
 class UserService {
     constructor(
@@ -72,6 +73,18 @@ class UserService {
         } catch (error) {
             console.warn('UserService -> me: ', error);
             return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getPublicProfile = async (userId: number): Promise<IResponse<IPublicProfile>> => {
+        try {
+            return await this._requester.request({
+                method: 'GET',
+                url: `${this._links.users}/${userId}`,
+            });
+        } catch (error) {
+            console.warn('UserService -> getPublicProfile: ', error);
+            return { isError: true, message: '' };
         }
     };
 

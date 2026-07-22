@@ -23,7 +23,8 @@ export const WineDetailsView = observer(() => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
-        selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, myReview, onPressBack } = useWineDetails();
+        selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, isResultHeaderFooterVisible,
+        myReview, onPressBack } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
         selectedWineId ?? wineId,
@@ -73,6 +74,7 @@ export const WineDetailsView = observer(() => {
                                 isAllVintagesSelected={isAllVintagesSelected}
                                 fromScanner={fromScanner}
                                 hasReviews={data.length > 0}
+                                isResultHeaderFooterVisible={isResultHeaderFooterVisible}
                             />
                         }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}

@@ -15,6 +15,7 @@ import { SignInFooter } from '../components/SignInFooter';
 import { useWineryDetails } from '../../presenters/useWineryDetails';
 import { useWineryRegionModal } from './presenters/useWineryRegionModal';
 import { getStyles } from './styles';
+import { EditableRegistrationLinks } from '../components/EditableRegistrationLinks';
 
 export const WineryDetailsView = observer(() => {
     const { colors, t } = useUiContext();
@@ -29,7 +30,8 @@ export const WineryDetailsView = observer(() => {
         onChangeName,
         onChangeFoundedYear,
         onChangeDescription,
-        onChangeLinks,
+        editableLinks,
+        onAddLink,
         onChangeCountry,
         onChangeRegion,
         onNextPress,
@@ -96,12 +98,12 @@ export const WineryDetailsView = observer(() => {
                                 onPress={onOpenRegionModal}
                                 isDisabled={isRegionPickerDisabled}
                             />
-                            <CustomInput
-                                value={form.links}
-                                onChangeText={onChangeLinks}
-                                placeholder={t('registration.wineryLinks')}
-                                multiline
-                                containerStyle={styles.input}
+                            <EditableRegistrationLinks
+                                items={editableLinks}
+                                label={t('registration.wineryLinks')}
+                                placeholder={t('registration.link')}
+                                addText={t('registration.addLink')}
+                                onAdd={onAddLink}
                             />
                             {isError.status && <Warning warningText={isError.errorText} />}
                         </View>

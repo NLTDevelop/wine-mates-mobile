@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { wineryWineService } from '@/entities/winery/services/WineryWineService';
-import { IAvailableWineryWine } from '@/entities/winery/types/IAvailableWineryWine';
 import { availableWineryWinesModel } from '@/entities/winery/models/AvailableWineryWinesModel';
 import { userModel } from '@/entities/users/UserModel';
 import { toastService } from '@/libs/toast/toastService';
@@ -15,7 +15,7 @@ export const useAddWineryWines = () => {
     const wineryId = userModel.winery?.id;
     const list = availableWineryWinesModel.list;
     const wines = list?.rows || [];
-    const [selectedWine, setSelectedWine] = useState<IAvailableWineryWine | null>(null);
+    const [selectedWine, setSelectedWine] = useState<IWineListItem | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
@@ -103,7 +103,7 @@ export const useAddWineryWines = () => {
         await loadWines(currentList.rows.length);
     }, [isLoading, isLoadingMore, loadWines]);
 
-    const onWinePress = useCallback((wine: IAvailableWineryWine) => {
+    const onWinePress = useCallback((wine: IWineListItem) => {
         setSelectedWine(wine);
     }, []);
 

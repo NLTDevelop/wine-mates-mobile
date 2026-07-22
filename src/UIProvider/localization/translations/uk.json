@@ -157,7 +157,10 @@
         "foundedYearError": "Вкажіть коректний рік заснування.",
         "wineryDescription": "Опис виноробні",
         "region": "Регіон",
-        "wineryLinks": "Посилання через кому або з нового рядка"
+        "wineryLinks": "Посилання виноробні",
+        "userLinks": "Посилання",
+        "link": "Посилання",
+        "addLink": "Додати посилання"
     },
     "wineLevel": {
         "lover": "Любитель вина",
@@ -327,6 +330,16 @@
         "myWineryWines": "Вина моєї виноробні",
         "noWineryWines": "До вашої виноробні ще не додано жодного вина",
         "addWineToWinery": "Додати вино",
+        "importWinesCsv": "Імпортувати вина з CSV",
+        "importWinesCsvTitle": "Імпорт вин",
+        "importWinesCsvMessage": "Завантажте заповнений CSV-файл або спочатку завантажте шаблон.",
+        "uploadWinesCsv": "Завантажити CSV-файл",
+        "downloadWinesCsvTemplate": "Завантажити CSV-шаблон",
+        "winesCsvTemplateUnavailable": "Посилання на CSV-шаблон ще недоступне.",
+        "winesCsvTemplateSaved": "CSV-шаблон завантажено та відкрито.",
+        "winesCsvNoViewer": "На пристрої немає застосунку, який може відкрити CSV-файл.",
+        "invalidWinesCsv": "Будь ласка, виберіть CSV-файл.",
+        "winesCsvImported": "Імпортовано вин із CSV: {{count}}",
         "availableWineryWines": "Додати вино до виноробні",
         "noAvailableWineryWines": "Немає вин, доступних для додавання",
         "addWineToWineryTitle": "Додати вино?",
@@ -334,6 +347,20 @@
         "wineAddedToWinery": "Вино додано до вашої виноробні",
         "appeals": "Звернення до адміністратора",
         "settings": "Налаштування"
+    },
+    "publicProfile": {
+        "description": "Опис",
+        "activity": "Активність",
+        "events": "Події",
+        "wines": "Вина",
+        "links": "Посилання",
+        "follow": "Підписатися",
+        "verified": "Підтверджено",
+        "notVerified": "Не підтверджено",
+        "foundedYear": "Рік заснування: {{year}}",
+        "noDescription": "Опис ще не додано.",
+        "noEvents": "Подій ще немає.",
+        "noWines": "Вин ще немає."
     },
     "appeals": {
         "title": "Мої звернення",
@@ -356,6 +383,7 @@
         "updated": "Звернення успішно оновлено.",
         "deleted": "Звернення видалено.",
         "createdAt": "Створено",
+        "closedAt": "Закрито",
         "adminComment": "Відповідь адміністратора",
         "notSpecified": "Не вказано",
         "edit": "Редагувати",

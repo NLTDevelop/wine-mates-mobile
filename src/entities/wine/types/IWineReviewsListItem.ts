@@ -1,3 +1,5 @@
+import { IWinery } from '@/entities/winery/types/IWinery';
+
 export interface IWineReviewsListItem {
     id: number;
     userRating: number | null;
@@ -19,5 +21,6 @@ export interface IWineReviewsListItem {
             mediumUrl: string;
             originalUrl: string;
         } | null;
+        winery?: IWinery | null;
     };
 }

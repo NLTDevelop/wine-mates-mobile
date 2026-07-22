@@ -13,6 +13,7 @@ export interface IRegisterUser {
     occupation?: string;
     wineryName?: string;
     instagramLink?: string;
+    links?: string[];
     gender?: string;
     placeOfWork?: string;
     winery?: IWineryRegistration;

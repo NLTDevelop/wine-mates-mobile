@@ -51,9 +51,6 @@ export const getStyles = (colors: IColors) => {
         bigInput: {
             minHeight: scaleVertical(120),
         },
-        instagramAccessory: {
-            marginLeft: scaleHorizontal(16),
-        },
         buttonContainer: {
             paddingBottom: scaleVertical(12),
             paddingTop: scaleVertical(8),

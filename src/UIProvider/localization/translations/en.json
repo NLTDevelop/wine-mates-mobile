@@ -157,7 +157,10 @@
         "foundedYearError": "Enter a valid founded year.",
         "wineryDescription": "Winery description",
         "region": "Region",
-        "wineryLinks": "Links, separated by a comma or a new line"
+        "wineryLinks": "Winery links",
+        "userLinks": "Links",
+        "link": "Link",
+        "addLink": "Add link"
     },
     "wineLevel": {
         "lover": "Wine lover",
@@ -323,6 +326,16 @@
         "myWineryWines": "My winery wines",
         "noWineryWines": "No wines have been added to your winery yet",
         "addWineToWinery": "Add wine",
+        "importWinesCsv": "Import wines from CSV",
+        "importWinesCsvTitle": "Import wines",
+        "importWinesCsvMessage": "Upload a completed CSV file or download the template first.",
+        "uploadWinesCsv": "Upload CSV file",
+        "downloadWinesCsvTemplate": "Download CSV template",
+        "winesCsvTemplateUnavailable": "The CSV template link is not available yet.",
+        "winesCsvTemplateSaved": "The CSV template was downloaded and opened.",
+        "winesCsvNoViewer": "There is no app on this device that can open CSV files.",
+        "invalidWinesCsv": "Please select a CSV file.",
+        "winesCsvImported": "Wines imported from CSV: {{count}}",
         "availableWineryWines": "Add wine to winery",
         "noAvailableWineryWines": "No wines available to add",
         "addWineToWineryTitle": "Add wine?",
@@ -330,6 +343,20 @@
         "wineAddedToWinery": "Wine added to your winery",
         "appeals": "Contact administrator",
         "settings": "Settings"
+    },
+    "publicProfile": {
+        "description": "Description",
+        "activity": "Activity",
+        "events": "Events",
+        "wines": "Wines",
+        "links": "Links",
+        "follow": "Follow",
+        "verified": "Verified",
+        "notVerified": "Not Verified",
+        "foundedYear": "Year founded: {{year}}",
+        "noDescription": "No description has been added yet.",
+        "noEvents": "No events have been added yet.",
+        "noWines": "No wines have been added yet."
     },
     "appeals": {
         "title": "My appeals",
@@ -352,6 +379,7 @@
         "updated": "Appeal updated successfully.",
         "deleted": "Appeal deleted.",
         "createdAt": "Created",
+        "closedAt": "Closed",
         "adminComment": "Administrator response",
         "notSpecified": "Not specified",
         "edit": "Edit",
