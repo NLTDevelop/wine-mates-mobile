@@ -19,9 +19,10 @@ interface IProps {
     isAllVintagesSelected: boolean;
     fromScanner?: boolean;
     isResultHeaderFooterVisible: boolean;
+    hasPremiumContentAccess: boolean;
 }
 
-export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, isResultHeaderFooterVisible }: IProps) => {
+export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, isResultHeaderFooterVisible, hasPremiumContentAccess }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { onPress, isCreating } = useResultHeader(item, fromScanner);
@@ -48,10 +49,11 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
                         isAllVintagesSelected={isAllVintagesSelected}
                         onPress={onPress}
                         isCreating={isCreating}
+                        hasPremiumContentAccess={hasPremiumContentAccess}
                     />
                 ) : undefined}
                 removeCardStyles
-                showExpertRatingWithoutPremium={false}
+                showExpertRatingWithoutPremium={hasPremiumContentAccess}
                 hideDate
             />
             <WineShareModal

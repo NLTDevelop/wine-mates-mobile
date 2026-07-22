@@ -10,17 +10,15 @@ export const getStyles = (colors: IColors) => {
             marginHorizontal: scaleHorizontal(16),
             gap: scaleVertical(9),
             padding: scaleVertical(12),
-            shadowColor: colors.shadow,
-            shadowOffset: { width: 0, height: scaleVertical(1) },
-            shadowOpacity: 0.1,
-            shadowRadius: 3,
-            elevation: 3,
+            borderWidth: scaleVertical(1),
+            borderColor: colors.border,
         },
         row: {
             flexDirection: 'row',
             gap: scaleHorizontal(8),
         },
         expertRateContainer: {
+            position: 'relative',
             backgroundColor: colors.background_light,
             borderRadius: 12,
             paddingVertical: scaleVertical(2),
@@ -37,6 +35,10 @@ export const getStyles = (colors: IColors) => {
         },
         date: {
             color: colors.text_light,
+        },
+        reviewContainer: {
+            position: 'relative',
+            borderRadius: 8,
         },
     });
     return styles;

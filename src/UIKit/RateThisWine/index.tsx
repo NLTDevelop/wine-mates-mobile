@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { View } from 'react-native';
 import { Typography } from '@/UIKit/Typography';
 import { PartitionedSlider } from '@/UIKit/RateThisWine/components/PartitionedSlider';
-import StarRating, { StarRatingDisplay } from 'react-native-star-rating-widget';
+import { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
@@ -10,6 +10,7 @@ import { useRateThisWine } from './presenters/useRateThisWine';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { RateMedal } from '../RateMedal/ui';
+import { PreciseStarRating } from './components/PreciseStarRating';
 
 interface IProps {
     sliderValue: number;
@@ -110,14 +111,14 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                 </View>
             ) : (
                 <View style={styles.starsContainer}>
-                    <StarRating
+                    <PreciseStarRating
                         key={ratingStarsKey}
                         rating={starRate}
-                        onChange={onStarRateChange ?? (() => {})}
-                        step={PRECISE_STAR_STEP}
+                        onChange={onStarRateChange}
                         StarIconComponent={StarIconComponent}
                         starSize={36}
                         starStyle={styles.star}
+                        color={colors.stars}
                         emptyColor={colors.icon}
                     />
                 </View>

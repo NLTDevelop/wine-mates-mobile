@@ -114,7 +114,7 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
                             ) : null}
                         </View>
 
-                        {showMedal && (hasPremium || showExpertRatingWithoutPremium) ? (
+                        {showMedal ? (
                             <>
                                 <Typography variant="subtitle_10_400" text={expertReviewLabel} />
                                 {expertReviewCount && showExpertReviewCount ? (

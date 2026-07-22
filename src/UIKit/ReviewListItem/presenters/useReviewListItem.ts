@@ -23,7 +23,7 @@ const formatDateTime = (raw: string | number | Date, locale: string) => {
 };
 
 export const useReviewListItem = ({ item, locale, showReviewWithoutPremium = false }: IProps) => {
-    const { onUserPress } = useProfileNavigation(item.user.id, item.user.winery);
+    const { onUserPress } = useProfileNavigation(item.user.id, item.user.wineExperienceLevel);
     const formattedDateTime = formatDateTime(item.createdAt, locale);
     const isPremiumUser = userModel.user?.hasPremium || false;
     const isMyReview = item.user.id === userModel.user?.id;

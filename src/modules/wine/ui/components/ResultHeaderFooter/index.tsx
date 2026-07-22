@@ -17,6 +17,7 @@ interface IProps {
     isAllVintagesSelected: boolean;
     onPress: () => void;
     isCreating: boolean;
+    hasPremiumContentAccess: boolean;
 }
 
 export const ResultHeaderFooter = ({
@@ -28,6 +29,7 @@ export const ResultHeaderFooter = ({
     isAllVintagesSelected,
     onPress,
     isCreating,
+    hasPremiumContentAccess,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -40,6 +42,7 @@ export const ResultHeaderFooter = ({
                 selectedVintage={item.vintage}
                 isAllVintagesSelected={isAllVintagesSelected}
                 onVintageChange={onVintageChange}
+                hasPremiumContentAccess={hasPremiumContentAccess}
             />
             <View style={styles.buttonTasteContainer}>
                 <Button

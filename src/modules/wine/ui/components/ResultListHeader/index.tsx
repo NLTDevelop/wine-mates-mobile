@@ -10,7 +10,6 @@ import { TasteCharacteristicItem } from '@/UIKit/TasteCharacteristicItem';
 import { IStatistic, IWineDetails, IVintagesItem } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
-import { userModel } from '@/entities/users/UserModel';
 import { useColorShades } from '@/modules/wine/presenters/useColorShades';
 import { StatisticCard } from '../StatisticCard';
 import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
@@ -28,14 +27,14 @@ interface IProps {
     fromScanner?: boolean;
     hasReviews?: boolean;
     isResultHeaderFooterVisible: boolean;
+    hasPremiumContentAccess: boolean;
 }
 
-export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, hasReviews, isResultHeaderFooterVisible }: IProps) => {
+export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, hasReviews, isResultHeaderFooterVisible, hasPremiumContentAccess }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
 
-    const isPremiumUser = userModel.user?.hasPremium || false;
     const tasteCharacteristics = useMemo(
         () => data?.statistics?.tasteCharacteristics?.filter(item => item?.levels && item?.selectedIndex != null) ?? [],
         [data.statistics.tasteCharacteristics],
@@ -71,6 +70,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 isAllVintagesSelected={isAllVintagesSelected}
                 fromScanner={fromScanner}
                 isResultHeaderFooterVisible={isResultHeaderFooterVisible}
+                hasPremiumContentAccess={hasPremiumContentAccess}
             />
 
             {isVintageTasted && (
@@ -146,7 +146,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
             )}
 
             {data.statistics.topWinePeaks && data.statistics.topWinePeaks.length > 0 && (
-                <WinePeaksGrid peaks={data.statistics.topWinePeaks} />
+                <WinePeaksGrid peaks={data.statistics.topWinePeaks} showWithoutPremium={hasPremiumContentAccess} />
             )}
 
             {tasteCharacteristics.length > 0 && (
@@ -161,7 +161,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                                 key={`${item.id}-${item.selectedIndex ?? 0}-${data.vintage ?? 'none'}`}
                                 item={item}
                                 value={Math.max((item.selectedIndex ?? 0) - 1, 0)}
-                                isPremiumUser={isPremiumUser}
+                                isPremiumUser={hasPremiumContentAccess}
                                 disabled={true}
                             />
                         ))}
@@ -172,7 +172,11 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
             {data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
 
             {data.aiSnacks?.length ? (
-                <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton isLocked={!isPremiumUser} />
+                <FoodPairing
+                    generatedSnacks={data.aiSnacks}
+                    hideGenerateButton
+                    isLocked={!hasPremiumContentAccess}
+                />
             ) : null}
 
             {(hasReviews || (wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0)) && (
