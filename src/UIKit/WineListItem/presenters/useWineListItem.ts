@@ -50,7 +50,7 @@ export const useWineListItem = ({ item, onPress, onSharePress, removeCardStyles,
                 return;
             }
 
-            onUserPressById(wineryUserId);
+            onUserPressById(wineryUserId, WineExperienceLevelEnum.CREATOR);
         },
         [onUserPressById, wineryUserId],
     );

@@ -4,15 +4,19 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { LockIcon } from '@assets/icons/LockIcon';
 
-export const LockContainer = () => {
+interface IProps {
+    iconSize?: number;
+}
+
+export const LockContainer = ({ iconSize = 32 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
         <>
             <View pointerEvents="none" style={styles.baseLayer} />
-            <View style={styles.centeredLockLayer}>
-                <LockIcon />
+            <View pointerEvents="none" style={styles.centeredLockLayer}>
+                <LockIcon width={iconSize} height={iconSize} />
             </View>
         </>
     );

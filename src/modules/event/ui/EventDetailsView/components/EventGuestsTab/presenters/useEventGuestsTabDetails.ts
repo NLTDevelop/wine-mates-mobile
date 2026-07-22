@@ -3,6 +3,7 @@ import { guestListModel } from '@/entities/guests/GuestListModel';
 import { guestListService } from '@/entities/guests/GuestListService';
 import { IGetEventGuestsParams } from '@/entities/guests/params/IGetEventGuestsParams';
 import { useCallback, useEffect, useState } from 'react';
+import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 const OFFSET = 0;
 const LIMIT = 20;
@@ -18,6 +19,7 @@ export const useEventGuestsTabDetails = ({ eventId, status = 'all' }: IProps) =>
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [updatingGuestId, setUpdatingGuestId] = useState<number | null>(null);
+    const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const guestList = guestListModel.guests;
     const eventGuests = guestList?.rows || [];
@@ -54,15 +56,22 @@ export const useEventGuestsTabDetails = ({ eventId, status = 'all' }: IProps) =>
     );
 
     const onRefresh = useCallback(() => {
+        onResetPaginationRequests();
         return loadGuests(OFFSET);
-    }, [loadGuests]);
+    }, [loadGuests, onResetPaginationRequests]);
 
     const onLoadMore = useCallback(() => {
         const currentGuestList = guestListModel.guests;
-        if (!isLoading && currentGuestList && currentGuestList.count > currentGuestList.rows.length) {
-            return loadGuests(currentGuestList.rows.length);
+        const offset = currentGuestList?.rows.length || 0;
+        if (
+            !isLoading &&
+            currentGuestList &&
+            currentGuestList.count > offset &&
+            onTryStartPaginationRequest(offset)
+        ) {
+            return loadGuests(offset);
         }
-    }, [isLoading, loadGuests]);
+    }, [isLoading, loadGuests, onTryStartPaginationRequest]);
 
     const onAcceptGuest = useCallback(
         async (id: number) => {
@@ -104,6 +113,7 @@ export const useEventGuestsTabDetails = ({ eventId, status = 'all' }: IProps) =>
 
     useEffect(() => {
         const timer = setTimeout(() => {
+            onResetPaginationRequests();
             loadGuests(OFFSET);
         }, 0);
 
@@ -111,7 +121,7 @@ export const useEventGuestsTabDetails = ({ eventId, status = 'all' }: IProps) =>
             clearTimeout(timer);
             guestListModel.clear();
         };
-    }, [loadGuests]);
+    }, [loadGuests, onResetPaginationRequests]);
 
     return {
         eventGuests,

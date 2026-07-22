@@ -13,6 +13,7 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { userModel } from '@/entities/users/UserModel';
+import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 type RouteParams = {
     ChooseWineResultsView: {
@@ -207,6 +208,7 @@ export const useChooseWineResults = () => {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const requestIdRef = useRef(0);
+    const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const wines = wineChooserResultsModel.list?.rows || [];
     const hasMore = !!wineChooserResultsModel.list && wineChooserResultsModel.list.count > wines.length;
@@ -215,6 +217,10 @@ export const useChooseWineResults = () => {
     }, [filters]);
 
     const loadWines = useCallback(async (offset: number, nextFilters: IWineChooserFilters, append: boolean) => {
+        if (!append) {
+            onResetPaginationRequests();
+        }
+
         requestIdRef.current += 1;
         const requestId = requestIdRef.current;
 
@@ -247,7 +253,7 @@ export const useChooseWineResults = () => {
             setIsLoading(false);
             setIsRefreshing(false);
         }
-    }, []);
+    }, [onResetPaginationRequests]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -284,8 +290,13 @@ export const useChooseWineResults = () => {
             return;
         }
 
-        loadWines(wines.length, filters, true);
-    }, [filters, hasMore, isLoading, isLoadingMore, loadWines, wines.length]);
+        const offset = wines.length;
+        if (!onTryStartPaginationRequest(offset)) {
+            return;
+        }
+
+        loadWines(offset, filters, true);
+    }, [filters, hasMore, isLoading, isLoadingMore, loadWines, onTryStartPaginationRequest, wines.length]);
 
     const onWinePress = useCallback((item: IWineListItem) => {
         navigation.navigate('WineDetailsView', { wineId: item.id });

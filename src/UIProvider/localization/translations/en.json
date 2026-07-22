@@ -31,7 +31,8 @@
         "loading": "Loading...",
         "selectPhoto": "Select Photo",
         "takePhoto": "Take Photo",
-        "chooseFromGallery": "Choose from Gallery"
+        "chooseFromGallery": "Choose from Gallery",
+        "back": "Back"
     },
     "notifications": {
         "title": "Notifications",

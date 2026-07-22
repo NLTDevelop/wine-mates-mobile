@@ -6,6 +6,7 @@ import { IEventsListParams } from '@/entities/events/params/IEventsListParams';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
 import { EventType } from '@/entities/events/enums/EventType';
+import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 const DEFAULT_RADIUS_KM = 50;
 const DEFAULT_LIMIT = 10;
@@ -21,6 +22,7 @@ export const useEventsList = ({ searchLocation, filters, selectedEventType }: IP
     const userLocation = locationModel.userLocation;
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
     const list = eventsModel.list;
     const hasMore = useMemo(() => {
         if (!list) {
@@ -77,14 +79,18 @@ export const useEventsList = ({ searchLocation, filters, selectedEventType }: IP
     }, [filters, getTargetLocation, selectedEventType]);
 
     const onRefresh = useCallback((offset: number = OFFSET, location?: IUserLocation | null) => {
+        if (offset === OFFSET) {
+            onResetPaginationRequests();
+        }
         return loadEvents(offset, location);
-    }, [loadEvents]);
+    }, [loadEvents, onResetPaginationRequests]);
 
     const onLoadMore = useCallback(() => {
-        if (!isLoading && list && list.count > list.rows.length) {
-            loadEvents(list.rows.length);
+        const offset = list?.rows.length || 0;
+        if (!isLoading && list && list.count > offset && onTryStartPaginationRequest(offset)) {
+            loadEvents(offset);
         }
-    }, [isLoading, list, loadEvents]);
+    }, [isLoading, list, loadEvents, onTryStartPaginationRequest]);
 
     const refetch = useCallback((location?: IUserLocation | null) => {
         const targetLocation = getTargetLocation(location);

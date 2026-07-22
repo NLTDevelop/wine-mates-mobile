@@ -1,18 +1,17 @@
 import { useCallback } from 'react';
 import { userModel } from '@/entities/users/UserModel';
-import { userService } from '@/entities/users/UserService';
-import { IWinery } from '@/entities/winery/types/IWinery';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { navigationRef } from '@/navigation/rootNavigator';
 
 type ProfileUserId = number | string;
 
 export const useProfileNavigation = (
     userId?: ProfileUserId | null,
-    winery?: IWinery | null,
+    wineExperienceLevel?: WineExperienceLevelEnum | null,
     onClose?: () => void,
 ) => {
     const onUserPressById = useCallback(
-        async (nextUserId?: ProfileUserId | null, nextWinery?: IWinery | null, nextOnClose?: () => void) => {
+        (nextUserId: ProfileUserId, nextWineExperienceLevel: WineExperienceLevelEnum, nextOnClose?: () => void) => {
             if (!nextUserId || !navigationRef.isReady()) {
                 return;
             }
@@ -33,18 +32,7 @@ export const useProfileNavigation = (
                 return;
             }
 
-            let hasWinery = Boolean(nextWinery);
-
-            if (nextWinery === undefined) {
-                const response = await userService.getPublicProfile(normalizedUserId);
-                hasWinery = !response.isError && Boolean(response.data?.winery);
-            }
-
-            if (!navigationRef.isReady()) {
-                return;
-            }
-
-            if (hasWinery) {
+            if (nextWineExperienceLevel === WineExperienceLevelEnum.CREATOR) {
                 navigationRef.navigate('PublicWineryProfileView', { userId: normalizedUserId });
                 return;
             }
@@ -55,8 +43,12 @@ export const useProfileNavigation = (
     );
 
     const onUserPress = useCallback(() => {
-        onUserPressById(userId, winery);
-    }, [onUserPressById, userId, winery]);
+        if (!userId || !wineExperienceLevel) {
+            return;
+        }
+
+        onUserPressById(userId, wineExperienceLevel);
+    }, [onUserPressById, userId, wineExperienceLevel]);
 
     return { onUserPress, onUserPressById };
 };

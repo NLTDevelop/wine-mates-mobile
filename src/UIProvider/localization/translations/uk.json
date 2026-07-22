@@ -31,7 +31,8 @@
         "loading": "Завантаження...",
         "selectPhoto": "Виберіть фото",
         "takePhoto": "Зробити фото",
-        "chooseFromGallery": "Вибрати з галереї"
+        "chooseFromGallery": "Вибрати з галереї",
+        "back": "Назад"
     },
     "notifications": {
         "title": "Сповіщення",

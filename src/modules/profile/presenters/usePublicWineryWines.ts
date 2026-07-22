@@ -6,6 +6,7 @@ import { wineryLinkedWinesModel } from '@/entities/winery/models/WineryLinkedWin
 import { wineryWineService } from '@/entities/winery/services/WineryWineService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { toastService } from '@/libs/toast/toastService';
+import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 const LIMIT = 10;
 
@@ -14,6 +15,7 @@ export const usePublicWineryWines = (wineryId?: number) => {
     const list = wineryLinkedWinesModel.list;
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const loadWines = useCallback(
         async (offset: number) => {
@@ -53,6 +55,7 @@ export const usePublicWineryWines = (wineryId?: number) => {
     useEffect(() => {
         const frameId = requestAnimationFrame(() => {
             if (wineryId) {
+                onResetPaginationRequests();
                 loadWines(0);
             }
         });
@@ -61,21 +64,29 @@ export const usePublicWineryWines = (wineryId?: number) => {
             cancelAnimationFrame(frameId);
             wineryLinkedWinesModel.list = null;
         };
-    }, [loadWines, wineryId]);
+    }, [loadWines, onResetPaginationRequests, wineryId]);
 
     const onRefreshWines = useCallback(async () => {
+        onResetPaginationRequests();
         await loadWines(0);
-    }, [loadWines]);
+    }, [loadWines, onResetPaginationRequests]);
 
     const onLoadMoreWines = useCallback(async () => {
         const currentList = wineryLinkedWinesModel.list;
 
-        if (!currentList || isLoading || isLoadingMore || currentList.rows.length >= currentList.count) {
+        const offset = currentList?.rows.length || 0;
+        if (
+            !currentList ||
+            isLoading ||
+            isLoadingMore ||
+            offset >= currentList.count ||
+            !onTryStartPaginationRequest(offset)
+        ) {
             return;
         }
 
-        await loadWines(currentList.rows.length);
-    }, [isLoading, isLoadingMore, loadWines]);
+        await loadWines(offset);
+    }, [isLoading, isLoadingMore, loadWines, onTryStartPaginationRequest]);
 
     const onWinePress = useCallback(
         (item: IWineListItem) => {

@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList } from 'react-native';
+import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 const LIMIT = 10;
 const OFFSET = 0;
@@ -18,6 +19,7 @@ export const useMyWine = () => {
     const [isLoading, setIsLoading] = useState(false);
     const data = wineListsModel.list?.rows;
     const listRef = useRef<FlatList>(null);
+    const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const scrollToTop = useCallback(() => {
         listRef.current?.scrollToOffset({ offset: 0, animated: true });
@@ -25,6 +27,10 @@ export const useMyWine = () => {
 
     const getList = useCallback(async (offset: number) => {
         try {
+            if (offset === OFFSET) {
+                onResetPaginationRequests();
+            }
+
             setIsLoading(true);
 
             const filters = wineListsModel.filters;
@@ -51,7 +57,7 @@ export const useMyWine = () => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [onResetPaginationRequests]);
 
     const onRefresh = useCallback(
         async (offset: number = OFFSET) => {
@@ -94,10 +100,11 @@ export const useMyWine = () => {
 
     const onEndReached = useCallback(async () => {
         const list = wineListsModel.list;
-        if (!isLoading && list && list.count > list.rows.length) {
-            await getList(list.rows.length);
+        const offset = list?.rows.length || 0;
+        if (!isLoading && list && list.count > offset && onTryStartPaginationRequest(offset)) {
+            await getList(offset);
         }
-    }, [isLoading, getList]);
+    }, [isLoading, getList, onTryStartPaginationRequest]);
 
     const onItemPress = useCallback(
         async (item: IWineListItem) => {

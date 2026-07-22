@@ -24,6 +24,9 @@ export const useAppealsList = (locale: string) => {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const requestIdRef = useRef(0);
+    const isRequestInFlightRef = useRef(false);
+    const currentPageRef = useRef(0);
+    const hasMoreRef = useRef(true);
 
     useEffect(() => {
         const timerId = setTimeout(() => {
@@ -37,12 +40,16 @@ export const useAppealsList = (locale: string) => {
         async (page: number, mode: 'initial' | 'refresh' | 'more') => {
             const requestId = requestIdRef.current + 1;
             requestIdRef.current = requestId;
+            isRequestInFlightRef.current = true;
 
             if (mode === 'initial') {
+                currentPageRef.current = 0;
+                hasMoreRef.current = false;
                 setIsLoading(true);
             } else if (mode === 'refresh') {
                 setIsRefreshing(true);
             } else {
+                hasMoreRef.current = false;
                 setIsLoadingMore(true);
             }
 
@@ -62,8 +69,12 @@ export const useAppealsList = (locale: string) => {
                     toastService.showError(localization.t('common.errorHappened'), response.message);
                     return;
                 }
+
+                currentPageRef.current = page;
+                hasMoreRef.current = response.data.rows.length > 0 && page < response.data.totalPages;
             } finally {
                 if (requestId === requestIdRef.current) {
+                    isRequestInFlightRef.current = false;
                     setIsLoading(false);
                     setIsRefreshing(false);
                     setIsLoadingMore(false);
@@ -118,19 +129,18 @@ export const useAppealsList = (locale: string) => {
     }, [loadAppeals]);
 
     const onLoadMore = useCallback(async () => {
-        const currentList = appealsModel.list;
-
         if (
-            !currentList ||
+            !appealsModel.list ||
+            isRequestInFlightRef.current ||
+            !hasMoreRef.current ||
             isLoading ||
             isRefreshing ||
-            isLoadingMore ||
-            currentList.rows.length >= currentList.count
+            isLoadingMore
         ) {
             return;
         }
 
-        const nextPage = Math.floor(currentList.rows.length / LIMIT) + 1;
+        const nextPage = currentPageRef.current + 1;
         await loadAppeals(nextPage, 'more');
     }, [isLoading, isLoadingMore, isRefreshing, loadAppeals]);
 
@@ -179,6 +189,7 @@ export const useAppealsList = (locale: string) => {
         listItems,
         search,
         status,
+        hasActiveFilter: status !== null,
         statusFilterOptions,
         isStatusFilterVisible,
         isLoading,
