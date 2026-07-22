@@ -12,7 +12,7 @@ export const getStyles = (colors: IColors) => {
             minHeight: scaleVertical(48),
             alignItems: 'center',
             gap: scaleHorizontal(8),
-            borderWidth: 1,
+            borderWidth: scaleVertical(1),
             borderColor: colors.border_light,
         },
         button: {
@@ -22,6 +22,18 @@ export const getStyles = (colors: IColors) => {
             backgroundColor: colors.background_grey,
             justifyContent: 'center',
             alignItems: 'center',
+        },
+        filterButton: {
+            position: 'relative',
+        },
+        filterBadge: {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: scaleVertical(8),
+            height: scaleVertical(8),
+            borderRadius: 4,
+            backgroundColor: colors.primary,
         },
         input: {
             paddingHorizontal: 0,

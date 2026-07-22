@@ -14,6 +14,8 @@ interface IProps {
     showReviewWithoutPremium?: boolean;
 }
 
+const LOCK_ICON_SIZE = 20;
+
 export const ReviewListItem = ({ item, showReviewWithoutPremium = false }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
@@ -51,6 +53,7 @@ export const ReviewListItem = ({ item, showReviewWithoutPremium = false }: IProp
                             <View style={styles.row}>
                                 <View style={styles.expertRateContainer}>
                                     <Typography text={formattedExpertRating} variant="subtitle_12_500" />
+                                    {isLocked && <LockContainer iconSize={LOCK_ICON_SIZE} />}
                                 </View>
                                 <View style={styles.expertRateContainer}>
                                     <Typography
@@ -64,8 +67,12 @@ export const ReviewListItem = ({ item, showReviewWithoutPremium = false }: IProp
                 </View>
                 <Typography text={formattedDateTime} variant="body_400" style={styles.date} />
             </TouchableOpacity>
-            {item.review ? <Typography text={item.review} variant="body_400" /> : null}
-            {isLocked && <LockContainer />}
+            {item.review ? (
+                <View style={styles.reviewContainer}>
+                    <Typography text={item.review} variant="body_400" />
+                    {isLocked && <LockContainer iconSize={LOCK_ICON_SIZE} />}
+                </View>
+            ) : null}
         </View>
     );
 };

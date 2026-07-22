@@ -3,6 +3,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { eventsModel } from '@/entities/events/EventsModel';
 import { eventsService } from '@/entities/events/EventsService';
 import { IGetEventsParams } from '@/entities/events/params/IGetEventsParams';
+import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 const OFFSET = 0;
 const LIMIT = 10;
@@ -14,6 +15,7 @@ export const useEventsList = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const hasAutoLoadedOnFocusRef = useRef(false);
+    const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const savedEvents = eventsModel.savedEvents;
     const createdEvents = eventsModel.createdEvents;
@@ -79,20 +81,33 @@ export const useEventsList = () => {
     }, [ ]);
 
     const onRefresh = useCallback((offset: number = OFFSET,) => {
+        onResetPaginationRequests();
         return loadEvents(offset, 'none');
-    }, [loadEvents]);
+    }, [loadEvents, onResetPaginationRequests]);
 
     const onLoadMoreSaved = useCallback(() => {
-        if (!isLoading && savedEvents && savedEvents.count > savedEvents.rows.length) {
-            loadEvents(savedEvents.rows.length, 'saved');
+        const offset = savedEvents?.rows.length || 0;
+        if (
+            !isLoading &&
+            savedEvents &&
+            savedEvents.count > offset &&
+            onTryStartPaginationRequest(`saved:${offset}`)
+        ) {
+            loadEvents(offset, 'saved');
         }
-    }, [isLoading, savedEvents, loadEvents]);
+    }, [isLoading, savedEvents, loadEvents, onTryStartPaginationRequest]);
 
     const onLoadMoreCreated = useCallback(() => {
-        if (!isLoading && createdEvents && createdEvents.count > createdEvents.rows.length) {
-            loadEvents(createdEvents.rows.length, 'created');
+        const offset = createdEvents?.rows.length || 0;
+        if (
+            !isLoading &&
+            createdEvents &&
+            createdEvents.count > offset &&
+            onTryStartPaginationRequest(`created:${offset}`)
+        ) {
+            loadEvents(offset, 'created');
         }
-    }, [isLoading, createdEvents, loadEvents]); 
+    }, [isLoading, createdEvents, loadEvents, onTryStartPaginationRequest]);
 
     const onFavoritePress = useCallback(async (eventId: number) => {
         try {

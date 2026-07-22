@@ -19,6 +19,10 @@ export const getStyles = (colors: IColors) => {
         reviewText: {
             color: colors.text_light,
         },
+        reviewContainer: {
+            position: 'relative',
+            borderRadius: 8,
+        },
     });
     return styles;
 }

@@ -88,6 +88,8 @@ export const Gallery = ({
             {hasPhotos && !hidePreview && (
                 <FlatList
                     horizontal
+                    directionalLockEnabled
+                    alwaysBounceVertical={false}
                     style={styles.list}
                     data={items}
                     renderItem={renderItem}
@@ -102,6 +104,8 @@ export const Gallery = ({
                         key={viewerKey}
                         style={styles.viewerList}
                         horizontal
+                        directionalLockEnabled
+                        alwaysBounceVertical={false}
                         pagingEnabled
                         data={items}
                         renderItem={renderViewerItem}

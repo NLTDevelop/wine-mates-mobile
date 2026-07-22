@@ -5,6 +5,7 @@ import { eventsService } from '@/entities/events/EventsService';
 import { userEventsModel } from '@/entities/events/UserEventsModel';
 import { localization } from '@/UIProvider/localization/Localization';
 import { toastService } from '@/libs/toast/toastService';
+import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 const LIMIT = 10;
 
@@ -13,6 +14,7 @@ export const usePublicProfileEvents = (userId: number) => {
     const list = userEventsModel.list;
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const loadEvents = useCallback(
         async (offset: number) => {
@@ -52,6 +54,7 @@ export const usePublicProfileEvents = (userId: number) => {
 
     useEffect(() => {
         const frameId = requestAnimationFrame(() => {
+            onResetPaginationRequests();
             loadEvents(0);
         });
 
@@ -59,21 +62,29 @@ export const usePublicProfileEvents = (userId: number) => {
             cancelAnimationFrame(frameId);
             userEventsModel.list = null;
         };
-    }, [loadEvents]);
+    }, [loadEvents, onResetPaginationRequests]);
 
     const onRefreshEvents = useCallback(async () => {
+        onResetPaginationRequests();
         await loadEvents(0);
-    }, [loadEvents]);
+    }, [loadEvents, onResetPaginationRequests]);
 
     const onLoadMoreEvents = useCallback(async () => {
         const currentList = userEventsModel.list;
 
-        if (!currentList || isLoading || isLoadingMore || currentList.rows.length >= currentList.count) {
+        const offset = currentList?.rows.length || 0;
+        if (
+            !currentList ||
+            isLoading ||
+            isLoadingMore ||
+            offset >= currentList.count ||
+            !onTryStartPaginationRequest(offset)
+        ) {
             return;
         }
 
-        await loadEvents(currentList.rows.length);
-    }, [isLoading, isLoadingMore, loadEvents]);
+        await loadEvents(offset);
+    }, [isLoading, isLoadingMore, loadEvents, onTryStartPaginationRequest]);
 
     const onEventPress = useCallback(
         (eventId: number) => {

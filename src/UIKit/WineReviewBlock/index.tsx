@@ -8,6 +8,8 @@ import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLe
 import { userModel } from '@/entities/users/UserModel';
 import { LockContainer } from '../LockContainer';
 
+const LOCK_ICON_SIZE = 20;
+
 interface IProps {
     user: {
         id?: number;
@@ -21,14 +23,18 @@ interface IProps {
         wineExperienceLevel: WineExperienceLevelEnum;
     };
     review: string | null;
+    showWithoutPremium?: boolean;
 }
 
-export const WineReviewBlock = ({ user, review }: IProps) => {
+export const WineReviewBlock = ({ user, review, showWithoutPremium = false }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const isPremiumUser = userModel.user?.hasPremium || false;
-    const isLocked = user.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && !isPremiumUser;
+    const isLocked =
+        user.wineExperienceLevel !== WineExperienceLevelEnum.LOVER &&
+        !isPremiumUser &&
+        !showWithoutPremium;
     const isMyReview = userModel.user?.id === user?.id;
 
     return (
@@ -43,13 +49,15 @@ export const WineReviewBlock = ({ user, review }: IProps) => {
                         />
                         <Typography variant="body_500" text={`${user.firstName} ${user.lastName}`} numberOfLines={1} />
                     </View>
-                    <Typography
-                        variant="body_400"
-                        text={review?.trim() || '-'}
-                        numberOfLines={3}
-                        style={styles.reviewText}
-                    />
-                    {isLocked && !isMyReview && <LockContainer />}
+                    <View style={styles.reviewContainer}>
+                        <Typography
+                            variant="body_400"
+                            text={review?.trim() || '-'}
+                            numberOfLines={3}
+                            style={styles.reviewText}
+                        />
+                        {isLocked && !isMyReview && <LockContainer iconSize={LOCK_ICON_SIZE} />}
+                    </View>
                 </View>
             ) : null}
         </>

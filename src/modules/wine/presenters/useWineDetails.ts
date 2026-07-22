@@ -10,6 +10,7 @@ import { NONE_VINTAGE_DROPDOWN_VALUE } from './useVintageDropdown';
 import { wineModel } from '@/entities/wine/models/WineModel';
 import { clearWineReviewsListModel } from '@/entities/wine/services/WineModelService';
 import { IRateDetails } from '@/entities/wine/types/IRateDetails';
+import { userModel } from '@/entities/users/UserModel';
 
 const getRateColorStatistics = (rateDetails: IRateDetails): IWineDetails['statistics']['topColors'] => {
     if (!rateDetails.color?.tone) {
@@ -231,6 +232,11 @@ export const useWineDetails = () => {
         isSaved: localIsSaved ?? details.isSaved,
     } : null;
 
+    const hasPremiumContentAccess = Boolean(
+        userModel.user?.hasPremium ||
+        (details?.wineryUserId && details.wineryUserId === userModel.user?.id),
+    );
+
     const onUpdateIsSaved = useCallback((isSaved: boolean) => {
         setLocalIsSaved(isSaved);
     }, []);
@@ -304,6 +310,7 @@ export const useWineDetails = () => {
         isPreloadedData: Boolean(wineDetailsData || notificationRateId),
         isResultHeaderFooterVisible: !notificationRateId,
         myReview: details?.myReview ?? null,
+        hasPremiumContentAccess,
         onPressBack,
     };
 };

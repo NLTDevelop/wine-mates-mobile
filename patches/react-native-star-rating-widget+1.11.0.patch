@@ -10,12 +10,12 @@ index 070548b..419af11 100644
 +  type: 'full' | 'half' | 'quarter' | 'three-quarter' | 'empty' | 'fraction';
 +  fill?: number;
  };
- 
+
  const RTL_TRANSFORM: ViewStyle = {
 @@ -107,6 +108,39 @@ const StarHalf = ({ size, color, index }: Omit<StarIconProps, 'type'>) => {
    );
  };
- 
+
 +const StarFraction = ({
 +  size,
 +  color,
@@ -62,17 +62,17 @@ index 070548b..419af11 100644
        return StarBorder;
    }
  };
- 
+
 -const StarIcon = ({ index, type, size, color }: StarIconProps) => {
 +const StarIcon = ({ index, type, size, color, fill }: StarIconProps) => {
    const Component = getStarComponent(type);
 -  return <Component index={index} size={size} color={color} />;
 +  return <Component index={index} size={size} color={color} fill={fill} />;
  };
- 
+
  export default StarIcon;
 diff --git a/node_modules/react-native-star-rating-widget/src/StarRating.tsx b/node_modules/react-native-star-rating-widget/src/StarRating.tsx
-index 22147c9..419494e 100644
+index 22147c9..948bcb1 100644
 --- a/node_modules/react-native-star-rating-widget/src/StarRating.tsx
 +++ b/node_modules/react-native-star-rating-widget/src/StarRating.tsx
 @@ -65,7 +65,7 @@ type StarRatingProps = {
@@ -81,13 +81,13 @@ index 22147c9..419494e 100644
     */
 -  step?: 'half' | 'quarter' | 'full';
 +  step?: 'half' | 'quarter' | 'full' | number;
- 
+
    /**
     * Enable swiping to rate.
 @@ -171,6 +171,14 @@ const defaultAnimationConfig: Required<AnimationConfig> = {
    delay: 300,
  };
- 
+
 +const getStepValue = (step: StarRatingProps['step']) => {
 +  if (typeof step === 'number') return step;
 +  if (step === 'quarter') return 0.25;
@@ -99,7 +99,7 @@ index 22147c9..419494e 100644
  const StarRating = ({
    rating,
    maxStars = 5,
-@@ -194,7 +202,9 @@ const StarRating = ({
+@@ -194,36 +202,48 @@ const StarRating = ({
    accessabilityActivateLabel = 'activate (default)',
    accessibilityAdjustmentLabel = '%value% stars',
  }: StarRatingProps) => {
@@ -108,12 +108,32 @@ index 22147c9..419494e 100644
 +  const multiplier = 1 / stepValue;
 +  const activeThreshold = stepValue;
    const width = React.useRef<number>(undefined);
++  const gestureStartX = React.useRef(0);
++  const ratingRef = React.useRef(rating);
++  const lastEmittedRating = React.useRef(rating);
    const [isInteracting, setInteracting] = React.useState(false);
    const [stagedRating, setStagedRating] = React.useState(rating);
-@@ -207,17 +217,12 @@ const StarRating = ({
-         return calculateRating(width.current - x, false);
++  const [gestureRating, setGestureRating] = React.useState<number | null>(null);
++
++  React.useEffect(() => {
++    ratingRef.current = rating;
++
++    if (!isInteracting) {
++      lastEmittedRating.current = rating;
++    }
++  }, [isInteracting, rating]);
+
+   const panResponder = React.useMemo(() => {
+-    const calculateRating = (x: number, isRTL = I18nManager.isRTL) => {
+-      if (!width.current) return rating;
++    const calculateRawRating = (x: number, isRTL = I18nManager.isRTL) => {
++      if (!width.current) return ratingRef.current;
+
+       if (isRTL) {
+-        return calculateRating(width.current - x, false);
++        return calculateRawRating(width.current - x, false);
        }
- 
+
 -      const newRating =
 -        step !== 'full'
 -          ? Math.max(
@@ -125,16 +145,81 @@ index 22147c9..419494e 100644
 -              )
 -            )
 -          : Math.ceil((x / width.current) * maxStars);
+-
+-      return newRating;
 +      const rawRating = (x / width.current) * maxStars;
++      return Math.max(0, Math.min(rawRating, maxStars));
++    };
++
++    const calculateRating = (rawRating: number) => {
 +      const steppedRating =
 +        stepValue >= 1
 +          ? Math.ceil(rawRating)
 +          : Math.round(rawRating * multiplier) / multiplier;
-+      const newRating = Math.max(0, Math.min(steppedRating, maxStars));
- 
-       return newRating;
++      return Math.max(0, Math.min(steppedRating, maxStars));
      };
-@@ -269,7 +274,7 @@ const StarRating = ({
+
+     const handleChange = (newRating: number) => {
+-      if (newRating !== rating) {
++      if (newRating !== lastEmittedRating.current) {
++        lastEmittedRating.current = newRating;
+         onChange(newRating);
+       }
+     };
+@@ -233,22 +253,33 @@ const StarRating = ({
+       onStartShouldSetPanResponderCapture: () => true,
+       onMoveShouldSetPanResponder: () => true,
+       onMoveShouldSetPanResponderCapture: () => true,
+-      onPanResponderMove: (e) => {
++      onPanResponderMove: (_, gestureState) => {
+         if (enableSwiping) {
+-          const newRating = calculateRating(e.nativeEvent.locationX);
++          const rawRating = calculateRawRating(
++            gestureStartX.current + gestureState.dx
++          );
++          const newRating = calculateRating(rawRating);
++          setGestureRating(rawRating);
+           handleChange(newRating);
+         }
+       },
+       onPanResponderStart: (e) => {
+-        const newRating = calculateRating(e.nativeEvent.locationX);
++        gestureStartX.current = e.nativeEvent.locationX;
++        const rawRating = calculateRawRating(gestureStartX.current);
++        const newRating = calculateRating(rawRating);
++        setGestureRating(rawRating);
+         onRatingStart?.(newRating);
+         handleChange(newRating);
+         setInteracting(true);
+       },
+-      onPanResponderEnd: (e) => {
+-        const newRating = calculateRating(e.nativeEvent.locationX);
++      onPanResponderEnd: (_, gestureState) => {
++        const rawRating = calculateRawRating(
++          gestureStartX.current + gestureState.dx
++        );
++        const newRating = calculateRating(rawRating);
+         handleChange(newRating);
+         onRatingEnd?.(newRating);
++        setGestureRating(null);
+
+         setTimeout(() => {
+           setInteracting(false);
+@@ -256,23 +287,25 @@ const StarRating = ({
+       },
+       onPanResponderTerminate: () => {
+         // called when user drags outside of the component
++        setGestureRating(null);
+         setTimeout(() => {
+           setInteracting(false);
+         }, animationConfig.delay || defaultAnimationConfig.delay);
+       },
+     });
+   }, [
+-    rating,
+     maxStars,
+     onChange,
+     enableSwiping,
      onRatingStart,
      onRatingEnd,
      animationConfig.delay,
@@ -142,8 +227,13 @@ index 22147c9..419494e 100644
 +    stepValue,
      multiplier,
    ]);
- 
-@@ -299,8 +304,7 @@ const StarRating = ({
+
++  const displayRating = gestureRating ?? rating;
++
+   return (
+     <View style={style}>
+       <View
+@@ -299,8 +332,7 @@ const StarRating = ({
            { name: 'activate', label: accessabilityActivateLabel },
          ]}
          onAccessibilityAction={(event: AccessibilityActionEvent) => {
@@ -153,7 +243,7 @@ index 22147c9..419494e 100644
            switch (event.nativeEvent.actionName) {
              case 'increment':
                if (stagedRating >= maxStars) {
-@@ -343,23 +347,26 @@ const StarRating = ({
+@@ -343,23 +375,26 @@ const StarRating = ({
            }
          }}
        >
@@ -174,13 +264,13 @@ index 22147c9..419494e 100644
 -            </AnimatedIcon>
 -          );
 -        })}
-+      {getStars(rating, maxStars, step).map((star, i) => {
++      {getStars(displayRating, maxStars, step).map((star, i) => {
 +        const isEmpty = star.type === 'empty';
 +
 +        return (
 +          <AnimatedIcon
 +            key={i}
-+            active={isInteracting && rating - i >= activeThreshold}
++            active={isInteracting && displayRating - i >= activeThreshold}
 +            animationConfig={animationConfig}
 +            style={starStyle}
 +          >
@@ -207,7 +297,7 @@ index 6be1eb6..48a2d5a 100644
     */
 -  step?: 'half' | 'quarter' | 'full';
 +  step?: 'half' | 'quarter' | 'full' | number;
- 
+
    /**
     * The accessibility label used on the star component.
 @@ -91,14 +91,17 @@ const StarRatingDisplay = ({
@@ -247,7 +337,7 @@ index 2b94662..685b936 100644
 +
    return [...Array(maxStars)].map((_, i) => {
      const remainder = rating - i;
- 
+
 -    if (remainder >= 1) return 'full';
 +    if (remainder >= 1) return { type: 'full' as const };
 +
@@ -261,7 +351,7 @@ index 2b94662..685b936 100644
 +
 +      return { type: 'empty' as const };
 +    }
- 
+
      if (step === 'quarter') {
 -      if (remainder >= 0.75) return 'three-quarter';
 -      if (remainder >= 0.5) return 'half';
@@ -273,7 +363,7 @@ index 2b94662..685b936 100644
 -      if (remainder >= 0.5) return 'half';
 +      if (remainder >= 0.5) return { type: 'half' as const };
      }
- 
+
 -    return 'empty';
 +    return { type: 'empty' as const };
    });

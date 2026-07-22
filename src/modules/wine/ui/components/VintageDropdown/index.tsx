@@ -12,7 +12,6 @@ import { RateMedal } from '@/UIKit/RateMedal/ui';
 import { ShowLock } from '@/UIKit/ShowLock';
 import { TickIcon } from '@assets/icons/TickIcon';
 import { useUiContext } from '@/UIProvider';
-import { userModel } from '@/entities/users/UserModel';
 import { IVintageDropdownItem } from './types/IVintageDropdownItem';
 
 interface IProps {
@@ -21,13 +20,12 @@ interface IProps {
     selectedVintage: number | string | null;
     isAllVintagesSelected: boolean;
     onVintageChange: (item: IDropdownItem) => void;
+    hasPremiumContentAccess: boolean;
 }
 
-export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isAllVintagesSelected, onVintageChange }: IProps) => {
+export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isAllVintagesSelected, onVintageChange, hasPremiumContentAccess }: IProps) => {
     const { colors, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-
-    const hasPremium = userModel.user?.hasPremium ?? false;
 
     const { vintageData, existingYears, onAddVintage, dropdownRef, selectedValue } =
         useVintageDropdown({
@@ -64,7 +62,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isA
                 ) : null}
 
                 {hasExpertRating ? (
-                    hasPremium ? (
+                    hasPremiumContentAccess ? (
                         <View style={styles.ratingItem}>
                             <RateMedal sliderValue={expertRating} size={16} hideText />
                             <Typography variant="subtitle_12_500" text={expertRating.toFixed(1)} />
@@ -75,7 +73,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isA
                 ) : null}
             </View>
         );
-    }, [hasPremium, styles]);
+    }, [hasPremiumContentAccess, styles]);
 
     const renderVintageContent = useCallback((dropdownItem: IVintageDropdownItem) => {
         return (

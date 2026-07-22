@@ -102,7 +102,7 @@ export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => 
                 fullName,
                 ageText,
                 avatarUrl: guest.user?.avatar?.smallUrl || null,
-                onUserPress: () => onUserPressById(guest.user.id),
+                onUserPress: () => onUserPressById(guest.user.id, guest.user.wineExperienceLevel),
             };
 
             const confirmAction: IGuestAction = {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Buffer } from 'buffer';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { wineryLinkedWinesModel } from '@/entities/winery/models/WineryLinkedWinesModel';
@@ -19,6 +19,7 @@ import {
     WINERY_WINES_CSV_MIME_TYPE,
     WINERY_WINES_CSV_TEMPLATE_FILE_NAME,
 } from '@/modules/profile/constants/wineryWinesCsv';
+import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 const LIMIT = 10;
 const ALERT_CLOSE_DELAY_MS = 250;
@@ -40,6 +41,7 @@ export const useMyWineryWines = () => {
     const [isTemplateDownloading, setIsTemplateDownloading] = useState(false);
     const [isCsvImportAlertVisible, setIsCsvImportAlertVisible] = useState(false);
     const [isError, setIsError] = useState(false);
+    const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const loadWines = useCallback(
         async (offset: number, mode: 'initial' | 'refresh' | 'more') => {
@@ -88,37 +90,40 @@ export const useMyWineryWines = () => {
         [wineryId],
     );
 
-    useFocusEffect(
-        useCallback(() => {
-            loadWines(0, 'initial');
-        }, [loadWines]),
-    );
-
     useEffect(() => {
+        const frameId = requestAnimationFrame(() => {
+            onResetPaginationRequests();
+            loadWines(0, 'initial');
+        });
+
         return () => {
+            cancelAnimationFrame(frameId);
             wineryLinkedWinesModel.list = null;
         };
-    }, []);
+    }, [loadWines, onResetPaginationRequests]);
 
     const onRefresh = useCallback(async () => {
+        onResetPaginationRequests();
         await loadWines(0, 'refresh');
-    }, [loadWines]);
+    }, [loadWines, onResetPaginationRequests]);
 
     const onEndReached = useCallback(async () => {
         const currentList = wineryLinkedWinesModel.list;
 
+        const offset = currentList?.rows.length || 0;
         if (
             !currentList ||
             isLoading ||
             isRefreshing ||
             isLoadingMore ||
-            currentList.rows.length >= currentList.count
+            offset >= currentList.count ||
+            !onTryStartPaginationRequest(offset)
         ) {
             return;
         }
 
-        await loadWines(currentList.rows.length, 'more');
-    }, [isLoading, isLoadingMore, isRefreshing, loadWines]);
+        await loadWines(offset, 'more');
+    }, [isLoading, isLoadingMore, isRefreshing, loadWines, onTryStartPaginationRequest]);
 
     const onPressBack = useCallback(() => {
         navigation.goBack();

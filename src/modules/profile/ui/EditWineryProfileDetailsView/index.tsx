@@ -92,6 +92,7 @@ export const EditWineryProfileDetailsView = () => {
                         onChangeText={onChangeName}
                         placeholder={t('registration.wineryName')}
                         containerStyle={styles.inputContainer}
+                        editable={false}
                     />
                 </ProfileFormField>
                 <ProfileFormField label={t('registration.foundedYear')}>

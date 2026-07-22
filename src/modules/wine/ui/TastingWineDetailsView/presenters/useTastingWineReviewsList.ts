@@ -7,6 +7,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { IWineReviewsListItem } from '@/entities/wine/types/IWineReviewsListItem';
 import { wineReviewsListModel } from '@/entities/wine/models/WineReviewsListModel';
 import { clearWineReviewsListModel } from '@/entities/wine/services/WineModelService';
+import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 const LIMIT = 10;
 const OFFSET = 0;
@@ -21,6 +22,7 @@ export const useTastingWineReviewsList = (
 ) => {
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
     const isFocused = useIsFocused();
+    const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
     const data = isPreloadedData && myReview ? [myReview] : (wineReviewsListModel.list?.rows || []);
 
     const getList = useCallback(async (offset: number, targetWineId: number) => {
@@ -57,6 +59,7 @@ export const useTastingWineReviewsList = (
     const onRefresh = useCallback(
         async (offset: number = OFFSET) => {
             if (!wineId) return;
+            onResetPaginationRequests();
             
             if (isPreloadedData) {
                 await getDetails(isAllVintagesSelected ? { vintages: 'All' } : undefined);
@@ -65,7 +68,7 @@ export const useTastingWineReviewsList = (
             
             await Promise.all([getDetails(isAllVintagesSelected ? { vintages: 'All' } : undefined), getList(offset, wineId)]);
         },
-        [getList, getDetails, wineId, isAllVintagesSelected, isPreloadedData],
+        [getList, getDetails, wineId, isAllVintagesSelected, isPreloadedData, onResetPaginationRequests],
     );
 
     const onEndReached = useCallback(async () => {
@@ -74,10 +77,11 @@ export const useTastingWineReviewsList = (
         }
         
         const list = wineReviewsListModel.list;
-        if (!isReviewsLoading && list && list.count > list.rows.length && wineId) {
-            await getList(list.rows.length, wineId);
+        const offset = list?.rows.length || 0;
+        if (!isReviewsLoading && list && list.count > offset && wineId && onTryStartPaginationRequest(offset)) {
+            await getList(offset, wineId);
         }
-    }, [isReviewsLoading, getList, wineId, isPreloadedData]);
+    }, [isReviewsLoading, getList, wineId, isPreloadedData, onTryStartPaginationRequest]);
 
     useEffect(() => {
         if (isPreloadedData) {
@@ -85,10 +89,11 @@ export const useTastingWineReviewsList = (
         }
         
         if (isFocused && wineId) {
+            onResetPaginationRequests();
             clearWineReviewsListModel();
             getList(OFFSET, wineId);
         }
-    }, [isFocused, getList, wineId, isAllVintagesSelected, isPreloadedData]);
+    }, [isFocused, getList, wineId, isAllVintagesSelected, isPreloadedData, onResetPaginationRequests]);
 
     useEffect(() => {
         return () => clearWineReviewsListModel();

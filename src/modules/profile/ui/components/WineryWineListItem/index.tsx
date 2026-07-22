@@ -7,11 +7,14 @@ interface IProps {
     item: IWineListItem;
     onPress: (item: IWineListItem) => void;
     onSharePress: (item: IWineListItem | IWineDetails) => void;
+    showExpertRatingWithoutPremium?: boolean;
 }
 
-export const WineryWineListItem = ({ item, onPress, onSharePress }: IProps) => {
+export const WineryWineListItem = ({ item, onPress, onSharePress, showExpertRatingWithoutPremium = true }: IProps) => {
     const review = item.lastReview;
-    const reviewBlock = review ? <WineReviewBlock user={review.user} review={review.review} /> : null;
+    const reviewBlock = review
+        ? <WineReviewBlock user={review.user} review={review.review} showWithoutPremium />
+        : null;
 
     return (
         <WineListItem
@@ -19,6 +22,7 @@ export const WineryWineListItem = ({ item, onPress, onSharePress }: IProps) => {
             onPress={onPress}
             onSharePress={onSharePress}
             footer={reviewBlock}
+            showExpertRatingWithoutPremium={showExpertRatingWithoutPremium}
             alignFooterToBottom
         />
     );
