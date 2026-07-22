@@ -1,4 +1,5 @@
 import { IWineTasteCharacteristic } from './IWineTasteCharacteristic';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 interface IRateMedia {
     smallUrl: string;
@@ -25,7 +26,7 @@ export interface IRateDetails {
         id: number;
         firstName: string;
         lastName: string;
-        wineExperienceLevel: string;
+        wineExperienceLevel: WineExperienceLevelEnum;
         image: IRateMedia | null;
     };
     color: (IRateStatistic & {

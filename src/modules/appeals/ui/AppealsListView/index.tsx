@@ -23,6 +23,7 @@ export const AppealsListView = observer(() => {
         listItems,
         search,
         status,
+        hasActiveFilter,
         statusFilterOptions,
         isStatusFilterVisible,
         isLoading,
@@ -59,6 +60,7 @@ export const AppealsListView = observer(() => {
                     value={search}
                     onChangeText={onSearchChange}
                     onFilterPress={onFilterPress}
+                    hasActiveFilter={hasActiveFilter}
                     placeholder={t('appeals.searchPlaceholder')}
                     containerStyle={styles.search}
                 />

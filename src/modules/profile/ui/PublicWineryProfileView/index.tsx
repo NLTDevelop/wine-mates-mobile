@@ -110,7 +110,7 @@ export const PublicWineryProfileView = observer(() => {
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton onPressBack={onPressBack} />}
+                headerComponent={<HeaderWithBackButton onPressBack={onPressBack} title={t('common.back')} isCentered={false}/>}
             >
                 {isLoading && !wineryName ? (
                     <Loader />

@@ -1,4 +1,5 @@
 import { IWinery } from '@/entities/winery/types/IWinery';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 export interface IWineReviewsListItem {
     id: number;
@@ -10,7 +11,7 @@ export interface IWineReviewsListItem {
         id: number;
         firstName: string;
         lastName: string;
-        wineExperienceLevel: string;
+        wineExperienceLevel: WineExperienceLevelEnum;
         avatar?: {
             smallUrl: string;
             mediumUrl: string;

@@ -24,7 +24,7 @@ export const WineDetailsView = observer(() => {
 
     const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
         selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, isResultHeaderFooterVisible,
-        myReview, onPressBack } = useWineDetails();
+        myReview, hasPremiumContentAccess, onPressBack } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
         selectedWineId ?? wineId,
@@ -45,7 +45,12 @@ export const WineDetailsView = observer(() => {
     } = useAddToFavoriteBottomSheet(details?.id, onUpdateIsSaved);
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
-    const renderItem = useCallback(({ item }: { item: IWineReviewsListItem }) => <ReviewListItem item={item} />, []);
+    const renderItem = useCallback(
+        ({ item }: { item: IWineReviewsListItem }) => (
+            <ReviewListItem item={item} showReviewWithoutPremium={hasPremiumContentAccess} />
+        ),
+        [hasPremiumContentAccess],
+    );
 
     return (
         <WithErrorHandler error={isError ? ErrorTypeEnum.ERROR : null} onRetry={getDetails}>
@@ -75,6 +80,7 @@ export const WineDetailsView = observer(() => {
                                 fromScanner={fromScanner}
                                 hasReviews={data.length > 0}
                                 isResultHeaderFooterVisible={isResultHeaderFooterVisible}
+                                hasPremiumContentAccess={hasPremiumContentAccess}
                             />
                         }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}

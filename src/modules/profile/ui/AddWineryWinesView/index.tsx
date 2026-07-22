@@ -42,7 +42,12 @@ export const AddWineryWinesView = observer(() => {
     const keyExtractor = useCallback((item: IWineListItem) => item.id.toString(), []);
     const renderItem = useCallback<ListRenderItem<IWineListItem>>(
         ({ item }) => (
-            <WineryWineListItem item={item} onPress={onWinePress} onSharePress={onOpenShareModal} />
+            <WineryWineListItem
+                item={item}
+                onPress={onWinePress}
+                onSharePress={onOpenShareModal}
+                showExpertRatingWithoutPremium={false}
+            />
         ),
         [onOpenShareModal, onWinePress],
     );
