@@ -15,6 +15,7 @@ import { toastService } from '@/libs/toast/toastService';
 import { getCurrentLocationPayload } from '@/libs/locations/getCurrentLocationPayload';
 import { IHomeSectionsListParams } from '@/entities/homeSections/params/IHomeSectionsListParams';
 import { locationModel } from '@/entities/location/LocationModel';
+import { userService } from '@/entities/users/UserService';
 
 const EMPTY_FIELD = '-';
 
@@ -423,10 +424,14 @@ export const useHomeView = (locale: string) => {
         setIsRefreshing(true);
 
         try {
-            const response = await requestHomeSections(true);
+            const [userResponse, homeSectionsResponse] = await Promise.all([
+                userService.me(),
+                requestHomeSections(true),
+            ]);
+            const errorResponse = userResponse.isError ? userResponse : homeSectionsResponse;
 
-            if (response.isError) {
-                showHomeRequestError(response.message);
+            if (errorResponse.isError) {
+                showHomeRequestError(errorResponse.message);
             }
         } catch (error) {
             console.warn('useHomeView -> onRefresh: ', error);

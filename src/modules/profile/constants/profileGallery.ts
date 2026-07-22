@@ -1,0 +1,1 @@
+export const PROFILE_GALLERY_MAX_PHOTOS = 4;

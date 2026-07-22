@@ -10,6 +10,7 @@ import { MyLevelView } from '@/modules/registration/ui/MyLevelView';
 import { RegistrationView } from '@/modules/registration/ui/RegistrationView';
 import { TabNavigator } from '../tabNavigator';
 import { PersonalDetailsView } from '@/modules/registration/ui/PersonalDetailsView';
+import { WineryDetailsView } from '@/modules/registration/ui/WineryDetailsView';
 import { CreatePasswordView } from '@/modules/registration/ui/CreatePasswordView';
 import { WineLookView } from '@/modules/scanner/ui/WineLookView';
 import { WineSmellView } from '@/modules/scanner/ui/WineSmellView';
@@ -30,6 +31,8 @@ import { TastingWineDetailsView } from '@/modules/wine/ui/TastingWineDetailsView
 import { DeleteAccountView } from '@/modules/settings/ui/DeleteAccountView';
 import { ProfileDetailsView } from '@/modules/profile/ui/ProfileDetailsView';
 import { EditProfileDetailsView } from '@/modules/profile/ui/EditProfileDetailsView';
+import { WineryProfileDetailsView } from '@/modules/profile/ui/WineryProfileDetailsView';
+import { EditWineryProfileDetailsView } from '@/modules/profile/ui/EditWineryProfileDetailsView';
 import { AvatarCameraView } from '@/UIKit/AvatarPicker/ui/AvatarCameraView';
 import { AddEventView } from '@/modules/event/ui/AddEventView';
 import { AddWineSetView } from '@/modules/event/ui/AddWineSetView';
@@ -42,6 +45,15 @@ import { ContactInfoView } from '@/modules/contactInfo/ui/ContactInfoView';
 import { CreatePaymentView } from '@/modules/payments/ui/CreatePaymentView';
 import { ChooseWineFiltersView } from '@/modules/chooseWine/ui/ChooseWineFiltersView';
 import { ChooseWineResultsView } from '@/modules/chooseWine/ui/ChooseWineResultsView';
+import { NotificationsView } from '@/modules/notifications/ui/NotificationsView';
+import { MyWineryWinesView } from '@/modules/profile/ui/MyWineryWinesView';
+import { AddWineryWinesView } from '@/modules/profile/ui/AddWineryWinesView';
+import { AppealsListView } from '@/modules/appeals/ui/AppealsListView';
+import { CreateAppealView } from '@/modules/appeals/ui/CreateAppealView';
+import { AppealDetailsView } from '@/modules/appeals/ui/AppealDetailsView';
+import { ScannerStack } from '@/navigation/scannerStackNavigator';
+import { PublicUserProfileView } from '@/modules/profile/ui/PublicUserProfileView';
+import { PublicWineryProfileView } from '@/modules/profile/ui/PublicWineryProfileView';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,6 +69,7 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="MyLevelView" component={MyLevelView} />
             <Stack.Screen name="RegistrationView" component={RegistrationView} />
             <Stack.Screen name="PersonalDetailsView" component={PersonalDetailsView} />
+            <Stack.Screen name="WineryDetailsView" component={WineryDetailsView} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
             <Stack.Screen name="AddEventView" component={AddEventView} />
             <Stack.Screen name="AddWineSetView" component={AddWineSetView} />
@@ -75,7 +88,11 @@ export const MainStackNavigator = observer(() => {
             />
             <Stack.Screen name="WineReviewView" component={WineReviewView} options={{ gestureEnabled: false }} />
             <Stack.Screen name="WineReviewResultView" component={WineReviewResultView} />
-            <Stack.Screen name="TastingWineLookView" component={TastingWineLookView} options={{ gestureEnabled: false }} />
+            <Stack.Screen
+                name="TastingWineLookView"
+                component={TastingWineLookView}
+                options={{ gestureEnabled: false }}
+            />
             <Stack.Screen name="TastingWineSmellView" component={TastingWineSmellView} />
             <Stack.Screen name="TastingWineTasteView" component={TastingWineTasteView} />
             <Stack.Screen
@@ -83,21 +100,40 @@ export const MainStackNavigator = observer(() => {
                 component={TastingWineTasteCharacteristicsView}
                 options={{ gestureEnabled: false }}
             />
-            <Stack.Screen name="TastingWineReviewView" component={TastingWineReviewView} options={{ gestureEnabled: false }} />
+            <Stack.Screen
+                name="TastingWineReviewView"
+                component={TastingWineReviewView}
+                options={{ gestureEnabled: false }}
+            />
             <Stack.Screen name="TastingWineReviewResultView" component={TastingWineReviewResultView} />
             <Stack.Screen name="SavedWinesView" component={SavedWinesView} />
             <Stack.Screen name="FavoriteWineListView" component={FavoriteWineListView} />
             <Stack.Screen name="DeleteAccountView" component={DeleteAccountView} />
             <Stack.Screen name="ProfileDetailsView" component={ProfileDetailsView} />
             <Stack.Screen name="EditProfileDetailsView" component={EditProfileDetailsView} />
+            <Stack.Screen name="WineryProfileDetailsView" component={WineryProfileDetailsView} />
+            <Stack.Screen name="EditWineryProfileDetailsView" component={EditWineryProfileDetailsView} />
             <Stack.Screen name="AvatarCameraView" component={AvatarCameraView} />
             <Stack.Screen name="EventListView" component={EventListView} />
             <Stack.Screen name="EventDetailsView" component={EventDetailsView} />
             <Stack.Screen name="PaymentsView" component={PaymentsView} />
             <Stack.Screen name="CreatePaymentView" component={CreatePaymentView} />
             <Stack.Screen name="ContactInfoView" component={ContactInfoView} />
-            <Stack.Screen name="ChooseWineFiltersView" component={ChooseWineFiltersView} options={{ gestureEnabled: false }}/>
+            <Stack.Screen
+                name="ChooseWineFiltersView"
+                component={ChooseWineFiltersView}
+                options={{ gestureEnabled: false }}
+            />
             <Stack.Screen name="ChooseWineResultsView" component={ChooseWineResultsView} />
+            <Stack.Screen name="NotificationsView" component={NotificationsView} />
+            <Stack.Screen name="MyWineryWinesView" component={MyWineryWinesView} />
+            <Stack.Screen name="AddWineryWinesView" component={AddWineryWinesView} />
+            <Stack.Screen name="PublicUserProfileView" component={PublicUserProfileView} />
+            <Stack.Screen name="PublicWineryProfileView" component={PublicWineryProfileView} />
+            <Stack.Screen name="AppealsListView" component={AppealsListView} />
+            <Stack.Screen name="CreateAppealView" component={CreateAppealView} />
+            <Stack.Screen name="AppealDetailsView" component={AppealDetailsView} />
+            <Stack.Screen name="NotificationScannerStack" component={ScannerStack} />
         </Stack.Navigator>
     );
 });

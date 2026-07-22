@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 
 export const WINE_LIST_ITEM_MEDAL_SIZE = 54;
 
-export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
+export const getStyles = (colors: IColors, removeCardStyles: boolean, alignFooterToBottom: boolean) => {
     const styles = StyleSheet.create({
         container: {
             overflow: 'hidden',
@@ -72,6 +72,17 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
+            alignSelf: alignFooterToBottom ? 'stretch' : undefined,
+        },
+        detailsContainer: {
+            width: '100%',
+            alignItems: 'center',
+            ...(alignFooterToBottom
+                ? {
+                      flex: 1,
+                      justifyContent: 'center',
+                  }
+                : {}),
         },
 
         medalContainer: {
@@ -80,6 +91,12 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean) => {
         titleText: {
             textAlign: 'center',
             marginTop: scaleVertical(12),
+        },
+        wineryTitleText: {
+            textAlign: 'center',
+            marginTop: scaleVertical(12),
+            color: colors.primary,
+            textDecorationLine: 'underline',
         },
         descriptionText: {
             textAlign: 'center',

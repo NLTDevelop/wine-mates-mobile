@@ -27,6 +27,7 @@ interface IProps {
     onChangeText: (value: string) => void;
     onSelect: (item: IDropdownItem) => void;
     onClose: () => void;
+    onDismiss: () => void;
 }
 
 export const SelectCityBottomSheet = ({
@@ -38,6 +39,7 @@ export const SelectCityBottomSheet = ({
     onChangeText,
     onSelect,
     onClose,
+    onDismiss,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
@@ -69,7 +71,7 @@ export const SelectCityBottomSheet = ({
             snapPoints={snapPoints}
             topInset={top}
             enablePanDownToClose={false}
-            onDismiss={onClose}
+            onDismiss={onDismiss}
             onAnimate={onSheetAnimate}
             backdropComponent={renderBackdrop}
             keyboardBehavior={'interactive'}

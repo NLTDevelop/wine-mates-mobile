@@ -1,4 +1,5 @@
-import { WineExperienceLevelEnum } from "../enums/WineExperienceLevelEnum";
+import { WineExperienceLevelEnum } from '../enums/WineExperienceLevelEnum';
+import { IWineryRegistration } from './IWineryRegistration';
 
 export interface IRegisterUser {
     email: string;
@@ -11,7 +12,9 @@ export interface IRegisterUser {
     birthday: string;
     occupation?: string;
     wineryName?: string;
-    instagramLink? : string;
+    instagramLink?: string;
+    links?: string[];
     gender?: string;
     placeOfWork?: string;
+    winery?: IWineryRegistration;
 }

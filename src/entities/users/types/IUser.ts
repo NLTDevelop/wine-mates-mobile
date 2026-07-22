@@ -1,4 +1,5 @@
 import { WineExperienceLevelEnum } from '../enums/WineExperienceLevelEnum';
+import { IMedia } from '@/entities/media/types/IMedia';
 
 export interface IAvatar {
     name: string;
@@ -25,7 +26,9 @@ export interface IUser {
     city: string;
     avatarUrl: string;
     avatar?: IAvatar;
+    gallery: IMedia[];
     instagramLink: string;
+    links?: string[];
     website: string;
     wineExperienceLevel: WineExperienceLevelEnum;
     isConfirmed: true;

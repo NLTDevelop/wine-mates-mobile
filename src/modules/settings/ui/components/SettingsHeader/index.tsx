@@ -19,12 +19,12 @@ export const SettingsHeader = observer(() => {
             <Avatar
                 size={64}
                 avatarUrl={userModel.user?.avatarUrl ?? null}
-                fullname={`${userModel.user?.firstName} ${userModel.user?.lastName}`}
+                fullname={`${userModel.user?.firstName} ${userModel.user?.lastName ?? ''}`}
             />
             <TouchableOpacity style={styles.mainContainer} onPress={onProfilePress}>
                 <View style={styles.row}>
                     <Typography
-                        text={`${userModel.user?.firstName} ${userModel.user?.lastName}`}
+                        text={`${userModel.user?.firstName} ${userModel.user?.lastName ?? ''}`}
                         variant="subtitle_20_500"
                     />
                     <NextArrowIcon color={colors.icon_primary} />

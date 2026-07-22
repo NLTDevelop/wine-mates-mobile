@@ -50,8 +50,7 @@ export const CustomAlert = ({ visible, onClose, header, content, footer }: IProp
                         <View style={styles.header}>
                             {typeof header === 'string' ? (
                                 <View style={styles.headerWithClose}>
-                                    <View/>
-                                    <Typography text={header} variant="h4" style={styles.headerText} />
+                                    <Typography text={header} variant="subtitle_20_500" style={styles.headerText} />
                                     <Pressable onPress={handleClose} style={styles.closeButton}>
                                         <CrossIcon width={20} height={20} color={colors.text} />
                                     </Pressable>

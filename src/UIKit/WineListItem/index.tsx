@@ -27,12 +27,17 @@ interface IProps {
     showExpertRatingWithoutPremium?: boolean;
     isMyWine?: boolean;
     hideDate?: boolean;
+    alignFooterToBottom?: boolean;
 }
 
 export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = false, footer, removeCardStyles = false,
-    showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent, showExpertRatingWithoutPremium = false, hideDate = false }: IProps) => {
+    showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent,
+    showExpertRatingWithoutPremium = false, hideDate = false, alignFooterToBottom = false }: IProps) => {
     const { colors, locale, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, removeCardStyles), [colors, removeCardStyles]);
+    const styles = useMemo(
+        () => getStyles(colors, removeCardStyles, alignFooterToBottom),
+        [alignFooterToBottom, colors, removeCardStyles],
+    );
     const {
         onItemPress,
         similarityText,
@@ -49,6 +54,8 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
         showExpertReviewCount,
         expertReviewLabel,
         onPressShareButton,
+        onWineryPress,
+        isWineryLink,
     } = useWineListItem({ item, onPress, onSharePress, removeCardStyles, isMyWine });
     const { description } = useWineDescription({ item, showVintage, showNonVintage });
     const getContainerStyle = useCallback(
@@ -92,60 +99,74 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
                 </View>
 
                 <View style={styles.rightColumn}>
-                    <View style={styles.medalContainer}>
-                        {!hasPremium && showMedal && !showExpertRatingWithoutPremium ? (
-                            <ShowLock iconSize={WINE_LIST_ITEM_MEDAL_SIZE} />
-                        ) : showMedal ? (
-                            <RateMedal
-                                sliderValue={expertRating ?? 0}
-                                size={WINE_LIST_ITEM_MEDAL_SIZE}
-                                titleFontSize={24}
-                                mainFontSize={90}
-                                nameFontSize={26}
-                            />
-                        ) : null}
-                    </View>
-
-                    {showMedal && (hasPremium || showExpertRatingWithoutPremium) ? (
-                        <>
-                            <Typography variant="subtitle_10_400" text={expertReviewLabel} />
-                            {expertReviewCount && showExpertReviewCount ? (
-                                <Typography
-                                    variant="subtitle_10_400"
-                                    text={`(${expertReviewCount})`}
-                                    numberOfLines={1}
+                    <View style={styles.detailsContainer}>
+                        <View style={styles.medalContainer}>
+                            {!hasPremium && showMedal && !showExpertRatingWithoutPremium ? (
+                                <ShowLock iconSize={WINE_LIST_ITEM_MEDAL_SIZE} />
+                            ) : showMedal ? (
+                                <RateMedal
+                                    sliderValue={expertRating ?? 0}
+                                    size={WINE_LIST_ITEM_MEDAL_SIZE}
+                                    titleFontSize={24}
+                                    mainFontSize={90}
+                                    nameFontSize={26}
                                 />
                             ) : null}
-                        </>
-                    ) : null}
-
-                    {item.producer ? <Typography variant="h5" text={item.producer} style={styles.titleText} /> : null}
-
-                    <Typography variant="subtitle_10_400" text={description || `-`} style={styles.descriptionText} />
-
-                    {userRating !== null ? (
-                        <View style={styles.rateContainer}>
-                            <View style={styles.starsContainer}>
-                                <SmallStarRating rating={parseFloat(userRating) || 0} starSize={12.5} />
-                                <Typography
-                                    variant="subtitle_12_500"
-                                    text={userRating}
-                                    numberOfLines={1}
-                                    style={styles.rateText}
-                                />
-                            </View>
-                            {showUserReviewCount && (
-                                <Typography
-                                    variant="subtitle_10_400"
-                                    text={`(${userReviewCount})`}
-                                    numberOfLines={1}
-                                    style={styles.rateReviewText}
-                                />
-                            )}
                         </View>
-                    ) : (
-                        <View style={styles.emptyDivider} />
-                    )}
+
+                        {showMedal && (hasPremium || showExpertRatingWithoutPremium) ? (
+                            <>
+                                <Typography variant="subtitle_10_400" text={expertReviewLabel} />
+                                {expertReviewCount && showExpertReviewCount ? (
+                                    <Typography
+                                        variant="subtitle_10_400"
+                                        text={`(${expertReviewCount})`}
+                                        numberOfLines={1}
+                                    />
+                                ) : null}
+                            </>
+                        ) : null}
+
+                        {item.producer ? (
+                            <TouchableOpacity
+                                onPress={onWineryPress}
+                                disabled={!isWineryLink}
+                                activeOpacity={0.8}
+                            >
+                                <Typography
+                                    variant="h5"
+                                    text={item.producer}
+                                    style={isWineryLink ? styles.wineryTitleText : styles.titleText}
+                                />
+                            </TouchableOpacity>
+                        ) : null}
+
+                        <Typography variant="subtitle_10_400" text={description || `-`} style={styles.descriptionText} />
+
+                        {userRating !== null ? (
+                            <View style={styles.rateContainer}>
+                                <View style={styles.starsContainer}>
+                                    <SmallStarRating rating={parseFloat(userRating) || 0} starSize={12.5} />
+                                    <Typography
+                                        variant="subtitle_12_500"
+                                        text={userRating}
+                                        numberOfLines={1}
+                                        style={styles.rateText}
+                                    />
+                                </View>
+                                {showUserReviewCount && (
+                                    <Typography
+                                        variant="subtitle_10_400"
+                                        text={`(${userReviewCount})`}
+                                        numberOfLines={1}
+                                        style={styles.rateReviewText}
+                                    />
+                                )}
+                            </View>
+                        ) : (
+                            <View style={styles.emptyDivider} />
+                        )}
+                    </View>
 
                     <View style={styles.footerContainer}>{footer}</View>
                 </View>

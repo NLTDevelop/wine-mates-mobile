@@ -23,6 +23,7 @@ target 'WineMates' do
   pod 'FirebaseCore', :modular_headers => true
   pod 'FirebaseInstallations', :modular_headers => true
   pod 'FirebaseMessaging', :modular_headers => true
+  pod 'RecaptchaInterop', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -45,6 +46,11 @@ target 'WineMates' do
         deployment_target = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']&.to_f || 0.0
         if deployment_target < 13.0
           config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+        end
+
+        # Xcode 26 can crash while compiling VisionCamera in whole-module mode.
+        if target.name == 'VisionCamera' && config.name == 'Release'
+          config.build_settings['SWIFT_COMPILATION_MODE'] = 'incremental'
         end
       end
     end

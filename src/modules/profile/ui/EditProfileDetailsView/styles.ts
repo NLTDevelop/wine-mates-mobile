@@ -18,24 +18,10 @@ export const getStyles = (colors: IColors) => {
         content: {
             flexGrow: 1,
         },
-        roleContainer: {
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: colors.background_light,
-            borderRadius: 99,
-            marginTop: scaleVertical(7),
-            paddingHorizontal: scaleHorizontal(8),
-            paddingVertical: scaleVertical(2),
-            gap: scaleHorizontal(2),
-        },
         avatarContainer: {
             alignSelf: 'center',
             marginBottom: scaleVertical(16),
             alignItems: 'center',
-        },
-        roleText: {
-            color: colors.text,
         },
         expertiseContainer: {
             marginBottom: scaleVertical(12),
@@ -59,15 +45,11 @@ export const getStyles = (colors: IColors) => {
             marginLeft: scaleHorizontal(10),
             color: colors.text,
         },
-        input: {
-            marginBottom: scaleVertical(16),
+        inputContainer: {
+            marginBottom: 0,
         },
         bigInput: {
-            marginBottom: scaleVertical(16),
             minHeight: scaleVertical(120),
-        },
-        instagramAccessory: {
-            marginLeft: scaleHorizontal(16),
         },
         buttonContainer: {
             paddingBottom: scaleVertical(12),
@@ -88,7 +70,7 @@ export const getStyles = (colors: IColors) => {
             textAlign: 'center',
         },
         alertFooter: {
-            gap: scaleVertical(12),
+            gap: scaleVertical(8),
         },
         alertButton: {
             width: '100%',

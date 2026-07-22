@@ -7,6 +7,9 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCallback, useMemo, useState } from 'react';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+
+const MIN_AGE = 18;
 
 export const useRegistration = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -16,13 +19,16 @@ export const useRegistration = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [countryCode, setCountryCode] = useState('+380');
     const [country, setCountry] = useState<ICountry | null>(null);
+    const [birthday, setBirthday] = useState('');
     const [isError, setIsError] = useState({ status: false, errorText: '' });
     const isDisabled = useMemo(() => {
         const hasPhone = phone.trim().length > 0;
         const hasEmail = email.trim().length > 0;
         const hasCountry = !!country;
-        return !(hasPhone && hasEmail && hasCountry);
-    }, [phone, email, country]);
+        const isCreator = registerUserModel.user?.wineExperienceLevel === WineExperienceLevelEnum.CREATOR;
+
+        return !(hasPhone && hasEmail && hasCountry) || (isCreator && !birthday);
+    }, [phone, email, country, birthday]);
 
     const onChangePhone = useCallback((text: string) => {
         setIsError({ status: false, errorText: '' });
@@ -46,14 +52,32 @@ export const useRegistration = () => {
         setCountry(code);
     }, []);
 
-    const handleNext = useCallback(async () => {
+    const onChangeBirthday = useCallback((value: string) => {
+        setBirthday(value);
+        setIsError({ status: false, errorText: '' });
+    }, []);
+
+    const onNext = useCallback(async () => {
         try {
             if (!registerUserModel.user) return;
 
             if (!validateEmail(email).isValid) {
                 return setIsError({ status: true, errorText: localization.t('authentication.invalidEmail') });
             }
-    
+
+            const isCreator = registerUserModel.user.wineExperienceLevel === WineExperienceLevelEnum.CREATOR;
+            const birthdayDate = new Date(birthday);
+            const today = new Date();
+            const age = today.getFullYear() - birthdayDate.getFullYear();
+            const monthDiff = today.getMonth() - birthdayDate.getMonth();
+            const dayDiff = today.getDate() - birthdayDate.getDate();
+            const isUnderAllowed =
+                age < MIN_AGE || (age === MIN_AGE && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
+
+            if (isCreator && isUnderAllowed) {
+                return setIsError({ status: true, errorText: localization.t('registration.birthdayError') });
+            }
+
             setIsLoading(true);
 
             const payload = {
@@ -71,28 +95,42 @@ export const useRegistration = () => {
                 }
             } else {
                 const fullPhone = `${countryCode}${phone}`;
-    
+
                 registerUserModel.user = {
                     ...registerUserModel.user,
                     phoneNumber: fullPhone,
                     email,
                     country: country?.cca2 || '',
-                }
-        
-                navigation.navigate('PersonalDetailsView');
+                    birthday: isCreator ? birthday : registerUserModel.user.birthday,
+                };
+
+                navigation.navigate(isCreator ? 'WineryDetailsView' : 'PersonalDetailsView');
             }
         } finally {
             setIsLoading(false);
         }
-    }, [navigation, email, phone, countryCode, country, validateEmail]);
+    }, [navigation, email, phone, countryCode, country, birthday, validateEmail]);
 
-    const handleRetry = useCallback(() => {
+    const onRetry = useCallback(() => {
         setIsError({ status: false, errorText: '' });
-        handleNext();
-    }, [handleNext]);
+        onNext();
+    }, [onNext]);
 
-    return { 
-        email, phone, isError, onChangeEmail, onChangePhone, clearPhone, handleNext, onChangeCountryCode, onChangeCountry, country,
-        isDisabled, isLoading, handleRetry
+    return {
+        email,
+        phone,
+        isError,
+        onChangeEmail,
+        onChangePhone,
+        clearPhone,
+        onNext,
+        onChangeCountryCode,
+        onChangeCountry,
+        country,
+        isDisabled,
+        isLoading,
+        onRetry,
+        birthday,
+        onChangeBirthday,
     };
 };

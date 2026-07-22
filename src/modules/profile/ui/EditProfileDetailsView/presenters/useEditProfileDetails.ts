@@ -17,6 +17,13 @@ import { countryDisplayNames } from '@/libs/countryCodePicker/countryDisplayName
 import { InteractionManager, Keyboard } from 'react-native';
 import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCurrencyPickerModal';
 import { useUserCurrencies } from '@/UIKit/CurrencyPicker/presenters/useUserCurrencies';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { getProfileGalleryPhotos } from '@/modules/profile/utils/getProfileGalleryPhotos';
+import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
+import { PROFILE_GALLERY_MAX_PHOTOS } from '@/modules/profile/constants/profileGallery';
+import { IGalleryFile } from '@/UIKit/Gallery/types/IGalleryPhoto';
+import { useProfileSinglePicker } from '@/modules/profile/presenters/useProfileSinglePicker';
+import { IEditableProfileLink } from '@/modules/profile/types/IEditableProfileLink';
 
 interface IProfileForm {
     fullName: string;
@@ -28,8 +35,7 @@ interface IProfileForm {
     gender: string;
     occupation: string;
     placeOfWork: string;
-    instagramLink: string;
-    website: string;
+    links: string[];
     bio: string;
     selectedCurrency: string;
 }
@@ -127,8 +133,11 @@ export const useEditProfileDetails = () => {
     );
     const [isAvatarChanged, setIsAvatarChanged] = useState(false);
     const [shouldRemoveAvatar, setShouldRemoveAvatar] = useState(false);
-    const [instagramLinkError, setInstagramLinkError] = useState<string | null>(null);
     const [isDeleteAvatarAlertVisible, setIsDeleteAvatarAlertVisible] = useState(false);
+    const [galleryPhotos, setGalleryPhotos] = useState(getProfileGalleryPhotos);
+    const [galleryPhotoIdToDelete, setGalleryPhotoIdToDelete] = useState<string | null>(null);
+    const [removeGalleryFileIds, setRemoveGalleryFileIds] = useState<number[]>([]);
+    const isGalleryChangedRef = useRef(false);
     const { currencies, isCurrenciesLoading, onLoadCurrencies } = useUserCurrencies();
     const [isDeferredContentReady, setIsDeferredContentReady] = useState(false);
 
@@ -192,8 +201,18 @@ export const useEditProfileDetails = () => {
             gender: userModel.user?.gender || '',
             occupation: userModel.user?.occupation || '',
             placeOfWork: userModel.user?.wineryName || '',
-            instagramLink: userModel.user?.instagramLink || '',
-            website: userModel.user?.website || '',
+            links: (() => {
+                if (Array.isArray(userModel.user?.links)) {
+                    const links = userModel.user.links.map(link => link.trim()).filter(Boolean);
+                    return links.length ? links : [''];
+                }
+
+                const legacyLinks = [userModel.user?.website, userModel.user?.instagramLink]
+                    .map(link => link?.trim() || '')
+                    .filter(Boolean);
+
+                return legacyLinks.length ? [...new Set(legacyLinks)] : [''];
+            })(),
             bio: userModel.user?.bio || '',
             selectedCurrency: userModel.user?.selectedCurrency || '',
         };
@@ -338,41 +357,10 @@ export const useEditProfileDetails = () => {
         [currentLocale],
     );
 
-    const validateInstagramLink = useCallback((link: string): boolean => {
-        if (!link.trim()) {
-            setInstagramLinkError(null);
-            return true;
-        }
-
-        const trimmedLink = link.trim();
-
-        const instagramUrlPattern = /^(?:https?:\/\/)?(?:www\.)?instagram\.com\/([a-zA-Z0-9._]+)\/?(?:\?.*)?$/;
-        const usernamePattern = /^@?([a-zA-Z0-9._]{1,30})$/;
-
-        const isInstagramUrl = instagramUrlPattern.test(trimmedLink);
-        const isUsername =
-            usernamePattern.test(trimmedLink) && !trimmedLink.includes('www.') && !trimmedLink.includes('http');
-
-        if (!isInstagramUrl && !isUsername) {
-            setInstagramLinkError(localization.t('settings.invalidInstagramLink'));
-            return false;
-        }
-
-        setInstagramLinkError(null);
-        return true;
+    const onChangeField = useCallback((key: keyof Omit<IProfileForm, 'links'>, value: string) => {
+        setForm(prev => ({ ...prev, [key]: value }));
+        setChangedFields(prev => new Set(prev).add(key));
     }, []);
-
-    const onChangeField = useCallback(
-        (key: keyof IProfileForm, value: string) => {
-            setForm(prev => ({ ...prev, [key]: value }));
-            setChangedFields(prev => new Set(prev).add(key));
-
-            if (key === 'instagramLink') {
-                validateInstagramLink(value);
-            }
-        },
-        [validateInstagramLink],
-    );
 
     const onChangeFullName = useCallback(
         (value: string) => {
@@ -416,19 +404,35 @@ export const useEditProfileDetails = () => {
         [onChangeField],
     );
 
-    const onChangeInstagramLink = useCallback(
-        (value: string) => {
-            onChangeField('instagramLink', value);
-        },
-        [onChangeField],
-    );
+    const onChangeLink = useCallback((index: number, value: string) => {
+        setForm(currentForm => ({
+            ...currentForm,
+            links: currentForm.links.map((link, linkIndex) => (linkIndex === index ? value : link)),
+        }));
+        setChangedFields(currentFields => new Set(currentFields).add('links'));
+    }, []);
 
-    const onChangeWebsite = useCallback(
-        (value: string) => {
-            onChangeField('website', value);
-        },
-        [onChangeField],
-    );
+    const onDeleteLink = useCallback((index: number) => {
+        setForm(currentForm => {
+            const links = currentForm.links.filter((_link, linkIndex) => linkIndex !== index);
+            return { ...currentForm, links: links.length ? links : [''] };
+        });
+        setChangedFields(currentFields => new Set(currentFields).add('links'));
+    }, []);
+
+    const onAddLink = useCallback(() => {
+        setForm(currentForm => ({ ...currentForm, links: [...currentForm.links, ''] }));
+        setChangedFields(currentFields => new Set(currentFields).add('links'));
+    }, []);
+
+    const editableLinks = useMemo<IEditableProfileLink[]>(() => {
+        return form.links.map((value, index) => ({
+            id: `profile-link-${index}`,
+            value,
+            onChangeText: nextValue => onChangeLink(index, nextValue),
+            onDelete: () => onDeleteLink(index),
+        }));
+    }, [form.links, onChangeLink, onDeleteLink]);
 
     const onChangeBio = useCallback(
         (value: string) => {
@@ -480,6 +484,9 @@ export const useEditProfileDetails = () => {
             setCountryCode(callingCode);
             setCountryCodeChanged(false);
             isCountryCodeInitializedRef.current = !!callingCode;
+            if (!isGalleryChangedRef.current) {
+                setGalleryPhotos(getProfileGalleryPhotos());
+            }
         }
     }, [getInitialForm, getCallingCodeFromUser]);
 
@@ -554,6 +561,18 @@ export const useEditProfileDetails = () => {
         [getCallingCodeFromUser],
     );
 
+    const galleryFiles = useMemo<IGalleryFile[]>(() => {
+        return galleryPhotos.reduce<IGalleryFile[]>((files, photo) => {
+            if (photo.file) {
+                files.push(photo.file);
+            }
+
+            return files;
+        }, []);
+    }, [galleryPhotos]);
+
+    const hasGalleryChanges = galleryFiles.length > 0 || removeGalleryFileIds.length > 0;
+
     const onSave = useCallback(async () => {
         const fullName = form.fullName.trim();
         if (!fullName) {
@@ -570,7 +589,8 @@ export const useEditProfileDetails = () => {
                 expertiseLevelChanged ||
                 countryCodeChanged ||
                 isAvatarChanged ||
-                shouldRemoveAvatar;
+                shouldRemoveAvatar ||
+                hasGalleryChanges;
 
             if (isProfileChanges) {
                 const formData = new FormData();
@@ -622,12 +642,9 @@ export const useEditProfileDetails = () => {
                     formData.append('wineryName', form.placeOfWork.trim());
                 }
 
-                if (changedFields.has('instagramLink')) {
-                    formData.append('instagramLink', form.instagramLink.trim());
-                }
-
-                if (changedFields.has('website')) {
-                    formData.append('website', form.website.trim());
+                if (changedFields.has('links')) {
+                    const links = form.links.map(link => link.trim()).filter(Boolean);
+                    formData.append('links', JSON.stringify(links));
                 }
 
                 if (changedFields.has('bio')) {
@@ -640,6 +657,14 @@ export const useEditProfileDetails = () => {
                 } else if (isAvatarChanged && selectedAvatarImage) {
                     formData.append('image', selectedAvatarImage as any);
                     console.log('📸 Avatar image added to FormData:', selectedAvatarImage);
+                }
+
+                galleryFiles.forEach(file => {
+                    formData.append('files', file as any);
+                });
+
+                if (removeGalleryFileIds.length) {
+                    formData.append('removeGalleryFileIds', JSON.stringify(removeGalleryFileIds));
                 }
 
                 console.log('📤 Sending FormData with _parts:', (formData as any)._parts);
@@ -674,6 +699,8 @@ export const useEditProfileDetails = () => {
             setSelectedAvatarImage(null);
             setIsAvatarChanged(false);
             setShouldRemoveAvatar(false);
+            setRemoveGalleryFileIds([]);
+            isGalleryChangedRef.current = false;
             navigation.goBack();
         } catch (error) {
             console.error('Error updating profile: ', JSON.stringify(error, null, 4));
@@ -690,6 +717,9 @@ export const useEditProfileDetails = () => {
         isAvatarChanged,
         shouldRemoveAvatar,
         selectedAvatarImage,
+        galleryFiles,
+        removeGalleryFileIds,
+        hasGalleryChanges,
         navigation,
     ]);
 
@@ -699,8 +729,9 @@ export const useEditProfileDetails = () => {
             expertiseLevelChanged ||
             countryCodeChanged ||
             isAvatarChanged ||
-            shouldRemoveAvatar;
-        return !form.fullName.trim() || !form.email.trim() || isInProgress || !hasChanges || !!instagramLinkError;
+            shouldRemoveAvatar ||
+            hasGalleryChanges;
+        return !form.fullName.trim() || !form.email.trim() || isInProgress || !hasChanges;
     }, [
         form,
         isInProgress,
@@ -709,7 +740,7 @@ export const useEditProfileDetails = () => {
         countryCodeChanged,
         isAvatarChanged,
         shouldRemoveAvatar,
-        instagramLinkError,
+        hasGalleryChanges,
     ]);
 
     const birthdayDisplayText = useMemo(() => {
@@ -768,9 +799,12 @@ export const useEditProfileDetails = () => {
 
     const onCloseCitySelector = useCallback(() => {
         Keyboard.dismiss();
+        selectCityModalRef.current?.dismiss();
+    }, []);
+
+    const onDismissCitySelector = useCallback(() => {
         setCitySearch('');
         clearCitySuggestions();
-        selectCityModalRef.current?.dismiss();
     }, [clearCitySuggestions]);
 
     const onSearchCityChange = useCallback(
@@ -791,6 +825,20 @@ export const useEditProfileDetails = () => {
         [onChangeField, onCloseCitySelector, onSelectCity],
     );
 
+    const onOpenExpertiseModal = useCallback(() => {
+        selectExpertiseModalRef.current?.present();
+    }, []);
+
+    const onCloseExpertiseModal = useCallback(() => {
+        selectExpertiseModalRef.current?.dismiss();
+    }, []);
+
+    const onSelectExpertise = useCallback((value: WineExperienceLevelEnum) => {
+        setExpertiseLevel(value);
+        setExpertiseLevelChanged(true);
+        selectExpertiseModalRef.current?.dismiss();
+    }, []);
+
     const onShowDeleteAvatarAlert = useCallback(() => {
         setIsDeleteAvatarAlertVisible(true);
     }, []);
@@ -806,17 +854,83 @@ export const useEditProfileDetails = () => {
         setIsDeleteAvatarAlertVisible(false);
     }, []);
 
-    const onCancelDeletion = useCallback(() => {
-        setShouldRemoveAvatar(false);
+    const onAddGalleryPhoto = useCallback(() => {
+        const remainingPhotoSlots = PROFILE_GALLERY_MAX_PHOTOS - galleryPhotos.length;
+        if (remainingPhotoSlots <= 0) {
+            return;
+        }
+
+        launchImageLibrary({ mediaType: 'photo', selectionLimit: remainingPhotoSlots, quality: 1 }, response => {
+            if (response.didCancel || response.errorCode) {
+                return;
+            }
+
+            const timestamp = Date.now();
+            const selectedPhotos = (response.assets || [])
+                .slice(0, remainingPhotoSlots)
+                .reduce<typeof galleryPhotos>((photos, asset, index) => {
+                    if (!asset.uri) {
+                        return photos;
+                    }
+
+                    photos.push({
+                        id: `${asset.fileName || 'gallery-photo'}-${timestamp}-${index}`,
+                        uri: asset.uri,
+                        file: {
+                            uri: asset.uri,
+                            name: asset.fileName || `gallery-photo-${timestamp}-${index}.jpg`,
+                            type: asset.type || 'image/jpeg',
+                        },
+                    });
+
+                    return photos;
+                }, []);
+
+            if (selectedPhotos.length) {
+                isGalleryChangedRef.current = true;
+                setGalleryPhotos(currentPhotos => [...currentPhotos, ...selectedPhotos]);
+            }
+        });
+    }, [galleryPhotos.length]);
+
+    const onRequestDeleteGalleryPhoto = useCallback((id: string) => {
+        setGalleryPhotoIdToDelete(id);
     }, []);
+
+    const onCloseDeleteGalleryPhotoAlert = useCallback(() => {
+        setGalleryPhotoIdToDelete(null);
+    }, []);
+
+    const onConfirmDeleteGalleryPhoto = useCallback(() => {
+        if (!galleryPhotoIdToDelete) {
+            return;
+        }
+
+        const photoToDelete = galleryPhotos.find(photo => photo.id === galleryPhotoIdToDelete);
+        const fileId = photoToDelete?.fileId;
+        if (typeof fileId === 'number') {
+            setRemoveGalleryFileIds(currentIds => {
+                if (currentIds.includes(fileId)) {
+                    return currentIds;
+                }
+
+                return [...currentIds, fileId];
+            });
+        }
+
+        isGalleryChangedRef.current = true;
+        setGalleryPhotos(currentPhotos => currentPhotos.filter(photo => photo.id !== galleryPhotoIdToDelete));
+        setGalleryPhotoIdToDelete(null);
+    }, [galleryPhotoIdToDelete, galleryPhotos]);
+
+    const gallery = useGallery({
+        photos: galleryPhotos,
+        onDeletePhoto: onRequestDeleteGalleryPhoto,
+    });
 
     const onEditModeBackHandler = useCallback(() => {
         navigation.goBack();
     }, [navigation]);
-
-    const hasAvatar = useMemo(() => {
-        return !shouldRemoveAvatar && (!!selectedAvatarImage || !!userModel.user?.avatarUrl);
-    }, [selectedAvatarImage, shouldRemoveAvatar]);
 
     useEffect(() => {
         const params = route.params as { selectedAvatar?: { uri: string; name: string; type: string } } | undefined;
@@ -833,23 +947,39 @@ export const useEditProfileDetails = () => {
         }
     }, [route.params]);
 
+    const countryPicker = useProfileSinglePicker({
+        title: localization.t('settings.country', { locale: currentLocale }),
+        value: form.country,
+        items: countryOptions,
+        onChange: onChangeCountry,
+    });
+    const genderPicker = useProfileSinglePicker({
+        title: localization.t('settings.gender', { locale: currentLocale }),
+        value: form.gender,
+        items: genderOptions,
+        onChange: onChangeGender,
+    });
+
     return {
         form,
         phoneInitialCca2: getPhoneCca2FromUser(),
         avatarUrl: userModel.user?.avatarUrl || null,
         selectedAvatarUri: selectedAvatarImage?.uri || null,
-        hasAvatar,
         isMarkedForDeletion: shouldRemoveAvatar,
         onOpenCamera,
         onRemoveAvatar: onShowDeleteAvatarAlert,
-        onCancelDeletion,
         isDeleteAvatarAlertVisible,
         onCloseDeleteAvatarAlert,
         onConfirmDeleteAvatar,
+        gallery,
+        onAddGalleryPhoto: galleryPhotos.length < PROFILE_GALLERY_MAX_PHOTOS ? onAddGalleryPhoto : undefined,
+        isDeleteGalleryPhotoAlertVisible: !!galleryPhotoIdToDelete,
+        onCloseDeleteGalleryPhotoAlert,
+        onConfirmDeleteGalleryPhoto,
         expertiseLevel,
         birthdayDisplayText,
-        genderOptions,
-        countryOptions,
+        countryPicker,
+        genderPicker,
         cityOptions,
         citySearch,
         cityEmptyStateText,
@@ -859,29 +989,24 @@ export const useEditProfileDetails = () => {
         onChangeFullName,
         onChangeEmail,
         onChangePhoneNumber,
-        onChangeGender,
         onChangeOccupation,
         currencyPicker,
         isCurrencySelectorDisabled,
         onChangePlaceOfWork,
-        onChangeInstagramLink,
-        onChangeWebsite,
+        editableLinks,
+        onAddLink,
         onChangeBio,
-        onChangeCountry,
         cityModalRef: selectCityModalRef,
         onOpenCitySelector,
         onCloseCitySelector,
+        onDismissCitySelector,
         onSearchCityChange,
         onSelectCityOption,
         onChangeCountryCode,
         selectExpertiseModalRef,
-        onOpenExpertiseModal: () => selectExpertiseModalRef.current?.present(),
-        onCloseExpertiseModal: () => selectExpertiseModalRef.current?.dismiss(),
-        onSelectExpertise: (value: WineExperienceLevelEnum) => {
-            setExpertiseLevel(value);
-            setExpertiseLevelChanged(true);
-            selectExpertiseModalRef.current?.dismiss();
-        },
+        onOpenExpertiseModal,
+        onCloseExpertiseModal,
+        onSelectExpertise,
         isBirthdayModalVisible,
         pickerDate,
         onOpenBirthdayModal,
@@ -891,7 +1016,6 @@ export const useEditProfileDetails = () => {
         onSave,
         isDisabled,
         isInProgress,
-        instagramLinkError,
         onEditModeBackHandler,
         isDeferredContentReady,
     };

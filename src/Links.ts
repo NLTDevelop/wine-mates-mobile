@@ -54,6 +54,7 @@ export interface ILinks {
     wineChooserAromasFlavors: string;
     wineChooserFilterOptions: string;
     faq: string;
+    users: string;
     me: string;
     favoriteWineLists: string;
     favoriteEvents: string;
@@ -62,6 +63,7 @@ export interface ILinks {
     eventPriceRange: string;
     eventFilterOptions: string;
     createdEvents: string;
+    userEvents: string;
     appliedEvents: string;
     eventBookings: string;
     userCurrencies: string;
@@ -73,6 +75,14 @@ export interface ILinks {
     eventTastingDraft: string;
     eventTastingSaveDraft: string;
     userLocation: string;
+    notifications: string;
+    notificationsSocket: string;
+    availableWineryWines: string;
+    wineryLinkedWines: string;
+    wineryWines: string;
+    wineries: string;
+    wineryUpdate: string;
+    appeals: string;
 }
 
 class Links implements ILinks {
@@ -118,6 +128,7 @@ class Links implements ILinks {
         wineChooserAromasFlavors: 'wine-chooser/aromas-flavors',
         wineChooserFilterOptions: 'wine-chooser/filter-options',
         faq: 'faq/topics',
+        users: 'users',
         me: 'users/me',
         favoriteWineLists: 'favorite/wine-lists',
         favoriteEvents: 'favorite/events',
@@ -126,6 +137,7 @@ class Links implements ILinks {
         eventPriceRange: 'events/price-range',
         eventFilterOptions: 'events/filter-options',
         createdEvents: 'events/my',
+        userEvents: 'events/user-events',
         appliedEvents: 'event-bookings/my',
         eventBookings: 'event-bookings',
         userCurrencies: 'users/currencies',
@@ -137,6 +149,13 @@ class Links implements ILinks {
         eventTastingDraft: 'event-tasting/draft',
         eventTastingSaveDraft: 'event-tasting/save-draft',
         userLocation: 'users/location',
+        notifications: 'notifications',
+        availableWineryWines: 'wines/winery',
+        wineryLinkedWines: 'wines/winery-linked',
+        wineryWines: 'winery-wines',
+        wineries: 'wineries',
+        wineryUpdate: 'wineries',
+        appeals: 'appeals',
     };
 
     private buildDomain() {
@@ -274,6 +293,9 @@ class Links implements ILinks {
     public get faq() {
         return `${this._domain}${this._links.faq}`;
     }
+    public get users() {
+        return `${this._domain}${this._links.users}`;
+    }
     public get me() {
         return `${this._domain}${this._links.me}`;
     }
@@ -297,6 +319,9 @@ class Links implements ILinks {
     }
     public get createdEvents() {
         return `${this._domain}${this._links.createdEvents}`;
+    }
+    public get userEvents() {
+        return `${this._domain}${this._links.userEvents}`;
     }
     public get appliedEvents() {
         return `${this._domain}${this._links.appliedEvents}`;
@@ -330,6 +355,31 @@ class Links implements ILinks {
     }
     public get userLocation() {
         return `${this._domain}${this._links.userLocation}`;
+    }
+    public get notifications() {
+        return `${this._domain}${this._links.notifications}`;
+    }
+    public get availableWineryWines() {
+        return `${this._domain}${this._links.availableWineryWines}`;
+    }
+    public get wineryLinkedWines() {
+        return `${this._domain}${this._links.wineryLinkedWines}`;
+    }
+    public get wineryWines() {
+        return `${this._domain}${this._links.wineryWines}`;
+    }
+    public get wineries() {
+        return `${this._domain}${this._links.wineries}`;
+    }
+    public get wineryUpdate() {
+        return `${this._domain}${this._links.wineryUpdate}`;
+    }
+    public get appeals() {
+        return `${this._domain}${this._links.appeals}`;
+    }
+
+    public get notificationsSocket() {
+        return `${this._domain.replace(/\/api\/v1\/?$/, '')}/notifications`;
     }
 }
 

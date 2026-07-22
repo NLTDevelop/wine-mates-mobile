@@ -5,7 +5,6 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
-            marginBottom: scaleVertical(16),
             minHeight: scaleVertical(48),
             borderRadius: 12,
             borderWidth: scaleHorizontal(1),

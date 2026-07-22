@@ -19,23 +19,48 @@ interface IProps {
     onClose: () => void;
     onDismiss: () => void;
     showCountryCode?: boolean;
+    countries?: ICountry[];
 }
 
-export const CountryPickerBottomSheet = ({ modalRef, onCountryPress, onClose, onDismiss, showCountryCode = false }: IProps) => {
+export const CountryPickerBottomSheet = ({
+    modalRef,
+    onCountryPress,
+    onClose,
+    onDismiss,
+    showCountryCode = false,
+    countries,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
-    const { countriesData, search, setSearch } = useCountryPickerModal();
+    const { countriesData: allCountries, search, setSearch } = useCountryPickerModal();
+    const countriesData = useMemo(() => {
+        if (!countries) {
+            return allCountries;
+        }
+
+        const query = search.trim().toLocaleLowerCase();
+
+        if (!query) {
+            return countries;
+        }
+
+        return countries.filter(country => country.name.toLocaleLowerCase().includes(query));
+    }, [allCountries, countries, search]);
     const snapPoints = useMemo(() => [windowHeight], []);
-    const renderBackdrop = useCallback((props: any) => (
-        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} onPress={onClose} />
-    ), [onClose]);
+    const renderBackdrop = useCallback(
+        (props: any) => <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} onPress={onClose} />,
+        [onClose],
+    );
     const renderHandle = useCallback(() => null, []);
 
-    const keyExtractor = useCallback((item: ICountry) => item.cca2, []);
-    const renderItem = useCallback(({ item }: { item: ICountry }) => (
-        <CountryListItem item={item} handleCountryPress={onCountryPress} showCountryCode={showCountryCode} />
-    ), [onCountryPress, showCountryCode]);
+    const keyExtractor = useCallback((item: ICountry) => item.id?.toString() || item.cca2, []);
+    const renderItem = useCallback(
+        ({ item }: { item: ICountry }) => (
+            <CountryListItem item={item} handleCountryPress={onCountryPress} showCountryCode={showCountryCode} />
+        ),
+        [onCountryPress, showCountryCode],
+    );
 
     return (
         <BottomSheetModal
