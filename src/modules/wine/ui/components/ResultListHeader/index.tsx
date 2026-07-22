@@ -27,9 +27,10 @@ interface IProps {
     isAllVintagesSelected: boolean;
     fromScanner?: boolean;
     hasReviews?: boolean;
+    isResultHeaderFooterVisible: boolean;
 }
 
-export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, hasReviews }: IProps) => {
+export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, hasReviews, isResultHeaderFooterVisible }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
@@ -69,6 +70,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 hasCurrentVintageData={hasCurrentVintageData}
                 isAllVintagesSelected={isAllVintagesSelected}
                 fromScanner={fromScanner}
+                isResultHeaderFooterVisible={isResultHeaderFooterVisible}
             />
 
             {isVintageTasted && (

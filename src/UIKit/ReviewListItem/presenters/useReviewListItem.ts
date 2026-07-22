@@ -1,6 +1,7 @@
 import { IWineReviewsListItem } from '@/entities/wine/types/IWineReviewsListItem';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { userModel } from '@/entities/users/UserModel';
+import { useProfileNavigation } from '@/hooks/useProfileNavigation';
 
 interface IProps {
     item: IWineReviewsListItem;
@@ -22,6 +23,7 @@ const formatDateTime = (raw: string | number | Date, locale: string) => {
 };
 
 export const useReviewListItem = ({ item, locale, showReviewWithoutPremium = false }: IProps) => {
+    const { onUserPress } = useProfileNavigation(item.user.id, item.user.winery);
     const formattedDateTime = formatDateTime(item.createdAt, locale);
     const isPremiumUser = userModel.user?.hasPremium || false;
     const isMyReview = item.user.id === userModel.user?.id;
@@ -41,5 +43,6 @@ export const useReviewListItem = ({ item, locale, showReviewWithoutPremium = fal
         isLoverLevel,
         formattedUserRating,
         formattedExpertRating,
+        onUserPress,
     };
 };

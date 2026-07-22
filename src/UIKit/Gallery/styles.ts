@@ -7,6 +7,9 @@ export const getStyles = (colors: IColors) => {
         container: {
             marginBottom: scaleVertical(16),
         },
+        hiddenContainer: {
+            marginBottom: 0,
+        },
         header: {
             minHeight: scaleVertical(28),
             flexDirection: 'row',
@@ -31,6 +34,12 @@ export const getStyles = (colors: IColors) => {
         listContent: {
             gap: scaleHorizontal(8),
             marginTop: scaleVertical(8),
+        },
+        list: {
+            flexGrow: 0,
+        },
+        listContentWithoutHeader: {
+            gap: scaleHorizontal(8),
         },
         viewer: {
             flex: 1,

@@ -35,6 +35,7 @@ import {
 import { wineChooserResultsModel } from '../models/WineChooserResultsModel';
 import { wineModel } from '../models/WineModel';
 import { wineReviewsListModel } from '../models/WineReviewsListModel';
+import { IRateDetails } from '../types/IRateDetails';
 
 class WineService {
     constructor(private _requester: IRequester, private _links: ILinks) {}
@@ -67,6 +68,20 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getById: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getRateDetails = async (id: number): Promise<IResponse<IRateDetails>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.rates}/${id}`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getRateDetails: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

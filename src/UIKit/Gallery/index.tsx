@@ -19,6 +19,9 @@ interface IProps {
     onCloseViewer: () => void;
     onAddPhoto?: () => void;
     containerStyle?: StyleProp<ViewStyle>;
+    photoStyle?: StyleProp<ViewStyle>;
+    hideHeader?: boolean;
+    hidePreview?: boolean;
 }
 
 export const Gallery = ({
@@ -31,14 +34,20 @@ export const Gallery = ({
     onCloseViewer,
     onAddPhoto,
     containerStyle,
+    photoStyle,
+    hideHeader = false,
+    hidePreview = false,
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { viewerWidth, viewerPhotoStyle, closeViewerButtonInsetStyle } = useGalleryLayout();
 
-    const renderItem = useCallback<ListRenderItem<IGalleryItem>>(({ item }) => {
-        return <GalleryPhoto {...item} />;
-    }, []);
+    const renderItem = useCallback<ListRenderItem<IGalleryItem>>(
+        ({ item }) => {
+            return <GalleryPhoto {...item} photoStyle={photoStyle} />;
+        },
+        [photoStyle],
+    );
 
     const keyExtractor = useCallback((item: IGalleryItem) => item.id, []);
 
@@ -61,26 +70,29 @@ export const Gallery = ({
     );
 
     return (
-        <View style={[styles.container, containerStyle]}>
-            <View style={styles.header}>
-                <Typography text={title} variant="body_500" style={styles.title} />
-                {!!onAddPhoto && (
-                    <TouchableOpacity onPress={onAddPhoto} style={styles.addButton}>
-                        <Typography
-                            text={t('settings.addPhoto')}
-                            variant="subtitle_12_500"
-                            style={styles.addButtonText}
-                        />
-                    </TouchableOpacity>
-                )}
-            </View>
-            {hasPhotos && (
+        <View style={[styles.container, hideHeader && hidePreview && styles.hiddenContainer, containerStyle]}>
+            {!hideHeader && (
+                <View style={styles.header}>
+                    <Typography text={title} variant="body_500" style={styles.title} />
+                    {!!onAddPhoto && (
+                        <TouchableOpacity onPress={onAddPhoto} style={styles.addButton}>
+                            <Typography
+                                text={t('settings.addPhoto')}
+                                variant="subtitle_12_500"
+                                style={styles.addButtonText}
+                            />
+                        </TouchableOpacity>
+                    )}
+                </View>
+            )}
+            {hasPhotos && !hidePreview && (
                 <FlatList
                     horizontal
+                    style={styles.list}
                     data={items}
                     renderItem={renderItem}
                     keyExtractor={keyExtractor}
-                    contentContainerStyle={styles.listContent}
+                    contentContainerStyle={hideHeader ? styles.listContentWithoutHeader : styles.listContent}
                     showsHorizontalScrollIndicator={false}
                 />
             )}

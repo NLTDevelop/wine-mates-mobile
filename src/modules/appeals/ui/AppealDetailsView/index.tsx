@@ -9,6 +9,7 @@ import { Button } from '@/UIKit/Button';
 import { DeleteForeverIcon } from '@assets/icons/DeleteForeverIcon';
 import { EditIcon } from '@assets/icons/EditIcon';
 import { Gallery } from '@/UIKit/Gallery';
+import { useRefresh } from '@/hooks/useRefresh';
 import { AppealDetailsField } from './components/AppealDetailsField';
 import { DeleteAppealAlert } from './components/DeleteAppealAlert';
 import { useAppealDetails } from './presenters/useAppealDetails';
@@ -23,6 +24,12 @@ export const AppealDetailsView = () => {
         isEditable,
         statusLabel,
         createdAt,
+        closedAt,
+        description,
+        adminComment,
+        hasAdminComment,
+        hasClosedAt,
+        isDescriptionLast,
         gallery,
         isDeleteVisible,
         isDeleting,
@@ -30,13 +37,16 @@ export const AppealDetailsView = () => {
         onShowDelete,
         onHideDelete,
         onDeletePress,
+        onRefresh,
     } = useAppealDetails(locale);
+    const { refreshControl } = useRefresh(onRefresh);
 
     return (
         <ScreenContainer
             edges={['top', 'bottom']}
             withGradient
             scrollEnabled
+            refreshControl={refreshControl}
             headerComponent={<HeaderWithBackButton title={t('appeals.detailsTitle')} isCentered />}
             contentContainerStyle={styles.scrollContent}
         >
@@ -52,13 +62,18 @@ export const AppealDetailsView = () => {
                             </View>
                         </View>
                         <AppealDetailsField label={t('appeals.createdAt')} value={createdAt} />
+                        {hasClosedAt && <AppealDetailsField label={t('appeals.closedAt')} value={closedAt} />}
                         <AppealDetailsField
                             label={t('appeals.description')}
-                            value={appeal.description || t('appeals.notSpecified')}
-                            isLast
+                            value={description}
+                            isLast={isDescriptionLast}
                         />
-                        {!!appeal.adminComment && (
-                            <AppealDetailsField label={t('appeals.adminComment')} value={appeal.adminComment} />
+                        {hasAdminComment && (
+                            <AppealDetailsField
+                                label={t('appeals.adminComment')}
+                                value={adminComment}
+                                isLast
+                            />
                         )}
                     </View>
                     {gallery.hasPhotos && <Gallery title={t('appeals.attachments')} {...gallery} />}

@@ -7,8 +7,8 @@ import { userService } from '@/entities/users/UserService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { getProfileGalleryPhotos } from '@/modules/profile/utils/getProfileGalleryPhotos';
 import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
-import { getContactTitle, getContactType } from '@/entities/contacts/presenters/useContactType';
 import { getProfileBirthdayText, getProfileCountryName } from '@/modules/profile/utils/profileUserFields';
+import { getProfileLinkItems } from '@/modules/profile/utils/getProfileLinkItems';
 
 const getField = (value: string | number | null | undefined, placeholder: string) => {
     const hasValue = value !== null && value !== undefined && String(value).trim().length > 0;
@@ -65,15 +65,7 @@ export const useWineryProfileDetails = (locale: string) => {
             localization.t('registration.birthday', { locale }),
         ),
     };
-    const linkItems = (winery?.links || []).map((url, index) => {
-        const contactType = getContactType('', url);
-        return {
-            id: `${index}-${url}`,
-            url,
-            contactType,
-            title: getContactTitle('', url, contactType) || url,
-        };
-    });
+    const linkItems = getProfileLinkItems(winery?.links || []);
 
     return {
         name: winery?.name || '',

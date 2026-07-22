@@ -23,6 +23,7 @@ import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
 import { PROFILE_GALLERY_MAX_PHOTOS } from '@/modules/profile/constants/profileGallery';
 import { IGalleryFile } from '@/UIKit/Gallery/types/IGalleryPhoto';
 import { useProfileSinglePicker } from '@/modules/profile/presenters/useProfileSinglePicker';
+import { IEditableProfileLink } from '@/modules/profile/types/IEditableProfileLink';
 
 interface IProfileForm {
     fullName: string;
@@ -34,8 +35,7 @@ interface IProfileForm {
     gender: string;
     occupation: string;
     placeOfWork: string;
-    instagramLink: string;
-    website: string;
+    links: string[];
     bio: string;
     selectedCurrency: string;
 }
@@ -133,7 +133,6 @@ export const useEditProfileDetails = () => {
     );
     const [isAvatarChanged, setIsAvatarChanged] = useState(false);
     const [shouldRemoveAvatar, setShouldRemoveAvatar] = useState(false);
-    const [instagramLinkError, setInstagramLinkError] = useState<string | null>(null);
     const [isDeleteAvatarAlertVisible, setIsDeleteAvatarAlertVisible] = useState(false);
     const [galleryPhotos, setGalleryPhotos] = useState(getProfileGalleryPhotos);
     const [galleryPhotoIdToDelete, setGalleryPhotoIdToDelete] = useState<string | null>(null);
@@ -202,8 +201,18 @@ export const useEditProfileDetails = () => {
             gender: userModel.user?.gender || '',
             occupation: userModel.user?.occupation || '',
             placeOfWork: userModel.user?.wineryName || '',
-            instagramLink: userModel.user?.instagramLink || '',
-            website: userModel.user?.website || '',
+            links: (() => {
+                if (Array.isArray(userModel.user?.links)) {
+                    const links = userModel.user.links.map(link => link.trim()).filter(Boolean);
+                    return links.length ? links : [''];
+                }
+
+                const legacyLinks = [userModel.user?.website, userModel.user?.instagramLink]
+                    .map(link => link?.trim() || '')
+                    .filter(Boolean);
+
+                return legacyLinks.length ? [...new Set(legacyLinks)] : [''];
+            })(),
             bio: userModel.user?.bio || '',
             selectedCurrency: userModel.user?.selectedCurrency || '',
         };
@@ -348,41 +357,10 @@ export const useEditProfileDetails = () => {
         [currentLocale],
     );
 
-    const validateInstagramLink = useCallback((link: string): boolean => {
-        if (!link.trim()) {
-            setInstagramLinkError(null);
-            return true;
-        }
-
-        const trimmedLink = link.trim();
-
-        const instagramUrlPattern = /^(?:https?:\/\/)?(?:www\.)?instagram\.com\/([a-zA-Z0-9._]+)\/?(?:\?.*)?$/;
-        const usernamePattern = /^@?([a-zA-Z0-9._]{1,30})$/;
-
-        const isInstagramUrl = instagramUrlPattern.test(trimmedLink);
-        const isUsername =
-            usernamePattern.test(trimmedLink) && !trimmedLink.includes('www.') && !trimmedLink.includes('http');
-
-        if (!isInstagramUrl && !isUsername) {
-            setInstagramLinkError(localization.t('settings.invalidInstagramLink'));
-            return false;
-        }
-
-        setInstagramLinkError(null);
-        return true;
+    const onChangeField = useCallback((key: keyof Omit<IProfileForm, 'links'>, value: string) => {
+        setForm(prev => ({ ...prev, [key]: value }));
+        setChangedFields(prev => new Set(prev).add(key));
     }, []);
-
-    const onChangeField = useCallback(
-        (key: keyof IProfileForm, value: string) => {
-            setForm(prev => ({ ...prev, [key]: value }));
-            setChangedFields(prev => new Set(prev).add(key));
-
-            if (key === 'instagramLink') {
-                validateInstagramLink(value);
-            }
-        },
-        [validateInstagramLink],
-    );
 
     const onChangeFullName = useCallback(
         (value: string) => {
@@ -426,19 +404,35 @@ export const useEditProfileDetails = () => {
         [onChangeField],
     );
 
-    const onChangeInstagramLink = useCallback(
-        (value: string) => {
-            onChangeField('instagramLink', value);
-        },
-        [onChangeField],
-    );
+    const onChangeLink = useCallback((index: number, value: string) => {
+        setForm(currentForm => ({
+            ...currentForm,
+            links: currentForm.links.map((link, linkIndex) => (linkIndex === index ? value : link)),
+        }));
+        setChangedFields(currentFields => new Set(currentFields).add('links'));
+    }, []);
 
-    const onChangeWebsite = useCallback(
-        (value: string) => {
-            onChangeField('website', value);
-        },
-        [onChangeField],
-    );
+    const onDeleteLink = useCallback((index: number) => {
+        setForm(currentForm => {
+            const links = currentForm.links.filter((_link, linkIndex) => linkIndex !== index);
+            return { ...currentForm, links: links.length ? links : [''] };
+        });
+        setChangedFields(currentFields => new Set(currentFields).add('links'));
+    }, []);
+
+    const onAddLink = useCallback(() => {
+        setForm(currentForm => ({ ...currentForm, links: [...currentForm.links, ''] }));
+        setChangedFields(currentFields => new Set(currentFields).add('links'));
+    }, []);
+
+    const editableLinks = useMemo<IEditableProfileLink[]>(() => {
+        return form.links.map((value, index) => ({
+            id: `profile-link-${index}`,
+            value,
+            onChangeText: nextValue => onChangeLink(index, nextValue),
+            onDelete: () => onDeleteLink(index),
+        }));
+    }, [form.links, onChangeLink, onDeleteLink]);
 
     const onChangeBio = useCallback(
         (value: string) => {
@@ -648,12 +642,9 @@ export const useEditProfileDetails = () => {
                     formData.append('wineryName', form.placeOfWork.trim());
                 }
 
-                if (changedFields.has('instagramLink')) {
-                    formData.append('instagramLink', form.instagramLink.trim());
-                }
-
-                if (changedFields.has('website')) {
-                    formData.append('website', form.website.trim());
+                if (changedFields.has('links')) {
+                    const links = form.links.map(link => link.trim()).filter(Boolean);
+                    formData.append('links', JSON.stringify(links));
                 }
 
                 if (changedFields.has('bio')) {
@@ -740,7 +731,7 @@ export const useEditProfileDetails = () => {
             isAvatarChanged ||
             shouldRemoveAvatar ||
             hasGalleryChanges;
-        return !form.fullName.trim() || !form.email.trim() || isInProgress || !hasChanges || !!instagramLinkError;
+        return !form.fullName.trim() || !form.email.trim() || isInProgress || !hasChanges;
     }, [
         form,
         isInProgress,
@@ -750,7 +741,6 @@ export const useEditProfileDetails = () => {
         isAvatarChanged,
         shouldRemoveAvatar,
         hasGalleryChanges,
-        instagramLinkError,
     ]);
 
     const birthdayDisplayText = useMemo(() => {
@@ -1003,8 +993,8 @@ export const useEditProfileDetails = () => {
         currencyPicker,
         isCurrencySelectorDisabled,
         onChangePlaceOfWork,
-        onChangeInstagramLink,
-        onChangeWebsite,
+        editableLinks,
+        onAddLink,
         onChangeBio,
         cityModalRef: selectCityModalRef,
         onOpenCitySelector,
@@ -1026,7 +1016,6 @@ export const useEditProfileDetails = () => {
         onSave,
         isDisabled,
         isInProgress,
-        instagramLinkError,
         onEditModeBackHandler,
         isDeferredContentReady,
     };

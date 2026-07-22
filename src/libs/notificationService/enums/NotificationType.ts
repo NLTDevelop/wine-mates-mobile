@@ -6,4 +6,5 @@ export enum NotificationType {
     EventParticipationConfirmed = 'event_application_confirmed',
     EventParticipationRejected = 'event_application_rejected',
     TastingReminder = 'event_start_reminder',
+    WineryWineTasted = 'winery_wine_tasted',
 }

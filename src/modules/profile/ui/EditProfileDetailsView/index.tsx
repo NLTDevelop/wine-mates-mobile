@@ -13,7 +13,6 @@ import { AvatarPicker } from '@/UIKit/AvatarPicker/ui';
 import { PhoneInputField } from '@/libs/countryCodePicker/components/PhoneInputField';
 import { BirthdaySelector } from '@/modules/registration/ui/components/BirthdaySelector';
 import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
-import { InstagramIcon } from '@assets/icons/InstagramIcon';
 import { SelectExpertiseBottomSheet } from './components/SelectExpertiseBottomSheet';
 import { ExpertiseSelectorRow } from './components/ExpertiseSelectorRow';
 import { SelectCityBottomSheet } from './components/SelectCityBottomSheet';
@@ -26,6 +25,7 @@ import { Gallery } from '@/UIKit/Gallery';
 import { ProfileFormField } from '@/modules/profile/ui/components/ProfileFormField';
 import { PickerButton } from '@/UIKit/PickerButton';
 import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
+import { EditableProfileLinks } from './components/EditableProfileLinks';
 
 export const EditProfileDetailsView = () => {
     const { colors, t } = useUiContext();
@@ -56,8 +56,8 @@ export const EditProfileDetailsView = () => {
         currencyPicker,
         isCurrencySelectorDisabled,
         onChangePlaceOfWork,
-        onChangeInstagramLink,
-        onChangeWebsite,
+        editableLinks,
+        onAddLink,
         onChangeBio,
         cityModalRef,
         onOpenCitySelector,
@@ -79,7 +79,6 @@ export const EditProfileDetailsView = () => {
         onCloseBirthdayModal,
         onChangePickerDate,
         onConfirmBirthday,
-        instagramLinkError,
         isDeleteAvatarAlertVisible,
         onCloseDeleteAvatarAlert,
         onConfirmDeleteAvatar,
@@ -219,31 +218,7 @@ export const EditProfileDetailsView = () => {
                                 containerStyle={styles.inputContainer}
                             />
                         </ProfileFormField>
-                        <ProfileFormField label={t('settings.instagramLabel')}>
-                            <CustomInput
-                                value={form.instagramLink}
-                                onChangeText={onChangeInstagramLink}
-                                editable
-                                placeholder={t('settings.instagram')}
-                                error={!!instagramLinkError}
-                                errorText={instagramLinkError || undefined}
-                                LeftAccessory={
-                                    <View style={styles.instagramAccessory}>
-                                        <InstagramIcon color={colors.text} />
-                                    </View>
-                                }
-                                containerStyle={styles.inputContainer}
-                            />
-                        </ProfileFormField>
-                        <ProfileFormField label={t('settings.websiteLabel')}>
-                            <CustomInput
-                                value={form.website}
-                                onChangeText={onChangeWebsite}
-                                editable
-                                placeholder={t('settings.website')}
-                                containerStyle={styles.inputContainer}
-                            />
-                        </ProfileFormField>
+                        <EditableProfileLinks items={editableLinks} onAdd={onAddLink} />
                         <ProfileFormField label={t('settings.bio')}>
                             <CustomInput
                                 value={form.bio}

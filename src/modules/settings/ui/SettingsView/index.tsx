@@ -7,8 +7,8 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { SettingsHeader } from '../components/SettingsHeader';
 import { useSettings } from '../../presenters/useSettings';
 import { SettingsItem } from '../components/SettingsItem';
-import { LogoutModal } from '../components/LogoutModal';
-import { useLogoutModal } from '../../presenters/useLogoutModal';
+import { LogoutAlert } from '../components/LogoutAlert';
+import { useLogoutAlert } from '../../presenters/useLogoutAlert';
 import { useSelectLanguageBottomSheet } from '../../presenters/useSelectLanguageBottomSheet';
 import { SelectLanguageBottomSheet } from '../components/SelectLanguageBottomSheet';
 
@@ -16,8 +16,8 @@ export const SettingsView = () => {
     const { colors, t, locale } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { isVisible: isLanguageModalVisible, onItemPress, onClose, onOpen } = useSelectLanguageBottomSheet()
-    const { isVisible, onShowLogoutModal, onHideLogoutModal, onLogout } = useLogoutModal();
-    const { APP_BUTTONS, BUTTONS, ACCOUNT_BUTTONS } = useSettings(onShowLogoutModal, onOpen, locale);
+    const { isVisible, isLoading, onShowLogoutAlert, onHideLogoutAlert, onLogout } = useLogoutAlert();
+    const { APP_BUTTONS, BUTTONS, ACCOUNT_BUTTONS } = useSettings(onShowLogoutAlert, onOpen, locale);
 
     return (
         <ScreenContainer
@@ -47,7 +47,12 @@ export const SettingsView = () => {
                     ))}
                 </View>
             </View>
-            <LogoutModal isVisible={isVisible} onHide={onHideLogoutModal} onLogout={onLogout}/>
+            <LogoutAlert
+                visible={isVisible}
+                isLoading={isLoading}
+                onClose={onHideLogoutAlert}
+                onConfirm={onLogout}
+            />
             {isLanguageModalVisible && (
                 <SelectLanguageBottomSheet
                     isVisible={isLanguageModalVisible}

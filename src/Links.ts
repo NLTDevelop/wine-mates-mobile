@@ -54,6 +54,7 @@ export interface ILinks {
     wineChooserAromasFlavors: string;
     wineChooserFilterOptions: string;
     faq: string;
+    users: string;
     me: string;
     favoriteWineLists: string;
     favoriteEvents: string;
@@ -62,6 +63,7 @@ export interface ILinks {
     eventPriceRange: string;
     eventFilterOptions: string;
     createdEvents: string;
+    userEvents: string;
     appliedEvents: string;
     eventBookings: string;
     userCurrencies: string;
@@ -76,6 +78,7 @@ export interface ILinks {
     notifications: string;
     notificationsSocket: string;
     availableWineryWines: string;
+    wineryLinkedWines: string;
     wineryWines: string;
     wineries: string;
     wineryUpdate: string;
@@ -125,6 +128,7 @@ class Links implements ILinks {
         wineChooserAromasFlavors: 'wine-chooser/aromas-flavors',
         wineChooserFilterOptions: 'wine-chooser/filter-options',
         faq: 'faq/topics',
+        users: 'users',
         me: 'users/me',
         favoriteWineLists: 'favorite/wine-lists',
         favoriteEvents: 'favorite/events',
@@ -133,6 +137,7 @@ class Links implements ILinks {
         eventPriceRange: 'events/price-range',
         eventFilterOptions: 'events/filter-options',
         createdEvents: 'events/my',
+        userEvents: 'events/user-events',
         appliedEvents: 'event-bookings/my',
         eventBookings: 'event-bookings',
         userCurrencies: 'users/currencies',
@@ -146,6 +151,7 @@ class Links implements ILinks {
         userLocation: 'users/location',
         notifications: 'notifications',
         availableWineryWines: 'wines/winery',
+        wineryLinkedWines: 'wines/winery-linked',
         wineryWines: 'winery-wines',
         wineries: 'wineries',
         wineryUpdate: 'wineries',
@@ -287,6 +293,9 @@ class Links implements ILinks {
     public get faq() {
         return `${this._domain}${this._links.faq}`;
     }
+    public get users() {
+        return `${this._domain}${this._links.users}`;
+    }
     public get me() {
         return `${this._domain}${this._links.me}`;
     }
@@ -310,6 +319,9 @@ class Links implements ILinks {
     }
     public get createdEvents() {
         return `${this._domain}${this._links.createdEvents}`;
+    }
+    public get userEvents() {
+        return `${this._domain}${this._links.userEvents}`;
     }
     public get appliedEvents() {
         return `${this._domain}${this._links.appliedEvents}`;
@@ -349,6 +361,9 @@ class Links implements ILinks {
     }
     public get availableWineryWines() {
         return `${this._domain}${this._links.availableWineryWines}`;
+    }
+    public get wineryLinkedWines() {
+        return `${this._domain}${this._links.wineryLinkedWines}`;
     }
     public get wineryWines() {
         return `${this._domain}${this._links.wineryWines}`;

@@ -21,6 +21,7 @@ import {
 } from '@/modules/profile/utils/profileUserFields';
 import { IEditableWineryLink } from '@/modules/profile/types/IEditableWineryLink';
 import { useProfileSinglePicker } from '@/modules/profile/presenters/useProfileSinglePicker';
+import { UpdateWineryDto } from '@/entities/winery/dto/UpdateWinery.dto';
 
 interface IWineryForm {
     name: string;
@@ -333,56 +334,44 @@ export const useEditWineryProfileDetails = () => {
         if (isDisabled) return;
         try {
             setIsLoading(true);
-            if (hasWineryChanges) {
-                const wineryFormData = new FormData();
-                if (changedFields.has('name')) wineryFormData.append('name', form.name.trim());
-                if (changedFields.has('foundedYear')) wineryFormData.append('foundedYear', String(foundedYear));
-                if (changedFields.has('description')) wineryFormData.append('description', form.description.trim());
-                if (changedFields.has('countryId')) wineryFormData.append('countryId', String(form.countryId));
-                if (changedFields.has('regionId')) {
-                    wineryFormData.append('regionId', form.regionId === null ? 'null' : String(form.regionId));
-                }
-                if (changedFields.has('links')) {
-                    const links = form.links.map(link => link.trim()).filter(Boolean);
-                    wineryFormData.append('links', JSON.stringify(links));
-                }
-                if (selectedMainPhoto) wineryFormData.append('mainPhoto', selectedMainPhoto as any);
-                if (removeMainPhoto) wineryFormData.append('removeMainPhoto', 'true');
-                galleryFiles.forEach(file => wineryFormData.append('files', file as any));
-                if (removeGalleryFileIds.length) {
-                    wineryFormData.append('removeGalleryFileIds', JSON.stringify(removeGalleryFileIds));
-                }
+            const profileFormData = new FormData();
 
-                const wineryResponse = await userService.updateWinery(wineryFormData);
-                if (wineryResponse.isError) {
-                    toastService.showError(
-                        localization.t('common.errorHappened'),
-                        wineryResponse.message || localization.t('common.somethingWentWrong'),
-                    );
-                    return;
-                }
+            if (changedFields.size) {
+                const winery: UpdateWineryDto = {};
+                if (changedFields.has('name')) winery.name = form.name.trim();
+                if (changedFields.has('foundedYear')) winery.foundedYear = foundedYear;
+                if (changedFields.has('description')) winery.description = form.description.trim();
+                if (changedFields.has('countryId') && form.countryId) winery.countryId = form.countryId;
+                if (changedFields.has('regionId')) winery.regionId = form.regionId;
+                if (changedFields.has('links')) winery.links = form.links.map(link => link.trim()).filter(Boolean);
+                profileFormData.append('winery', JSON.stringify(winery));
             }
 
             if (hasUserChanges) {
-                const userFormData = new FormData();
-                if (changedUserFields.has('country')) userFormData.append('country', userForm.country);
-                if (changedUserFields.has('birthday')) userFormData.append('birthday', userForm.birthday);
+                const user: Partial<IUserForm> = {};
+                if (changedUserFields.has('country')) user.country = userForm.country;
+                if (changedUserFields.has('birthday')) user.birthday = userForm.birthday;
                 if (changedUserFields.has('phoneNumber') || phoneCountryCodeChanged) {
                     const rawPhone = userForm.phoneNumber.trim();
-                    const phoneNumber = rawPhone.startsWith('+')
+                    user.phoneNumber = rawPhone.startsWith('+')
                         ? rawPhone
                         : `${phoneCountryCode}${rawPhone}`.replace(/\s+/g, '');
-                    userFormData.append('phoneNumber', phoneNumber);
                 }
+                profileFormData.append('user', JSON.stringify(user));
+            }
 
-                const userResponse = await userService.update(userFormData);
-                if (userResponse.isError) {
-                    toastService.showError(
-                        localization.t('common.errorHappened'),
-                        userResponse.message || localization.t('common.somethingWentWrong'),
-                    );
-                    return;
-                }
+            if (selectedMainPhoto) profileFormData.append('image', selectedMainPhoto as any);
+            galleryFiles.forEach(file => profileFormData.append('files', file as any));
+            if (removeMainPhoto) profileFormData.append('removeMainPhoto', 'true');
+            removeGalleryFileIds.forEach(fileId => profileFormData.append('removeGalleryFileIds', String(fileId)));
+
+            const updateResponse = await userService.updateWinery(profileFormData);
+            if (updateResponse.isError) {
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    updateResponse.message || localization.t('common.somethingWentWrong'),
+                );
+                return;
             }
 
             const meResponse = await userService.me();
@@ -405,7 +394,6 @@ export const useEditWineryProfileDetails = () => {
         foundedYear,
         galleryFiles,
         hasUserChanges,
-        hasWineryChanges,
         isDisabled,
         navigation,
         phoneCountryCode,

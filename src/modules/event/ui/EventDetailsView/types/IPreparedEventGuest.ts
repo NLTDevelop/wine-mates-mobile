@@ -5,6 +5,7 @@ export interface IPreparedEventGuest {
     fullName: string;
     ageText: string;
     avatarUrl: string | null;
+    onUserPress: () => void;
     primaryAction?: IGuestAction;
     secondaryAction?: IGuestAction;
 }

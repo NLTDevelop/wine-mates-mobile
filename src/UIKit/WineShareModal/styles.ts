@@ -11,7 +11,7 @@ export const getStyles = (colors: IColors) => {
             paddingHorizontal: scaleHorizontal(16),
         },
         backdrop: {
-            ...StyleSheet.absoluteFillObject,
+            ...StyleSheet.absoluteFill,
             backgroundColor: colors.text,
             opacity: 0.35,
         },

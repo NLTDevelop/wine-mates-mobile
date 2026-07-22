@@ -19,6 +19,7 @@ import { getStyles } from './styles';
 import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { DateTimePickerModal } from '@/UIKit/DateTimePickerModal';
+import { EditableRegistrationLinks } from '../components/EditableRegistrationLinks';
 
 export const PersonalDetailsView = observer(() => {
     const { t, colors } = useUiContext();
@@ -41,7 +42,8 @@ export const PersonalDetailsView = observer(() => {
         onNextPress,
         isError,
         isDisabled,
-        onChangeInstagramLink,
+        editableLinks,
+        onAddLink,
         onChangeGender,
         onChangePlaceOfWork,
     } = usePersonalDetails();
@@ -123,16 +125,13 @@ export const PersonalDetailsView = observer(() => {
                                     onFocus={onInputFocus}
                                 />
                             )}
-                            {registerUserModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
-                                <CustomInput
-                                    autoCapitalize="none"
-                                    value={form.instagramLink}
-                                    onChangeText={onChangeInstagramLink}
-                                    placeholder={t('registration.instagramLink')}
-                                    containerStyle={styles.input}
-                                    onFocus={onInputFocus}
-                                />
-                            )}
+                            <EditableRegistrationLinks
+                                items={editableLinks}
+                                label={t('registration.userLinks')}
+                                placeholder={t('registration.link')}
+                                addText={t('registration.addLink')}
+                                onAdd={onAddLink}
+                            />
                             {registerUserModel.user?.wineExperienceLevel !== WineExperienceLevelEnum.LOVER && (
                                 <CustomInput
                                     autoCapitalize="none"

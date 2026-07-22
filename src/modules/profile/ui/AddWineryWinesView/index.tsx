@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { FlatList, ListRenderItem } from 'react-native';
 import { observer } from 'mobx-react-lite';
-import { IAvailableWineryWine } from '@/entities/winery/types/IAvailableWineryWine';
+import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { useRefresh } from '@/hooks/useRefresh';
 import { useUiContext } from '@/UIProvider';
@@ -10,9 +10,11 @@ import { WithErrorHandler } from '@/UIKit/ErrorHandler';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
+import { WineShareModal } from '@/UIKit/WineShareModal';
+import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 import { AddWineryWineAlert } from './components/AddWineryWineAlert';
-import { AvailableWineryWineListItem } from './components/AvailableWineryWineListItem';
+import { WineryWineListItem } from '@/modules/profile/ui/components/WineryWineListItem';
 import { useAddWineryWines } from './presenters/useAddWineryWines';
 import { getStyles } from './styles';
 
@@ -34,11 +36,15 @@ export const AddWineryWinesView = observer(() => {
         onPressBack,
     } = useAddWineryWines();
     const { refreshControl } = useRefresh(onRefresh);
+    const { isShareModalVisible, onOpenShareModal, onCloseShareModal, onShareMessengerPress, onCopyWineLinkPress } =
+        useWineShareModal();
 
-    const keyExtractor = useCallback((item: IAvailableWineryWine) => item.id.toString(), []);
-    const renderItem = useCallback<ListRenderItem<IAvailableWineryWine>>(
-        ({ item }) => <AvailableWineryWineListItem item={item} onPress={onWinePress} />,
-        [onWinePress],
+    const keyExtractor = useCallback((item: IWineListItem) => item.id.toString(), []);
+    const renderItem = useCallback<ListRenderItem<IWineListItem>>(
+        ({ item }) => (
+            <WineryWineListItem item={item} onPress={onWinePress} onSharePress={onOpenShareModal} />
+        ),
+        [onOpenShareModal, onWinePress],
     );
 
     return (
@@ -69,10 +75,16 @@ export const AddWineryWinesView = observer(() => {
                         />
                     }
                 />
+                <WineShareModal
+                    visible={isShareModalVisible}
+                    onClose={onCloseShareModal}
+                    onShareMessengerPress={onShareMessengerPress}
+                    onCopyLinkPress={onCopyWineLinkPress}
+                />
                 {!!selectedWine && (
                     <AddWineryWineAlert
                         visible
-                        wineName={selectedWine.name}
+                        wineName={selectedWine.name || ''}
                         isLoading={isAdding}
                         onClose={onCloseAlert}
                         onConfirm={onConfirmAdd}

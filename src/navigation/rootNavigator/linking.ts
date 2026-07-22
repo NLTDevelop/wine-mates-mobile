@@ -6,6 +6,7 @@ import {
 } from '@react-navigation/native';
 import { AppState, Linking } from 'react-native';
 import { IEventDetailsViewParams } from '@/modules/event/ui/EventDetailsView/types/IEventDetailsViewParams';
+import { IPublicProfileRouteParams } from '@/modules/profile/types/IPublicProfileRouteParams';
 
 type TabDeepLinkParamList = {
     EventStack: undefined;
@@ -13,6 +14,10 @@ type TabDeepLinkParamList = {
 
 export type RootDeepLinkParamList = {
     TabNavigator: NavigatorScreenParams<TabDeepLinkParamList>;
+    ProfileDetailsView: undefined;
+    WineryProfileDetailsView: undefined;
+    PublicUserProfileView: IPublicProfileRouteParams;
+    PublicWineryProfileView: IPublicProfileRouteParams;
     EventDetailsView: IEventDetailsViewParams;
     WineDetailsView: {
         wineId: number;

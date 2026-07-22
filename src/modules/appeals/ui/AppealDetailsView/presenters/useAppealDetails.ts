@@ -38,9 +38,7 @@ export const useAppealDetails = (locale: string) => {
     const [isDeleteVisible, setIsDeleteVisible] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const loadAppeal = useCallback(async () => {
-        setIsLoading(true);
-
+    const getAppeal = useCallback(async () => {
         try {
             const response = await appealsService.get(appealId);
 
@@ -50,10 +48,20 @@ export const useAppealDetails = (locale: string) => {
             }
 
             setAppeal(response.data);
-        } finally {
-            setIsLoading(false);
+        } catch {
+            toastService.showError(localization.t('common.errorHappened'));
         }
     }, [appealId]);
+
+    const loadAppeal = useCallback(async () => {
+        setIsLoading(true);
+        await getAppeal();
+        setIsLoading(false);
+    }, [getAppeal]);
+
+    const onRefresh = useCallback(async () => {
+        await getAppeal();
+    }, [getAppeal]);
 
     useFocusEffect(
         useCallback(() => {
@@ -64,6 +72,12 @@ export const useAppealDetails = (locale: string) => {
     const isEditable = appeal?.status === AppealStatus.OPEN;
     const statusLabel = appeal ? localization.t(`appeals.status.${appeal.status}`, { locale }) : '';
     const createdAt = formatAppealDate(appeal?.createdAt, locale);
+    const closedAt = formatAppealDate(appeal?.closedAt || undefined, locale);
+    const description = appeal?.description || localization.t('appeals.notSpecified', { locale });
+    const adminComment = appeal?.adminComment || '';
+    const hasAdminComment = !!adminComment;
+    const hasClosedAt = !!closedAt;
+    const isDescriptionLast = !hasAdminComment;
     const photos = useMemo(() => getAppealGalleryPhotos(appeal?.photos || []), [appeal?.photos]);
     const gallery = useGallery({ photos });
 
@@ -116,10 +130,16 @@ export const useAppealDetails = (locale: string) => {
         isEditable,
         statusLabel,
         createdAt,
+        closedAt,
+        description,
+        adminComment,
+        hasAdminComment,
+        hasClosedAt,
+        isDescriptionLast,
         gallery,
         isDeleteVisible,
         isDeleting,
-        loadAppeal,
+        onRefresh,
         onEditPress,
         onShowDelete,
         onHideDelete,

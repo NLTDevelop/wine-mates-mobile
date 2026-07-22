@@ -5,13 +5,12 @@ import { BackHandler } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useCameraDevice, useCameraPermission, usePhotoOutput } from 'react-native-vision-camera';
+import type { CameraOrientation } from 'react-native-vision-camera';
 import ImageResizer from 'react-native-image-resizer';
 import { IWineImage } from '@/entities/wine/types/IWineImage';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 import { wineModel } from '@/entities/wine/models/WineModel';
-
-const SCANNER_IMAGE_MAX_SIZE = 2048;
-const SCANNER_IMAGE_QUALITY = 85;
+import { isAndroid } from '@/utils';
 
 export const useScanner = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -27,34 +26,45 @@ export const useScanner = () => {
     const torchMode = isCameraActive && isPreviewStarted ? torch : undefined;
     const isTorchDisabled = !isCameraActive || !isPreviewStarted;
 
-    const prepareCameraImage = async ({ uri, width, height }: { uri: string; width: number; height: number }): Promise<IWineImage> => {
+    const prepareCameraImage = async ({ uri, width, height, orientation }: {
+        uri: string;
+        width: number;
+        height: number;
+        orientation: CameraOrientation;
+    }): Promise<IWineImage> => {
         const normalizedUri = uri.includes('://') ? uri : `file://${uri}`;
-
-        if (width <= SCANNER_IMAGE_MAX_SIZE && height <= SCANNER_IMAGE_MAX_SIZE) {
-            return {
-                uri: normalizedUri,
-                name: normalizedUri.split('/').pop() || `scanner-photo-${Date.now()}.jpg`,
-                type: 'image/jpeg',
-            };
-        }
-
-        const resized = await ImageResizer.createResizedImage(
-            normalizedUri,
-            SCANNER_IMAGE_MAX_SIZE,
-            SCANNER_IMAGE_MAX_SIZE,
-            'JPEG',
-            SCANNER_IMAGE_QUALITY,
-            0,
-            undefined,
-            false,
-            { mode: 'contain', onlyScaleDown: true },
-        );
-
-        return {
-            uri: resized.uri,
-            name: resized.name || `scanner-photo-${Date.now()}.jpg`,
+        const originalImage = {
+            uri: normalizedUri,
+            name: normalizedUri.split('/').pop() || `scanner-photo-${Date.now()}.jpg`,
             type: 'image/jpeg',
         };
+
+        if (!isAndroid || orientation === 'up') {
+            return originalImage;
+        }
+
+        try {
+            const isSideways = orientation === 'left' || orientation === 'right';
+            const correctedWidth = isSideways ? height : width;
+            const correctedHeight = isSideways ? width : height;
+            const orientationCorrectedImage = await ImageResizer.createResizedImage(
+                normalizedUri,
+                correctedWidth,
+                correctedHeight,
+                'JPEG',
+                100,
+                0,
+            );
+
+            return {
+                uri: orientationCorrectedImage.uri,
+                name: orientationCorrectedImage.name || originalImage.name,
+                type: 'image/jpeg',
+            };
+        } catch (error) {
+            console.error('Error correcting scanner photo orientation:', error);
+            return originalImage;
+        }
     };
 
     useEffect(() => {
@@ -114,6 +124,7 @@ export const useScanner = () => {
                     uri: photoPath,
                     width: photo.width,
                     height: photo.height,
+                    orientation: photo.orientation,
                 });
                 navigation.navigate('ScanResultsListView');
             } finally {

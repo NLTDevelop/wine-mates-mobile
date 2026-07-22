@@ -1,5 +1,5 @@
 import { memo, useMemo } from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Avatar } from '@/UIKit/Avatar';
@@ -13,6 +13,7 @@ const GuestItemViewComponent = ({
     fullName,
     avatarUrl,
     ageText,
+    onUserPress,
     primaryAction,
     secondaryAction,
 }: IProps) => {
@@ -21,13 +22,13 @@ const GuestItemViewComponent = ({
 
     return (
         <View style={styles.container}>
-            <View style={styles.userAvatarInfoContainer}>
+            <TouchableOpacity style={styles.userAvatarInfoContainer} onPress={onUserPress}>
                 <Avatar size={40} avatarUrl={avatarUrl} fullname={fullName} />
                 <View style={styles.userInfoContainer}>
                     <Typography variant="body_500" text={fullName} style={styles.fullname} numberOfLines={1} />
                     <Typography variant="subtitle_12_400" text={ageText} style={styles.age} />
                 </View>
-            </View>
+            </TouchableOpacity>
             {primaryAction ? (
                 <View style={styles.actionsContainer}>
                     {secondaryAction ? (

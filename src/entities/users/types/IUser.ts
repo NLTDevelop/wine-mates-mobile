@@ -28,6 +28,7 @@ export interface IUser {
     avatar?: IAvatar;
     gallery: IMedia[];
     instagramLink: string;
+    links?: string[];
     website: string;
     wineExperienceLevel: WineExperienceLevelEnum;
     isConfirmed: true;
