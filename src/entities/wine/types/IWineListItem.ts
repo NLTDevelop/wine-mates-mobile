@@ -10,7 +10,7 @@ export interface IWineListItem {
     userId?: number;
     createdAt: string;
     image: IMedia | null;
-    defaultImage: IMedia | null;
+    defaultImage?: IMedia | null;
     averageUserRating: number | null;
     countUserRating: number | null;
     averageExpertRating: number | null;
@@ -39,7 +39,7 @@ export interface IWineListItem {
     } | null;
     myReview?: {
         id: number;
-        review: string;
+        review: string | null;
         createdAt: string;
         user: {
             id: number;

@@ -349,6 +349,7 @@
         "description": "Description",
         "activity": "Activity",
         "events": "Events",
+        "tastings": "Tastings",
         "wines": "Wines",
         "links": "Links",
         "follow": "Follow",
@@ -357,6 +358,7 @@
         "foundedYear": "Year founded: {{year}}",
         "noDescription": "No description has been added yet.",
         "noEvents": "No events have been added yet.",
+        "noTastings": "No wines have been tasted yet.",
         "noWines": "No wines have been added yet."
     },
     "appeals": {

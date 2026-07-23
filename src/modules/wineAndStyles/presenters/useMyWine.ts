@@ -112,6 +112,7 @@ export const useMyWine = () => {
                 try {
                     const params = {
                         rateId: item.myReview.id,
+                        vintages: 'All' as const,
                     };
                     const response = await myWineService.getMyWineDetails(item.id, params);
 
@@ -123,7 +124,7 @@ export const useMyWine = () => {
                         return;
                     }
 
-                    navigation.navigate('WineDetailsView', { wineDetailsData: response.data });
+                    navigation.navigate('WineDetailsView', { wineDetailsData: response.data, vintages: 'All' });
                 } catch (error) {
                     console.error('onItemPress error: ', JSON.stringify(error, null, 2));
                     toastService.showError(
@@ -132,7 +133,7 @@ export const useMyWine = () => {
                     );
                 }
             } else {
-                navigation.navigate('WineDetailsView', { wineId: item.id });
+                navigation.navigate('WineDetailsView', { wineId: item.id, vintages: 'All' });
             }
         },
         [navigation],

@@ -131,7 +131,7 @@ export const useMyWineryWines = () => {
 
     const onItemPress = useCallback(
         (item: IWineListItem) => {
-            navigation.navigate('WineDetailsView', { wineId: item.id });
+            navigation.navigate('WineDetailsView', { wineId: item.id, vintages: 'All' });
         },
         [navigation],
     );
