@@ -92,7 +92,7 @@ export const useScannerResultsList = () => {
             return;
         }
 
-        navigation.navigate('WineDetailsView', { wineId: item.id, fromScanner: true });
+        navigation.navigate('WineDetailsView', { wineId: item.id, fromScanner: true, vintages: 'All' });
     },[navigation]);
 
     const onAddWinePress = useCallback(() => {

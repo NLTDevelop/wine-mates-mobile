@@ -7,7 +7,7 @@ export const useSavedWinesListItem = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     
     const onPress = useCallback((item: IWineListItem) => {
-        navigation.navigate('WineDetailsView', {wineId: item.id});
+        navigation.navigate('WineDetailsView', { wineId: item.id, vintages: 'All' });
     },[navigation]);
 
     return { onPress };

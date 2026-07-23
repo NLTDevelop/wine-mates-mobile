@@ -591,7 +591,7 @@ export const useTastingWineReviewResult = () => {
                 skipNextBlurSave();
                 const state = navigation.getState();
                 const hasDetailsScreen = state.routes.some(route => route.name === 'WineDetailsView');
-                const wineDetailsParams = { wineId: wineModel.wine?.id };
+                const wineDetailsParams = { wineId: wineModel.wine?.id, vintages: 'All' };
                 const routesToDrop = new Set([
                     'AddWineView',
                     'WineLookView',

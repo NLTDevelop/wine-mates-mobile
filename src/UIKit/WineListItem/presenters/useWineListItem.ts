@@ -15,6 +15,7 @@ interface IProps {
     hideSimilarity?: boolean;
     removeCardStyles?: boolean;
     isMyWine?: boolean;
+    showTastingAuthor?: boolean;
 }
 
 const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
@@ -22,7 +23,14 @@ const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListIt
 };
 const isWineDetails = (item: IWineListItem | IWineDetails): item is IWineDetails => 'currentVintage' in item;
 
-export const useWineListItem = ({ item, onPress, onSharePress, removeCardStyles, isMyWine }: IProps) => {
+export const useWineListItem = ({
+    item,
+    onPress,
+    onSharePress,
+    removeCardStyles,
+    isMyWine,
+    showTastingAuthor,
+}: IProps) => {
     const { t } = useUiContext();
     const wineryUserId = isWineDetails(item) ? item.wineryUserId : null;
     const { onUserPressById } = useProfileNavigation();
@@ -155,35 +163,59 @@ export const useWineListItem = ({ item, onPress, onSharePress, removeCardStyles,
         return currentUserWineExperienceLevel === WineExperienceLevelEnum.LOVER;
     }, [currentUserWineExperienceLevel]);
 
+    const tastingAuthor = item.myReview?.user;
+    const tastingAuthorFullName = useMemo(() => {
+        if (!showTastingAuthor || !tastingAuthor) {
+            return '';
+        }
+
+        return [tastingAuthor.firstName, tastingAuthor.lastName].filter(Boolean).join(' ').trim();
+    }, [showTastingAuthor, tastingAuthor]);
+    const isTastingAuthorExpert =
+        showTastingAuthor && tastingAuthor?.wineExperienceLevel === WineExperienceLevelEnum.EXPERT;
+    const isTastingAuthorLover =
+        showTastingAuthor && tastingAuthor?.wineExperienceLevel === WineExperienceLevelEnum.LOVER;
+
     const showExpertReviewCount = useMemo(() => {
+        if (isTastingAuthorExpert) {
+            return false;
+        }
+
         if (!isMyWine) {
             return true;
         }
 
         return isCurrentUserLover;
-    }, [isCurrentUserLover, isMyWine]);
-
-    const showUserReviewCount = useMemo(() => {
-        if (!isMyWine) {
-            return true;
-        }
-
-        return !isCurrentUserLover;
-    }, [isCurrentUserLover, isMyWine]);
+    }, [isCurrentUserLover, isMyWine, isTastingAuthorExpert]);
 
     const expertReviewLabel = useMemo(() => {
+        if (isTastingAuthorExpert && tastingAuthorFullName) {
+            return tastingAuthorFullName;
+        }
+
         if (isMyWine && !isCurrentUserLover) {
             return t('wine.myReview');
         }
 
         return t('wine.expertReview');
-    }, [isCurrentUserLover, isMyWine, t]);
+    }, [isCurrentUserLover, isMyWine, isTastingAuthorExpert, t, tastingAuthorFullName]);
+
+    const userReviewLabel = useMemo(() => {
+        if (isTastingAuthorLover && tastingAuthorFullName) {
+            return tastingAuthorFullName;
+        }
+
+        if (isMyWine && isCurrentUserLover) {
+            return t('wine.myReview');
+        }
+
+        return `(${userReviewCount})`;
+    }, [isCurrentUserLover, isMyWine, isTastingAuthorLover, t, tastingAuthorFullName, userReviewCount]);
 
     return {
         onItemPress,
         similarityText,
         userRating,
-        userReviewCount,
         lastReviewData,
         getFormattedDate,
         locationText,
@@ -194,9 +226,9 @@ export const useWineListItem = ({ item, onPress, onSharePress, removeCardStyles,
         currentVintageData,
         expertRating,
         showMedal,
-        showUserReviewCount,
         showExpertReviewCount,
         expertReviewLabel,
+        userReviewLabel,
         onPressShareButton,
         onWineryPress,
         isWineryLink,
