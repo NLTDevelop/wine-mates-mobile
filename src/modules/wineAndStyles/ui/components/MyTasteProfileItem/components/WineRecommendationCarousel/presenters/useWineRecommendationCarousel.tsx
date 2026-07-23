@@ -26,7 +26,7 @@ export const useWineRecommendationCarousel = ({ typeId, colorId }: IUseWineRecom
     const pagination = wineAndStylesModel.recommendationsPagination[key];
 
     const onWinePress = useCallback((item: IWineListItem) => {
-        navigation.navigate('WineDetailsView', { wineId: item.id });
+        navigation.navigate('WineDetailsView', { wineId: item.id, vintages: 'All' });
     }, [navigation]);
 
     const fetchNextPage = useCallback(async () => {

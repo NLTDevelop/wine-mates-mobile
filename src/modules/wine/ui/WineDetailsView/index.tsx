@@ -24,7 +24,7 @@ export const WineDetailsView = observer(() => {
 
     const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
         selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, isResultHeaderFooterVisible,
-        myReview, hasPremiumContentAccess, onPressBack } = useWineDetails();
+        showTastingAuthor, myReview, hasPremiumContentAccess, onPressBack } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
         selectedWineId ?? wineId,
@@ -80,6 +80,7 @@ export const WineDetailsView = observer(() => {
                                 fromScanner={fromScanner}
                                 hasReviews={data.length > 0}
                                 isResultHeaderFooterVisible={isResultHeaderFooterVisible}
+                                showTastingAuthor={showTastingAuthor}
                                 hasPremiumContentAccess={hasPremiumContentAccess}
                             />
                         }

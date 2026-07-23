@@ -27,10 +27,13 @@ interface IProps {
     fromScanner?: boolean;
     hasReviews?: boolean;
     isResultHeaderFooterVisible: boolean;
+    showTastingAuthor: boolean;
     hasPremiumContentAccess: boolean;
 }
 
-export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData, isAllVintagesSelected, fromScanner, hasReviews, isResultHeaderFooterVisible, hasPremiumContentAccess }: IProps) => {
+export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData,
+    isAllVintagesSelected, fromScanner, hasReviews, isResultHeaderFooterVisible, showTastingAuthor,
+    hasPremiumContentAccess }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
@@ -70,6 +73,7 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 isAllVintagesSelected={isAllVintagesSelected}
                 fromScanner={fromScanner}
                 isResultHeaderFooterVisible={isResultHeaderFooterVisible}
+                showTastingAuthor={showTastingAuthor}
                 hasPremiumContentAccess={hasPremiumContentAccess}
             />
 

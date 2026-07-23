@@ -33,7 +33,7 @@ export const useCloseButton = () => {
                                 ],
                             },
                         },
-                        { name: 'WineDetailsView', params: { wineId } },
+                        { name: 'WineDetailsView', params: { wineId, vintages: 'All' } },
                     ],
                 }),
             );
