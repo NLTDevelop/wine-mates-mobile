@@ -28,11 +28,13 @@ interface IProps {
     isMyWine?: boolean;
     hideDate?: boolean;
     alignFooterToBottom?: boolean;
+    showTastingAuthor?: boolean;
 }
 
 export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = false, footer, removeCardStyles = false,
     showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent,
-    showExpertRatingWithoutPremium = false, hideDate = false, alignFooterToBottom = false }: IProps) => {
+    showExpertRatingWithoutPremium = false, hideDate = false, alignFooterToBottom = false,
+    showTastingAuthor = false }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const styles = useMemo(
         () => getStyles(colors, removeCardStyles, alignFooterToBottom),
@@ -42,7 +44,6 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
         onItemPress,
         similarityText,
         userRating,
-        userReviewCount,
         expertReviewCount,
         lastReviewData,
         getFormattedDate,
@@ -50,13 +51,20 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
         shouldReviewShow,
         expertRating,
         showMedal, 
-        showUserReviewCount,
         showExpertReviewCount,
         expertReviewLabel,
+        userReviewLabel,
         onPressShareButton,
         onWineryPress,
         isWineryLink,
-    } = useWineListItem({ item, onPress, onSharePress, removeCardStyles, isMyWine });
+    } = useWineListItem({
+        item,
+        onPress,
+        onSharePress,
+        removeCardStyles,
+        isMyWine,
+        showTastingAuthor,
+    });
     const { description } = useWineDescription({ item, showVintage, showNonVintage });
     const getContainerStyle = useCallback(
         ({ pressed }: { pressed: boolean }) => [styles.container, pressed && styles.pressed],
@@ -154,14 +162,12 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
                                         style={styles.rateText}
                                     />
                                 </View>
-                                {showUserReviewCount && (
-                                    <Typography
-                                        variant="subtitle_10_400"
-                                        text={`(${userReviewCount})`}
-                                        numberOfLines={1}
-                                        style={styles.rateReviewText}
-                                    />
-                                )}
+                                <Typography
+                                    variant="subtitle_10_400"
+                                    text={userReviewLabel}
+                                    numberOfLines={1}
+                                    style={styles.rateReviewText}
+                                />
                             </View>
                         ) : (
                             <View style={styles.emptyDivider} />

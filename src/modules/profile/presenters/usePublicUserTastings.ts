@@ -1,25 +1,26 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { userTastingsModel } from '@/entities/wine/models/UserTastingsModel';
+import { userTastingsService } from '@/entities/wine/services/UserTastingsService';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
-import { wineryLinkedWinesModel } from '@/entities/winery/models/WineryLinkedWinesModel';
-import { wineryWineService } from '@/entities/winery/services/WineryWineService';
-import { localization } from '@/UIProvider/localization/Localization';
-import { toastService } from '@/libs/toast/toastService';
 import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
+import { toastService } from '@/libs/toast/toastService';
+import { localization } from '@/UIProvider/localization/Localization';
 
 const LIMIT = 10;
 
-export const usePublicWineryWines = (wineryId?: number) => {
+export const usePublicUserTastings = (userId: number) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const list = wineryLinkedWinesModel.list;
-    const [isLoading, setIsLoading] = useState(false);
+    const list = userTastingsModel.list;
+    const [isLoading, setIsLoading] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
-    const loadWines = useCallback(
+    const loadTastings = useCallback(
         async (offset: number) => {
-            if (!wineryId) {
+            if (!userId) {
+                setIsLoading(false);
                 return;
             }
 
@@ -30,7 +31,7 @@ export const usePublicWineryWines = (wineryId?: number) => {
                     setIsLoadingMore(true);
                 }
 
-                const response = await wineryWineService.getLinkedWines({ wineryId, limit: LIMIT, offset });
+                const response = await userTastingsService.list({ userId, limit: LIMIT, offset });
 
                 if (response.isError || !response.data) {
                     toastService.showError(
@@ -39,7 +40,7 @@ export const usePublicWineryWines = (wineryId?: number) => {
                     );
                 }
             } catch (error) {
-                console.warn('usePublicWineryWines -> loadWines: ', error);
+                console.warn('usePublicUserTastings -> loadTastings: ', error);
                 toastService.showError(
                     localization.t('common.errorHappened'),
                     localization.t('common.somethingWentWrong'),
@@ -49,32 +50,30 @@ export const usePublicWineryWines = (wineryId?: number) => {
                 setIsLoadingMore(false);
             }
         },
-        [wineryId],
+        [userId],
     );
 
     useEffect(() => {
         const frameId = requestAnimationFrame(() => {
-            if (wineryId) {
-                onResetPaginationRequests();
-                loadWines(0);
-            }
+            onResetPaginationRequests();
+            loadTastings(0);
         });
 
         return () => {
             cancelAnimationFrame(frameId);
-            wineryLinkedWinesModel.list = null;
+            userTastingsModel.list = null;
         };
-    }, [loadWines, onResetPaginationRequests, wineryId]);
+    }, [loadTastings, onResetPaginationRequests]);
 
-    const onRefreshWines = useCallback(async () => {
+    const onRefreshTastings = useCallback(async () => {
         onResetPaginationRequests();
-        await loadWines(0);
-    }, [loadWines, onResetPaginationRequests]);
+        await loadTastings(0);
+    }, [loadTastings, onResetPaginationRequests]);
 
-    const onLoadMoreWines = useCallback(async () => {
-        const currentList = wineryLinkedWinesModel.list;
-
+    const onLoadMoreTastings = useCallback(async () => {
+        const currentList = userTastingsModel.list;
         const offset = currentList?.rows.length || 0;
+
         if (
             !currentList ||
             isLoading ||
@@ -85,10 +84,10 @@ export const usePublicWineryWines = (wineryId?: number) => {
             return;
         }
 
-        await loadWines(offset);
-    }, [isLoading, isLoadingMore, loadWines, onTryStartPaginationRequest]);
+        await loadTastings(offset);
+    }, [isLoading, isLoadingMore, loadTastings, onTryStartPaginationRequest]);
 
-    const onWinePress = useCallback(
+    const onTastingPress = useCallback(
         (item: IWineListItem) => {
             navigation.navigate('WineDetailsView', { wineId: item.id, vintages: 'All' });
         },
@@ -96,11 +95,11 @@ export const usePublicWineryWines = (wineryId?: number) => {
     );
 
     return {
-        wines: list?.rows || [],
-        isWinesLoading: isLoading,
-        isWinesLoadingMore: isLoadingMore,
-        onRefreshWines,
-        onLoadMoreWines,
-        onWinePress,
+        tastings: list?.rows || [],
+        isTastingsLoading: isLoading,
+        isTastingsLoadingMore: isLoadingMore,
+        onRefreshTastings,
+        onLoadMoreTastings,
+        onTastingPress,
     };
 };

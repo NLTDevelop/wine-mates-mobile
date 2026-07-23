@@ -353,6 +353,7 @@
         "description": "Опис",
         "activity": "Активність",
         "events": "Події",
+        "tastings": "Дегустації",
         "wines": "Вина",
         "links": "Посилання",
         "follow": "Підписатися",
@@ -361,6 +362,7 @@
         "foundedYear": "Рік заснування: {{year}}",
         "noDescription": "Опис ще не додано.",
         "noEvents": "Подій ще немає.",
+        "noTastings": "Продегустованих вин ще немає.",
         "noWines": "Вин ще немає."
     },
     "appeals": {

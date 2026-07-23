@@ -12,6 +12,15 @@ import { clearWineReviewsListModel } from '@/entities/wine/services/WineModelSer
 import { IRateDetails } from '@/entities/wine/types/IRateDetails';
 import { userModel } from '@/entities/users/UserModel';
 
+type WineDetailsRouteParams = {
+    wineId?: number;
+    fromScanner?: boolean;
+    wineDetailsData?: IWineDetails;
+    openedFromDeepLink?: boolean;
+    notificationRateId?: number;
+    vintages?: 'All';
+};
+
 const getRateColorStatistics = (rateDetails: IRateDetails): IWineDetails['statistics']['topColors'] => {
     if (!rateDetails.color?.tone) {
         return [];
@@ -66,11 +75,19 @@ const mergeRateDetails = (wineDetails: IWineDetails, rateDetails: IRateDetails):
 export const useWineDetails = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const { wineId, fromScanner, wineDetailsData, openedFromDeepLink, notificationRateId } = (route.params as { wineId?: number; fromScanner?: boolean; wineDetailsData?: IWineDetails; openedFromDeepLink?: boolean; notificationRateId?: number }) || { wineId: null, fromScanner: false, wineDetailsData: undefined, openedFromDeepLink: false, notificationRateId: undefined };
+    const {
+        wineId,
+        fromScanner,
+        wineDetailsData,
+        openedFromDeepLink,
+        notificationRateId,
+        vintages: routeVintages,
+    } = (route.params as WineDetailsRouteParams | undefined) || {};
+    const initialVintages = notificationRateId ? undefined : routeVintages;
     const isFocused = useIsFocused();
     const [details, setDetails] = useState<IWineDetails | null>(null);
     const [isError, setIsError] = useState(false);
-    const [isAllVintagesSelected, setIsAllVintagesSelected] = useState(false);
+    const [isAllVintagesSelected, setIsAllVintagesSelected] = useState(initialVintages === 'All');
     const [localIsSaved, setLocalIsSaved] = useState<boolean | undefined>(undefined);
     const [rateId, setRateId] = useState<number | null>(null);
     const isResettingRef = useRef(false);
@@ -89,7 +106,7 @@ export const useWineDetails = () => {
                     return;
                 }
 
-                const wineResponse = await wineService.getById(rateResponse.data.wineId, params);
+                const wineResponse = await wineService.getById(rateResponse.data.wineId);
 
                 if (wineResponse.isError || !wineResponse.data) {
                     toastService.showError(
@@ -201,7 +218,7 @@ export const useWineDetails = () => {
 
         const frameId = requestAnimationFrame(() => {
             if (wineDetailsData) {
-                setIsAllVintagesSelected(false);
+                setIsAllVintagesSelected(initialVintages === 'All');
                 wineModel.selectedWineId = wineDetailsData.id;
                 setDetails(wineDetailsData);
                 wineModel.vintages = wineDetailsData.vintages;
@@ -213,17 +230,17 @@ export const useWineDetails = () => {
 
             if (!wineId && !notificationRateId) return;
 
-            setIsAllVintagesSelected(false);
+            setIsAllVintagesSelected(initialVintages === 'All');
             if (wineId) {
                 wineModel.selectedWineId = wineId;
             }
-            getDetails();
+            getDetails(initialVintages ? { vintages: initialVintages } : undefined);
         });
 
         return () => {
             cancelAnimationFrame(frameId);
         };
-    }, [wineId, wineDetailsData, notificationRateId, isFocused, getDetails]);
+    }, [wineId, wineDetailsData, notificationRateId, initialVintages, isFocused, getDetails]);
 
     const hasCurrentVintageData = !!details?.currentVintage && typeof details.currentVintage === 'object';
 
@@ -309,6 +326,7 @@ export const useWineDetails = () => {
         onUpdateIsSaved,
         isPreloadedData: Boolean(wineDetailsData || notificationRateId),
         isResultHeaderFooterVisible: !notificationRateId,
+        showTastingAuthor: Boolean(notificationRateId),
         myReview: details?.myReview ?? null,
         hasPremiumContentAccess,
         onPressBack,

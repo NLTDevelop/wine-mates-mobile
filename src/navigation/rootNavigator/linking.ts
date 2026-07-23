@@ -22,6 +22,7 @@ export type RootDeepLinkParamList = {
     WineDetailsView: {
         wineId: number;
         openedFromDeepLink?: boolean;
+        vintages?: 'All';
     };
 };
 
@@ -106,13 +107,14 @@ export const linking: LinkingOptions<RootDeepLinkParamList> = {
     getStateFromPath: (path, options) => {
         const state = getStateFromPath(path, options) as PartialState<any> | undefined;
         const route = state?.routes?.find((item) => item.name === 'EventDetailsView' || item.name === 'WineDetailsView') as
-            | { params?: Record<string, unknown> }
+            | { name?: string; params?: Record<string, unknown> }
             | undefined;
 
         if (route) {
             route.params = {
                 ...(route.params || {}),
                 openedFromDeepLink: true,
+                ...(route.name === 'WineDetailsView' ? { vintages: 'All' } : {}),
             };
         }
 
