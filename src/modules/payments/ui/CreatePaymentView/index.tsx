@@ -6,10 +6,11 @@ import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { useCreatePayment } from './presenters/useCreatePayment';
 import { Button } from '@/UIKit/Button';
 import { CustomInput } from '@/UIKit/CustomInput';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Typography } from '@/UIKit/Typography';
 import { AddMediaIcon } from '@assets/icons/AddMediaIcon';
 import { CrossIcon } from '@assets/icons/CrossIcon';
+import FastImage from '@d11/react-native-fast-image';
 
 export const CreatePaymentView = () => {
     const { colors, t } = useUiContext();
@@ -64,7 +65,7 @@ export const CreatePaymentView = () => {
 
                 {!!selectedImageUri && (
                     <View style={styles.imageContainer}>
-                        <Image source={{ uri: selectedImageUri }} style={styles.image} />
+                        <FastImage source={{ uri: selectedImageUri }} style={styles.image} />
                         <TouchableOpacity style={styles.removeImageButton} onPress={onRemoveImagePress}>
                             <CrossIcon width={14} height={14} color={colors.background} />
                         </TouchableOpacity>

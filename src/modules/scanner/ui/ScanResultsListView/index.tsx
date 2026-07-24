@@ -51,7 +51,7 @@ export const ScanResultsListView = observer(() => {
     return (
         // <WithErrorHandler error={null} onRetry={() => {}}>
         <ScreenContainer
-            edges={['top', 'bottom']}
+            edges={['top']}
             withGradient
             headerComponent={<HeaderWithBackButton title={t('scanner.results')} onPressBack={onPressBack} />}
         >

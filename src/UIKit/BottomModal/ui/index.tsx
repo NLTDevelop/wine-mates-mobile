@@ -16,6 +16,7 @@ import { TitleVariant, Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { useBottomModal } from '@/UIKit/BottomModal/presenters/useBottomModal';
+import { ToastOverlay } from '@/libs/toast/ui/ToastOverlay';
 
 interface IProps {
     visible: boolean;
@@ -126,6 +127,7 @@ export const BottomModal = ({
                         </View>
                     </Animated.View>
                 </Reanimated.View>
+                {visible ? <ToastOverlay /> : null}
             </View>
         </Modal>
     );

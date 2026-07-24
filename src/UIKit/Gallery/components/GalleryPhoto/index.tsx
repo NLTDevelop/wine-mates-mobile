@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
-import { Image, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { useUiContext } from '@/UIProvider';
 import { IGalleryItem } from '../../types/IGalleryPhoto';
 import { getStyles } from './styles';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps extends IGalleryItem {
     photoStyle?: StyleProp<ViewStyle>;
@@ -16,7 +17,7 @@ export const GalleryPhoto = ({ uri, onPress, onDelete, photoStyle }: IProps) => 
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={onPress} style={[styles.button, photoStyle]} activeOpacity={0.85}>
-                <Image source={{ uri }} style={styles.image} resizeMode="cover" />
+                <FastImage source={{ uri }} style={styles.image} resizeMode="cover" />
             </TouchableOpacity>
             {!!onDelete && (
                 <TouchableOpacity onPress={onDelete} style={styles.deleteButton} activeOpacity={0.85}>

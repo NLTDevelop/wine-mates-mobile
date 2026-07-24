@@ -24,6 +24,10 @@ import { PROFILE_GALLERY_MAX_PHOTOS } from '@/modules/profile/constants/profileG
 import { IGalleryFile } from '@/UIKit/Gallery/types/IGalleryPhoto';
 import { useProfileSinglePicker } from '@/modules/profile/presenters/useProfileSinglePicker';
 import { IEditableProfileLink } from '@/modules/profile/types/IEditableProfileLink';
+import {
+    PROFILE_BIO_EXPERT_MAX_LENGTH,
+    PROFILE_BIO_LOVER_MAX_LENGTH,
+} from '@/modules/profile/constants/profileBio';
 
 interface IProfileForm {
     fullName: string;
@@ -46,6 +50,14 @@ const formatDateToLocalApi = (date: Date) => {
     const day = String(date.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+};
+
+const getBioMaxLength = (expertiseLevel: WineExperienceLevelEnum) => {
+    if (expertiseLevel === WineExperienceLevelEnum.EXPERT) {
+        return PROFILE_BIO_EXPERT_MAX_LENGTH;
+    }
+
+    return PROFILE_BIO_LOVER_MAX_LENGTH;
 };
 
 const getLocalDateFromApi = (value: string) => {
@@ -230,6 +242,8 @@ export const useEditProfileDetails = () => {
     const selectCityModalRef = useRef<BottomSheetModal | null>(null);
     const isCountryCodeInitializedRef = useRef(!!getCallingCodeFromUser());
     const [citySearch, setCitySearch] = useState('');
+    const bioMaxLength = getBioMaxLength(expertiseLevel);
+    const bioCharactersText = `${form.bio.length}/${bioMaxLength}`;
 
     const [isBirthdayModalVisible, setIsBirthdayModalVisible] = useState(false);
     const [pickerDate, setPickerDate] = useState<Date>(() => {
@@ -436,9 +450,9 @@ export const useEditProfileDetails = () => {
 
     const onChangeBio = useCallback(
         (value: string) => {
-            onChangeField('bio', value);
+            onChangeField('bio', value.slice(0, bioMaxLength));
         },
-        [onChangeField],
+        [bioMaxLength, onChangeField],
     );
 
     const onChangeCurrency = useCallback(
@@ -833,11 +847,22 @@ export const useEditProfileDetails = () => {
         selectExpertiseModalRef.current?.dismiss();
     }, []);
 
-    const onSelectExpertise = useCallback((value: WineExperienceLevelEnum) => {
-        setExpertiseLevel(value);
-        setExpertiseLevelChanged(true);
-        selectExpertiseModalRef.current?.dismiss();
-    }, []);
+    const onSelectExpertise = useCallback(
+        (value: WineExperienceLevelEnum) => {
+            const nextBioMaxLength = getBioMaxLength(value);
+
+            setExpertiseLevel(value);
+            setExpertiseLevelChanged(true);
+
+            if (form.bio.length > nextBioMaxLength) {
+                setForm(currentForm => ({ ...currentForm, bio: currentForm.bio.slice(0, nextBioMaxLength) }));
+                setChangedFields(currentFields => new Set(currentFields).add('bio'));
+            }
+
+            selectExpertiseModalRef.current?.dismiss();
+        },
+        [form.bio.length],
+    );
 
     const onShowDeleteAvatarAlert = useCallback(() => {
         setIsDeleteAvatarAlertVisible(true);
@@ -996,6 +1021,8 @@ export const useEditProfileDetails = () => {
         editableLinks,
         onAddLink,
         onChangeBio,
+        bioMaxLength,
+        bioCharactersText,
         cityModalRef: selectCityModalRef,
         onOpenCitySelector,
         onCloseCitySelector,

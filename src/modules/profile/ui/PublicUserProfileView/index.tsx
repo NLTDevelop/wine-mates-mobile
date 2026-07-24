@@ -39,6 +39,7 @@ export const PublicUserProfileView = observer(() => {
         galleryBadgeText,
         fullName,
         avatarUrl,
+        bio,
         isLoading,
         isError,
         isEventsLoading,
@@ -95,6 +96,7 @@ export const PublicUserProfileView = observer(() => {
             <PublicProfileHeader
                 name={fullName}
                 avatarUrl={avatarUrl}
+                bio={bio}
                 galleryBadgeText={galleryBadgeText}
                 hasLinks={hasLinks}
                 onAvatarPress={onAvatarPress}

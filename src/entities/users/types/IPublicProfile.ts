@@ -6,6 +6,7 @@ export interface IPublicProfileUser {
     id: number;
     firstName: string;
     lastName: string;
+    bio?: string | null;
     website: string | null;
     instagramLink: string | null;
     links?: string[];

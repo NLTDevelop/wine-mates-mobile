@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { CustomAlert } from '@/UIKit/CustomAlert/ui';
 import { Typography } from '@/UIKit/Typography';
@@ -7,6 +7,7 @@ import { Button } from '@/UIKit/Button';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { IEventPaymentMethod } from '@/modules/event/ui/EventDetailsView/types/IEventPaymentMethod';
 import { getStyles } from './styles';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps {
     visible: boolean;
@@ -38,7 +39,11 @@ export const EventSelectedPaymentMethodModal = ({ visible, paymentMethod, onClos
             content={
                 <View style={styles.contentContainer}>
                     {paymentMethod?.qrCodeOriginalUrl ? (
-                        <Image source={{ uri: paymentMethod.qrCodeOriginalUrl }} style={styles.qrImage} resizeMode="contain" />
+                        <FastImage
+                            source={{ uri: paymentMethod.qrCodeOriginalUrl }}
+                            style={styles.qrImage}
+                            resizeMode="contain"
+                        />
                     ) : (
                         <Typography text={paymentMethod?.paymentDetails || ''} variant="h5" style={styles.paymentDetails} />
                     )}
