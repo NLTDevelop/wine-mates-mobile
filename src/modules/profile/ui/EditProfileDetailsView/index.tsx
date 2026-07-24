@@ -59,6 +59,8 @@ export const EditProfileDetailsView = () => {
         editableLinks,
         onAddLink,
         onChangeBio,
+        bioMaxLength,
+        bioCharactersText,
         cityModalRef,
         onOpenCitySelector,
         onCloseCitySelector,
@@ -226,8 +228,14 @@ export const EditProfileDetailsView = () => {
                                 editable
                                 placeholder={t('settings.bio')}
                                 multiline
+                                maxLength={bioMaxLength}
                                 inputContainerStyle={styles.bigInput}
                                 containerStyle={styles.inputContainer}
+                            />
+                            <Typography
+                                text={bioCharactersText}
+                                variant="subtitle_12_400"
+                                style={styles.bioCharacters}
                             />
                         </ProfileFormField>
                     </View>

@@ -4,13 +4,41 @@ import { StackActions, useFocusEffect, useIsFocused, useNavigation } from '@reac
 import { BackHandler } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { openCropper, openPicker } from 'react-native-image-crop-picker';
+import type { Image as ImageCropPickerResult } from 'react-native-image-crop-picker';
 import { useCameraDevice, useCameraPermission, usePhotoOutput } from 'react-native-vision-camera';
 import type { CameraOrientation } from 'react-native-vision-camera';
 import ImageResizer from 'react-native-image-resizer';
 import { IWineImage } from '@/entities/wine/types/IWineImage';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 import { wineModel } from '@/entities/wine/models/WineModel';
-import { isAndroid } from '@/utils';
+import { isAndroid, isIOS } from '@/utils';
+import { localization } from '@/UIProvider/localization/Localization';
+
+const SCANNER_CROP_MAX_SIZE = 2048;
+
+interface IImageCropPickerError {
+    code?: string;
+}
+
+const getCropDimensions = (width?: number, height?: number) => {
+    const sourceWidth = width || SCANNER_CROP_MAX_SIZE;
+    const sourceHeight = height || SCANNER_CROP_MAX_SIZE;
+    const scale = Math.min(1, SCANNER_CROP_MAX_SIZE / sourceWidth, SCANNER_CROP_MAX_SIZE / sourceHeight);
+
+    return {
+        width: Math.max(1, Math.round(sourceWidth * scale)),
+        height: Math.max(1, Math.round(sourceHeight * scale)),
+    };
+};
+
+const isCropCancelled = (error: unknown) => {
+    if (!error || typeof error !== 'object') {
+        return false;
+    }
+
+    return (error as IImageCropPickerError).code === 'E_PICKER_CANCELLED';
+};
 
 export const useScanner = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -94,21 +122,85 @@ export const useScanner = () => {
         setTorch('off');
     }, []);
 
-    const onGalleryPress = () => {
-        launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, quality: 1 }, async response => {
-            if (response.didCancel || response.errorCode) return;
+    const onUseCroppedImage = useCallback((croppedImage: ImageCropPickerResult) => {
+        const normalizedUri = croppedImage.path.startsWith('file://')
+            ? croppedImage.path
+            : `file://${croppedImage.path}`;
 
-            const asset = response.assets?.[0];
-            if (asset?.uri) {
-                wineModel.image = {
-                    uri: asset.uri,
-                    name: asset.fileName || `gallery-photo-${Date.now()}.jpg`,
-                    type: asset.type || 'image/jpeg',
-                };
-                navigation.navigate('ScanResultsListView');
+        wineModel.image = {
+            uri: normalizedUri,
+            name: croppedImage.filename || croppedImage.path.split('/').pop() || `wine-label-${Date.now()}.jpg`,
+            type: croppedImage.mime || 'image/jpeg',
+        };
+        navigation.navigate('ScanResultsListView');
+    }, [navigation]);
+
+    const onGalleryPress = useCallback(async () => {
+        const cropperOptions = {
+            mediaType: 'photo' as const,
+            freeStyleCropEnabled: true,
+            compressImageMaxWidth: SCANNER_CROP_MAX_SIZE,
+            compressImageMaxHeight: SCANNER_CROP_MAX_SIZE,
+            compressImageQuality: 1,
+            hideBottomControls: true,
+            cropperRotateButtonsHidden: true,
+            cropperToolbarTitle: localization.t('scanner.cropLabelPhoto'),
+            cropperChooseText: localization.t('common.choose'),
+            cropperCancelText: localization.t('common.cancel'),
+        };
+
+        if (isIOS) {
+            try {
+                const croppedImage = await openPicker({
+                    ...cropperOptions,
+                    width: SCANNER_CROP_MAX_SIZE,
+                    height: SCANNER_CROP_MAX_SIZE,
+                    cropping: true,
+                    waitAnimationEnd: true,
+                });
+
+                onUseCroppedImage(croppedImage);
+            } catch (error) {
+                if (!isCropCancelled(error)) {
+                    console.error('Error selecting or cropping scanner photo:', error);
+                }
             }
-        });
-    };
+
+            return;
+        }
+
+        const response = await launchImageLibrary({ mediaType: 'photo', selectionLimit: 1, quality: 1 });
+
+        if (response.didCancel) {
+            return;
+        }
+
+        if (response.errorCode) {
+            console.error('Error selecting scanner photo:', response.errorCode, response.errorMessage);
+            return;
+        }
+
+        const asset = response.assets?.[0];
+        if (!asset?.uri) {
+            return;
+        }
+
+        const cropDimensions = getCropDimensions(asset.width, asset.height);
+
+        try {
+            const croppedImage = await openCropper({
+                ...cropperOptions,
+                path: asset.uri,
+                width: cropDimensions.width,
+                height: cropDimensions.height,
+            });
+            onUseCroppedImage(croppedImage);
+        } catch (error) {
+            if (!isCropCancelled(error)) {
+                console.error('Error cropping scanner photo:', error);
+            }
+        }
+    }, [onUseCroppedImage]);
 
     const onTakePhotoPress = async () => {
         if (!isCameraActive || !isPreviewStarted) {

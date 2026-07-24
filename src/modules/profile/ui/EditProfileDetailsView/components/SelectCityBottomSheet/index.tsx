@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import {
     BottomSheetBackdrop,
     BottomSheetBackdropProps,
@@ -17,6 +17,7 @@ import { getStyles } from './styles';
 import { CityOptionItem } from '../CityOptionItem';
 import { useSelectCityBottomSheet } from './presenters/useSelectCityBottomSheet';
 import { SearchBar } from '@/UIKit/SearchBar';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps {
     modalRef: React.RefObject<BottomSheetModal | null>;
@@ -102,7 +103,13 @@ export const SelectCityBottomSheet = ({
                             keyboardShouldPersistTaps="handled"
                             contentContainerStyle={styles.listContent}
                             ListEmptyComponent={ <EmptyListView
-                                image={<Image source={require('@assets/images/city_search.jpeg')} style={styles.emptyImage} />}
+                                image={
+                                    <FastImage
+                                        source={require('@assets/images/city_search.jpeg')}
+                                        style={styles.emptyImage}
+                                        resizeMode="cover"
+                                    />
+                                }
                                 text={emptyText}
                                 isLoading={isLoading}
                             />}

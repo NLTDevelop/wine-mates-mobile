@@ -1,9 +1,10 @@
 import { memo, useMemo, useState, useCallback } from 'react';
-import { DimensionValue, ViewStyle, View, LayoutChangeEvent, Image } from 'react-native';
+import { DimensionValue, ViewStyle, View, LayoutChangeEvent } from 'react-native';
 import { getStyle, getInitialsTextStyle } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { scaleVertical } from '@/utils';
 import { Typography } from '../Typography';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps {
     size?: number;
@@ -50,7 +51,7 @@ const AvatarComponent = ({ containerStyle = {}, avatarUrl, fullname, size = 40 }
             style={[styles.container, containerStyle, sizeStyle]}
         >
             {avatarUrl ? (
-                <Image
+                <FastImage
                     source={{ uri: avatarUrl }}
                     style={[styles.avatar, sizeStyle]}
                 />

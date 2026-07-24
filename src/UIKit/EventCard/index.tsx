@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, Pressable, Image, TouchableOpacity } from 'react-native';
+import { View, Pressable, TouchableOpacity } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -18,6 +18,7 @@ import { ShareIcon } from '@assets/icons/ShareIcon';
 import { EventParticipantsPreview } from '@/UIKit/EventParticipantsPreview';
 import { QR_CODE_SHARE_SIZE } from '@/utils';
 import { EventStatusSource } from './types/EventStatusSource';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps {
     event: IEvent | ISavedEvent;
@@ -171,7 +172,7 @@ export const EventCard = ({
 
             {hasMapPreview && (
                 <View style={styles.mapContainer}>
-                    <Image source={{ uri: mapPreviewUri }} style={styles.map} resizeMode="cover" />
+                    <FastImage source={{ uri: mapPreviewUri }} style={styles.map} resizeMode="cover" />
                 </View>
             )}
 

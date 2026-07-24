@@ -40,7 +40,6 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
         emptyImage: {
             width: scaleVertical(230),
             height: scaleVertical(230),
-            resizeMode: 'cover',
         },
         footer: {
             paddingBottom: bottomInset + scaleVertical(16),

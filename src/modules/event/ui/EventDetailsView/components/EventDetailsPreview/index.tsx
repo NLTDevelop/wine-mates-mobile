@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -13,6 +13,7 @@ import { getStyles } from './styles';
 import { useEventDetailsPreview } from './presenters/useEventDetailsPreview';
 import { EventParticipantsPreview } from '@/UIKit/EventParticipantsPreview';
 import { QR_CODE_SHARE_SIZE } from '@/utils';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps {
     data: IEventDetailsPreviewData;
@@ -55,7 +56,7 @@ export const EventDetailsPreview = ({ data, eventId }: IProps) => {
             </View>
             <EventParticipantsPreview data={data.participantsPreviewData} />
             <View style={styles.mapContainer}>
-                <Image source={{ uri: data.mapPreviewUri }} style={styles.map} resizeMode="cover" />
+                <FastImage source={{ uri: data.mapPreviewUri }} style={styles.map} resizeMode="cover" />
             </View>
 
             <View style={styles.hiddenQrCodeContainer}>

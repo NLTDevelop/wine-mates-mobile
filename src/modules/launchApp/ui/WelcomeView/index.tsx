@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { getStyles } from './styles';
-import { TouchableOpacity, View, Image } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { Typography } from '@/UIKit/Typography';
@@ -10,6 +10,7 @@ import { useWelcome } from '@/modules/launchApp/presenters/useWelcome';
 import { RedLineIcon } from '@assets/icons/RedLineIcon';
 import { ConfirmationAlert } from '@/UIKit/ConfirmationAlert';
 import { useConfirmationAlert } from '@/UIKit/ConfirmationAlert/presenters/useConfirmationAlert';
+import FastImage from '@d11/react-native-fast-image';
 
 export const WelcomeView = () => {
     const { t, colors } = useUiContext();
@@ -33,7 +34,7 @@ export const WelcomeView = () => {
                         <RedLineIcon />
                     </View>
                     <View style={styles.imageWrapper}>
-                        <Image
+                        <FastImage
                             source={require('@assets/images/welcome.png')}
                             style={styles.image}
                             resizeMode="contain"

@@ -66,12 +66,6 @@ export const usePublicProfileData = (userId: number, linkSource: LinkSource) => 
         const targetUrl = getContactUrl(url, contactType);
 
         try {
-            const canOpen = await Linking.canOpenURL(targetUrl);
-
-            if (!canOpen) {
-                throw new Error(`Cannot open public profile link: ${targetUrl}`);
-            }
-
             await Linking.openURL(targetUrl);
         } catch (error) {
             console.warn('usePublicProfileData -> onOpenLink: ', error);

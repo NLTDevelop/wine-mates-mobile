@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { ActivityIndicator, Image, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 import SwipeableRow from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -7,6 +7,7 @@ import { DeleteForeverIcon } from '@assets/icons/DeleteForeverIcon';
 import { useNotificationListItem } from './presenters/useNotificationListItem';
 import { getStyles } from './styles';
 import { IClientNotification } from '@/entities/notifications/types/IClientNotification';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps {
     item: IClientNotification;
@@ -35,7 +36,7 @@ export const NotificationListItem = ({ item }: IProps) => {
     return (
         <SwipeableRow containerStyle={styles.swipeContainer} renderRightActions={renderRightActions} overshootRight={false}>
             <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={1}>
-                <Image source={require('@assets/images/app_icon.png')} style={styles.appIcon} />
+                <FastImage source={require('@assets/images/app_icon.png')} style={styles.appIcon} />
                 <View style={styles.content}>
                     <Typography text={item.title} variant="body_500" style={styles.title} numberOfLines={2} />
                     <Typography text={item.body} variant="body_400" style={styles.body} numberOfLines={3} />

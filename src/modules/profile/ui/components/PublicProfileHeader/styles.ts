@@ -62,6 +62,25 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
             marginTop: scaleVertical(4),
         },
+        bioContainer: {
+            marginTop: scaleVertical(12),
+        },
+        bio: {
+            color: colors.text,
+        },
+        bioMeasurement: {
+            position: 'absolute',
+            right: 0,
+            left: 0,
+            opacity: 0,
+        },
+        showMoreButton: {
+            alignSelf: 'flex-start',
+            marginTop: scaleVertical(4),
+        },
+        showMoreText: {
+            color: colors.primary,
+        },
         linksButton: {
             alignSelf: 'flex-end',
             marginTop: scaleVertical(12),
