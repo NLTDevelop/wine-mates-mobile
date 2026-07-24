@@ -1,5 +1,5 @@
 import { useCallback, useMemo, ReactNode } from 'react';
-import { Image, Pressable, TouchableOpacity, View } from 'react-native';
+import { Pressable, TouchableOpacity, View } from 'react-native';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -12,6 +12,7 @@ import { getStyles, WINE_LIST_ITEM_MEDAL_SIZE } from './styles';
 import { useWineDescription } from './presenters/useWineDescription';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { ShareIcon } from '@assets/icons/ShareIcon';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps {
     item: IWineListItem | IWineDetails;
@@ -29,12 +30,13 @@ interface IProps {
     hideDate?: boolean;
     alignFooterToBottom?: boolean;
     showTastingAuthor?: boolean;
+    onImagePress?: () => void;
 }
 
 export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = false, footer, removeCardStyles = false,
     showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent,
     showExpertRatingWithoutPremium = false, hideDate = false, alignFooterToBottom = false,
-    showTastingAuthor = false }: IProps) => {
+    showTastingAuthor = false, onImagePress }: IProps) => {
     const { colors, locale, t } = useUiContext();
     const styles = useMemo(
         () => getStyles(colors, removeCardStyles, alignFooterToBottom),
@@ -55,6 +57,7 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
         expertReviewLabel,
         userReviewLabel,
         onPressShareButton,
+        onPressImage,
         onWineryPress,
         isWineryLink,
     } = useWineListItem({
@@ -64,6 +67,7 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
         removeCardStyles,
         isMyWine,
         showTastingAuthor,
+        onImagePress,
     });
     const { description } = useWineDescription({ item, showVintage, showNonVintage });
     const getContainerStyle = useCallback(
@@ -80,7 +84,12 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
                 <ShareIcon width={20} height={20} color={colors.text} />
             </TouchableOpacity>
             <View style={styles.content}>
-                <View style={styles.imageContainer} pointerEvents="none">
+                <TouchableOpacity
+                    style={styles.imageContainer}
+                    onPress={onPressImage}
+                    disabled={!onImagePress}
+                    activeOpacity={0.85}
+                >
                     {showSimilarity && (
                         <View style={styles.similarityBadgeContainer}>
                             <View style={styles.similarityBadge}>
@@ -95,7 +104,7 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
                     )}
 
                     {item.image?.originalUrl || item.defaultImage?.originalUrl ? (
-                        <Image
+                        <FastImage
                             source={{ uri: item.image?.originalUrl || item.defaultImage?.originalUrl }}
                             style={styles.image}
                         />
@@ -104,7 +113,7 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
                             <EmptyWine containerStyle={styles.imagePlaceholder} />
                         </View>
                     )}
-                </View>
+                </TouchableOpacity>
 
                 <View style={styles.rightColumn}>
                     <View style={styles.detailsContainer}>

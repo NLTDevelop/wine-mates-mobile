@@ -4,10 +4,12 @@ import { useUiContext } from '@/UIProvider';
 import { Avatar } from '@/UIKit/Avatar';
 import { Typography } from '@/UIKit/Typography';
 import { getStyles } from './styles';
+import { usePublicProfileHeader } from './presenters/usePublicProfileHeader';
 
 interface IProps {
     name: string;
     avatarUrl: string | null;
+    bio?: string;
     details?: string;
     statusLabel?: string;
     isVerified?: boolean;
@@ -20,6 +22,7 @@ interface IProps {
 export const PublicProfileHeader = ({
     name,
     avatarUrl,
+    bio,
     details,
     statusLabel,
     isVerified = false,
@@ -30,6 +33,14 @@ export const PublicProfileHeader = ({
 }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const {
+        bio: normalizedBio,
+        bioNumberOfLines,
+        bioToggleText,
+        isBioToggleVisible,
+        onBioTextLayout,
+        onBioTogglePress,
+    } = usePublicProfileHeader(bio);
 
     return (
         <View style={styles.container}>
@@ -61,6 +72,33 @@ export const PublicProfileHeader = ({
                     )}
                 </TouchableOpacity>
             </View>
+            {!!normalizedBio && (
+                <View style={styles.bioContainer}>
+                    <Typography
+                        text={normalizedBio}
+                        variant="body_400"
+                        style={styles.bio}
+                        numberOfLines={bioNumberOfLines}
+                    />
+                    <Typography
+                        text={normalizedBio}
+                        variant="body_400"
+                        style={[styles.bio, styles.bioMeasurement]}
+                        onTextLayout={onBioTextLayout}
+                        pointerEvents="none"
+                        accessible={false}
+                    />
+                    {isBioToggleVisible && (
+                        <TouchableOpacity onPress={onBioTogglePress} style={styles.showMoreButton}>
+                            <Typography
+                                text={bioToggleText}
+                                variant="body_500"
+                                style={styles.showMoreText}
+                            />
+                        </TouchableOpacity>
+                    )}
+                </View>
+            )}
             {hasLinks && (
                 <TouchableOpacity onPress={onLinksPress} style={styles.linksButton}>
                     <Typography text={t('publicProfile.links')} variant="body_500" style={styles.linksText} />

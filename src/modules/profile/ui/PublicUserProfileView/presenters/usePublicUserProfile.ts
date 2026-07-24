@@ -87,6 +87,8 @@ export const usePublicUserProfile = () => {
         return avatar?.mediumUrl || avatar?.originalUrl || avatar?.smallUrl || null;
     }, [profileData.profile]);
 
+    const bio = useMemo(() => profileData.profile?.user.bio?.trim() || '', [profileData.profile]);
+
     return {
         ...profileData,
         ...eventsData,
@@ -96,6 +98,7 @@ export const usePublicUserProfile = () => {
         tabs,
         fullName,
         avatarUrl,
+        bio,
         isFollowDisabled: true,
         onPressBack,
         onFollowPress,

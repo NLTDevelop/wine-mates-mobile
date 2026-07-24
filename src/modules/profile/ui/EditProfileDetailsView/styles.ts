@@ -51,6 +51,11 @@ export const getStyles = (colors: IColors) => {
         bigInput: {
             minHeight: scaleVertical(120),
         },
+        bioCharacters: {
+            alignSelf: 'flex-end',
+            marginTop: scaleVertical(4),
+            color: colors.text_light,
+        },
         buttonContainer: {
             paddingBottom: scaleVertical(12),
             paddingTop: scaleVertical(8),

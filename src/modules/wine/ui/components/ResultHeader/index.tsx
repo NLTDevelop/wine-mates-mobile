@@ -21,11 +21,12 @@ interface IProps {
     isResultHeaderFooterVisible: boolean;
     showTastingAuthor: boolean;
     hasPremiumContentAccess: boolean;
+    onWineImagePress?: () => void;
 }
 
 export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData,
     isAllVintagesSelected, fromScanner, isResultHeaderFooterVisible, showTastingAuthor,
-    hasPremiumContentAccess }: IProps) => {
+    hasPremiumContentAccess, onWineImagePress }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { onPress, isCreating } = useResultHeader(item, fromScanner);
@@ -42,6 +43,7 @@ export const ResultHeader = ({ item, vintages, onVintageChange, onFavoritePress,
             <WineListItem
                 item={item}
                 onSharePress={onOpenShareModal}
+                onImagePress={onWineImagePress}
                 footer={isResultHeaderFooterVisible ? (
                     <ResultHeaderFooter
                         item={item}

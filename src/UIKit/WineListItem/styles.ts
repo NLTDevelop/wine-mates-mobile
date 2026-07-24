@@ -53,7 +53,6 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean, alignFoote
             position: 'absolute',
             width: '100%',
             height: '100%',
-            resizeMode: 'cover',
             borderRadius: 12,
             backgroundColor: 'transparent',
         },

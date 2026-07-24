@@ -193,6 +193,7 @@
         "reviewCount": ["review", "reviews", "reviews"],
         "whatsInYourGlass": "What’s in your glass?",
         "enterData": "(Enter data manually or scan the label)",
+        "cropLabelPhoto": "Crop wine label",
         "tasteWine": "Taste Wine"
     },
     "wine": {
@@ -352,6 +353,8 @@
         "tastings": "Tastings",
         "wines": "Wines",
         "links": "Links",
+        "showMore": "Show more",
+        "showLess": "Show less",
         "follow": "Follow",
         "verified": "Verified",
         "notVerified": "Not Verified",
