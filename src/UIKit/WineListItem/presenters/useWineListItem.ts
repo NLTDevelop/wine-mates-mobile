@@ -16,6 +16,7 @@ interface IProps {
     removeCardStyles?: boolean;
     isMyWine?: boolean;
     showTastingAuthor?: boolean;
+    onImagePress?: () => void;
 }
 
 const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
@@ -30,6 +31,7 @@ export const useWineListItem = ({
     removeCardStyles,
     isMyWine,
     showTastingAuthor,
+    onImagePress,
 }: IProps) => {
     const { t } = useUiContext();
     const wineryUserId = isWineDetails(item) ? item.wineryUserId : null;
@@ -49,6 +51,11 @@ export const useWineListItem = ({
         event.stopPropagation();
         onShareItemPress();
     }, [onShareItemPress]);
+
+    const onPressImage = useCallback((event: GestureResponderEvent) => {
+        event.stopPropagation();
+        onImagePress?.();
+    }, [onImagePress]);
 
     const onWineryPress = useCallback(
         (event: GestureResponderEvent) => {
@@ -230,6 +237,7 @@ export const useWineListItem = ({
         expertReviewLabel,
         userReviewLabel,
         onPressShareButton,
+        onPressImage,
         onWineryPress,
         isWineryLink,
     };

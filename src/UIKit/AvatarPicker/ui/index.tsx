@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
-import { TouchableOpacity, View, Image } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { PlusIcon } from '@assets/icons/PlusIcon';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps {
     size: number;
@@ -59,7 +60,7 @@ export const AvatarPicker = ({
         <>
             <TouchableOpacity disabled={!isEditing} onPress={onAvatarPress} style={styles.container}>
                 {displayUri && !isMarkedForDeletion ? (
-                    <Image source={{ uri: normalizedDisplayUri || undefined }} style={styles.image} />
+                    <FastImage source={{ uri: normalizedDisplayUri || '' }} style={styles.image} />
                 ) : (
                     <View style={styles.placeholder}>
                         {isEditing ? (

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
@@ -8,6 +8,7 @@ import { useWineSetItem } from './presenters/useWineSetItem';
 import { IWineSetItem } from '@/entities/events/types/IWineSetItem';
 import { StarIcon } from '@assets/icons/StartIcon';
 import { RateMedal } from '@/UIKit/RateMedal/ui';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps {
     eventId: number;
@@ -47,7 +48,7 @@ export const WineSetItem = ({
     const statusBadgeTextStyle = statusBadgeData ? styles[`${statusBadgeData.type}BadgeText`] : null;
     const wineImage = isImageVisible ? (
         imageUrl ? (
-            <Image source={{ uri: imageUrl }} style={styles.image} />
+            <FastImage source={{ uri: imageUrl }} style={styles.image} />
         ) : (
             <View style={styles.image} />
         )

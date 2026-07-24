@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { Image, View, ViewStyle } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { IGalleryItem } from '../../types/IGalleryPhoto';
 import { getStyles } from './styles';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IProps {
     item: IGalleryItem;
@@ -15,7 +16,7 @@ export const GalleryViewerPhoto = ({ item, containerStyle }: IProps) => {
 
     return (
         <View style={[styles.container, containerStyle]}>
-            <Image source={{ uri: item.uri }} style={styles.image} resizeMode="contain" />
+            <FastImage source={{ uri: item.uri }} style={styles.image} resizeMode="contain" />
         </View>
     );
 };

@@ -5,12 +5,14 @@ import { toastService } from '@/libs/toast/toastService';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { localization } from '@/UIProvider/localization/Localization';
 import { CommonActions, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NONE_VINTAGE_DROPDOWN_VALUE } from './useVintageDropdown';
 import { wineModel } from '@/entities/wine/models/WineModel';
 import { clearWineReviewsListModel } from '@/entities/wine/services/WineModelService';
 import { IRateDetails } from '@/entities/wine/types/IRateDetails';
 import { userModel } from '@/entities/users/UserModel';
+import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
+import { IGalleryPhoto } from '@/UIKit/Gallery/types/IGalleryPhoto';
 
 type WineDetailsRouteParams = {
     wineId?: number;
@@ -249,6 +251,22 @@ export const useWineDetails = () => {
         isSaved: localIsSaved ?? details.isSaved,
     } : null;
 
+    const wineImagePhotos = useMemo<IGalleryPhoto[]>(() => {
+        const image = details?.image || details?.defaultImage;
+        const uri = image?.originalUrl || image?.mediumUrl || image?.smallUrl;
+
+        if (!uri || !details) {
+            return [];
+        }
+
+        return [{
+            id: `wine-details-image-${details.id}`,
+            uri,
+        }];
+    }, [details]);
+    const wineImageGallery = useGallery({ photos: wineImagePhotos });
+    const onWineImagePress = wineImageGallery.items[0]?.onPress;
+
     const hasPremiumContentAccess = Boolean(
         userModel.user?.hasPremium ||
         (details?.wineryUserId && details.wineryUserId === userModel.user?.id),
@@ -330,5 +348,7 @@ export const useWineDetails = () => {
         myReview: details?.myReview ?? null,
         hasPremiumContentAccess,
         onPressBack,
+        wineImageGallery,
+        onWineImagePress,
     };
 };

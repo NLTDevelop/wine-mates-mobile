@@ -17,6 +17,7 @@ import { useWineDetails } from '@/modules/wine/presenters/useWineDetails';
 import { useWineReviewsList } from '@/modules/wine/presenters/useWineReviewsList';
 import { AddToFavoriteBottomSheet } from '../components/AddToFavoriteBottomSheet';
 import { useAddToFavoriteBottomSheet } from '../../presenters/useAddToFavoriteBottomSheet';
+import { Gallery } from '@/UIKit/Gallery';
 
 export const WineDetailsView = observer(() => {
     const { colors, t } = useUiContext();
@@ -24,7 +25,8 @@ export const WineDetailsView = observer(() => {
 
     const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
         selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, isResultHeaderFooterVisible,
-        showTastingAuthor, myReview, hasPremiumContentAccess, onPressBack } = useWineDetails();
+        showTastingAuthor, myReview, hasPremiumContentAccess, onPressBack, wineImageGallery,
+        onWineImagePress } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
         selectedWineId ?? wineId,
@@ -82,6 +84,7 @@ export const WineDetailsView = observer(() => {
                                 isResultHeaderFooterVisible={isResultHeaderFooterVisible}
                                 showTastingAuthor={showTastingAuthor}
                                 hasPremiumContentAccess={hasPremiumContentAccess}
+                                onWineImagePress={onWineImagePress}
                             />
                         }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
@@ -98,6 +101,7 @@ export const WineDetailsView = observer(() => {
                         isSaving={isSaving}
                     />
                 )}
+                <Gallery title="" {...wineImageGallery} hideHeader hidePreview />
             </ScreenContainer>
         </WithErrorHandler>
     );

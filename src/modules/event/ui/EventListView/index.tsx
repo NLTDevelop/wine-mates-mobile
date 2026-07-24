@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { FlatList, Image, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { NavigationState, SceneRendererProps, TabView } from 'react-native-tab-view';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -20,6 +20,7 @@ import { Loader } from '@/UIKit/Loader';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { Button } from '@/UIKit/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FastImage from '@d11/react-native-fast-image';
 
 interface IRoute {
     key: 'created' | 'saved' | 'applied';
@@ -65,7 +66,13 @@ export const EventListView = observer(() => {
 
     const emptyList = (
         <EmptyListView
-            image={<Image source={require('@assets/images/city_search.jpeg')} style={styles.emptyImage} />}
+            image={
+                <FastImage
+                    source={require('@assets/images/city_search.jpeg')}
+                    style={styles.emptyImage}
+                    resizeMode="cover"
+                />
+            }
             text={t('event.emptyList')}
             isLoading={isLoading}
         />
