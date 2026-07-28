@@ -8,6 +8,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useEventGuestsTabDetails } from './useEventGuestsTabDetails';
 import { useUiContext } from '@/UIProvider';
 import { useProfileNavigation } from '@/hooks/useProfileNavigation';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 interface IProps {
     eventId: number;
@@ -96,11 +97,13 @@ export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => 
             const fullName = `${guest.user?.firstName ?? '-'} ${guest.user?.lastName ?? '-'}`.trim();
             const age = getAge(guest.user?.birthday);
             const ageText = age === null ? '' : `${age} ${t('eventGuests.age')}`;
+            const showAge = age !== null && guest.user.wineExperienceLevel !== WineExperienceLevelEnum.CREATOR;
             const isUpdating = updatingGuestId === guest.id;
             const preparedGuest = {
                 id: guest.id,
                 fullName,
                 ageText,
+                showAge,
                 avatarUrl: guest.user?.avatar?.smallUrl || null,
                 onUserPress: () => onUserPressById(guest.user.id, guest.user.wineExperienceLevel),
             };

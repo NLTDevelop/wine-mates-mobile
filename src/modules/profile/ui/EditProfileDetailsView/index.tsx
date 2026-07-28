@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { View } from 'react-native';
-import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
@@ -19,7 +18,6 @@ import { SelectCityBottomSheet } from './components/SelectCityBottomSheet';
 import { CustomAlert } from '@/UIKit/CustomAlert/ui';
 import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
 import { ProfileSelectorRow } from './components/ProfileSelectorRow';
-import { useKeyboardStickyLayout } from '@/hooks/useKeyboardStickyLayout';
 import { Loader } from '@/UIKit/Loader';
 import { Gallery } from '@/UIKit/Gallery';
 import { ProfileFormField } from '@/modules/profile/ui/components/ProfileFormField';
@@ -30,7 +28,6 @@ import { EditableProfileLinks } from './components/EditableProfileLinks';
 export const EditProfileDetailsView = () => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { scrollBottomOffset, extraKeyboardSpace, stickyOpenedOffset, onStickyLayout } = useKeyboardStickyLayout();
 
     const {
         form,
@@ -105,158 +102,146 @@ export const EditProfileDetailsView = () => {
     }
 
     return (
-        <ScreenContainer edges={['top', 'bottom']} withGradient headerComponent={headerComponent}>
+        <ScreenContainer
+            edges={['top', 'bottom']}
+            withGradient
+            headerComponent={headerComponent}
+            isKeyboardAvoiding
+            scrollEnabled
+            contentContainerStyle={styles.contentContainer}
+            footerComponent={
+                <View style={styles.buttonContainer}>
+                    <Button
+                        text={t('common.save')}
+                        onPress={onSave}
+                        type="main"
+                        disabled={isDisabled}
+                        inProgress={isInProgress}
+                    />
+                </View>
+            }
+        >
             <View style={styles.container}>
-                <KeyboardAwareScrollView
-                    style={styles.scroll}
-                    contentContainerStyle={styles.contentContainer}
-                    showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps="handled"
-                    bottomOffset={scrollBottomOffset}
-                    extraKeyboardSpace={extraKeyboardSpace}
-                >
-                    <View style={styles.content}>
-                        <View style={styles.avatarContainer}>
-                            <AvatarPicker
-                                size={120}
-                                avatarUrl={avatarUrl}
-                                fullname={form.fullName}
-                                isEditing
-                                selectedImageUri={selectedAvatarUri}
-                                isMarkedForDeletion={isMarkedForDeletion}
-                                onPress={onOpenCamera}
-                                onRemove={onRemoveAvatar}
-                            />
-                        </View>
-
-                        <Gallery title={t('settings.photoGallery')} {...gallery} onAddPhoto={onAddGalleryPhoto} />
-
-                        <ExpertiseSelectorRow expertiseLevel={expertiseLevel} onPress={onOpenExpertiseModal} />
-
-                        <ProfileFormField label={t('settings.fullName')}>
-                            <CustomInput
-                                value={form.fullName}
-                                onChangeText={onChangeFullName}
-                                editable
-                                placeholder={t('settings.fullName')}
-                                containerStyle={styles.inputContainer}
-                            />
-                        </ProfileFormField>
-                        <ProfileFormField label={t('settings.email')}>
-                            <CustomInput
-                                value={form.email}
-                                onChangeText={onChangeEmail}
-                                editable
-                                placeholder={t('settings.email')}
-                                containerStyle={styles.inputContainer}
-                            />
-                        </ProfileFormField>
-                        <ProfileFormField label={t('settings.phoneNumber')}>
-                            <PhoneInputField
-                                value={form.phoneNumber}
-                                onChangeText={onChangePhoneNumber}
-                                onChangeCountryCode={onChangeCountryCode}
-                                editable
-                                initialCca2={phoneInitialCca2}
-                            />
-                        </ProfileFormField>
-                        <ProfileFormField label={t('settings.country')}>
-                            <PickerButton
-                                text={countryPicker.selectedText}
-                                placeholder={t('settings.country')}
-                                onPress={countryPicker.onOpen}
-                                isDisabled={countryPicker.isDisabled}
-                            />
-                        </ProfileFormField>
-                        <ProfileFormField label={t('settings.city')}>
-                            <ProfileSelectorRow
-                                value={form.city}
-                                placeholder={t('settings.city')}
-                                disabled={isCitySelectorDisabled}
-                                onPress={onOpenCitySelector}
-                            />
-                        </ProfileFormField>
-                        <ProfileFormField label={t('registration.birthday')}>
-                            <BirthdaySelector
-                                date={form.birthday}
-                                onPress={onOpenBirthdayModal}
-                                isOpened={isBirthdayModalVisible}
-                                isError={false}
-                                displayText={birthdayDisplayText}
-                                disabled={false}
-                            />
-                        </ProfileFormField>
-                        <ProfileFormField label={t('settings.gender')}>
-                            <PickerButton
-                                text={genderPicker.selectedText}
-                                placeholder={t('settings.gender')}
-                                onPress={genderPicker.onOpen}
-                                isDisabled={genderPicker.isDisabled}
-                            />
-                        </ProfileFormField>
-                        <ProfileFormField label={t('settings.occupation')}>
-                            <CustomInput
-                                value={form.occupation}
-                                onChangeText={onChangeOccupation}
-                                editable
-                                placeholder={t('settings.occupation')}
-                                containerStyle={styles.inputContainer}
-                            />
-                        </ProfileFormField>
-                        <ProfileFormField label={t('settings.selectedCurrency')}>
-                            <ProfileSelectorRow
-                                value={currencyPicker.selectedText}
-                                placeholder={t('settings.selectedCurrency')}
-                                disabled={isCurrencySelectorDisabled}
-                                onPress={currencyPicker.onOpen}
-                            />
-                        </ProfileFormField>
-                        <ProfileFormField label={t('settings.placeOfWork')}>
-                            <CustomInput
-                                value={form.placeOfWork}
-                                onChangeText={onChangePlaceOfWork}
-                                editable
-                                placeholder={t('settings.placeOfWork')}
-                                containerStyle={styles.inputContainer}
-                            />
-                        </ProfileFormField>
-                        <EditableProfileLinks items={editableLinks} onAdd={onAddLink} />
-                        <ProfileFormField label={t('settings.bio')}>
-                            <CustomInput
-                                value={form.bio}
-                                onChangeText={onChangeBio}
-                                editable
-                                placeholder={t('settings.bio')}
-                                multiline
-                                maxLength={bioMaxLength}
-                                inputContainerStyle={styles.bigInput}
-                                containerStyle={styles.inputContainer}
-                            />
-                            <Typography
-                                text={bioCharactersText}
-                                variant="subtitle_12_400"
-                                style={styles.bioCharacters}
-                            />
-                        </ProfileFormField>
-                    </View>
-                </KeyboardAwareScrollView>
-
-                <KeyboardStickyView
-                    offset={{
-                        closed: 0,
-                        opened: stickyOpenedOffset,
-                    }}
-                >
-                    <View style={styles.buttonContainer} onLayout={onStickyLayout}>
-                        <Button
-                            text={t('common.save')}
-                            onPress={onSave}
-                            type="main"
-                            disabled={isDisabled}
-                            inProgress={isInProgress}
+                <View style={styles.content}>
+                    <View style={styles.avatarContainer}>
+                        <AvatarPicker
+                            size={120}
+                            avatarUrl={avatarUrl}
+                            fullname={form.fullName}
+                            isEditing
+                            selectedImageUri={selectedAvatarUri}
+                            isMarkedForDeletion={isMarkedForDeletion}
+                            onPress={onOpenCamera}
+                            onRemove={onRemoveAvatar}
                         />
                     </View>
-                </KeyboardStickyView>
+
+                    <Gallery title={t('settings.photoGallery')} {...gallery} onAddPhoto={onAddGalleryPhoto} />
+
+                    <ExpertiseSelectorRow expertiseLevel={expertiseLevel} onPress={onOpenExpertiseModal} />
+
+                    <ProfileFormField label={t('settings.fullName')}>
+                        <CustomInput
+                            value={form.fullName}
+                            onChangeText={onChangeFullName}
+                            editable
+                            placeholder={t('settings.fullName')}
+                            containerStyle={styles.inputContainer}
+                        />
+                    </ProfileFormField>
+                    <ProfileFormField label={t('settings.email')}>
+                        <CustomInput
+                            value={form.email}
+                            onChangeText={onChangeEmail}
+                            editable
+                            placeholder={t('settings.email')}
+                            containerStyle={styles.inputContainer}
+                        />
+                    </ProfileFormField>
+                    <ProfileFormField label={t('settings.phoneNumber')}>
+                        <PhoneInputField
+                            value={form.phoneNumber}
+                            onChangeText={onChangePhoneNumber}
+                            onChangeCountryCode={onChangeCountryCode}
+                            editable
+                            initialCca2={phoneInitialCca2}
+                        />
+                    </ProfileFormField>
+                    <ProfileFormField label={t('settings.country')}>
+                        <PickerButton
+                            text={countryPicker.selectedText}
+                            placeholder={t('settings.country')}
+                            onPress={countryPicker.onOpen}
+                            isDisabled={countryPicker.isDisabled}
+                        />
+                    </ProfileFormField>
+                    <ProfileFormField label={t('settings.city')}>
+                        <ProfileSelectorRow
+                            value={form.city}
+                            placeholder={t('settings.city')}
+                            disabled={isCitySelectorDisabled}
+                            onPress={onOpenCitySelector}
+                        />
+                    </ProfileFormField>
+                    <ProfileFormField label={t('registration.birthday')}>
+                        <BirthdaySelector
+                            date={form.birthday}
+                            onPress={onOpenBirthdayModal}
+                            isOpened={isBirthdayModalVisible}
+                            isError={false}
+                            displayText={birthdayDisplayText}
+                            disabled={false}
+                        />
+                    </ProfileFormField>
+                    <ProfileFormField label={t('settings.gender')}>
+                        <PickerButton
+                            text={genderPicker.selectedText}
+                            placeholder={t('settings.gender')}
+                            onPress={genderPicker.onOpen}
+                            isDisabled={genderPicker.isDisabled}
+                        />
+                    </ProfileFormField>
+                    <ProfileFormField label={t('settings.occupation')}>
+                        <CustomInput
+                            value={form.occupation}
+                            onChangeText={onChangeOccupation}
+                            editable
+                            placeholder={t('settings.occupation')}
+                            containerStyle={styles.inputContainer}
+                        />
+                    </ProfileFormField>
+                    <ProfileFormField label={t('settings.selectedCurrency')}>
+                        <ProfileSelectorRow
+                            value={currencyPicker.selectedText}
+                            placeholder={t('settings.selectedCurrency')}
+                            disabled={isCurrencySelectorDisabled}
+                            onPress={currencyPicker.onOpen}
+                        />
+                    </ProfileFormField>
+                    <ProfileFormField label={t('settings.placeOfWork')}>
+                        <CustomInput
+                            value={form.placeOfWork}
+                            onChangeText={onChangePlaceOfWork}
+                            editable
+                            placeholder={t('settings.placeOfWork')}
+                            containerStyle={styles.inputContainer}
+                        />
+                    </ProfileFormField>
+                    <EditableProfileLinks items={editableLinks} onAdd={onAddLink} />
+                    <ProfileFormField label={t('settings.bio')}>
+                        <CustomInput
+                            value={form.bio}
+                            onChangeText={onChangeBio}
+                            editable
+                            placeholder={t('settings.bio')}
+                            multiline
+                            maxLength={bioMaxLength}
+                            inputContainerStyle={styles.bigInput}
+                            containerStyle={styles.inputContainer}
+                        />
+                        <Typography text={bioCharactersText} variant="subtitle_12_400" style={styles.bioCharacters} />
+                    </ProfileFormField>
+                </View>
             </View>
 
             {isDeferredContentReady && (

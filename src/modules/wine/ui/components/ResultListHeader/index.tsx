@@ -30,11 +30,12 @@ interface IProps {
     showTastingAuthor: boolean;
     hasPremiumContentAccess: boolean;
     onWineImagePress?: () => void;
+    hideResultHeader?: boolean;
 }
 
 export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData,
     isAllVintagesSelected, fromScanner, hasReviews, isResultHeaderFooterVisible, showTastingAuthor,
-    hasPremiumContentAccess, onWineImagePress }: IProps) => {
+    hasPremiumContentAccess, onWineImagePress, hideResultHeader = false }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
@@ -65,19 +66,21 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
 
     return (
         <View>
-            <ResultHeader
-                item={data}
-                vintages={vintages}
-                onVintageChange={onVintageChange}
-                onFavoritePress={onFavoritePress}
-                hasCurrentVintageData={hasCurrentVintageData}
-                isAllVintagesSelected={isAllVintagesSelected}
-                fromScanner={fromScanner}
-                isResultHeaderFooterVisible={isResultHeaderFooterVisible}
-                showTastingAuthor={showTastingAuthor}
-                hasPremiumContentAccess={hasPremiumContentAccess}
-                onWineImagePress={onWineImagePress}
-            />
+            {!hideResultHeader ? (
+                <ResultHeader
+                    item={data}
+                    vintages={vintages}
+                    onVintageChange={onVintageChange}
+                    onFavoritePress={onFavoritePress}
+                    hasCurrentVintageData={hasCurrentVintageData}
+                    isAllVintagesSelected={isAllVintagesSelected}
+                    fromScanner={fromScanner}
+                    isResultHeaderFooterVisible={isResultHeaderFooterVisible}
+                    showTastingAuthor={showTastingAuthor}
+                    hasPremiumContentAccess={hasPremiumContentAccess}
+                    onWineImagePress={onWineImagePress}
+                />
+            ) : null}
 
             {isVintageTasted && (
                 <>

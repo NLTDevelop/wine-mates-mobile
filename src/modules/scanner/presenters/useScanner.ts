@@ -14,6 +14,7 @@ import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 import { wineModel } from '@/entities/wine/models/WineModel';
 import { isAndroid, isIOS } from '@/utils';
 import { localization } from '@/UIProvider/localization/Localization';
+import { toastService } from '@/libs/toast/toastService';
 
 const SCANNER_CROP_MAX_SIZE = 2048;
 
@@ -38,6 +39,35 @@ const isCropCancelled = (error: unknown) => {
     }
 
     return (error as IImageCropPickerError).code === 'E_PICKER_CANCELLED';
+};
+
+const normalizeCroppedImageToJpeg = async (croppedImage: ImageCropPickerResult): Promise<IWineImage> => {
+    const cropDimensions = getCropDimensions(croppedImage.width, croppedImage.height);
+    const normalizedImage = await ImageResizer.createResizedImage(
+        croppedImage.path,
+        cropDimensions.width,
+        cropDimensions.height,
+        'JPEG',
+        95,
+        0,
+        undefined,
+        false,
+        {
+            mode: 'contain',
+            onlyScaleDown: true,
+        },
+    );
+    const normalizedUri = normalizedImage.uri.startsWith('file://')
+        ? normalizedImage.uri
+        : `file://${normalizedImage.uri}`;
+    const originalName = normalizedImage.name || croppedImage.filename || `wine-label-${Date.now()}`;
+    const nameWithoutExtension = originalName.replace(/\.[^/.]+$/, '');
+
+    return {
+        uri: normalizedUri,
+        name: `${nameWithoutExtension}.jpg`,
+        type: 'image/jpeg',
+    };
 };
 
 export const useScanner = () => {
@@ -122,17 +152,17 @@ export const useScanner = () => {
         setTorch('off');
     }, []);
 
-    const onUseCroppedImage = useCallback((croppedImage: ImageCropPickerResult) => {
-        const normalizedUri = croppedImage.path.startsWith('file://')
-            ? croppedImage.path
-            : `file://${croppedImage.path}`;
-
-        wineModel.image = {
-            uri: normalizedUri,
-            name: croppedImage.filename || croppedImage.path.split('/').pop() || `wine-label-${Date.now()}.jpg`,
-            type: croppedImage.mime || 'image/jpeg',
-        };
-        navigation.navigate('ScanResultsListView');
+    const onUseCroppedImage = useCallback(async (croppedImage: ImageCropPickerResult) => {
+        try {
+            wineModel.image = await normalizeCroppedImageToJpeg(croppedImage);
+            navigation.navigate('ScanResultsListView');
+        } catch (error) {
+            console.error('Error normalizing cropped scanner photo:', error);
+            toastService.showError(
+                localization.t('common.errorHappened'),
+                localization.t('common.somethingWentWrong'),
+            );
+        }
     }, [navigation]);
 
     const onGalleryPress = useCallback(async () => {
@@ -147,6 +177,7 @@ export const useScanner = () => {
             cropperToolbarTitle: localization.t('scanner.cropLabelPhoto'),
             cropperChooseText: localization.t('common.choose'),
             cropperCancelText: localization.t('common.cancel'),
+            forceJpg: true,
         };
 
         if (isIOS) {
@@ -159,7 +190,7 @@ export const useScanner = () => {
                     waitAnimationEnd: true,
                 });
 
-                onUseCroppedImage(croppedImage);
+                await onUseCroppedImage(croppedImage);
             } catch (error) {
                 if (!isCropCancelled(error)) {
                     console.error('Error selecting or cropping scanner photo:', error);
@@ -194,7 +225,7 @@ export const useScanner = () => {
                 width: cropDimensions.width,
                 height: cropDimensions.height,
             });
-            onUseCroppedImage(croppedImage);
+            await onUseCroppedImage(croppedImage);
         } catch (error) {
             if (!isCropCancelled(error)) {
                 console.error('Error cropping scanner photo:', error);

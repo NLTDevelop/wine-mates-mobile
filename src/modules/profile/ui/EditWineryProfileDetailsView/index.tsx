@@ -70,6 +70,11 @@ export const EditWineryProfileDetailsView = () => {
             scrollEnabled
             isKeyboardAvoiding
             headerComponent={<HeaderWithBackButton title={t('settings.profileSettings')} onPressBack={onPressBack} />}
+            footerComponent={
+                <View style={styles.buttonContainer}>
+                    <Button text={t('common.save')} onPress={onSave} disabled={isDisabled} inProgress={isLoading} />
+                </View>
+            }
         >
             <View style={styles.container}>
                 <View style={styles.mainPhotoSection}>
@@ -157,13 +162,6 @@ export const EditWineryProfileDetailsView = () => {
                         displayText={birthdayDisplayText}
                     />
                 </ProfileFormField>
-                <Button
-                    text={t('common.save')}
-                    onPress={onSave}
-                    disabled={isDisabled}
-                    inProgress={isLoading}
-                    containerStyle={styles.button}
-                />
             </View>
             <CustomAlert
                 visible={isDeleteMainPhotoAlertVisible}

@@ -734,6 +734,20 @@
         "addPaymentMethodsInProfile": "Add payment methods to your profile.",
         "openPayments": "Open payments"
     },
+    "wineMarketplace": {
+        "profileTab": "Wine profile",
+        "evolutionTab": "Evolution wine",
+        "purchaseTab": "Where to buy",
+        "premiumTitle": "Premium Feature",
+        "premiumDescription": "This feature is available for premium users only. Upgrade your plan to unlock full access.",
+        "getPremium": "Get Premium",
+        "evolutionComingSoon": "Wine evolution is coming soon",
+        "from": "from",
+        "to": "to",
+        "visitWebsite": "Visit website",
+        "privateOffers": "Private offers",
+        "price": "Price"
+    },
     "contactInfo": {
         "contactInfo": "Contact information",
         "addContact": "Add contact",

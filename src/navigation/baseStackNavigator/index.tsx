@@ -27,6 +27,8 @@ import { TastingWineReviewResultView } from '@/modules/tastings/ui/TastingWineRe
 import { SavedWinesView } from '@/modules/wine/ui/SavedWinesView';
 import { FavoriteWineListView } from '@/modules/wine/ui/FavoriteWineListView';
 import { WineDetailsView } from '@/modules/wine/ui/WineDetailsView';
+import { NotificationWineDetailsView } from '@/modules/wine/ui/NotificationWineDetailsView';
+import { PrivateWineOffersView } from '@/modules/wine/ui/PrivateWineOffersView';
 import { TastingWineDetailsView } from '@/modules/wine/ui/TastingWineDetailsView';
 import { DeleteAccountView } from '@/modules/settings/ui/DeleteAccountView';
 import { ProfileDetailsView } from '@/modules/profile/ui/ProfileDetailsView';
@@ -77,6 +79,8 @@ export const MainStackNavigator = observer(() => {
             <Stack.Screen name="LocationPickerView" component={LocationPickerView} />
             <Stack.Screen name="CreatePasswordView" component={CreatePasswordView} />
             <Stack.Screen name="WineDetailsView" component={WineDetailsView} />
+            <Stack.Screen name="NotificationWineDetailsView" component={NotificationWineDetailsView} />
+            <Stack.Screen name="PrivateWineOffersView" component={PrivateWineOffersView} />
             <Stack.Screen name="TastingWineDetailsView" component={TastingWineDetailsView} />
             <Stack.Screen name="WineLookView" component={WineLookView} options={{ gestureEnabled: false }} />
             <Stack.Screen name="WineSmellView" component={WineSmellView} />
