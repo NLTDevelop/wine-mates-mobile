@@ -18,6 +18,7 @@ import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
 import { WineShareModal } from '@/UIKit/WineShareModal';
 import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
+import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
 
 export const ScanResultsListView = observer(() => {
     const { colors, t } = useUiContext();
@@ -58,6 +59,7 @@ export const ScanResultsListView = observer(() => {
             <Typography text={t('scanner.resultsTitle')} variant="body_400" style={styles.title} />
             <View style={styles.container}>
                 <FlatList
+                    {...WINE_LIST_PERFORMANCE_PROPS}
                     refreshControl={refreshControl}
                     data={data || []}
                     keyExtractor={keyExtractor}

@@ -296,12 +296,12 @@ export const useTastingWineReview = () => {
             }
         }
 
-        if (wineModel.winePeak !== null) {
+        if (isExpertOrWinemaker && wineModel.winePeak !== null) {
             payload.winePeak = wineModel.winePeak;
         }
 
         return payload;
-    }, [wineId]);
+    }, [isExpertOrWinemaker, wineId]);
 
     const saveReviewOnlyFinalDraft = useCallback(async () => {
         if (!eventId || !wineId) {

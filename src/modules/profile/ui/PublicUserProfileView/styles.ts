@@ -4,11 +4,11 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
-        headerContent: {
-            marginBottom: scaleVertical(16),
-        },
         followButton: {
             marginBottom: scaleVertical(12),
+        },
+        tastingsSearch: {
+            marginTop: scaleVertical(16),
         },
         listContent: {
             flexGrow: 1,

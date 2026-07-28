@@ -60,11 +60,7 @@ export const TastingWineReviewView = observer(() => {
                     />
                     {isFullTastingReview ? <Notes /> : null}
                     {isWinePeakPickerVisible ? (
-                        <WinePeakPicker
-                            value={winePeak}
-                            onChange={onWinePeakChange}
-                            isPremiumLockEnabled={false}
-                        />
+                        <WinePeakPicker value={winePeak} onChange={onWinePeakChange} />
                     ) : null}
                     <Typography text={t('wine.review')} variant="subtitle_20_500" style={styles.title} />
                     <CustomInput

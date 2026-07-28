@@ -28,6 +28,7 @@ import {
     PROFILE_BIO_EXPERT_MAX_LENGTH,
     PROFILE_BIO_LOVER_MAX_LENGTH,
 } from '@/modules/profile/constants/profileBio';
+import { useSellerCountriesPicker } from '@/modules/profile/presenters/useSellerCountriesPicker';
 
 interface IProfileForm {
     fullName: string;
@@ -152,6 +153,9 @@ export const useEditProfileDetails = () => {
     const isGalleryChangedRef = useRef(false);
     const { currencies, isCurrenciesLoading, onLoadCurrencies } = useUserCurrencies();
     const [isDeferredContentReady, setIsDeferredContentReady] = useState(false);
+    const sellerCountriesPicker = useSellerCountriesPicker();
+    const hasSellerCountriesChanges = sellerCountriesPicker.hasChanges;
+    const onSaveSellerCountries = sellerCountriesPicker.onSave;
 
     const normalizeE164Phone = useCallback((raw: string) => {
         const trimmed = raw.trim().replace(/\s+/g, '');
@@ -705,6 +709,11 @@ export const useEditProfileDetails = () => {
                 }
             }
 
+            const sellerCountriesSaved = await onSaveSellerCountries();
+            if (!sellerCountriesSaved) {
+                return;
+            }
+
             await userService.me();
             toastService.showSuccess(localization.t('common.success'), localization.t('settings.profileUpdated'));
             setChangedFields(new Set());
@@ -735,6 +744,7 @@ export const useEditProfileDetails = () => {
         removeGalleryFileIds,
         hasGalleryChanges,
         navigation,
+        onSaveSellerCountries,
     ]);
 
     const isDisabled = useMemo(() => {
@@ -744,7 +754,8 @@ export const useEditProfileDetails = () => {
             countryCodeChanged ||
             isAvatarChanged ||
             shouldRemoveAvatar ||
-            hasGalleryChanges;
+            hasGalleryChanges ||
+            hasSellerCountriesChanges;
         return !form.fullName.trim() || !form.email.trim() || isInProgress || !hasChanges;
     }, [
         form,
@@ -755,6 +766,7 @@ export const useEditProfileDetails = () => {
         isAvatarChanged,
         shouldRemoveAvatar,
         hasGalleryChanges,
+        hasSellerCountriesChanges,
     ]);
 
     const birthdayDisplayText = useMemo(() => {
@@ -1004,6 +1016,7 @@ export const useEditProfileDetails = () => {
         expertiseLevel,
         birthdayDisplayText,
         countryPicker,
+        sellerCountriesPicker,
         genderPicker,
         cityOptions,
         citySearch,

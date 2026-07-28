@@ -13,6 +13,13 @@ const createSuggestedItemName = (id: number) => `${id}`;
 const DRAFT_ITEM_COLOR = colorTheme.colors.background;
 const DEFAULT_EXPERT_RATING = 70;
 
+const hasWinePeakAccess = () => {
+    const experienceLevel = userModel.user?.wineExperienceLevel;
+
+    return experienceLevel === WineExperienceLevelEnum.EXPERT ||
+        experienceLevel === WineExperienceLevelEnum.CREATOR;
+};
+
 const getAromaDraftItems = (ids?: number[]): IWineSelectedSmell[] => {
     if (!ids?.length) {
         return [];
@@ -167,7 +174,9 @@ export const useEventTastingDraft = () => {
             ...getFlavorDraftItems(nextDraft.flavors),
         ];
         wineModel.draftTasteCharacteristics = nextDraft.tasteCharacteristics || null;
-        wineModel.winePeak = typeof nextDraft.winePeak === 'number' ? nextDraft.winePeak : null;
+        wineModel.winePeak = hasWinePeakAccess() && typeof nextDraft.winePeak === 'number'
+            ? nextDraft.winePeak
+            : null;
     }, [getDefaultEventTastingDraft]);
 
     const buildEventTastingDraftPayload = useCallback((wineId: number): Partial<AddRateDto> => {
@@ -213,8 +222,10 @@ export const useEventTastingDraft = () => {
             payload.image = wineModel.image;
         }
 
-        if (wineModel.winePeak !== null) {
+        if (hasWinePeakAccess() && wineModel.winePeak !== null) {
             payload.winePeak = wineModel.winePeak;
+        } else {
+            delete payload.winePeak;
         }
 
         if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {

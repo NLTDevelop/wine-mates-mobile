@@ -40,6 +40,7 @@ export const EditProfileDetailsView = () => {
         expertiseLevel,
         birthdayDisplayText,
         countryPicker,
+        sellerCountriesPicker,
         genderPicker,
         cityOptions,
         citySearch,
@@ -173,6 +174,14 @@ export const EditProfileDetailsView = () => {
                             placeholder={t('settings.country')}
                             onPress={countryPicker.onOpen}
                             isDisabled={countryPicker.isDisabled}
+                        />
+                    </ProfileFormField>
+                    <ProfileFormField label={t('settings.sellerCountries')}>
+                        <PickerButton
+                            text={sellerCountriesPicker.selectedText}
+                            placeholder={t('settings.sellerCountries')}
+                            onPress={sellerCountriesPicker.onOpen}
+                            isDisabled={sellerCountriesPicker.isDisabled}
                         />
                     </ProfileFormField>
                     <ProfileFormField label={t('settings.city')}>
@@ -369,6 +378,19 @@ export const EditProfileDetailsView = () => {
                     confirmText={t('common.confirm')}
                     onClose={genderPicker.onClose}
                     onConfirm={genderPicker.onConfirm}
+                />
+            )}
+            {sellerCountriesPicker.isVisible && (
+                <UniversalPickerBottomModal
+                    visible={sellerCountriesPicker.isVisible}
+                    title={sellerCountriesPicker.title}
+                    options={sellerCountriesPicker.options}
+                    isLoading={sellerCountriesPicker.isLoading}
+                    selectionMode="multiple"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={sellerCountriesPicker.onClose}
+                    onConfirm={sellerCountriesPicker.onConfirm}
                 />
             )}
         </ScreenContainer>

@@ -28,6 +28,7 @@ export const EditWineryProfileDetailsView = () => {
         wineryCountryPicker,
         regionPicker,
         userCountryPicker,
+        sellerCountriesPicker,
         phoneInitialCca2,
         birthdayDisplayText,
         mainPhotoUrl,
@@ -133,6 +134,14 @@ export const EditWineryProfileDetailsView = () => {
                         placeholder={t('registration.region')}
                         onPress={regionPicker.onOpen}
                         isDisabled={regionPicker.isDisabled}
+                    />
+                </ProfileFormField>
+                <ProfileFormField label={t('settings.sellerCountries')}>
+                    <PickerButton
+                        text={sellerCountriesPicker.selectedText}
+                        placeholder={t('settings.sellerCountries')}
+                        onPress={sellerCountriesPicker.onOpen}
+                        isDisabled={sellerCountriesPicker.isDisabled}
                     />
                 </ProfileFormField>
                 <EditableWineryLinks items={editableLinks} onAdd={onAddLink} />
@@ -264,6 +273,19 @@ export const EditWineryProfileDetailsView = () => {
                     confirmText={t('common.confirm')}
                     onClose={userCountryPicker.onClose}
                     onConfirm={userCountryPicker.onConfirm}
+                />
+            )}
+            {sellerCountriesPicker.isVisible && (
+                <UniversalPickerBottomModal
+                    visible={sellerCountriesPicker.isVisible}
+                    title={sellerCountriesPicker.title}
+                    options={sellerCountriesPicker.options}
+                    isLoading={sellerCountriesPicker.isLoading}
+                    selectionMode="multiple"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={sellerCountriesPicker.onClose}
+                    onConfirm={sellerCountriesPicker.onConfirm}
                 />
             )}
         </ScreenContainer>

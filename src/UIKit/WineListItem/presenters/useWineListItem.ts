@@ -19,6 +19,29 @@ interface IProps {
     onImagePress?: () => void;
 }
 
+const dateFormatters = new Map<string, Intl.DateTimeFormat>();
+
+const getDateFormatter = (locale: string) => {
+    const formatterLocale = locale === 'en' ? 'en-US' : 'uk-UA';
+    const cachedFormatter = dateFormatters.get(formatterLocale);
+
+    if (cachedFormatter) {
+        return cachedFormatter;
+    }
+
+    const formatter = new Intl.DateTimeFormat(formatterLocale, {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: locale === 'en',
+    });
+    dateFormatters.set(formatterLocale, formatter);
+
+    return formatter;
+};
+
 const isWineListItem = (item: IWineListItem | IWineDetails): item is IWineListItem => {
     return !('currentVintage' in item);
 };
@@ -33,7 +56,7 @@ export const useWineListItem = ({
     showTastingAuthor,
     onImagePress,
 }: IProps) => {
-    const { t } = useUiContext();
+    const { locale, t } = useUiContext();
     const wineryUserId = isWineDetails(item) ? item.wineryUserId : null;
     const { onUserPressById } = useProfileNavigation();
 
@@ -122,21 +145,19 @@ export const useWineListItem = ({
         return parts.length > 0 ? parts.join(', ') : null;
     }, [item.country, item.region]);
 
-    const getFormattedDate = useCallback((createdAt: string, locale: string) => {
-        const date = new Date(createdAt);
-        const isEnglish = locale === 'en';
+    const formattedDate = useMemo(() => {
+        if (!lastReviewData?.createdAt) {
+            return '';
+        }
 
-        const options: Intl.DateTimeFormatOptions = {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: isEnglish,
-        };
+        return getDateFormatter(locale).format(new Date(lastReviewData.createdAt));
+    }, [lastReviewData, locale]);
 
-        return new Intl.DateTimeFormat(isEnglish ? 'en-US' : 'uk-UA', options).format(date);
-    }, []);
+    const imageUri = useMemo(() => {
+        const image = item.image || item.defaultImage;
+
+        return image?.mediumUrl || image?.smallUrl || image?.originalUrl || null;
+    }, [item.defaultImage, item.image]);
 
     const hasPremium = useMemo(() => userModel.user?.hasPremium ?? false, []);
 
@@ -224,7 +245,8 @@ export const useWineListItem = ({
         similarityText,
         userRating,
         lastReviewData,
-        getFormattedDate,
+        formattedDate,
+        imageUri,
         locationText,
         expertReviewCount,
         hasPremium,

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { WineListItem } from '@/UIKit/WineListItem';
@@ -10,7 +11,7 @@ interface IProps {
     showExpertRatingWithoutPremium?: boolean;
 }
 
-export const WineryWineListItem = ({ item, onPress, onSharePress, showExpertRatingWithoutPremium = true }: IProps) => {
+const WineryWineListItemComponent = ({ item, onPress, onSharePress, showExpertRatingWithoutPremium = true }: IProps) => {
     const review = item.lastReview;
     const reviewBlock = review
         ? <WineReviewBlock user={review.user} review={review.review} showWithoutPremium />
@@ -27,3 +28,6 @@ export const WineryWineListItem = ({ item, onPress, onSharePress, showExpertRati
         />
     );
 };
+
+export const WineryWineListItem = memo(WineryWineListItemComponent);
+WineryWineListItem.displayName = 'WineryWineListItem';

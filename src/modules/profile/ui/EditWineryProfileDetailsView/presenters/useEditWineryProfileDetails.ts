@@ -22,6 +22,7 @@ import {
 import { IEditableWineryLink } from '@/modules/profile/types/IEditableWineryLink';
 import { useProfileSinglePicker } from '@/modules/profile/presenters/useProfileSinglePicker';
 import { UpdateWineryDto } from '@/entities/winery/dto/UpdateWinery.dto';
+import { useSellerCountriesPicker } from '@/modules/profile/presenters/useSellerCountriesPicker';
 
 interface IWineryForm {
     name: string;
@@ -93,6 +94,9 @@ export const useEditWineryProfileDetails = () => {
     const [galleryPhotoIdToDelete, setGalleryPhotoIdToDelete] = useState<string | null>(null);
     const [removeGalleryFileIds, setRemoveGalleryFileIds] = useState<number[]>([]);
     const { regions } = useWineRegion(form.countryId);
+    const sellerCountriesPicker = useSellerCountriesPicker();
+    const hasSellerCountriesChanges = sellerCountriesPicker.hasChanges;
+    const onSaveSellerCountries = sellerCountriesPicker.onSave;
 
     useEffect(() => {
         const onLoadCountries = async () => {
@@ -317,7 +321,7 @@ export const useEditWineryProfileDetails = () => {
         !!galleryFiles.length ||
         !!removeGalleryFileIds.length;
     const hasUserChanges = changedUserFields.size > 0 || phoneCountryCodeChanged;
-    const hasChanges = hasWineryChanges || hasUserChanges;
+    const hasChanges = hasWineryChanges || hasUserChanges || hasSellerCountriesChanges;
     const foundedYear = Number(form.foundedYear);
     const currentYear = new Date().getFullYear();
     const isDisabled =
@@ -334,43 +338,50 @@ export const useEditWineryProfileDetails = () => {
         if (isDisabled) return;
         try {
             setIsLoading(true);
-            const profileFormData = new FormData();
+            if (hasWineryChanges || hasUserChanges) {
+                const profileFormData = new FormData();
 
-            if (changedFields.size) {
-                const winery: UpdateWineryDto = {};
-                if (changedFields.has('name')) winery.name = form.name.trim();
-                if (changedFields.has('foundedYear')) winery.foundedYear = foundedYear;
-                if (changedFields.has('description')) winery.description = form.description.trim();
-                if (changedFields.has('countryId') && form.countryId) winery.countryId = form.countryId;
-                if (changedFields.has('regionId')) winery.regionId = form.regionId;
-                if (changedFields.has('links')) winery.links = form.links.map(link => link.trim()).filter(Boolean);
-                profileFormData.append('winery', JSON.stringify(winery));
-            }
-
-            if (hasUserChanges) {
-                const user: Partial<IUserForm> = {};
-                if (changedUserFields.has('country')) user.country = userForm.country;
-                if (changedUserFields.has('birthday')) user.birthday = userForm.birthday;
-                if (changedUserFields.has('phoneNumber') || phoneCountryCodeChanged) {
-                    const rawPhone = userForm.phoneNumber.trim();
-                    user.phoneNumber = rawPhone.startsWith('+')
-                        ? rawPhone
-                        : `${phoneCountryCode}${rawPhone}`.replace(/\s+/g, '');
+                if (changedFields.size) {
+                    const winery: UpdateWineryDto = {};
+                    if (changedFields.has('name')) winery.name = form.name.trim();
+                    if (changedFields.has('foundedYear')) winery.foundedYear = foundedYear;
+                    if (changedFields.has('description')) winery.description = form.description.trim();
+                    if (changedFields.has('countryId') && form.countryId) winery.countryId = form.countryId;
+                    if (changedFields.has('regionId')) winery.regionId = form.regionId;
+                    if (changedFields.has('links')) winery.links = form.links.map(link => link.trim()).filter(Boolean);
+                    profileFormData.append('winery', JSON.stringify(winery));
                 }
-                profileFormData.append('user', JSON.stringify(user));
+
+                if (hasUserChanges) {
+                    const user: Partial<IUserForm> = {};
+                    if (changedUserFields.has('country')) user.country = userForm.country;
+                    if (changedUserFields.has('birthday')) user.birthday = userForm.birthday;
+                    if (changedUserFields.has('phoneNumber') || phoneCountryCodeChanged) {
+                        const rawPhone = userForm.phoneNumber.trim();
+                        user.phoneNumber = rawPhone.startsWith('+')
+                            ? rawPhone
+                            : `${phoneCountryCode}${rawPhone}`.replace(/\s+/g, '');
+                    }
+                    profileFormData.append('user', JSON.stringify(user));
+                }
+
+                if (selectedMainPhoto) profileFormData.append('image', selectedMainPhoto as any);
+                galleryFiles.forEach(file => profileFormData.append('files', file as any));
+                if (removeMainPhoto) profileFormData.append('removeMainPhoto', 'true');
+                removeGalleryFileIds.forEach(fileId => profileFormData.append('removeGalleryFileIds', String(fileId)));
+
+                const updateResponse = await userService.updateWinery(profileFormData);
+                if (updateResponse.isError) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        updateResponse.message || localization.t('common.somethingWentWrong'),
+                    );
+                    return;
+                }
             }
 
-            if (selectedMainPhoto) profileFormData.append('image', selectedMainPhoto as any);
-            galleryFiles.forEach(file => profileFormData.append('files', file as any));
-            if (removeMainPhoto) profileFormData.append('removeMainPhoto', 'true');
-            removeGalleryFileIds.forEach(fileId => profileFormData.append('removeGalleryFileIds', String(fileId)));
-
-            const updateResponse = await userService.updateWinery(profileFormData);
-            if (updateResponse.isError) {
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    updateResponse.message || localization.t('common.somethingWentWrong'),
-                );
+            const sellerCountriesSaved = await onSaveSellerCountries();
+            if (!sellerCountriesSaved) {
                 return;
             }
 
@@ -393,6 +404,7 @@ export const useEditWineryProfileDetails = () => {
         form,
         foundedYear,
         galleryFiles,
+        hasWineryChanges,
         hasUserChanges,
         isDisabled,
         navigation,
@@ -401,6 +413,7 @@ export const useEditWineryProfileDetails = () => {
         removeGalleryFileIds,
         removeMainPhoto,
         selectedMainPhoto,
+        onSaveSellerCountries,
         userForm,
     ]);
 
@@ -413,6 +426,7 @@ export const useEditWineryProfileDetails = () => {
         wineryCountryPicker,
         regionPicker,
         userCountryPicker,
+        sellerCountriesPicker,
         phoneInitialCca2: initialPhone.cca2,
         birthdayDisplayText: getProfileBirthdayText(userForm.birthday, localization.locale),
         mainPhotoUrl,

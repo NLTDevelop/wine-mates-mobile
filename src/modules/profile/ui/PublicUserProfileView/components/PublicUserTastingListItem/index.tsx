@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { IUserTastingListItem } from '@/entities/wine/types/IUserTastingsList';
@@ -10,7 +11,7 @@ interface IProps {
     onSharePress: (item: IWineListItem | IWineDetails) => void;
 }
 
-export const PublicUserTastingListItem = ({ item, onPress, onSharePress }: IProps) => {
+const PublicUserTastingListItemComponent = ({ item, onPress, onSharePress }: IProps) => {
     return (
         <WineListItem
             item={item}
@@ -30,3 +31,6 @@ export const PublicUserTastingListItem = ({ item, onPress, onSharePress }: IProp
         />
     );
 };
+
+export const PublicUserTastingListItem = memo(PublicUserTastingListItemComponent);
+PublicUserTastingListItem.displayName = 'PublicUserTastingListItem';

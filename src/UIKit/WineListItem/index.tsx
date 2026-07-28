@@ -1,4 +1,4 @@
-import { useCallback, useMemo, ReactNode } from 'react';
+import { memo, useCallback, useMemo, ReactNode } from 'react';
 import { Pressable, TouchableOpacity, View } from 'react-native';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { useUiContext } from '@/UIProvider';
@@ -33,11 +33,11 @@ interface IProps {
     onImagePress?: () => void;
 }
 
-export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = false, footer, removeCardStyles = false,
+const WineListItemComponent = ({ item, onPress, onSharePress, showSimilarity = false, footer, removeCardStyles = false,
     showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent,
     showExpertRatingWithoutPremium = false, hideDate = false, alignFooterToBottom = false,
     showTastingAuthor = false, onImagePress }: IProps) => {
-    const { colors, locale, t } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(
         () => getStyles(colors, removeCardStyles, alignFooterToBottom),
         [alignFooterToBottom, colors, removeCardStyles],
@@ -48,7 +48,8 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
         userRating,
         expertReviewCount,
         lastReviewData,
-        getFormattedDate,
+        formattedDate,
+        imageUri,
         hasPremium,
         shouldReviewShow,
         expertRating,
@@ -103,10 +104,15 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
                         </View>
                     )}
 
-                    {item.image?.originalUrl || item.defaultImage?.originalUrl ? (
+                    {imageUri ? (
                         <FastImage
-                            source={{ uri: item.image?.originalUrl || item.defaultImage?.originalUrl }}
+                            source={{
+                                uri: imageUri,
+                                cache: FastImage.cacheControl.immutable,
+                                priority: FastImage.priority.normal,
+                            }}
                             style={styles.image}
+                            resizeMode={FastImage.resizeMode.cover}
                         />
                     ) : (
                         <View style={styles.imagePlaceholderContainer}>
@@ -191,7 +197,7 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
                     <View style={styles.dateContainer}>
                         <Typography
                             variant="subtitle_12_400"
-                            text={getFormattedDate(lastReviewData.createdAt, locale)}
+                            text={formattedDate}
                             numberOfLines={1}
                             style={styles.locationText}
                         />
@@ -200,3 +206,6 @@ export const WineListItem = ({ item, onPress, onSharePress, showSimilarity = fal
         </Pressable>
     );
 };
+
+export const WineListItem = memo(WineListItemComponent);
+WineListItem.displayName = 'WineListItem';

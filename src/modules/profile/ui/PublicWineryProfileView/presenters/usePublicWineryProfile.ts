@@ -32,14 +32,20 @@ export const usePublicWineryProfile = () => {
     }, [navigation]);
 
     const onDescriptionPress = useCallback(() => {
+        if (activeTab === PublicProfileTab.WINES) {
+            winesData.onResetWinesSearch();
+        }
         setActiveTab(PublicProfileTab.DESCRIPTION);
-    }, []);
+    }, [activeTab, winesData]);
 
     const onActivityPress = useCallback(() => undefined, []);
 
     const onEventsPress = useCallback(() => {
+        if (activeTab === PublicProfileTab.WINES) {
+            winesData.onResetWinesSearch();
+        }
         setActiveTab(PublicProfileTab.EVENTS);
-    }, []);
+    }, [activeTab, winesData]);
 
     const onWinesPress = useCallback(() => {
         setActiveTab(PublicProfileTab.WINES);

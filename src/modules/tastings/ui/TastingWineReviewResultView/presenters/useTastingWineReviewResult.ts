@@ -532,7 +532,11 @@ export const useTastingWineReviewResult = () => {
                 payload.image = wineModel.image;
             }
 
-            if (wineModel.winePeak !== null) {
+            const experienceLevel = userModel.user?.wineExperienceLevel;
+            const hasWinePeakAccess = experienceLevel === WineExperienceLevelEnum.EXPERT ||
+                experienceLevel === WineExperienceLevelEnum.CREATOR;
+
+            if (hasWinePeakAccess && wineModel.winePeak !== null) {
                 payload.winePeak = wineModel.winePeak;
             }
 

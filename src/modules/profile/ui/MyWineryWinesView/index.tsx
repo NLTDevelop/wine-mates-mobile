@@ -20,6 +20,8 @@ import { CsvImportAlert } from './components/CsvImportAlert';
 import { WineryWineListItem } from '@/modules/profile/ui/components/WineryWineListItem';
 import { useMyWineryWines } from './presenters/useMyWineryWines';
 import { getStyles } from './styles';
+import { WineListSearchBar } from '@/modules/profile/ui/components/WineListSearchBar';
+import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
 
 export const MyWineryWinesView = observer(() => {
     const { colors, t } = useUiContext();
@@ -32,8 +34,11 @@ export const MyWineryWinesView = observer(() => {
         isTemplateDownloading,
         isCsvImportAlertVisible,
         isError,
+        listRef,
         onRefresh,
         onEndReached,
+        onSearch,
+        scrollToTop,
         onPressBack,
         onItemPress,
         onAddWinePress,
@@ -68,7 +73,12 @@ export const MyWineryWinesView = observer(() => {
                     />
                 }
             >
+                <View style={styles.searchContainer}>
+                    <WineListSearchBar onSearch={onSearch} scrollToTop={scrollToTop} />
+                </View>
                 <FlatList
+                    {...WINE_LIST_PERFORMANCE_PROPS}
+                    ref={listRef}
                     data={data}
                     renderItem={renderItem}
                     keyExtractor={keyExtractor}

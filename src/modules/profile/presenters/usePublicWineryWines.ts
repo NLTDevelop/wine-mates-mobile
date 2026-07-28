@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
@@ -7,6 +8,7 @@ import { wineryWineService } from '@/entities/winery/services/WineryWineService'
 import { localization } from '@/UIProvider/localization/Localization';
 import { toastService } from '@/libs/toast/toastService';
 import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
+import { IWineListSearchQuery } from '@/modules/profile/types/IWineListSearchQuery';
 
 const LIMIT = 10;
 
@@ -15,6 +17,8 @@ export const usePublicWineryWines = (wineryId?: number) => {
     const list = wineryLinkedWinesModel.list;
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const listRef = useRef<FlatList<IWineListItem>>(null);
+    const searchQueryRef = useRef<IWineListSearchQuery>({ search: '' });
     const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const loadWines = useCallback(
@@ -30,7 +34,12 @@ export const usePublicWineryWines = (wineryId?: number) => {
                     setIsLoadingMore(true);
                 }
 
-                const response = await wineryWineService.getLinkedWines({ wineryId, limit: LIMIT, offset });
+                const response = await wineryWineService.getLinkedWines({
+                    wineryId,
+                    limit: LIMIT,
+                    offset,
+                    ...searchQueryRef.current,
+                });
 
                 if (response.isError || !response.data) {
                     toastService.showError(
@@ -71,6 +80,22 @@ export const usePublicWineryWines = (wineryId?: number) => {
         await loadWines(0);
     }, [loadWines, onResetPaginationRequests]);
 
+    const scrollWinesToTop = useCallback(() => {
+        listRef.current?.scrollToOffset({ offset: 0, animated: true });
+    }, []);
+
+    const onSearchWines = useCallback(async (query: IWineListSearchQuery) => {
+        searchQueryRef.current = query;
+        onResetPaginationRequests();
+        await loadWines(0);
+    }, [loadWines, onResetPaginationRequests]);
+
+    const onResetWinesSearch = useCallback(async () => {
+        searchQueryRef.current = { search: '' };
+        onResetPaginationRequests();
+        await loadWines(0);
+    }, [loadWines, onResetPaginationRequests]);
+
     const onLoadMoreWines = useCallback(async () => {
         const currentList = wineryLinkedWinesModel.list;
 
@@ -99,8 +124,12 @@ export const usePublicWineryWines = (wineryId?: number) => {
         wines: list?.rows || [],
         isWinesLoading: isLoading,
         isWinesLoadingMore: isLoadingMore,
+        winesListRef: listRef,
         onRefreshWines,
         onLoadMoreWines,
         onWinePress,
+        onSearchWines,
+        onResetWinesSearch,
+        scrollWinesToTop,
     };
 };

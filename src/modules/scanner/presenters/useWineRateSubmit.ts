@@ -17,6 +17,13 @@ interface ISaveWineRateParams {
 
 const DEFAULT_EXPERT_RATING = 70;
 
+const hasWinePeakAccess = () => {
+    const experienceLevel = userModel.user?.wineExperienceLevel;
+
+    return experienceLevel === WineExperienceLevelEnum.EXPERT ||
+        experienceLevel === WineExperienceLevelEnum.CREATOR;
+};
+
 const addRatingToPayload = (payload: Partial<AddRateDto>) => {
     if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
         const starRate = wineModel.review?.starRate ?? 0;
@@ -41,7 +48,7 @@ const buildShortWineRatePayload = (): Partial<AddRateDto> => {
 
     addRatingToPayload(payload);
 
-    if (wineModel.winePeak !== null) {
+    if (hasWinePeakAccess() && wineModel.winePeak !== null) {
         payload.winePeak = wineModel.winePeak;
     }
 
@@ -109,7 +116,7 @@ const buildFullWineRatePayload = (isPremiumUser: boolean): Partial<AddRateDto> =
         payload.image = wineModel.image;
     }
 
-    if (wineModel.winePeak !== null) {
+    if (hasWinePeakAccess() && wineModel.winePeak !== null) {
         payload.winePeak = wineModel.winePeak;
     }
 
