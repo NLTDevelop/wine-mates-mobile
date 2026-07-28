@@ -23,6 +23,8 @@ import { PublicProfileLinksModal } from '@/modules/profile/ui/components/PublicP
 import { WineryWineListItem } from '@/modules/profile/ui/components/WineryWineListItem';
 import { usePublicWineryProfile } from './presenters/usePublicWineryProfile';
 import { getStyles } from './styles';
+import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
+import { WineListSearchBar } from '@/modules/profile/ui/components/WineListSearchBar';
 
 export const PublicWineryProfileView = observer(() => {
     const { colors, t } = useUiContext();
@@ -51,6 +53,7 @@ export const PublicWineryProfileView = observer(() => {
         isWinesLoadingMore,
         isLinksModalVisible,
         isShareModalVisible,
+        winesListRef,
         onPressBack,
         onRefresh,
         onLoadMoreEvents,
@@ -58,6 +61,8 @@ export const PublicWineryProfileView = observer(() => {
         onEventPress,
         onFavoriteEventPress,
         onWinePress,
+        onSearchWines,
+        scrollWinesToTop,
         onShowLinksModal,
         onHideLinksModal,
         onAvatarPress,
@@ -89,7 +94,7 @@ export const PublicWineryProfileView = observer(() => {
         [onOpenShareModal, onWinePress],
     );
     const profileHeader = (
-        <View style={styles.profileHeader}>
+        <View>
             <PublicProfileHeader
                 name={wineryName}
                 avatarUrl={mainPhotoUrl}
@@ -102,6 +107,11 @@ export const PublicWineryProfileView = observer(() => {
                 onLinksPress={onShowLinksModal}
             />
             <PublicProfileTabs items={tabs} />
+            {activeTab === PublicProfileTab.WINES ? (
+                <View style={styles.winesSearch}>
+                    <WineListSearchBar onSearch={onSearchWines} scrollToTop={scrollWinesToTop} />
+                </View>
+            ) : null}
         </View>
     );
 
@@ -152,6 +162,8 @@ export const PublicWineryProfileView = observer(() => {
                     />
                 ) : (
                     <FlatList
+                        {...WINE_LIST_PERFORMANCE_PROPS}
+                        ref={winesListRef}
                         data={wines}
                         renderItem={renderWineItem}
                         keyExtractor={wineKeyExtractor}

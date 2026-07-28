@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Avatar } from '@/UIKit/Avatar';
@@ -26,7 +26,7 @@ interface IProps {
     showWithoutPremium?: boolean;
 }
 
-export const WineReviewBlock = ({ user, review, showWithoutPremium = false }: IProps) => {
+const WineReviewBlockComponent = ({ user, review, showWithoutPremium = false }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -63,3 +63,6 @@ export const WineReviewBlock = ({ user, review, showWithoutPremium = false }: IP
         </>
     );
 };
+
+export const WineReviewBlock = memo(WineReviewBlockComponent);
+WineReviewBlock.displayName = 'WineReviewBlock';

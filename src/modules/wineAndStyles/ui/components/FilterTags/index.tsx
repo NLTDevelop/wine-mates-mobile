@@ -4,12 +4,7 @@ import { getStyles } from './styles';
 import { FilterTag } from '../FilterTag';
 import { useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
-
-export interface IFilterTagItem {
-    label: string;
-    value: string | number;
-    type: 'sort' | 'color' | 'type';
-}
+import { IFilterTagItem } from '@/modules/wineAndStyles/types/IFilterTagItem';
 
 interface IProps {
     tags: IFilterTagItem[];
@@ -34,8 +29,8 @@ const FilterTagsComponent = ({ tags, onRemoveTag }: IProps) => {
             {tags.map((tag, index) => (
                 <FilterTag
                     key={`${tag.type}-${tag.value}-${index}`}
-                    label={tag.label}
-                    onRemove={() => onRemoveTag(tag)}
+                    tag={tag}
+                    onRemoveTag={onRemoveTag}
                 />
             ))}
         </ScrollView>

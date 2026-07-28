@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
@@ -35,7 +35,7 @@ const getStars = (rating: number, maxStars: number): IStar[] => {
     return stars;
 };
 
-export const SmallStarRating = ({ rating, starSize = 16, maxStars = 5 }: IProps) => {
+const SmallStarRatingComponent = ({ rating, starSize = 16, maxStars = 5 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const emptyStarColor = rating <= 0 ? colors.border : colors.icon;
@@ -86,3 +86,6 @@ export const SmallStarRating = ({ rating, starSize = 16, maxStars = 5 }: IProps)
         </View>
     );
 };
+
+export const SmallStarRating = memo(SmallStarRatingComponent);
+SmallStarRating.displayName = 'SmallStarRating';

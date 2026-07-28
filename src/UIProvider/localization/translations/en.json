@@ -454,7 +454,8 @@
         "wineryLink": "Link",
         "addWineryLink": "Add link",
         "delete": "Delete",
-        "selectedCurrency": "Selected currency"
+        "selectedCurrency": "Selected currency",
+        "sellerCountries": "Countries where wine is sold"
     },
     "logout": {
         "logout": "Log out?",

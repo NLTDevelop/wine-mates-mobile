@@ -458,7 +458,8 @@
         "wineryLink": "Посилання",
         "addWineryLink": "Додати посилання",
         "delete": "Видалити",
-        "selectedCurrency": "Обрана валюта"
+        "selectedCurrency": "Обрана валюта",
+        "sellerCountries": "Країни продажу вина"
     },
     "logout": {
         "logout": "Вийти?",

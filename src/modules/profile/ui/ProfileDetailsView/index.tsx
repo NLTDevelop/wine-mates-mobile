@@ -51,6 +51,7 @@ export const ProfileDetailsView = observer(() => {
                     <ProfileDetailsField {...fields.email} />
                     <ProfileDetailsField {...fields.phone} />
                     <ProfileDetailsField {...fields.country} />
+                    <ProfileDetailsField {...fields.sellerCountries} />
                     <ProfileDetailsField {...fields.city} />
                     <ProfileDetailsField {...fields.birthday} />
                     <ProfileDetailsField {...fields.gender} />

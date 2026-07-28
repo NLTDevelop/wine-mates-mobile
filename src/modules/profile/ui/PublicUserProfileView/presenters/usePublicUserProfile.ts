@@ -30,8 +30,11 @@ export const usePublicUserProfile = () => {
 
     const onActivityPress = useCallback(() => undefined, []);
     const onEventsPress = useCallback(() => {
+        if (activeTab === PublicProfileTab.TASTINGS) {
+            tastingsData.onResetTastingsSearch();
+        }
         setActiveTab(PublicProfileTab.EVENTS);
-    }, []);
+    }, [activeTab, tastingsData]);
 
     const onTastingsPress = useCallback(() => {
         setActiveTab(PublicProfileTab.TASTINGS);

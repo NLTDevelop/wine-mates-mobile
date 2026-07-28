@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { View } from 'react-native';
 import { getStyles } from './styles.ts';
 import { useUiContext } from '@/UIProvider';
@@ -21,7 +21,7 @@ interface IProps {
     hideText?: boolean;
 }
 
-export const RateMedal = ({ sliderValue, size, titleFontSize, mainFontSize, nameFontSize, hideText }: IProps) => {
+const RateMedalComponent = ({ sliderValue, size, titleFontSize, mainFontSize, nameFontSize, hideText }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { medalType } = useRateMedal(sliderValue);
@@ -68,3 +68,6 @@ export const RateMedal = ({ sliderValue, size, titleFontSize, mainFontSize, name
 
     return <View style={styles.container}>{renderMedal()}</View>;
 };
+
+export const RateMedal = memo(RateMedalComponent);
+RateMedal.displayName = 'RateMedal';

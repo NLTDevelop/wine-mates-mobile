@@ -16,6 +16,7 @@ import { useFavoriteWineListView } from '../../presenters/useFavoriteWineListVie
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { WineShareModal } from '@/UIKit/WineShareModal';
 import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
+import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
 
 type RootStackParamList = {
     FavoriteWineListView: {
@@ -71,6 +72,7 @@ export const FavoriteWineListView = observer(() => {
                     <Loader />
                 ) : (
                     <FlatList
+                        {...WINE_LIST_PERFORMANCE_PROPS}
                         data={wines || []}
                         keyExtractor={keyExtractor}
                         renderItem={renderItem}

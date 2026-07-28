@@ -5,23 +5,16 @@ import { useUiContext } from '@/UIProvider';
 import { useWinePeakPicker } from '../presenters/useWinePeakPicker';
 import { YearPickerModal } from './components/YearPickerModal';
 import { getStyles } from './styles';
-import { CrownIcon } from '@assets/icons/CrownIcon';
 import { CrossIcon } from '@assets/icons/CrossIcon';
-import { userModel } from '@/entities/users/UserModel';
-import { observer } from 'mobx-react-lite';
-import { LockContainer } from '@/UIKit/LockContainer';
 
 interface IProps {
     value: number | null;
     onChange: (year: number | null) => void;
-    isPremiumLockEnabled?: boolean;
 }
 
-export const WinePeakPicker = observer(({ value, onChange, isPremiumLockEnabled = true }: IProps) => {
+export const WinePeakPicker = ({ value, onChange }: IProps) => {
     const { colors, t } = useUiContext();
-    const isPremiumUser = userModel.user?.hasPremium || false;
-    const hasAccess = !isPremiumLockEnabled || isPremiumUser;
-    const styles = useMemo(() => getStyles(colors, hasAccess), [colors, hasAccess]);
+    const styles = useMemo(() => getStyles(colors), [colors]);
 
     const {
         selectedYear,
@@ -46,7 +39,6 @@ export const WinePeakPicker = observer(({ value, onChange, isPremiumLockEnabled 
                     <TouchableOpacity
                         onPress={onOpen}
                         style={styles.pickerButton}
-                        disabled={!hasAccess}
                         activeOpacity={0.75}
                     >
                         <Typography
@@ -54,18 +46,12 @@ export const WinePeakPicker = observer(({ value, onChange, isPremiumLockEnabled 
                             variant="h6"
                             style={styles.pickerText}
                         />
-                        {!hasAccess && (
-                            <View style={styles.crownIconContainer}>
-                                <CrownIcon />
-                            </View>
-                        )}
-                        {!hasAccess && <LockContainer/>}
                     </TouchableOpacity>
-                    {value && hasAccess && (
+                    {value ? (
                         <TouchableOpacity onPress={onReset} style={styles.resetButton} activeOpacity={0.75}>
                             <CrossIcon width={20} height={20} color={colors.icon_inverted} />
                         </TouchableOpacity>
-                    )}
+                    ) : null}
                 </View>
             </View>
             <YearPickerModal
@@ -80,6 +66,6 @@ export const WinePeakPicker = observer(({ value, onChange, isPremiumLockEnabled 
             />
         </>
     );
-});
+};
 
 WinePeakPicker.displayName = 'WinePeakPicker';

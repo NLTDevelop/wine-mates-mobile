@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Buffer } from 'buffer';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -20,6 +20,8 @@ import {
     WINERY_WINES_CSV_TEMPLATE_FILE_NAME,
 } from '@/modules/profile/constants/wineryWinesCsv';
 import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
+import { FlatList } from 'react-native';
+import { IWineListSearchQuery } from '@/modules/profile/types/IWineListSearchQuery';
 
 const LIMIT = 10;
 const ALERT_CLOSE_DELAY_MS = 250;
@@ -41,6 +43,8 @@ export const useMyWineryWines = () => {
     const [isTemplateDownloading, setIsTemplateDownloading] = useState(false);
     const [isCsvImportAlertVisible, setIsCsvImportAlertVisible] = useState(false);
     const [isError, setIsError] = useState(false);
+    const listRef = useRef<FlatList<IWineListItem>>(null);
+    const searchQueryRef = useRef<IWineListSearchQuery>({ search: '' });
     const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const loadWines = useCallback(
@@ -65,6 +69,7 @@ export const useMyWineryWines = () => {
                     wineryId,
                     limit: LIMIT,
                     offset,
+                    ...searchQueryRef.current,
                 });
 
                 if (response.isError || !response.data) {
@@ -105,6 +110,16 @@ export const useMyWineryWines = () => {
     const onRefresh = useCallback(async () => {
         onResetPaginationRequests();
         await loadWines(0, 'refresh');
+    }, [loadWines, onResetPaginationRequests]);
+
+    const scrollToTop = useCallback(() => {
+        listRef.current?.scrollToOffset({ offset: 0, animated: true });
+    }, []);
+
+    const onSearch = useCallback(async (query: IWineListSearchQuery) => {
+        searchQueryRef.current = query;
+        onResetPaginationRequests();
+        await loadWines(0, 'initial');
     }, [loadWines, onResetPaginationRequests]);
 
     const onEndReached = useCallback(async () => {
@@ -290,8 +305,11 @@ export const useMyWineryWines = () => {
         isTemplateDownloading,
         isCsvImportAlertVisible,
         isError,
+        listRef,
         onRefresh,
         onEndReached,
+        onSearch,
+        scrollToTop,
         onPressBack,
         onItemPress,
         onAddWinePress,
