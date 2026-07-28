@@ -8,9 +8,6 @@ export const getStyles = (colors: IColors) => {
             flex: 1,
             paddingHorizontal: scaleHorizontal(16),
         },
-        scroll: {
-            flex: 1,
-        },
         contentContainerStyle: {
             paddingTop: scaleVertical(8),
             paddingBottom: scaleVertical(16),
@@ -32,7 +29,7 @@ export const getStyles = (colors: IColors) => {
         sectionTitle: {
             marginBottom: scaleVertical(-8),
             color: colors.text_primary,
-            alignSelf: 'center'
+            alignSelf: 'center',
         },
         descriptionInputContainerStyle: {
             minHeight: scaleVertical(115),
@@ -43,6 +40,7 @@ export const getStyles = (colors: IColors) => {
             marginTop: scaleVertical(4),
         },
         buttonContainer: {
+            paddingHorizontal: scaleHorizontal(16),
             paddingBottom: scaleVertical(12),
             paddingTop: scaleVertical(8),
         },

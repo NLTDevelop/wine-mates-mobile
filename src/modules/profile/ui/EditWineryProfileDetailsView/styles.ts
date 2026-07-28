@@ -24,8 +24,10 @@ export const getStyles = (colors: IColors) => {
         inputContainer: {
             marginBottom: 0,
         },
-        button: {
-            marginTop: scaleVertical(8),
+        buttonContainer: {
+            marginHorizontal: scaleHorizontal(16),
+            paddingTop: scaleVertical(8),
+            paddingBottom: scaleVertical(12),
         },
         alertMessage: {
             color: colors.text_light,

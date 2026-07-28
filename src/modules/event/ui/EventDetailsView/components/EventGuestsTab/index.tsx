@@ -28,6 +28,7 @@ export const GuestsTab = ({ eventId, requiresConfirmation }: IProps) => {
                 fullName={item.fullName}
                 avatarUrl={item.avatarUrl}
                 ageText={item.ageText}
+                showAge={item.showAge}
                 onUserPress={item.onUserPress}
                 primaryAction={item.primaryAction}
                 secondaryAction={item.secondaryAction}

@@ -26,10 +26,11 @@ export const useLogoutAlert = () => {
         try {
             await notificationService.unregisterCurrentDevice().catch(() => {});
             userModel.token = null;
+            onHideLogoutAlert();
         } finally {
             setIsLoading(false);
         }
-    }, [isLoading]);
+    }, [isLoading, onHideLogoutAlert]);
 
     return {
         isVisible,

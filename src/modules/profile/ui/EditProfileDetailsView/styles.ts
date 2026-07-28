@@ -8,12 +8,8 @@ export const getStyles = (colors: IColors) => {
             flex: 1,
             marginHorizontal: scaleHorizontal(16),
         },
-        scroll: {
-            flex: 1,
-        },
         contentContainer: {
             paddingTop: scaleVertical(8),
-            paddingBottom: scaleVertical(0),
         },
         content: {
             flexGrow: 1,
@@ -57,6 +53,7 @@ export const getStyles = (colors: IColors) => {
             color: colors.text_light,
         },
         buttonContainer: {
+            marginHorizontal: scaleHorizontal(16),
             paddingBottom: scaleVertical(12),
             paddingTop: scaleVertical(8),
         },
