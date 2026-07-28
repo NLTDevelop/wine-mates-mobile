@@ -4,8 +4,14 @@ import { Edge, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { Gradient } from '../Gradient';
-import { KeyboardAwareScrollView, KeyboardAvoidingView, KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
+import {
+    KeyboardAwareScrollView,
+    KeyboardAvoidingView,
+    KeyboardAwareScrollViewRef,
+    KeyboardStickyView,
+} from 'react-native-keyboard-controller';
 import { scaleVertical } from '@/utils';
+import { useKeyboardStickyLayout } from '@/hooks/useKeyboardStickyLayout';
 
 interface IProps {
     edges?: Edge[];
@@ -18,15 +24,28 @@ interface IProps {
     isKeyboardAvoiding?: boolean;
     refreshControl?: React.ReactElement<RefreshControlProps>;
     scrollRef?: React.RefObject<KeyboardAwareScrollViewRef | null>;
+    footerComponent?: React.ReactNode;
 }
 
-export const ScreenContainer = ({ headerComponent, edges, children, scrollEnabled = false, containerStyle, contentContainerStyle,
-    withGradient = false, isKeyboardAvoiding = false, refreshControl, scrollRef,
+export const ScreenContainer = ({
+    headerComponent,
+    edges,
+    children,
+    scrollEnabled = false,
+    containerStyle,
+    contentContainerStyle,
+    withGradient = false,
+    isKeyboardAvoiding = false,
+    refreshControl,
+    scrollRef,
+    footerComponent,
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const safeAreaInsets = useSafeAreaInsets();
-    const bottomOffset = useMemo(() => (scaleVertical(24)), []);
+    const bottomOffset = useMemo(() => scaleVertical(24), []);
+    const { scrollBottomOffset, extraKeyboardSpace, stickyOpenedOffset, onStickyLayout } = useKeyboardStickyLayout();
+    const keyboardBottomOffset = footerComponent ? scrollBottomOffset : bottomOffset;
 
     const edgesStyle = useMemo(() => {
         const result: any = {};
@@ -56,21 +75,34 @@ export const ScreenContainer = ({ headerComponent, edges, children, scrollEnable
             {isKeyboardAvoiding ? (
                 <>
                     {scrollEnabled ? (
-                        <KeyboardAwareScrollView
-                            showsVerticalScrollIndicator={false}
-                            keyboardShouldPersistTaps="handled"
-                            nestedScrollEnabled
-                            contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
-                            style={styles.scroll}
-                            bottomOffset={bottomOffset}
-                            refreshControl={refreshControl}
-                            bounces={!!refreshControl}
-                            ref={scrollRef}
-                        >
-                            <Pressable style={styles.container} onPress={Keyboard.dismiss}>
-                                {children}
-                            </Pressable>
-                        </KeyboardAwareScrollView>
+                        <>
+                            <KeyboardAwareScrollView
+                                showsVerticalScrollIndicator={false}
+                                keyboardShouldPersistTaps="handled"
+                                nestedScrollEnabled
+                                contentContainerStyle={[styles.contentContainerStyle, contentContainerStyle]}
+                                style={styles.scroll}
+                                bottomOffset={keyboardBottomOffset}
+                                extraKeyboardSpace={footerComponent ? extraKeyboardSpace : undefined}
+                                refreshControl={refreshControl}
+                                bounces={!!refreshControl}
+                                ref={scrollRef}
+                            >
+                                <Pressable style={styles.container} onPress={Keyboard.dismiss}>
+                                    {children}
+                                </Pressable>
+                            </KeyboardAwareScrollView>
+                            {footerComponent && (
+                                <KeyboardStickyView
+                                    offset={{
+                                        closed: 0,
+                                        opened: stickyOpenedOffset,
+                                    }}
+                                >
+                                    <View onLayout={onStickyLayout}>{footerComponent}</View>
+                                </KeyboardStickyView>
+                            )}
+                        </>
                     ) : (
                         <KeyboardAvoidingView style={[styles.container, containerStyle]}>
                             <Pressable style={styles.container} onPress={Keyboard.dismiss}>

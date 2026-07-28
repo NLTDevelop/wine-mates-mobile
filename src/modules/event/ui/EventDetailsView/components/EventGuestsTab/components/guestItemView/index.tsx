@@ -13,6 +13,7 @@ const GuestItemViewComponent = ({
     fullName,
     avatarUrl,
     ageText,
+    showAge,
     onUserPress,
     primaryAction,
     secondaryAction,
@@ -26,7 +27,7 @@ const GuestItemViewComponent = ({
                 <Avatar size={40} avatarUrl={avatarUrl} fullname={fullName} />
                 <View style={styles.userInfoContainer}>
                     <Typography variant="body_500" text={fullName} style={styles.fullname} numberOfLines={1} />
-                    <Typography variant="subtitle_12_400" text={ageText} style={styles.age} />
+                    {showAge ? <Typography variant="subtitle_12_400" text={ageText} style={styles.age} /> : null}
                 </View>
             </TouchableOpacity>
             {primaryAction ? (

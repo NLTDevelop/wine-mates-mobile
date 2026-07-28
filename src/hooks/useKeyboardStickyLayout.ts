@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { LayoutChangeEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { isIOS, scaleVertical } from '@/utils';
+import { scaleVertical } from '@/utils';
 
 const KEYBOARD_SCROLL_GAP = scaleVertical(16);
 
@@ -18,7 +18,7 @@ export const useKeyboardStickyLayout = () => {
     }, [stickyHeight]);
 
     const extraKeyboardSpace = scrollBottomOffset;
-    const stickyOpenedOffset = isIOS ? bottom : 0;
+    const stickyOpenedOffset = bottom;
 
     return {
         scrollBottomOffset,

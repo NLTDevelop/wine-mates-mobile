@@ -90,6 +90,7 @@ export const useWineDetails = () => {
     const [details, setDetails] = useState<IWineDetails | null>(null);
     const [isError, setIsError] = useState(false);
     const [isAllVintagesSelected, setIsAllVintagesSelected] = useState(initialVintages === 'All');
+    const [hasSelectedVintageData, setHasSelectedVintageData] = useState(true);
     const [localIsSaved, setLocalIsSaved] = useState<boolean | undefined>(undefined);
     const [rateId, setRateId] = useState<number | null>(null);
     const isResettingRef = useRef(false);
@@ -166,6 +167,7 @@ export const useWineDetails = () => {
 
         if (isAllVintages) {
             setIsAllVintagesSelected(true);
+            setHasSelectedVintageData(true);
             await getDetails({ vintages: 'All' });
             return;
         }
@@ -175,12 +177,14 @@ export const useWineDetails = () => {
         const selectedVintage = isNoneVintage || item.value === null ? null : Number(item.value);
 
         if (selectedWineId && selectedWineId !== wineModel.selectedWineId) {
+            setHasSelectedVintageData(true);
             wineModel.selectedWineId = selectedWineId;
             await getDetails();
             return;
         }
 
         if (selectedWineId && selectedWineId === wineModel.selectedWineId) {
+            setHasSelectedVintageData(true);
             await getDetails();
             return;
         }
@@ -189,6 +193,7 @@ export const useWineDetails = () => {
             return;
         }
 
+        setHasSelectedVintageData(false);
         if (details) {
             setDetails({
                 ...details,
@@ -221,6 +226,7 @@ export const useWineDetails = () => {
         const frameId = requestAnimationFrame(() => {
             if (wineDetailsData) {
                 setIsAllVintagesSelected(initialVintages === 'All');
+                setHasSelectedVintageData(true);
                 wineModel.selectedWineId = wineDetailsData.id;
                 setDetails(wineDetailsData);
                 wineModel.vintages = wineDetailsData.vintages;
@@ -233,6 +239,7 @@ export const useWineDetails = () => {
             if (!wineId && !notificationRateId) return;
 
             setIsAllVintagesSelected(initialVintages === 'All');
+            setHasSelectedVintageData(true);
             if (wineId) {
                 wineModel.selectedWineId = wineId;
             }
@@ -245,6 +252,9 @@ export const useWineDetails = () => {
     }, [wineId, wineDetailsData, notificationRateId, initialVintages, isFocused, getDetails]);
 
     const hasCurrentVintageData = !!details?.currentVintage && typeof details.currentVintage === 'object';
+    const reviewsWineId = hasSelectedVintageData
+        ? wineModel.selectedWineId ?? wineId ?? null
+        : null;
 
     const detailsWithLocalIsSaved = details ? {
         ...details,
@@ -340,6 +350,7 @@ export const useWineDetails = () => {
         isAllVintagesSelected,
         wineId,
         selectedWineId: wineModel.selectedWineId,
+        reviewsWineId,
         fromScanner,
         onUpdateIsSaved,
         isPreloadedData: Boolean(wineDetailsData || notificationRateId),
@@ -347,6 +358,7 @@ export const useWineDetails = () => {
         showTastingAuthor: Boolean(notificationRateId),
         myReview: details?.myReview ?? null,
         hasPremiumContentAccess,
+        hasPremiumSubscription: Boolean(userModel.user?.hasPremium),
         onPressBack,
         wineImageGallery,
         onWineImagePress,

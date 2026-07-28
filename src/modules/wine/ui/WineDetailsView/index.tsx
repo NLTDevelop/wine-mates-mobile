@@ -3,7 +3,7 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
-import { FlatList } from 'react-native';
+import { FlatList, ScrollView } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { ResultListHeader } from '../components/ResultListHeader';
 import { ReviewListItem } from '../../../../UIKit/ReviewListItem';
@@ -18,18 +18,23 @@ import { useWineReviewsList } from '@/modules/wine/presenters/useWineReviewsList
 import { AddToFavoriteBottomSheet } from '../components/AddToFavoriteBottomSheet';
 import { useAddToFavoriteBottomSheet } from '../../presenters/useAddToFavoriteBottomSheet';
 import { Gallery } from '@/UIKit/Gallery';
+import { PremiumFeature } from './components/PremiumFeature';
+import { WineMarketplaceTab } from './components/WineMarketplaceTab';
+import { useWineDetailsTabs } from '../../presenters/useWineDetailsTabs';
+import { Typography } from '@/UIKit/Typography';
+import { WineDetailsScrollableHeader } from './components/WineDetailsScrollableHeader';
 
 export const WineDetailsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected, wineId,
-        selectedWineId, fromScanner, onUpdateIsSaved, isPreloadedData, isResultHeaderFooterVisible,
-        showTastingAuthor, myReview, hasPremiumContentAccess, onPressBack, wineImageGallery,
+    const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected,
+        reviewsWineId, fromScanner, onUpdateIsSaved, isPreloadedData, isResultHeaderFooterVisible,
+        showTastingAuthor, myReview, hasPremiumContentAccess, hasPremiumSubscription, onPressBack, wineImageGallery,
         onWineImagePress } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
-        selectedWineId ?? wineId,
+        reviewsWineId,
         isAllVintagesSelected,
         isPreloadedData,
         myReview,
@@ -45,6 +50,15 @@ export const WineDetailsView = observer(() => {
         isLoading,
         isSaving,
     } = useAddToFavoriteBottomSheet(details?.id, onUpdateIsSaved);
+    const {
+        isProfileActive,
+        isEvolutionActive,
+        isPurchaseActive,
+        onProfilePress,
+        onEvolutionPress,
+        onPurchasePress,
+        onGetPremiumPress,
+    } = useWineDetailsTabs();
 
     const keyExtractor = useCallback((item: IWineReviewsListItem) => `${item.id}`, []);
     const renderItem = useCallback(
@@ -64,31 +78,116 @@ export const WineDetailsView = observer(() => {
                 {!details ? (
                     <Loader />
                 ) : (
-                    <FlatList
-                        data={data}
-                        keyExtractor={keyExtractor}
-                        renderItem={renderItem}
-                        refreshControl={refreshControl}
-                        onEndReached={onEndReached}
-                        contentContainerStyle={styles.containerStyle}
-                        ListHeaderComponent={
-                            <ResultListHeader
-                                data={details}
-                                vintages={vintages}
-                                onVintageChange={onVintageChange}
-                                onFavoritePress={onOpen}
-                                hasCurrentVintageData={hasCurrentVintageData}
-                                isAllVintagesSelected={isAllVintagesSelected}
-                                fromScanner={fromScanner}
-                                hasReviews={data.length > 0}
-                                isResultHeaderFooterVisible={isResultHeaderFooterVisible}
-                                showTastingAuthor={showTastingAuthor}
-                                hasPremiumContentAccess={hasPremiumContentAccess}
-                                onWineImagePress={onWineImagePress}
+                    <>
+                        {isProfileActive ? (
+                            <FlatList
+                                data={data}
+                                keyExtractor={keyExtractor}
+                                renderItem={renderItem}
+                                refreshControl={refreshControl}
+                                onEndReached={onEndReached}
+                                contentContainerStyle={styles.containerStyle}
+                                ListHeaderComponent={
+                                    <>
+                                        <WineDetailsScrollableHeader
+                                            details={details}
+                                            vintages={vintages}
+                                            onVintageChange={onVintageChange}
+                                            onFavoritePress={onOpen}
+                                            hasCurrentVintageData={hasCurrentVintageData}
+                                            isAllVintagesSelected={isAllVintagesSelected}
+                                            fromScanner={fromScanner}
+                                            isResultHeaderFooterVisible={isResultHeaderFooterVisible}
+                                            showTastingAuthor={showTastingAuthor}
+                                            hasPremiumContentAccess={hasPremiumContentAccess}
+                                            onWineImagePress={onWineImagePress}
+                                            isProfileActive={isProfileActive}
+                                            isEvolutionActive={isEvolutionActive}
+                                            isPurchaseActive={isPurchaseActive}
+                                            onProfilePress={onProfilePress}
+                                            onEvolutionPress={onEvolutionPress}
+                                            onPurchasePress={onPurchasePress}
+                                        />
+                                        <ResultListHeader
+                                            data={details}
+                                            vintages={vintages}
+                                            onVintageChange={onVintageChange}
+                                            onFavoritePress={onOpen}
+                                            hasCurrentVintageData={hasCurrentVintageData}
+                                            isAllVintagesSelected={isAllVintagesSelected}
+                                            fromScanner={fromScanner}
+                                            hasReviews={data.length > 0}
+                                            isResultHeaderFooterVisible={isResultHeaderFooterVisible}
+                                            showTastingAuthor={showTastingAuthor}
+                                            hasPremiumContentAccess={hasPremiumContentAccess}
+                                            onWineImagePress={onWineImagePress}
+                                            hideResultHeader
+                                        />
+                                    </>
+                                }
+                                ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
                             />
-                        }
-                        ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
-                    />
+                        ) : null}
+                        {isEvolutionActive ? (
+                            <ScrollView contentContainerStyle={styles.evolutionContent}>
+                                <WineDetailsScrollableHeader
+                                    details={details}
+                                    vintages={vintages}
+                                    onVintageChange={onVintageChange}
+                                    onFavoritePress={onOpen}
+                                    hasCurrentVintageData={hasCurrentVintageData}
+                                    isAllVintagesSelected={isAllVintagesSelected}
+                                    fromScanner={fromScanner}
+                                    isResultHeaderFooterVisible={isResultHeaderFooterVisible}
+                                    showTastingAuthor={showTastingAuthor}
+                                    hasPremiumContentAccess={hasPremiumContentAccess}
+                                    onWineImagePress={onWineImagePress}
+                                    isProfileActive={isProfileActive}
+                                    isEvolutionActive={isEvolutionActive}
+                                    isPurchaseActive={isPurchaseActive}
+                                    onProfilePress={onProfilePress}
+                                    onEvolutionPress={onEvolutionPress}
+                                    onPurchasePress={onPurchasePress}
+                                />
+                                {hasPremiumSubscription ? (
+                                    <Typography
+                                        text={t('wineMarketplace.evolutionComingSoon')}
+                                        variant="h4"
+                                        style={styles.evolutionText}
+                                    />
+                                ) : (
+                                    <PremiumFeature onGetPremiumPress={onGetPremiumPress} />
+                                )}
+                            </ScrollView>
+                        ) : null}
+                        {isPurchaseActive ? (
+                            <WineMarketplaceTab
+                                wineDetails={details}
+                                headerComponent={
+                                    <WineDetailsScrollableHeader
+                                        details={details}
+                                        vintages={vintages}
+                                        onVintageChange={onVintageChange}
+                                        onFavoritePress={onOpen}
+                                        hasCurrentVintageData={hasCurrentVintageData}
+                                        isAllVintagesSelected={isAllVintagesSelected}
+                                        fromScanner={fromScanner}
+                                        isResultHeaderFooterVisible={isResultHeaderFooterVisible}
+                                        showTastingAuthor={showTastingAuthor}
+                                        hasPremiumContentAccess={hasPremiumContentAccess}
+                                        onWineImagePress={onWineImagePress}
+                                        isProfileActive={isProfileActive}
+                                        isEvolutionActive={isEvolutionActive}
+                                        isPurchaseActive={isPurchaseActive}
+                                        onProfilePress={onProfilePress}
+                                        onEvolutionPress={onEvolutionPress}
+                                        onPurchasePress={onPurchasePress}
+                                        compactTabsBottomSpacing
+                                    />
+                                }
+                            />
+                        ) : null}
+                    </>
                 )}
                 {isAddToFavoriteModalVisible && (
                     <AddToFavoriteBottomSheet
