@@ -1,0 +1,70 @@
+diff --git a/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml b/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml
+index 19bb690..8841429 100644
+--- a/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml
++++ b/node_modules/react-native-image-crop-picker/android/src/main/AndroidManifest.xml
+@@ -23,7 +23,7 @@
+         </provider>
+ 
+         <activity
+-            android:name="com.yalantis.ucrop.UCropActivity"
++            android:name=".InsetAwareUCropActivity"
+             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+             android:exported="false" />
+ 
+diff --git a/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/ImageCropPicker.java b/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/ImageCropPicker.java
+index b9c494e..8a8973e 100644
+--- a/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/ImageCropPicker.java
++++ b/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/ImageCropPicker.java
+@@ -748,7 +748,9 @@ class ImageCropPicker implements ActivityEventListener {
+             uCrop.withAspectRatio(width, height);
+         }
+ 
+-        uCrop.start(activity);
++        Intent cropIntent = uCrop.getIntent(activity);
++        cropIntent.setClass(activity, InsetAwareUCropActivity.class);
++        activity.startActivityForResult(cropIntent, UCrop.REQUEST_CROP);
+     }
+ 
+     private void imagePickerResult(Activity activity, final int requestCode, final int resultCode, final Intent data) {
+diff --git a/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/InsetAwareUCropActivity.java b/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/InsetAwareUCropActivity.java
+new file mode 100644
+index 0000000..c41125e
+--- /dev/null
++++ b/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/InsetAwareUCropActivity.java
+@@ -0,0 +1,36 @@
++package com.reactnative.ivpusic.imagepicker;
++
++import android.os.Bundle;
++import android.view.View;
++
++import androidx.annotation.Nullable;
++import androidx.core.graphics.Insets;
++import androidx.core.view.ViewCompat;
++import androidx.core.view.WindowInsetsCompat;
++
++import com.yalantis.ucrop.UCropActivity;
++
++public class InsetAwareUCropActivity extends UCropActivity {
++    @Override
++    public void onCreate(@Nullable Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++
++        View contentView = findViewById(android.R.id.content);
++        int initialPaddingLeft = contentView.getPaddingLeft();
++        int initialPaddingTop = contentView.getPaddingTop();
++        int initialPaddingRight = contentView.getPaddingRight();
++        int initialPaddingBottom = contentView.getPaddingBottom();
++
++        ViewCompat.setOnApplyWindowInsetsListener(contentView, (view, windowInsets) -> {
++            Insets navigationBarInsets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
++            view.setPadding(
++                    initialPaddingLeft,
++                    initialPaddingTop,
++                    initialPaddingRight,
++                    initialPaddingBottom + navigationBarInsets.bottom
++            );
++            return windowInsets;
++        });
++        ViewCompat.requestApplyInsets(contentView);
++    }
++}

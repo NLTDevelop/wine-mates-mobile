@@ -206,7 +206,7 @@ class NotificationNavigationHandler {
                 this.readPushNotification(data, rateId);
             }
 
-            this.navigate('WineDetailsView', { notificationRateId: rateId });
+            this.navigate('NotificationWineDetailsView', { notificationRateId: rateId });
         }
     };
 

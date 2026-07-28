@@ -738,6 +738,20 @@
         "addPaymentMethodsInProfile": "Додайте способи оплати в профілі",
         "openPayments": "Відкрити способи оплати"
     },
+    "wineMarketplace": {
+        "profileTab": "Профіль вина",
+        "evolutionTab": "Еволюція вина",
+        "purchaseTab": "Де купити",
+        "premiumTitle": "Преміум-функція",
+        "premiumDescription": "Ця функція доступна лише преміум-користувачам. Оновіть тариф, щоб отримати повний доступ.",
+        "getPremium": "Отримати Premium",
+        "evolutionComingSoon": "Еволюція вина скоро з’явиться",
+        "from": "від",
+        "to": "до",
+        "visitWebsite": "Перейти на сайт",
+        "privateOffers": "Пропозиції",
+        "price": "Ціна"
+    },
     "contactInfo": {
         "contactInfo": "Контактна інформація",
         "addContact": "Додати контакт",
