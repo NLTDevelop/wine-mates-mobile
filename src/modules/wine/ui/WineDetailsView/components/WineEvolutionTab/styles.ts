@@ -377,6 +377,7 @@ export const getStyles = (colors: IColors) => {
         },
         statReviews: {
             textAlign: 'center',
+            opacity: 0.7,
         },
         avatarContent: {
             gap: scaleVertical(7),

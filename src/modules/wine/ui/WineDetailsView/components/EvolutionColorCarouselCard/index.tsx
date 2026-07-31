@@ -33,7 +33,7 @@ export const EvolutionColorCarouselCard = ({ card }: IProps) => {
                                     <Typography
                                         text={card.colors[0].reviewsText}
                                         variant="subtitle_12_400"
-                                        style={[styles.statReviews, { color: card.colors[0].textColor, opacity: 0.7 }]}
+                                        style={[styles.statReviews, { color: card.colors[0].textColor }]}
                                     />
                                 </View>
                             ) : null}
@@ -47,7 +47,7 @@ export const EvolutionColorCarouselCard = ({ card }: IProps) => {
                                     <Typography
                                         text={card.colors[1].reviewsText}
                                         variant="subtitle_12_400"
-                                        style={[styles.statReviews, { color: card.colors[1].textColor, opacity: 0.7 }]}
+                                        style={[styles.statReviews, { color: card.colors[1].textColor }]}
                                     />
                                 </View>
                             ) : null}
@@ -61,7 +61,7 @@ export const EvolutionColorCarouselCard = ({ card }: IProps) => {
                                     <Typography
                                         text={card.colors[2].reviewsText}
                                         variant="subtitle_12_400"
-                                        style={[styles.statReviews, { color: card.colors[2].textColor, opacity: 0.7 }]}
+                                        style={[styles.statReviews, { color: card.colors[2].textColor }]}
                                     />
                                 </View>
                             ) : null}
@@ -75,7 +75,7 @@ export const EvolutionColorCarouselCard = ({ card }: IProps) => {
                                     <Typography
                                         text={card.colors[3].reviewsText}
                                         variant="subtitle_12_400"
-                                        style={[styles.statReviews, { color: card.colors[3].textColor, opacity: 0.7 }]}
+                                        style={[styles.statReviews, { color: card.colors[3].textColor }]}
                                     />
                                 </View>
                             ) : null}
@@ -89,7 +89,7 @@ export const EvolutionColorCarouselCard = ({ card }: IProps) => {
                                     <Typography
                                         text={card.colors[4].reviewsText}
                                         variant="subtitle_12_400"
-                                        style={[styles.statReviews, { color: card.colors[4].textColor, opacity: 0.7 }]}
+                                        style={[styles.statReviews, { color: card.colors[4].textColor }]}
                                     />
                                 </View>
                             ) : null}

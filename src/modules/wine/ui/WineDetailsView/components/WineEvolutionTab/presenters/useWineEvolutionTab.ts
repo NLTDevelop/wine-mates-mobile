@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ICarouselInstance } from 'react-native-reanimated-carousel';
-import { scaleHorizontal } from '@/utils';
-import { getContrastColor } from '@/utils';
+import { getContrastColor, scaleHorizontal } from '@/utils';
 import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { wineService } from '@/entities/wine/services/WineService';
@@ -413,12 +412,10 @@ export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
             : [createEmptyCarouselCard('taste-empty')];
     }, [evolutionData]);
 
-    useEffect(() => {
-        setExpertActiveIndex(index => Math.min(index, Math.max(expertAssessments.length - 1, 0)));
-        setColorActiveIndex(index => Math.min(index, Math.max(connectedColorCards.length - 1, 0)));
-        setAromaActiveIndex(index => Math.min(index, Math.max(connectedAromaCards.length - 1, 0)));
-        setTasteActiveIndex(index => Math.min(index, Math.max(connectedTasteCards.length - 1, 0)));
-    }, [connectedAromaCards.length, connectedColorCards.length, connectedTasteCards.length, expertAssessments.length]);
+    const safeExpertActiveIndex = Math.min(expertActiveIndex, Math.max(expertAssessments.length - 1, 0));
+    const safeColorActiveIndex = Math.min(colorActiveIndex, Math.max(connectedColorCards.length - 1, 0));
+    const safeAromaActiveIndex = Math.min(aromaActiveIndex, Math.max(connectedAromaCards.length - 1, 0));
+    const safeTasteActiveIndex = Math.min(tasteActiveIndex, Math.max(connectedTasteCards.length - 1, 0));
 
     const amateurRatingRows = useMemo(
         () => (selectedEvolution ? createEvolutionRatingRows(selectedEvolution) : createEmptyRatingRows()),
@@ -439,16 +436,16 @@ export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
         isYearPickerVisible,
         yearOptions,
         expertAssessments,
-        expertActiveIndex,
+        expertActiveIndex: safeExpertActiveIndex,
         expertCarouselRef,
         colorCards: connectedColorCards,
-        colorActiveIndex,
+        colorActiveIndex: safeColorActiveIndex,
         colorCarouselRef,
         aromaCards: connectedAromaCards,
-        aromaActiveIndex,
+        aromaActiveIndex: safeAromaActiveIndex,
         aromaCarouselRef,
         tasteCards: connectedTasteCards,
-        tasteActiveIndex,
+        tasteActiveIndex: safeTasteActiveIndex,
         tasteCarouselRef,
         amateurAgeGroups: AMATEUR_AGE_GROUPS,
         amateurRatingRows,
