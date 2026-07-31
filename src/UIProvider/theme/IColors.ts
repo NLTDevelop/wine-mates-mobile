@@ -7,6 +7,7 @@ export type IColors = {
     background_light: string;
     background_middle: string;
     background_grey: string;
+    evolution_background_grey: string;
     background_disabled: string;
 
     border: string;
@@ -42,22 +43,35 @@ export type IColors = {
 
     stars: string;
     lockBackground: string;
+
+    evolutionChartRed: string;
+    evolutionChartRedBackground: string;
+    evolutionChartGreen: string;
+    evolutionChartGreenBackground: string;
+    evolutionChartBlue: string;
+    evolutionChartBlueBackground: string;
+    evolutionChartYellow: string;
+    evolutionChartYellowBackground: string;
+    evolutionChartPurple: string;
+    evolutionChartPurpleBackground: string;
+    evolutionChartOrange: string;
+    evolutionColorRed: string;
+    evolutionColorOrange: string;
+    evolutionColorPink: string;
+    evolutionAromaFruity: string;
+    evolutionAromaFloral: string;
+    evolutionAromaSpicy: string;
+    evolutionAromaHerbal: string;
+    evolutionTasteCherry: string;
+    evolutionTasteRaspberry: string;
+    evolutionTasteVanilla: string;
+    evolutionTasteOak: string;
+    evolutionPeopleBackground: string;
 };
 
 export type FontStyle = {
     fontFamily: string;
-    fontWeight:
-    | 'normal'
-    | 'bold'
-    | '100'
-    | '200'
-    | '300'
-    | '400'
-    | '500'
-    | '600'
-    | '700'
-    | '800'
-    | '900';
+    fontWeight: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 };
 
 export interface IFonts {
