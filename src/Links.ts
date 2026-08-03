@@ -22,6 +22,7 @@ export interface ILinks {
     features: string;
     homeSections: string;
     wines: string;
+    wineEvolution: string;
     wineFilters: string;
     wineSetSearch: string;
     wineEventDetails: string;
@@ -97,6 +98,7 @@ class Links implements ILinks {
         features: 'features',
         homeSections: 'home-sections',
         wines: 'wines',
+        wineEvolution: 'wines',
         wineFilters: 'wines/filters',
         wineSetSearch: 'wines/search/wine-set',
         wineEventDetails: 'wines',
@@ -198,6 +200,9 @@ class Links implements ILinks {
     }
     public get wines() {
         return `${this._domain}${this._links.wines}`;
+    }
+    public get wineEvolution() {
+        return `${this._domain}${this._links.wineEvolution}`;
     }
     public get wineFilters() {
         return `${this._domain}${this._links.wineFilters}`;
