@@ -37,11 +37,18 @@ export interface IWineEvolutionCarouselCard {
 export interface IWineEvolutionLineSeries {
     id: string;
     color: string;
-    points: string;
+    path: string;
     lastPoint: {
         x: number;
         y: number;
     };
+}
+
+export interface IWineEvolutionAudienceControl {
+    id: 'men' | 'women';
+    title: string;
+    isActive: boolean;
+    onPress: () => void;
 }
 
 export interface IWineEvolutionChart {
@@ -54,4 +61,5 @@ export interface IWineEvolutionChart {
     plotHeight: number;
     strokeWidth: number;
     series: IWineEvolutionLineSeries[];
+    audienceControls?: IWineEvolutionAudienceControl[];
 }

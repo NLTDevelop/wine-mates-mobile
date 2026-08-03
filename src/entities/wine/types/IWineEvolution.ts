@@ -23,7 +23,7 @@ export interface IWineEvolutionRatingByGroup {
 export interface IWineEvolutionStatistic {
     id: number;
     name: string;
-    colorHex: string;
+    colorHex: string | null;
     userCount: number;
 }
 
@@ -36,7 +36,7 @@ export interface IWineEvolutionTasteCharacteristicLevel {
 export interface IWineEvolutionTasteCharacteristic {
     characteristicId: number;
     name: string;
-    colorHex: string;
+    colorHex: string | null;
     avgSortNumber: number | null;
     avgLevelId: number | null;
     levelName: string | null;

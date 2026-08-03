@@ -180,7 +180,7 @@ export const getStyles = (colors: IColors) => {
         },
         summaryTitle: {
             color: colors.text,
-            flexShrink: 0,
+            flexShrink: 1,
             lineHeight: scaleVertical(18),
         },
         graphArea: {
@@ -243,11 +243,18 @@ export const getStyles = (colors: IColors) => {
             backgroundColor: colors.primary,
             borderRadius: scaleVertical(20),
         },
+        toggleInactive: {
+            alignItems: 'flex-start',
+            backgroundColor: colors.border,
+        },
         toggleThumb: {
             width: scaleVertical(15),
             height: scaleVertical(15),
             backgroundColor: colors.text_inverted,
             borderRadius: scaleVertical(15),
+        },
+        toggleThumbInactive: {
+            backgroundColor: colors.background,
         },
         chips: {
             flexDirection: 'row',
@@ -337,11 +344,10 @@ export const getStyles = (colors: IColors) => {
             opacity: 0.3,
         },
         carouselViewport: {
-            height: scaleVertical(444),
+            height: scaleVertical(432),
             marginLeft: scaleHorizontal(16),
             paddingTop: scaleVertical(12),
             paddingLeft: scaleHorizontal(12),
-            gap: scaleVertical(6),
             backgroundColor: colors.evolution_background_grey,
             borderRadius: scaleVertical(12),
         },
@@ -441,7 +447,6 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
         },
         metricCard: {
-            height: scaleVertical(280),
             gap: scaleVertical(12),
             padding: scaleHorizontal(16),
             backgroundColor: colors.evolution_background_grey,
@@ -449,8 +454,8 @@ export const getStyles = (colors: IColors) => {
         },
         metricTitle: {
             color: colors.text,
-            flexShrink: 0,
-            lineHeight: scaleVertical(20),
+            flexShrink: 1,
+            // lineHeight: scaleVertical(20),
         },
         metricGraphPlot: {
             height: scaleVertical(193),
@@ -466,13 +471,13 @@ export const getStyles = (colors: IColors) => {
             height: scaleVertical(193),
         },
         metricYLabels: {
-            width: scaleHorizontal(35),
+            width: scaleHorizontal(88),
             height: scaleVertical(193),
             justifyContent: 'space-between',
         },
         metricXAxis: {
             height: scaleVertical(20),
-            marginLeft: scaleHorizontal(35),
+            marginLeft: scaleHorizontal(88),
             flexDirection: 'row',
             alignItems: 'flex-end',
             justifyContent: 'space-between',

@@ -183,8 +183,8 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
                             onSnapToItem={onColorSnap}
                             renderItem={renderColorItem}
                         />
-                        <EvolutionCarouselDots count={colorCards.length} activeIndex={colorActiveIndex} />
                     </View>
+                    <EvolutionCarouselDots count={colorCards.length} activeIndex={colorActiveIndex} />
                 </View>
 
                 <View style={styles.carouselSection}>
@@ -218,8 +218,8 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
                             onSnapToItem={onAromaSnap}
                             renderItem={renderColorItem}
                         />
-                        <EvolutionCarouselDots count={aromaCards.length} activeIndex={aromaActiveIndex} />
                     </View>
+                    <EvolutionCarouselDots count={aromaCards.length} activeIndex={aromaActiveIndex} />
                 </View>
 
                 <View style={styles.carouselSection}>
@@ -253,8 +253,8 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
                             onSnapToItem={onTasteSnap}
                             renderItem={renderColorItem}
                         />
-                        <EvolutionCarouselDots count={tasteCards.length} activeIndex={tasteActiveIndex} />
                     </View>
+                    <EvolutionCarouselDots count={tasteCards.length} activeIndex={tasteActiveIndex} />
                 </View>
 
                 <View style={styles.metricSection}>

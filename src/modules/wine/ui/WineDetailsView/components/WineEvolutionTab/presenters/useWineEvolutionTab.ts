@@ -19,6 +19,7 @@ import {
 } from '@/modules/wine/types/IWineEvolution';
 
 const NO_DATA = '-';
+const NO_VINTAGE = 'Non-vintage';
 
 const getChartColors = (colors: IColors) => [
     colors.evolutionChartRed,
@@ -32,7 +33,15 @@ const getChartColors = (colors: IColors) => [
 const AMATEUR_AGE_GROUPS = ['18-25', '26-35', '36-45', '46-60', '60+'];
 const AMATEUR_AGE_KEYS = ['18_25', '26_35', '36_45', '46_60', '60_plus'] as const;
 
+const EMPTY_CHART_TITLES = ['Sweetness', 'Acidity', 'Tannin', 'Body', 'Aftertaste', 'Alcohol'];
+const MOCK_AVATAR_SOURCES = [
+    require('@assets/images/wine_evolution_avatars/wine_evolution_avatar_1.png'),
+    require('@assets/images/wine_evolution_avatars/wine_evolution_avatar_2.png'),
+    require('@assets/images/wine_evolution_avatars/wine_evolution_avatar_3.png'),
+];
+
 const formatScore = (value: number | null) => (value === null ? NO_DATA : value.toFixed(1));
+const formatVintage = (vintage: number | null) => (vintage === null ? NO_VINTAGE : `${vintage}`);
 
 const createEmptyRatingRows = (): IWineEvolutionRatingRow[] =>
     ['Men', 'Women'].map(label => ({
@@ -53,7 +62,8 @@ const createEvolutionRatingRows = (item: IWineEvolutionVintage): IWineEvolutionR
                 score: item.ratingByGroup.men[ageKey].avg,
                 reviews: item.ratingByGroup.men[ageKey].count,
                 scoreText: formatScore(item.ratingByGroup.men[ageKey].avg),
-                reviewsText: `(${item.ratingByGroup.men[ageKey].count})`,
+                reviewsText:
+                    item.ratingByGroup.men[ageKey].avg === null ? NO_DATA : `(${item.ratingByGroup.men[ageKey].count})`,
             })),
         },
         {
@@ -62,23 +72,27 @@ const createEvolutionRatingRows = (item: IWineEvolutionVintage): IWineEvolutionR
                 score: item.ratingByGroup.women[ageKey].avg,
                 reviews: item.ratingByGroup.women[ageKey].count,
                 scoreText: formatScore(item.ratingByGroup.women[ageKey].avg),
-                reviewsText: `(${item.ratingByGroup.women[ageKey].count})`,
+                reviewsText:
+                    item.ratingByGroup.women[ageKey].avg === null
+                        ? NO_DATA
+                        : `(${item.ratingByGroup.women[ageKey].count})`,
             })),
         },
     ];
 };
 
-const createEvolutionStatistic = (item: IWineEvolutionStatistic): IWineEvolutionColorStat => ({
+const createEvolutionStatistic = (item: IWineEvolutionStatistic, fallbackColor: string): IWineEvolutionColorStat => ({
     label: item.name,
     reviews: item.userCount,
     reviewsText: `(${item.userCount} Reviews)`,
-    backgroundColor: item.colorHex,
-    textColor: getContrastColor(item.colorHex),
+    backgroundColor: item.colorHex ?? fallbackColor,
+    textColor: getContrastColor(item.colorHex ?? fallbackColor),
 });
 
 const createEvolutionCarouselCards = (
     data: IWineEvolutionVintage[],
     getStatistics: (item: IWineEvolutionVintage) => IWineEvolutionStatistic[],
+    fallbackColors: string[],
 ): IWineEvolutionCarouselCard[] => {
     return data.map((item, index) => {
         const statistics = getStatistics(item).slice(0, 5);
@@ -86,9 +100,11 @@ const createEvolutionCarouselCards = (
 
         return {
             id: `evolution-card-${item.vintage ?? 'none'}-${index}`,
-            year: item.vintage === null ? NO_DATA : `${item.vintage}`,
-            colors: statistics.map(createEvolutionStatistic),
-            avatarSources: [],
+            year: formatVintage(item.vintage),
+            colors: statistics.map((statistic, statisticIndex) =>
+                createEvolutionStatistic(statistic, fallbackColors[statisticIndex % fallbackColors.length]),
+            ),
+            avatarSources: MOCK_AVATAR_SOURCES,
             additionalPeople: peopleCount,
             additionalPeopleText: peopleCount ? `+${peopleCount}` : '',
             isEmpty: statistics.length === 0,
@@ -109,23 +125,14 @@ const createEmptyCarouselCard = (id: string): IWineEvolutionCarouselCard => ({
 const createEvolutionExpertAssessments = (data: IWineEvolutionVintage[]): IWineEvolutionExpertAssessment[] => {
     return data.map((item, index) => ({
         id: `expert-${item.vintage ?? 'none'}-${index}`,
-        year: item.vintage === null ? NO_DATA : `${item.vintage}`,
+        year: formatVintage(item.vintage),
         score: item.avgExpertRating,
     }));
 };
 
-const getCharacteristicValue = (item: IWineEvolutionVintage, name: string): number | null => {
-    const characteristic = item.tasteCharacteristics.find(
-        (tasteCharacteristic: IWineEvolutionTasteCharacteristic) =>
-            tasteCharacteristic.name.toLowerCase() === name.toLowerCase(),
-    );
-
-    return characteristic?.avgSortNumber ?? null;
-};
-
 const createSeries = (
     id: string,
-    values: number[],
+    values: Array<number | null>,
     color: string,
     minValue: number,
     maxValue: number,
@@ -133,17 +140,44 @@ const createSeries = (
     plotHeight: number,
 ): IWineEvolutionLineSeries => {
     const points = values.map((value, index) => {
+        if (value === null) {
+            return null;
+        }
+
         const x = values.length > 1 ? (plotWidth / (values.length - 1)) * index : 0;
-        const y = plotHeight - ((value - minValue) / (maxValue - minValue)) * plotHeight;
+        const valueRange = maxValue - minValue || 1;
+        const y = plotHeight - ((value - minValue) / valueRange) * plotHeight;
 
         return { x, y };
     });
 
+    const pathParts: string[] = [];
+    let currentSegment: string[] = [];
+
+    points.forEach(point => {
+        if (!point) {
+            if (currentSegment.length) {
+                pathParts.push(currentSegment.join(' '));
+                currentSegment = [];
+            }
+
+            return;
+        }
+
+        currentSegment.push(`${currentSegment.length ? 'L' : 'M'} ${point.x} ${point.y}`);
+    });
+
+    if (currentSegment.length) {
+        pathParts.push(currentSegment.join(' '));
+    }
+
+    const validPoints = points.filter((point): point is { x: number; y: number } => point !== null);
+
     return {
         id,
         color,
-        points: points.map(point => `${point.x},${point.y}`).join(' '),
-        lastPoint: points[points.length - 1],
+        path: pathParts.join(' '),
+        lastPoint: validPoints[validPoints.length - 1],
     };
 };
 
@@ -151,7 +185,7 @@ const createChart = (
     id: string,
     title: string,
     yAxisLabels: string[],
-    values: number[],
+    values: Array<number | null>,
     color: string,
     minValue: number,
     maxValue: number,
@@ -168,40 +202,85 @@ const createChart = (
     plotWidth,
     plotHeight,
     strokeWidth: 1.5,
-    series: values.length ? [createSeries(id, values, color, minValue, maxValue, plotWidth, plotHeight)] : [],
+    series: values.some(value => value !== null)
+        ? [createSeries(id, values, color, minValue, maxValue, plotWidth, plotHeight)]
+        : [],
 });
+
+const getCharacteristicDefinitions = (data: IWineEvolutionVintage[]) => {
+    const definitions: IWineEvolutionTasteCharacteristic[] = [];
+
+    data.forEach(item => {
+        item.tasteCharacteristics.forEach(characteristic => {
+            if (!definitions.some(definition => definition.characteristicId === characteristic.characteristicId)) {
+                definitions.push(characteristic);
+            }
+        });
+    });
+
+    return definitions;
+};
+
+const getCharacteristicLevels = (characteristic: IWineEvolutionTasteCharacteristic) =>
+    [...characteristic.levels].sort((first, second) => second.sortNumber - first.sortNumber);
+
+const getGridLines = (height: number, labelsCount: number) => {
+    if (labelsCount <= 1) {
+        return [height / 2];
+    }
+
+    return Array.from({ length: labelsCount }, (_, index) => (height / (labelsCount - 1)) * index);
+};
 
 const createEvolutionLineCharts = (
     data: IWineEvolutionVintage[],
     chartColors: string[],
     plotWidth: number,
 ): IWineEvolutionChart[] => {
-    const chartYears = data.map(item => (item.vintage === null ? NO_DATA : `${item.vintage}`));
+    const chartYears = data.map(item => formatVintage(item.vintage));
     const compactPlotHeight = 193;
-    const chartDefinitions = [
-        { id: 'sweetness', title: 'Sweetness', labels: ['very sweet', 'semisweet', 'dry'], maxValue: 3 },
-        { id: 'acidity', title: 'Acidity', labels: ['high', 'medium', 'low'], maxValue: 3 },
-        { id: 'tannin', title: 'Tannin', labels: ['high', 'medium', 'low'], maxValue: 3 },
-        { id: 'body', title: 'Body', labels: ['saturated', 'dense', 'medium', 'light', 'ultralight'], maxValue: 4 },
-        { id: 'aftertaste', title: 'Aftertaste', labels: ['long >45 sec', 'medium', 'short <10 sec'], maxValue: 3 },
-        { id: 'alcohol', title: 'Alcohol', labels: ['high', 'medium', 'low'], maxValue: 3 },
-    ];
+    const characteristics = getCharacteristicDefinitions(data).slice(0, EMPTY_CHART_TITLES.length);
+    const chartDefinitions = EMPTY_CHART_TITLES.map((emptyTitle, index) => characteristics[index] ?? null);
 
-    return chartDefinitions.map((definition, index) => {
-        const values = data.map(item => getCharacteristicValue(item, definition.title));
-        const gridY = definition.maxValue === 4 ? [12, 54, 96, 138, 181] : [24, 96, 168];
+    return chartDefinitions.map((characteristic, index) => {
+        if (!characteristic) {
+            return createChart(
+                `empty-${index}`,
+                EMPTY_CHART_TITLES[index],
+                [NO_DATA],
+                [],
+                chartColors[index % chartColors.length],
+                0,
+                1,
+                plotWidth,
+                compactPlotHeight,
+                [compactPlotHeight / 2],
+                chartYears,
+            );
+        }
+
+        const levels = getCharacteristicLevels(characteristic);
+        const yAxisLabels = levels.length ? levels.map(level => level.name) : [NO_DATA];
+        const minValue = levels.length ? levels[levels.length - 1].sortNumber : 0;
+        const maxValue = levels.length ? levels[0].sortNumber : 1;
+        const values = data.map(
+            item =>
+                item.tasteCharacteristics.find(
+                    itemCharacteristic => itemCharacteristic.characteristicId === characteristic.characteristicId,
+                )?.avgSortNumber ?? null,
+        );
 
         return createChart(
-            definition.id,
-            definition.title,
-            definition.labels,
-            values.every((value): value is number => value !== null) ? values : [],
-            chartColors[index],
-            0,
-            definition.maxValue,
+            `characteristic-${characteristic.characteristicId}`,
+            characteristic.name,
+            yAxisLabels,
+            values,
+            characteristic.colorHex ?? chartColors[index % chartColors.length],
+            minValue,
+            maxValue,
             plotWidth,
             compactPlotHeight,
-            gridY,
+            getGridLines(compactPlotHeight, yAxisLabels.length),
             chartYears,
         );
     });
@@ -211,15 +290,19 @@ const createEvolutionAssessmentChart = (
     data: IWineEvolutionVintage[],
     chartColors: string[],
     plotWidth: number,
+    audienceVisibility: { men: boolean; women: boolean },
+    onMenToggle: () => void,
+    onWomenToggle: () => void,
 ): IWineEvolutionChart => {
-    const ageKeys = ['18_25', '26_35', '36_45'] as const;
+    const ageKeys = AMATEUR_AGE_KEYS;
     const groupSeries = [
-        { id: 'men', group: 'men' as const, ageKey: ageKeys[0] },
-        { id: 'men', group: 'men' as const, ageKey: ageKeys[1] },
-        { id: 'men', group: 'men' as const, ageKey: ageKeys[2] },
-        { id: 'women', group: 'women' as const, ageKey: ageKeys[0] },
-        { id: 'women', group: 'women' as const, ageKey: ageKeys[1] },
-        { id: 'women', group: 'women' as const, ageKey: ageKeys[2] },
+        ...ageKeys.map((ageKey, index) => ({ id: `men-${ageKey}`, group: 'men' as const, ageKey, colorIndex: index })),
+        ...ageKeys.map((ageKey, index) => ({
+            id: `women-${ageKey}`,
+            group: 'women' as const,
+            ageKey,
+            colorIndex: index,
+        })),
     ];
     const plotHeight = 282;
 
@@ -227,30 +310,36 @@ const createEvolutionAssessmentChart = (
         id: 'assessment-over-years',
         title: 'Dynamics of the assessment over the years',
         yAxisLabels: ['5', '4', '3', '2', '1', '0'],
-        xAxisLabels: data.map(item => (item.vintage === null ? NO_DATA : `${item.vintage}`)),
+        xAxisLabels: data.map(item => formatVintage(item.vintage)),
         gridY: [16, 66, 116, 166, 216, 266],
         plotWidth,
         plotHeight,
         strokeWidth: 1.5,
         series: data.length
-            ? groupSeries.flatMap((series, index) => {
-                  const values = data.map(item => item.ratingByGroup[series.group][series.ageKey].avg);
+            ? groupSeries
+                  .filter(series => audienceVisibility[series.group])
+                  .flatMap(series => {
+                      const values = data.map(item => item.ratingByGroup[series.group][series.ageKey].avg);
 
-                  return values.every((value): value is number => value !== null)
-                      ? [
-                            createSeries(
-                                `assessment-${series.id}-${series.ageKey}`,
-                                values,
-                                chartColors[index],
-                                0,
-                                5,
-                                plotWidth,
-                                plotHeight,
-                            ),
-                        ]
-                      : [];
-              })
+                      return values.some(value => value !== null)
+                          ? [
+                                createSeries(
+                                    `assessment-${series.id}`,
+                                    values,
+                                    chartColors[series.colorIndex % chartColors.length],
+                                    0,
+                                    5,
+                                    plotWidth,
+                                    plotHeight,
+                                ),
+                            ]
+                          : [];
+                  })
             : [],
+        audienceControls: [
+            { id: 'men', title: 'Men', isActive: audienceVisibility.men, onPress: onMenToggle },
+            { id: 'women', title: 'Women', isActive: audienceVisibility.women, onPress: onWomenToggle },
+        ],
     };
 };
 
@@ -269,6 +358,7 @@ export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
     const [colorActiveIndex, setColorActiveIndex] = useState(0);
     const [aromaActiveIndex, setAromaActiveIndex] = useState(0);
     const [tasteActiveIndex, setTasteActiveIndex] = useState(0);
+    const [audienceVisibility, setAudienceVisibility] = useState({ men: true, women: true });
 
     const expertCarouselRef = useRef<ICarouselInstance>(null);
     const colorCarouselRef = useRef<ICarouselInstance>(null);
@@ -301,16 +391,16 @@ export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
     }, [wineId]);
 
     const evolutionYears = useMemo(() => {
-        const years = evolutionData.map(item => item.vintage).filter((vintage): vintage is number => vintage !== null);
+        const years = evolutionData.map(item => formatVintage(item.vintage));
 
-        return years.length ? years.map(year => `${year}`) : [NO_DATA];
+        return years.length ? years : [NO_DATA];
     }, [evolutionData]);
 
     const activeYear = evolutionYears.includes(selectedYear) ? selectedYear : evolutionYears[0];
     const activeDraftYear = evolutionYears.includes(draftYear) ? draftYear : activeYear;
 
     const selectedEvolution = useMemo(() => {
-        return evolutionData.find(item => (item.vintage === null ? NO_DATA : `${item.vintage}`) === activeYear);
+        return evolutionData.find(item => formatVintage(item.vintage) === activeYear);
     }, [activeYear, evolutionData]);
 
     const onYearPress = useCallback(() => {
@@ -382,35 +472,61 @@ export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
         setTasteActiveIndex(index);
     }, []);
 
+    const onMenToggle = useCallback(() => {
+        setAudienceVisibility(current => ({ ...current, men: !current.men }));
+    }, []);
+
+    const onWomenToggle = useCallback(() => {
+        setAudienceVisibility(current => ({ ...current, women: !current.women }));
+    }, []);
+
     const connectedLineCharts = useMemo(
         () => createEvolutionLineCharts(evolutionData, chartColors, graphPlotWidth),
         [chartColors, evolutionData, graphPlotWidth],
     );
 
     const connectedAssessmentChart = useMemo(
-        () => createEvolutionAssessmentChart(evolutionData, chartColors, graphPlotWidth),
-        [chartColors, evolutionData, graphPlotWidth],
+        () =>
+            createEvolutionAssessmentChart(
+                evolutionData,
+                chartColors,
+                graphPlotWidth,
+                audienceVisibility,
+                onMenToggle,
+                onWomenToggle,
+            ),
+        [audienceVisibility, chartColors, evolutionData, graphPlotWidth, onMenToggle, onWomenToggle],
     );
 
     const expertAssessments = useMemo(() => createEvolutionExpertAssessments(evolutionData), [evolutionData]);
 
     const connectedColorCards = useMemo(() => {
         return evolutionData.length
-            ? createEvolutionCarouselCards(evolutionData, item => [...item.topColors, ...item.topShades])
+            ? createEvolutionCarouselCards(evolutionData, item => item.topColors, chartColors)
             : [createEmptyCarouselCard('color-empty')];
-    }, [evolutionData]);
+    }, [chartColors, evolutionData]);
 
     const connectedAromaCards = useMemo(() => {
         return evolutionData.length
-            ? createEvolutionCarouselCards(evolutionData, item => item.topAromas)
+            ? createEvolutionCarouselCards(evolutionData, item => item.topAromas, chartColors)
             : [createEmptyCarouselCard('aroma-empty')];
-    }, [evolutionData]);
+    }, [chartColors, evolutionData]);
 
     const connectedTasteCards = useMemo(() => {
         return evolutionData.length
-            ? createEvolutionCarouselCards(evolutionData, item => item.topFlavors)
+            ? createEvolutionCarouselCards(
+                  evolutionData,
+                  item =>
+                      item.tasteCharacteristics.map(characteristic => ({
+                          id: characteristic.characteristicId,
+                          name: characteristic.name,
+                          colorHex: characteristic.colorHex,
+                          userCount: characteristic.userCount,
+                      })),
+                  chartColors,
+              )
             : [createEmptyCarouselCard('taste-empty')];
-    }, [evolutionData]);
+    }, [chartColors, evolutionData]);
 
     const safeExpertActiveIndex = Math.min(expertActiveIndex, Math.max(expertAssessments.length - 1, 0));
     const safeColorActiveIndex = Math.min(colorActiveIndex, Math.max(connectedColorCards.length - 1, 0));

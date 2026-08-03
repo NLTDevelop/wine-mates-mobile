@@ -107,7 +107,7 @@ export const EvolutionColorCarouselCard = ({ card }: IProps) => {
                                 ) : null}
                                 <View style={styles.additionalPeople}>
                                     <Typography
-                                        text={card.additionalPeopleText}
+                                        text={card.additionalPeopleText || '-'}
                                         variant="subtitle_12_400"
                                         style={styles.additionalPeopleText}
                                     />
@@ -121,7 +121,9 @@ export const EvolutionColorCarouselCard = ({ card }: IProps) => {
                         </View>
                     </>
                 )}
-                {card.year !== '-' ? <Typography text={card.year} variant="h5" style={styles.statYear} /> : null}
+                {card.isEmpty && card.year === '-' ? null : (
+                    <Typography text={card.year} variant="h5" style={styles.statYear} />
+                )}
             </View>
         </View>
     );

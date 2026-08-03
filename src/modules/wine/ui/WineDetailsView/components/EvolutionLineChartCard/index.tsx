@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
-import { Circle, Line, Polyline, Svg } from 'react-native-svg';
+import { TouchableOpacity, View } from 'react-native';
+import { Circle, Line, Path, Svg } from 'react-native-svg';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { IWineEvolutionChart } from '@/modules/wine/types/IWineEvolution';
@@ -17,33 +17,65 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
 
     return (
         <View style={isSummary ? styles.summaryCard : styles.metricCard}>
-            <Typography
-                text={chart.title}
-                variant={isSummary ? 'body_500' : 'h5'}
-                style={isSummary ? styles.summaryTitle : styles.metricTitle}
-            />
+            <Typography text={chart.title} variant="h5" style={isSummary ? styles.summaryTitle : styles.metricTitle} />
             <View style={isSummary ? styles.graphPlotRow : styles.metricPlotRow}>
                 <View style={isSummary ? styles.graphYLabels : styles.metricYLabels}>
-                    <Typography text={chart.yAxisLabels[0]} variant="subtitle_12_400" style={styles.graphYAxis} />
-                    <Typography text={chart.yAxisLabels[1]} variant="subtitle_12_400" style={styles.graphYAxis} />
-                    <Typography text={chart.yAxisLabels[2]} variant="subtitle_12_400" style={styles.graphYAxis} />
-                    {isSummary ? (
+                    {chart.series.length ? (
                         <>
                             <Typography
-                                text={chart.yAxisLabels[3]}
+                                text={chart.yAxisLabels[0] ?? '-'}
                                 variant="subtitle_12_400"
                                 style={styles.graphYAxis}
+                                numberOfLines={1}
+                                adjustsFontSizeToFit
+                                minimumFontScale={0.65}
                             />
                             <Typography
-                                text={chart.yAxisLabels[4]}
+                                text={chart.yAxisLabels[1] ?? '-'}
                                 variant="subtitle_12_400"
                                 style={styles.graphYAxis}
+                                numberOfLines={1}
+                                adjustsFontSizeToFit
+                                minimumFontScale={0.65}
                             />
                             <Typography
-                                text={chart.yAxisLabels[5]}
+                                text={chart.yAxisLabels[2] ?? '-'}
                                 variant="subtitle_12_400"
                                 style={styles.graphYAxis}
+                                numberOfLines={1}
+                                adjustsFontSizeToFit
+                                minimumFontScale={0.65}
                             />
+                            {chart.yAxisLabels[3] ? (
+                                <Typography
+                                    text={chart.yAxisLabels[3]}
+                                    variant="subtitle_12_400"
+                                    style={styles.graphYAxis}
+                                    numberOfLines={1}
+                                    adjustsFontSizeToFit
+                                    minimumFontScale={0.65}
+                                />
+                            ) : null}
+                            {chart.yAxisLabels[4] ? (
+                                <Typography
+                                    text={chart.yAxisLabels[4]}
+                                    variant="subtitle_12_400"
+                                    style={styles.graphYAxis}
+                                    numberOfLines={1}
+                                    adjustsFontSizeToFit
+                                    minimumFontScale={0.65}
+                                />
+                            ) : null}
+                            {chart.yAxisLabels[5] ? (
+                                <Typography
+                                    text={chart.yAxisLabels[5]}
+                                    variant="subtitle_12_400"
+                                    style={styles.graphYAxis}
+                                    numberOfLines={1}
+                                    adjustsFontSizeToFit
+                                    minimumFontScale={0.65}
+                                />
+                            ) : null}
                         </>
                     ) : null}
                 </View>
@@ -88,40 +120,42 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                 strokeWidth={chart.strokeWidth}
                                 strokeDasharray="1 4"
                             />
-                            {isSummary ? (
-                                <>
-                                    <Line
-                                        x1="0"
-                                        y1={chart.gridY[3]}
-                                        x2={chart.plotWidth}
-                                        y2={chart.gridY[3]}
-                                        stroke={colors.border_light}
-                                        strokeWidth={chart.strokeWidth}
-                                        strokeDasharray="1 4"
-                                    />
-                                    <Line
-                                        x1="0"
-                                        y1={chart.gridY[4]}
-                                        x2={chart.plotWidth}
-                                        y2={chart.gridY[4]}
-                                        stroke={colors.border_light}
-                                        strokeWidth={chart.strokeWidth}
-                                        strokeDasharray="1 4"
-                                    />
-                                    <Line
-                                        x1="0"
-                                        y1={chart.gridY[5]}
-                                        x2={chart.plotWidth}
-                                        y2={chart.gridY[5]}
-                                        stroke={colors.border_light}
-                                        strokeWidth={chart.strokeWidth}
-                                        strokeDasharray="1 4"
-                                    />
-                                </>
+                            {chart.gridY[3] !== undefined ? (
+                                <Line
+                                    x1="0"
+                                    y1={chart.gridY[3]}
+                                    x2={chart.plotWidth}
+                                    y2={chart.gridY[3]}
+                                    stroke={colors.border_light}
+                                    strokeWidth={chart.strokeWidth}
+                                    strokeDasharray="1 4"
+                                />
+                            ) : null}
+                            {chart.gridY[4] !== undefined ? (
+                                <Line
+                                    x1="0"
+                                    y1={chart.gridY[4]}
+                                    x2={chart.plotWidth}
+                                    y2={chart.gridY[4]}
+                                    stroke={colors.border_light}
+                                    strokeWidth={chart.strokeWidth}
+                                    strokeDasharray="1 4"
+                                />
+                            ) : null}
+                            {chart.gridY[5] !== undefined ? (
+                                <Line
+                                    x1="0"
+                                    y1={chart.gridY[5]}
+                                    x2={chart.plotWidth}
+                                    y2={chart.gridY[5]}
+                                    stroke={colors.border_light}
+                                    strokeWidth={chart.strokeWidth}
+                                    strokeDasharray="1 4"
+                                />
                             ) : null}
                             {chart.series[0] ? (
-                                <Polyline
-                                    points={chart.series[0].points}
+                                <Path
+                                    d={chart.series[0].path}
                                     fill="none"
                                     stroke={chart.series[0].color}
                                     strokeWidth={chart.strokeWidth}
@@ -130,8 +164,8 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                 />
                             ) : null}
                             {chart.series[1] ? (
-                                <Polyline
-                                    points={chart.series[1].points}
+                                <Path
+                                    d={chart.series[1].path}
                                     fill="none"
                                     stroke={chart.series[1].color}
                                     strokeWidth={chart.strokeWidth}
@@ -140,8 +174,8 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                 />
                             ) : null}
                             {chart.series[2] ? (
-                                <Polyline
-                                    points={chart.series[2].points}
+                                <Path
+                                    d={chart.series[2].path}
                                     fill="none"
                                     stroke={chart.series[2].color}
                                     strokeWidth={chart.strokeWidth}
@@ -150,8 +184,8 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                 />
                             ) : null}
                             {chart.series[3] ? (
-                                <Polyline
-                                    points={chart.series[3].points}
+                                <Path
+                                    d={chart.series[3].path}
                                     fill="none"
                                     stroke={chart.series[3].color}
                                     strokeWidth={chart.strokeWidth}
@@ -160,8 +194,8 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                 />
                             ) : null}
                             {chart.series[4] ? (
-                                <Polyline
-                                    points={chart.series[4].points}
+                                <Path
+                                    d={chart.series[4].path}
                                     fill="none"
                                     stroke={chart.series[4].color}
                                     strokeWidth={chart.strokeWidth}
@@ -170,10 +204,50 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                 />
                             ) : null}
                             {chart.series[5] ? (
-                                <Polyline
-                                    points={chart.series[5].points}
+                                <Path
+                                    d={chart.series[5].path}
                                     fill="none"
                                     stroke={chart.series[5].color}
+                                    strokeWidth={chart.strokeWidth}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            ) : null}
+                            {chart.series[6] ? (
+                                <Path
+                                    d={chart.series[6].path}
+                                    fill="none"
+                                    stroke={chart.series[6].color}
+                                    strokeWidth={chart.strokeWidth}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            ) : null}
+                            {chart.series[7] ? (
+                                <Path
+                                    d={chart.series[7].path}
+                                    fill="none"
+                                    stroke={chart.series[7].color}
+                                    strokeWidth={chart.strokeWidth}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            ) : null}
+                            {chart.series[8] ? (
+                                <Path
+                                    d={chart.series[8].path}
+                                    fill="none"
+                                    stroke={chart.series[8].color}
+                                    strokeWidth={chart.strokeWidth}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            ) : null}
+                            {chart.series[9] ? (
+                                <Path
+                                    d={chart.series[9].path}
+                                    fill="none"
+                                    stroke={chart.series[9].color}
                                     strokeWidth={chart.strokeWidth}
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
@@ -227,6 +301,38 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                     fill={chart.series[5].color}
                                 />
                             ) : null}
+                            {chart.series[6] ? (
+                                <Circle
+                                    cx={chart.series[6].lastPoint.x}
+                                    cy={chart.series[6].lastPoint.y}
+                                    r="2"
+                                    fill={chart.series[6].color}
+                                />
+                            ) : null}
+                            {chart.series[7] ? (
+                                <Circle
+                                    cx={chart.series[7].lastPoint.x}
+                                    cy={chart.series[7].lastPoint.y}
+                                    r="2"
+                                    fill={chart.series[7].color}
+                                />
+                            ) : null}
+                            {chart.series[8] ? (
+                                <Circle
+                                    cx={chart.series[8].lastPoint.x}
+                                    cy={chart.series[8].lastPoint.y}
+                                    r="2"
+                                    fill={chart.series[8].color}
+                                />
+                            ) : null}
+                            {chart.series[9] ? (
+                                <Circle
+                                    cx={chart.series[9].lastPoint.x}
+                                    cy={chart.series[9].lastPoint.y}
+                                    r="2"
+                                    fill={chart.series[9].color}
+                                />
+                            ) : null}
                         </Svg>
                     )}
                 </View>
@@ -236,44 +342,85 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                     text={chart.xAxisLabels[0] ?? '-'}
                     variant="subtitle_12_400"
                     style={styles.graphXAxisLabel}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.75}
                 />
                 <Typography
                     text={chart.xAxisLabels[1] ?? '-'}
                     variant="subtitle_12_400"
                     style={styles.graphXAxisLabel}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.75}
                 />
                 <Typography
                     text={chart.xAxisLabels[2] ?? '-'}
                     variant="subtitle_12_400"
                     style={styles.graphXAxisLabel}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.75}
                 />
                 <Typography
                     text={chart.xAxisLabels[3] ?? '-'}
                     variant="subtitle_12_400"
                     style={styles.graphXAxisLabel}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.75}
                 />
                 <Typography
                     text={chart.xAxisLabels[4] ?? '-'}
                     variant="subtitle_12_400"
                     style={styles.graphXAxisLabel}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.75}
                 />
                 <Typography
                     text={chart.xAxisLabels[5] ?? '-'}
                     variant="subtitle_12_400"
                     style={styles.graphXAxisLabel}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.75}
                 />
                 {chart.xAxisLabels[6] ? (
-                    <Typography text={chart.xAxisLabels[6]} variant="subtitle_12_400" style={styles.graphXAxisLabel} />
+                    <Typography
+                        text={chart.xAxisLabels[6]}
+                        variant="subtitle_12_400"
+                        style={styles.graphXAxisLabel}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                        minimumFontScale={0.75}
+                    />
                 ) : null}
             </View>
             {isSummary ? (
                 <View style={styles.audienceSection}>
-                    <View style={styles.audienceHeader}>
-                        <Typography text="Men" variant="subtitle_12_500" style={styles.audienceTitle} />
-                        <View style={styles.toggle}>
-                            <View style={styles.toggleThumb} />
-                        </View>
-                    </View>
+                    {chart.audienceControls?.[0] ? (
+                        <TouchableOpacity onPress={chart.audienceControls[0].onPress} style={styles.audienceHeader}>
+                            <Typography
+                                text={chart.audienceControls[0].title}
+                                variant="subtitle_12_500"
+                                style={styles.audienceTitle}
+                            />
+                            <View
+                                style={[
+                                    styles.toggle,
+                                    chart.audienceControls[0].isActive ? undefined : styles.toggleInactive,
+                                ]}
+                            >
+                                <View
+                                    style={[
+                                        styles.toggleThumb,
+                                        chart.audienceControls[0].isActive ? undefined : styles.toggleThumbInactive,
+                                    ]}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                    ) : null}
                     <View style={styles.chips}>
                         <View style={[styles.chip, styles.redChip]}>
                             <View style={[styles.chipDot, styles.redChipDot]} />
@@ -296,12 +443,28 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                             <Typography text="60+" variant="subtitle_10_400" style={styles.chipText} />
                         </View>
                     </View>
-                    <View style={styles.audienceHeader}>
-                        <Typography text="Women" variant="subtitle_12_500" style={styles.audienceTitle} />
-                        <View style={styles.toggle}>
-                            <View style={styles.toggleThumb} />
-                        </View>
-                    </View>
+                    {chart.audienceControls?.[1] ? (
+                        <TouchableOpacity onPress={chart.audienceControls[1].onPress} style={styles.audienceHeader}>
+                            <Typography
+                                text={chart.audienceControls[1].title}
+                                variant="subtitle_12_500"
+                                style={styles.audienceTitle}
+                            />
+                            <View
+                                style={[
+                                    styles.toggle,
+                                    chart.audienceControls[1].isActive ? undefined : styles.toggleInactive,
+                                ]}
+                            >
+                                <View
+                                    style={[
+                                        styles.toggleThumb,
+                                        chart.audienceControls[1].isActive ? undefined : styles.toggleThumbInactive,
+                                    ]}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                    ) : null}
                     <View style={styles.chips}>
                         <View style={[styles.chip, styles.redChip]}>
                             <View style={[styles.chipDot, styles.redChipDot]} />
