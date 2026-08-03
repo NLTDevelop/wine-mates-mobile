@@ -23,13 +23,15 @@ export const WinePurchaseCard = ({ item }: IProps) => {
     const { logoAspectRatioStyle, onLogoLoad } = useWinePurchaseCard();
 
     return (
-        <TouchableOpacity style={styles.container} onPress={item.onPress}>
+        <TouchableOpacity style={styles.container} onPress={item.onPress} activeOpacity={0.9}>
             <View style={styles.imageContainer}>
-                <FastImage
-                    source={{ uri: item.imageUrl }}
-                    style={styles.image}
-                    resizeMode={FastImage.resizeMode.cover}
-                />
+                {item.imageUrl ? (
+                    <FastImage
+                        source={{ uri: item.imageUrl }}
+                        style={styles.image}
+                        resizeMode={FastImage.resizeMode.cover}
+                    />
+                ) : null}
                 <LinearGradient
                     colors={IMAGE_GRADIENT_COLORS}
                     locations={[0, 0.52, 1]}
@@ -38,12 +40,12 @@ export const WinePurchaseCard = ({ item }: IProps) => {
                     style={styles.imageGradient}
                 />
                 <View style={styles.content}>
-                    <Typography
-                        text={item.description}
-                        variant="subtitle_20_700"
-                        style={styles.title}
-                        numberOfLines={2}
-                    />
+                    <Typography variant="subtitle_20_700" style={styles.title}>
+                        {item.titlePrefix}
+                        <Typography variant="subtitle_20_700" style={styles.titleHighlight}>
+                            {item.titleHighlight}
+                        </Typography>
+                    </Typography>
                     <View style={styles.logoContainer}>
                         {item.logoUrl ? (
                             <>

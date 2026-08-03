@@ -5,10 +5,10 @@ export interface IWinePurchasePartner {
     id: number;
     name: string;
     description: string;
-    website: string | null;
+    websiteUrl: string | null;
     status: PartnerStatus;
     logo: IMedia | null;
-    image: IMedia;
+    image: IMedia | null;
     minPrice?: number;
     maxPrice?: number;
     currency?: string;

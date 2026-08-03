@@ -23,6 +23,8 @@ import { IEditableWineryLink } from '@/modules/profile/types/IEditableWineryLink
 import { useProfileSinglePicker } from '@/modules/profile/presenters/useProfileSinglePicker';
 import { UpdateWineryDto } from '@/entities/winery/dto/UpdateWinery.dto';
 import { useSellerCountriesPicker } from '@/modules/profile/presenters/useSellerCountriesPicker';
+import { useUserCurrencies } from '@/UIKit/CurrencyPicker/presenters/useUserCurrencies';
+import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCurrencyPickerModal';
 
 interface IWineryForm {
     name: string;
@@ -37,6 +39,7 @@ interface IUserForm {
     country: string;
     phoneNumber: string;
     birthday: string;
+    selectedCurrency: string;
 }
 
 const MIN_FOUNDED_YEAR = 1000;
@@ -76,6 +79,7 @@ export const useEditWineryProfileDetails = () => {
         country: userModel.user?.country || '',
         phoneNumber: initialPhone.nationalNumber,
         birthday: userModel.user?.birthday || '',
+        selectedCurrency: userModel.user?.selectedCurrency || '',
     });
     const [phoneCountryCode, setPhoneCountryCode] = useState(initialPhone.callingCode);
     const [phoneCountryCodeChanged, setPhoneCountryCodeChanged] = useState(false);
@@ -97,6 +101,11 @@ export const useEditWineryProfileDetails = () => {
     const sellerCountriesPicker = useSellerCountriesPicker();
     const hasSellerCountriesChanges = sellerCountriesPicker.hasChanges;
     const onSaveSellerCountries = sellerCountriesPicker.onSave;
+    const { currencies, isCurrenciesLoading, onLoadCurrencies } = useUserCurrencies();
+
+    useEffect(() => {
+        onLoadCurrencies();
+    }, [onLoadCurrencies]);
 
     useEffect(() => {
         const onLoadCountries = async () => {
@@ -195,6 +204,11 @@ export const useEditWineryProfileDetails = () => {
         setChangedUserFields(currentFields => new Set(currentFields).add('country'));
     }, []);
 
+    const onChangeCurrency = useCallback((selectedCurrency: string) => {
+        setUserForm(currentForm => ({ ...currentForm, selectedCurrency }));
+        setChangedUserFields(currentFields => new Set(currentFields).add('selectedCurrency'));
+    }, []);
+
     const wineryCountryPicker = useProfileSinglePicker({
         title: localization.t('settings.wineryCountry'),
         value: form.countryId,
@@ -214,6 +228,13 @@ export const useEditWineryProfileDetails = () => {
         value: userForm.country,
         items: userCountryOptions,
         onChange: onChangeUserCountry,
+    });
+    const isCurrencySelectorDisabled = isCurrenciesLoading || !currencies.length;
+    const currencyPicker = useCurrencyPickerModal({
+        value: userForm.selectedCurrency,
+        currencies,
+        onChange: onChangeCurrency,
+        isDisabled: isCurrencySelectorDisabled,
     });
 
     const onChangePhoneNumber = useCallback((phoneNumber: string) => {
@@ -320,8 +341,10 @@ export const useEditWineryProfileDetails = () => {
         removeMainPhoto ||
         !!galleryFiles.length ||
         !!removeGalleryFileIds.length;
-    const hasUserChanges = changedUserFields.size > 0 || phoneCountryCodeChanged;
-    const hasChanges = hasWineryChanges || hasUserChanges || hasSellerCountriesChanges;
+    const isCurrencyChanged = changedUserFields.has('selectedCurrency');
+    const hasProfileUserChanges =
+        Array.from(changedUserFields).some(field => field !== 'selectedCurrency') || phoneCountryCodeChanged;
+    const hasChanges = hasWineryChanges || hasProfileUserChanges || isCurrencyChanged || hasSellerCountriesChanges;
     const foundedYear = Number(form.foundedYear);
     const currentYear = new Date().getFullYear();
     const isDisabled =
@@ -338,7 +361,7 @@ export const useEditWineryProfileDetails = () => {
         if (isDisabled) return;
         try {
             setIsLoading(true);
-            if (hasWineryChanges || hasUserChanges) {
+            if (hasWineryChanges || hasProfileUserChanges) {
                 const profileFormData = new FormData();
 
                 if (changedFields.size) {
@@ -352,7 +375,7 @@ export const useEditWineryProfileDetails = () => {
                     profileFormData.append('winery', JSON.stringify(winery));
                 }
 
-                if (hasUserChanges) {
+                if (hasProfileUserChanges) {
                     const user: Partial<IUserForm> = {};
                     if (changedUserFields.has('country')) user.country = userForm.country;
                     if (changedUserFields.has('birthday')) user.birthday = userForm.birthday;
@@ -375,6 +398,17 @@ export const useEditWineryProfileDetails = () => {
                     toastService.showError(
                         localization.t('common.errorHappened'),
                         updateResponse.message || localization.t('common.somethingWentWrong'),
+                    );
+                    return;
+                }
+            }
+
+            if (isCurrencyChanged) {
+                const currencyResponse = await userService.updateCurrency(userForm.selectedCurrency.trim());
+                if (currencyResponse.isError) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        currencyResponse.message || localization.t('common.somethingWentWrong'),
                     );
                     return;
                 }
@@ -405,7 +439,8 @@ export const useEditWineryProfileDetails = () => {
         foundedYear,
         galleryFiles,
         hasWineryChanges,
-        hasUserChanges,
+        hasProfileUserChanges,
+        isCurrencyChanged,
         isDisabled,
         navigation,
         phoneCountryCode,
@@ -427,6 +462,8 @@ export const useEditWineryProfileDetails = () => {
         regionPicker,
         userCountryPicker,
         sellerCountriesPicker,
+        currencyPicker,
+        isCurrencySelectorDisabled,
         phoneInitialCca2: initialPhone.cca2,
         birthdayDisplayText: getProfileBirthdayText(userForm.birthday, localization.locale),
         mainPhotoUrl,

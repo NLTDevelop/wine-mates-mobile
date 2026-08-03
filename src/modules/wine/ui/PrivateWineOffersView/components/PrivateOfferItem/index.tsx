@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Avatar } from '@/UIKit/Avatar';
 import { Typography } from '@/UIKit/Typography';
@@ -15,12 +15,12 @@ export const PrivateOfferItem = ({ item }: IProps) => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
-        <View style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={item.onPress} activeOpacity={0.7}>
             <Avatar size={36} avatarUrl={item.avatarUrl} fullname={item.fullName} />
             <Typography text={item.fullName} variant="subtitle_12_500" numberOfLines={2} style={styles.name} />
             <View style={styles.price}>
                 <Typography text={item.priceText} variant="subtitle_12_500" style={styles.priceText} />
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };

@@ -40,6 +40,7 @@ export const useBottomModal = ({ onClose, isFullScreen = false, shouldAvoidKeybo
         if (!shouldAvoidKeyboard) {
             return {
                 marginBottom: 0,
+                maxHeight,
             };
         }
 
@@ -48,6 +49,10 @@ export const useBottomModal = ({ onClose, isFullScreen = false, shouldAvoidKeybo
 
         return {
             marginBottom: withTiming(target, {
+                duration: ANIMATION_DURATION,
+                easing: Easing.out(Easing.cubic),
+            }),
+            maxHeight: withTiming(Math.max(maxHeight - target, 0), {
                 duration: ANIMATION_DURATION,
                 easing: Easing.out(Easing.cubic),
             }),

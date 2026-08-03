@@ -1,13 +1,14 @@
 import { ReactElement, useCallback, useMemo } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Loader } from '@/UIKit/Loader';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWinePurchaseCard } from '@/modules/wine/types/IWinePurchaseCard';
 import { useWineMarketplace } from '@/modules/wine/presenters/useWineMarketplace';
+import { useRefresh } from '@/hooks/useRefresh';
 import { WinePurchaseCard } from '../WinePurchaseCard';
-import { WinePartnerModal } from '../WinePartnerModal';
 import { getStyles } from './styles';
+import { EmptyListView } from '@/UIKit/EmptyListView';
 
 interface IProps {
     wineDetails: IWineDetails;
@@ -15,16 +16,10 @@ interface IProps {
 }
 
 export const WineMarketplaceTab = ({ wineDetails, headerComponent }: IProps) => {
-    const { colors } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const {
-        cards,
-        isLoading,
-        selectedPartner,
-        isPartnerModalVisible,
-        onClosePartnerModal,
-        onOpenPartnerWebsite,
-    } = useWineMarketplace(wineDetails.id, wineDetails);
+    const { cards, isLoading, onRefresh } = useWineMarketplace(wineDetails.id, wineDetails);
+    const { refreshControl } = useRefresh(onRefresh);
 
     const keyExtractor = useCallback((item: IWinePurchaseCard) => `${item.id}`, []);
     const renderItem = useCallback(({ item }: { item: IWinePurchaseCard }) => {
@@ -32,21 +27,22 @@ export const WineMarketplaceTab = ({ wineDetails, headerComponent }: IProps) => 
     }, []);
 
     return (
-        <>
-            <FlatList
-                data={isLoading ? [] : cards}
-                keyExtractor={keyExtractor}
-                renderItem={renderItem}
-                contentContainerStyle={styles.list}
-                ListHeaderComponent={headerComponent}
-                ListEmptyComponent={isLoading ? <Loader /> : null}
-            />
-            <WinePartnerModal
-                visible={isPartnerModalVisible}
-                partner={selectedPartner}
-                onClose={onClosePartnerModal}
-                onOpenWebsite={onOpenPartnerWebsite}
-            />
-        </>
+        <FlatList
+            data={isLoading ? [] : cards}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+            refreshControl={refreshControl}
+            contentContainerStyle={styles.list}
+            ListHeaderComponent={headerComponent}
+            ListEmptyComponent={
+                isLoading ? (
+                    <View style={styles.loaderContainer}>
+                        <Loader />
+                    </View>
+                ) : (
+                    <EmptyListView text={t('wineMarketplace.noPurchaseOptions')} />
+                )
+            }
+        />
     );
 };

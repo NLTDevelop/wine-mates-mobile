@@ -3,10 +3,10 @@ import { ILinks, links } from '@/Links';
 import { LinkWineryWinesDto } from '../dto/LinkWineryWines.dto';
 import { IAvailableWineryWineList } from '../types/IAvailableWineryWine';
 import { IList } from '@/entities/IList';
-import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { IWineryLinkedWinesParams } from '../params/IWineryLinkedWinesParams';
 import { wineryLinkedWinesModel } from '../models/WineryLinkedWinesModel';
 import { IImportWineryWinesResponse } from '../types/IImportWineryWinesResponse';
+import { IWineryLinkedWine } from '../types/IWineryLinkedWine';
 
 interface IAvailableWineryWinesParams {
     wineryId: number;
@@ -37,7 +37,7 @@ class WineryWineService {
         }
     };
 
-    getLinkedWines = async (params: IWineryLinkedWinesParams): Promise<IResponse<IList<IWineListItem>>> => {
+    getLinkedWines = async (params: IWineryLinkedWinesParams): Promise<IResponse<IList<IWineryLinkedWine>>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
