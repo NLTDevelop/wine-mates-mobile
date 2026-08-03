@@ -18,20 +18,36 @@ import { useWineReviewsList } from '@/modules/wine/presenters/useWineReviewsList
 import { AddToFavoriteBottomSheet } from '../components/AddToFavoriteBottomSheet';
 import { useAddToFavoriteBottomSheet } from '../../presenters/useAddToFavoriteBottomSheet';
 import { Gallery } from '@/UIKit/Gallery';
-import { PremiumFeature } from './components/PremiumFeature';
 import { WineMarketplaceTab } from './components/WineMarketplaceTab';
 import { useWineDetailsTabs } from '../../presenters/useWineDetailsTabs';
-import { Typography } from '@/UIKit/Typography';
 import { WineDetailsScrollableHeader } from './components/WineDetailsScrollableHeader';
+import { WineEvolutionTab } from './components/WineEvolutionTab';
+import { PremiumFeature } from './components/PremiumFeature';
 
 export const WineDetailsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected,
-        reviewsWineId, fromScanner, onUpdateIsSaved, isPreloadedData, isResultHeaderFooterVisible,
-        showTastingAuthor, myReview, hasPremiumContentAccess, hasPremiumSubscription, onPressBack, wineImageGallery,
-        onWineImagePress } = useWineDetails();
+    const {
+        details,
+        vintages,
+        isError,
+        getDetails,
+        onVintageChange,
+        hasCurrentVintageData,
+        isAllVintagesSelected,
+        reviewsWineId,
+        fromScanner,
+        onUpdateIsSaved,
+        isPreloadedData,
+        isResultHeaderFooterVisible,
+        showTastingAuthor,
+        myReview,
+        hasPremiumContentAccess,
+        onPressBack,
+        wineImageGallery,
+        onWineImagePress,
+    } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
         reviewsWineId,
@@ -73,7 +89,9 @@ export const WineDetailsView = observer(() => {
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton title={t('wine.result')} isCentered={false} onPressBack={onPressBack} />}
+                headerComponent={
+                    <HeaderWithBackButton title={t('wine.result')} isCentered={false} onPressBack={onPressBack} />
+                }
             >
                 {!details ? (
                     <Loader />
@@ -149,12 +167,8 @@ export const WineDetailsView = observer(() => {
                                     onEvolutionPress={onEvolutionPress}
                                     onPurchasePress={onPurchasePress}
                                 />
-                                {hasPremiumSubscription ? (
-                                    <Typography
-                                        text={t('wineMarketplace.evolutionComingSoon')}
-                                        variant="h4"
-                                        style={styles.evolutionText}
-                                    />
+                                {hasPremiumContentAccess ? (
+                                    <WineEvolutionTab wineId={details.id} />
                                 ) : (
                                     <PremiumFeature onGetPremiumPress={onGetPremiumPress} />
                                 )}
