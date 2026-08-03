@@ -22,6 +22,8 @@ import {
 import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 import { FlatList } from 'react-native';
 import { IWineListSearchQuery } from '@/modules/profile/types/IWineListSearchQuery';
+import { IWineOffer } from '@/entities/wine/types/IWineOffer';
+import { IWineryLinkedWine, IWineryLinkedWineOffer } from '@/entities/winery/types/IWineryLinkedWine';
 
 const LIMIT = 10;
 const ALERT_CLOSE_DELAY_MS = 250;
@@ -43,7 +45,9 @@ export const useMyWineryWines = () => {
     const [isTemplateDownloading, setIsTemplateDownloading] = useState(false);
     const [isCsvImportAlertVisible, setIsCsvImportAlertVisible] = useState(false);
     const [isError, setIsError] = useState(false);
-    const listRef = useRef<FlatList<IWineListItem>>(null);
+    const [selectedWine, setSelectedWine] = useState<IWineListItem | null>(null);
+    const [selectedOffer, setSelectedOffer] = useState<IWineryLinkedWineOffer | null>(null);
+    const listRef = useRef<FlatList<IWineryLinkedWine>>(null);
     const searchQueryRef = useRef<IWineListSearchQuery>({ search: '' });
     const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
@@ -154,6 +158,40 @@ export const useMyWineryWines = () => {
     const onAddWinePress = useCallback(() => {
         navigation.navigate('AddWineryWinesView');
     }, [navigation]);
+
+    const onOfferPress = useCallback((wine: IWineListItem, offer: IWineryLinkedWineOffer | null) => {
+        setSelectedWine(wine);
+        setSelectedOffer(offer);
+    }, []);
+
+    const onCloseOfferModal = useCallback(() => {
+        setSelectedWine(null);
+        setSelectedOffer(null);
+    }, []);
+
+    const onOfferSaved = useCallback((offer: IWineOffer) => {
+        const currentList = wineryLinkedWinesModel.list;
+        if (currentList) {
+            wineryLinkedWinesModel.list = {
+                ...currentList,
+                rows: currentList.rows.map(wine => (wine.id === offer.wineId ? { ...wine, offer } : wine)),
+            };
+        }
+        setSelectedWine(null);
+        setSelectedOffer(null);
+    }, []);
+
+    const onOfferDeleted = useCallback((wineId: number) => {
+        const currentList = wineryLinkedWinesModel.list;
+        if (currentList) {
+            wineryLinkedWinesModel.list = {
+                ...currentList,
+                rows: currentList.rows.map(wine => (wine.id === wineId ? { ...wine, offer: null } : wine)),
+            };
+        }
+        setSelectedWine(null);
+        setSelectedOffer(null);
+    }, []);
 
     const onShowCsvImportAlert = useCallback(() => {
         setIsCsvImportAlertVisible(true);
@@ -304,7 +342,10 @@ export const useMyWineryWines = () => {
         isImporting,
         isTemplateDownloading,
         isCsvImportAlertVisible,
+        isOfferModalVisible: Boolean(selectedWine),
         isError,
+        selectedWine,
+        selectedOffer,
         listRef,
         onRefresh,
         onEndReached,
@@ -313,6 +354,10 @@ export const useMyWineryWines = () => {
         onPressBack,
         onItemPress,
         onAddWinePress,
+        onOfferPress,
+        onCloseOfferModal,
+        onOfferSaved,
+        onOfferDeleted,
         onImportCsvPress,
         onShowCsvImportAlert,
         onHideCsvImportAlert,

@@ -10,6 +10,8 @@ import { PrivateOfferItem } from './components/PrivateOfferItem';
 import { OffersFilterButton } from './components/OffersFilterButton';
 import { PriceFilterModal } from './components/PriceFilterModal';
 import { getStyles } from './styles';
+import { EmptyListView } from '@/UIKit/EmptyListView';
+import { ListFooterLoader } from '@/UIKit/ListFooterLoader';
 
 export const PrivateWineOffersView = () => {
     const { colors, t } = useUiContext();
@@ -17,16 +19,20 @@ export const PrivateWineOffersView = () => {
     const {
         wineDetails,
         items,
+        isLoading,
+        isLoadingMore,
         isFilterVisible,
         draftMinPrice,
         draftMaxPrice,
         priceMin,
         priceMax,
+        priceCurrency,
         filterCount,
         onOpenFilter,
         onCloseFilter,
         onPriceRangeChange,
         onApplyFilter,
+        onEndReached,
         onVintageChange,
         onFavoritePress,
     } = usePrivateWineOffers();
@@ -53,6 +59,10 @@ export const PrivateWineOffersView = () => {
                 keyExtractor={keyExtractor}
                 renderItem={renderItem}
                 contentContainerStyle={styles.list}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={0.4}
+                ListFooterComponent={isLoadingMore ? <ListFooterLoader /> : null}
+                ListEmptyComponent={<EmptyListView isLoading={isLoading} isNothingFound={!isLoading} />}
                 ListHeaderComponent={
                     <ResultHeader
                         item={wineDetails}
@@ -73,6 +83,7 @@ export const PrivateWineOffersView = () => {
                 max={priceMax}
                 minValue={draftMinPrice}
                 maxValue={draftMaxPrice}
+                currency={priceCurrency}
                 onChange={onPriceRangeChange}
                 onClose={onCloseFilter}
                 onApply={onApplyFilter}

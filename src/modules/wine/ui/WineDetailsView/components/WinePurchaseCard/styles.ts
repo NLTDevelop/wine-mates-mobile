@@ -40,7 +40,9 @@ export const getStyles = (colors: IColors) => {
         },
         title: {
             color: colors.text_inverted,
-            maxWidth: '78%',
+        },
+        titleHighlight: {
+            color: colors.warning,
         },
         logoContainer: {
             minHeight: scaleVertical(38),

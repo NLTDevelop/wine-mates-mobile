@@ -20,6 +20,7 @@ interface IProps {
     onSharePress?: (item: IWineListItem | IWineDetails) => void;
     showSimilarity?: boolean;
     footer?: ReactNode;
+    detailsFooter?: ReactNode;
     removeCardStyles?: boolean;
     showDate?: boolean;
     showVintage?: boolean;
@@ -33,7 +34,7 @@ interface IProps {
     onImagePress?: () => void;
 }
 
-const WineListItemComponent = ({ item, onPress, onSharePress, showSimilarity = false, footer, removeCardStyles = false,
+const WineListItemComponent = ({ item, onPress, onSharePress, showSimilarity = false, footer, detailsFooter, removeCardStyles = false,
     showDate = false, showVintage = false, showNonVintage = false, isMyWine = false, customBottomComponent,
     showExpertRatingWithoutPremium = false, hideDate = false, alignFooterToBottom = false,
     showTastingAuthor = false, onImagePress }: IProps) => {
@@ -185,8 +186,24 @@ const WineListItemComponent = ({ item, onPress, onSharePress, showSimilarity = f
                                 />
                             </View>
                         ) : (
-                            <View style={styles.emptyDivider} />
+                            <View
+                                style={[
+                                    styles.emptyDivider,
+                                    detailsFooter ? styles.emptyDividerWithDetailsFooter : undefined,
+                                ]}
+                            />
                         )}
+
+                        {detailsFooter ? (
+                            <View
+                                style={[
+                                    styles.detailsFooterContainer,
+                                    footer ? styles.detailsFooterWithFooter : undefined,
+                                ]}
+                            >
+                                {detailsFooter}
+                            </View>
+                        ) : null}
                     </View>
 
                     <View style={styles.footerContainer}>{footer}</View>

@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { FlatList, ListRenderItem, ScrollView, View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { IEvent } from '@/entities/events/types/IEvent';
-import { IWineListItem } from '@/entities/wine/types/IWineListItem';
+import { IWineryLinkedWine } from '@/entities/winery/types/IWineryLinkedWine';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { PublicProfileTab } from '@/modules/profile/enums/PublicProfileTab';
 import { useUiContext } from '@/UIProvider';
@@ -73,7 +73,7 @@ export const PublicWineryProfileView = observer(() => {
     } = usePublicWineryProfile();
     const { refreshControl } = useRefresh(onRefresh);
     const eventKeyExtractor = useCallback((item: IEvent) => item.id.toString(), []);
-    const wineKeyExtractor = useCallback((item: IWineListItem) => item.id.toString(), []);
+    const wineKeyExtractor = useCallback((item: IWineryLinkedWine) => item.id.toString(), []);
     const renderEventItem = useCallback<ListRenderItem<IEvent>>(
         ({ item }) => (
             <EventCard
@@ -87,9 +87,9 @@ export const PublicWineryProfileView = observer(() => {
         ),
         [onEventPress, onFavoriteEventPress],
     );
-    const renderWineItem = useCallback<ListRenderItem<IWineListItem>>(
+    const renderWineItem = useCallback<ListRenderItem<IWineryLinkedWine>>(
         ({ item }) => (
-            <WineryWineListItem item={item} onPress={onWinePress} onSharePress={onOpenShareModal} />
+            <WineryWineListItem item={item} offer={item.offer} onPress={onWinePress} onSharePress={onOpenShareModal} />
         ),
         [onOpenShareModal, onWinePress],
     );
