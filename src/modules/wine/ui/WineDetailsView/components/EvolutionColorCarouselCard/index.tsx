@@ -10,7 +10,7 @@ interface IProps {
 }
 
 export const EvolutionColorCarouselCard = ({ card }: IProps) => {
-    const { colors } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
@@ -114,7 +114,7 @@ export const EvolutionColorCarouselCard = ({ card }: IProps) => {
                                 </View>
                             </View>
                             <Typography
-                                text="Number of people who chose these colors"
+                                text={t('wine.evolution.peopleWhoChose')}
                                 variant="subtitle_12_400"
                                 style={styles.avatarDescription}
                             />

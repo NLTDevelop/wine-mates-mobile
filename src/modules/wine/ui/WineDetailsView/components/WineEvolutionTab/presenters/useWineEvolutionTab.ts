@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ICarouselInstance } from 'react-native-reanimated-carousel';
-import { getContrastColor, scaleHorizontal } from '@/utils';
+import { declOfWord, getContrastColor, scaleHorizontal } from '@/utils';
 import { IUniversalPickerOption } from '@/UIKit/UniversalPickerBottomModal/types/IUniversalPickerOption';
 import { IColors } from '@/UIProvider/theme/IColors';
+import { ILocalization } from '@/UIProvider/localization/ILocalization';
 import { wineService } from '@/entities/wine/services/WineService';
 import {
     IWineEvolutionStatistic,
@@ -19,7 +20,6 @@ import {
 } from '@/modules/wine/types/IWineEvolution';
 
 const NO_DATA = '-';
-const NO_VINTAGE = 'Non-vintage';
 
 const getChartColors = (colors: IColors) => [
     colors.evolutionChartRed,
@@ -33,7 +33,7 @@ const getChartColors = (colors: IColors) => [
 const AMATEUR_AGE_GROUPS = ['18-25', '26-35', '36-45', '46-60', '60+'];
 const AMATEUR_AGE_KEYS = ['18_25', '26_35', '36_45', '46_60', '60_plus'] as const;
 
-const EMPTY_CHART_TITLES = ['Sweetness', 'Acidity', 'Tannin', 'Body', 'Aftertaste', 'Alcohol'];
+const EMPTY_CHART_TITLE_KEYS = ['sweetness', 'acidity', 'tannin', 'body', 'aftertaste', 'alcohol'];
 const MOCK_AVATAR_SOURCES = [
     require('@assets/images/wine_evolution_avatars/wine_evolution_avatar_1.png'),
     require('@assets/images/wine_evolution_avatars/wine_evolution_avatar_2.png'),
@@ -41,10 +41,11 @@ const MOCK_AVATAR_SOURCES = [
 ];
 
 const formatScore = (value: number | null) => (value === null ? NO_DATA : value.toFixed(1));
-const formatVintage = (vintage: number | null) => (vintage === null ? NO_VINTAGE : `${vintage}`);
+const formatVintage = (vintage: number | null, t: ILocalization['t']) =>
+    vintage === null ? t('wine.nonVintage') : `${vintage}`;
 
-const createEmptyRatingRows = (): IWineEvolutionRatingRow[] =>
-    ['Men', 'Women'].map(label => ({
+const createEmptyRatingRows = (t: ILocalization['t']): IWineEvolutionRatingRow[] =>
+    [t('wine.evolution.men'), t('wine.evolution.women')].map(label => ({
         label,
         ratings: AMATEUR_AGE_GROUPS.map(() => ({
             score: null,
@@ -54,10 +55,10 @@ const createEmptyRatingRows = (): IWineEvolutionRatingRow[] =>
         })),
     }));
 
-const createEvolutionRatingRows = (item: IWineEvolutionVintage): IWineEvolutionRatingRow[] => {
+const createEvolutionRatingRows = (item: IWineEvolutionVintage, t: ILocalization['t']): IWineEvolutionRatingRow[] => {
     return [
         {
-            label: 'Men',
+            label: t('wine.evolution.men'),
             ratings: AMATEUR_AGE_KEYS.map(ageKey => ({
                 score: item.ratingByGroup.men[ageKey].avg,
                 reviews: item.ratingByGroup.men[ageKey].count,
@@ -67,7 +68,7 @@ const createEvolutionRatingRows = (item: IWineEvolutionVintage): IWineEvolutionR
             })),
         },
         {
-            label: 'Women',
+            label: t('wine.evolution.women'),
             ratings: AMATEUR_AGE_KEYS.map(ageKey => ({
                 score: item.ratingByGroup.women[ageKey].avg,
                 reviews: item.ratingByGroup.women[ageKey].count,
@@ -81,10 +82,14 @@ const createEvolutionRatingRows = (item: IWineEvolutionVintage): IWineEvolutionR
     ];
 };
 
-const createEvolutionStatistic = (item: IWineEvolutionStatistic, fallbackColor: string): IWineEvolutionColorStat => ({
+const createEvolutionStatistic = (
+    item: IWineEvolutionStatistic,
+    fallbackColor: string,
+    t: ILocalization['t'],
+): IWineEvolutionColorStat => ({
     label: item.name,
     reviews: item.userCount,
-    reviewsText: `(${item.userCount} Reviews)`,
+    reviewsText: `(${declOfWord(item.userCount, t('scanner.reviewCount') as unknown as string[])})`,
     backgroundColor: item.colorHex ?? fallbackColor,
     textColor: getContrastColor(item.colorHex ?? fallbackColor),
 });
@@ -93,6 +98,7 @@ const createEvolutionCarouselCards = (
     data: IWineEvolutionVintage[],
     getStatistics: (item: IWineEvolutionVintage) => IWineEvolutionStatistic[],
     fallbackColors: string[],
+    t: ILocalization['t'],
 ): IWineEvolutionCarouselCard[] => {
     return data.map((item, index) => {
         const statistics = getStatistics(item).slice(0, 5);
@@ -100,9 +106,9 @@ const createEvolutionCarouselCards = (
 
         return {
             id: `evolution-card-${item.vintage ?? 'none'}-${index}`,
-            year: formatVintage(item.vintage),
+            year: formatVintage(item.vintage, t),
             colors: statistics.map((statistic, statisticIndex) =>
-                createEvolutionStatistic(statistic, fallbackColors[statisticIndex % fallbackColors.length]),
+                createEvolutionStatistic(statistic, fallbackColors[statisticIndex % fallbackColors.length], t),
             ),
             avatarSources: MOCK_AVATAR_SOURCES,
             additionalPeople: peopleCount,
@@ -122,10 +128,13 @@ const createEmptyCarouselCard = (id: string): IWineEvolutionCarouselCard => ({
     isEmpty: true,
 });
 
-const createEvolutionExpertAssessments = (data: IWineEvolutionVintage[]): IWineEvolutionExpertAssessment[] => {
+const createEvolutionExpertAssessments = (
+    data: IWineEvolutionVintage[],
+    t: ILocalization['t'],
+): IWineEvolutionExpertAssessment[] => {
     return data.map((item, index) => ({
         id: `expert-${item.vintage ?? 'none'}-${index}`,
-        year: formatVintage(item.vintage),
+        year: formatVintage(item.vintage, t),
         score: item.avgExpertRating,
     }));
 };
@@ -236,17 +245,18 @@ const createEvolutionLineCharts = (
     data: IWineEvolutionVintage[],
     chartColors: string[],
     plotWidth: number,
+    t: ILocalization['t'],
 ): IWineEvolutionChart[] => {
-    const chartYears = data.map(item => formatVintage(item.vintage));
+    const chartYears = data.map(item => formatVintage(item.vintage, t));
     const compactPlotHeight = 193;
-    const characteristics = getCharacteristicDefinitions(data).slice(0, EMPTY_CHART_TITLES.length);
-    const chartDefinitions = EMPTY_CHART_TITLES.map((emptyTitle, index) => characteristics[index] ?? null);
+    const characteristics = getCharacteristicDefinitions(data).slice(0, EMPTY_CHART_TITLE_KEYS.length);
+    const chartDefinitions = EMPTY_CHART_TITLE_KEYS.map((emptyTitle, index) => characteristics[index] ?? null);
 
     return chartDefinitions.map((characteristic, index) => {
         if (!characteristic) {
             return createChart(
                 `empty-${index}`,
-                EMPTY_CHART_TITLES[index],
+                t(`wine.evolution.chartTitles.${EMPTY_CHART_TITLE_KEYS[index]}`),
                 [NO_DATA],
                 [],
                 chartColors[index % chartColors.length],
@@ -293,6 +303,7 @@ const createEvolutionAssessmentChart = (
     audienceVisibility: { men: boolean; women: boolean },
     onMenToggle: () => void,
     onWomenToggle: () => void,
+    t: ILocalization['t'],
 ): IWineEvolutionChart => {
     const ageKeys = AMATEUR_AGE_KEYS;
     const groupSeries = [
@@ -308,9 +319,9 @@ const createEvolutionAssessmentChart = (
 
     return {
         id: 'assessment-over-years',
-        title: 'Dynamics of the assessment over the years',
+        title: t('wine.evolution.assessmentOverYears'),
         yAxisLabels: ['5', '4', '3', '2', '1', '0'],
-        xAxisLabels: data.map(item => formatVintage(item.vintage)),
+        xAxisLabels: data.map(item => formatVintage(item.vintage, t)),
         gridY: [16, 66, 116, 166, 216, 266],
         plotWidth,
         plotHeight,
@@ -337,18 +348,25 @@ const createEvolutionAssessmentChart = (
                   })
             : [],
         audienceControls: [
-            { id: 'men', title: 'Men', isActive: audienceVisibility.men, onPress: onMenToggle },
-            { id: 'women', title: 'Women', isActive: audienceVisibility.women, onPress: onWomenToggle },
+            { id: 'men', title: t('wine.evolution.men'), isActive: audienceVisibility.men, onPress: onMenToggle },
+            {
+                id: 'women',
+                title: t('wine.evolution.women'),
+                isActive: audienceVisibility.women,
+                onPress: onWomenToggle,
+            },
         ],
     };
 };
 
 interface IProps {
     colors: IColors;
+    locale: string;
     wineId: number;
+    t: ILocalization['t'];
 }
 
-export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
+export const useWineEvolutionTab = ({ colors, locale, wineId, t }: IProps) => {
     const [evolutionData, setEvolutionData] = useState<IWineEvolutionVintage[]>([]);
     const [isEvolutionLoading, setIsEvolutionLoading] = useState(true);
     const [selectedYear, setSelectedYear] = useState(NO_DATA);
@@ -391,17 +409,17 @@ export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
     }, [wineId]);
 
     const evolutionYears = useMemo(() => {
-        const years = evolutionData.map(item => formatVintage(item.vintage));
+        const years = evolutionData.map(item => formatVintage(item.vintage, t));
 
         return years.length ? years : [NO_DATA];
-    }, [evolutionData]);
+    }, [evolutionData, locale, t]);
 
     const activeYear = evolutionYears.includes(selectedYear) ? selectedYear : evolutionYears[0];
     const activeDraftYear = evolutionYears.includes(draftYear) ? draftYear : activeYear;
 
     const selectedEvolution = useMemo(() => {
-        return evolutionData.find(item => formatVintage(item.vintage) === activeYear);
-    }, [activeYear, evolutionData]);
+        return evolutionData.find(item => formatVintage(item.vintage, t) === activeYear);
+    }, [activeYear, evolutionData, locale, t]);
 
     const onYearPress = useCallback(() => {
         setDraftYear(activeYear);
@@ -481,8 +499,8 @@ export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
     }, []);
 
     const connectedLineCharts = useMemo(
-        () => createEvolutionLineCharts(evolutionData, chartColors, graphPlotWidth),
-        [chartColors, evolutionData, graphPlotWidth],
+        () => createEvolutionLineCharts(evolutionData, chartColors, graphPlotWidth, t),
+        [chartColors, evolutionData, graphPlotWidth, locale, t],
     );
 
     const connectedAssessmentChart = useMemo(
@@ -494,23 +512,27 @@ export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
                 audienceVisibility,
                 onMenToggle,
                 onWomenToggle,
+                t,
             ),
-        [audienceVisibility, chartColors, evolutionData, graphPlotWidth, onMenToggle, onWomenToggle],
+        [audienceVisibility, chartColors, evolutionData, graphPlotWidth, locale, onMenToggle, onWomenToggle, t],
     );
 
-    const expertAssessments = useMemo(() => createEvolutionExpertAssessments(evolutionData), [evolutionData]);
+    const expertAssessments = useMemo(
+        () => createEvolutionExpertAssessments(evolutionData, t),
+        [evolutionData, locale, t],
+    );
 
     const connectedColorCards = useMemo(() => {
         return evolutionData.length
-            ? createEvolutionCarouselCards(evolutionData, item => item.topColors, chartColors)
+            ? createEvolutionCarouselCards(evolutionData, item => item.topColors, chartColors, t)
             : [createEmptyCarouselCard('color-empty')];
-    }, [chartColors, evolutionData]);
+    }, [chartColors, evolutionData, locale, t]);
 
     const connectedAromaCards = useMemo(() => {
         return evolutionData.length
-            ? createEvolutionCarouselCards(evolutionData, item => item.topAromas, chartColors)
+            ? createEvolutionCarouselCards(evolutionData, item => item.topAromas, chartColors, t)
             : [createEmptyCarouselCard('aroma-empty')];
-    }, [chartColors, evolutionData]);
+    }, [chartColors, evolutionData, locale, t]);
 
     const connectedTasteCards = useMemo(() => {
         return evolutionData.length
@@ -524,9 +546,10 @@ export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
                           userCount: characteristic.userCount,
                       })),
                   chartColors,
+                  t,
               )
             : [createEmptyCarouselCard('taste-empty')];
-    }, [chartColors, evolutionData]);
+    }, [chartColors, evolutionData, locale, t]);
 
     const safeExpertActiveIndex = Math.min(expertActiveIndex, Math.max(expertAssessments.length - 1, 0));
     const safeColorActiveIndex = Math.min(colorActiveIndex, Math.max(connectedColorCards.length - 1, 0));
@@ -534,13 +557,15 @@ export const useWineEvolutionTab = ({ colors, wineId }: IProps) => {
     const safeTasteActiveIndex = Math.min(tasteActiveIndex, Math.max(connectedTasteCards.length - 1, 0));
 
     const amateurRatingRows = useMemo(
-        () => (selectedEvolution ? createEvolutionRatingRows(selectedEvolution) : createEmptyRatingRows()),
-        [selectedEvolution],
+        () => (selectedEvolution ? createEvolutionRatingRows(selectedEvolution, t) : createEmptyRatingRows(t)),
+        [locale, selectedEvolution, t],
     );
     const proAssessmentScore = selectedEvolution?.avgExpertRating ?? null;
     const selectedWinePeak = selectedEvolution?.winePeaks[0];
     const winePeakYear = selectedWinePeak ? `${selectedWinePeak.year}` : NO_DATA;
-    const winePeakReviews = selectedWinePeak ? `(${selectedWinePeak.userCount} Reviews)` : NO_DATA;
+    const winePeakReviews = selectedWinePeak
+        ? `(${declOfWord(selectedWinePeak.userCount, t('scanner.reviewCount') as unknown as string[])})`
+        : NO_DATA;
 
     return {
         tastingYear: activeYear,

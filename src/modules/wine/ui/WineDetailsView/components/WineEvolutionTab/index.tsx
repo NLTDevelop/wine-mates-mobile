@@ -60,7 +60,7 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
         onTastePrevious,
         onTasteNext,
         onTasteSnap,
-    } = useWineEvolutionTab({ colors, wineId });
+    } = useWineEvolutionTab({ colors, wineId, t });
 
     const renderExpertItem = useCallback(
         ({ item }: { item: IWineEvolutionExpertAssessment }) => (
@@ -85,11 +85,11 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
         <>
             <View style={styles.root}>
                 <View style={styles.section}>
-                    <Typography text="Year of tasting" variant="h4" style={styles.sectionTitle} />
+                    <Typography text={t('wine.evolution.yearOfTasting')} variant="h4" style={styles.sectionTitle} />
                     <View style={styles.yearContent}>
                         <View style={styles.yearPickerColumn}>
                             <Typography
-                                text="Choose a wine year"
+                                text={t('wine.evolution.chooseWineYear')}
                                 variant="subtitle_12_400"
                                 style={styles.yearPickerLabel}
                             />
@@ -105,7 +105,7 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
                                 <Typography text="-" variant="h5" style={styles.proAssessmentNoData} />
                             )}
                             <Typography
-                                text="Pro assessment"
+                                text={t('wine.evolution.proAssessment')}
                                 variant="subtitle_10_400"
                                 style={styles.proAssessmentLabel}
                             />
@@ -114,7 +114,11 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
                 </View>
 
                 <View style={styles.section}>
-                    <Typography text="Taste dynamics & expert ratings" variant="h4" style={styles.sectionTitle} />
+                    <Typography
+                        text={t('wine.evolution.tasteDynamicsExpertRatings')}
+                        variant="h4"
+                        style={styles.sectionTitle}
+                    />
                     {expertAssessments.length ? (
                         <Carousel
                             ref={expertCarouselRef}
@@ -138,12 +142,12 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
                 </View>
 
                 <View style={styles.section}>
-                    <Typography text="Amateur rating" variant="h4" style={styles.sectionTitle} />
+                    <Typography text={t('wine.evolution.amateurRating')} variant="h4" style={styles.sectionTitle} />
                     <WineEvolutionAmateurRating ageGroups={amateurAgeGroups} rows={amateurRatingRows} />
                 </View>
 
                 <View style={styles.section}>
-                    <Typography text="Wine peak" variant="h4" style={styles.sectionTitle} />
+                    <Typography text={t('wine.evolution.winePeak')} variant="h4" style={styles.sectionTitle} />
                     <View style={styles.winePeakCard}>
                         <Typography text={winePeakYear} variant="h5" style={styles.winePeakYear} />
                         <Typography text={winePeakReviews} variant="subtitle_12_400" style={styles.winePeakReviews} />
@@ -154,7 +158,7 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
 
                 <View style={styles.carouselSection}>
                     <View style={styles.carouselHeader}>
-                        <Typography text="Color" variant="h5" style={styles.carouselHeaderTitle} />
+                        <Typography text={t('wine.evolution.color')} variant="h5" style={styles.carouselHeaderTitle} />
                         <View style={styles.carouselActions}>
                             <TouchableOpacity
                                 disabled={colorActiveIndex === 0}
@@ -189,7 +193,7 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
 
                 <View style={styles.carouselSection}>
                     <View style={styles.carouselHeader}>
-                        <Typography text="Aroma" variant="h5" style={styles.carouselHeaderTitle} />
+                        <Typography text={t('wine.evolution.aroma')} variant="h5" style={styles.carouselHeaderTitle} />
                         <View style={styles.carouselActions}>
                             <TouchableOpacity
                                 disabled={aromaActiveIndex === 0}
@@ -224,7 +228,7 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
 
                 <View style={styles.carouselSection}>
                     <View style={styles.carouselHeader}>
-                        <Typography text="Taste" variant="h5" style={styles.carouselHeaderTitle} />
+                        <Typography text={t('wine.evolution.taste')} variant="h5" style={styles.carouselHeaderTitle} />
                         <View style={styles.carouselActions}>
                             <TouchableOpacity
                                 disabled={tasteActiveIndex === 0}
@@ -259,7 +263,11 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
 
                 <View style={styles.metricSection}>
                     <View style={styles.metricSectionHeader}>
-                        <Typography text="Taste characteristics" variant="h5" style={styles.metricSectionTitle} />
+                        <Typography
+                            text={t('wine.evolution.tasteCharacteristics')}
+                            variant="h5"
+                            style={styles.metricSectionTitle}
+                        />
                     </View>
                     <View style={styles.metricList}>
                         <EvolutionLineChartCard chart={lineCharts[0]} />

@@ -100,8 +100,8 @@ export const getStyles = (colors: IColors) => {
             borderBottomColor: colors.border_light,
         },
         ratingLabel: {
-            width: scaleHorizontal(67),
-            paddingLeft: scaleHorizontal(12),
+            width: scaleHorizontal(68),
+            paddingLeft: scaleHorizontal(8),
             color: colors.text,
         },
         ratingCell: {
