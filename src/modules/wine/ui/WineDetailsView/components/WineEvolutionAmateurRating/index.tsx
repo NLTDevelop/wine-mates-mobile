@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { IWineEvolutionRatingRow } from '@/modules/wine/types/IWineEvolution';
+import { WineEvolutionRatingCell } from '../WineEvolutionTab/components/WineEvolutionRatingCell';
 import { getStyles } from '../WineEvolutionTab/styles';
 
 interface IProps {
@@ -19,7 +19,13 @@ export const WineEvolutionAmateurRating = ({ ageGroups, rows }: IProps) => {
         <View style={styles.ratingCard}>
             <View style={styles.ratingTable}>
                 <View style={styles.ratingHeader}>
-                    <Typography text={t('wine.evolution.sex')} variant="body_400" style={styles.ratingLabel} numberOfLines={1} adjustsFontSizeToFit />
+                    <Typography
+                        text={t('wine.evolution.sex')}
+                        variant="body_400"
+                        style={styles.ratingLabel}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                    />
                     <View style={[styles.ratingCell, styles.ratingHeaderCell]}>
                         <View style={[styles.ratingHeaderAccent, styles.ratingHeaderAccentRed]} />
                         <Typography text={ageGroups[0]} variant="subtitle_12_400" style={styles.ratingHeaderText} />
@@ -42,200 +48,32 @@ export const WineEvolutionAmateurRating = ({ ageGroups, rows }: IProps) => {
                     </View>
                 </View>
                 <View style={styles.ratingRow}>
-                    <Typography text={rows[0].label} variant="body_400" style={styles.ratingLabel} numberOfLines={1} adjustsFontSizeToFit />
-                    <View style={styles.ratingCell}>
-                        <View style={styles.ratingValueRow}>
-                            <Typography
-                                text={rows[0].ratings[0].scoreText}
-                                variant="subtitle_12_400"
-                                style={styles.ratingValue}
-                            />
-                            <FilledStarIcon
-                                width={16}
-                                height={16}
-                                color={rows[0].ratings[0].score === null ? colors.background : colors.stars}
-                            />
-                        </View>
-                        <Typography
-                            text={rows[0].ratings[0].reviewsText}
-                            variant="subtitle_12_400"
-                            style={styles.ratingReviews}
-                        />
-                    </View>
-                    <View style={styles.ratingCell}>
-                        <View style={styles.ratingValueRow}>
-                            <Typography
-                                text={rows[0].ratings[1].scoreText}
-                                variant="subtitle_12_400"
-                                style={styles.ratingValue}
-                            />
-                            <FilledStarIcon
-                                width={16}
-                                height={16}
-                                color={rows[0].ratings[1].score === null ? colors.background : colors.stars}
-                            />
-                        </View>
-                        <Typography
-                            text={rows[0].ratings[1].reviewsText}
-                            variant="subtitle_12_400"
-                            style={styles.ratingReviews}
-                        />
-                    </View>
-                    <View style={styles.ratingCell}>
-                        <View style={styles.ratingValueRow}>
-                            <Typography
-                                text={rows[0].ratings[2].scoreText}
-                                variant="subtitle_12_400"
-                                style={styles.ratingValue}
-                            />
-                            <FilledStarIcon
-                                width={16}
-                                height={16}
-                                color={rows[0].ratings[2].score === null ? colors.background : colors.stars}
-                            />
-                        </View>
-                        <Typography
-                            text={rows[0].ratings[2].reviewsText}
-                            variant="subtitle_12_400"
-                            style={styles.ratingReviews}
-                        />
-                    </View>
-                    <View style={styles.ratingCell}>
-                        <View style={styles.ratingValueRow}>
-                            <Typography
-                                text={rows[0].ratings[3].scoreText}
-                                variant="subtitle_12_400"
-                                style={styles.ratingValue}
-                            />
-                            <FilledStarIcon
-                                width={16}
-                                height={16}
-                                color={rows[0].ratings[3].score === null ? colors.background : colors.stars}
-                            />
-                        </View>
-                        <Typography
-                            text={rows[0].ratings[3].reviewsText}
-                            variant="subtitle_12_400"
-                            style={styles.ratingReviews}
-                        />
-                    </View>
-                    <View style={styles.ratingCell}>
-                        <View style={styles.ratingValueRow}>
-                            <Typography
-                                text={rows[0].ratings[4].scoreText}
-                                variant="subtitle_12_400"
-                                style={styles.ratingValue}
-                            />
-                            <FilledStarIcon
-                                width={16}
-                                height={16}
-                                color={rows[0].ratings[4].score === null ? colors.background : colors.stars}
-                            />
-                        </View>
-                        <Typography
-                            text={rows[0].ratings[4].reviewsText}
-                            variant="subtitle_12_400"
-                            style={styles.ratingReviews}
-                        />
-                    </View>
+                    <Typography
+                        text={rows[0].label}
+                        variant="body_400"
+                        style={styles.ratingLabel}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                    />
+                    <WineEvolutionRatingCell rating={rows[0].ratings[0]} />
+                    <WineEvolutionRatingCell rating={rows[0].ratings[1]} />
+                    <WineEvolutionRatingCell rating={rows[0].ratings[2]} />
+                    <WineEvolutionRatingCell rating={rows[0].ratings[3]} />
+                    <WineEvolutionRatingCell rating={rows[0].ratings[4]} />
                 </View>
                 <View style={styles.ratingRow}>
-                    <Typography text={rows[1].label} variant="body_400" style={styles.ratingLabel} numberOfLines={1} adjustsFontSizeToFit />
-                    <View style={styles.ratingCell}>
-                        <View style={styles.ratingValueRow}>
-                            <Typography
-                                text={rows[1].ratings[0].scoreText}
-                                variant="subtitle_12_400"
-                                style={styles.ratingValue}
-                            />
-                            <FilledStarIcon
-                                width={16}
-                                height={16}
-                                color={rows[1].ratings[0].score === null ? colors.background : colors.stars}
-                            />
-                        </View>
-                        <Typography
-                            text={rows[1].ratings[0].reviewsText}
-                            variant="subtitle_12_400"
-                            style={styles.ratingReviews}
-                        />
-                    </View>
-                    <View style={styles.ratingCell}>
-                        <View style={styles.ratingValueRow}>
-                            <Typography
-                                text={rows[1].ratings[1].scoreText}
-                                variant="subtitle_12_400"
-                                style={styles.ratingValue}
-                            />
-                            <FilledStarIcon
-                                width={16}
-                                height={16}
-                                color={rows[1].ratings[1].score === null ? colors.background : colors.stars}
-                            />
-                        </View>
-                        <Typography
-                            text={rows[1].ratings[1].reviewsText}
-                            variant="subtitle_12_400"
-                            style={styles.ratingReviews}
-                        />
-                    </View>
-                    <View style={styles.ratingCell}>
-                        <View style={styles.ratingValueRow}>
-                            <Typography
-                                text={rows[1].ratings[2].scoreText}
-                                variant="subtitle_12_400"
-                                style={styles.ratingValue}
-                            />
-                            <FilledStarIcon
-                                width={16}
-                                height={16}
-                                color={rows[1].ratings[2].score === null ? colors.background : colors.stars}
-                            />
-                        </View>
-                        <Typography
-                            text={rows[1].ratings[2].reviewsText}
-                            variant="subtitle_12_400"
-                            style={styles.ratingReviews}
-                        />
-                    </View>
-                    <View style={styles.ratingCell}>
-                        <View style={styles.ratingValueRow}>
-                            <Typography
-                                text={rows[1].ratings[3].scoreText}
-                                variant="subtitle_12_400"
-                                style={styles.ratingValue}
-                            />
-                            <FilledStarIcon
-                                width={16}
-                                height={16}
-                                color={rows[1].ratings[3].score === null ? colors.background : colors.stars}
-                            />
-                        </View>
-                        <Typography
-                            text={rows[1].ratings[3].reviewsText}
-                            variant="subtitle_12_400"
-                            style={styles.ratingReviews}
-                        />
-                    </View>
-                    <View style={styles.ratingCell}>
-                        <View style={styles.ratingValueRow}>
-                            <Typography
-                                text={rows[1].ratings[4].scoreText}
-                                variant="subtitle_12_400"
-                                style={styles.ratingValue}
-                            />
-                            <FilledStarIcon
-                                width={16}
-                                height={16}
-                                color={rows[1].ratings[4].score === null ? colors.background : colors.stars}
-                            />
-                        </View>
-                        <Typography
-                            text={rows[1].ratings[4].reviewsText}
-                            variant="subtitle_12_400"
-                            style={styles.ratingReviews}
-                        />
-                    </View>
+                    <Typography
+                        text={rows[1].label}
+                        variant="body_400"
+                        style={styles.ratingLabel}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                    />
+                    <WineEvolutionRatingCell rating={rows[1].ratings[0]} />
+                    <WineEvolutionRatingCell rating={rows[1].ratings[1]} />
+                    <WineEvolutionRatingCell rating={rows[1].ratings[2]} />
+                    <WineEvolutionRatingCell rating={rows[1].ratings[3]} />
+                    <WineEvolutionRatingCell rating={rows[1].ratings[4]} />
                 </View>
             </View>
         </View>

@@ -22,7 +22,7 @@ export const getStyles = (colors: IColors) => {
         },
         yearPickerColumn: {
             gap: scaleVertical(4),
-            width: scaleHorizontal(153),
+            width: scaleHorizontal(200),
         },
         yearPickerLabel: {
             color: colors.text_light,
@@ -40,6 +40,7 @@ export const getStyles = (colors: IColors) => {
         },
         yearText: {
             color: colors.text,
+            flex: 1,
         },
         proAssessment: {
             alignItems: 'center',
@@ -116,7 +117,8 @@ export const getStyles = (colors: IColors) => {
         ratingHeaderAccent: {
             position: 'absolute',
             top: 0,
-            width: scaleHorizontal(24),
+            alignSelf: 'center',
+            width: scaleHorizontal(36),
             height: scaleVertical(2),
             borderRadius: scaleVertical(2),
         },
@@ -136,6 +138,7 @@ export const getStyles = (colors: IColors) => {
             backgroundColor: colors.evolutionChartPurple,
         },
         ratingHeaderText: {
+            width: '100%',
             color: colors.text,
             textAlign: 'center',
         },
@@ -148,6 +151,7 @@ export const getStyles = (colors: IColors) => {
             textAlign: 'center',
         },
         ratingValueRow: {
+            width: '100%',
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
@@ -189,8 +193,8 @@ export const getStyles = (colors: IColors) => {
         },
         graphPlotRow: {
             flexDirection: 'row',
-            alignItems: 'center',
-            height: scaleVertical(282),
+            alignItems: 'flex-start',
+            height: scaleVertical(306),
         },
         graphYLabels: {
             width: scaleHorizontal(35),
@@ -199,10 +203,18 @@ export const getStyles = (colors: IColors) => {
         },
         graphYAxis: {
             color: colors.icon,
+            lineHeight: scaleVertical(14),
         },
         graphPlot: {
-            flex: 1,
+            flex: 0,
+            width: '100%',
             height: scaleVertical(282),
+        },
+        graphScrollViewport: {
+            flex: 1,
+        },
+        graphScrollContent: {
+            gap: scaleVertical(4),
         },
         graphPlotNoData: {
             alignItems: 'center',
@@ -213,7 +225,8 @@ export const getStyles = (colors: IColors) => {
         },
         graphXAxis: {
             height: scaleVertical(20),
-            marginLeft: scaleHorizontal(35),
+            marginLeft: 0,
+            paddingLeft: 0,
             flexDirection: 'row',
             alignItems: 'flex-end',
             justifyContent: 'space-between',
@@ -222,6 +235,11 @@ export const getStyles = (colors: IColors) => {
             color: colors.icon,
             textAlign: 'center',
             flex: 1,
+            lineHeight: scaleVertical(14),
+        },
+        graphXAxisLabelHidden: {
+            flex: 0,
+            width: 0,
         },
         audienceSection: {
             gap: scaleVertical(8),
@@ -344,7 +362,6 @@ export const getStyles = (colors: IColors) => {
             opacity: 0.3,
         },
         carouselViewport: {
-            height: scaleVertical(432),
             marginLeft: scaleHorizontal(16),
             paddingTop: scaleVertical(12),
             paddingLeft: scaleHorizontal(12),
@@ -352,16 +369,14 @@ export const getStyles = (colors: IColors) => {
             borderRadius: scaleVertical(12),
         },
         carousel: {
-            height: scaleVertical(420),
             overflow: 'visible',
         },
         carouselItem: {
             width: scaleHorizontal(233),
-            height: scaleVertical(420),
         },
         statCard: {
             width: scaleHorizontal(223),
-            height: scaleVertical(404),
+            minHeight: scaleVertical(100),
             gap: scaleVertical(20),
             padding: scaleHorizontal(12),
             backgroundColor: colors.background,
@@ -373,7 +388,8 @@ export const getStyles = (colors: IColors) => {
             gap: scaleVertical(8),
         },
         statBar: {
-            height: scaleVertical(46),
+            minHeight: scaleVertical(46),
+            paddingVertical: scaleVertical(6),
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: scaleVertical(4),
@@ -422,7 +438,7 @@ export const getStyles = (colors: IColors) => {
             textAlign: 'center',
         },
         emptyCard: {
-            flex: 1,
+            minHeight: scaleVertical(76),
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: colors.evolution_background_grey,
@@ -449,17 +465,18 @@ export const getStyles = (colors: IColors) => {
         metricCard: {
             gap: scaleVertical(12),
             padding: scaleHorizontal(16),
-            backgroundColor: colors.evolution_background_grey,
+            backgroundColor: colors.evolution_chart_background,
             borderRadius: scaleVertical(12),
         },
         metricTitle: {
             color: colors.text,
             flexShrink: 1,
-            // lineHeight: scaleVertical(20),
+            lineHeight: scaleVertical(20),
         },
         metricGraphPlot: {
             height: scaleVertical(193),
-            flex: 1,
+            flex: 0,
+            width: '100%',
         },
         metricGraphPlotNoData: {
             alignItems: 'center',
@@ -467,17 +484,18 @@ export const getStyles = (colors: IColors) => {
         },
         metricPlotRow: {
             flexDirection: 'row',
-            alignItems: 'center',
-            height: scaleVertical(193),
+            alignItems: 'flex-start',
+            height: scaleVertical(217),
         },
         metricYLabels: {
-            width: scaleHorizontal(88),
+            width: scaleHorizontal(80),
             height: scaleVertical(193),
             justifyContent: 'space-between',
         },
         metricXAxis: {
             height: scaleVertical(20),
-            marginLeft: scaleHorizontal(88),
+            marginLeft: 0,
+            paddingLeft: 0,
             flexDirection: 'row',
             alignItems: 'flex-end',
             justifyContent: 'space-between',
