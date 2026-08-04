@@ -160,16 +160,17 @@ export const useAddWineryWines = () => {
             const isWineAlreadyLinked = linkedWines?.rows.some(wine => wine.id === wineId);
 
             if (!isWineAlreadyLinked) {
+                const linkedWine = { ...selectedWine, offer: null };
                 wineryLinkedWinesModel.list = linkedWines
                     ? {
                           ...linkedWines,
                           count: linkedWines.count + 1,
-                          rows: [selectedWine, ...linkedWines.rows],
+                          rows: [linkedWine, ...linkedWines.rows],
                       }
                     : {
                           count: 1,
                           totalPages: 1,
-                          rows: [selectedWine],
+                          rows: [linkedWine],
                       };
             }
 

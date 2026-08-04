@@ -61,6 +61,10 @@ export const useWineryProfileDetails = (locale: string) => {
             sellerCountriesText,
             localization.t('settings.sellerCountries', { locale }),
         ),
+        selectedCurrency: getLabeledField(
+            user?.selectedCurrency,
+            localization.t('settings.selectedCurrency', { locale }),
+        ),
         userCountry: getLabeledField(
             getProfileCountryName(user?.country || '', locale),
             localization.t('settings.userCountry', { locale }),

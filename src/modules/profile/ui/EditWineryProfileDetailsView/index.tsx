@@ -18,6 +18,7 @@ import { EditableWineryLinks } from './components/EditableWineryLinks';
 import { ProfileFormField } from '@/modules/profile/ui/components/ProfileFormField';
 import { PickerButton } from '@/UIKit/PickerButton';
 import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
+import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
 
 export const EditWineryProfileDetailsView = () => {
     const { colors, t } = useUiContext();
@@ -29,6 +30,8 @@ export const EditWineryProfileDetailsView = () => {
         regionPicker,
         userCountryPicker,
         sellerCountriesPicker,
+        currencyPicker,
+        isCurrencySelectorDisabled,
         phoneInitialCca2,
         birthdayDisplayText,
         mainPhotoUrl,
@@ -151,6 +154,14 @@ export const EditWineryProfileDetailsView = () => {
                         placeholder={t('settings.userCountry')}
                         onPress={userCountryPicker.onOpen}
                         isDisabled={userCountryPicker.isDisabled}
+                    />
+                </ProfileFormField>
+                <ProfileFormField label={t('settings.selectedCurrency')}>
+                    <PickerButton
+                        text={currencyPicker.selectedText}
+                        placeholder={t('settings.selectedCurrency')}
+                        onPress={currencyPicker.onOpen}
+                        isDisabled={isCurrencySelectorDisabled}
                     />
                 </ProfileFormField>
                 <ProfileFormField label={t('settings.phoneNumber')}>
@@ -286,6 +297,16 @@ export const EditWineryProfileDetailsView = () => {
                     confirmText={t('common.confirm')}
                     onClose={sellerCountriesPicker.onClose}
                     onConfirm={sellerCountriesPicker.onConfirm}
+                />
+            )}
+            {currencyPicker.isVisible && (
+                <CurrencyPickerBottomSheet
+                    visible={currencyPicker.isVisible}
+                    title={t('settings.selectedCurrency')}
+                    onClose={currencyPicker.onClose}
+                    items={currencyPicker.items}
+                    selectedValue={currencyPicker.draft}
+                    onConfirm={currencyPicker.onConfirm}
                 />
             )}
         </ScreenContainer>

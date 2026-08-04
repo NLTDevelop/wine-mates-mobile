@@ -48,6 +48,7 @@ export const WineryProfileDetailsView = observer(() => {
                     <ProfileDetailsField {...fields.wineryCountry} />
                     <ProfileDetailsField {...fields.region} />
                     <ProfileDetailsField {...fields.sellerCountries} />
+                    <ProfileDetailsField {...fields.selectedCurrency} />
                     <ProfileDetailsField {...fields.userCountry} />
                     <ProfileDetailsField {...fields.phone} />
                     <ProfileDetailsField {...fields.birthday} />

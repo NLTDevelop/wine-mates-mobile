@@ -5,8 +5,14 @@ import { scaleVertical } from '@/utils';
 export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
         list: {
+            flexGrow: 1,
             gap: scaleVertical(16),
             paddingBottom: scaleVertical(20),
+        },
+        loaderContainer: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
         },
     });
 
