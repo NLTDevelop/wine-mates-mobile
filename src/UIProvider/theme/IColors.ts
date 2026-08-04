@@ -8,6 +8,7 @@ export type IColors = {
     background_middle: string;
     background_grey: string;
     evolution_background_grey: string;
+    evolution_chart_background: string;
     background_disabled: string;
 
     border: string;
@@ -55,6 +56,7 @@ export type IColors = {
     evolutionChartPurple: string;
     evolutionChartPurpleBackground: string;
     evolutionChartOrange: string;
+    evolutionChartBurgundy: string;
     evolutionColorRed: string;
     evolutionColorOrange: string;
     evolutionColorPink: string;

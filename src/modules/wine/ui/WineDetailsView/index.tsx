@@ -39,6 +39,8 @@ export const WineDetailsView = observer(() => {
         reviewsWineId,
         fromScanner,
         onUpdateIsSaved,
+        onRegisterEvolutionRefresh,
+        onEvolutionRefresh,
         isPreloadedData,
         isResultHeaderFooterVisible,
         showTastingAuthor,
@@ -56,6 +58,7 @@ export const WineDetailsView = observer(() => {
         myReview,
     );
     const { refreshControl } = useRefresh(onRefresh);
+    const { refreshControl: evolutionRefreshControl } = useRefresh(onEvolutionRefresh);
     const {
         favoriteData,
         isVisible: isAddToFavoriteModalVisible,
@@ -147,7 +150,11 @@ export const WineDetailsView = observer(() => {
                             />
                         ) : null}
                         {isEvolutionActive ? (
-                            <ScrollView contentContainerStyle={styles.evolutionContent}>
+                            <ScrollView
+                                contentContainerStyle={styles.evolutionContent}
+                                refreshControl={evolutionRefreshControl}
+                                bounces
+                            >
                                 <WineDetailsScrollableHeader
                                     details={details}
                                     vintages={vintages}
@@ -168,7 +175,10 @@ export const WineDetailsView = observer(() => {
                                     onPurchasePress={onPurchasePress}
                                 />
                                 {hasPremiumContentAccess ? (
-                                    <WineEvolutionTab wineId={details.id} />
+                                    <WineEvolutionTab
+                                        wineId={details.id}
+                                        onRegisterRefresh={onRegisterEvolutionRefresh}
+                                    />
                                 ) : (
                                     <PremiumFeature onGetPremiumPress={onGetPremiumPress} />
                                 )}

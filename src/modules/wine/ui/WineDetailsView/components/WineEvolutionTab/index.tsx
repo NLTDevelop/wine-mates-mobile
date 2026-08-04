@@ -17,10 +17,11 @@ import { getStyles } from './styles';
 
 interface IProps {
     wineId: number;
+    onRegisterRefresh: (callback: (() => Promise<void>) | null) => void;
 }
 
-export const WineEvolutionTab = ({ wineId }: IProps) => {
-    const { colors, t } = useUiContext();
+export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
+    const { colors, locale, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
         tastingYear,
@@ -33,15 +34,26 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
         expertAssessments,
         expertActiveIndex,
         expertCarouselRef,
+        onExpertProgressChange,
+        onConfigureCarouselPanGesture,
         colorCards,
         colorActiveIndex,
         colorCarouselRef,
+        onColorProgressChange,
+        colorCarouselHeight,
+        onColorCardLayout,
         aromaCards,
         aromaActiveIndex,
         aromaCarouselRef,
+        onAromaProgressChange,
+        aromaCarouselHeight,
+        onAromaCardLayout,
         tasteCards,
         tasteActiveIndex,
         tasteCarouselRef,
+        onTasteProgressChange,
+        tasteCarouselHeight,
+        onTasteCardLayout,
         amateurAgeGroups,
         amateurRatingRows,
         assessmentChart,
@@ -50,17 +62,13 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
         onYearPress,
         onYearPickerClose,
         onYearConfirm,
-        onExpertSnap,
         onColorPrevious,
         onColorNext,
-        onColorSnap,
         onAromaPrevious,
         onAromaNext,
-        onAromaSnap,
         onTastePrevious,
         onTasteNext,
-        onTasteSnap,
-    } = useWineEvolutionTab({ colors, wineId, t });
+    } = useWineEvolutionTab({ colors, locale, wineId, t, onRegisterRefresh });
 
     const renderExpertItem = useCallback(
         ({ item }: { item: IWineEvolutionExpertAssessment }) => (
@@ -77,8 +85,24 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
     );
 
     const renderColorItem = useCallback(
-        ({ item }: { item: IWineEvolutionCarouselCard }) => <EvolutionColorCarouselCard card={item} />,
-        [],
+        ({ item }: { item: IWineEvolutionCarouselCard }) => (
+            <EvolutionColorCarouselCard card={item} onLayout={onColorCardLayout} />
+        ),
+        [onColorCardLayout],
+    );
+
+    const renderAromaItem = useCallback(
+        ({ item }: { item: IWineEvolutionCarouselCard }) => (
+            <EvolutionColorCarouselCard card={item} onLayout={onAromaCardLayout} />
+        ),
+        [onAromaCardLayout],
+    );
+
+    const renderTasteItem = useCallback(
+        ({ item }: { item: IWineEvolutionCarouselCard }) => (
+            <EvolutionColorCarouselCard card={item} onLayout={onTasteCardLayout} />
+        ),
+        [onTasteCardLayout],
     );
 
     return (
@@ -94,7 +118,7 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
                                 style={styles.yearPickerLabel}
                             />
                             <TouchableOpacity style={styles.yearPicker} onPress={onYearPress}>
-                                <Typography text={tastingYear} variant="h6" style={styles.yearText} />
+                                <Typography text={tastingYear} variant="h6" style={styles.yearText} numberOfLines={1} />
                                 <ArrowDownIcon color={colors.icon} />
                             </TouchableOpacity>
                         </View>
@@ -113,13 +137,13 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
                     </View>
                 </View>
 
-                <View style={styles.section}>
-                    <Typography
-                        text={t('wine.evolution.tasteDynamicsExpertRatings')}
-                        variant="h4"
-                        style={styles.sectionTitle}
-                    />
-                    {expertAssessments.length ? (
+                {expertAssessments.length ? (
+                    <View style={styles.section}>
+                        <Typography
+                            text={t('wine.evolution.tasteDynamicsExpertRatings')}
+                            variant="h4"
+                            style={styles.sectionTitle}
+                        />
                         <Carousel
                             ref={expertCarouselRef}
                             loop={false}
@@ -130,16 +154,13 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
                             height={styles.expertCarousel.height as number}
                             style={styles.expertCarousel}
                             data={expertAssessments}
-                            onSnapToItem={onExpertSnap}
+                            onProgressChange={onExpertProgressChange}
+                            onConfigurePanGesture={onConfigureCarouselPanGesture}
                             renderItem={renderExpertItem}
                         />
-                    ) : (
-                        <View style={[styles.expertCarousel, styles.expertCarouselNoData]}>
-                            <Typography text="-" variant="h5" style={styles.expertNoData} />
-                        </View>
-                    )}
-                    <EvolutionCarouselDots count={expertAssessments.length} activeIndex={expertActiveIndex} />
-                </View>
+                        <EvolutionCarouselDots count={expertAssessments.length} activeIndex={expertActiveIndex} />
+                    </View>
+                ) : null}
 
                 <View style={styles.section}>
                     <Typography text={t('wine.evolution.amateurRating')} variant="h4" style={styles.sectionTitle} />
@@ -154,130 +175,153 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
                     </View>
                 </View>
 
-                <EvolutionLineChartCard chart={assessmentChart} isSummary />
+                {assessmentChart.series.length ? <EvolutionLineChartCard chart={assessmentChart} isSummary /> : null}
 
-                <View style={styles.carouselSection}>
-                    <View style={styles.carouselHeader}>
-                        <Typography text={t('wine.evolution.color')} variant="h5" style={styles.carouselHeaderTitle} />
-                        <View style={styles.carouselActions}>
-                            <TouchableOpacity
-                                disabled={colorActiveIndex === 0}
-                                onPress={onColorPrevious}
-                                style={[
-                                    styles.carouselArrow,
-                                    colorActiveIndex === 0 ? styles.carouselArrowDisabled : undefined,
-                                ]}
-                            >
-                                <NextArrowIcon rotate={180} color={colors.text_inverted} />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={onColorNext} style={styles.carouselArrow}>
-                                <NextArrowIcon color={colors.text_inverted} />
-                            </TouchableOpacity>
+                {colorCards.length ? (
+                    <View style={styles.carouselSection}>
+                        <View style={styles.carouselHeader}>
+                            <Typography
+                                text={t('wine.evolution.color')}
+                                variant="h5"
+                                style={styles.carouselHeaderTitle}
+                            />
+                            <View style={styles.carouselActions}>
+                                <TouchableOpacity
+                                    disabled={colorActiveIndex === 0}
+                                    onPress={onColorPrevious}
+                                    style={[
+                                        styles.carouselArrow,
+                                        colorActiveIndex === 0 ? styles.carouselArrowDisabled : undefined,
+                                    ]}
+                                >
+                                    <NextArrowIcon rotate={180} color={colors.text_inverted} />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={onColorNext} style={styles.carouselArrow}>
+                                    <NextArrowIcon color={colors.text_inverted} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.carouselViewport}>
+                            <Carousel
+                                ref={colorCarouselRef}
+                                loop={false}
+                                overscrollEnabled={false}
+                                width={carouselItemWidth}
+                                height={colorCarouselHeight}
+                                style={styles.carousel}
+                                data={colorCards}
+                                onProgressChange={onColorProgressChange}
+                                onConfigurePanGesture={onConfigureCarouselPanGesture}
+                                renderItem={renderColorItem}
+                            />
+                        </View>
+                        <EvolutionCarouselDots count={colorCards.length} activeIndex={colorActiveIndex} />
+                    </View>
+                ) : null}
+
+                {aromaCards.length ? (
+                    <View style={styles.carouselSection}>
+                        <View style={styles.carouselHeader}>
+                            <Typography
+                                text={t('wine.evolution.aroma')}
+                                variant="h5"
+                                style={styles.carouselHeaderTitle}
+                            />
+                            <View style={styles.carouselActions}>
+                                <TouchableOpacity
+                                    disabled={aromaActiveIndex === 0}
+                                    onPress={onAromaPrevious}
+                                    style={[
+                                        styles.carouselArrow,
+                                        aromaActiveIndex === 0 ? styles.carouselArrowDisabled : undefined,
+                                    ]}
+                                >
+                                    <NextArrowIcon rotate={180} color={colors.text_inverted} />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={onAromaNext} style={styles.carouselArrow}>
+                                    <NextArrowIcon color={colors.text_inverted} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.carouselViewport}>
+                            <Carousel
+                                ref={aromaCarouselRef}
+                                loop={false}
+                                overscrollEnabled={false}
+                                width={carouselItemWidth}
+                                height={aromaCarouselHeight}
+                                style={styles.carousel}
+                                data={aromaCards}
+                                onProgressChange={onAromaProgressChange}
+                                onConfigurePanGesture={onConfigureCarouselPanGesture}
+                                renderItem={renderAromaItem}
+                            />
+                        </View>
+                        <EvolutionCarouselDots count={aromaCards.length} activeIndex={aromaActiveIndex} />
+                    </View>
+                ) : null}
+
+                {tasteCards.length ? (
+                    <View style={styles.carouselSection}>
+                        <View style={styles.carouselHeader}>
+                            <Typography
+                                text={t('wine.evolution.taste')}
+                                variant="h5"
+                                style={styles.carouselHeaderTitle}
+                            />
+                            <View style={styles.carouselActions}>
+                                <TouchableOpacity
+                                    disabled={tasteActiveIndex === 0}
+                                    onPress={onTastePrevious}
+                                    style={[
+                                        styles.carouselArrow,
+                                        tasteActiveIndex === 0 ? styles.carouselArrowDisabled : undefined,
+                                    ]}
+                                >
+                                    <NextArrowIcon rotate={180} color={colors.text_inverted} />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={onTasteNext} style={styles.carouselArrow}>
+                                    <NextArrowIcon color={colors.text_inverted} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.carouselViewport}>
+                            <Carousel
+                                ref={tasteCarouselRef}
+                                loop={false}
+                                overscrollEnabled={false}
+                                width={carouselItemWidth}
+                                height={tasteCarouselHeight}
+                                style={styles.carousel}
+                                data={tasteCards}
+                                onProgressChange={onTasteProgressChange}
+                                onConfigurePanGesture={onConfigureCarouselPanGesture}
+                                renderItem={renderTasteItem}
+                            />
+                        </View>
+                        <EvolutionCarouselDots count={tasteCards.length} activeIndex={tasteActiveIndex} />
+                    </View>
+                ) : null}
+
+                {lineCharts.length ? (
+                    <View style={styles.metricSection}>
+                        <View style={styles.metricSectionHeader}>
+                            <Typography
+                                text={t('wine.evolution.tasteCharacteristics')}
+                                variant="h5"
+                                style={styles.metricSectionTitle}
+                            />
+                        </View>
+                        <View style={styles.metricList}>
+                            {lineCharts[0] ? <EvolutionLineChartCard chart={lineCharts[0]} /> : null}
+                            {lineCharts[1] ? <EvolutionLineChartCard chart={lineCharts[1]} /> : null}
+                            {lineCharts[2] ? <EvolutionLineChartCard chart={lineCharts[2]} /> : null}
+                            {lineCharts[3] ? <EvolutionLineChartCard chart={lineCharts[3]} /> : null}
+                            {lineCharts[4] ? <EvolutionLineChartCard chart={lineCharts[4]} /> : null}
+                            {lineCharts[5] ? <EvolutionLineChartCard chart={lineCharts[5]} /> : null}
                         </View>
                     </View>
-                    <View style={styles.carouselViewport}>
-                        <Carousel
-                            ref={colorCarouselRef}
-                            loop={false}
-                            overscrollEnabled={false}
-                            width={carouselItemWidth}
-                            height={styles.carousel.height as number}
-                            style={styles.carousel}
-                            data={colorCards}
-                            onSnapToItem={onColorSnap}
-                            renderItem={renderColorItem}
-                        />
-                    </View>
-                    <EvolutionCarouselDots count={colorCards.length} activeIndex={colorActiveIndex} />
-                </View>
-
-                <View style={styles.carouselSection}>
-                    <View style={styles.carouselHeader}>
-                        <Typography text={t('wine.evolution.aroma')} variant="h5" style={styles.carouselHeaderTitle} />
-                        <View style={styles.carouselActions}>
-                            <TouchableOpacity
-                                disabled={aromaActiveIndex === 0}
-                                onPress={onAromaPrevious}
-                                style={[
-                                    styles.carouselArrow,
-                                    aromaActiveIndex === 0 ? styles.carouselArrowDisabled : undefined,
-                                ]}
-                            >
-                                <NextArrowIcon rotate={180} color={colors.text_inverted} />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={onAromaNext} style={styles.carouselArrow}>
-                                <NextArrowIcon color={colors.text_inverted} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.carouselViewport}>
-                        <Carousel
-                            ref={aromaCarouselRef}
-                            loop={false}
-                            overscrollEnabled={false}
-                            width={carouselItemWidth}
-                            height={styles.carousel.height as number}
-                            style={styles.carousel}
-                            data={aromaCards}
-                            onSnapToItem={onAromaSnap}
-                            renderItem={renderColorItem}
-                        />
-                    </View>
-                    <EvolutionCarouselDots count={aromaCards.length} activeIndex={aromaActiveIndex} />
-                </View>
-
-                <View style={styles.carouselSection}>
-                    <View style={styles.carouselHeader}>
-                        <Typography text={t('wine.evolution.taste')} variant="h5" style={styles.carouselHeaderTitle} />
-                        <View style={styles.carouselActions}>
-                            <TouchableOpacity
-                                disabled={tasteActiveIndex === 0}
-                                onPress={onTastePrevious}
-                                style={[
-                                    styles.carouselArrow,
-                                    tasteActiveIndex === 0 ? styles.carouselArrowDisabled : undefined,
-                                ]}
-                            >
-                                <NextArrowIcon rotate={180} color={colors.text_inverted} />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={onTasteNext} style={styles.carouselArrow}>
-                                <NextArrowIcon color={colors.text_inverted} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.carouselViewport}>
-                        <Carousel
-                            ref={tasteCarouselRef}
-                            loop={false}
-                            overscrollEnabled={false}
-                            width={carouselItemWidth}
-                            height={styles.carousel.height as number}
-                            style={styles.carousel}
-                            data={tasteCards}
-                            onSnapToItem={onTasteSnap}
-                            renderItem={renderColorItem}
-                        />
-                    </View>
-                    <EvolutionCarouselDots count={tasteCards.length} activeIndex={tasteActiveIndex} />
-                </View>
-
-                <View style={styles.metricSection}>
-                    <View style={styles.metricSectionHeader}>
-                        <Typography
-                            text={t('wine.evolution.tasteCharacteristics')}
-                            variant="h5"
-                            style={styles.metricSectionTitle}
-                        />
-                    </View>
-                    <View style={styles.metricList}>
-                        <EvolutionLineChartCard chart={lineCharts[0]} />
-                        <EvolutionLineChartCard chart={lineCharts[1]} />
-                        <EvolutionLineChartCard chart={lineCharts[2]} />
-                        <EvolutionLineChartCard chart={lineCharts[3]} />
-                        <EvolutionLineChartCard chart={lineCharts[4]} />
-                        <EvolutionLineChartCard chart={lineCharts[5]} />
-                    </View>
-                </View>
+                ) : null}
             </View>
             <UniversalPickerBottomModal
                 visible={isYearPickerVisible}

@@ -1,3 +1,5 @@
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+
 export interface IWineEvolutionGroupRating {
     avg: number | null;
     count: number;
@@ -49,12 +51,30 @@ export interface IWineEvolutionWinePeak {
     userCount: number;
 }
 
+export interface IWineEvolutionReviewer {
+    id: number;
+    firstName: string;
+    lastName: string;
+    wineExperienceLevel: WineExperienceLevelEnum;
+    avatar: {
+        smallUrl: string;
+        mediumUrl: string;
+        originalUrl: string;
+    } | null;
+}
+
+export interface IWineEvolutionReviewers {
+    totalCount: number;
+    users: IWineEvolutionReviewer[];
+}
+
 export interface IWineEvolutionVintage {
     wineId: number;
     vintage: number | null;
     reviewCount: number;
     avgUserRating: number | null;
     avgExpertRating: number | null;
+    reviewers?: IWineEvolutionReviewers | null;
     ratingByGroup: IWineEvolutionRatingByGroup;
     winePeaks: IWineEvolutionWinePeak[];
     topColors: IWineEvolutionStatistic[];
