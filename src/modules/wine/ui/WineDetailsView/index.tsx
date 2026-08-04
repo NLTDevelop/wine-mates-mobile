@@ -76,6 +76,7 @@ export const WineDetailsView = observer(() => {
         isProfileActive,
         isEvolutionActive,
         isPurchaseActive,
+        shouldRenderEvolution,
         onProfilePress,
         onEvolutionPress,
         onPurchasePress,
@@ -185,7 +186,7 @@ export const WineDetailsView = observer(() => {
                                     onEvolutionPress={onEvolutionPress}
                                     onPurchasePress={onPurchasePress}
                                 />
-                                {isEvolutionActive ? (
+                                {shouldRenderEvolution ? (
                                     hasPremiumContentAccess ? (
                                         <WineEvolutionTab
                                             wineId={details.id}

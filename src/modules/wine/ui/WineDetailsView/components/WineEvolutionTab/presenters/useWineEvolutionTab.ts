@@ -517,10 +517,16 @@ export const useWineEvolutionTab = ({ colors, locale, wineId, t, onRegisterRefre
     const chartColors = useMemo(() => getChartColors(colors), [colors]);
     const getEvolution = useCallback(async () => {
         setIsEvolutionLoading(true);
-        const response = await wineService.getEvolution(wineId);
 
-        setEvolutionData(response.isError || !response.data ? [] : response.data.filter(item => item.vintage !== null));
-        setIsEvolutionLoading(false);
+        try {
+            const response = await wineService.getEvolution(wineId);
+
+            if (!response.isError && response.data) {
+                setEvolutionData(response.data.filter(item => item.vintage !== null));
+            }
+        } finally {
+            setIsEvolutionLoading(false);
+        }
     }, [wineId]);
 
     useEffect(() => {
@@ -636,8 +642,6 @@ export const useWineEvolutionTab = ({ colors, locale, wineId, t, onRegisterRefre
         () => createEvolutionExpertAssessments(evolutionData, t),
         [evolutionData, locale, t],
     );
-
-    console.log({ evolutionData });
 
     const connectedColorCards = useMemo(() => {
         return createEvolutionCarouselCards(evolutionData, item => item.topColors, chartColors, t);
@@ -792,8 +796,9 @@ export const useWineEvolutionTab = ({ colors, locale, wineId, t, onRegisterRefre
         proAssessmentScore,
         winePeakYear,
         winePeakReviews,
+        hasWinePeak: Boolean(selectedWinePeak),
         hasProAssessment: proAssessmentScore !== null,
-        isEvolutionLoading,
+        isInitialLoading: isEvolutionLoading && evolutionData.length === 0,
         isYearPickerVisible,
         yearOptions,
         expertAssessments,

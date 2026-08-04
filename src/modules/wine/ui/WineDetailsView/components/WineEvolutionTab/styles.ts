@@ -8,6 +8,11 @@ export const getStyles = (colors: IColors) => {
             gap: scaleVertical(16),
             paddingBottom: scaleVertical(24),
         },
+        loaderContainer: {
+            height: scaleVertical(240),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
         section: {
             gap: scaleVertical(8),
             marginHorizontal: scaleHorizontal(16),
