@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { IWineListItem } from '@/entities/wine/types/IWineListItem';
-import { IWineOffer } from '@/entities/wine/types/IWineOffer';
-import { IWineryLinkedWineOffer } from '@/entities/winery/types/IWineryLinkedWine';
+import {
+    IWineOfferSaveResult,
+    IWineOfferSummary,
+    IWineOfferTarget,
+} from '@/entities/wine/types/IOfferedWineListItem';
 import { wineOfferService } from '@/entities/wine/services/WineOfferService';
 import { userModel } from '@/entities/users/UserModel';
 import { localization } from '@/UIProvider/localization/Localization';
@@ -11,10 +13,10 @@ import { useCurrencyPickerModal } from '@/UIKit/CurrencyPicker/presenters/useCur
 
 interface IProps {
     visible: boolean;
-    wine: IWineListItem | null;
-    offer: IWineryLinkedWineOffer | null;
+    wine: IWineOfferTarget | null;
+    offer: IWineOfferSummary | null;
     onClose: () => void;
-    onSaved: (offer: IWineOffer) => void;
+    onSaved: (result: IWineOfferSaveResult) => void;
     onDeleted: (wineId: number) => void;
     isWinery?: boolean;
 }
@@ -97,34 +99,57 @@ export const useWineOfferModal = ({ visible, wine, offer, onClose, onSaved, onDe
         try {
             const trimmedWebsiteUrl = websiteUrl.trim();
             const parsedQuantity = quantity ? Number(quantity) : undefined;
-            const response = offer
-                ? await wineOfferService.update(offer.id, {
-                      price: normalizedPrice,
-                      currency,
-                      quantity: parsedQuantity,
-                      websiteUrl: trimmedWebsiteUrl || null,
-                  })
-                : await wineOfferService.create({
-                      wineId: wine.id,
-                      price: normalizedPrice,
-                      currency,
-                      quantity: parsedQuantity,
-                      websiteUrl: trimmedWebsiteUrl || undefined,
-                  });
+            let saveResult: IWineOfferSaveResult;
 
-            if (response.isError || !response.data) {
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    response.message || localization.t('common.somethingWentWrong'),
-                );
-                return;
+            if (offer) {
+                const response = await wineOfferService.update(offer.id, {
+                    price: normalizedPrice,
+                    currency,
+                    quantity: parsedQuantity,
+                    websiteUrl: trimmedWebsiteUrl || null,
+                });
+
+                if (response.isError || !response.data) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        response.message || localization.t('common.somethingWentWrong'),
+                    );
+                    return;
+                }
+
+                saveResult = {
+                    type: 'updated',
+                    wineId: wine.id,
+                    offer: response.data,
+                };
+            } else {
+                const response = await wineOfferService.create({
+                    wineId: wine.id,
+                    price: normalizedPrice,
+                    currency,
+                    quantity: parsedQuantity,
+                    websiteUrl: trimmedWebsiteUrl || undefined,
+                });
+
+                if (response.isError || !response.data) {
+                    toastService.showError(
+                        localization.t('common.errorHappened'),
+                        response.message || localization.t('common.somethingWentWrong'),
+                    );
+                    return;
+                }
+
+                saveResult = {
+                    type: 'created',
+                    wine: response.data,
+                };
             }
 
             toastService.showSuccess(
                 localization.t('common.success'),
                 localization.t(offer ? 'profile.wineOfferUpdated' : 'profile.wineOfferCreated'),
             );
-            onSaved(response.data);
+            onSaved(saveResult);
         } catch (error) {
             console.error('useWineOfferModal -> onSave: ', error);
             toastService.showError(localization.t('common.errorHappened'), localization.t('common.somethingWentWrong'));

@@ -25,6 +25,7 @@ export const useWineReview = () => {
     const wineId = params?.wineId;
     const { saveWineRate } = useWineRateSubmit();
     const [review, setReview] = useState(() => wineModel.review?.review ?? '');
+    const [isPublicReview, setIsPublicReview] = useState(() => !(wineModel.review?.isHidden ?? false));
     const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? DEFAULT_EXPERT_RATING);
     const [starRate, setStarRate] = useState(() => wineModel.review?.starRate ?? 0);
     const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
@@ -42,6 +43,14 @@ export const useWineReview = () => {
 
     const onChangeReview = useCallback((text: string) => {
         setReview(text);
+    }, []);
+
+    const onPublicReviewChange = useCallback((value: boolean) => {
+        setIsPublicReview(value);
+        wineModel.review = {
+            ...(wineModel.review || { review: '' }),
+            isHidden: !value,
+        };
     }, []);
 
     const onStarRateChange = useCallback((value: number) => {
@@ -64,10 +73,11 @@ export const useWineReview = () => {
             starRate,
             rate: sliderValue,
             review,
+            isHidden: !isPublicReview,
             hasChangedRate: isExpertOrWinemaker || hasChangedRate,
             hasChangedStarRate,
         };
-    }, [hasChangedRate, hasChangedStarRate, isExpertOrWinemaker, review, sliderValue, starRate]);
+    }, [hasChangedRate, hasChangedStarRate, isExpertOrWinemaker, isPublicReview, review, sliderValue, starRate]);
 
     const onContinueFullTastingPress = useCallback(() => {
         saveReview();
@@ -91,7 +101,9 @@ export const useWineReview = () => {
 
     return {
         review,
+        isPublicReview,
         onChangeReview,
+        onPublicReviewChange,
         onSliderChange,
         onContinueFullTastingPress,
         onFinishTastingPress,

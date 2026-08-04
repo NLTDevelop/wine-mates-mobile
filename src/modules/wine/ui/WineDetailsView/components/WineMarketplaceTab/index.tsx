@@ -13,12 +13,30 @@ import { EmptyListView } from '@/UIKit/EmptyListView';
 interface IProps {
     wineDetails: IWineDetails;
     headerComponent: ReactElement;
+    isAllVintagesSelected: boolean;
+    hasSelectedVintageData: boolean;
+    isVintageChanging: boolean;
+    isActive: boolean;
 }
 
-export const WineMarketplaceTab = ({ wineDetails, headerComponent }: IProps) => {
+export const WineMarketplaceTab = ({
+    wineDetails,
+    headerComponent,
+    isAllVintagesSelected,
+    hasSelectedVintageData,
+    isVintageChanging,
+    isActive,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { cards, isLoading, onRefresh } = useWineMarketplace(wineDetails.id, wineDetails);
+    const { cards, isLoading, onRefresh } = useWineMarketplace(
+        wineDetails.id,
+        wineDetails,
+        isAllVintagesSelected,
+        hasSelectedVintageData,
+        isVintageChanging,
+        isActive,
+    );
     const { refreshControl } = useRefresh(onRefresh);
 
     const keyExtractor = useCallback((item: IWinePurchaseCard) => `${item.id}`, []);

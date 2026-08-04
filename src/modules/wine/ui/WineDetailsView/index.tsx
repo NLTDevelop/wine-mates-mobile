@@ -3,7 +3,7 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
-import { FlatList, ScrollView } from 'react-native';
+import { FlatList, ScrollView, View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { ResultListHeader } from '../components/ResultListHeader';
 import { ReviewListItem } from '../../../../UIKit/ReviewListItem';
@@ -35,6 +35,8 @@ export const WineDetailsView = observer(() => {
         getDetails,
         onVintageChange,
         hasCurrentVintageData,
+        hasSelectedVintageData,
+        isVintageChanging,
         isAllVintagesSelected,
         reviewsWineId,
         fromScanner,
@@ -56,6 +58,7 @@ export const WineDetailsView = observer(() => {
         isAllVintagesSelected,
         isPreloadedData,
         myReview,
+        isVintageChanging,
     );
     const { refreshControl } = useRefresh(onRefresh);
     const { refreshControl: evolutionRefreshControl } = useRefresh(onEvolutionRefresh);
@@ -73,6 +76,7 @@ export const WineDetailsView = observer(() => {
         isProfileActive,
         isEvolutionActive,
         isPurchaseActive,
+        shouldRenderEvolution,
         onProfilePress,
         onEvolutionPress,
         onPurchasePress,
@@ -100,7 +104,11 @@ export const WineDetailsView = observer(() => {
                     <Loader />
                 ) : (
                     <>
-                        {isProfileActive ? (
+                        <View
+                            collapsable={false}
+                            pointerEvents={isProfileActive ? 'auto' : 'none'}
+                            style={[styles.tabContainer, isProfileActive ? null : styles.hiddenTabContainer]}
+                        >
                             <FlatList
                                 data={data}
                                 keyExtractor={keyExtractor}
@@ -148,8 +156,12 @@ export const WineDetailsView = observer(() => {
                                 }
                                 ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
                             />
-                        ) : null}
-                        {isEvolutionActive ? (
+                        </View>
+                        <View
+                            collapsable={false}
+                            pointerEvents={isEvolutionActive ? 'auto' : 'none'}
+                            style={[styles.tabContainer, isEvolutionActive ? null : styles.hiddenTabContainer]}
+                        >
                             <ScrollView
                                 contentContainerStyle={styles.evolutionContent}
                                 refreshControl={evolutionRefreshControl}
@@ -174,19 +186,29 @@ export const WineDetailsView = observer(() => {
                                     onEvolutionPress={onEvolutionPress}
                                     onPurchasePress={onPurchasePress}
                                 />
-                                {hasPremiumContentAccess ? (
-                                    <WineEvolutionTab
-                                        wineId={details.id}
-                                        onRegisterRefresh={onRegisterEvolutionRefresh}
-                                    />
-                                ) : (
-                                    <PremiumFeature onGetPremiumPress={onGetPremiumPress} />
-                                )}
+                                {shouldRenderEvolution ? (
+                                    hasPremiumContentAccess ? (
+                                        <WineEvolutionTab
+                                            wineId={details.id}
+                                            onRegisterRefresh={onRegisterEvolutionRefresh}
+                                        />
+                                    ) : (
+                                        <PremiumFeature onGetPremiumPress={onGetPremiumPress} />
+                                    )
+                                ) : null}
                             </ScrollView>
-                        ) : null}
-                        {isPurchaseActive ? (
+                        </View>
+                        <View
+                            collapsable={false}
+                            pointerEvents={isPurchaseActive ? 'auto' : 'none'}
+                            style={[styles.tabContainer, isPurchaseActive ? null : styles.hiddenTabContainer]}
+                        >
                             <WineMarketplaceTab
                                 wineDetails={details}
+                                isAllVintagesSelected={isAllVintagesSelected}
+                                hasSelectedVintageData={hasSelectedVintageData}
+                                isVintageChanging={isVintageChanging}
+                                isActive={isPurchaseActive}
                                 headerComponent={
                                     <WineDetailsScrollableHeader
                                         details={details}
@@ -210,7 +232,7 @@ export const WineDetailsView = observer(() => {
                                     />
                                 }
                             />
-                        ) : null}
+                        </View>
                     </>
                 )}
                 {isAddToFavoriteModalVisible && (

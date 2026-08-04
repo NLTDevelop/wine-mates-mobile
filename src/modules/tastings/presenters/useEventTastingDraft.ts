@@ -80,6 +80,7 @@ export const useEventTastingDraft = () => {
     const getDefaultEventTastingDraft = useCallback((wineId: number): Partial<AddRateDto> => ({
         wineId,
         review: '',
+        isHidden: false,
         color: {
             colorId: 0,
             shadeId: 0,
@@ -158,6 +159,7 @@ export const useEventTastingDraft = () => {
         wineModel.look = nextDraft.color?.colorId ? nextDraft.color : null;
         wineModel.review = {
             review: nextDraft.review || '',
+            isHidden: nextDraft.isHidden ?? false,
             rate: typeof nextDraft.expertRating === 'number' ? nextDraft.expertRating : undefined,
             starRate: typeof nextDraft.userRating === 'number' ? nextDraft.userRating : undefined,
             hasChangedRate: typeof nextDraft.expertRating === 'number',
@@ -204,6 +206,7 @@ export const useEventTastingDraft = () => {
             ...currentEventTastingDraftRef.current,
             wineId,
             review: wineModel.review?.review.trim() || '',
+            isHidden: wineModel.review?.isHidden ?? false,
             color: {
                 colorId: wineModel.look?.colorId || 0,
                 shadeId: wineModel.look?.shadeId || 0,

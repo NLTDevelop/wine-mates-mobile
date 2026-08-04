@@ -19,7 +19,5 @@ export const useWineSearchBottomSheet = () => {
         };
     });
 
-    return {
-        animatedListContainerStyle,
-    };
+    return { animatedListContainerStyle };
 };

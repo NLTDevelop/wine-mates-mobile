@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { FlatList, ListRenderItem, View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useUiContext } from '@/UIProvider';
-import { IWineryLinkedWine } from '@/entities/winery/types/IWineryLinkedWine';
+import { IOfferedWineListItem } from '@/entities/wine/types/IOfferedWineListItem';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { EmptyListView } from '@/UIKit/EmptyListView';
@@ -59,9 +59,9 @@ export const MyWineryWinesView = observer(() => {
     const { isShareModalVisible, onOpenShareModal, onCloseShareModal, onShareMessengerPress, onCopyWineLinkPress } =
         useWineShareModal();
 
-    const keyExtractor = useCallback((item: IWineryLinkedWine) => item.id.toString(), []);
+    const keyExtractor = useCallback((item: IOfferedWineListItem) => item.id.toString(), []);
 
-    const renderItem = useCallback<ListRenderItem<IWineryLinkedWine>>(
+    const renderItem = useCallback<ListRenderItem<IOfferedWineListItem>>(
         ({ item }) => {
             return (
                 <WineryWineListItem

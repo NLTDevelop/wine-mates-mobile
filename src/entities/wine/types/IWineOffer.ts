@@ -1,4 +1,5 @@
 import { IMedia } from '@/entities/media/types/IMedia';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 export type WineOfferableType = 'user' | 'winery' | 'partner';
 
@@ -18,6 +19,7 @@ export interface IWineOffer {
         firstName: string;
         lastName: string;
         avatar: IMedia | null;
+        wineExperienceLevel?: WineExperienceLevelEnum | null;
     } | null;
 }
 

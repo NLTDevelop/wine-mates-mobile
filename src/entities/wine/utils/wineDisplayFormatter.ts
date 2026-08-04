@@ -7,7 +7,7 @@ interface INamedValue {
     name?: string | ILocalizedName[] | null;
 }
 
-interface IWineSetDisplayWine {
+interface IWineDisplayItem {
     id?: number | null;
     name?: string | null;
     producer?: string | null;
@@ -35,7 +35,7 @@ const getLocalizedName = (value: ILocalizedName[], locale?: string) => {
     return value.find(item => item.value?.trim())?.value?.trim() || '';
 };
 
-const getWineSetText = (value?: string | INamedValue | null, locale?: string) => {
+const getWineText = (value?: string | INamedValue | null, locale?: string) => {
     if (!value) {
         return '';
     }
@@ -51,17 +51,17 @@ const getWineSetText = (value?: string | INamedValue | null, locale?: string) =>
     return value.name?.trim() || '';
 };
 
-export const getWineSetDisplayTitle = (wine: IWineSetDisplayWine) => {
+export const getWineDisplayTitle = (wine: IWineDisplayItem) => {
     const producer = wine.producer?.trim();
 
     if (producer) {
-        return `${producer}`;
+        return producer;
     }
 
     return wine.id ? `Wine #${wine.id}` : 'Wine';
 };
 
-export const getWineSetDisplaySubtitle = (wine: IWineSetDisplayWine, locale?: string) => {
+export const getWineDisplaySubtitle = (wine: IWineDisplayItem, locale?: string) => {
     const parts = [
         wine.grapeVariety,
         wine.name,
@@ -71,7 +71,7 @@ export const getWineSetDisplaySubtitle = (wine: IWineSetDisplayWine, locale?: st
         wine.region,
         wine.vintage?.toString(),
     ]
-        .map(item => getWineSetText(item, locale))
+        .map(item => getWineText(item, locale))
         .filter(Boolean);
 
     return parts.join(' / ');

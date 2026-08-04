@@ -2,12 +2,13 @@ import { memo, useMemo } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
-import { IWineryLinkedWineOffer } from '@/entities/winery/types/IWineryLinkedWine';
+import { IWineOfferSummary } from '@/entities/wine/types/IOfferedWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { WineListItem } from '@/UIKit/WineListItem';
 import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
 import { Typography } from '@/UIKit/Typography';
 import { PlusIcon } from '@assets/icons/PlusIcon';
+import { EditIcon } from '@assets/icons/EditIcon';
 import { useWineryWineListItem } from './presenters/useWineryWineListItem';
 import { getStyles } from './styles';
 
@@ -15,8 +16,8 @@ interface IProps {
     item: IWineListItem;
     onPress: (item: IWineListItem) => void;
     onSharePress: (item: IWineListItem | IWineDetails) => void;
-    offer?: IWineryLinkedWineOffer | null;
-    onOfferPress?: (item: IWineListItem, offer: IWineryLinkedWineOffer | null) => void;
+    offer?: IWineOfferSummary | null;
+    onOfferPress?: (item: IWineListItem, offer: IWineOfferSummary | null) => void;
     showExpertRatingWithoutPremium?: boolean;
 }
 
@@ -30,11 +31,12 @@ const WineryWineListItemComponent = ({
 }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { isOfferBlockVisible, isOfferActionDisabled, hasReview, priceText, onPricePress } = useWineryWineListItem({
-        item,
-        offer,
-        onOfferPress,
-    });
+    const { isOfferBlockVisible, isOfferActionDisabled, isEditIconVisible, hasReview, priceText, onPricePress } =
+        useWineryWineListItem({
+            item,
+            offer,
+            onOfferPress,
+        });
     const review = item.lastReview;
     const reviewBlock = review && hasReview
         ? <WineReviewBlock user={review.user} review={review.review} showWithoutPremium />
@@ -50,6 +52,7 @@ const WineryWineListItemComponent = ({
                 text={priceText}
                 style={offer ? styles.priceText : styles.addPriceText}
             />
+            {isEditIconVisible ? <EditIcon color={colors.primary} /> : null}
             {!offer ? <PlusIcon color={colors.primary} /> : null}
         </TouchableOpacity>
     ) : null;
@@ -63,6 +66,7 @@ const WineryWineListItemComponent = ({
             footer={reviewBlock}
             showExpertRatingWithoutPremium={showExpertRatingWithoutPremium}
             alignFooterToBottom
+            showVintage
         />
     );
 };

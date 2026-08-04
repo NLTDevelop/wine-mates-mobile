@@ -20,14 +20,14 @@ interface IProps {
 export const WinePurchaseCard = ({ item }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { logoAspectRatioStyle, onLogoLoad } = useWinePurchaseCard();
+    const { logoAspectRatioStyle, onLogoLoad, imageSource } = useWinePurchaseCard(item);
 
     return (
         <TouchableOpacity style={styles.container} onPress={item.onPress} activeOpacity={0.9}>
             <View style={styles.imageContainer}>
-                {item.imageUrl ? (
+                {imageSource ? (
                     <FastImage
-                        source={{ uri: item.imageUrl }}
+                        source={imageSource}
                         style={styles.image}
                         resizeMode={FastImage.resizeMode.cover}
                     />

@@ -22,8 +22,11 @@ import {
 import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 import { FlatList } from 'react-native';
 import { IWineListSearchQuery } from '@/modules/profile/types/IWineListSearchQuery';
-import { IWineOffer } from '@/entities/wine/types/IWineOffer';
-import { IWineryLinkedWine, IWineryLinkedWineOffer } from '@/entities/winery/types/IWineryLinkedWine';
+import {
+    IOfferedWineListItem,
+    IWineOfferSaveResult,
+    IWineOfferSummary,
+} from '@/entities/wine/types/IOfferedWineListItem';
 
 const LIMIT = 10;
 const ALERT_CLOSE_DELAY_MS = 250;
@@ -46,8 +49,8 @@ export const useMyWineryWines = () => {
     const [isCsvImportAlertVisible, setIsCsvImportAlertVisible] = useState(false);
     const [isError, setIsError] = useState(false);
     const [selectedWine, setSelectedWine] = useState<IWineListItem | null>(null);
-    const [selectedOffer, setSelectedOffer] = useState<IWineryLinkedWineOffer | null>(null);
-    const listRef = useRef<FlatList<IWineryLinkedWine>>(null);
+    const [selectedOffer, setSelectedOffer] = useState<IWineOfferSummary | null>(null);
+    const listRef = useRef<FlatList<IOfferedWineListItem>>(null);
     const searchQueryRef = useRef<IWineListSearchQuery>({ search: '' });
     const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
@@ -159,7 +162,7 @@ export const useMyWineryWines = () => {
         navigation.navigate('AddWineryWinesView');
     }, [navigation]);
 
-    const onOfferPress = useCallback((wine: IWineListItem, offer: IWineryLinkedWineOffer | null) => {
+    const onOfferPress = useCallback((wine: IWineListItem, offer: IWineOfferSummary | null) => {
         setSelectedWine(wine);
         setSelectedOffer(offer);
     }, []);
@@ -169,12 +172,22 @@ export const useMyWineryWines = () => {
         setSelectedOffer(null);
     }, []);
 
-    const onOfferSaved = useCallback((offer: IWineOffer) => {
+    const onOfferSaved = useCallback((result: IWineOfferSaveResult) => {
         const currentList = wineryLinkedWinesModel.list;
         if (currentList) {
+            const isExistingWine = result.type === 'created'
+                && currentList.rows.some(wine => wine.id === result.wine.id);
             wineryLinkedWinesModel.list = {
                 ...currentList,
-                rows: currentList.rows.map(wine => (wine.id === offer.wineId ? { ...wine, offer } : wine)),
+                count: currentList.count + (result.type === 'created' && !isExistingWine ? 1 : 0),
+                rows:
+                    result.type === 'created'
+                        ? isExistingWine
+                            ? currentList.rows.map(wine => wine.id === result.wine.id ? result.wine : wine)
+                            : [result.wine, ...currentList.rows]
+                        : currentList.rows.map(wine =>
+                              wine.id === result.wineId ? { ...wine, offer: result.offer } : wine,
+                          ),
             };
         }
         setSelectedWine(null);

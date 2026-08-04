@@ -6,8 +6,10 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         priceContainer: {
             width: '100%',
+            flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
+            gap: scaleHorizontal(8),
             paddingHorizontal: scaleHorizontal(8),
         },
         priceText: {

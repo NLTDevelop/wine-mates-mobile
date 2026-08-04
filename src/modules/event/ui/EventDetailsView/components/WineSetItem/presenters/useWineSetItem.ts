@@ -3,7 +3,7 @@ import { IWineSetItem, WineSetTastingStatus } from '@/entities/events/types/IWin
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
-import { getWineSetDisplaySubtitle, getWineSetDisplayTitle } from '@/modules/event/utils/wineSetDisplayFormatter';
+import { getWineDisplaySubtitle, getWineDisplayTitle } from '@/entities/wine/utils/wineDisplayFormatter';
 
 type WineSetStatusBadgeType = 'notStarted' | 'inProgress' | 'tasted' | 'missed';
 type TTranslate = (key: string, options?: Record<string, unknown>) => string;
@@ -60,8 +60,8 @@ export const useWineSetItem = ({
     t,
 }: IUseWineSetItemProps) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const defaultTitle = getWineSetDisplayTitle(item.wine);
-    const defaultSubtitle = getWineSetDisplaySubtitle(item.wine, locale);
+    const defaultTitle = getWineDisplayTitle(item.wine);
+    const defaultSubtitle = getWineDisplaySubtitle(item.wine, locale);
     const defaultImageUrl =
         item.wine.image?.smallUrl ||
         item.wine.image?.mediumUrl ||

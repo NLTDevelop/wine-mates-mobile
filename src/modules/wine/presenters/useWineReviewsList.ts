@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { wineService } from '@/entities/wine/services/WineService';
-import { useIsFocused } from '@react-navigation/native';
 import { IWineReviewsListItem } from '@/entities/wine/types/IWineReviewsListItem';
 import { wineReviewsListModel } from '@/entities/wine/models/WineReviewsListModel';
 import { clearWineReviewsListModel } from '@/entities/wine/services/WineModelService';
@@ -18,9 +17,9 @@ export const useWineReviewsList = (
     isAllVintagesSelected: boolean = false,
     isPreloadedData: boolean = false,
     myReview?: IWineReviewsListItem | null,
+    isVintageChanging: boolean = false,
 ) => {
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
-    const isFocused = useIsFocused();
     const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
     const data = isPreloadedData && myReview ? [myReview] : (wineReviewsListModel.list?.rows || []);
 
@@ -80,12 +79,14 @@ export const useWineReviewsList = (
             return;
         }
         
-        if (isFocused && wineId) {
-            onResetPaginationRequests();
-            clearWineReviewsListModel();
-            getList(OFFSET, wineId);
+        if (!wineId || isVintageChanging) {
+            return;
         }
-    }, [isFocused, getList, wineId, isAllVintagesSelected, isPreloadedData, onResetPaginationRequests]);
+
+        onResetPaginationRequests();
+        clearWineReviewsListModel();
+        getList(OFFSET, wineId);
+    }, [getList, wineId, isPreloadedData, isVintageChanging, onResetPaginationRequests]);
 
     useEffect(() => {
         return () => clearWineReviewsListModel();

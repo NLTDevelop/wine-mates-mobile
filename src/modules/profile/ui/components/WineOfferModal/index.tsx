@@ -1,8 +1,10 @@
 import { memo, useMemo } from 'react';
 import { ScrollView } from 'react-native';
-import { IWineListItem } from '@/entities/wine/types/IWineListItem';
-import { IWineOffer } from '@/entities/wine/types/IWineOffer';
-import { IWineryLinkedWineOffer } from '@/entities/winery/types/IWineryLinkedWine';
+import {
+    IWineOfferSaveResult,
+    IWineOfferSummary,
+    IWineOfferTarget,
+} from '@/entities/wine/types/IOfferedWineListItem';
 import { useUiContext } from '@/UIProvider';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { CustomInput } from '@/UIKit/CustomInput';
@@ -14,15 +16,15 @@ import { getStyles } from './styles';
 
 interface IProps {
     visible: boolean;
-    wine: IWineListItem | null;
-    offer: IWineryLinkedWineOffer | null;
+    wine: IWineOfferTarget | null;
+    offer: IWineOfferSummary | null;
     onClose: () => void;
-    onSaved: (offer: IWineOffer) => void;
+    onSaved: (result: IWineOfferSaveResult) => void;
     onDeleted: (wineId: number) => void;
     isWinery?: boolean;
 }
 
-const WineOfferModalComponent = ({ visible, wine, offer, onClose, onSaved, onDeleted, isWinery = false}: IProps) => {
+const WineOfferModalComponent = ({ visible, wine, offer, onClose, onSaved, onDeleted, isWinery = false }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {

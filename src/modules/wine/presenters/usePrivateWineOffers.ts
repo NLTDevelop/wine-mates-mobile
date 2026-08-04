@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { wineOfferService } from '@/entities/wine/services/WineOfferService';
 import { IWineOffer, IWineOfferPriceRange } from '@/entities/wine/types/IWineOffer';
 import { IWineDetails } from '@/entities/wine/types/IWineDetails';
@@ -8,12 +8,16 @@ import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
+import { useProfileNavigation } from '@/hooks/useProfileNavigation';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { WineOfferVintages } from '@/entities/wine/types/WineOfferVintages';
 
 const LIMIT = 20;
 
 type RouteParams = {
     wineId: number;
     wineDetails: IWineDetails;
+    vintages?: WineOfferVintages;
 };
 
 type LoadMode = 'initial' | 'filter' | 'more';
@@ -27,9 +31,9 @@ const normalizePriceRange = (range: IWineOfferPriceRange): IWineOfferPriceRange 
 };
 
 export const usePrivateWineOffers = () => {
-    const navigation = useNavigation<NavigationProp<Record<string, object | undefined>>>();
     const route = useRoute();
-    const { wineId, wineDetails } = route.params as RouteParams;
+    const { onUserPressById } = useProfileNavigation();
+    const { wineId, wineDetails, vintages } = route.params as RouteParams;
     const [offers, setOffers] = useState<IWineOffer[]>([]);
     const [offersCount, setOffersCount] = useState(0);
     const [priceRange, setPriceRange] = useState<IWineOfferPriceRange | null>(null);
@@ -47,8 +51,8 @@ export const usePrivateWineOffers = () => {
 
         try {
             const [offersResponse, priceRangeResponse] = await Promise.all([
-                wineOfferService.getUserOffers({ wineId, offset: 0, limit: LIMIT }),
-                wineOfferService.getPriceRange(wineId),
+                wineOfferService.getUserOffers({ wineId, vintages, offset: 0, limit: LIMIT }),
+                wineOfferService.getPriceRange({ wineId, vintages }),
             ]);
 
             if (
@@ -78,7 +82,7 @@ export const usePrivateWineOffers = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [wineId]);
+    }, [vintages, wineId]);
 
     useEffect(() => {
         const frameId = requestAnimationFrame(() => {
@@ -106,6 +110,7 @@ export const usePrivateWineOffers = () => {
             try {
                 const response = await wineOfferService.getUserOffers({
                     wineId,
+                    vintages,
                     offset,
                     limit: LIMIT,
                     minPrice: nextMinPrice === priceRange.minPrice ? undefined : nextMinPrice,
@@ -134,7 +139,7 @@ export const usePrivateWineOffers = () => {
                 setIsLoadingMore(false);
             }
         },
-        [isLoadingMore, priceRange, wineId],
+        [isLoadingMore, priceRange, vintages, wineId],
     );
 
     const onOpenFilter = useCallback(() => {
@@ -164,6 +169,11 @@ export const usePrivateWineOffers = () => {
         loadOffers(0, draftMinPrice, draftMaxPrice, 'filter');
     }, [draftMaxPrice, draftMinPrice, loadOffers, onResetPaginationRequests]);
 
+    const onRefresh = useCallback(async () => {
+        onResetPaginationRequests();
+        await loadInitialData();
+    }, [loadInitialData, onResetPaginationRequests]);
+
     const onEndReached = useCallback(() => {
         if (isLoading || isLoadingMore || offers.length >= offersCount || !onTryStartPaginationRequest(offers.length)) {
             return;
@@ -182,12 +192,12 @@ export const usePrivateWineOffers = () => {
     ]);
 
     const createOnUserPress = useCallback(
-        (userId: number) => {
+        (userId: number, wineExperienceLevel?: WineExperienceLevelEnum | null) => {
             return () => {
-                navigation.navigate('PublicUserProfileView', { userId });
+                onUserPressById(userId, wineExperienceLevel || WineExperienceLevelEnum.LOVER);
             };
         },
-        [navigation],
+        [onUserPressById],
     );
 
     const items = useMemo<IPrivateOfferListItem[]>(() => {
@@ -205,7 +215,7 @@ export const usePrivateWineOffers = () => {
                     offer.user.avatar?.originalUrl ||
                     null,
                 priceText: `${offer.price} ${offer.currency}`,
-                onPress: createOnUserPress(offer.user.id),
+                onPress: createOnUserPress(offer.user.id, offer.user.wineExperienceLevel),
             });
 
             return result;
@@ -231,6 +241,7 @@ export const usePrivateWineOffers = () => {
         onCloseFilter,
         onPriceRangeChange,
         onApplyFilter,
+        onRefresh,
         onEndReached,
         onVintageChange,
         onFavoritePress,

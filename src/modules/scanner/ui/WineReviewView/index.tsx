@@ -14,6 +14,7 @@ import { RateThisWine } from '@/UIKit/RateThisWine';
 import { NextLongArrowIcon } from '@assets/icons/NextLongArrowIcon';
 import { Notes } from '@/UIKit/Notes';
 import { WinePeakPicker } from '@/UIKit/WinePeakPicker/ui';
+import { ReviewVisibilitySwitch } from '@/UIKit/ReviewVisibilitySwitch';
 
 export const WineReviewView = observer(() => {
     const { colors, t } = useUiContext();
@@ -21,7 +22,9 @@ export const WineReviewView = observer(() => {
 
     const {
         review,
+        isPublicReview,
         onChangeReview,
+        onPublicReviewChange,
         onSliderChange,
         onContinueFullTastingPress,
         onFinishTastingPress,
@@ -66,6 +69,7 @@ export const WineReviewView = observer(() => {
                         containerStyle={styles.inputContainer}
                         inputContainerStyle={styles.input}
                     />
+                    <ReviewVisibilitySwitch value={isPublicReview} onChange={onPublicReviewChange} />
 
                     <SelectedParameters containerStyle={styles.selectedParameters} />
                 </View>

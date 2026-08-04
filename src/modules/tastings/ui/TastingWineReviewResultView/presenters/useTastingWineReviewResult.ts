@@ -511,6 +511,7 @@ export const useTastingWineReviewResult = () => {
             const payload: AddRateDto = {
                 wineId: wineModel.wine?.id || 0,
                 review: wineModel.review?.review.trim() || '',
+                isHidden: wineModel.review?.isHidden ?? false,
                 color: {
                     colorId: wineModel.look?.colorId || 0,
                     shadeId: wineModel.look?.shadeId || 0,

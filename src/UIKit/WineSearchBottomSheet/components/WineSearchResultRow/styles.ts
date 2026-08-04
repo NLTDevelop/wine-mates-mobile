@@ -10,9 +10,7 @@ export const getStyles = (colors: IColors) => {
             paddingHorizontal: scaleHorizontal(12),
             paddingVertical: scaleVertical(8),
         },
-        title: {
-            color: colors.text,
-        },
+        title: { color: colors.text },
         subtitle: {
             color: colors.text_light,
             marginTop: scaleVertical(2),

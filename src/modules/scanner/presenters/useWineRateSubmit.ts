@@ -44,6 +44,7 @@ const buildShortWineRatePayload = (): Partial<AddRateDto> => {
     const payload: Partial<AddRateDto> = {
         wineId: wineModel.wine?.id || 0,
         review: wineModel.review?.review.trim() || '',
+        isHidden: wineModel.review?.isHidden ?? false,
     };
 
     addRatingToPayload(payload);
@@ -59,6 +60,7 @@ const buildFullWineRatePayload = (isPremiumUser: boolean): Partial<AddRateDto> =
     const payload: Partial<AddRateDto> = {
         wineId: wineModel.wine?.id || 0,
         review: wineModel.review?.review.trim() || '',
+        isHidden: wineModel.review?.isHidden ?? false,
     };
 
     if (wineModel.look) {

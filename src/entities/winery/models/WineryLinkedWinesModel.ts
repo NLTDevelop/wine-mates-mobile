@@ -1,24 +1,24 @@
 import { IList } from '@/entities/IList';
-import { IWineryLinkedWine } from '../types/IWineryLinkedWine';
+import { IOfferedWineListItem } from '@/entities/wine/types/IOfferedWineListItem';
 import { MobXRepository } from '@/repository/MobXRepository';
 
 interface IWineryLinkedWinesModel {
-    list: IList<IWineryLinkedWine> | null;
-    append: (value: IList<IWineryLinkedWine>) => void;
+    list: IList<IOfferedWineListItem> | null;
+    append: (value: IList<IOfferedWineListItem>) => void;
 }
 
 class WineryLinkedWinesModel implements IWineryLinkedWinesModel {
-    private listRepository = new MobXRepository<IList<IWineryLinkedWine> | null>(null);
+    private listRepository = new MobXRepository<IList<IOfferedWineListItem> | null>(null);
 
     public get list() {
         return this.listRepository.data;
     }
 
-    public set list(value: IList<IWineryLinkedWine> | null) {
+    public set list(value: IList<IOfferedWineListItem> | null) {
         this.listRepository.save(value);
     }
 
-    public append(value: IList<IWineryLinkedWine>) {
+    public append(value: IList<IOfferedWineListItem>) {
         if (!this.list) {
             this.list = value;
             return;

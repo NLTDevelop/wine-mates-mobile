@@ -82,6 +82,7 @@ export interface ILinks {
     availableWineryWines: string;
     wineryLinkedWines: string;
     wineOffers: string;
+    wineOffersSearch: string;
     partners: string;
     wineryWines: string;
     wineries: string;
@@ -103,6 +104,7 @@ class Links implements ILinks {
         wineEvolution: 'wines',
         wineFilters: 'wines/filters',
         wineSetSearch: 'wines/search/wine-set',
+        wineOffersSearch: 'wines/search/for-offers',
         wineEventDetails: 'wines',
         scannedWines: 'wines/scanner',
         wineTypes: 'wine-types',
@@ -382,6 +384,9 @@ class Links implements ILinks {
     public get wineOffers() {
         return `${this._domain}${this._links.wineOffers}`;
     }
+    public get wineOffersSearch() {
+        return `${this._domain}${this._links.wineOffersSearch}`;
+    }
     public get partners() {
         return `${this._domain}${this._links.partners}`;
     }
@@ -397,7 +402,6 @@ class Links implements ILinks {
     public get appeals() {
         return `${this._domain}${this._links.appeals}`;
     }
-
     public get notificationsSocket() {
         return `${this._domain.replace(/\/api\/v1\/?$/, '')}/notifications`;
     }
