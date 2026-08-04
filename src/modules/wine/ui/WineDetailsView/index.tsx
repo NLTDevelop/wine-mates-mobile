@@ -41,6 +41,8 @@ export const WineDetailsView = observer(() => {
         reviewsWineId,
         fromScanner,
         onUpdateIsSaved,
+        onRegisterEvolutionRefresh,
+        onEvolutionRefresh,
         isPreloadedData,
         isResultHeaderFooterVisible,
         showTastingAuthor,
@@ -59,6 +61,7 @@ export const WineDetailsView = observer(() => {
         isVintageChanging,
     );
     const { refreshControl } = useRefresh(onRefresh);
+    const { refreshControl: evolutionRefreshControl } = useRefresh(onEvolutionRefresh);
     const {
         favoriteData,
         isVisible: isAddToFavoriteModalVisible,
@@ -158,7 +161,11 @@ export const WineDetailsView = observer(() => {
                             pointerEvents={isEvolutionActive ? 'auto' : 'none'}
                             style={[styles.tabContainer, isEvolutionActive ? null : styles.hiddenTabContainer]}
                         >
-                            <ScrollView contentContainerStyle={styles.evolutionContent}>
+                            <ScrollView
+                                contentContainerStyle={styles.evolutionContent}
+                                refreshControl={evolutionRefreshControl}
+                                bounces
+                            >
                                 <WineDetailsScrollableHeader
                                     details={details}
                                     vintages={vintages}
@@ -180,7 +187,10 @@ export const WineDetailsView = observer(() => {
                                 />
                                 {isEvolutionActive ? (
                                     hasPremiumContentAccess ? (
-                                        <WineEvolutionTab wineId={details.id} />
+                                        <WineEvolutionTab
+                                            wineId={details.id}
+                                            onRegisterRefresh={onRegisterEvolutionRefresh}
+                                        />
                                     ) : (
                                         <PremiumFeature onGetPremiumPress={onGetPremiumPress} />
                                     )

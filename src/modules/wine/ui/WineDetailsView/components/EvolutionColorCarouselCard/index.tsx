@@ -1,20 +1,41 @@
-import { useMemo } from 'react';
-import { Image, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { FlatList, Image, LayoutChangeEvent, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { IWineEvolutionCarouselCard } from '@/modules/wine/types/IWineEvolution';
+import { IWineEvolutionCarouselCard, IWineEvolutionColorStat } from '@/modules/wine/types/IWineEvolution';
 import { getStyles } from '../WineEvolutionTab/styles';
 
 interface IProps {
     card: IWineEvolutionCarouselCard;
+    onLayout: (event: LayoutChangeEvent) => void;
 }
 
-export const EvolutionColorCarouselCard = ({ card }: IProps) => {
+export const EvolutionColorCarouselCard = ({ card, onLayout }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
+    const renderStatItem = useCallback(
+        ({ item }: { item: IWineEvolutionColorStat }) => (
+            <View style={[styles.statBar, { backgroundColor: item.backgroundColor }]}>
+                <Typography
+                    text={item.label}
+                    variant="body_500"
+                    style={[styles.statLabel, { color: item.textColor }]}
+                />
+                <Typography
+                    text={item.reviewsText}
+                    variant="subtitle_12_400"
+                    style={[styles.statReviews, { color: item.textColor }]}
+                />
+            </View>
+        ),
+        [styles],
+    );
+
+    const keyExtractor = useCallback((item: IWineEvolutionColorStat, index: number) => `${item.label}-${index}`, []);
+
     return (
-        <View style={styles.carouselItem}>
+        <View style={styles.carouselItem} onLayout={onLayout}>
             <View style={styles.statCard}>
                 {card.isEmpty ? (
                     <View style={styles.emptyCard}>
@@ -22,96 +43,33 @@ export const EvolutionColorCarouselCard = ({ card }: IProps) => {
                     </View>
                 ) : (
                     <>
-                        <View style={styles.statBars}>
-                            {card.colors[0] ? (
-                                <View style={[styles.statBar, { backgroundColor: card.colors[0].backgroundColor }]}>
-                                    <Typography
-                                        text={card.colors[0].label}
-                                        variant="body_500"
-                                        style={[styles.statLabel, { color: card.colors[0].textColor }]}
-                                    />
-                                    <Typography
-                                        text={card.colors[0].reviewsText}
-                                        variant="subtitle_12_400"
-                                        style={[styles.statReviews, { color: card.colors[0].textColor }]}
-                                    />
-                                </View>
-                            ) : null}
-                            {card.colors[1] ? (
-                                <View style={[styles.statBar, { backgroundColor: card.colors[1].backgroundColor }]}>
-                                    <Typography
-                                        text={card.colors[1].label}
-                                        variant="body_500"
-                                        style={[styles.statLabel, { color: card.colors[1].textColor }]}
-                                    />
-                                    <Typography
-                                        text={card.colors[1].reviewsText}
-                                        variant="subtitle_12_400"
-                                        style={[styles.statReviews, { color: card.colors[1].textColor }]}
-                                    />
-                                </View>
-                            ) : null}
-                            {card.colors[2] ? (
-                                <View style={[styles.statBar, { backgroundColor: card.colors[2].backgroundColor }]}>
-                                    <Typography
-                                        text={card.colors[2].label}
-                                        variant="body_500"
-                                        style={[styles.statLabel, { color: card.colors[2].textColor }]}
-                                    />
-                                    <Typography
-                                        text={card.colors[2].reviewsText}
-                                        variant="subtitle_12_400"
-                                        style={[styles.statReviews, { color: card.colors[2].textColor }]}
-                                    />
-                                </View>
-                            ) : null}
-                            {card.colors[3] ? (
-                                <View style={[styles.statBar, { backgroundColor: card.colors[3].backgroundColor }]}>
-                                    <Typography
-                                        text={card.colors[3].label}
-                                        variant="body_500"
-                                        style={[styles.statLabel, { color: card.colors[3].textColor }]}
-                                    />
-                                    <Typography
-                                        text={card.colors[3].reviewsText}
-                                        variant="subtitle_12_400"
-                                        style={[styles.statReviews, { color: card.colors[3].textColor }]}
-                                    />
-                                </View>
-                            ) : null}
-                            {card.colors[4] ? (
-                                <View style={[styles.statBar, { backgroundColor: card.colors[4].backgroundColor }]}>
-                                    <Typography
-                                        text={card.colors[4].label}
-                                        variant="body_500"
-                                        style={[styles.statLabel, { color: card.colors[4].textColor }]}
-                                    />
-                                    <Typography
-                                        text={card.colors[4].reviewsText}
-                                        variant="subtitle_12_400"
-                                        style={[styles.statReviews, { color: card.colors[4].textColor }]}
-                                    />
-                                </View>
-                            ) : null}
-                        </View>
+                        <FlatList
+                            data={card.colors}
+                            renderItem={renderStatItem}
+                            keyExtractor={keyExtractor}
+                            contentContainerStyle={styles.statBars}
+                            scrollEnabled={false}
+                        />
                         <View style={styles.avatarContent}>
                             <View style={styles.avatarRow}>
-                                {card.avatarSources[0] ? (
-                                    <Image source={card.avatarSources[0]} style={styles.avatar} />
+                                {card.avatarUrls[0] ? (
+                                    <Image source={{ uri: card.avatarUrls[0] }} style={styles.avatar} />
                                 ) : null}
-                                {card.avatarSources[1] ? (
-                                    <Image source={card.avatarSources[1]} style={styles.avatar} />
+                                {card.avatarUrls[1] ? (
+                                    <Image source={{ uri: card.avatarUrls[1] }} style={styles.avatar} />
                                 ) : null}
-                                {card.avatarSources[2] ? (
-                                    <Image source={card.avatarSources[2]} style={styles.avatar} />
+                                {card.avatarUrls[2] ? (
+                                    <Image source={{ uri: card.avatarUrls[2] }} style={styles.avatar} />
                                 ) : null}
-                                <View style={styles.additionalPeople}>
-                                    <Typography
-                                        text={card.additionalPeopleText || '-'}
-                                        variant="subtitle_12_400"
-                                        style={styles.additionalPeopleText}
-                                    />
-                                </View>
+                                {card.additionalPeople > 0 ? (
+                                    <View style={styles.additionalPeople}>
+                                        <Typography
+                                            text={card.additionalPeopleText}
+                                            variant="subtitle_12_400"
+                                            style={styles.additionalPeopleText}
+                                        />
+                                    </View>
+                                ) : null}
                             </View>
                             <Typography
                                 text={t('wine.evolution.peopleWhoChose')}

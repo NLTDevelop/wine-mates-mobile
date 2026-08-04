@@ -9,6 +9,7 @@ export const COLORS: { light: IColors } = {
         background_middle: '#F0F0F0',
         background_grey: '#D0D3D9',
         evolution_background_grey: '#E1E1E5',
+        evolution_chart_background: '#F7F7F7',
         background_disabled: '#C7C7C7',
 
         border: '#E4E4E4',
@@ -57,6 +58,7 @@ export const COLORS: { light: IColors } = {
         evolutionChartPurple: '#9074C9',
         evolutionChartPurpleBackground: '#9074C91F',
         evolutionChartOrange: '#D75B42',
+        evolutionChartBurgundy: '#910D0D',
         evolutionColorRed: '#620000',
         evolutionColorOrange: '#E58A2C',
         evolutionColorPink: '#FFC9C9',

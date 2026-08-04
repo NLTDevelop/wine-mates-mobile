@@ -28,7 +28,7 @@ export interface IWineEvolutionCarouselCard {
     id: string;
     year: string;
     colors: IWineEvolutionColorStat[];
-    avatarSources: number[];
+    avatarUrls: string[];
     additionalPeople: number;
     additionalPeopleText: string;
     isEmpty?: boolean;
@@ -38,10 +38,7 @@ export interface IWineEvolutionLineSeries {
     id: string;
     color: string;
     path: string;
-    lastPoint: {
-        x: number;
-        y: number;
-    };
+    markersPath: string;
 }
 
 export interface IWineEvolutionAudienceControl {

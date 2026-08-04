@@ -296,6 +296,19 @@ export const useWineDetails = () => {
         setLocalIsSaved(isSaved);
     }, []);
 
+    const evolutionRefreshRef = useRef<(() => Promise<void>) | null>(null);
+    const onRegisterEvolutionRefresh = useCallback((callback: (() => Promise<void>) | null) => {
+        evolutionRefreshRef.current = callback;
+    }, []);
+    const onEvolutionRefresh = useCallback(async () => {
+        const detailsRefresh = isAllVintagesSelected ? { vintages: 'All' as const } : undefined;
+
+        await Promise.all([
+            getDetails(detailsRefresh),
+            evolutionRefreshRef.current?.() || Promise.resolve(),
+        ]);
+    }, [getDetails, isAllVintagesSelected]);
+
     const resetToHome = useCallback(() => {
         isResettingRef.current = true;
         navigation.dispatch(
@@ -365,6 +378,8 @@ export const useWineDetails = () => {
         reviewsWineId,
         fromScanner,
         onUpdateIsSaved,
+        onRegisterEvolutionRefresh,
+        onEvolutionRefresh,
         isPreloadedData: Boolean(wineDetailsData || notificationRateId),
         isResultHeaderFooterVisible: !notificationRateId,
         showTastingAuthor: Boolean(notificationRateId),
