@@ -1,9 +1,10 @@
-import { CommonActions, StackActions, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { CommonActions, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { BackHandler } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 import { clearWineModel } from '@/entities/wine/services/WineModelService';
+import { getWineScannerReturnAction } from '@/modules/scanner/utils/getWineScannerReturnAction';
 
 export const useScanResultsListBackButton = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -15,14 +16,7 @@ export const useScanResultsListBackButton = () => {
 
         if (addWineSetScannerState) {
             wineSetScannerModel.clear();
-            navigation.dispatch(
-                StackActions.popTo('AddWineSetView', {
-                    draft: addWineSetScannerState.draft,
-                    initialSelectedWines: addWineSetScannerState.selectedWines,
-                    editEventId: addWineSetScannerState.editEventId,
-                    isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
-                }),
-            );
+            navigation.dispatch(getWineScannerReturnAction(addWineSetScannerState));
             return;
         }
 

@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
-import { IWineryLinkedWineOffer } from '@/entities/winery/types/IWineryLinkedWine';
+import { IWineOfferSummary } from '@/entities/wine/types/IOfferedWineListItem';
 import { localization } from '@/UIProvider/localization/Localization';
 
 interface IProps {
     item: IWineListItem;
-    offer: IWineryLinkedWineOffer | null;
-    onOfferPress?: (item: IWineListItem, offer: IWineryLinkedWineOffer | null) => void;
+    offer: IWineOfferSummary | null;
+    onOfferPress?: (item: IWineListItem, offer: IWineOfferSummary | null) => void;
 }
 
 export const useWineryWineListItem = ({ item, offer, onOfferPress }: IProps) => {
@@ -18,6 +18,7 @@ export const useWineryWineListItem = ({ item, offer, onOfferPress }: IProps) => 
         return {
             isOfferBlockVisible: Boolean(offer) || Boolean(onOfferPress),
             isOfferActionDisabled: !onOfferPress,
+            isEditIconVisible: Boolean(offer) && Boolean(onOfferPress),
             hasReview: Boolean(item.lastReview?.review?.trim()),
             priceText: offer ? `${offer.price} ${offer.currency}` : localization.t('profile.setWinePrice'),
             onPricePress,

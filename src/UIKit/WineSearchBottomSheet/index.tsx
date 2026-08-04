@@ -4,19 +4,21 @@ import Animated from 'react-native-reanimated';
 import { useUiContext } from '@/UIProvider';
 import { SearchBar } from '@/UIKit/SearchBar';
 import { Button } from '@/UIKit/Button';
-import { IWineSearchResultViewItem } from '@/modules/event/types/IWineSetViewItem';
-import { WineSearchResultRow } from '../WineSearchResultRow';
-import { WineSearchEmptyState } from '../WineSearchEmptyState';
-import { getStyles } from './styles';
-import { useWineSearchBottomSheet } from './presenters/useWineSearchBottomSheet';
 import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { CameraIcon } from '@assets/icons/CameraIcon';
+import { IWineSearchResultItem } from './types/IWineSearchResultItem';
+import { WineSearchResultRow } from './components/WineSearchResultRow';
+import { WineSearchEmptyState } from './components/WineSearchEmptyState';
+import { useWineSearchBottomSheet } from './presenters/useWineSearchBottomSheet';
+import { getStyles } from './styles';
 
 interface IProps {
     visible: boolean;
+    title: string;
+    scannerButtonText: string;
     searchInputRef: RefObject<TextInput | null>;
     value: string;
-    data: IWineSearchResultViewItem[];
+    data: IWineSearchResultItem[];
     isLoading: boolean;
     emptyText: string;
     onChangeText: (value: string) => void;
@@ -27,6 +29,8 @@ interface IProps {
 
 export const WineSearchBottomSheet = ({
     visible,
+    title,
+    scannerButtonText,
     searchInputRef,
     value,
     data,
@@ -41,18 +45,11 @@ export const WineSearchBottomSheet = ({
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { animatedListContainerStyle } = useWineSearchBottomSheet();
 
-    const keyExtractor = useCallback((item: IWineSearchResultViewItem) => {
-        return `${item.id}`;
-    }, []);
-
-    const renderItem = useCallback(({ item }: { item: IWineSearchResultViewItem }) => {
+    const keyExtractor = useCallback((item: IWineSearchResultItem) => `${item.id}`, []);
+    const renderItem = useCallback(({ item }: { item: IWineSearchResultItem }) => {
         return <WineSearchResultRow title={item.title} subtitle={item.subtitle} onPress={item.onPress} />;
     }, []);
-
-    const renderItemSeparator = useCallback(() => {
-        return <View style={styles.divider} />;
-    }, [styles.divider]);
-
+    const renderItemSeparator = useCallback(() => <View style={styles.divider} />, [styles.divider]);
     const renderListEmpty = useCallback(() => {
         return <WineSearchEmptyState text={emptyText} isLoading={isLoading} />;
     }, [emptyText, isLoading]);
@@ -61,7 +58,7 @@ export const WineSearchBottomSheet = ({
         <BottomModal
             visible={visible}
             onClose={onClose}
-            title={t('event.addWine')}
+            title={title}
             isFullScreen
             shouldAvoidKeyboard={false}
         >
@@ -73,7 +70,6 @@ export const WineSearchBottomSheet = ({
                     placeholder={t('common.search')}
                     containerStyle={styles.searchContainer}
                 />
-
                 <Animated.View style={[styles.listContainer, animatedListContainerStyle]}>
                     <FlatList
                         data={data}
@@ -90,7 +86,7 @@ export const WineSearchBottomSheet = ({
                         scrollEnabled={data.length > 0}
                     />
                     <Button
-                        text={t('event.searchWineWithScanner')}
+                        text={scannerButtonText}
                         onPress={onOpenScannerPress}
                         type="secondary"
                         containerStyle={styles.scanButton}

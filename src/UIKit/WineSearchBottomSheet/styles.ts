@@ -4,25 +4,11 @@ import { isIOS, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            minHeight: 0,
-            gap: scaleVertical(16),
-        },
-        searchContainer: {
-            marginBottom: scaleVertical(8),
-        },
-        scanButton: {
-            marginBottom: scaleVertical(8),
-        },
-        listContainer: {
-            flex: 1,
-            minHeight: 0,
-        },
-        list: {
-            flex: 1,
-            minHeight: 0,
-        },
+        container: { flex: 1, minHeight: 0, gap: scaleVertical(16) },
+        searchContainer: { marginBottom: scaleVertical(8) },
+        scanButton: { marginBottom: scaleVertical(8) },
+        listContainer: { flex: 1, minHeight: 0 },
+        list: { flex: 1, minHeight: 0 },
         listContent: {
             flexGrow: 1,
             paddingBottom: isIOS ? scaleVertical(32) : scaleVertical(16),

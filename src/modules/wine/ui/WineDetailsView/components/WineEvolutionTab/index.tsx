@@ -20,7 +20,7 @@ interface IProps {
 }
 
 export const WineEvolutionTab = ({ wineId }: IProps) => {
-    const { colors, t } = useUiContext();
+    const { colors, locale, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
         tastingYear,
@@ -60,7 +60,7 @@ export const WineEvolutionTab = ({ wineId }: IProps) => {
         onTastePrevious,
         onTasteNext,
         onTasteSnap,
-    } = useWineEvolutionTab({ colors, wineId, t });
+    } = useWineEvolutionTab({ colors, locale, wineId, t });
 
     const renderExpertItem = useCallback(
         ({ item }: { item: IWineEvolutionExpertAssessment }) => (

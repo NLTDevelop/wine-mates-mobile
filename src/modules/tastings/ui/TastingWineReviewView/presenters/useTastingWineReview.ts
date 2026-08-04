@@ -27,7 +27,10 @@ interface IRouteParams {
     isFullTastingReview?: boolean;
 }
 
-type ReviewOnlyDraftPayload = Pick<Partial<AddRateDto>, 'wineId' | 'review' | 'userRating' | 'expertRating' | 'winePeak'>;
+type ReviewOnlyDraftPayload = Pick<
+    Partial<AddRateDto>,
+    'wineId' | 'review' | 'userRating' | 'expertRating' | 'winePeak' | 'isHidden'
+>;
 const DEFAULT_EXPERT_RATING = 70;
 
 export const useTastingWineReview = () => {
@@ -51,6 +54,7 @@ export const useTastingWineReview = () => {
     } = useEventTastingDraft();
 
     const [review, setReview] = useState(() => wineModel.review?.review ?? '');
+    const [isPublicReview, setIsPublicReview] = useState(() => !(wineModel.review?.isHidden ?? false));
     const [sliderValue, setSliderValue] = useState(() => wineModel.review?.rate ?? DEFAULT_EXPERT_RATING);
     const [starRate, setStarRate] = useState(() => wineModel.review?.starRate ?? 0);
     const [winePeak, setWinePeak] = useState<number | null>(wineModel.winePeak);
@@ -68,6 +72,7 @@ export const useTastingWineReview = () => {
         expertRating?: number;
         userRating?: number;
         winePeak?: number;
+        isHidden?: boolean;
     }) => {
         const nextReview = draftReview.review || '';
         const nextSliderValue = typeof draftReview.expertRating === 'number'
@@ -80,6 +85,7 @@ export const useTastingWineReview = () => {
         const nextHasChangedStarRate = typeof draftReview.userRating === 'number';
 
         setReview(nextReview);
+        setIsPublicReview(!(draftReview.isHidden ?? false));
         setSliderValue(nextSliderValue);
         setStarRate(nextStarRate);
         setHasChangedRate(nextHasChangedRate);
@@ -95,6 +101,7 @@ export const useTastingWineReview = () => {
         wineModel.review = {
             ...(wineModel.review || { review: '' }),
             review: nextReview,
+            isHidden: draftReview.isHidden ?? false,
             rate: nextSliderValue,
             starRate: nextStarRate,
             hasChangedRate: nextHasChangedRate,
@@ -105,12 +112,14 @@ export const useTastingWineReview = () => {
 
     const syncReviewFromModel = useCallback(() => {
         const nextReview = wineModel.review?.review ?? '';
+        const nextIsPublicReview = !(wineModel.review?.isHidden ?? false);
         const nextSliderValue = wineModel.review?.rate ?? DEFAULT_EXPERT_RATING;
         const nextStarRate = wineModel.review?.starRate ?? 0;
         const nextHasChangedRate = wineModel.review?.hasChangedRate ?? false;
         const nextHasChangedStarRate = wineModel.review?.hasChangedStarRate ?? false;
 
         setReview(nextReview);
+        setIsPublicReview(nextIsPublicReview);
         setSliderValue(nextSliderValue);
         setStarRate(nextStarRate);
         setHasChangedRate(nextHasChangedRate);
@@ -195,6 +204,14 @@ export const useTastingWineReview = () => {
         };
     }, []);
 
+    const onPublicReviewChange = useCallback((value: boolean) => {
+        setIsPublicReview(value);
+        wineModel.review = {
+            ...(wineModel.review || { review: '' }),
+            isHidden: !value,
+        };
+    }, []);
+
     const onStarRateChange = useCallback((value: number) => {
         const newValue = Number(value.toFixed(1));
         setStarRate(prev => prev === newValue ? prev : newValue);
@@ -220,10 +237,11 @@ export const useTastingWineReview = () => {
             starRate,
             rate: sliderValue,
             review,
+            isHidden: !isPublicReview,
             hasChangedRate: isExpertOrWinemaker || hasChangedRate,
             hasChangedStarRate,
         };
-    }, [hasChangedRate, hasChangedStarRate, isExpertOrWinemaker, review, sliderValue, starRate]);
+    }, [hasChangedRate, hasChangedStarRate, isExpertOrWinemaker, isPublicReview, review, sliderValue, starRate]);
 
     const { skipNextBlurSave } = useSaveEventTastingDraftOnBlur({
         eventId,
@@ -282,6 +300,7 @@ export const useTastingWineReview = () => {
         const payload: ReviewOnlyDraftPayload = {
             wineId,
             review: wineModel.review?.review.trim() || '',
+            isHidden: wineModel.review?.isHidden ?? false,
         };
 
         if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {
@@ -399,7 +418,9 @@ export const useTastingWineReview = () => {
 
     return {
         review,
+        isPublicReview,
         onChangeReview,
+        onPublicReviewChange,
         onSliderChange,
         onNextPress,
         sliderValue,

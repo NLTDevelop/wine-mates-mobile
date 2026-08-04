@@ -9,10 +9,7 @@ interface IProps {
     isLoading: boolean;
 }
 
-export const WineSearchEmptyState = ({
-    text,
-    isLoading,
-}: IProps) => {
+export const WineSearchEmptyState = ({ text, isLoading }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 

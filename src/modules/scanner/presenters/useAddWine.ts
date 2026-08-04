@@ -1,4 +1,4 @@
-import { StackActions, useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IWineBase, IWineBaseValue } from '@/entities/wine/types/IWineBase';
@@ -12,6 +12,7 @@ import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 import { clearTasteCharacteristicsCache, clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
 import { wineModel } from '@/entities/wine/models/WineModel';
 import { clearWineModel } from '@/entities/wine/services/WineModelService';
+import { getWineScannerReturnAction } from '@/modules/scanner/utils/getWineScannerReturnAction';
 
 const createValue = (): IWineBaseValue => ({ id: null, value: '' });
 
@@ -192,15 +193,10 @@ export const useAddWine = () => {
                         clearWineModel();
 
                         if (addWineSetScannerState) {
-                            navigation.dispatch(
-                                StackActions.popTo('AddWineSetView', {
-                                    draft: addWineSetScannerState.draft,
-                                    initialSelectedWines: addWineSetScannerState.selectedWines,
-                                    editEventId: addWineSetScannerState.editEventId,
-                                    isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
-                                    selectedWine: getWineSetSearchItem(wineId, form),
-                                }),
-                            );
+                            navigation.dispatch(getWineScannerReturnAction(
+                                addWineSetScannerState,
+                                getWineSetSearchItem(wineId, form),
+                            ));
                         }
                         return;
                     }
@@ -239,15 +235,10 @@ export const useAddWine = () => {
                     clearWineModel();
 
                     if (addWineSetScannerState) {
-                        navigation.dispatch(
-                            StackActions.popTo('AddWineSetView', {
-                                draft: addWineSetScannerState.draft,
-                                initialSelectedWines: addWineSetScannerState.selectedWines,
-                                editEventId: addWineSetScannerState.editEventId,
-                                isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
-                                selectedWine: getWineSetSearchItem(response.data.id, form),
-                            }),
-                        );
+                        navigation.dispatch(getWineScannerReturnAction(
+                            addWineSetScannerState,
+                            getWineSetSearchItem(response.data.id, form),
+                        ));
                     }
                     return;
                 }

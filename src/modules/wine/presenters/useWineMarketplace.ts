@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Linking } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { IWinePurchasePartner } from '@/entities/wine/types/IWinePurchasePartner';
@@ -92,20 +92,73 @@ const getCardTitle = (partner: IWinePurchasePartner) => {
     };
 };
 
-export const useWineMarketplace = (wineId: number, wineDetails: IWineDetails) => {
+export const useWineMarketplace = (
+    wineId: number,
+    wineDetails: IWineDetails,
+    isAllVintagesSelected: boolean,
+    hasSelectedVintageData: boolean,
+    isVintageChanging: boolean,
+    isActive: boolean,
+) => {
     const navigation = useNavigation<NavigationProp<Record<string, object | undefined>>>();
     const [partners, setPartners] = useState<IWinePurchasePartner[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const latestRequestIdRef = useRef(0);
+    const activeRequestRef = useRef<{ id: number; key: string } | null>(null);
+    const loadedRequestKeyRef = useRef<string | null>(null);
 
-    const getPartners = useCallback(async (showLoader = true) => {
+    const getPartners = useCallback(async (showLoader = true, force = false) => {
+        if (!isActive) {
+            latestRequestIdRef.current += 1;
+            activeRequestRef.current = null;
+            return;
+        }
+
+        if (isVintageChanging) {
+            latestRequestIdRef.current += 1;
+            activeRequestRef.current = null;
+            setIsLoading(true);
+            return;
+        }
+
+        if (!hasSelectedVintageData) {
+            latestRequestIdRef.current += 1;
+            activeRequestRef.current = null;
+            loadedRequestKeyRef.current = null;
+            setPartners([]);
+            setIsLoading(false);
+            return;
+        }
+
+        const requestKey = `${wineId}:${isAllVintagesSelected ? 'All' : 'current'}`;
+        if (activeRequestRef.current?.key === requestKey) {
+            return;
+        }
+
+        if (!force && loadedRequestKeyRef.current === requestKey) {
+            setIsLoading(false);
+            return;
+        }
+
+        const requestId = latestRequestIdRef.current + 1;
+        latestRequestIdRef.current = requestId;
+        activeRequestRef.current = { id: requestId, key: requestKey };
+
         if (showLoader) {
             setIsLoading(true);
         }
 
         try {
-            const response = await wineMarketplaceService.getPurchasePartners(wineId);
+            const response = await wineMarketplaceService.getPurchasePartners({
+                wineId,
+                vintages: isAllVintagesSelected ? 'All' : undefined,
+            });
 
             if (response.isError || !response.data) {
+                if (requestId !== latestRequestIdRef.current) {
+                    return;
+                }
+
                 toastService.showError(
                     localization.t('common.errorHappened'),
                     response.message || localization.t('common.somethingWentWrong'),
@@ -113,11 +166,22 @@ export const useWineMarketplace = (wineId: number, wineDetails: IWineDetails) =>
                 return;
             }
 
+            if (requestId !== latestRequestIdRef.current) {
+                return;
+            }
+
             setPartners(getPartnersFromSummary(response.data));
+            loadedRequestKeyRef.current = requestKey;
         } finally {
-            setIsLoading(false);
+            if (activeRequestRef.current?.id === requestId) {
+                activeRequestRef.current = null;
+            }
+
+            if (requestId === latestRequestIdRef.current) {
+                setIsLoading(false);
+            }
         }
-    }, [wineId]);
+    }, [hasSelectedVintageData, isActive, isAllVintagesSelected, isVintageChanging, wineId]);
 
     useEffect(() => {
         const frameId = requestAnimationFrame(() => {
@@ -130,13 +194,21 @@ export const useWineMarketplace = (wineId: number, wineDetails: IWineDetails) =>
     }, [getPartners]);
 
     const onRefresh = useCallback(async () => {
-        await getPartners(false);
+        await getPartners(false, true);
+    }, [getPartners]);
+
+    const onRetry = useCallback(async () => {
+        await getPartners(true, true);
     }, [getPartners]);
 
     const onPartnerPress = useCallback(
         async (partner: IWinePurchasePartner) => {
             if (partner.status === PartnerStatus.BUSINESS_PARTNERS) {
-                navigation.navigate('PrivateWineOffersView', { wineId, wineDetails });
+                navigation.navigate('PrivateWineOffersView', {
+                    wineId,
+                    wineDetails,
+                    vintages: isAllVintagesSelected ? 'All' : undefined,
+                });
                 return;
             }
 
@@ -153,10 +225,14 @@ export const useWineMarketplace = (wineId: number, wineDetails: IWineDetails) =>
                 );
             }
         },
-        [navigation, wineDetails, wineId],
+        [isAllVintagesSelected, navigation, wineDetails, wineId],
     );
 
     const cards = useMemo<IWinePurchaseCard[]>(() => {
+        if (!hasSelectedVintageData) {
+            return [];
+        }
+
         return partners.map(partner => ({
             id: partner.id,
             name: partner.name,
@@ -168,12 +244,12 @@ export const useWineMarketplace = (wineId: number, wineDetails: IWineDetails) =>
             status: partner.status,
             onPress: () => onPartnerPress(partner),
         }));
-    }, [onPartnerPress, partners]);
+    }, [hasSelectedVintageData, onPartnerPress, partners]);
 
     return {
         cards,
-        isLoading,
+        isLoading: isActive && hasSelectedVintageData && partners.length === 0 && (isLoading || isVintageChanging),
         onRefresh,
-        onRetry: getPartners,
+        onRetry,
     };
 };

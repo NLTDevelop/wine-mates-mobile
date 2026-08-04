@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { IWineryLinkedWine } from '@/entities/winery/types/IWineryLinkedWine';
+import { IOfferedWineListItem } from '@/entities/wine/types/IOfferedWineListItem';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { wineryLinkedWinesModel } from '@/entities/winery/models/WineryLinkedWinesModel';
 import { wineryWineService } from '@/entities/winery/services/WineryWineService';
@@ -18,7 +18,7 @@ export const usePublicWineryWines = (wineryId?: number) => {
     const list = wineryLinkedWinesModel.list;
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
-    const listRef = useRef<FlatList<IWineryLinkedWine>>(null);
+    const listRef = useRef<FlatList<IOfferedWineListItem>>(null);
     const searchQueryRef = useRef<IWineListSearchQuery>({ search: '' });
     const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 

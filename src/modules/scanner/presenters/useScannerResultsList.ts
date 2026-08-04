@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { wineService } from '@/entities/wine/services/WineService';
-import { StackActions, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { IAIData } from '@/entities/wine/types/IAIData';
@@ -10,6 +10,7 @@ import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
 import { wineModel } from '@/entities/wine/models/WineModel';
 import { clearWineListModel } from '@/entities/wine/services/WineModelService';
+import { getWineScannerReturnAction } from '@/modules/scanner/utils/getWineScannerReturnAction';
 
 const getWineSetSearchItem = (item: IWineListItem): IWineSetSearchItem => {
     return {
@@ -81,13 +82,7 @@ export const useScannerResultsList = () => {
         if (addWineSetScannerState) {
             wineSetScannerModel.clear();
             navigation.dispatch(
-                StackActions.popTo('AddWineSetView', {
-                    draft: addWineSetScannerState.draft,
-                    initialSelectedWines: addWineSetScannerState.selectedWines,
-                    editEventId: addWineSetScannerState.editEventId,
-                    isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
-                    selectedWine: getWineSetSearchItem(item),
-                }),
+                getWineScannerReturnAction(addWineSetScannerState, getWineSetSearchItem(item)),
             );
             return;
         }

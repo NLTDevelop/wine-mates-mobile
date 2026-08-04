@@ -11,6 +11,7 @@ export interface AddRateDto {
     userRating?: number;
     expertRating?: number;
     review: string;
+    isHidden: boolean;
     color: {
         colorId: number;
         shadeId: number;

@@ -1,6 +1,7 @@
 import { IRequester, IResponse, requester } from '@/libs/requester';
 import { ILinks, links } from '@/Links';
 import { IWineMarketplaceSummary } from '../types/IWineMarketplaceSummary';
+import { IWineMarketplaceParams } from '../params/IWineMarketplaceParams';
 
 class WineMarketplaceService {
     constructor(
@@ -8,12 +9,12 @@ class WineMarketplaceService {
         private _links: ILinks,
     ) {}
 
-    getPurchasePartners = async (wineId: number): Promise<IResponse<IWineMarketplaceSummary>> => {
+    getPurchasePartners = async (params: IWineMarketplaceParams): Promise<IResponse<IWineMarketplaceSummary>> => {
         try {
             return await this._requester.request({
                 method: 'GET',
                 url: this._links.partners,
-                params: { wineId },
+                params,
             });
         } catch (error) {
             console.warn('WineMarketplaceService -> getPurchasePartners: ', error);

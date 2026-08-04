@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppState } from '@react-native-community/hooks';
-import { StackActions, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { BackHandler } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { launchImageLibrary } from 'react-native-image-picker';
@@ -15,6 +15,7 @@ import { wineModel } from '@/entities/wine/models/WineModel';
 import { isAndroid, isIOS } from '@/utils';
 import { localization } from '@/UIProvider/localization/Localization';
 import { toastService } from '@/libs/toast/toastService';
+import { getWineScannerReturnAction } from '@/modules/scanner/utils/getWineScannerReturnAction';
 
 const SCANNER_CROP_MAX_SIZE = 2048;
 
@@ -264,14 +265,7 @@ export const useScanner = () => {
 
         if (addWineSetScannerState) {
             wineSetScannerModel.clear();
-            navigation.dispatch(
-                StackActions.popTo('AddWineSetView', {
-                    draft: addWineSetScannerState.draft,
-                    initialSelectedWines: addWineSetScannerState.selectedWines,
-                    editEventId: addWineSetScannerState.editEventId,
-                    isDuplicateEvent: addWineSetScannerState.isDuplicateEvent,
-                }),
-            );
+            navigation.dispatch(getWineScannerReturnAction(addWineSetScannerState));
             return;
         }
 

@@ -6,7 +6,7 @@ import { IList } from '@/entities/IList';
 import { IWineryLinkedWinesParams } from '../params/IWineryLinkedWinesParams';
 import { wineryLinkedWinesModel } from '../models/WineryLinkedWinesModel';
 import { IImportWineryWinesResponse } from '../types/IImportWineryWinesResponse';
-import { IWineryLinkedWine } from '../types/IWineryLinkedWine';
+import { IOfferedWineListItem } from '@/entities/wine/types/IOfferedWineListItem';
 
 interface IAvailableWineryWinesParams {
     wineryId: number;
@@ -37,7 +37,7 @@ class WineryWineService {
         }
     };
 
-    getLinkedWines = async (params: IWineryLinkedWinesParams): Promise<IResponse<IList<IWineryLinkedWine>>> => {
+    getLinkedWines = async (params: IWineryLinkedWinesParams): Promise<IResponse<IList<IOfferedWineListItem>>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',

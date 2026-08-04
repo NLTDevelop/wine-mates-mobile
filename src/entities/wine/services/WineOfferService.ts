@@ -5,6 +5,12 @@ import { UpdateWineOfferDto } from '../dto/UpdateWineOffer.dto';
 import { IWineryWineOffersParams } from '../params/IWineryWineOffersParams';
 import { IWineOffersParams } from '../params/IWineOffersParams';
 import { IDeleteWineOfferResponse, IWineOffer, IWineOfferList, IWineOfferPriceRange } from '../types/IWineOffer';
+import { IOfferedWineListItem } from '../types/IOfferedWineListItem';
+import { IMyWineOffersParams } from '../params/IMyWineOffersParams';
+import { IList } from '@/entities/IList';
+import { IWineOfferPriceRangeParams } from '../params/IWineOfferPriceRangeParams';
+import { IPartnerWineOffersParams } from '../params/IPartnerWineOffersParams';
+import { IWineSetSearchItem } from '../types/IWineSetSearchItem';
 
 class WineOfferService {
     constructor(
@@ -38,12 +44,25 @@ class WineOfferService {
         }
     };
 
-    getPriceRange = async (wineId: number): Promise<IResponse<IWineOfferPriceRange>> => {
+    getPartnerOffers = async (params: IPartnerWineOffersParams): Promise<IResponse<IWineOfferList>> => {
+        try {
+            return await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineOffers}/partner`,
+                params,
+            });
+        } catch (error) {
+            console.warn('WineOfferService -> getPartnerOffers: ', error);
+            return { isError: true, message: '' };
+        }
+    };
+
+    getPriceRange = async (params: IWineOfferPriceRangeParams): Promise<IResponse<IWineOfferPriceRange>> => {
         try {
             return await this._requester.request({
                 method: 'GET',
                 url: `${this._links.wineOffers}/price-range`,
-                params: { wineId },
+                params,
             });
         } catch (error) {
             console.warn('WineOfferService -> getPriceRange: ', error);
@@ -51,7 +70,37 @@ class WineOfferService {
         }
     };
 
-    create = async (data: CreateWineOfferDto): Promise<IResponse<IWineOffer>> => {
+    getMyOffers = async (params: IMyWineOffersParams): Promise<IResponse<IList<IOfferedWineListItem>>> => {
+        try {
+            return await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineOffers}/my`,
+                params,
+            });
+        } catch (error) {
+            console.warn('WineOfferService -> getMyOffers: ', error);
+            return { isError: true, message: '' };
+        }
+    };
+
+    search = async (params: {
+        query: string;
+        limit: number;
+        offset: number;
+    }): Promise<IResponse<IList<IWineSetSearchItem>>> => {
+        try {
+            return await this._requester.request({
+                method: 'GET',
+                url: this._links.wineOffersSearch,
+                params,
+            });
+        } catch (error) {
+            console.warn('WineOfferService -> search: ', error);
+            return { isError: true, message: '' };
+        }
+    };
+
+    create = async (data: CreateWineOfferDto): Promise<IResponse<IOfferedWineListItem>> => {
         try {
             return await this._requester.request({
                 method: 'POST',
