@@ -27,10 +27,8 @@ export const EventDetailsView = observer(() => {
     const { eventId, screenIndex, routes, onIndexChange, onPressBack } = useEventDetailsView({ t });
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isEventDetailsTabFocused = screenIndex === 0;
-    const { eventDetail, setEventDetail, isError, isLoading, isRefreshing, onRefresh } = useEventDetails(
-        eventId,
-        isEventDetailsTabFocused,
-    );
+    const { eventDetail, isEventOwner, setEventDetail, isError, isLoading, isRefreshing, onRefresh } =
+        useEventDetails(eventId, isEventDetailsTabFocused);
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
         if (sceneRoute.key === 'eventDetails') {
@@ -47,7 +45,13 @@ export const EventDetailsView = observer(() => {
         }
 
         const requireConfirmation = Boolean(eventDetail?.requiresConfirmation);
-        return <GuestsTab eventId={eventId} requiresConfirmation={requireConfirmation} />;
+        return (
+            <GuestsTab
+                eventId={eventId}
+                requiresConfirmation={requireConfirmation}
+                isEventOwner={isEventOwner}
+            />
+        );
     };
 
     const renderTabBar = function renderTabBar(

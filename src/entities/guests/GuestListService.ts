@@ -5,6 +5,7 @@ import { UpdateGuestBookingStatusDto } from './dto/UpdateGuestBookingStatus.dto'
 import { guestListModel } from './GuestListModel';
 import { IGetEventGuestsParams } from './params/IGetEventGuestsParams';
 import { IGuestBooking } from './types/IGuestBooking';
+import { IEventGuestUsers } from './types/IEventGuestUsers';
 
 class GuestListService {
     constructor(
@@ -49,6 +50,18 @@ class GuestListService {
             return response;
         } catch (error) {
             console.warn('GuestListService -> getEventGuests: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getEventGuestUsers = async (eventId: number): Promise<IResponse<IEventGuestUsers>> => {
+        try {
+            return await this._requester.request({
+                method: 'GET',
+                url: `${this._links.guests}/${eventId}/guests`,
+            });
+        } catch (error) {
+            console.warn('GuestListService -> getEventGuestUsers: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

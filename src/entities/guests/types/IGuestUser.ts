@@ -5,7 +5,7 @@ export interface IGuestUser {
     id: number;
     firstName: string;
     lastName: string;
-    birthday: string;
+    birthday?: string;
     wineExperienceLevel: WineExperienceLevelEnum;
     avatar?: IAvatar | null;
 }

@@ -13,7 +13,7 @@ import { IWineListSearchQuery } from '@/modules/profile/types/IWineListSearchQue
 
 const LIMIT = 10;
 
-export const usePublicWineryWines = (wineryId?: number) => {
+export const usePublicWineryWines = (wineryId: number | undefined, isEnabled: boolean) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const list = wineryLinkedWinesModel.list;
     const [isLoading, setIsLoading] = useState(false);
@@ -63,6 +63,10 @@ export const usePublicWineryWines = (wineryId?: number) => {
     );
 
     useEffect(() => {
+        if (!isEnabled) {
+            return undefined;
+        }
+
         const frameId = requestAnimationFrame(() => {
             if (wineryId) {
                 onResetPaginationRequests();
@@ -74,7 +78,7 @@ export const usePublicWineryWines = (wineryId?: number) => {
             cancelAnimationFrame(frameId);
             wineryLinkedWinesModel.list = null;
         };
-    }, [loadWines, onResetPaginationRequests, wineryId]);
+    }, [isEnabled, loadWines, onResetPaginationRequests, wineryId]);
 
     const onRefreshWines = useCallback(async () => {
         onResetPaginationRequests();
@@ -91,11 +95,10 @@ export const usePublicWineryWines = (wineryId?: number) => {
         await loadWines(0);
     }, [loadWines, onResetPaginationRequests]);
 
-    const onResetWinesSearch = useCallback(async () => {
+    const onResetWinesSearch = useCallback(() => {
         searchQueryRef.current = { search: '' };
         onResetPaginationRequests();
-        await loadWines(0);
-    }, [loadWines, onResetPaginationRequests]);
+    }, [onResetPaginationRequests]);
 
     const onLoadMoreWines = useCallback(async () => {
         const currentList = wineryLinkedWinesModel.list;

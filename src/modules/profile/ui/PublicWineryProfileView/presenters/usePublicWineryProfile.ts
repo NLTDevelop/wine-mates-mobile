@@ -20,11 +20,14 @@ type RouteList = {
 export const usePublicWineryProfile = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<RouteProp<RouteList, 'PublicWineryProfileView'>>();
-    const userId = route.params?.userId;
+    const { userId, initialProfile } = route.params;
     const [activeTab, setActiveTab] = useState(PublicProfileTab.DESCRIPTION);
-    const profileData = usePublicProfileData(userId, 'winery');
-    const eventsData = usePublicProfileEvents(userId);
-    const winesData = usePublicWineryWines(profileData.profile?.winery?.id);
+    const profileData = usePublicProfileData(userId, 'winery', initialProfile);
+    const eventsData = usePublicProfileEvents(userId, activeTab === PublicProfileTab.EVENTS);
+    const winesData = usePublicWineryWines(
+        profileData.profile?.winery?.id,
+        activeTab === PublicProfileTab.WINES,
+    );
     const shareData = useWineShareModal();
 
     const onPressBack = useCallback(() => {

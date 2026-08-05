@@ -9,7 +9,7 @@ import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 const LIMIT = 10;
 
-export const usePublicProfileEvents = (userId: number) => {
+export const usePublicProfileEvents = (userId: number, isEnabled: boolean) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const list = userEventsModel.list;
     const [isLoading, setIsLoading] = useState(true);
@@ -53,6 +53,10 @@ export const usePublicProfileEvents = (userId: number) => {
     );
 
     useEffect(() => {
+        if (!isEnabled) {
+            return undefined;
+        }
+
         const frameId = requestAnimationFrame(() => {
             onResetPaginationRequests();
             loadEvents(0);
@@ -62,7 +66,7 @@ export const usePublicProfileEvents = (userId: number) => {
             cancelAnimationFrame(frameId);
             userEventsModel.list = null;
         };
-    }, [loadEvents, onResetPaginationRequests]);
+    }, [isEnabled, loadEvents, onResetPaginationRequests]);
 
     const onRefreshEvents = useCallback(async () => {
         onResetPaginationRequests();

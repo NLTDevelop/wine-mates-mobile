@@ -11,9 +11,16 @@ import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
 
 type LinkSource = 'user' | 'winery';
 
-export const usePublicProfileData = (userId: number, linkSource: LinkSource) => {
-    const [profile, setProfile] = useState<IPublicProfile | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+export const usePublicProfileData = (
+    userId: number,
+    linkSource: LinkSource,
+    initialProfile?: IPublicProfile,
+) => {
+    const hasInitialProfile = initialProfile?.user.id === userId;
+    const [profile, setProfile] = useState<IPublicProfile | null>(() =>
+        hasInitialProfile ? initialProfile : null,
+    );
+    const [isLoading, setIsLoading] = useState(!hasInitialProfile);
     const [isError, setIsError] = useState(false);
     const [isLinksModalVisible, setIsLinksModalVisible] = useState(false);
 
@@ -52,6 +59,10 @@ export const usePublicProfileData = (userId: number, linkSource: LinkSource) => 
     }, [userId]);
 
     useEffect(() => {
+        if (hasInitialProfile) {
+            return undefined;
+        }
+
         const frameId = requestAnimationFrame(() => {
             loadProfile();
         });
@@ -59,7 +70,7 @@ export const usePublicProfileData = (userId: number, linkSource: LinkSource) => 
         return () => {
             cancelAnimationFrame(frameId);
         };
-    }, [loadProfile]);
+    }, [hasInitialProfile, loadProfile]);
 
     const onOpenLink = useCallback(async (url: string) => {
         const contactType = getContactType('', url);
