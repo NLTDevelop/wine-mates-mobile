@@ -79,10 +79,22 @@ class UserService {
 
     getPublicProfile = async (userId: number): Promise<IResponse<IPublicProfile>> => {
         try {
-            return await this._requester.request({
+            const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.users}/${userId}`,
             });
+
+            if (!response.isError && response.data && !response.data.user) {
+                return {
+                    ...response,
+                    data: {
+                        user: response.data,
+                        winery: response.data.winery || null,
+                    },
+                };
+            }
+
+            return response;
         } catch (error) {
             console.warn('UserService -> getPublicProfile: ', error);
             return { isError: true, message: '' };

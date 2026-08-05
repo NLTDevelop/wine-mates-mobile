@@ -7,15 +7,17 @@ import { declOfWord } from '@/utils';
 import { ResultHeader } from '../ResultHeader';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
 import { TasteCharacteristicItem } from '@/UIKit/TasteCharacteristicItem';
-import { IStatistic, IWineDetails, IVintagesItem } from '@/entities/wine/types/IWineDetails';
+import { IStatistic, IVintagesItem, IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
-import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
-import { useColorShades } from '@/modules/wine/presenters/useColorShades';
 import { StatisticCard } from '../StatisticCard';
 import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
 import { FoodPairing } from '@/UIKit/FoodPairing';
 import { TastingNote } from '../TastingNote';
 import { wineReviewsListModel } from '@/entities/wine/models/WineReviewsListModel';
+import { WineSnackCuisinePickerModal } from '@/UIKit/WineSnackCuisinePickerModal';
+import { Button } from '@/UIKit/Button';
+import { useResultListHeader } from './presenters/useResultListHeader';
+import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 
 interface IProps {
     data: IWineDetails;
@@ -33,36 +35,41 @@ interface IProps {
     hideResultHeader?: boolean;
 }
 
-export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePress, hasCurrentVintageData,
-    isAllVintagesSelected, fromScanner, hasReviews, isResultHeaderFooterVisible, showTastingAuthor,
-    hasPremiumContentAccess, onWineImagePress, hideResultHeader = false }: IProps) => {
+
+export const ResultListHeader = ({
+    data,
+    vintages,
+    onVintageChange,
+    onFavoritePress,
+    hasCurrentVintageData,
+    isAllVintagesSelected,
+    fromScanner,
+    hasReviews,
+    isResultHeaderFooterVisible,
+    showTastingAuthor,
+    hasPremiumContentAccess,
+    onWineImagePress,
+    hideResultHeader = false,
+}: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { colorShadeItems } = useColorShades(data.statistics.topColors);
-
-    const tasteCharacteristics = useMemo(
-        () => data?.statistics?.tasteCharacteristics?.filter(item => item?.levels && item?.selectedIndex != null) ?? [],
-        [data.statistics.tasteCharacteristics],
-    );
-    const isVintageTasted = useMemo(() => {
-        if (!data.isTasted) return false;
-        if (data.vintage === null) return true;
-
-        const isInVintages = vintages.some(v => {
-            if (typeof v === 'number') return v === data.vintage;
-            if (typeof v === 'string') {
-                const parsedValue = Number(v);
-                return !Number.isNaN(parsedValue) && parsedValue === data.vintage;
-            }
-
-            return v.vintage === data.vintage;
-        });
-        const isCurrentVintage = typeof data.currentVintage === 'object'
-            && data.currentVintage !== null
-            && data.currentVintage.vintage === data.vintage;
-
-        return isInVintages || isCurrentVintage;
-    }, [data.isTasted, data.vintage, data.currentVintage, vintages]);
+    const {
+        colorShadeItems,
+        tasteCharacteristics,
+        isVintageTasted,
+        aiUsage,
+        snacks,
+        isGeneratingSnacks,
+        isCuisineModalVisible,
+        isLoadingCuisines,
+        cuisineOptions,
+        cuisineSelectButtonText,
+        onOpenCuisinePickerPress,
+        onCloseCuisinePicker,
+        onConfirmCuisineSelection,
+        onGenerateSnacksPress,
+        onSubscribePress,
+    } = useResultListHeader(data, vintages);
 
     return (
         <View>
@@ -178,19 +185,56 @@ export const ResultListHeader = ({ data, vintages, onVintageChange, onFavoritePr
                 </>
             )}
 
-            {data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
+            {data.aiTastingNote ? <TastingNote note={data.aiTastingNote} /> : null}
 
-            {data.aiSnacks?.length ? (
-                <FoodPairing
-                    generatedSnacks={data.aiSnacks}
-                    hideGenerateButton
-                    isLocked={!hasPremiumContentAccess}
-                />
-            ) : null}
+            <View style={styles.limitContainer}>
+                {aiUsage?.left === 0 ? (
+                    <>
+                        <Typography text={t('wine.foodPairingAttempts.label3')} />
+                        <Typography text={t('wine.foodPairingAttempts.label4')} />
+                        <Button
+                            text={t('aiAttempts.subscribe')}
+                            onPress={onSubscribePress}
+                            containerStyle={styles.subscribeButton}
+                        />
+                    </>
+                ) : (
+                    <Typography variant="h6">
+                        {t('wine.foodPairingAttempts.label1')}{' '}
+                        <Typography
+                            text={`${aiUsage?.left}/${aiUsage?.total}`}
+                            variant="h5"
+                            style={styles.limitCountText}
+                        />{' '}
+                        {t('wine.foodPairingAttempts.label2')}
+                    </Typography>
+                )}
+            </View>
+
+            <FoodPairing
+                generatedSnacks={data.aiSnacks}
+                snacks={snacks}
+                isGenerating={isGeneratingSnacks}
+                onGeneratePress={onGenerateSnacksPress}
+                cuisineSelectButtonText={cuisineSelectButtonText}
+                onCuisineSelectPress={onOpenCuisinePickerPress}
+                isLocked={!hasPremiumContentAccess}
+            />
 
             {(hasReviews || (wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0)) && (
                 <Typography text={t('wine.reviews')} variant="h3" style={styles.title} />
             )}
+
+            {isCuisineModalVisible ? (
+                <WineSnackCuisinePickerModal
+                    visible={isCuisineModalVisible}
+                    options={cuisineOptions}
+                    isLoading={isLoadingCuisines}
+                    isConfirming={isGeneratingSnacks}
+                    onClose={onCloseCuisinePicker}
+                    onConfirm={onConfirmCuisineSelection}
+                />
+            ) : null}
         </View>
     );
 };

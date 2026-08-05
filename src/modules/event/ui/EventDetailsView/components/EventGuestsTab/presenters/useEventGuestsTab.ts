@@ -13,6 +13,7 @@ import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLe
 interface IProps {
     eventId: number;
     requiresConfirmation?: boolean;
+    isEventOwner: boolean;
 }
 
 const getSelectedStatus = (selectedTab: GuestTabs): IGetEventGuestsParams['status'] => {
@@ -27,7 +28,11 @@ const getSelectedStatus = (selectedTab: GuestTabs): IGetEventGuestsParams['statu
     return 'all';
 };
 
-const getAge = (birthday: string) => {
+const getAge = (birthday?: string) => {
+    if (!birthday) {
+        return null;
+    }
+
     const birthdayDate = new Date(birthday);
     if (Number.isNaN(birthdayDate.getTime())) {
         return null;
@@ -45,7 +50,7 @@ const getAge = (birthday: string) => {
     return age;
 };
 
-export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => {
+export const useEventGuestsTab = ({ eventId, requiresConfirmation, isEventOwner }: IProps) => {
     const { t } = useUiContext();
     const { onUserPressById } = useProfileNavigation();
     const [selectedTab, setSelectedTab] = useState<GuestTabs>(GuestTabs.ALL);
@@ -89,12 +94,17 @@ export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => 
     const guestsTabDetails = useEventGuestsTabDetails({
         eventId,
         status: getSelectedStatus(selectedTab),
+        isEventOwner,
     });
     const { onAcceptGuest, onRejectGuest, updatingGuestId } = guestsTabDetails;
 
     const eventGuests: IPreparedEventGuest[] = useMemo(() => {
         return guestsTabDetails.eventGuests.map(guest => {
-            const fullName = `${guest.user?.firstName ?? '-'} ${guest.user?.lastName ?? '-'}`.trim();
+            const userFullName = `${guest.user?.firstName ?? '-'} ${guest.user?.lastName ?? '-'}`.trim();
+            const isOrganizer = guest.user.id === guestsTabDetails.organizerId;
+            const fullName = isOrganizer
+                ? `${userFullName} (${t('eventGuests.organizer')})`
+                : userFullName;
             const age = getAge(guest.user?.birthday);
             const ageText = age === null ? '' : `${age} ${t('eventGuests.age')}`;
             const showAge = age !== null && guest.user.wineExperienceLevel !== WineExperienceLevelEnum.CREATOR;
@@ -136,7 +146,7 @@ export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => 
                 inProgress: isUpdating,
             };
 
-            if (!requiresConfirmation) {
+            if (!isEventOwner || !requiresConfirmation) {
                 return preparedGuest;
             }
 
@@ -173,14 +183,19 @@ export const useEventGuestsTab = ({ eventId, requiresConfirmation }: IProps) => 
         t,
         updatingGuestId,
         requiresConfirmation,
+        isEventOwner,
+        guestsTabDetails.organizerId,
     ]);
 
     return {
         eventGuests,
         tabs,
+        areStatusTabsVisible: Boolean(requiresConfirmation && isEventOwner),
         isLoading: guestsTabDetails.isLoading,
+        isRefreshing: guestsTabDetails.isRefreshing,
         isError: guestsTabDetails.isError,
         errorMessage: guestsTabDetails.errorMessage,
+        onRefresh: guestsTabDetails.onRefresh,
         onLoadMore: guestsTabDetails.onLoadMore,
     };
 };

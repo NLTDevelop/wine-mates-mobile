@@ -61,7 +61,7 @@ const getPriceText = (partner: IWinePurchasePartner) => {
     }
 
     const currency = partner.currency || '';
-    if (partner.maxPrice !== undefined) {
+    if (partner.maxPrice !== undefined && partner.maxPrice !== partner.minPrice) {
         return (
             `${localization.t('wineMarketplace.from')} ${partner.minPrice} ` +
             `${localization.t('wineMarketplace.to')} ${partner.maxPrice} ${currency}`.trim()
@@ -240,7 +240,10 @@ export const useWineMarketplace = (
             imageUrl: partner.image?.mediumUrl || partner.image?.originalUrl || partner.image?.smallUrl || null,
             logoUrl: partner.logo?.mediumUrl || partner.logo?.originalUrl || null,
             priceText: getPriceText(partner),
-            hasPriceRange: partner.minPrice !== undefined && partner.maxPrice !== undefined,
+            hasPriceRange:
+                partner.minPrice !== undefined &&
+                partner.maxPrice !== undefined &&
+                partner.maxPrice !== partner.minPrice,
             status: partner.status,
             onPress: () => onPartnerPress(partner),
         }));

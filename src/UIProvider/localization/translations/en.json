@@ -292,6 +292,12 @@
         "emptyFoodPairing": "No food pairings yet. Click Generate to get food pairing recommendations for this wine.",
         "snackCuisines": "Choose world cuisines",
         "noSnackCuisines": "No cuisines available.",
+        "foodPairingAttempts": {
+            "label1": "You have ",
+            "label2": " food pairing generations left.",
+            "label3": "No food pairing generations left.",
+            "label4": "Subscribe to continue generating food pairings."
+        },
         "attemptsLeft": "attempts left",
         "exhaustedAllAttempts": "You have exhausted all attempts.",
         "tastingNotes": "Tasting notes",
@@ -402,6 +408,9 @@
         "showMore": "Show more",
         "showLess": "Show less",
         "follow": "Follow",
+        "rating": "Rating: {{rating}}",
+        "rankInCountry": "Country rank: {{rank}}",
+        "rankInWorld": "World rank: {{rank}}",
         "verified": "Verified",
         "notVerified": "Not Verified",
         "foundedYear": "Year founded: {{year}}",
@@ -715,6 +724,7 @@
         "cancelConfirmation": "Cancel confirmation",
         "provideConfirmation": "Provide confirmation",
         "age": "Age",
+        "organizer": "Organizer",
         "emptyList": "Guest list is empty"
     },
     "repeatEvent": {

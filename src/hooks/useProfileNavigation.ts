@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { navigationRef } from '@/navigation/rootNavigator';
+import { userService } from '@/entities/users/UserService';
 
 type ProfileUserId = number | string;
 
@@ -11,7 +12,7 @@ export const useProfileNavigation = (
     onClose?: () => void,
 ) => {
     const onUserPressById = useCallback(
-        (nextUserId: ProfileUserId, nextWineExperienceLevel: WineExperienceLevelEnum, nextOnClose?: () => void) => {
+        async (nextUserId: ProfileUserId, nextWineExperienceLevel: WineExperienceLevelEnum, nextOnClose?: () => void) => {
             if (!nextUserId || !navigationRef.isReady()) {
                 return;
             }
@@ -33,7 +34,19 @@ export const useProfileNavigation = (
             }
 
             if (nextWineExperienceLevel === WineExperienceLevelEnum.CREATOR) {
-                navigationRef.navigate('PublicWineryProfileView', { userId: normalizedUserId });
+                const response = await userService.getPublicProfile(normalizedUserId);
+                if (!response.isError && response.data && !response.data.winery) {
+                    navigationRef.navigate('PublicUserProfileView', {
+                        userId: normalizedUserId,
+                        initialProfile: response.data,
+                    });
+                    return;
+                }
+
+                navigationRef.navigate('PublicWineryProfileView', {
+                    userId: normalizedUserId,
+                    initialProfile: response.data,
+                });
                 return;
             }
 

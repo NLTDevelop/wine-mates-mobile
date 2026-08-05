@@ -39,6 +39,7 @@ export interface ILinks {
     rates: string;
     eventRates: string;
     generateSnacks: string;
+    generateWineSnacks: string;
     wineSnackCuisines: string;
     generateNote: string;
     generateBlindNote: string;
@@ -119,6 +120,7 @@ class Links implements ILinks {
         rates: 'rates',
         eventRates: 'rates/event-rates',
         generateSnacks: 'rates/generate-snacks',
+        generateWineSnacks: 'rates/generate-wine-snacks',
         wineSnackCuisines: 'wine-snack-cuisines',
         generateNote: 'rates/generate-note',
         generateBlindNote: 'rates/generate-blind-note',
@@ -257,6 +259,9 @@ class Links implements ILinks {
     }
     public get generateSnacks() {
         return `${this._domain}${this._links.generateSnacks}`;
+    }
+    public get generateWineSnacks() {
+        return `${this._domain}${this._links.generateWineSnacks}`;
     }
     public get wineSnackCuisines() {
         return `${this._domain}${this._links.wineSnackCuisines}`;
