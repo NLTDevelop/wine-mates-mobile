@@ -13,6 +13,7 @@ interface IProps {
     max: number;
     minValue: number;
     maxValue: number;
+    currency: string;
     onChange: (minValue: number, maxValue: number) => void;
     onClose: () => void;
     onApply: () => void;
@@ -24,6 +25,7 @@ export const PriceFilterModal = ({
     max,
     minValue,
     maxValue,
+    currency,
     onChange,
     onClose,
     onApply,
@@ -42,7 +44,7 @@ export const PriceFilterModal = ({
                     maxValue={maxValue}
                     onChange={onChange}
                     step={10}
-                    valueSuffix=" UAH"
+                    valueSuffix={currency ? ` ${currency}` : ''}
                     activeColor={colors.primary}
                     inactiveColor={colors.background_grey}
                 />

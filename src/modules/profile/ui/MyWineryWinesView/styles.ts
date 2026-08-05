@@ -4,6 +4,9 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
+        searchContainer: {
+            paddingHorizontal: scaleHorizontal(16),
+        },
         list: {
             flex: 1,
             marginBottom: scaleVertical(16),

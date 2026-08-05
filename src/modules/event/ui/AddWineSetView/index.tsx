@@ -6,14 +6,14 @@ import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { useAddWineSetView } from './presenters/useAddWineSetView';
-import { useAddWineSetSearch } from './presenters/useAddWineSetSearch';
+import { useWineSearch } from '@/UIKit/WineSearchBottomSheet/presenters/useWineSearch';
 import { getStyles } from './styles';
 import { WineSetItemRow } from './components/WineSetItemRow';
 import { EventCreatedAlert } from './components/EventCreatedAlert';
 import { IWineSetViewItem } from '@/modules/event/types/IWineSetViewItem';
 import { WineSetListHeader } from './components/WineSetListHeader';
 import { WineSetListFooter } from './components/WineSetListFooter';
-import { WineSearchBottomSheet } from './components/WineSearchBottomSheet';
+import { WineSearchBottomSheet } from '@/UIKit/WineSearchBottomSheet';
 import { useRepeatRuleModal } from './presenters/useRepeatRuleModal';
 import { useTastingTypeModal } from './presenters/useTastingTypeModal';
 import { useWineSetSortableList } from './presenters/useWineSetSortableList';
@@ -37,7 +37,7 @@ export const AddWineSetView = () => {
         onCloseSearchModal,
         onLoadMoreSearchResults,
         onResetSearch,
-    } = useAddWineSetSearch();
+    } = useWineSearch();
 
     const {
         tastingType,
@@ -222,6 +222,8 @@ export const AddWineSetView = () => {
             )}
             <WineSearchBottomSheet
                 visible={isSearchModalVisible}
+                title={t('event.addWine')}
+                scannerButtonText={t('event.searchWineWithScanner')}
                 searchInputRef={searchInputRef}
                 value={searchQuery}
                 data={wineSearchResultItems}

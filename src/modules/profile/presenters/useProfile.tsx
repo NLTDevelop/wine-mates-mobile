@@ -14,11 +14,15 @@ import { WineryStatusEnum } from '@/entities/winery/enums/WineryStatusEnum';
 import { GlassWithWineIcon } from '@assets/icons/GlassWithWineIcon';
 import { IProfileButton } from '../types/IProfileButton';
 import { CommentIcon } from '@assets/icons/CommentIcon';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 export const useProfile = (locale: string) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const winery = userModel.winery;
     const isWineryApproved = winery?.application.status === WineryStatusEnum.APPROVED;
+    const wineExperienceLevel = userModel.user?.wineExperienceLevel;
+    const isPrivateSeller = wineExperienceLevel === WineExperienceLevelEnum.LOVER
+        || wineExperienceLevel === WineExperienceLevelEnum.EXPERT;
     const userFullName = `${userModel.user?.firstName || ''} ${userModel.user?.lastName || ''}`.trim();
     const profileName = winery?.name || userFullName;
     const profileImageUrl = winery
@@ -64,6 +68,10 @@ export const useProfile = (locale: string) => {
         navigation.navigate('MyWineryWinesView');
     }, [isWineryApproved, navigation]);
 
+    const onMyWinesForSalePress = useCallback(() => {
+        navigation.navigate('MyWinesForSaleView');
+    }, [navigation]);
+
     const BUTTONS = useMemo<IProfileButton[]>(
         () => [
             {
@@ -98,10 +106,10 @@ export const useProfile = (locale: string) => {
             // },
             {
                 id: 6,
-                text: localization.t('profile.myWineryWines', { locale }),
+                text: localization.t(winery ? 'profile.myWineryWines' : 'profile.myWinesForSale', { locale }),
                 icon: <GlassWithWineIcon color={colorTheme.colors.icon} />,
-                onPress: onMyWineryWinesPress,
-                disabled: !isWineryApproved,
+                onPress: winery ? onMyWineryWinesPress : onMyWinesForSalePress,
+                disabled: Boolean(winery) && !isWineryApproved,
             },
             {
                 id: 8,
@@ -115,7 +123,7 @@ export const useProfile = (locale: string) => {
                 icon: <SettingsIcon />,
                 onPress: onSettingsPress,
             },
-        ].filter(item => item.id !== 6 || !!winery),
+        ].filter(item => item.id !== 6 || !!winery || isPrivateSeller),
         [
             // onChemicalAnalysisPress,
             onEventsPress,
@@ -126,7 +134,9 @@ export const useProfile = (locale: string) => {
             onSettingsPress,
             onWineAndStylePress,
             onMyWineryWinesPress,
+            onMyWinesForSalePress,
             isWineryApproved,
+            isPrivateSeller,
             winery,
         ],
     );

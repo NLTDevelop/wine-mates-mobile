@@ -11,6 +11,9 @@ export interface IPublicProfileUser {
     instagramLink: string | null;
     links?: string[];
     wineExperienceLevel: WineExperienceLevelEnum;
+    rating: number | null;
+    rankInCountry: number | null;
+    rankInWorld: number | null;
     avatar: IMedia | null;
     gallery: IMedia[];
 }

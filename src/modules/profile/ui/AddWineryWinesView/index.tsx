@@ -17,6 +17,7 @@ import { AddWineryWineAlert } from './components/AddWineryWineAlert';
 import { WineryWineListItem } from '@/modules/profile/ui/components/WineryWineListItem';
 import { useAddWineryWines } from './presenters/useAddWineryWines';
 import { getStyles } from './styles';
+import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
 
 export const AddWineryWinesView = observer(() => {
     const { colors, t } = useUiContext();
@@ -62,6 +63,7 @@ export const AddWineryWinesView = observer(() => {
                 }
             >
                 <FlatList
+                    {...WINE_LIST_PERFORMANCE_PROPS}
                     data={wines}
                     renderItem={renderItem}
                     keyExtractor={keyExtractor}

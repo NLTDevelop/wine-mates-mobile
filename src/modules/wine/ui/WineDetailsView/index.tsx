@@ -3,7 +3,7 @@ import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
-import { FlatList, ScrollView } from 'react-native';
+import { FlatList, ScrollView, View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { ResultListHeader } from '../components/ResultListHeader';
 import { ReviewListItem } from '../../../../UIKit/ReviewListItem';
@@ -18,28 +18,50 @@ import { useWineReviewsList } from '@/modules/wine/presenters/useWineReviewsList
 import { AddToFavoriteBottomSheet } from '../components/AddToFavoriteBottomSheet';
 import { useAddToFavoriteBottomSheet } from '../../presenters/useAddToFavoriteBottomSheet';
 import { Gallery } from '@/UIKit/Gallery';
-import { PremiumFeature } from './components/PremiumFeature';
 import { WineMarketplaceTab } from './components/WineMarketplaceTab';
 import { useWineDetailsTabs } from '../../presenters/useWineDetailsTabs';
-import { Typography } from '@/UIKit/Typography';
 import { WineDetailsScrollableHeader } from './components/WineDetailsScrollableHeader';
+import { WineEvolutionTab } from './components/WineEvolutionTab';
+import { PremiumFeature } from './components/PremiumFeature';
 
 export const WineDetailsView = observer(() => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { details, vintages, isError, getDetails, onVintageChange, hasCurrentVintageData, isAllVintagesSelected,
-        reviewsWineId, fromScanner, onUpdateIsSaved, isPreloadedData, isResultHeaderFooterVisible,
-        showTastingAuthor, myReview, hasPremiumContentAccess, hasPremiumSubscription, onPressBack, wineImageGallery,
-        onWineImagePress } = useWineDetails();
+    const {
+        details,
+        vintages,
+        isError,
+        getDetails,
+        onVintageChange,
+        hasCurrentVintageData,
+        hasSelectedVintageData,
+        isVintageChanging,
+        isAllVintagesSelected,
+        reviewsWineId,
+        fromScanner,
+        onUpdateIsSaved,
+        onRegisterEvolutionRefresh,
+        onEvolutionRefresh,
+        isPreloadedData,
+        isResultHeaderFooterVisible,
+        showTastingAuthor,
+        myReview,
+        hasPremiumContentAccess,
+        onPressBack,
+        wineImageGallery,
+        onWineImagePress,
+    } = useWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useWineReviewsList(
         getDetails,
         reviewsWineId,
         isAllVintagesSelected,
         isPreloadedData,
         myReview,
+        isVintageChanging,
     );
     const { refreshControl } = useRefresh(onRefresh);
+    const { refreshControl: evolutionRefreshControl } = useRefresh(onEvolutionRefresh);
     const {
         favoriteData,
         isVisible: isAddToFavoriteModalVisible,
@@ -54,6 +76,7 @@ export const WineDetailsView = observer(() => {
         isProfileActive,
         isEvolutionActive,
         isPurchaseActive,
+        shouldRenderEvolution,
         onProfilePress,
         onEvolutionPress,
         onPurchasePress,
@@ -73,13 +96,19 @@ export const WineDetailsView = observer(() => {
             <ScreenContainer
                 edges={['top', 'bottom']}
                 withGradient
-                headerComponent={<HeaderWithBackButton title={t('wine.result')} isCentered={false} onPressBack={onPressBack} />}
+                headerComponent={
+                    <HeaderWithBackButton title={t('wine.result')} isCentered={false} onPressBack={onPressBack} />
+                }
             >
                 {!details ? (
                     <Loader />
                 ) : (
                     <>
-                        {isProfileActive ? (
+                        <View
+                            collapsable={false}
+                            pointerEvents={isProfileActive ? 'auto' : 'none'}
+                            style={[styles.tabContainer, isProfileActive ? null : styles.hiddenTabContainer]}
+                        >
                             <FlatList
                                 data={data}
                                 keyExtractor={keyExtractor}
@@ -127,9 +156,17 @@ export const WineDetailsView = observer(() => {
                                 }
                                 ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
                             />
-                        ) : null}
-                        {isEvolutionActive ? (
-                            <ScrollView contentContainerStyle={styles.evolutionContent}>
+                        </View>
+                        <View
+                            collapsable={false}
+                            pointerEvents={isEvolutionActive ? 'auto' : 'none'}
+                            style={[styles.tabContainer, isEvolutionActive ? null : styles.hiddenTabContainer]}
+                        >
+                            <ScrollView
+                                contentContainerStyle={styles.evolutionContent}
+                                refreshControl={evolutionRefreshControl}
+                                bounces
+                            >
                                 <WineDetailsScrollableHeader
                                     details={details}
                                     vintages={vintages}
@@ -149,20 +186,29 @@ export const WineDetailsView = observer(() => {
                                     onEvolutionPress={onEvolutionPress}
                                     onPurchasePress={onPurchasePress}
                                 />
-                                {hasPremiumSubscription ? (
-                                    <Typography
-                                        text={t('wineMarketplace.evolutionComingSoon')}
-                                        variant="h4"
-                                        style={styles.evolutionText}
-                                    />
-                                ) : (
-                                    <PremiumFeature onGetPremiumPress={onGetPremiumPress} />
-                                )}
+                                {shouldRenderEvolution ? (
+                                    hasPremiumContentAccess ? (
+                                        <WineEvolutionTab
+                                            wineId={details.id}
+                                            onRegisterRefresh={onRegisterEvolutionRefresh}
+                                        />
+                                    ) : (
+                                        <PremiumFeature onGetPremiumPress={onGetPremiumPress} />
+                                    )
+                                ) : null}
                             </ScrollView>
-                        ) : null}
-                        {isPurchaseActive ? (
+                        </View>
+                        <View
+                            collapsable={false}
+                            pointerEvents={isPurchaseActive ? 'auto' : 'none'}
+                            style={[styles.tabContainer, isPurchaseActive ? null : styles.hiddenTabContainer]}
+                        >
                             <WineMarketplaceTab
                                 wineDetails={details}
+                                isAllVintagesSelected={isAllVintagesSelected}
+                                hasSelectedVintageData={hasSelectedVintageData}
+                                isVintageChanging={isVintageChanging}
+                                isActive={isPurchaseActive}
                                 headerComponent={
                                     <WineDetailsScrollableHeader
                                         details={details}
@@ -186,7 +232,7 @@ export const WineDetailsView = observer(() => {
                                     />
                                 }
                             />
-                        ) : null}
+                        </View>
                     </>
                 )}
                 {isAddToFavoriteModalVisible && (

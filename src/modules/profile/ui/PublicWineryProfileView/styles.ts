@@ -4,8 +4,8 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        profileHeader: {
-            marginBottom: scaleVertical(16),
+        winesSearch: {
+            marginTop: scaleVertical(16),
         },
         listContent: {
             flexGrow: 1,
@@ -19,6 +19,7 @@ export const getStyles = (colors: IColors) => {
             paddingBottom: scaleVertical(24),
         },
         gallery: {
+            marginTop: scaleVertical(16),
             marginBottom: scaleVertical(16),
         },
         galleryPhoto: {

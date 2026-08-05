@@ -59,8 +59,15 @@ export const getStyles = (colors: IColors) => {
             color: colors.error,
         },
         details: {
-            color: colors.text_light,
+            color: colors.text,
             marginTop: scaleVertical(4),
+        },
+        rating: {
+            color: colors.text,
+            marginTop: scaleVertical(4),
+        },
+        rank: {
+            color: colors.text,
         },
         bioContainer: {
             marginTop: scaleVertical(12),
@@ -74,9 +81,12 @@ export const getStyles = (colors: IColors) => {
             left: 0,
             opacity: 0,
         },
+        bioToggleSlot: {
+            minHeight: scaleVertical(18),
+            marginTop: scaleVertical(4),
+        },
         showMoreButton: {
             alignSelf: 'flex-start',
-            marginTop: scaleVertical(4),
         },
         showMoreText: {
             color: colors.primary,

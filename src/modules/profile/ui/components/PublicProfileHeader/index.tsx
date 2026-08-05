@@ -11,6 +11,9 @@ interface IProps {
     avatarUrl: string | null;
     bio?: string;
     details?: string;
+    ratingText?: string;
+    countryRankText?: string;
+    worldRankText?: string;
     statusLabel?: string;
     isVerified?: boolean;
     galleryBadgeText?: string;
@@ -24,6 +27,9 @@ export const PublicProfileHeader = ({
     avatarUrl,
     bio,
     details,
+    ratingText,
+    countryRankText,
+    worldRankText,
     statusLabel,
     isVerified = false,
     galleryBadgeText,
@@ -38,6 +44,7 @@ export const PublicProfileHeader = ({
         bioNumberOfLines,
         bioToggleText,
         isBioToggleVisible,
+        isBioToggleSlotVisible,
         onBioTextLayout,
         onBioTogglePress,
     } = usePublicProfileHeader(bio);
@@ -57,6 +64,9 @@ export const PublicProfileHeader = ({
                     )}
                     <Typography text={name} variant="h3" style={styles.name} />
                     {!!details && <Typography text={details} variant="body_400" style={styles.details} />}
+                    {!!ratingText && <Typography text={ratingText} variant="body_400" style={styles.rating} />}
+                    {!!countryRankText && <Typography text={countryRankText} variant="body_400" style={styles.rank} />}
+                    {!!worldRankText && <Typography text={worldRankText} variant="body_400" style={styles.rank} />}
                 </View>
                 <TouchableOpacity
                     style={styles.avatarContainer}
@@ -88,15 +98,19 @@ export const PublicProfileHeader = ({
                         pointerEvents="none"
                         accessible={false}
                     />
-                    {isBioToggleVisible && (
-                        <TouchableOpacity onPress={onBioTogglePress} style={styles.showMoreButton}>
-                            <Typography
-                                text={bioToggleText}
-                                variant="body_500"
-                                style={styles.showMoreText}
-                            />
-                        </TouchableOpacity>
-                    )}
+                    {isBioToggleSlotVisible ? (
+                        <View style={styles.bioToggleSlot}>
+                            {isBioToggleVisible ? (
+                                <TouchableOpacity onPress={onBioTogglePress} style={styles.showMoreButton}>
+                                    <Typography
+                                        text={bioToggleText}
+                                        variant="body_500"
+                                        style={styles.showMoreText}
+                                    />
+                                </TouchableOpacity>
+                            ) : null}
+                        </View>
+                    ) : null}
                 </View>
             )}
             {hasLinks && (

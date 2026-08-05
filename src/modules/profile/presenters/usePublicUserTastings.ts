@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { userTastingsModel } from '@/entities/wine/models/UserTastingsModel';
@@ -7,14 +7,19 @@ import { IWineListItem } from '@/entities/wine/types/IWineListItem';
 import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
+import { FlatList } from 'react-native';
+import { IUserTastingListItem } from '@/entities/wine/types/IUserTastingsList';
+import { IWineListSearchQuery } from '@/modules/profile/types/IWineListSearchQuery';
 
 const LIMIT = 10;
 
-export const usePublicUserTastings = (userId: number) => {
+export const usePublicUserTastings = (userId: number, isEnabled: boolean) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const list = userTastingsModel.list;
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const listRef = useRef<FlatList<IUserTastingListItem>>(null);
+    const searchQueryRef = useRef<IWineListSearchQuery>({ search: '' });
     const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const loadTastings = useCallback(
@@ -31,7 +36,12 @@ export const usePublicUserTastings = (userId: number) => {
                     setIsLoadingMore(true);
                 }
 
-                const response = await userTastingsService.list({ userId, limit: LIMIT, offset });
+                const response = await userTastingsService.list({
+                    userId,
+                    limit: LIMIT,
+                    offset,
+                    ...searchQueryRef.current,
+                });
 
                 if (response.isError || !response.data) {
                     toastService.showError(
@@ -54,6 +64,10 @@ export const usePublicUserTastings = (userId: number) => {
     );
 
     useEffect(() => {
+        if (!isEnabled) {
+            return undefined;
+        }
+
         const frameId = requestAnimationFrame(() => {
             onResetPaginationRequests();
             loadTastings(0);
@@ -63,12 +77,27 @@ export const usePublicUserTastings = (userId: number) => {
             cancelAnimationFrame(frameId);
             userTastingsModel.list = null;
         };
-    }, [loadTastings, onResetPaginationRequests]);
+    }, [isEnabled, loadTastings, onResetPaginationRequests]);
 
     const onRefreshTastings = useCallback(async () => {
         onResetPaginationRequests();
         await loadTastings(0);
     }, [loadTastings, onResetPaginationRequests]);
+
+    const scrollTastingsToTop = useCallback(() => {
+        listRef.current?.scrollToOffset({ offset: 0, animated: true });
+    }, []);
+
+    const onSearchTastings = useCallback(async (query: IWineListSearchQuery) => {
+        searchQueryRef.current = query;
+        onResetPaginationRequests();
+        await loadTastings(0);
+    }, [loadTastings, onResetPaginationRequests]);
+
+    const onResetTastingsSearch = useCallback(() => {
+        searchQueryRef.current = { search: '' };
+        onResetPaginationRequests();
+    }, [onResetPaginationRequests]);
 
     const onLoadMoreTastings = useCallback(async () => {
         const currentList = userTastingsModel.list;
@@ -98,8 +127,12 @@ export const usePublicUserTastings = (userId: number) => {
         tastings: list?.rows || [],
         isTastingsLoading: isLoading,
         isTastingsLoadingMore: isLoadingMore,
+        tastingsListRef: listRef,
         onRefreshTastings,
         onLoadMoreTastings,
         onTastingPress,
+        onSearchTastings,
+        onResetTastingsSearch,
+        scrollTastingsToTop,
     };
 };

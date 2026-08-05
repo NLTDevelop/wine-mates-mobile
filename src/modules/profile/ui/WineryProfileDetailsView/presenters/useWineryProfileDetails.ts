@@ -9,6 +9,7 @@ import { getProfileGalleryPhotos } from '@/modules/profile/utils/getProfileGalle
 import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
 import { getProfileBirthdayText, getProfileCountryName } from '@/modules/profile/utils/profileUserFields';
 import { getProfileLinkItems } from '@/modules/profile/utils/getProfileLinkItems';
+import { useSellerCountriesField } from '@/modules/profile/presenters/useSellerCountriesField';
 
 const getField = (value: string | number | null | undefined, placeholder: string) => {
     const hasValue = value !== null && value !== undefined && String(value).trim().length > 0;
@@ -24,6 +25,7 @@ export const useWineryProfileDetails = (locale: string) => {
     const winery = userModel.winery;
     const user = userModel.user;
     const gallery = useGallery({ photos: getProfileGalleryPhotos() });
+    const { sellerCountriesText } = useSellerCountriesField();
 
     useFocusEffect(
         useCallback(() => {
@@ -55,6 +57,14 @@ export const useWineryProfileDetails = (locale: string) => {
         description: getLabeledField(winery?.description, localization.t('registration.wineryDescription', { locale })),
         wineryCountry: getLabeledField(winery?.country?.name, localization.t('settings.wineryCountry', { locale })),
         region: getLabeledField(winery?.region?.name, localization.t('registration.region', { locale })),
+        sellerCountries: getLabeledField(
+            sellerCountriesText,
+            localization.t('settings.sellerCountries', { locale }),
+        ),
+        selectedCurrency: getLabeledField(
+            user?.selectedCurrency,
+            localization.t('settings.selectedCurrency', { locale }),
+        ),
         userCountry: getLabeledField(
             getProfileCountryName(user?.country || '', locale),
             localization.t('settings.userCountry', { locale }),

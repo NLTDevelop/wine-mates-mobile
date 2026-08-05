@@ -18,6 +18,7 @@ import { EditableWineryLinks } from './components/EditableWineryLinks';
 import { ProfileFormField } from '@/modules/profile/ui/components/ProfileFormField';
 import { PickerButton } from '@/UIKit/PickerButton';
 import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
+import { CurrencyPickerBottomSheet } from '@/UIKit/CurrencyPicker/ui';
 
 export const EditWineryProfileDetailsView = () => {
     const { colors, t } = useUiContext();
@@ -28,6 +29,9 @@ export const EditWineryProfileDetailsView = () => {
         wineryCountryPicker,
         regionPicker,
         userCountryPicker,
+        sellerCountriesPicker,
+        currencyPicker,
+        isCurrencySelectorDisabled,
         phoneInitialCca2,
         birthdayDisplayText,
         mainPhotoUrl,
@@ -135,6 +139,14 @@ export const EditWineryProfileDetailsView = () => {
                         isDisabled={regionPicker.isDisabled}
                     />
                 </ProfileFormField>
+                <ProfileFormField label={t('settings.sellerCountries')}>
+                    <PickerButton
+                        text={sellerCountriesPicker.selectedText}
+                        placeholder={t('settings.sellerCountries')}
+                        onPress={sellerCountriesPicker.onOpen}
+                        isDisabled={sellerCountriesPicker.isDisabled}
+                    />
+                </ProfileFormField>
                 <EditableWineryLinks items={editableLinks} onAdd={onAddLink} />
                 <ProfileFormField label={t('settings.userCountry')}>
                     <PickerButton
@@ -142,6 +154,14 @@ export const EditWineryProfileDetailsView = () => {
                         placeholder={t('settings.userCountry')}
                         onPress={userCountryPicker.onOpen}
                         isDisabled={userCountryPicker.isDisabled}
+                    />
+                </ProfileFormField>
+                <ProfileFormField label={t('settings.selectedCurrency')}>
+                    <PickerButton
+                        text={currencyPicker.selectedText}
+                        placeholder={t('settings.selectedCurrency')}
+                        onPress={currencyPicker.onOpen}
+                        isDisabled={isCurrencySelectorDisabled}
                     />
                 </ProfileFormField>
                 <ProfileFormField label={t('settings.phoneNumber')}>
@@ -264,6 +284,29 @@ export const EditWineryProfileDetailsView = () => {
                     confirmText={t('common.confirm')}
                     onClose={userCountryPicker.onClose}
                     onConfirm={userCountryPicker.onConfirm}
+                />
+            )}
+            {sellerCountriesPicker.isVisible && (
+                <UniversalPickerBottomModal
+                    visible={sellerCountriesPicker.isVisible}
+                    title={sellerCountriesPicker.title}
+                    options={sellerCountriesPicker.options}
+                    isLoading={sellerCountriesPicker.isLoading}
+                    selectionMode="multiple"
+                    emptyText={t('common.nothingFoundTitle')}
+                    confirmText={t('common.confirm')}
+                    onClose={sellerCountriesPicker.onClose}
+                    onConfirm={sellerCountriesPicker.onConfirm}
+                />
+            )}
+            {currencyPicker.isVisible && (
+                <CurrencyPickerBottomSheet
+                    visible={currencyPicker.isVisible}
+                    title={t('settings.selectedCurrency')}
+                    onClose={currencyPicker.onClose}
+                    items={currencyPicker.items}
+                    selectedValue={currencyPicker.draft}
+                    onConfirm={currencyPicker.onConfirm}
                 />
             )}
         </ScreenContainer>

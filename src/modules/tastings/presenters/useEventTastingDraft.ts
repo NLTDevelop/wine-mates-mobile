@@ -13,6 +13,13 @@ const createSuggestedItemName = (id: number) => `${id}`;
 const DRAFT_ITEM_COLOR = colorTheme.colors.background;
 const DEFAULT_EXPERT_RATING = 70;
 
+const hasWinePeakAccess = () => {
+    const experienceLevel = userModel.user?.wineExperienceLevel;
+
+    return experienceLevel === WineExperienceLevelEnum.EXPERT ||
+        experienceLevel === WineExperienceLevelEnum.CREATOR;
+};
+
 const getAromaDraftItems = (ids?: number[]): IWineSelectedSmell[] => {
     if (!ids?.length) {
         return [];
@@ -73,6 +80,7 @@ export const useEventTastingDraft = () => {
     const getDefaultEventTastingDraft = useCallback((wineId: number): Partial<AddRateDto> => ({
         wineId,
         review: '',
+        isHidden: false,
         color: {
             colorId: 0,
             shadeId: 0,
@@ -151,6 +159,7 @@ export const useEventTastingDraft = () => {
         wineModel.look = nextDraft.color?.colorId ? nextDraft.color : null;
         wineModel.review = {
             review: nextDraft.review || '',
+            isHidden: nextDraft.isHidden ?? false,
             rate: typeof nextDraft.expertRating === 'number' ? nextDraft.expertRating : undefined,
             starRate: typeof nextDraft.userRating === 'number' ? nextDraft.userRating : undefined,
             hasChangedRate: typeof nextDraft.expertRating === 'number',
@@ -167,7 +176,9 @@ export const useEventTastingDraft = () => {
             ...getFlavorDraftItems(nextDraft.flavors),
         ];
         wineModel.draftTasteCharacteristics = nextDraft.tasteCharacteristics || null;
-        wineModel.winePeak = typeof nextDraft.winePeak === 'number' ? nextDraft.winePeak : null;
+        wineModel.winePeak = hasWinePeakAccess() && typeof nextDraft.winePeak === 'number'
+            ? nextDraft.winePeak
+            : null;
     }, [getDefaultEventTastingDraft]);
 
     const buildEventTastingDraftPayload = useCallback((wineId: number): Partial<AddRateDto> => {
@@ -195,6 +206,7 @@ export const useEventTastingDraft = () => {
             ...currentEventTastingDraftRef.current,
             wineId,
             review: wineModel.review?.review.trim() || '',
+            isHidden: wineModel.review?.isHidden ?? false,
             color: {
                 colorId: wineModel.look?.colorId || 0,
                 shadeId: wineModel.look?.shadeId || 0,
@@ -213,8 +225,10 @@ export const useEventTastingDraft = () => {
             payload.image = wineModel.image;
         }
 
-        if (wineModel.winePeak !== null) {
+        if (hasWinePeakAccess() && wineModel.winePeak !== null) {
             payload.winePeak = wineModel.winePeak;
+        } else {
+            delete payload.winePeak;
         }
 
         if (userModel.user?.wineExperienceLevel === WineExperienceLevelEnum.LOVER) {

@@ -2,7 +2,7 @@ import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
+export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             gap: scaleVertical(4),
@@ -29,7 +29,6 @@ export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
             justifyContent: 'center',
             position: 'relative',
             overflow: 'hidden',
-            opacity: isPremiumUser ? 1 : 0.6,
         },
         resetButton: {
             backgroundColor: colors.primary,
@@ -41,19 +40,6 @@ export const getStyles = (colors: IColors, isPremiumUser: boolean = true) => {
         },
         pickerText: {
             color: colors.text_inverted,
-        },
-        crownIconContainer: {
-            position: 'absolute',
-            top: scaleVertical(8),
-            right: scaleHorizontal(8),
-        },
-        blurOverlay: {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            borderRadius: 12,
         },
     });
     return styles;

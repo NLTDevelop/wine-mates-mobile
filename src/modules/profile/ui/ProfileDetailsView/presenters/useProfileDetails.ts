@@ -9,6 +9,7 @@ import { getProfileGalleryPhotos } from '@/modules/profile/utils/getProfileGalle
 import { useGallery } from '@/UIKit/Gallery/presenters/useGallery';
 import { getProfileBirthdayText, getProfileCountryName } from '@/modules/profile/utils/profileUserFields';
 import { getProfileLinkItems } from '@/modules/profile/utils/getProfileLinkItems';
+import { useSellerCountriesField } from '@/modules/profile/presenters/useSellerCountriesField';
 
 const getProfileField = (value: string | undefined | null, placeholder: string) => {
     const text = value || placeholder;
@@ -19,6 +20,7 @@ const getProfileField = (value: string | undefined | null, placeholder: string) 
 export const useProfileDetails = (locale: string) => {
     const navigation = useNavigation<any>();
     const gallery = useGallery({ photos: getProfileGalleryPhotos() });
+    const { sellerCountriesText } = useSellerCountriesField();
 
     useFocusEffect(
         useCallback(() => {
@@ -77,6 +79,10 @@ export const useProfileDetails = (locale: string) => {
         country: {
             ...getProfileField(country, localization.t('settings.country', { locale })),
             label: localization.t('settings.country', { locale }),
+        },
+        sellerCountries: {
+            ...getProfileField(sellerCountriesText, localization.t('settings.sellerCountries', { locale })),
+            label: localization.t('settings.sellerCountries', { locale }),
         },
         city: {
             ...getProfileField(city, localization.t('settings.city', { locale })),

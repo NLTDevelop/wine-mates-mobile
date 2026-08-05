@@ -11,15 +11,27 @@ import { EmptyListView } from '@/UIKit/EmptyListView';
 interface IProps {
     eventId: number;
     requiresConfirmation: boolean;
+    isEventOwner: boolean;
 }
 
-export const GuestsTab = ({ eventId, requiresConfirmation }: IProps) => {
+export const GuestsTab = ({ eventId, requiresConfirmation, isEventOwner }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { eventGuests, errorMessage, isError, isLoading, onLoadMore, tabs } = useEventGuestsTab({
+    const {
+        eventGuests,
+        errorMessage,
+        isError,
+        isLoading,
+        isRefreshing,
+        onRefresh,
+        onLoadMore,
+        tabs,
+        areStatusTabsVisible,
+    } = useEventGuestsTab({
         eventId,
         requiresConfirmation,
+        isEventOwner,
     });
 
     const renderItem = useCallback(({ item }: { item: IPreparedEventGuest }) => {
@@ -47,7 +59,7 @@ export const GuestsTab = ({ eventId, requiresConfirmation }: IProps) => {
     if (isLoading) {
         return (
             <>
-                {requiresConfirmation ? <GuestTabsView tabs={tabs} /> : null}
+                {areStatusTabsVisible ? <GuestTabsView tabs={tabs} /> : null}
                 <View style={styles.stateContainer}>
                     <ActivityIndicator size="large" color={colors.primary} />
                 </View>
@@ -58,7 +70,7 @@ export const GuestsTab = ({ eventId, requiresConfirmation }: IProps) => {
     if (!eventGuests.length) {
         return (
             <>
-                {requiresConfirmation ? <GuestTabsView tabs={tabs} /> : null}
+                {areStatusTabsVisible ? <GuestTabsView tabs={tabs} /> : null}
                 <View style={styles.stateContainer}>
                     <EmptyListView
                         isNothingFound={isError && !errorMessage}
@@ -71,12 +83,14 @@ export const GuestsTab = ({ eventId, requiresConfirmation }: IProps) => {
 
     return (
         <>
-            {requiresConfirmation ? <GuestTabsView tabs={tabs} /> : null}
+            {areStatusTabsVisible ? <GuestTabsView tabs={tabs} /> : null}
             <FlatList
                 data={eventGuests}
                 keyExtractor={keyExtractor}
                 renderItem={renderItem}
                 ItemSeparatorComponent={renderItemSeparator}
+                refreshing={isRefreshing}
+                onRefresh={onRefresh}
                 onEndReached={onLoadMore}
                 contentContainerStyle={styles.flatlist}
             />

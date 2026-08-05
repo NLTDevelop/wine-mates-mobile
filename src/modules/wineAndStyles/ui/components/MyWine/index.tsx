@@ -14,6 +14,7 @@ import { WineReviewBlock } from '@/UIKit/WineReviewBlock';
 import { WineListItem } from '@/UIKit/WineListItem';
 import { WineShareModal } from '@/UIKit/WineShareModal';
 import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
+import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
 
 export const MyWine = observer(() => {
     const { colors , t } = useUiContext();
@@ -47,6 +48,7 @@ export const MyWine = observer(() => {
                 <MyWineSearchBar onSearch={getList} scrollToTop={scrollToTop} />
             </View>
             <FlatList
+                {...WINE_LIST_PERFORMANCE_PROPS}
                 ref={listRef}
                 refreshControl={refreshControl}
                 data={data || []}
