@@ -263,7 +263,9 @@ const createSeries = (
         pathParts.push(currentSegment.join(' '));
     }
 
-    const validPoints = points.filter((point): point is { x: number; y: number } => point !== null);
+    const validPoints = points
+        .map((point, index) => (point ? { ...point, index } : null))
+        .filter((point): point is { index: number; x: number; y: number } => point !== null);
     const markersPath = validPoints
         .map(
             point =>
@@ -276,6 +278,7 @@ const createSeries = (
         color,
         path: pathParts.join(' '),
         markersPath,
+        points: validPoints.map(point => ({ ...point, value: values[point.index] as number })),
     };
 };
 
@@ -380,7 +383,7 @@ const createEvolutionLineCharts = (
 
         const values = chartData.map(chartItem => chartItem.value);
 
-        if (values.filter(value => value !== null).length < 2) {
+        if (values.every(value => value === null)) {
             return [];
         }
 
@@ -449,7 +452,7 @@ const createEvolutionAssessmentChart = (
         plotHeight,
         strokeWidth: 2,
         series:
-            availableYearsCount >= 2
+            availableYearsCount >= 1
                 ? visibleGroupSeries.flatMap(series => {
                       const values = chartData.map(
                           chartItem => chartItem.item?.ratingByGroup[series.group][series.ageKey].avg ?? null,

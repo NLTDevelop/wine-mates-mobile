@@ -215,6 +215,37 @@ export const getStyles = (colors: IColors) => {
             width: '100%',
             height: scaleVertical(282),
         },
+        chartZoomLayer: {
+            width: '100%',
+            height: '100%',
+        },
+        graphTooltip: {
+            position: 'absolute',
+            width: scaleHorizontal(112),
+            minHeight: scaleVertical(44),
+            paddingHorizontal: scaleHorizontal(8),
+            paddingVertical: scaleVertical(6),
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colors.background,
+            borderWidth: scaleVertical(1),
+            borderColor: colors.border,
+            borderRadius: scaleVertical(8),
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: scaleVertical(2),
+            },
+            shadowOpacity: 0.15,
+            shadowRadius: scaleVertical(4),
+            elevation: 4,
+        },
+        graphTooltipYear: {
+            color: colors.icon,
+        },
+        graphTooltipValue: {
+            color: colors.text,
+        },
         graphScrollViewport: {
             flex: 1,
         },
