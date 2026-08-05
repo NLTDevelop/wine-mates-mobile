@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { FlatList, ListRenderItem, ScrollView, View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { IEvent } from '@/entities/events/types/IEvent';
-import { IWineListItem } from '@/entities/wine/types/IWineListItem';
+import { IOfferedWineListItem } from '@/entities/wine/types/IOfferedWineListItem';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { PublicProfileTab } from '@/modules/profile/enums/PublicProfileTab';
 import { useUiContext } from '@/UIProvider';
@@ -23,6 +23,8 @@ import { PublicProfileLinksModal } from '@/modules/profile/ui/components/PublicP
 import { WineryWineListItem } from '@/modules/profile/ui/components/WineryWineListItem';
 import { usePublicWineryProfile } from './presenters/usePublicWineryProfile';
 import { getStyles } from './styles';
+import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
+import { WineListSearchBar } from '@/modules/profile/ui/components/WineListSearchBar';
 
 export const PublicWineryProfileView = observer(() => {
     const { colors, t } = useUiContext();
@@ -51,6 +53,7 @@ export const PublicWineryProfileView = observer(() => {
         isWinesLoadingMore,
         isLinksModalVisible,
         isShareModalVisible,
+        winesListRef,
         onPressBack,
         onRefresh,
         onLoadMoreEvents,
@@ -58,6 +61,8 @@ export const PublicWineryProfileView = observer(() => {
         onEventPress,
         onFavoriteEventPress,
         onWinePress,
+        onSearchWines,
+        scrollWinesToTop,
         onShowLinksModal,
         onHideLinksModal,
         onAvatarPress,
@@ -68,7 +73,7 @@ export const PublicWineryProfileView = observer(() => {
     } = usePublicWineryProfile();
     const { refreshControl } = useRefresh(onRefresh);
     const eventKeyExtractor = useCallback((item: IEvent) => item.id.toString(), []);
-    const wineKeyExtractor = useCallback((item: IWineListItem) => item.id.toString(), []);
+    const wineKeyExtractor = useCallback((item: IOfferedWineListItem) => item.id.toString(), []);
     const renderEventItem = useCallback<ListRenderItem<IEvent>>(
         ({ item }) => (
             <EventCard
@@ -82,14 +87,14 @@ export const PublicWineryProfileView = observer(() => {
         ),
         [onEventPress, onFavoriteEventPress],
     );
-    const renderWineItem = useCallback<ListRenderItem<IWineListItem>>(
+    const renderWineItem = useCallback<ListRenderItem<IOfferedWineListItem>>(
         ({ item }) => (
-            <WineryWineListItem item={item} onPress={onWinePress} onSharePress={onOpenShareModal} />
+            <WineryWineListItem item={item} offer={item.offer} onPress={onWinePress} onSharePress={onOpenShareModal} />
         ),
         [onOpenShareModal, onWinePress],
     );
     const profileHeader = (
-        <View style={styles.profileHeader}>
+        <View>
             <PublicProfileHeader
                 name={wineryName}
                 avatarUrl={mainPhotoUrl}
@@ -102,6 +107,11 @@ export const PublicWineryProfileView = observer(() => {
                 onLinksPress={onShowLinksModal}
             />
             <PublicProfileTabs items={tabs} />
+            {activeTab === PublicProfileTab.WINES ? (
+                <View style={styles.winesSearch}>
+                    <WineListSearchBar onSearch={onSearchWines} scrollToTop={scrollWinesToTop} />
+                </View>
+            ) : null}
         </View>
     );
 
@@ -152,6 +162,8 @@ export const PublicWineryProfileView = observer(() => {
                     />
                 ) : (
                     <FlatList
+                        {...WINE_LIST_PERFORMANCE_PROPS}
+                        ref={winesListRef}
                         data={wines}
                         renderItem={renderWineItem}
                         keyExtractor={wineKeyExtractor}

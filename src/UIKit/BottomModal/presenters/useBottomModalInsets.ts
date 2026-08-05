@@ -15,6 +15,12 @@ const getAndroidNavigationInset = () => {
 export const useBottomModalInsets = () => {
     const { top, bottom } = useSafeAreaInsets();
 
+    const topInset = useMemo(() => {
+        const initialTopInset = initialWindowMetrics?.insets.top || 0;
+
+        return Math.max(top, initialTopInset);
+    }, [top]);
+
     const bottomInset = useMemo(() => {
         const initialBottomInset = initialWindowMetrics?.insets.bottom || 0;
         const androidNavigationInset = getAndroidNavigationInset();
@@ -23,7 +29,7 @@ export const useBottomModalInsets = () => {
     }, [bottom]);
 
     return {
-        topInset: top,
+        topInset,
         bottomInset,
     };
 };

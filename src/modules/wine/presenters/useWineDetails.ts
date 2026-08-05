@@ -4,7 +4,7 @@ import { myWineService } from '@/entities/wine/services/MyWineService';
 import { toastService } from '@/libs/toast/toastService';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { localization } from '@/UIProvider/localization/Localization';
-import { CommonActions, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
+import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NONE_VINTAGE_DROPDOWN_VALUE } from './useVintageDropdown';
 import { wineModel } from '@/entities/wine/models/WineModel';
@@ -86,11 +86,11 @@ export const useWineDetails = () => {
         vintages: routeVintages,
     } = (route.params as WineDetailsRouteParams | undefined) || {};
     const initialVintages = notificationRateId ? undefined : routeVintages;
-    const isFocused = useIsFocused();
     const [details, setDetails] = useState<IWineDetails | null>(null);
     const [isError, setIsError] = useState(false);
     const [isAllVintagesSelected, setIsAllVintagesSelected] = useState(initialVintages === 'All');
     const [hasSelectedVintageData, setHasSelectedVintageData] = useState(true);
+    const [isVintageChanging, setIsVintageChanging] = useState(false);
     const [localIsSaved, setLocalIsSaved] = useState<boolean | undefined>(undefined);
     const [rateId, setRateId] = useState<number | null>(null);
     const isResettingRef = useRef(false);
@@ -159,16 +159,26 @@ export const useWineDetails = () => {
         }
     }, [notificationRateId, rateId]);
 
+    const getVintageDetails = useCallback(async (params?: { vintages?: 'All' }) => {
+        try {
+            await getDetails(params);
+        } finally {
+            setIsVintageChanging(false);
+        }
+    }, [getDetails]);
+
     const onVintageChange = useCallback(async (item: IDropdownItem) => {
         const isNoneVintage = item.value === NONE_VINTAGE_DROPDOWN_VALUE;
         const isAllVintages = item.value === null
             || (typeof item.label === 'string' && item.label.toLowerCase() === localization.t('wine.allVintages').toLowerCase())
             || (typeof item.value === 'string' && item.value.toLowerCase() === 'all');
 
+        setIsVintageChanging(true);
+
         if (isAllVintages) {
             setIsAllVintagesSelected(true);
             setHasSelectedVintageData(true);
-            await getDetails({ vintages: 'All' });
+            await getVintageDetails({ vintages: 'All' });
             return;
         }
 
@@ -179,17 +189,18 @@ export const useWineDetails = () => {
         if (selectedWineId && selectedWineId !== wineModel.selectedWineId) {
             setHasSelectedVintageData(true);
             wineModel.selectedWineId = selectedWineId;
-            await getDetails();
+            await getVintageDetails();
             return;
         }
 
         if (selectedWineId && selectedWineId === wineModel.selectedWineId) {
             setHasSelectedVintageData(true);
-            await getDetails();
+            await getVintageDetails();
             return;
         }
 
         if (selectedVintage !== null && Number.isNaN(selectedVintage)) {
+            setIsVintageChanging(false);
             return;
         }
 
@@ -218,11 +229,10 @@ export const useWineDetails = () => {
             });
             clearWineReviewsListModel();
         }
-    }, [details, getDetails]);
+        setIsVintageChanging(false);
+    }, [details, getVintageDetails]);
 
     useEffect(() => {
-        if (!isFocused) return;
-
         const frameId = requestAnimationFrame(() => {
             if (wineDetailsData) {
                 setIsAllVintagesSelected(initialVintages === 'All');
@@ -249,7 +259,7 @@ export const useWineDetails = () => {
         return () => {
             cancelAnimationFrame(frameId);
         };
-    }, [wineId, wineDetailsData, notificationRateId, initialVintages, isFocused, getDetails]);
+    }, [wineId, wineDetailsData, notificationRateId, initialVintages, getDetails]);
 
     const hasCurrentVintageData = !!details?.currentVintage && typeof details.currentVintage === 'object';
     const reviewsWineId = hasSelectedVintageData
@@ -285,6 +295,19 @@ export const useWineDetails = () => {
     const onUpdateIsSaved = useCallback((isSaved: boolean) => {
         setLocalIsSaved(isSaved);
     }, []);
+
+    const evolutionRefreshRef = useRef<(() => Promise<void>) | null>(null);
+    const onRegisterEvolutionRefresh = useCallback((callback: (() => Promise<void>) | null) => {
+        evolutionRefreshRef.current = callback;
+    }, []);
+    const onEvolutionRefresh = useCallback(async () => {
+        const detailsRefresh = isAllVintagesSelected ? { vintages: 'All' as const } : undefined;
+
+        await Promise.all([
+            getDetails(detailsRefresh),
+            evolutionRefreshRef.current?.() || Promise.resolve(),
+        ]);
+    }, [getDetails, isAllVintagesSelected]);
 
     const resetToHome = useCallback(() => {
         isResettingRef.current = true;
@@ -347,12 +370,16 @@ export const useWineDetails = () => {
         getDetails,
         onVintageChange,
         hasCurrentVintageData,
+        hasSelectedVintageData,
+        isVintageChanging,
         isAllVintagesSelected,
         wineId,
         selectedWineId: wineModel.selectedWineId,
         reviewsWineId,
         fromScanner,
         onUpdateIsSaved,
+        onRegisterEvolutionRefresh,
+        onEvolutionRefresh,
         isPreloadedData: Boolean(wineDetailsData || notificationRateId),
         isResultHeaderFooterVisible: !notificationRateId,
         showTastingAuthor: Boolean(notificationRateId),

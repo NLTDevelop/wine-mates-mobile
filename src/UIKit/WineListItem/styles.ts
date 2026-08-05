@@ -131,8 +131,17 @@ export const getStyles = (colors: IColors, removeCardStyles: boolean, alignFoote
         emptyDivider: {
             marginVertical: scaleVertical(12),
         },
+        emptyDividerWithDetailsFooter: {
+            marginVertical: scaleVertical(6),
+        },
         footerContainer: {
             width: '100%',
+        },
+        detailsFooterContainer: {
+            width: '100%',
+        },
+        detailsFooterWithFooter: {
+            marginBottom: scaleVertical(12),
         },
         shareButton: {
             position: 'absolute',

@@ -2,6 +2,7 @@ import { IMedia } from '@/entities/media/types/IMedia';
 import { IWineTasteCharacteristic } from './IWineTasteCharacteristic';
 import { ISnack } from '@/entities/snacks/types/ISnack';
 import { IWineReviewsListItem } from './IWineReviewsListItem';
+import { IAIUsage } from './IRateContext';
 
 export interface IStatistic {
     id: number;
@@ -80,6 +81,7 @@ export interface IWineDetails {
     totalReviews: number;
     aiTastingNote?: 'string';
     aiSnacks?: ISnack[];
+    aiUsage: IAIUsage;
     isSaved?: boolean;
     myReview?: IWineReviewsListItem | null;
 }

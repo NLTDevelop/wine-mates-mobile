@@ -17,11 +17,11 @@ type RouteList = {
 export const usePublicUserProfile = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<RouteProp<RouteList, 'PublicUserProfileView'>>();
-    const userId = route.params?.userId;
+    const { userId, initialProfile } = route.params;
     const [activeTab, setActiveTab] = useState(PublicProfileTab.EVENTS);
-    const profileData = usePublicProfileData(userId, 'user');
-    const eventsData = usePublicProfileEvents(userId);
-    const tastingsData = usePublicUserTastings(userId);
+    const profileData = usePublicProfileData(userId, 'user', initialProfile);
+    const eventsData = usePublicProfileEvents(userId, activeTab === PublicProfileTab.EVENTS);
+    const tastingsData = usePublicUserTastings(userId, activeTab === PublicProfileTab.TASTINGS);
     const shareData = useWineShareModal();
 
     const onPressBack = useCallback(() => {
@@ -30,8 +30,11 @@ export const usePublicUserProfile = () => {
 
     const onActivityPress = useCallback(() => undefined, []);
     const onEventsPress = useCallback(() => {
+        if (activeTab === PublicProfileTab.TASTINGS) {
+            tastingsData.onResetTastingsSearch();
+        }
         setActiveTab(PublicProfileTab.EVENTS);
-    }, []);
+    }, [activeTab, tastingsData]);
 
     const onTastingsPress = useCallback(() => {
         setActiveTab(PublicProfileTab.TASTINGS);
@@ -89,6 +92,36 @@ export const usePublicUserProfile = () => {
 
     const bio = useMemo(() => profileData.profile?.user.bio?.trim() || '', [profileData.profile]);
 
+    const ratingText = useMemo(() => {
+        const user = profileData.profile?.user;
+
+        if (!user || user.rating === null || user.rating === undefined) {
+            return '';
+        }
+
+        return localization.t('publicProfile.rating', { rating: user.rating });
+    }, [profileData.profile]);
+
+    const countryRankText = useMemo(() => {
+        const rank = profileData.profile?.user.rankInCountry;
+
+        if (rank === null || rank === undefined) {
+            return '';
+        }
+
+        return localization.t('publicProfile.rankInCountry', { rank });
+    }, [profileData.profile]);
+
+    const worldRankText = useMemo(() => {
+        const rank = profileData.profile?.user.rankInWorld;
+
+        if (rank === null || rank === undefined) {
+            return '';
+        }
+
+        return localization.t('publicProfile.rankInWorld', { rank });
+    }, [profileData.profile]);
+
     return {
         ...profileData,
         ...eventsData,
@@ -99,6 +132,9 @@ export const usePublicUserProfile = () => {
         fullName,
         avatarUrl,
         bio,
+        ratingText,
+        countryRankText,
+        worldRankText,
         isFollowDisabled: true,
         onPressBack,
         onFollowPress,

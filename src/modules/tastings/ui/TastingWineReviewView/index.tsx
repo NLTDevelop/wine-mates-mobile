@@ -14,6 +14,7 @@ import { RateThisWine } from '@/UIKit/RateThisWine';
 import { Notes } from '@/UIKit/Notes';
 import { useTastingWineReview } from './presenters/useTastingWineReview';
 import { WinePeakPicker } from '@/UIKit/WinePeakPicker/ui';
+import { ReviewVisibilitySwitch } from '@/UIKit/ReviewVisibilitySwitch';
 
 export const TastingWineReviewView = observer(() => {
     const { colors, t } = useUiContext();
@@ -21,7 +22,9 @@ export const TastingWineReviewView = observer(() => {
 
     const {
         review,
+        isPublicReview,
         onChangeReview,
+        onPublicReviewChange,
         onSliderChange,
         onNextPress,
         onContinueFullTastingPress,
@@ -60,11 +63,7 @@ export const TastingWineReviewView = observer(() => {
                     />
                     {isFullTastingReview ? <Notes /> : null}
                     {isWinePeakPickerVisible ? (
-                        <WinePeakPicker
-                            value={winePeak}
-                            onChange={onWinePeakChange}
-                            isPremiumLockEnabled={false}
-                        />
+                        <WinePeakPicker value={winePeak} onChange={onWinePeakChange} />
                     ) : null}
                     <Typography text={t('wine.review')} variant="subtitle_20_500" style={styles.title} />
                     <CustomInput
@@ -77,6 +76,7 @@ export const TastingWineReviewView = observer(() => {
                         containerStyle={styles.inputContainer}
                         inputContainerStyle={styles.input}
                     />
+                    <ReviewVisibilitySwitch value={isPublicReview} onChange={onPublicReviewChange} />
 
                     {isSelectedParametersVisible ? (
                         <SelectedParameters containerStyle={styles.selectedParameters} />

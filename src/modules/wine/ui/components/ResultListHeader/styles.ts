@@ -57,6 +57,21 @@ export const getStyles = (colors: IColors) => {
             gap: scaleVertical(10),
             marginBottom: scaleVertical(16),
         },
+        limitContainer: {
+            borderRadius: 12,
+            padding: scaleVertical(12),
+            marginBottom: scaleVertical(24),
+            borderWidth: scaleHorizontal(1),
+            borderColor: colors.primary,
+            marginHorizontal: scaleHorizontal(16),
+        },
+        limitCountText: {
+            color: colors.text_primary,
+        },
+        subscribeButton: {
+            marginTop: scaleVertical(8),
+            height: scaleVertical(36),
+        },
     });
     return styles;
 };

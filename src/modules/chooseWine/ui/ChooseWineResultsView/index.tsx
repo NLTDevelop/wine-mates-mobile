@@ -15,6 +15,7 @@ import { getStyles } from './styles';
 import { ResultsFilterButton } from './components/ResultsFilterButton';
 import { WineShareModal } from '@/UIKit/WineShareModal';
 import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
+import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
 
 export const ChooseWineResultsView = observer(() => {
     const { colors, t } = useUiContext();
@@ -75,6 +76,7 @@ export const ChooseWineResultsView = observer(() => {
                 <ResultsFilterButton count={appliedFiltersCount} onPress={onFilterPress} />
             </View>
             <FlatList
+                {...WINE_LIST_PERFORMANCE_PROPS}
                 data={wines}
                 keyExtractor={keyExtractor}
                 renderItem={renderItem}

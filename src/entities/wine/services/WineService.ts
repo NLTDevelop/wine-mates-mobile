@@ -36,11 +36,15 @@ import { wineChooserResultsModel } from '../models/WineChooserResultsModel';
 import { wineModel } from '../models/WineModel';
 import { wineReviewsListModel } from '../models/WineReviewsListModel';
 import { IRateDetails } from '../types/IRateDetails';
+import { IWineEvolutionVintage } from '../types/IWineEvolution';
 
 class WineService {
-    constructor(private _requester: IRequester, private _links: ILinks) {}
+    constructor(
+        private _requester: IRequester,
+        private _links: ILinks,
+    ) {}
 
-    list = async ( data: FormData): Promise<IResponse<{raws: IWineListItem[], aiData: IAIData }>> => {
+    list = async (data: FormData): Promise<IResponse<{ raws: IWineListItem[]; aiData: IAIData }>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -50,7 +54,7 @@ class WineService {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-         
+
             return response;
         } catch (error) {
             console.warn('WineService -> list: ', error);
@@ -68,6 +72,20 @@ class WineService {
             return response;
         } catch (error) {
             console.warn('WineService -> getById: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getEvolution = async (id: number): Promise<IResponse<IWineEvolutionVintage[]>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineEvolution}/${id}/evolution`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getEvolution: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
@@ -100,7 +118,11 @@ class WineService {
         }
     };
 
-    searchWineSet = async (params: { query: string; limit: number; offset: number }): Promise<IResponse<IList<IWineSetSearchItem>>> => {
+    searchWineSet = async (params: {
+        query: string;
+        limit: number;
+        offset: number;
+    }): Promise<IResponse<IList<IWineSetSearchItem>>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -246,7 +268,7 @@ class WineService {
                 url: `${this._links.wineAromas}`,
                 params,
             });
-            
+
             if (!response.isError) {
                 wineModel.searchedAroma = response.data;
             }
@@ -277,7 +299,10 @@ class WineService {
         }
     };
 
-    getTastesCharacteristics = async (params: { colorId: number; typeId: number }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
+    getTastesCharacteristics = async (params: {
+        colorId: number;
+        typeId: number;
+    }): Promise<IResponse<IWineTasteCharacteristic[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -313,7 +338,7 @@ class WineService {
         }
     };
 
-    getReviewsList = async (params: IReviewsListParams): Promise<IResponse<IList<IWineReviewsListItem>>>  => {
+    getReviewsList = async (params: IReviewsListParams): Promise<IResponse<IList<IWineReviewsListItem>>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -336,9 +361,12 @@ class WineService {
         }
     };
 
-    getEventReviewsList = async (
-        params: { wineId: number; eventId: number; offset: number; limit: number },
-    ): Promise<IResponse<IList<IWineReviewsListItem>>>  => {
+    getEventReviewsList = async (params: {
+        wineId: number;
+        eventId: number;
+        offset: number;
+        limit: number;
+    }): Promise<IResponse<IList<IWineReviewsListItem>>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -361,7 +389,7 @@ class WineService {
         }
     };
 
-    generateNote = async (data: GenerateNoteDto): Promise<IResponse<{note: string}>> => {
+    generateNote = async (data: GenerateNoteDto): Promise<IResponse<{ note: string }>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -376,7 +404,7 @@ class WineService {
         }
     };
 
-    generateBlindNote = async (data: GenerateNoteDto): Promise<IResponse<{note: string}>> => {
+    generateBlindNote = async (data: GenerateNoteDto): Promise<IResponse<{ note: string }>> => {
         try {
             const response = await this._requester.request({
                 method: 'POST',
@@ -420,7 +448,7 @@ class WineService {
         }
     };
 
-    getRecommendations = async (params: IRecommendationWineListParams): Promise<IResponse<IList<IWineListItem>>>  => {
+    getRecommendations = async (params: IRecommendationWineListParams): Promise<IResponse<IList<IWineListItem>>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -464,9 +492,10 @@ class WineService {
         }
     };
 
-    getWineChooserGrapeVarieties = async (
-        params: { limit: number; offset: number },
-    ): Promise<IResponse<IList<IWineChooserGrapeVariety>>> => {
+    getWineChooserGrapeVarieties = async (params: {
+        limit: number;
+        offset: number;
+    }): Promise<IResponse<IList<IWineChooserGrapeVariety>>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
@@ -509,9 +538,10 @@ class WineService {
         }
     };
 
-    getWineChooserAromasFlavors = async (
-        params: { typeId: number; colorId: number },
-    ): Promise<IResponse<{ aromas: IWineChooserOption[]; flavors: IWineChooserOption[] }>> => {
+    getWineChooserAromasFlavors = async (params: {
+        typeId: number;
+        colorId: number;
+    }): Promise<IResponse<{ aromas: IWineChooserOption[]; flavors: IWineChooserOption[] }>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',

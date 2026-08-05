@@ -24,9 +24,11 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             overflow: 'hidden',
+            flexShrink: 1,
         },
         container: {
             overflow: 'hidden',
+            flexShrink: 1,
         },
         fullScreenContainer: {
             flex: 1,
@@ -62,6 +64,7 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
         contentContainer: {
             paddingHorizontal: scaleHorizontal(16),
             paddingBottom: bottomInset + scaleVertical(16),
+            flexShrink: 1,
         },
         fullScreenContentContainer: {
             flex: 1,

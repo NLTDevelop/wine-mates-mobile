@@ -24,6 +24,8 @@ import { PublicUserTastingListItem } from './components/PublicUserTastingListIte
 import { usePublicUserProfile } from './presenters/usePublicUserProfile';
 import { getStyles } from './styles';
 import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
+import { WineListSearchBar } from '@/modules/profile/ui/components/WineListSearchBar';
+import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
 
 export const PublicUserProfileView = observer(() => {
     const { colors, t } = useUiContext();
@@ -40,6 +42,9 @@ export const PublicUserProfileView = observer(() => {
         fullName,
         avatarUrl,
         bio,
+        ratingText,
+        countryRankText,
+        worldRankText,
         isLoading,
         isError,
         isEventsLoading,
@@ -49,6 +54,7 @@ export const PublicUserProfileView = observer(() => {
         isFollowDisabled,
         isLinksModalVisible,
         isShareModalVisible,
+        tastingsListRef,
         onPressBack,
         onFollowPress,
         onRefresh,
@@ -57,6 +63,8 @@ export const PublicUserProfileView = observer(() => {
         onEventPress,
         onFavoriteEventPress,
         onTastingPress,
+        onSearchTastings,
+        scrollTastingsToTop,
         onOpenShareModal,
         onCloseShareModal,
         onShareMessengerPress,
@@ -67,7 +75,7 @@ export const PublicUserProfileView = observer(() => {
     } = usePublicUserProfile();
     const { refreshControl } = useRefresh(onRefresh);
     const eventKeyExtractor = useCallback((item: IEvent) => item.id.toString(), []);
-    const tastingKeyExtractor = useCallback((item: IUserTastingListItem) => item.id.toString(), []);
+    const tastingKeyExtractor = useCallback((item: IUserTastingListItem, index: number) => `${item.id.toString()}-${index}`, []);
     const renderEventItem = useCallback<ListRenderItem<IEvent>>(
         ({ item }) => (
             <EventCard
@@ -92,11 +100,14 @@ export const PublicUserProfileView = observer(() => {
         [onOpenShareModal, onTastingPress],
     );
     const profileHeader = (
-        <View style={styles.headerContent}>
+        <View>
             <PublicProfileHeader
                 name={fullName}
                 avatarUrl={avatarUrl}
                 bio={bio}
+                ratingText={ratingText}
+                countryRankText={countryRankText}
+                worldRankText={worldRankText}
                 galleryBadgeText={galleryBadgeText}
                 hasLinks={hasLinks}
                 onAvatarPress={onAvatarPress}
@@ -110,6 +121,11 @@ export const PublicUserProfileView = observer(() => {
                 containerStyle={styles.followButton}
             />
             <PublicProfileTabs items={tabs} />
+            {activeTab === PublicProfileTab.TASTINGS ? (
+                <View style={styles.tastingsSearch}>
+                    <WineListSearchBar onSearch={onSearchTastings} scrollToTop={scrollTastingsToTop} />
+                </View>
+            ) : null}
         </View>
     );
 
@@ -141,6 +157,8 @@ export const PublicUserProfileView = observer(() => {
                         />
                     ) : (
                         <FlatList
+                            {...WINE_LIST_PERFORMANCE_PROPS}
+                            ref={tastingsListRef}
                             data={tastings}
                             renderItem={renderTastingItem}
                             keyExtractor={tastingKeyExtractor}

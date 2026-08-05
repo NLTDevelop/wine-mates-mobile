@@ -3,4 +3,5 @@ export interface IPrivateOfferListItem {
     fullName: string;
     avatarUrl: string | null;
     priceText: string;
+    onPress: () => void;
 }

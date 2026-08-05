@@ -4,6 +4,7 @@ export interface IWineReview {
     starRate?: number;
     rate?: number;
     review: string;
+    isHidden?: boolean;
     hasChangedStarRate?: boolean;
     hasChangedRate?: boolean;
     aiTastingNote?: string | null;

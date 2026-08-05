@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { FlatList, ListRenderItem, View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { useUiContext } from '@/UIProvider';
-import { IWineListItem } from '@/entities/wine/types/IWineListItem';
+import { IOfferedWineListItem } from '@/entities/wine/types/IOfferedWineListItem';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
 import { EmptyListView } from '@/UIKit/EmptyListView';
@@ -20,6 +20,9 @@ import { CsvImportAlert } from './components/CsvImportAlert';
 import { WineryWineListItem } from '@/modules/profile/ui/components/WineryWineListItem';
 import { useMyWineryWines } from './presenters/useMyWineryWines';
 import { getStyles } from './styles';
+import { WineListSearchBar } from '@/modules/profile/ui/components/WineListSearchBar';
+import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
+import { WineOfferModal } from '../components/WineOfferModal';
 
 export const MyWineryWinesView = observer(() => {
     const { colors, t } = useUiContext();
@@ -31,12 +34,22 @@ export const MyWineryWinesView = observer(() => {
         isImporting,
         isTemplateDownloading,
         isCsvImportAlertVisible,
+        isOfferModalVisible,
         isError,
+        selectedWine,
+        selectedOffer,
+        listRef,
         onRefresh,
         onEndReached,
+        onSearch,
+        scrollToTop,
         onPressBack,
         onItemPress,
         onAddWinePress,
+        onOfferPress,
+        onCloseOfferModal,
+        onOfferSaved,
+        onOfferDeleted,
         onImportCsvPress,
         onShowCsvImportAlert,
         onHideCsvImportAlert,
@@ -46,13 +59,21 @@ export const MyWineryWinesView = observer(() => {
     const { isShareModalVisible, onOpenShareModal, onCloseShareModal, onShareMessengerPress, onCopyWineLinkPress } =
         useWineShareModal();
 
-    const keyExtractor = useCallback((item: IWineListItem) => item.id.toString(), []);
+    const keyExtractor = useCallback((item: IOfferedWineListItem) => item.id.toString(), []);
 
-    const renderItem = useCallback<ListRenderItem<IWineListItem>>(
+    const renderItem = useCallback<ListRenderItem<IOfferedWineListItem>>(
         ({ item }) => {
-            return <WineryWineListItem item={item} onPress={onItemPress} onSharePress={onOpenShareModal} />;
+            return (
+                <WineryWineListItem
+                    item={item}
+                    offer={item.offer}
+                    onPress={onItemPress}
+                    onSharePress={onOpenShareModal}
+                    onOfferPress={onOfferPress}
+                />
+            );
         },
-        [onItemPress, onOpenShareModal],
+        [onItemPress, onOfferPress, onOpenShareModal],
     );
 
     return (
@@ -68,7 +89,12 @@ export const MyWineryWinesView = observer(() => {
                     />
                 }
             >
+                <View style={styles.searchContainer}>
+                    <WineListSearchBar onSearch={onSearch} scrollToTop={scrollToTop} />
+                </View>
                 <FlatList
+                    {...WINE_LIST_PERFORMANCE_PROPS}
+                    ref={listRef}
                     data={data}
                     renderItem={renderItem}
                     keyExtractor={keyExtractor}
@@ -119,6 +145,17 @@ export const MyWineryWinesView = observer(() => {
                     onUploadPress={onImportCsvPress}
                     onDownloadTemplatePress={onDownloadCsvTemplatePress}
                 />
+                {isOfferModalVisible ? (
+                    <WineOfferModal
+                        visible
+                        wine={selectedWine}
+                        offer={selectedOffer}
+                        onClose={onCloseOfferModal}
+                        onSaved={onOfferSaved}
+                        onDeleted={onOfferDeleted}
+                        isWinery={true}
+                    />
+                ) : null}
             </ScreenContainer>
         </WithErrorHandler>
     );

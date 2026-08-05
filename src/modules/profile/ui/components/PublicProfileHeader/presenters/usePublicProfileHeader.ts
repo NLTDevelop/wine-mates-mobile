@@ -7,17 +7,20 @@ const COLLAPSED_BIO_LINES = 2;
 export const usePublicProfileHeader = (bio?: string) => {
     const [expandedBio, setExpandedBio] = useState<string | null>(null);
     const [overflowBio, setOverflowBio] = useState<string | null>(null);
+    const [measuredBio, setMeasuredBio] = useState<string | null>(null);
 
     const normalizedBio = useMemo(() => bio?.trim() || '', [bio]);
     const isBioExpanded = expandedBio === normalizedBio;
     const bioNumberOfLines = isBioExpanded ? undefined : COLLAPSED_BIO_LINES;
     const isBioToggleVisible = overflowBio === normalizedBio;
+    const isBioToggleSlotVisible = measuredBio !== normalizedBio || isBioToggleVisible;
     const bioToggleText = localization.t(
         isBioExpanded ? 'publicProfile.showLess' : 'publicProfile.showMore',
     );
 
     const onBioTextLayout = useCallback(
         (event: NativeSyntheticEvent<TextLayoutEventData>) => {
+            setMeasuredBio(normalizedBio);
             if (event.nativeEvent.lines.length > COLLAPSED_BIO_LINES) {
                 setOverflowBio(normalizedBio);
             }
@@ -34,6 +37,7 @@ export const usePublicProfileHeader = (bio?: string) => {
         bioNumberOfLines,
         bioToggleText,
         isBioToggleVisible,
+        isBioToggleSlotVisible,
         onBioTextLayout,
         onBioTogglePress,
     };

@@ -22,6 +22,7 @@ export interface ILinks {
     features: string;
     homeSections: string;
     wines: string;
+    wineEvolution: string;
     wineFilters: string;
     wineSetSearch: string;
     wineEventDetails: string;
@@ -38,6 +39,7 @@ export interface ILinks {
     rates: string;
     eventRates: string;
     generateSnacks: string;
+    generateWineSnacks: string;
     wineSnackCuisines: string;
     generateNote: string;
     generateBlindNote: string;
@@ -67,6 +69,7 @@ export interface ILinks {
     appliedEvents: string;
     eventBookings: string;
     userCurrencies: string;
+    sellerCountries: string;
     paymentMethods: string;
     contacts: string;
     guests: string;
@@ -79,6 +82,9 @@ export interface ILinks {
     notificationsSocket: string;
     availableWineryWines: string;
     wineryLinkedWines: string;
+    wineOffers: string;
+    wineOffersSearch: string;
+    partners: string;
     wineryWines: string;
     wineries: string;
     wineryUpdate: string;
@@ -96,8 +102,10 @@ class Links implements ILinks {
         features: 'features',
         homeSections: 'home-sections',
         wines: 'wines',
+        wineEvolution: 'wines',
         wineFilters: 'wines/filters',
         wineSetSearch: 'wines/search/wine-set',
+        wineOffersSearch: 'wines/search/for-offers',
         wineEventDetails: 'wines',
         scannedWines: 'wines/scanner',
         wineTypes: 'wine-types',
@@ -112,6 +120,7 @@ class Links implements ILinks {
         rates: 'rates',
         eventRates: 'rates/event-rates',
         generateSnacks: 'rates/generate-snacks',
+        generateWineSnacks: 'rates/generate-wine-snacks',
         wineSnackCuisines: 'wine-snack-cuisines',
         generateNote: 'rates/generate-note',
         generateBlindNote: 'rates/generate-blind-note',
@@ -141,6 +150,7 @@ class Links implements ILinks {
         appliedEvents: 'event-bookings/my',
         eventBookings: 'event-bookings',
         userCurrencies: 'users/currencies',
+        sellerCountries: 'seller-countries',
         paymentMethods: 'users/payment-methods',
         contacts: 'users/contacts',
         guests: 'event-bookings/event',
@@ -152,6 +162,8 @@ class Links implements ILinks {
         notifications: 'notifications',
         availableWineryWines: 'wines/winery',
         wineryLinkedWines: 'wines/winery-linked',
+        wineOffers: 'wine-offers',
+        partners: 'partners',
         wineryWines: 'winery-wines',
         wineries: 'wineries',
         wineryUpdate: 'wineries',
@@ -196,6 +208,9 @@ class Links implements ILinks {
     }
     public get wines() {
         return `${this._domain}${this._links.wines}`;
+    }
+    public get wineEvolution() {
+        return `${this._domain}${this._links.wineEvolution}`;
     }
     public get wineFilters() {
         return `${this._domain}${this._links.wineFilters}`;
@@ -244,6 +259,9 @@ class Links implements ILinks {
     }
     public get generateSnacks() {
         return `${this._domain}${this._links.generateSnacks}`;
+    }
+    public get generateWineSnacks() {
+        return `${this._domain}${this._links.generateWineSnacks}`;
     }
     public get wineSnackCuisines() {
         return `${this._domain}${this._links.wineSnackCuisines}`;
@@ -332,6 +350,9 @@ class Links implements ILinks {
     public get userCurrencies() {
         return `${this._domain}${this._links.userCurrencies}`;
     }
+    public get sellerCountries() {
+        return `${this._domain}${this._links.sellerCountries}`;
+    }
     public get paymentMethods() {
         return `${this._domain}${this._links.paymentMethods}`;
     }
@@ -365,6 +386,15 @@ class Links implements ILinks {
     public get wineryLinkedWines() {
         return `${this._domain}${this._links.wineryLinkedWines}`;
     }
+    public get wineOffers() {
+        return `${this._domain}${this._links.wineOffers}`;
+    }
+    public get wineOffersSearch() {
+        return `${this._domain}${this._links.wineOffersSearch}`;
+    }
+    public get partners() {
+        return `${this._domain}${this._links.partners}`;
+    }
     public get wineryWines() {
         return `${this._domain}${this._links.wineryWines}`;
     }
@@ -377,7 +407,6 @@ class Links implements ILinks {
     public get appeals() {
         return `${this._domain}${this._links.appeals}`;
     }
-
     public get notificationsSocket() {
         return `${this._domain.replace(/\/api\/v1\/?$/, '')}/notifications`;
     }

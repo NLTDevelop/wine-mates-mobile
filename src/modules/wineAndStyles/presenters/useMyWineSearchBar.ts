@@ -4,7 +4,7 @@ import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useCallback, useEffect } from 'react';
 import { useMyWineFiltersBottomSheet } from './useMyWineFiltersBottomSheet';
-import { IFilterTagItem } from '../ui/components/FilterTags';
+import { IFilterTagItem } from '../types/IFilterTagItem';
 import { computed } from 'mobx';
 import { wineListsModel } from '@/entities/wine/models/WineListsModel';
 

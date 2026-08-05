@@ -17,6 +17,7 @@ import { IUserCurrencies } from './types/IUserCurrencies';
 import { LocationDto } from './dto/Location.dto';
 import { IWinery } from '@/entities/winery/types/IWinery';
 import { IPublicProfile } from './types/IPublicProfile';
+import { ISellerCountry } from './types/ISellerCountry';
 
 class UserService {
     constructor(
@@ -78,10 +79,22 @@ class UserService {
 
     getPublicProfile = async (userId: number): Promise<IResponse<IPublicProfile>> => {
         try {
-            return await this._requester.request({
+            const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.users}/${userId}`,
             });
+
+            if (!response.isError && response.data && !response.data.user) {
+                return {
+                    ...response,
+                    data: {
+                        user: response.data,
+                        winery: response.data.winery || null,
+                    },
+                };
+            }
+
+            return response;
         } catch (error) {
             console.warn('UserService -> getPublicProfile: ', error);
             return { isError: true, message: '' };
@@ -346,6 +359,31 @@ class UserService {
             return response;
         } catch (error) {
             console.warn('UserService -> updateCurrency: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getSellerCountries = async (): Promise<IResponse<ISellerCountry[]>> => {
+        try {
+            return await this._requester.request({
+                method: 'GET',
+                url: this._links.sellerCountries,
+            });
+        } catch (error) {
+            console.warn('UserService -> getSellerCountries: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    updateSellerCountries = async (countryIds: number[]): Promise<IResponse<ISellerCountry[]>> => {
+        try {
+            return await this._requester.request({
+                method: 'PATCH',
+                url: this._links.sellerCountries,
+                data: { countryIds },
+            });
+        } catch (error) {
+            console.warn('UserService -> updateSellerCountries: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };

@@ -5,12 +5,14 @@ import { WineDetailsTab } from '../enums/WineDetailsTab';
 export const useWineDetailsTabs = () => {
     const navigation = useNavigation();
     const [activeTab, setActiveTab] = useState(WineDetailsTab.PROFILE);
+    const [shouldRenderEvolution, setShouldRenderEvolution] = useState(false);
 
     const onProfilePress = useCallback(() => {
         setActiveTab(WineDetailsTab.PROFILE);
     }, []);
 
     const onEvolutionPress = useCallback(() => {
+        setShouldRenderEvolution(true);
         setActiveTab(WineDetailsTab.EVOLUTION);
     }, []);
 
@@ -26,6 +28,7 @@ export const useWineDetailsTabs = () => {
         isProfileActive: activeTab === WineDetailsTab.PROFILE,
         isEvolutionActive: activeTab === WineDetailsTab.EVOLUTION,
         isPurchaseActive: activeTab === WineDetailsTab.PURCHASE,
+        shouldRenderEvolution,
         onProfilePress,
         onEvolutionPress,
         onPurchasePress,

@@ -21,7 +21,7 @@ import { formatEventPrice } from '@/modules/event/utils/formatEventPrice';
 import { shareEventQrCode } from '@/modules/event/utils/shareEventQrCode';
 import { addEventWineSetDraftModel } from '@/entities/events/AddEventWineSetDraftModel';
 import { addEventCreateDraftCacheModel } from '@/entities/events/AddEventCreateDraftCacheModel';
-import { getWineSetDisplaySubtitle, getWineSetDisplayTitle } from '@/modules/event/utils/wineSetDisplayFormatter';
+import { getWineDisplaySubtitle, getWineDisplayTitle } from '@/entities/wine/utils/wineDisplayFormatter';
 
 interface IWineSetDragEndPayload {
     data: IWineSetViewItem[];
@@ -253,8 +253,8 @@ export const useAddWineSetView = ({
     const wineSetViewItems = useMemo<IWineSetViewItem[]>(() => {
         return selectedWines.map(item => ({
             id: item.id,
-            title: getWineSetDisplayTitle(item),
-            subtitle: getWineSetDisplaySubtitle(item, locale),
+            title: getWineDisplayTitle(item),
+            subtitle: getWineDisplaySubtitle(item, locale),
             imageUrl: getWineImageUrl(item),
             onEditPress: createOnEditWinePress(item),
             onDeletePress: createOnDeleteWinePress(item.id),
@@ -288,8 +288,8 @@ export const useAddWineSetView = ({
             .filter(item => !selectedWines.some(wine => wine.id === item.id))
             .map(item => ({
                 ...item,
-                title: getWineSetDisplayTitle(item),
-                subtitle: getWineSetDisplaySubtitle(item, locale),
+                title: getWineDisplayTitle(item),
+                subtitle: getWineDisplaySubtitle(item, locale),
                 onPress: createOnSelectWinePress(item),
             }));
     }, [createOnSelectWinePress, isSearchListVisible, locale, selectedWines, wineSearchResults]);
