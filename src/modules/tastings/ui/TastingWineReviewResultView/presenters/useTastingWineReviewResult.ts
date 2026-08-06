@@ -44,7 +44,8 @@ export const useTastingWineReviewResult = () => {
     const eventId = routeParams.eventId;
     const wineId = routeParams.wineId;
     const isEditingFinishedTasting = routeParams.tastingStatus === 'tasted';
-    const cuisineCacheWineId = wineModel.wine?.id ?? wineId;
+    const currentWineId = wineId ?? wineModel.wine?.id;
+    const cuisineCacheWineId = currentWineId;
     const { buildEventTastingDraftPayload } = useEventTastingDraft();
     const [isLoadingLimits, setIsLoadingLimits] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
@@ -82,7 +83,7 @@ export const useTastingWineReviewResult = () => {
             .map(item => item.name.trim());
 
         const payload: GenerateNoteDto = {
-            wineId: wineModel.wine?.id || wineId || 0,
+            wineId: currentWineId ?? 0,
             review: wineModel.review?.review.trim() || '',
             color: wineModel.look,
             aromas: (wineModel.selectedSmells || []).filter(item => item.colorHex).map(item => item.id),
@@ -141,15 +142,15 @@ export const useTastingWineReviewResult = () => {
         }
 
         return payload;
-    }, [wineId]);
+    }, [currentWineId]);
 
     const getLimits = useCallback(async () => {
         try {
-            if (!wineModel.wine?.id) return null;
+            if (!currentWineId) return null;
 
             setIsLoadingLimits(true);
 
-            const params = { wineId: wineModel.wine?.id };
+            const params = { wineId: currentWineId };
 
             const response = await wineService.getLimits(params);
 
@@ -168,7 +169,7 @@ export const useTastingWineReviewResult = () => {
         } finally {
             setIsLoadingLimits(false);
         }
-    }, []);
+    }, [currentWineId]);
 
     const saveEventTastingDraft = useCallback(async () => {
         if (!eventId || !wineId) {
@@ -223,7 +224,13 @@ export const useTastingWineReviewResult = () => {
         snacks,
         isGenerating: isGeneratingSnacks,
         onGeneratePress: onGenerateSnacksPress,
-    } = useFoodPairing(setLimits, wineModel.review?.aiSnacks || undefined, saveEventTastingDraft, selectedCuisineNames);
+    } = useFoodPairing(
+        setLimits,
+        wineModel.review?.aiSnacks || undefined,
+        saveEventTastingDraft,
+        selectedCuisineNames,
+        currentWineId,
+    );
 
     const loadCuisines = useCallback(async () => {
         try {

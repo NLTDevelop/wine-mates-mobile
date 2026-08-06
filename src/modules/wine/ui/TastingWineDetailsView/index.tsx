@@ -25,15 +25,14 @@ export const TastingWineDetailsView = observer(() => {
         isError,
         getDetails,
         isAllVintagesSelected,
-        wineId,
-        selectedWineId,
+        reviewsWineId,
         isPreloadedData,
         myReview,
         eventId,
     } = useTastingWineDetails();
     const { data, isReviewsLoading, onRefresh, onEndReached } = useTastingWineReviewsList(
         getDetails,
-        selectedWineId ?? wineId,
+        reviewsWineId,
         eventId,
         isAllVintagesSelected,
         isPreloadedData,
