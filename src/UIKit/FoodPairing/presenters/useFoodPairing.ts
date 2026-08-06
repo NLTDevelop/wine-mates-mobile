@@ -16,6 +16,7 @@ export const useFoodPairing = (
     generatedSnacks?: ISnack[],
     onGenerateSuccess?: OnGenerateSuccess,
     cuisines?: string[],
+    wineId?: number,
 ) => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [snacks, setSnacks] = useState<ISnack[] | null>(generatedSnacks || wineModel.review?.aiSnacks || null);
@@ -40,7 +41,7 @@ export const useFoodPairing = (
             }
 
             const payload: GenerateSnacksDto = {
-                wineId: wineModel.wine?.id || 0,
+                wineId: wineId ?? wineModel.wine?.id ?? 0,
                 color: wineModel.look,
                 aromas: (wineModel.selectedSmells || []).filter(item => item.colorHex).map(item => item.id),
                 flavors: (wineModel.selectedTastes || []).filter(item => item.colorHex).map(item => item.id),
@@ -97,7 +98,7 @@ export const useFoodPairing = (
         } finally {
             setIsGenerating(false);
         }
-    }, [cuisines, onGenerateSuccess, setLimits]);
+    }, [cuisines, onGenerateSuccess, setLimits, wineId]);
 
     return { snacks, isGenerating, onGeneratePress };
 };
