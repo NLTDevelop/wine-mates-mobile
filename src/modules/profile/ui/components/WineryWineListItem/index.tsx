@@ -66,7 +66,6 @@ const WineryWineListItemComponent = ({
             footer={reviewBlock}
             showExpertRatingWithoutPremium={showExpertRatingWithoutPremium}
             alignFooterToBottom
-            showVintage
         />
     );
 };
