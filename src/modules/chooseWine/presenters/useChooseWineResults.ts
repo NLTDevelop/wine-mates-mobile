@@ -299,7 +299,7 @@ export const useChooseWineResults = () => {
     }, [filters, hasMore, isLoading, isLoadingMore, loadWines, onTryStartPaginationRequest, wines.length]);
 
     const onWinePress = useCallback((item: IWineListItem) => {
-        navigation.navigate('WineDetailsView', { wineId: item.id });
+        navigation.navigate('WineDetailsView', { wineId: item.id, vintages: 'All' });
     }, [navigation]);
 
     const onFilterPress = useCallback(() => {

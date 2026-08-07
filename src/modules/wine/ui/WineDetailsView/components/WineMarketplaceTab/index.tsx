@@ -14,8 +14,6 @@ interface IProps {
     wineDetails: IWineDetails;
     headerComponent: ReactElement;
     isAllVintagesSelected: boolean;
-    hasSelectedVintageData: boolean;
-    isVintageChanging: boolean;
     isActive: boolean;
 }
 
@@ -23,8 +21,6 @@ export const WineMarketplaceTab = ({
     wineDetails,
     headerComponent,
     isAllVintagesSelected,
-    hasSelectedVintageData,
-    isVintageChanging,
     isActive,
 }: IProps) => {
     const { colors, t } = useUiContext();
@@ -33,8 +29,6 @@ export const WineMarketplaceTab = ({
         wineDetails.id,
         wineDetails,
         isAllVintagesSelected,
-        hasSelectedVintageData,
-        isVintageChanging,
         isActive,
     );
     const { refreshControl } = useRefresh(onRefresh);

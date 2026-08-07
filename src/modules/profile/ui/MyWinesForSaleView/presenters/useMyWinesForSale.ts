@@ -185,7 +185,7 @@ export const useMyWinesForSale = ({
         return wineSearchResults.map(wine => ({
             id: wine.id,
             title: getWineDisplayTitle(wine),
-            subtitle: getWineDisplaySubtitle(wine, localization.locale),
+            subtitle: getWineDisplaySubtitle(wine, localization.locale, false),
             onPress: createOnSelectWinePress(wine),
         }));
     }, [createOnSelectWinePress, isSearchListVisible, wineSearchResults]);

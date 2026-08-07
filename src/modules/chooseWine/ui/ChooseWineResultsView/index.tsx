@@ -53,8 +53,6 @@ export const ChooseWineResultsView = observer(() => {
                 onPress={onWinePress}
                 onSharePress={onOpenShareModal}
                 showDate
-                showVintage
-                showNonVintage
             />
         );
     }, [onOpenShareModal, onWinePress]);
