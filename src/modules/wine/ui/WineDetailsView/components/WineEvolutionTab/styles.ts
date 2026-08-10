@@ -437,6 +437,7 @@ export const getStyles = (colors: IColors) => {
         carouselViewport: {
             marginLeft: scaleHorizontal(16),
             paddingTop: scaleVertical(12),
+            paddingBottom: scaleVertical(12),
             paddingLeft: scaleHorizontal(12),
             backgroundColor: colors.evolution_background_grey,
             borderRadius: scaleVertical(12),

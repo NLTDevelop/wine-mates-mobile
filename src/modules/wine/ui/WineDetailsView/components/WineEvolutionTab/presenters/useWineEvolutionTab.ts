@@ -850,7 +850,7 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
             return;
         }
 
-        setColorCarouselHeight(current => Math.max(current, Math.ceil(height + CAROUSEL_HEIGHT_BUFFER)));
+        setColorCarouselHeight(Math.ceil(height + CAROUSEL_HEIGHT_BUFFER));
     }, []);
     const onAromaCardLayout = useCallback((event: LayoutChangeEvent) => {
         const height = event?.nativeEvent?.layout?.height;
@@ -859,7 +859,7 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
             return;
         }
 
-        setAromaCarouselHeight(current => Math.max(current, Math.ceil(height + CAROUSEL_HEIGHT_BUFFER)));
+        setAromaCarouselHeight(Math.ceil(height + CAROUSEL_HEIGHT_BUFFER));
     }, []);
     const onTasteCardLayout = useCallback((event: LayoutChangeEvent) => {
         const height = event?.nativeEvent?.layout?.height;
@@ -868,7 +868,7 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
             return;
         }
 
-        setTasteCarouselHeight(current => Math.max(current, Math.ceil(height + CAROUSEL_HEIGHT_BUFFER)));
+        setTasteCarouselHeight(Math.ceil(height + CAROUSEL_HEIGHT_BUFFER));
     }, []);
 
     const getCarouselIndex = useCallback((itemsCount: number, absoluteProgress: number) => {
