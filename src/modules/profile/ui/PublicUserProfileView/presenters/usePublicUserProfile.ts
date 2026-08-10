@@ -33,14 +33,10 @@ export const usePublicUserProfile = () => {
 
     const onOfferPress = useCallback(() => undefined, []);
 
-    const loadOffers = useCallback(async () => {
+    const fetchOffers = useCallback(async () => {
         if (!hasWineOffersContext || !wineId || !userId) {
-            setOffers([]);
-            setIsOffersLoading(false);
             return;
         }
-
-        setIsOffersLoading(true);
 
         try {
             const response = await wineOfferService.getUserOffers({ wineId, vintages, offset: 0, limit: 100 });
@@ -77,9 +73,20 @@ export const usePublicUserProfile = () => {
         }
     }, [hasWineOffersContext, onOfferPress, userId, vintages, wineId]);
 
+    const loadOffers = useCallback(async () => {
+        if (!hasWineOffersContext || !wineId || !userId) {
+            return;
+        }
+
+        setIsOffersLoading(true);
+        await fetchOffers();
+    }, [fetchOffers, hasWineOffersContext, userId, wineId]);
+
     useEffect(() => {
-        loadOffers();
-    }, [loadOffers]);
+        if (hasWineOffersContext && wineId && userId) {
+            fetchOffers();
+        }
+    }, [fetchOffers, hasWineOffersContext, userId, wineId]);
 
     const onPressBack = useCallback(() => {
         navigation.goBack();
