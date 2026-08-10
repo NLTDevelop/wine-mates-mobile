@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import { useSharedValue, useAnimatedStyle, withSpring, useAnimatedReaction } from 'react-native-reanimated';
 import { Gesture } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';

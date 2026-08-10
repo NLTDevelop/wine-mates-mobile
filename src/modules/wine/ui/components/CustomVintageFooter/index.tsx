@@ -1,6 +1,5 @@
 import { View, TouchableOpacity, TextInput } from 'react-native';
 import { Typography } from '@/UIKit/Typography';
-import { PlusIcon } from '@assets/icons/PlusIcon';
 import { TickIcon } from '@assets/icons/TickIcon';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { useCustomVintageFooter } from './useCustomVintageFooter';

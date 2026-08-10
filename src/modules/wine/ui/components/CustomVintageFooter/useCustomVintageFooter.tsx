@@ -7,7 +7,7 @@ interface IProps {
     onAddVintage: (year: number) => void;
 }
 
-export const useCustomVintageFooter = ({ existingYears, onAddVintage }: IProps) => {
+export const useCustomVintageFooter = ({ existingYears: _existingYears, onAddVintage }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -16,7 +16,6 @@ export const useCustomVintageFooter = ({ existingYears, onAddVintage }: IProps) 
     const [error, setError] = useState('');
 
     const currentYear = new Date().getFullYear();
-    const startYear = 2010;
 
     const validateYear = useCallback((year: number): string => {
         if (year > currentYear) {
