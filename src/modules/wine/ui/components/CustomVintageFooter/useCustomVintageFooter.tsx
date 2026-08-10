@@ -25,19 +25,19 @@ export const useCustomVintageFooter = ({ existingYears: _existingYears, onAddVin
         return '';
     }, [currentYear]);
 
-    const handleButtonPress = useCallback(() => {
+    const onButtonPress = useCallback(() => {
         setIsInputMode(true);
         setInputValue('');
         setError('');
     }, []);
 
-    const handleCancel = useCallback(() => {
+    const onCancel = useCallback(() => {
         setIsInputMode(false);
         setInputValue('');
         setError('');
     }, []);
 
-    const handleConfirm = useCallback(() => {
+    const onConfirm = useCallback(() => {
         const year = parseInt(inputValue, 10);
         
         if (isNaN(year) || inputValue.length !== 4) {
@@ -57,7 +57,7 @@ export const useCustomVintageFooter = ({ existingYears: _existingYears, onAddVin
         setError('');
     }, [inputValue, validateYear, onAddVintage]);
 
-    const handleInputChange = useCallback((text: string) => {
+    const onInputChange = useCallback((text: string) => {
         const numericText = text.replace(/[^0-9]/g, '');
         if (numericText.length <= 4) {
             setInputValue(numericText);
@@ -71,9 +71,9 @@ export const useCustomVintageFooter = ({ existingYears: _existingYears, onAddVin
         error,
         styles,
         t,
-        handleButtonPress,
-        handleCancel,
-        handleConfirm,
-        handleInputChange,
+        onButtonPress,
+        onCancel,
+        onConfirm,
+        onInputChange,
     };
 };

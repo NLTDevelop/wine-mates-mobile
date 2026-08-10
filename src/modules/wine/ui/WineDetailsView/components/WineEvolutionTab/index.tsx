@@ -72,16 +72,20 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
     const renderExpertItem = useCallback(
         ({ item }: { item: IWineEvolutionExpertAssessment }) => (
             <View style={styles.expertItem}>
-                {item.proScore === null ? (
-                    <Typography text="-" variant="h5" style={styles.expertNoData} />
-                ) : (
-                    <RateMedal sliderValue={item.proScore as number} size={54} />
-                )}
-                {item.userScore === null ? (
-                    <Typography text="-" variant="h5" style={styles.expertNoData} />
-                ) : (
-                    <SmallStarRating rating={item.userScore} starSize={14} />
-                )}
+                <View style={styles.expertMedalSlot}>
+                    {item.proScore === null ? (
+                        <Typography text="-" variant="h5" style={styles.expertNoData} />
+                    ) : (
+                        <RateMedal sliderValue={item.proScore as number} size={54} />
+                    )}
+                </View>
+                <View style={styles.expertStarsSlot}>
+                    {item.userScore === null ? (
+                        <Typography text="-" variant="h5" style={styles.expertNoData} />
+                    ) : (
+                        <SmallStarRating rating={item.userScore} starSize={14} />
+                    )}
+                </View>
                 <Typography text={item.year} variant="subtitle_10_400" style={styles.expertYear} />
             </View>
         ),

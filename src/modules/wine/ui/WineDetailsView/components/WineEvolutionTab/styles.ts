@@ -87,6 +87,17 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'center',
         },
+        expertMedalSlot: {
+            width: scaleHorizontal(54),
+            height: scaleVertical(54),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        expertStarsSlot: {
+            height: scaleVertical(16),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
         expertYear: {
             color: colors.icon,
             textAlign: 'center',

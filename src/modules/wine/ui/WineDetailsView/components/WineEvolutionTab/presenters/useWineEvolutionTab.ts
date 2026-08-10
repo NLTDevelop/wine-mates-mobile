@@ -482,7 +482,7 @@ const getScrollablePlotWidth = (visiblePlotWidth: number, yearsCount: number) =>
 const getChartYears = (years: number[], fallbackYears: number[] = []) => {
     const sourceYears = years.length ? years : fallbackYears;
 
-    return [...new Set(sourceYears.filter(year => Number.isFinite(year)))].sort((first, second) => first - second);
+    return [...new Set(sourceYears.filter(year => Number.isFinite(year)))].sort((first, second) => second - first);
 };
 
 const getThreeYAxisLabels = (levels: IWineEvolutionTasteCharacteristic['levels']) => {

@@ -1,12 +1,13 @@
 import { useCallback, useMemo, useRef } from 'react';
 import type { GestureResponderEvent, LayoutChangeEvent, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
-import { useSliderGesture, UseSliderGestureReturn } from './useSliderGesture.tsx';
+import { useSliderGesture } from './useSliderGesture.tsx';
 import { getStyles } from '../styles.ts';
 import {
     UseSmoothSliderProps,
     NormalizedLabel,
     DecoratorItem,
+    UseSliderGestureReturn,
 } from '../types/types.ts';
 
 interface UseSmoothSliderReturn extends UseSliderGestureReturn {
@@ -55,9 +56,9 @@ export const useSmoothSlider = ({
         panGesture,
         thumbStyle,
         activeTrackStyle,
-        handleLabelPress: handleLabelPressInternal,
-        handleLayout,
-        handleTrackPress,
+        onLabelPress: onLabelPressInternal,
+        onLayout,
+        onTrackPress: onTrackPressGesture,
     } = useSliderGesture({
         min,
         max: actualMax,
@@ -68,9 +69,9 @@ export const useSmoothSlider = ({
     });
 
     const onLabelClick = useCallback((targetIndex: number) => {
-        handleLabelPressInternal(targetIndex);
+        onLabelPressInternal(targetIndex);
         onLabelPress?.(targetIndex);
-    }, [handleLabelPressInternal, onLabelPress]);
+    }, [onLabelPressInternal, onLabelPress]);
 
     const onGetLabelPress = useCallback((targetIndex: number) => {
         return () => {
@@ -79,20 +80,20 @@ export const useSmoothSlider = ({
     }, [onLabelClick]);
 
     const onTrackLayout = useCallback((event: LayoutChangeEvent) => {
-        handleLayout(event.nativeEvent.layout.width);
+        onLayout(event.nativeEvent.layout.width);
 
         requestAnimationFrame(() => {
             trackContainerRef.current?.measureInWindow((x) => {
                 trackPageXRef.current = x;
             });
         });
-    }, [handleLayout]);
+    }, [onLayout]);
 
     const onTrackPress = useCallback((event: GestureResponderEvent) => {
         const pageX = event.nativeEvent.pageX;
         const locationX = pageX - trackPageXRef.current;
-        handleTrackPress(locationX);
-    }, [handleTrackPress]);
+        onTrackPressGesture(locationX);
+    }, [onTrackPressGesture]);
 
     const normalizedLabels = useMemo(() => {
         if (labelsProp && labelsProp.length > 0) {
@@ -146,9 +147,8 @@ export const useSmoothSlider = ({
         panGesture,
         thumbStyle,
         activeTrackStyle,
-        handleLabelPress: handleLabelPressInternal,
-        handleLayout,
-        handleTrackPress,
+        onLabelPress: onLabelPressInternal,
+        onLayout,
         styles,
         actualMax,
         normalizedLabels,
