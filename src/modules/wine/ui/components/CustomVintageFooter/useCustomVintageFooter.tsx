@@ -7,7 +7,7 @@ interface IProps {
     onAddVintage: (year: number) => void;
 }
 
-export const useCustomVintageFooter = ({ existingYears, onAddVintage }: IProps) => {
+export const useCustomVintageFooter = ({ existingYears: _existingYears, onAddVintage }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -16,7 +16,6 @@ export const useCustomVintageFooter = ({ existingYears, onAddVintage }: IProps) 
     const [error, setError] = useState('');
 
     const currentYear = new Date().getFullYear();
-    const startYear = 2010;
 
     const validateYear = useCallback((year: number): string => {
         if (year > currentYear) {
@@ -26,19 +25,19 @@ export const useCustomVintageFooter = ({ existingYears, onAddVintage }: IProps) 
         return '';
     }, [currentYear]);
 
-    const handleButtonPress = useCallback(() => {
+    const onButtonPress = useCallback(() => {
         setIsInputMode(true);
         setInputValue('');
         setError('');
     }, []);
 
-    const handleCancel = useCallback(() => {
+    const onCancel = useCallback(() => {
         setIsInputMode(false);
         setInputValue('');
         setError('');
     }, []);
 
-    const handleConfirm = useCallback(() => {
+    const onConfirm = useCallback(() => {
         const year = parseInt(inputValue, 10);
         
         if (isNaN(year) || inputValue.length !== 4) {
@@ -58,7 +57,7 @@ export const useCustomVintageFooter = ({ existingYears, onAddVintage }: IProps) 
         setError('');
     }, [inputValue, validateYear, onAddVintage]);
 
-    const handleInputChange = useCallback((text: string) => {
+    const onInputChange = useCallback((text: string) => {
         const numericText = text.replace(/[^0-9]/g, '');
         if (numericText.length <= 4) {
             setInputValue(numericText);
@@ -72,9 +71,9 @@ export const useCustomVintageFooter = ({ existingYears, onAddVintage }: IProps) 
         error,
         styles,
         t,
-        handleButtonPress,
-        handleCancel,
-        handleConfirm,
-        handleInputChange,
+        onButtonPress,
+        onCancel,
+        onConfirm,
+        onInputChange,
     };
 };

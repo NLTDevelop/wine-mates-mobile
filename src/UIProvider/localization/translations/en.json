@@ -252,9 +252,12 @@
         "taste": "Taste",
         "evolution": {
             "yearOfTasting": "Year of tasting",
-            "chooseWineYear": "Choose a wine year",
-            "proAssessment": "Pro assessment",
-            "tasteDynamicsExpertRatings": "Taste dynamics & expert ratings",
+            "chooseWineYear": "Choose a tasting year",
+            "yearOfTastingDescription": "Shows tasting results recorded in the selected year. Choose All years to see the average across all tastings.",
+            "allYears": "All years",
+            "proAssessment": "Wine pro rating",
+            "wineLoversRating": "Wine lover rating",
+            "tasteDynamicsExpertRatings": "Taste dynamics & wine pro ratings",
             "amateurRating": "Amateur rating",
             "winePeak": "Wine peak",
             "color": "Color",
@@ -263,6 +266,7 @@
             "tasteCharacteristics": "Taste characteristics",
             "assessmentOverYears": "Dynamics of the assessment over the years",
             "sex": "Sex",
+            "years": "Years",
             "men": "Men",
             "women": "Women",
             "peopleWhoChose": "Number of people who chose these characteristics",
@@ -314,7 +318,7 @@
             "defective": "Defective wine"
         },
         "overallScore": "Overall Score",
-        "expertReview": "Expert review",
+        "expertReview": "Wine pro review",
         "myReview": "My review",
         "shareWineTitle": "Share wine",
         "shareWineIntro": "Check this wine in WineMates",
@@ -326,7 +330,7 @@
         "shareWineCopyLink": "Copy link",
         "shareWineLinkCopied": "Wine link copied to clipboard",
         "customVintage": "Custom vintage",
-        "expertScoreTitle": "Expert Rate",
+        "expertScoreTitle": "Wine pro rating",
         "similarity": "Photo match"
     },
     "aiAttempts": {
@@ -404,6 +408,7 @@
         "events": "Events",
         "tastings": "Tastings",
         "wines": "Wines",
+        "offers": "Offers",
         "links": "Links",
         "showMore": "Show more",
         "showLess": "Show less",
@@ -417,7 +422,8 @@
         "noDescription": "No description has been added yet.",
         "noEvents": "No events have been added yet.",
         "noTastings": "No wines have been tasted yet.",
-        "noWines": "No wines have been added yet."
+        "noWines": "No wines have been added yet.",
+        "noOffers": "No offers have been added yet."
     },
     "appeals": {
         "title": "My appeals",

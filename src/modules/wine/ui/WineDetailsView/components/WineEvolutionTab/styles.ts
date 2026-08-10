@@ -21,13 +21,11 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
         },
         yearContent: {
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-            justifyContent: 'space-between',
+            gap: scaleVertical(12),
         },
         yearPickerColumn: {
             gap: scaleVertical(4),
-            width: scaleHorizontal(200),
+            width: '100%',
         },
         yearPickerLabel: {
             color: colors.text_light,
@@ -47,26 +45,56 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
             flex: 1,
         },
+        yearDescription: {
+            color: colors.text_light,
+            lineHeight: scaleVertical(14),
+        },
         proAssessment: {
+            flex: 1,
+            width: 0,
+            minHeight: scaleVertical(78),
+            paddingVertical: scaleVertical(6),
             alignItems: 'center',
+            justifyContent: 'center',
             gap: scaleVertical(2),
-            width: scaleHorizontal(70),
+            backgroundColor: colors.background,
+            borderWidth: scaleVertical(1),
+            borderColor: colors.border_light,
+            borderRadius: scaleVertical(8),
+        },
+        selectedRatings: {
+            flexDirection: 'row',
+            alignItems: 'stretch',
+            gap: scaleHorizontal(8),
+            width: '100%',
         },
         proAssessmentLabel: {
             color: colors.icon,
+            width: '100%',
             textAlign: 'center',
         },
         expertCarousel: {
             width: '100%',
-            height: scaleVertical(68),
+            height: scaleVertical(100),
         },
         expertCarouselNoData: {
             alignItems: 'center',
             justifyContent: 'center',
         },
         expertItem: {
-            width: scaleHorizontal(66),
-            height: scaleVertical(68),
+            width: scaleHorizontal(96),
+            height: scaleVertical(100),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        expertMedalSlot: {
+            width: scaleHorizontal(54),
+            height: scaleVertical(54),
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        expertStarsSlot: {
+            height: scaleVertical(16),
             alignItems: 'center',
             justifyContent: 'center',
         },
@@ -89,6 +117,15 @@ export const getStyles = (colors: IColors) => {
         },
         ratingTable: {
             gap: 0,
+        },
+        ratingYearsHint: {
+            height: scaleVertical(20),
+            paddingLeft: scaleHorizontal(8),
+            justifyContent: 'center',
+            backgroundColor: colors.evolution_background_grey,
+        },
+        ratingYearsHintText: {
+            color: colors.text_light,
         },
         ratingHeader: {
             height: scaleVertical(40),
@@ -214,6 +251,37 @@ export const getStyles = (colors: IColors) => {
             flex: 0,
             width: '100%',
             height: scaleVertical(282),
+        },
+        chartZoomLayer: {
+            width: '100%',
+            height: '100%',
+        },
+        graphTooltip: {
+            position: 'absolute',
+            width: scaleHorizontal(112),
+            minHeight: scaleVertical(44),
+            paddingHorizontal: scaleHorizontal(8),
+            paddingVertical: scaleVertical(6),
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colors.background,
+            borderWidth: scaleVertical(1),
+            borderColor: colors.border,
+            borderRadius: scaleVertical(8),
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: scaleVertical(2),
+            },
+            shadowOpacity: 0.15,
+            shadowRadius: scaleVertical(4),
+            elevation: 4,
+        },
+        graphTooltipYear: {
+            color: colors.icon,
+        },
+        graphTooltipValue: {
+            color: colors.text,
         },
         graphScrollViewport: {
             flex: 1,
@@ -369,6 +437,7 @@ export const getStyles = (colors: IColors) => {
         carouselViewport: {
             marginLeft: scaleHorizontal(16),
             paddingTop: scaleVertical(12),
+            paddingBottom: scaleVertical(12),
             paddingLeft: scaleHorizontal(12),
             backgroundColor: colors.evolution_background_grey,
             borderRadius: scaleVertical(12),

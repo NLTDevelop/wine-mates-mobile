@@ -1,7 +1,8 @@
 export interface IWineEvolutionExpertAssessment {
     id: string;
     year: string;
-    score: number | null;
+    proScore: number | null;
+    userScore: number | null;
 }
 
 export interface IWineEvolutionRating {
@@ -39,6 +40,14 @@ export interface IWineEvolutionLineSeries {
     color: string;
     path: string;
     markersPath: string;
+    points: IWineEvolutionChartPoint[];
+}
+
+export interface IWineEvolutionChartPoint {
+    index: number;
+    x: number;
+    y: number;
+    value: number;
 }
 
 export interface IWineEvolutionAudienceControl {

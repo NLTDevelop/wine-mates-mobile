@@ -207,17 +207,17 @@ export const EventListView = observer(() => {
                         initialLayout={{ width: size.width }}
                     />
                     {isCreatedTab && (
-                        <Button text={t('event.addEvent')} onPress={onAddEventPress} containerStyle={styles.addButton} />
+                        <Button
+                            text={t('event.addEvent')}
+                            onPress={onAddEventPress}
+                            containerStyle={styles.addButton}
+                        />
                     )}
                 </View>
             </ScreenContainer>
 
             {selectedEvent && isModalVisible && (
-                <BottomModal
-                    visible={isModalVisible}
-                    onClose={onCloseModal}
-                    title={t('eventDetails.title')}
-                >
+                <BottomModal visible={isModalVisible} onClose={onCloseModal} title={t('eventDetails.title')}>
                     <EventCard
                         event={selectedEvent}
                         isSelected={false}

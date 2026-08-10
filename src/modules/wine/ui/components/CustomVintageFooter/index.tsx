@@ -1,6 +1,5 @@
 import { View, TouchableOpacity, TextInput } from 'react-native';
 import { Typography } from '@/UIKit/Typography';
-import { PlusIcon } from '@assets/icons/PlusIcon';
 import { TickIcon } from '@assets/icons/TickIcon';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { useCustomVintageFooter } from './useCustomVintageFooter';
@@ -17,10 +16,10 @@ export const CustomVintageFooter = ({ existingYears, onAddVintage }: IProps) => 
         error,
         styles,
         t,
-        handleButtonPress,
-        handleCancel,
-        handleConfirm,
-        handleInputChange,
+        onButtonPress,
+        onCancel,
+        onConfirm,
+        onInputChange,
     } = useCustomVintageFooter({ existingYears, onAddVintage });
 
     if (isInputMode) {
@@ -30,16 +29,16 @@ export const CustomVintageFooter = ({ existingYears, onAddVintage }: IProps) => 
                     <TextInput
                         style={[styles.input, error ? styles.inputError : null]}
                         value={inputValue}
-                        onChangeText={handleInputChange}
+                        onChangeText={onInputChange}
                         placeholder="YYYY"
                         keyboardType="number-pad"
                         maxLength={4}
                         autoFocus
                     />
-                    <TouchableOpacity style={styles.iconButton} onPress={handleConfirm}>
+                    <TouchableOpacity style={styles.iconButton} onPress={onConfirm}>
                         <TickIcon />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconButton} onPress={handleCancel}>
+                    <TouchableOpacity style={styles.iconButton} onPress={onCancel}>
                         <CrossIcon />
                     </TouchableOpacity>
                 </View>
@@ -50,7 +49,7 @@ export const CustomVintageFooter = ({ existingYears, onAddVintage }: IProps) => 
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
+            <TouchableOpacity style={styles.button} onPress={onButtonPress}>
                 <Typography text={t('wine.customVintage')} variant="body_500" />
             </TouchableOpacity>
         </View>

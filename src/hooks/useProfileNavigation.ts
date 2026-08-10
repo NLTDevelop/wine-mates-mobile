@@ -1,10 +1,12 @@
 import { useCallback } from 'react';
 import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
+import { IPublicProfileRouteParams } from '@/modules/profile/types/IPublicProfileRouteParams';
 import { navigationRef } from '@/navigation/rootNavigator';
 import { userService } from '@/entities/users/UserService';
 
 type ProfileUserId = number | string;
+type PublicProfileNavigationOptions = Pick<IPublicProfileRouteParams, 'initialTab' | 'wineId' | 'vintages'>;
 
 export const useProfileNavigation = (
     userId?: ProfileUserId | null,
@@ -12,7 +14,12 @@ export const useProfileNavigation = (
     onClose?: () => void,
 ) => {
     const onUserPressById = useCallback(
-        async (nextUserId: ProfileUserId, nextWineExperienceLevel: WineExperienceLevelEnum, nextOnClose?: () => void) => {
+        async (
+            nextUserId: ProfileUserId,
+            nextWineExperienceLevel: WineExperienceLevelEnum,
+            nextOnClose?: () => void,
+            options?: PublicProfileNavigationOptions,
+        ) => {
             if (!nextUserId || !navigationRef.isReady()) {
                 return;
             }
@@ -39,6 +46,7 @@ export const useProfileNavigation = (
                     navigationRef.navigate('PublicUserProfileView', {
                         userId: normalizedUserId,
                         initialProfile: response.data,
+                        ...options,
                     });
                     return;
                 }
@@ -50,7 +58,7 @@ export const useProfileNavigation = (
                 return;
             }
 
-            navigationRef.navigate('PublicUserProfileView', { userId: normalizedUserId });
+            navigationRef.navigate('PublicUserProfileView', { userId: normalizedUserId, ...options });
         },
         [onClose],
     );

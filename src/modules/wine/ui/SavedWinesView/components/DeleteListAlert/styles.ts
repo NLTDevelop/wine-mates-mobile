@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors) => {
+export const getStyles = (_colors: IColors) => {
     const styles = StyleSheet.create({
         title: {
             textAlign: 'center',

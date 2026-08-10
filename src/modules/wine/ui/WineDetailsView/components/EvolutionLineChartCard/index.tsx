@@ -1,10 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
-import { Line, Path, Svg } from 'react-native-svg';
+import { GestureDetector } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
+import { Circle, Line, Path, Rect, Svg } from 'react-native-svg';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { IWineEvolutionChart } from '@/modules/wine/types/IWineEvolution';
 import { getStyles } from '../WineEvolutionTab/styles';
+import { useEvolutionLineChart } from './presenters/useEvolutionLineChart';
 
 interface IProps {
     chart: IWineEvolutionChart;
@@ -16,6 +19,8 @@ const CHART_TEXT_VARIANT = 'subtitle_12_500' as const;
 export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
+    const { animatedChartStyle, onPlotPress, pinchGesture, plotWidth, selectedPoint, tooltipPosition } =
+        useEvolutionLineChart({ chart });
     const renderXAxisLabel = useCallback(
         (label: string, index: number) => (
             <Typography
@@ -69,10 +74,11 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                         showsHorizontalScrollIndicator={false}
                         style={styles.graphScrollViewport}
                     >
-                        <View style={[styles.graphScrollContent, { width: chart.plotWidth }]}>
+                        <View style={[styles.graphScrollContent, { width: plotWidth }]}>
                             <View
                                 style={[
                                     isSummary ? styles.graphPlot : styles.metricGraphPlot,
+                                    { width: plotWidth },
                                     chart.series.length === 0
                                         ? isSummary
                                             ? styles.graphPlotNoData
@@ -83,207 +89,276 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                 {chart.series.length === 0 ? (
                                     <Typography text="-" variant={CHART_TEXT_VARIANT} style={styles.graphNoDataText} />
                                 ) : (
-                                    <Svg
-                                        width="100%"
-                                        height="100%"
-                                        viewBox={`0 0 ${chart.plotWidth} ${chart.plotHeight}`}
-                                    >
-                                        <Line
-                                            x1="0"
-                                            y1={chart.gridY[0]}
-                                            x2={chart.plotWidth}
-                                            y2={chart.gridY[0]}
-                                            stroke={colors.evolution_background_grey}
-                                            strokeWidth={1}
-                                            strokeDasharray="2 5"
-                                        />
-                                        <Line
-                                            x1="0"
-                                            y1={chart.gridY[1]}
-                                            x2={chart.plotWidth}
-                                            y2={chart.gridY[1]}
-                                            stroke={colors.evolution_background_grey}
-                                            strokeWidth={1}
-                                            strokeDasharray="2 5"
-                                        />
-                                        <Line
-                                            x1="0"
-                                            y1={chart.gridY[2]}
-                                            x2={chart.plotWidth}
-                                            y2={chart.gridY[2]}
-                                            stroke={colors.evolution_background_grey}
-                                            strokeWidth={1}
-                                            strokeDasharray="2 5"
-                                        />
-                                        {chart.gridY[3] !== undefined ? (
-                                            <Line
-                                                x1="0"
-                                                y1={chart.gridY[3]}
-                                                x2={chart.plotWidth}
-                                                y2={chart.gridY[3]}
-                                                stroke={colors.evolution_background_grey}
-                                                strokeWidth={1}
-                                                strokeDasharray="2 5"
-                                            />
-                                        ) : null}
-                                        {chart.gridY[4] !== undefined ? (
-                                            <Line
-                                                x1="0"
-                                                y1={chart.gridY[4]}
-                                                x2={chart.plotWidth}
-                                                y2={chart.gridY[4]}
-                                                stroke={colors.evolution_background_grey}
-                                                strokeWidth={1}
-                                                strokeDasharray="2 5"
-                                            />
-                                        ) : null}
-                                        {chart.gridY[5] !== undefined ? (
-                                            <Line
-                                                x1="0"
-                                                y1={chart.gridY[5]}
-                                                x2={chart.plotWidth}
-                                                y2={chart.gridY[5]}
-                                                stroke={colors.evolution_background_grey}
-                                                strokeWidth={1}
-                                                strokeDasharray="2 5"
-                                            />
-                                        ) : null}
-                                        {chart.series[0] ? (
-                                            <Path
-                                                d={chart.series[0].path}
-                                                fill="none"
-                                                stroke={chart.series[0].color}
-                                                strokeWidth={chart.strokeWidth}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        ) : null}
-                                        {chart.series[1] ? (
-                                            <Path
-                                                d={chart.series[1].path}
-                                                fill="none"
-                                                stroke={chart.series[1].color}
-                                                strokeWidth={chart.strokeWidth}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        ) : null}
-                                        {chart.series[2] ? (
-                                            <Path
-                                                d={chart.series[2].path}
-                                                fill="none"
-                                                stroke={chart.series[2].color}
-                                                strokeWidth={chart.strokeWidth}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        ) : null}
-                                        {chart.series[3] ? (
-                                            <Path
-                                                d={chart.series[3].path}
-                                                fill="none"
-                                                stroke={chart.series[3].color}
-                                                strokeWidth={chart.strokeWidth}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        ) : null}
-                                        {chart.series[4] ? (
-                                            <Path
-                                                d={chart.series[4].path}
-                                                fill="none"
-                                                stroke={chart.series[4].color}
-                                                strokeWidth={chart.strokeWidth}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        ) : null}
-                                        {chart.series[5] ? (
-                                            <Path
-                                                d={chart.series[5].path}
-                                                fill="none"
-                                                stroke={chart.series[5].color}
-                                                strokeWidth={chart.strokeWidth}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        ) : null}
-                                        {chart.series[6] ? (
-                                            <Path
-                                                d={chart.series[6].path}
-                                                fill="none"
-                                                stroke={chart.series[6].color}
-                                                strokeWidth={chart.strokeWidth}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        ) : null}
-                                        {chart.series[7] ? (
-                                            <Path
-                                                d={chart.series[7].path}
-                                                fill="none"
-                                                stroke={chart.series[7].color}
-                                                strokeWidth={chart.strokeWidth}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        ) : null}
-                                        {chart.series[8] ? (
-                                            <Path
-                                                d={chart.series[8].path}
-                                                fill="none"
-                                                stroke={chart.series[8].color}
-                                                strokeWidth={chart.strokeWidth}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        ) : null}
-                                        {chart.series[9] ? (
-                                            <Path
-                                                d={chart.series[9].path}
-                                                fill="none"
-                                                stroke={chart.series[9].color}
-                                                strokeWidth={chart.strokeWidth}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        ) : null}
-                                        {chart.series[0] ? (
-                                            <Path d={chart.series[0].markersPath} fill={chart.series[0].color} />
-                                        ) : null}
-                                        {chart.series[1] ? (
-                                            <Path d={chart.series[1].markersPath} fill={chart.series[1].color} />
-                                        ) : null}
-                                        {chart.series[2] ? (
-                                            <Path d={chart.series[2].markersPath} fill={chart.series[2].color} />
-                                        ) : null}
-                                        {chart.series[3] ? (
-                                            <Path d={chart.series[3].markersPath} fill={chart.series[3].color} />
-                                        ) : null}
-                                        {chart.series[4] ? (
-                                            <Path d={chart.series[4].markersPath} fill={chart.series[4].color} />
-                                        ) : null}
-                                        {chart.series[5] ? (
-                                            <Path d={chart.series[5].markersPath} fill={chart.series[5].color} />
-                                        ) : null}
-                                        {chart.series[6] ? (
-                                            <Path d={chart.series[6].markersPath} fill={chart.series[6].color} />
-                                        ) : null}
-                                        {chart.series[7] ? (
-                                            <Path d={chart.series[7].markersPath} fill={chart.series[7].color} />
-                                        ) : null}
-                                        {chart.series[8] ? (
-                                            <Path d={chart.series[8].markersPath} fill={chart.series[8].color} />
-                                        ) : null}
-                                        {chart.series[9] ? (
-                                            <Path d={chart.series[9].markersPath} fill={chart.series[9].color} />
-                                        ) : null}
-                                    </Svg>
+                                    <GestureDetector gesture={pinchGesture}>
+                                        <Animated.View style={[styles.chartZoomLayer, animatedChartStyle]}>
+                                            <Svg
+                                                width={plotWidth}
+                                                height="100%"
+                                                viewBox={`0 0 ${chart.plotWidth} ${chart.plotHeight}`}
+                                            >
+                                                <Rect
+                                                    x="0"
+                                                    y="0"
+                                                    width={chart.plotWidth}
+                                                    height={chart.plotHeight}
+                                                    fill={colors.background}
+                                                    opacity={0.01}
+                                                    onPress={onPlotPress}
+                                                />
+                                                <Line
+                                                    x1="0"
+                                                    y1={chart.gridY[0]}
+                                                    x2={chart.plotWidth}
+                                                    y2={chart.gridY[0]}
+                                                    stroke={colors.evolution_background_grey}
+                                                    strokeWidth={1}
+                                                    strokeDasharray="2 5"
+                                                />
+                                                <Line
+                                                    x1="0"
+                                                    y1={chart.gridY[1]}
+                                                    x2={chart.plotWidth}
+                                                    y2={chart.gridY[1]}
+                                                    stroke={colors.evolution_background_grey}
+                                                    strokeWidth={1}
+                                                    strokeDasharray="2 5"
+                                                />
+                                                <Line
+                                                    x1="0"
+                                                    y1={chart.gridY[2]}
+                                                    x2={chart.plotWidth}
+                                                    y2={chart.gridY[2]}
+                                                    stroke={colors.evolution_background_grey}
+                                                    strokeWidth={1}
+                                                    strokeDasharray="2 5"
+                                                />
+                                                {chart.gridY[3] !== undefined ? (
+                                                    <Line
+                                                        x1="0"
+                                                        y1={chart.gridY[3]}
+                                                        x2={chart.plotWidth}
+                                                        y2={chart.gridY[3]}
+                                                        stroke={colors.evolution_background_grey}
+                                                        strokeWidth={1}
+                                                        strokeDasharray="2 5"
+                                                    />
+                                                ) : null}
+                                                {chart.gridY[4] !== undefined ? (
+                                                    <Line
+                                                        x1="0"
+                                                        y1={chart.gridY[4]}
+                                                        x2={chart.plotWidth}
+                                                        y2={chart.gridY[4]}
+                                                        stroke={colors.evolution_background_grey}
+                                                        strokeWidth={1}
+                                                        strokeDasharray="2 5"
+                                                    />
+                                                ) : null}
+                                                {chart.gridY[5] !== undefined ? (
+                                                    <Line
+                                                        x1="0"
+                                                        y1={chart.gridY[5]}
+                                                        x2={chart.plotWidth}
+                                                        y2={chart.gridY[5]}
+                                                        stroke={colors.evolution_background_grey}
+                                                        strokeWidth={1}
+                                                        strokeDasharray="2 5"
+                                                    />
+                                                ) : null}
+                                                {chart.series[0] ? (
+                                                    <Path
+                                                        d={chart.series[0].path}
+                                                        fill="none"
+                                                        stroke={chart.series[0].color}
+                                                        strokeWidth={chart.strokeWidth}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                ) : null}
+                                                {chart.series[1] ? (
+                                                    <Path
+                                                        d={chart.series[1].path}
+                                                        fill="none"
+                                                        stroke={chart.series[1].color}
+                                                        strokeWidth={chart.strokeWidth}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                ) : null}
+                                                {chart.series[2] ? (
+                                                    <Path
+                                                        d={chart.series[2].path}
+                                                        fill="none"
+                                                        stroke={chart.series[2].color}
+                                                        strokeWidth={chart.strokeWidth}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                ) : null}
+                                                {chart.series[3] ? (
+                                                    <Path
+                                                        d={chart.series[3].path}
+                                                        fill="none"
+                                                        stroke={chart.series[3].color}
+                                                        strokeWidth={chart.strokeWidth}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                ) : null}
+                                                {chart.series[4] ? (
+                                                    <Path
+                                                        d={chart.series[4].path}
+                                                        fill="none"
+                                                        stroke={chart.series[4].color}
+                                                        strokeWidth={chart.strokeWidth}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                ) : null}
+                                                {chart.series[5] ? (
+                                                    <Path
+                                                        d={chart.series[5].path}
+                                                        fill="none"
+                                                        stroke={chart.series[5].color}
+                                                        strokeWidth={chart.strokeWidth}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                ) : null}
+                                                {chart.series[6] ? (
+                                                    <Path
+                                                        d={chart.series[6].path}
+                                                        fill="none"
+                                                        stroke={chart.series[6].color}
+                                                        strokeWidth={chart.strokeWidth}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                ) : null}
+                                                {chart.series[7] ? (
+                                                    <Path
+                                                        d={chart.series[7].path}
+                                                        fill="none"
+                                                        stroke={chart.series[7].color}
+                                                        strokeWidth={chart.strokeWidth}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                ) : null}
+                                                {chart.series[8] ? (
+                                                    <Path
+                                                        d={chart.series[8].path}
+                                                        fill="none"
+                                                        stroke={chart.series[8].color}
+                                                        strokeWidth={chart.strokeWidth}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                ) : null}
+                                                {chart.series[9] ? (
+                                                    <Path
+                                                        d={chart.series[9].path}
+                                                        fill="none"
+                                                        stroke={chart.series[9].color}
+                                                        strokeWidth={chart.strokeWidth}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                ) : null}
+                                                {chart.series[0] ? (
+                                                    <Path
+                                                        d={chart.series[0].markersPath}
+                                                        fill={chart.series[0].color}
+                                                    />
+                                                ) : null}
+                                                {chart.series[1] ? (
+                                                    <Path
+                                                        d={chart.series[1].markersPath}
+                                                        fill={chart.series[1].color}
+                                                    />
+                                                ) : null}
+                                                {chart.series[2] ? (
+                                                    <Path
+                                                        d={chart.series[2].markersPath}
+                                                        fill={chart.series[2].color}
+                                                    />
+                                                ) : null}
+                                                {chart.series[3] ? (
+                                                    <Path
+                                                        d={chart.series[3].markersPath}
+                                                        fill={chart.series[3].color}
+                                                    />
+                                                ) : null}
+                                                {chart.series[4] ? (
+                                                    <Path
+                                                        d={chart.series[4].markersPath}
+                                                        fill={chart.series[4].color}
+                                                    />
+                                                ) : null}
+                                                {chart.series[5] ? (
+                                                    <Path
+                                                        d={chart.series[5].markersPath}
+                                                        fill={chart.series[5].color}
+                                                    />
+                                                ) : null}
+                                                {chart.series[6] ? (
+                                                    <Path
+                                                        d={chart.series[6].markersPath}
+                                                        fill={chart.series[6].color}
+                                                    />
+                                                ) : null}
+                                                {chart.series[7] ? (
+                                                    <Path
+                                                        d={chart.series[7].markersPath}
+                                                        fill={chart.series[7].color}
+                                                    />
+                                                ) : null}
+                                                {chart.series[8] ? (
+                                                    <Path
+                                                        d={chart.series[8].markersPath}
+                                                        fill={chart.series[8].color}
+                                                    />
+                                                ) : null}
+                                                {chart.series[9] ? (
+                                                    <Path
+                                                        d={chart.series[9].markersPath}
+                                                        fill={chart.series[9].color}
+                                                    />
+                                                ) : null}
+                                                {selectedPoint ? (
+                                                    <Circle
+                                                        cx={selectedPoint.x}
+                                                        cy={selectedPoint.y}
+                                                        r={5}
+                                                        fill={selectedPoint.color}
+                                                        stroke={colors.background}
+                                                        strokeWidth={2}
+                                                        onPress={onPlotPress}
+                                                    />
+                                                ) : null}
+                                            </Svg>
+                                            {selectedPoint ? (
+                                                <View
+                                                    pointerEvents="none"
+                                                    style={[styles.graphTooltip, tooltipPosition]}
+                                                >
+                                                    <Typography
+                                                        text={selectedPoint.year}
+                                                        variant="subtitle_10_400"
+                                                        style={styles.graphTooltipYear}
+                                                    />
+                                                    <Typography
+                                                        text={selectedPoint.valueText}
+                                                        variant="subtitle_12_500"
+                                                        style={styles.graphTooltipValue}
+                                                    />
+                                                </View>
+                                            ) : null}
+                                        </Animated.View>
+                                    </GestureDetector>
                                 )}
                             </View>
-                            <View
-                                style={[isSummary ? styles.graphXAxis : styles.metricXAxis, { width: chart.plotWidth }]}
-                            >
+                            <View style={[isSummary ? styles.graphXAxis : styles.metricXAxis, { width: plotWidth }]}>
                                 {chart.xAxisLabels.map(renderXAxisLabel)}
                             </View>
                         </View>

@@ -1,27 +1,8 @@
+/* eslint-disable react-hooks/immutability */
 import { useSharedValue, useAnimatedStyle, withSpring, useAnimatedReaction } from 'react-native-reanimated';
 import { Gesture } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
-
-interface UseSliderGestureProps {
-    min: number;
-    max: number;
-    initialValue?: number;
-    onChange?: (value: number) => void;
-    step?: number;
-    snapped?: boolean;
-}
-
-type AnimatedStyleReturn = ReturnType<typeof useAnimatedStyle>;
-type PanGestureType = ReturnType<typeof Gesture.Pan>;
-
-export interface UseSliderGestureReturn {
-    panGesture: PanGestureType;
-    thumbStyle: AnimatedStyleReturn;
-    activeTrackStyle: AnimatedStyleReturn;
-    handleLabelPress: (index: number) => void;
-    handleLayout: (width: number) => void;
-    handleTrackPress: (locationX: number) => void;
-}
+import { UseSliderGestureProps, UseSliderGestureReturn } from '../types/types.ts';
 
 export const useSliderGesture = ({
     min,
@@ -69,7 +50,7 @@ export const useSliderGesture = ({
         });
     };
 
-    const handleLabelPress = (index: number) => {
+    const onLabelPress = (index: number) => {
         position.value = withSpring(index, {
             damping: 10,
             stiffness: 100,
@@ -113,11 +94,11 @@ export const useSliderGesture = ({
         return { width };
     });
 
-    const handleLayout = (width: number) => {
+    const onLayout = (width: number) => {
         sliderWidth.value = width;
     };
 
-    const handleTrackPress = (locationX: number) => {
+    const onTrackPress = (locationX: number) => {
         const range = maxValue - minValue;
         const stepSize = range > 0 ? sliderWidth.value / range : 1;
         const clickedValue = minValue + (locationX / stepSize);
@@ -145,8 +126,8 @@ export const useSliderGesture = ({
         panGesture,
         thumbStyle,
         activeTrackStyle,
-        handleLabelPress,
-        handleLayout,
-        handleTrackPress,
+        onLabelPress,
+        onLayout,
+        onTrackPress,
     };
 };

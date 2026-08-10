@@ -9,9 +9,9 @@ export const useFAQ = () => {
     const [data, setData] = useState<null | IFAQListItem[]>(null);
 
     const getFAQ = useCallback(async () => {
-        try {
-            setIsLoading(true);
+        setIsLoading(true);
 
+        try {
             const response = await faqService.list();
 
             if (response.isError || !response.data) {
@@ -27,8 +27,26 @@ export const useFAQ = () => {
     }, []);
 
     useEffect(() => {
-        getFAQ();
-    }, [getFAQ]);
+        let isMounted = true;
+
+        faqService.list().then((response) => {
+            if (!isMounted) return;
+            if (response.isError || !response.data) {
+                toastService.showError(localization.t('common.errorHappened'), response.message);
+            } else {
+                setData(response.data);
+            }
+            setIsLoading(false);
+        }).catch((error) => {
+            if (!isMounted) return;
+            console.error(JSON.stringify(error, null, 4));
+            setIsLoading(false);
+        });
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     return { data, isLoading, getFAQ };
 };
