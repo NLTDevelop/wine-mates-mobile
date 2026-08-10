@@ -94,6 +94,7 @@ export const useWineDetails = () => {
     const [localIsSaved, setLocalIsSaved] = useState<boolean | undefined>(undefined);
     const [rateId, setRateId] = useState<number | null>(null);
     const isResettingRef = useRef(false);
+    const selectedWineIdRef = useRef<number | null>(wineDetailsData?.id ?? wineId ?? null);
 
     const getDetails = useCallback(async (params?: { vintages?: 'All' }) => {
         try {
@@ -121,6 +122,7 @@ export const useWineDetails = () => {
                 }
 
                 const notificationDetails = mergeRateDetails(wineResponse.data, rateResponse.data);
+                selectedWineIdRef.current = rateResponse.data.wineId;
                 wineModel.selectedWineId = rateResponse.data.wineId;
                 setDetails(notificationDetails);
                 wineModel.vintages = notificationDetails.vintages;
@@ -129,7 +131,8 @@ export const useWineDetails = () => {
                 return;
             }
 
-            if (!wineModel.selectedWineId) return;
+            const selectedWineId = selectedWineIdRef.current;
+            if (!selectedWineId) return;
 
             const detailsParams = {
                 rateId,
@@ -137,8 +140,8 @@ export const useWineDetails = () => {
             }; 
 
             const response = rateId
-                ? await myWineService.getMyWineDetails(wineModel.selectedWineId, detailsParams)
-                : await wineService.getById(wineModel.selectedWineId, params);
+                ? await myWineService.getMyWineDetails(selectedWineId, detailsParams)
+                : await wineService.getById(selectedWineId, params);
 
             if (response.isError || !response.data) {
                 toastService.showError(
@@ -186,14 +189,15 @@ export const useWineDetails = () => {
         const selectedWineId = item.id ? Number(item.id) : null;
         const selectedVintage = isNoneVintage || item.value === null ? null : Number(item.value);
 
-        if (selectedWineId && selectedWineId !== wineModel.selectedWineId) {
+        if (selectedWineId && selectedWineId !== selectedWineIdRef.current) {
             setHasSelectedVintageData(true);
+            selectedWineIdRef.current = selectedWineId;
             wineModel.selectedWineId = selectedWineId;
             await getVintageDetails();
             return;
         }
 
-        if (selectedWineId && selectedWineId === wineModel.selectedWineId) {
+        if (selectedWineId && selectedWineId === selectedWineIdRef.current) {
             setHasSelectedVintageData(true);
             await getVintageDetails();
             return;
@@ -237,6 +241,7 @@ export const useWineDetails = () => {
             if (wineDetailsData) {
                 setIsAllVintagesSelected(initialVintages === 'All');
                 setHasSelectedVintageData(true);
+                selectedWineIdRef.current = wineDetailsData.id;
                 wineModel.selectedWineId = wineDetailsData.id;
                 setDetails(wineDetailsData);
                 wineModel.vintages = wineDetailsData.vintages;
@@ -251,6 +256,7 @@ export const useWineDetails = () => {
             setIsAllVintagesSelected(initialVintages === 'All');
             setHasSelectedVintageData(true);
             if (wineId) {
+                selectedWineIdRef.current = wineId;
                 wineModel.selectedWineId = wineId;
             }
             getDetails(initialVintages ? { vintages: initialVintages } : undefined);
@@ -263,7 +269,7 @@ export const useWineDetails = () => {
 
     const hasCurrentVintageData = !!details?.currentVintage && typeof details.currentVintage === 'object';
     const reviewsWineId = hasSelectedVintageData
-        ? wineModel.selectedWineId ?? wineId ?? null
+        ? details?.id ?? wineId ?? null
         : null;
 
     const detailsWithLocalIsSaved = details ? {
@@ -374,7 +380,6 @@ export const useWineDetails = () => {
         isVintageChanging,
         isAllVintagesSelected,
         wineId,
-        selectedWineId: wineModel.selectedWineId,
         reviewsWineId,
         fromScanner,
         onUpdateIsSaved,

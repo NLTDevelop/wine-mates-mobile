@@ -20,15 +20,16 @@ export const usePublicUserProfile = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<RouteProp<RouteList, 'PublicUserProfileView'>>();
     const userId = route.params?.userId;
+    const initialProfile = route.params?.initialProfile;
     const wineId = route.params?.wineId;
     const vintages = route.params?.vintages;
     const hasWineOffersContext = Boolean(wineId && route.params?.initialTab === PublicProfileTab.WINES);
     const [activeTab, setActiveTab] = useState(route.params?.initialTab ?? PublicProfileTab.EVENTS);
     const [offers, setOffers] = useState<IPrivateOfferListItem[]>([]);
     const [isOffersLoading, setIsOffersLoading] = useState(hasWineOffersContext);
-    const profileData = usePublicProfileData(userId, 'user');
-    const eventsData = usePublicProfileEvents(userId);
-    const tastingsData = usePublicUserTastings(userId);
+    const profileData = usePublicProfileData(userId, 'user', initialProfile);
+    const eventsData = usePublicProfileEvents(userId, activeTab === PublicProfileTab.EVENTS);
+    const tastingsData = usePublicUserTastings(userId, activeTab === PublicProfileTab.TASTINGS);
     const shareData = useWineShareModal();
 
     const onOfferPress = useCallback(() => undefined, []);
@@ -171,6 +172,36 @@ export const usePublicUserProfile = () => {
 
     const bio = useMemo(() => profileData.profile?.user.bio?.trim() || '', [profileData.profile]);
 
+    const ratingText = useMemo(() => {
+        const user = profileData.profile?.user;
+
+        if (!user || user.rating === null || user.rating === undefined) {
+            return '';
+        }
+
+        return localization.t('publicProfile.rating', { rating: user.rating });
+    }, [profileData.profile]);
+
+    const countryRankText = useMemo(() => {
+        const rank = profileData.profile?.user.rankInCountry;
+
+        if (rank === null || rank === undefined) {
+            return '';
+        }
+
+        return localization.t('publicProfile.rankInCountry', { rank });
+    }, [profileData.profile]);
+
+    const worldRankText = useMemo(() => {
+        const rank = profileData.profile?.user.rankInWorld;
+
+        if (rank === null || rank === undefined) {
+            return '';
+        }
+
+        return localization.t('publicProfile.rankInWorld', { rank });
+    }, [profileData.profile]);
+
     return {
         ...profileData,
         ...eventsData,
@@ -183,6 +214,9 @@ export const usePublicUserProfile = () => {
         fullName,
         avatarUrl,
         bio,
+        ratingText,
+        countryRankText,
+        worldRankText,
         isFollowDisabled: true,
         onPressBack,
         onFollowPress,

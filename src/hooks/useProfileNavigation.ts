@@ -3,6 +3,7 @@ import { userModel } from '@/entities/users/UserModel';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { IPublicProfileRouteParams } from '@/modules/profile/types/IPublicProfileRouteParams';
 import { navigationRef } from '@/navigation/rootNavigator';
+import { userService } from '@/entities/users/UserService';
 
 type ProfileUserId = number | string;
 type PublicProfileNavigationOptions = Pick<IPublicProfileRouteParams, 'initialTab' | 'wineId' | 'vintages'>;
@@ -13,7 +14,7 @@ export const useProfileNavigation = (
     onClose?: () => void,
 ) => {
     const onUserPressById = useCallback(
-        (
+        async (
             nextUserId: ProfileUserId,
             nextWineExperienceLevel: WineExperienceLevelEnum,
             nextOnClose?: () => void,
@@ -40,7 +41,20 @@ export const useProfileNavigation = (
             }
 
             if (nextWineExperienceLevel === WineExperienceLevelEnum.CREATOR) {
-                navigationRef.navigate('PublicWineryProfileView', { userId: normalizedUserId });
+                const response = await userService.getPublicProfile(normalizedUserId);
+                if (!response.isError && response.data && !response.data.winery) {
+                    navigationRef.navigate('PublicUserProfileView', {
+                        userId: normalizedUserId,
+                        initialProfile: response.data,
+                        ...options,
+                    });
+                    return;
+                }
+
+                navigationRef.navigate('PublicWineryProfileView', {
+                    userId: normalizedUserId,
+                    initialProfile: response.data,
+                });
                 return;
             }
 

@@ -13,7 +13,7 @@ import { IWineListSearchQuery } from '@/modules/profile/types/IWineListSearchQue
 
 const LIMIT = 10;
 
-export const usePublicUserTastings = (userId: number) => {
+export const usePublicUserTastings = (userId: number, isEnabled: boolean) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const list = userTastingsModel.list;
     const [isLoading, setIsLoading] = useState(true);
@@ -64,6 +64,10 @@ export const usePublicUserTastings = (userId: number) => {
     );
 
     useEffect(() => {
+        if (!isEnabled) {
+            return undefined;
+        }
+
         const frameId = requestAnimationFrame(() => {
             onResetPaginationRequests();
             loadTastings(0);
@@ -73,7 +77,7 @@ export const usePublicUserTastings = (userId: number) => {
             cancelAnimationFrame(frameId);
             userTastingsModel.list = null;
         };
-    }, [loadTastings, onResetPaginationRequests]);
+    }, [isEnabled, loadTastings, onResetPaginationRequests]);
 
     const onRefreshTastings = useCallback(async () => {
         onResetPaginationRequests();
@@ -90,11 +94,10 @@ export const usePublicUserTastings = (userId: number) => {
         await loadTastings(0);
     }, [loadTastings, onResetPaginationRequests]);
 
-    const onResetTastingsSearch = useCallback(async () => {
+    const onResetTastingsSearch = useCallback(() => {
         searchQueryRef.current = { search: '' };
         onResetPaginationRequests();
-        await loadTastings(0);
-    }, [loadTastings, onResetPaginationRequests]);
+    }, [onResetPaginationRequests]);
 
     const onLoadMoreTastings = useCallback(async () => {
         const currentList = userTastingsModel.list;

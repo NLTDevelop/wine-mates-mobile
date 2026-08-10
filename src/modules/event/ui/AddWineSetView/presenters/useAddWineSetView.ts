@@ -289,7 +289,7 @@ export const useAddWineSetView = ({
             .map(item => ({
                 ...item,
                 title: getWineDisplayTitle(item),
-                subtitle: getWineDisplaySubtitle(item, locale),
+                subtitle: getWineDisplaySubtitle(item, locale, false),
                 onPress: createOnSelectWinePress(item),
             }));
     }, [createOnSelectWinePress, isSearchListVisible, locale, selectedWines, wineSearchResults]);

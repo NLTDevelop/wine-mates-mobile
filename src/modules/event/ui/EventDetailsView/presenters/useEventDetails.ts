@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { IEventDetail } from '@/entities/events/types/IEvent';
 import { eventsService } from '@/entities/events/EventsService';
+import { userModel } from '@/entities/users/UserModel';
 
 export const useEventDetails = (eventId: number, isEventDetailsTabFocused: boolean) => {
     const [eventDetail, setEventDetail] = useState<IEventDetail | null>(null);
@@ -81,6 +82,7 @@ export const useEventDetails = (eventId: number, isEventDetailsTabFocused: boole
 
     return {
         eventDetail,
+        isEventOwner: Boolean(eventDetail?.ownerId && eventDetail.ownerId === userModel.user?.id),
         setEventDetail,
         isError,
         isLoading,

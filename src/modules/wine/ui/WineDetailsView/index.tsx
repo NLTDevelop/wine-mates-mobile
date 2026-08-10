@@ -35,7 +35,6 @@ export const WineDetailsView = observer(() => {
         getDetails,
         onVintageChange,
         hasCurrentVintageData,
-        hasSelectedVintageData,
         isVintageChanging,
         isAllVintagesSelected,
         reviewsWineId,
@@ -206,8 +205,6 @@ export const WineDetailsView = observer(() => {
                             <WineMarketplaceTab
                                 wineDetails={details}
                                 isAllVintagesSelected={isAllVintagesSelected}
-                                hasSelectedVintageData={hasSelectedVintageData}
-                                isVintageChanging={isVintageChanging}
                                 isActive={isPurchaseActive}
                                 headerComponent={
                                     <WineDetailsScrollableHeader

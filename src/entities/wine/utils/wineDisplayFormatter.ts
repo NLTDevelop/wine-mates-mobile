@@ -61,7 +61,7 @@ export const getWineDisplayTitle = (wine: IWineDisplayItem) => {
     return wine.id ? `Wine #${wine.id}` : 'Wine';
 };
 
-export const getWineDisplaySubtitle = (wine: IWineDisplayItem, locale?: string) => {
+export const getWineDisplaySubtitle = (wine: IWineDisplayItem, locale?: string, showVintage = true) => {
     const parts = [
         wine.grapeVariety,
         wine.name,
@@ -69,7 +69,7 @@ export const getWineDisplaySubtitle = (wine: IWineDisplayItem, locale?: string) 
         wine.color,
         wine.country,
         wine.region,
-        wine.vintage?.toString(),
+        showVintage ? wine.vintage?.toString() : null,
     ]
         .map(item => getWineText(item, locale))
         .filter(Boolean);

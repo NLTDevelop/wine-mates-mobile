@@ -5,7 +5,7 @@ import { myWineService } from '@/entities/wine/services/MyWineService';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { useRoute, useIsFocused } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { wineModel } from '@/entities/wine/models/WineModel';
 
 interface IEventVintageResponse extends IVintage {
@@ -52,10 +52,12 @@ export const useTastingWineDetails = () => {
     const [isAllVintagesSelected, setIsAllVintagesSelected] = useState(false);
     const [localIsSaved, setLocalIsSaved] = useState<boolean | undefined>(undefined);
     const [rateId, setRateId] = useState<number | null>(null);
+    const selectedWineIdRef = useRef<number | null>(wineDetailsData?.id ?? wineId ?? null);
 
     const getDetails = useCallback(async (params?: { vintages?: 'All' }) => {
         try {
-            if (!wineModel.selectedWineId) return;
+            const selectedWineId = selectedWineIdRef.current;
+            if (!selectedWineId) return;
 
             const detailsParams = {
                 rateId,
@@ -63,10 +65,10 @@ export const useTastingWineDetails = () => {
             };
 
             const response = eventId
-                ? await wineService.getEventDetails(wineModel.selectedWineId, { eventId })
+                ? await wineService.getEventDetails(selectedWineId, { eventId })
                 : rateId
-                ? await myWineService.getMyWineDetails(wineModel.selectedWineId, detailsParams)
-                : await wineService.getById(wineModel.selectedWineId, params);
+                ? await myWineService.getMyWineDetails(selectedWineId, detailsParams)
+                : await wineService.getById(selectedWineId, params);
 
             if (response.isError || !response.data) {
                 toastService.showError(
@@ -94,6 +96,7 @@ export const useTastingWineDetails = () => {
         if (wineDetailsData) {
             const normalizedDetails = eventId ? normalizeEventDetails(wineDetailsData) : wineDetailsData;
             setIsAllVintagesSelected(false);
+            selectedWineIdRef.current = normalizedDetails.id;
             wineModel.selectedWineId = normalizedDetails.id;
             setDetails(normalizedDetails);
             wineModel.vintages = normalizedDetails.vintages;
@@ -106,6 +109,7 @@ export const useTastingWineDetails = () => {
         if (!wineId) return;
 
         setIsAllVintagesSelected(false);
+        selectedWineIdRef.current = wineId;
         wineModel.selectedWineId = wineId;
         getDetails();
     }, [wineId, wineDetailsData, eventId, isFocused, getDetails]);
@@ -114,6 +118,7 @@ export const useTastingWineDetails = () => {
         ...details,
         isSaved: localIsSaved ?? details.isSaved,
     } : null;
+    const reviewsWineId = details?.id ?? wineId ?? null;
 
     return {
         details: detailsWithLocalIsSaved,
@@ -121,7 +126,7 @@ export const useTastingWineDetails = () => {
         getDetails,
         isAllVintagesSelected,
         wineId,
-        selectedWineId: wineModel.selectedWineId,
+        reviewsWineId,
         isPreloadedData: !!wineDetailsData,
         myReview: details?.myReview ?? null,
         eventId,
