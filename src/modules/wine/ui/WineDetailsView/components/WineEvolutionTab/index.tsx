@@ -4,8 +4,8 @@ import Carousel from 'react-native-reanimated-carousel';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { RateMedal } from '@/UIKit/RateMedal/ui';
+import { SmallStarRating } from '@/UIKit/SmallStarRating';
 import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
-import { NextArrowIcon } from '@assets/icons/NextArrowIcon';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { IWineEvolutionCarouselCard, IWineEvolutionExpertAssessment } from '@/modules/wine/types/IWineEvolution';
 import { EvolutionColorCarouselCard } from '../EvolutionColorCarouselCard';
@@ -22,12 +22,14 @@ interface IProps {
 }
 
 export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
-    const { colors, locale, t } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
         tastingYear,
         proAssessmentScore,
+        wineLoverScore,
         hasProAssessment,
+        hasWineLoverScore,
         winePeakYear,
         winePeakReviews,
         hasWinePeak,
@@ -65,21 +67,20 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
         onYearPress,
         onYearPickerClose,
         onYearConfirm,
-        onColorPrevious,
-        onColorNext,
-        onAromaPrevious,
-        onAromaNext,
-        onTastePrevious,
-        onTasteNext,
-    } = useWineEvolutionTab({ colors, locale, wineId, t, onRegisterRefresh });
+    } = useWineEvolutionTab({ colors, wineId, t, onRegisterRefresh });
 
     const renderExpertItem = useCallback(
         ({ item }: { item: IWineEvolutionExpertAssessment }) => (
             <View style={styles.expertItem}>
-                {item.score === null ? (
+                {item.proScore === null ? (
                     <Typography text="-" variant="h5" style={styles.expertNoData} />
                 ) : (
-                    <RateMedal sliderValue={item.score} size={54} />
+                    <RateMedal sliderValue={item.proScore as number} size={54} />
+                )}
+                {item.userScore === null ? (
+                    <Typography text="-" variant="h5" style={styles.expertNoData} />
+                ) : (
+                    <SmallStarRating rating={item.userScore} starSize={14} />
                 )}
                 <Typography text={item.year} variant="subtitle_10_400" style={styles.expertYear} />
             </View>
@@ -135,20 +136,61 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                     <ArrowDownIcon color={colors.icon} />
                                 </TouchableOpacity>
                             </View>
-                            <View style={styles.proAssessment}>
-                                {hasProAssessment ? (
-                                    <RateMedal sliderValue={proAssessmentScore as number} size={54} />
-                                ) : (
-                                    <Typography text="-" variant="h5" style={styles.proAssessmentNoData} />
-                                )}
-                                <Typography
-                                    text={t('wine.evolution.proAssessment')}
-                                    variant="subtitle_10_400"
-                                    style={styles.proAssessmentLabel}
-                                />
+                            <View style={styles.selectedRatings}>
+                                <View style={styles.proAssessment}>
+                                    {hasProAssessment ? (
+                                        <RateMedal sliderValue={proAssessmentScore as number} size={54} />
+                                    ) : (
+                                        <Typography text="-" variant="h5" style={styles.proAssessmentNoData} />
+                                    )}
+                                    <Typography
+                                        text={t('wine.evolution.proAssessment')}
+                                        variant="subtitle_10_400"
+                                        style={styles.proAssessmentLabel}
+                                    />
+                                </View>
+                                <View style={styles.proAssessment}>
+                                    {hasWineLoverScore ? (
+                                        <SmallStarRating rating={wineLoverScore as number} starSize={16} />
+                                    ) : (
+                                        <Typography text="-" variant="h5" style={styles.proAssessmentNoData} />
+                                    )}
+                                    <Typography
+                                        text={t('wine.evolution.wineLoversRating')}
+                                        variant="subtitle_10_400"
+                                        style={styles.proAssessmentLabel}
+                                    />
+                                </View>
                             </View>
                         </View>
                     </View>
+
+                    <View style={styles.section}>
+                        <Typography
+                            text={t('wine.evolution.amateurRating')}
+                            variant="subtitle_12_500"
+                            style={styles.sectionTitle}
+                        />
+                        <WineEvolutionAmateurRating ageGroups={amateurAgeGroups} rows={amateurRatingRows} />
+                    </View>
+
+                    {hasWinePeak ? (
+                        <View style={styles.section}>
+                            <Typography text={t('wine.evolution.winePeak')} variant="h4" style={styles.sectionTitle} />
+                            <View style={styles.winePeakCard}>
+                                <Typography text={winePeakYear} variant="h5" style={styles.winePeakYear} />
+                                <Typography
+                                    text={winePeakReviews}
+                                    variant="subtitle_12_400"
+                                    style={styles.winePeakReviews}
+                                />
+                            </View>
+                        </View>
+                    ) : null}
+
+                    {assessmentChart.series.length ? (
+                        <EvolutionLineChartCard chart={assessmentChart} isSummary />
+                    ) : null}
 
                     {expertAssessments.length ? (
                         <View style={styles.section}>
@@ -175,29 +217,6 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                         </View>
                     ) : null}
 
-                    <View style={styles.section}>
-                        <Typography text={t('wine.evolution.amateurRating')} variant="h4" style={styles.sectionTitle} />
-                        <WineEvolutionAmateurRating ageGroups={amateurAgeGroups} rows={amateurRatingRows} />
-                    </View>
-
-                    {hasWinePeak ? (
-                        <View style={styles.section}>
-                            <Typography text={t('wine.evolution.winePeak')} variant="h4" style={styles.sectionTitle} />
-                            <View style={styles.winePeakCard}>
-                                <Typography text={winePeakYear} variant="h5" style={styles.winePeakYear} />
-                                <Typography
-                                    text={winePeakReviews}
-                                    variant="subtitle_12_400"
-                                    style={styles.winePeakReviews}
-                                />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {assessmentChart.series.length ? (
-                        <EvolutionLineChartCard chart={assessmentChart} isSummary />
-                    ) : null}
-
                     {colorCards.length ? (
                         <View style={styles.carouselSection}>
                             <View style={styles.carouselHeader}>
@@ -206,21 +225,6 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                     variant="h5"
                                     style={styles.carouselHeaderTitle}
                                 />
-                                <View style={styles.carouselActions}>
-                                    <TouchableOpacity
-                                        disabled={colorActiveIndex === 0}
-                                        onPress={onColorPrevious}
-                                        style={[
-                                            styles.carouselArrow,
-                                            colorActiveIndex === 0 ? styles.carouselArrowDisabled : undefined,
-                                        ]}
-                                    >
-                                        <NextArrowIcon rotate={180} color={colors.text_inverted} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={onColorNext} style={styles.carouselArrow}>
-                                        <NextArrowIcon color={colors.text_inverted} />
-                                    </TouchableOpacity>
-                                </View>
                             </View>
                             <View style={styles.carouselViewport}>
                                 <Carousel
@@ -248,21 +252,6 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                     variant="h5"
                                     style={styles.carouselHeaderTitle}
                                 />
-                                <View style={styles.carouselActions}>
-                                    <TouchableOpacity
-                                        disabled={aromaActiveIndex === 0}
-                                        onPress={onAromaPrevious}
-                                        style={[
-                                            styles.carouselArrow,
-                                            aromaActiveIndex === 0 ? styles.carouselArrowDisabled : undefined,
-                                        ]}
-                                    >
-                                        <NextArrowIcon rotate={180} color={colors.text_inverted} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={onAromaNext} style={styles.carouselArrow}>
-                                        <NextArrowIcon color={colors.text_inverted} />
-                                    </TouchableOpacity>
-                                </View>
                             </View>
                             <View style={styles.carouselViewport}>
                                 <Carousel
@@ -290,21 +279,6 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                     variant="h5"
                                     style={styles.carouselHeaderTitle}
                                 />
-                                <View style={styles.carouselActions}>
-                                    <TouchableOpacity
-                                        disabled={tasteActiveIndex === 0}
-                                        onPress={onTastePrevious}
-                                        style={[
-                                            styles.carouselArrow,
-                                            tasteActiveIndex === 0 ? styles.carouselArrowDisabled : undefined,
-                                        ]}
-                                    >
-                                        <NextArrowIcon rotate={180} color={colors.text_inverted} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={onTasteNext} style={styles.carouselArrow}>
-                                        <NextArrowIcon color={colors.text_inverted} />
-                                    </TouchableOpacity>
-                                </View>
                             </View>
                             <View style={styles.carouselViewport}>
                                 <Carousel

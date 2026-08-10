@@ -36,7 +36,7 @@ import { wineChooserResultsModel } from '../models/WineChooserResultsModel';
 import { wineModel } from '../models/WineModel';
 import { wineReviewsListModel } from '../models/WineReviewsListModel';
 import { IRateDetails } from '../types/IRateDetails';
-import { IWineEvolutionVintage } from '../types/IWineEvolution';
+import { IWineEvolutionResponse, IWineEvolutionYear } from '../types/IWineEvolution';
 
 class WineService {
     constructor(
@@ -76,7 +76,7 @@ class WineService {
         }
     };
 
-    getEvolution = async (id: number): Promise<IResponse<IWineEvolutionVintage[]>> => {
+    getEvolution = async (id: number): Promise<IResponse<IWineEvolutionResponse | IWineEvolutionYear[]>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',

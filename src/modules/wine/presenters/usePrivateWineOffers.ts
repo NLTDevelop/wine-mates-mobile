@@ -11,6 +11,7 @@ import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 import { useProfileNavigation } from '@/hooks/useProfileNavigation';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { WineOfferVintages } from '@/entities/wine/types/WineOfferVintages';
+import { PublicProfileTab } from '@/modules/profile/enums/PublicProfileTab';
 
 const LIMIT = 20;
 
@@ -194,10 +195,14 @@ export const usePrivateWineOffers = () => {
     const createOnUserPress = useCallback(
         (userId: number, wineExperienceLevel?: WineExperienceLevelEnum | null) => {
             return () => {
-                onUserPressById(userId, wineExperienceLevel || WineExperienceLevelEnum.LOVER);
+                onUserPressById(userId, wineExperienceLevel || WineExperienceLevelEnum.LOVER, undefined, {
+                    initialTab: PublicProfileTab.WINES,
+                    wineId,
+                    vintages,
+                });
             };
         },
-        [onUserPressById],
+        [onUserPressById, vintages, wineId],
     );
 
     const items = useMemo<IPrivateOfferListItem[]>(() => {

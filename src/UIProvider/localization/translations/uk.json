@@ -252,17 +252,21 @@
         "taste": "Смак",
         "evolution": {
             "yearOfTasting": "Рік дегустації",
-            "chooseWineYear": "Оберіть рік вина",
-            "proAssessment": "Оцінка експертів",
-            "tasteDynamicsExpertRatings": "Динаміка смаку та оцінки експертів",
-            "amateurRating": "Оцінка аматорів",
-            "winePeak": "Пік вина",
+            "chooseWineYear": "Середні оцінки ловерів і порфі за рік дегустації",
+            "yearOfTastingDescription": "Показує результати дегустацій, проведених у вибраний рік. Оберіть «Усі роки», щоб побачити середнє за всіма дегустаціями.",
+            "allYears": "Усі роки",
+            "proAssessment": "Оцінка винного профі",
+            "wineLoversRating": "Оцінка вайнловерів",
+            "tasteDynamicsExpertRatings": "Динаміка оцінки wine profi цього вина по роках",
+            "amateurRating": "Оцінка Wine Lover з прив'язкою до статі і віку динаміки оцінки експерта цього вина по роках",
+            "winePeak": "Пік зрілості",
             "color": "Колір",
             "aroma": "Аромат",
             "taste": "Смак",
             "tasteCharacteristics": "Смакові характеристики",
             "assessmentOverYears": "Динаміка оцінки за роками",
             "sex": "Стать",
+            "years": "Роки",
             "men": "Чоловіки",
             "women": "Жінки",
             "peopleWhoChose": "Кількість людей, які обрали ці характеристики",
@@ -312,7 +316,7 @@
             "defective": "Дефектне вино"
         },
         "overallScore": "Загальний бал",
-        "expertReview": "Оцінка експерта",
+        "expertReview": "Оцінка винного профі",
         "myReview": "Моя оцінка",
         "shareWineTitle": "Поділитися вином",
         "shareWineIntro": "Подивіться це вино у WineMates",
@@ -324,7 +328,7 @@
         "shareWineCopyLink": "Копіювати посилання",
         "shareWineLinkCopied": "Посилання на вино скопійовано до буферу обміну",
         "customVintage": "Власний вінтаж",
-        "expertScoreTitle": "Оцінка від експерта",
+        "expertScoreTitle": "Оцінка винного профі",
         "similarity": "Збіг по фото"
     },
     "aiAttempts": {
@@ -402,6 +406,7 @@
         "events": "Події",
         "tastings": "Дегустації",
         "wines": "Вина",
+        "offers": "Пропозиції",
         "links": "Посилання",
         "showMore": "Показати більше",
         "showLess": "Приховати",
@@ -412,7 +417,8 @@
         "noDescription": "Опис ще не додано.",
         "noEvents": "Подій ще немає.",
         "noTastings": "Продегустованих вин ще немає.",
-        "noWines": "Вин ще немає."
+        "noWines": "Вин ще немає.",
+        "noOffers": "Пропозицій ще немає."
     },
     "appeals": {
         "title": "Мої звернення",

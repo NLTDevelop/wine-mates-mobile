@@ -1,7 +1,8 @@
 export interface IWineEvolutionExpertAssessment {
     id: string;
     year: string;
-    score: number | null;
+    proScore: number | null;
+    userScore: number | null;
 }
 
 export interface IWineEvolutionRating {

@@ -21,13 +21,11 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
         },
         yearContent: {
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-            justifyContent: 'space-between',
+            gap: scaleVertical(12),
         },
         yearPickerColumn: {
             gap: scaleVertical(4),
-            width: scaleHorizontal(200),
+            width: '100%',
         },
         yearPickerLabel: {
             color: colors.text_light,
@@ -47,26 +45,45 @@ export const getStyles = (colors: IColors) => {
             color: colors.text,
             flex: 1,
         },
+        yearDescription: {
+            color: colors.text_light,
+            lineHeight: scaleVertical(14),
+        },
         proAssessment: {
+            flex: 1,
+            width: 0,
+            minHeight: scaleVertical(78),
+            paddingVertical: scaleVertical(6),
             alignItems: 'center',
+            justifyContent: 'center',
             gap: scaleVertical(2),
-            width: scaleHorizontal(70),
+            backgroundColor: colors.background,
+            borderWidth: scaleVertical(1),
+            borderColor: colors.border_light,
+            borderRadius: scaleVertical(8),
+        },
+        selectedRatings: {
+            flexDirection: 'row',
+            alignItems: 'stretch',
+            gap: scaleHorizontal(8),
+            width: '100%',
         },
         proAssessmentLabel: {
             color: colors.icon,
+            width: '100%',
             textAlign: 'center',
         },
         expertCarousel: {
             width: '100%',
-            height: scaleVertical(68),
+            height: scaleVertical(100),
         },
         expertCarouselNoData: {
             alignItems: 'center',
             justifyContent: 'center',
         },
         expertItem: {
-            width: scaleHorizontal(66),
-            height: scaleVertical(68),
+            width: scaleHorizontal(96),
+            height: scaleVertical(100),
             alignItems: 'center',
             justifyContent: 'center',
         },
@@ -89,6 +106,15 @@ export const getStyles = (colors: IColors) => {
         },
         ratingTable: {
             gap: 0,
+        },
+        ratingYearsHint: {
+            height: scaleVertical(20),
+            paddingLeft: scaleHorizontal(8),
+            justifyContent: 'center',
+            backgroundColor: colors.evolution_background_grey,
+        },
+        ratingYearsHintText: {
+            color: colors.text_light,
         },
         ratingHeader: {
             height: scaleVertical(40),

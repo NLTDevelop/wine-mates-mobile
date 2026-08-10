@@ -39,16 +39,32 @@ export interface IWineEvolutionTasteCharacteristic {
     characteristicId: number;
     name: string;
     colorHex: string | null;
+    levels: IWineEvolutionTasteCharacteristicLevel[];
+    allYears?: IWineEvolutionTasteCharacteristicValue | null;
+    byYear?: IWineEvolutionTasteCharacteristicValue[];
+    avgSortNumber?: number | null;
+    avgLevelId?: number | null;
+    levelName?: string | null;
+    userCount?: number;
+}
+
+export interface IWineEvolutionTasteCharacteristicValue {
+    year?: number;
     avgSortNumber: number | null;
     avgLevelId: number | null;
     levelName: string | null;
     userCount: number;
-    levels: IWineEvolutionTasteCharacteristicLevel[];
+}
+
+export interface IWineEvolutionWinePeakDistribution {
+    year: number;
+    userCount: number;
 }
 
 export interface IWineEvolutionWinePeak {
-    year: number;
-    userCount: number;
+    from: number | null;
+    to: number | null;
+    distribution: IWineEvolutionWinePeakDistribution[];
 }
 
 export interface IWineEvolutionReviewer {
@@ -68,18 +84,42 @@ export interface IWineEvolutionReviewers {
     users: IWineEvolutionReviewer[];
 }
 
-export interface IWineEvolutionVintage {
-    wineId: number;
-    vintage: number | null;
+export interface IWineEvolutionYear {
+    year: number;
     reviewCount: number;
     avgUserRating: number | null;
     avgExpertRating: number | null;
-    reviewers?: IWineEvolutionReviewers | null;
     ratingByGroup: IWineEvolutionRatingByGroup;
-    winePeaks: IWineEvolutionWinePeak[];
-    topColors: IWineEvolutionStatistic[];
-    topShades: IWineEvolutionStatistic[];
-    topAromas: IWineEvolutionStatistic[];
-    topFlavors: IWineEvolutionStatistic[];
-    tasteCharacteristics: IWineEvolutionTasteCharacteristic[];
+    winePeak: IWineEvolutionWinePeak | null;
+    topColors?: IWineEvolutionStatistic[];
+    topAromas?: IWineEvolutionStatistic[];
+    topFlavors?: IWineEvolutionStatistic[];
+    reviewers?: IWineEvolutionReviewers | null;
+}
+
+export interface IWineEvolutionAggregate extends Omit<IWineEvolutionYear, 'year'> {
+    reviewers: IWineEvolutionReviewers | null;
+    topColors?: IWineEvolutionStatistic[];
+    topAromas?: IWineEvolutionStatistic[];
+    topFlavors?: IWineEvolutionStatistic[];
+}
+
+export interface IWineEvolutionResponse {
+    wineId: number;
+    vintage: number | null;
+    currentYear?: number;
+    years?: number[];
+    byYear?: IWineEvolutionYear[];
+    allYears?: IWineEvolutionAggregate;
+    reviewCount?: number;
+    avgUserRating?: number | null;
+    avgExpertRating?: number | null;
+    ratingByGroup?: IWineEvolutionRatingByGroup;
+    winePeaks?: IWineEvolutionWinePeakDistribution[];
+    reviewers?: IWineEvolutionReviewers | null;
+    topColors?: IWineEvolutionStatistic[];
+    topShades?: IWineEvolutionStatistic[];
+    topAromas?: IWineEvolutionStatistic[];
+    topFlavors?: IWineEvolutionStatistic[];
+    tasteCharacteristics?: IWineEvolutionTasteCharacteristic[];
 }
