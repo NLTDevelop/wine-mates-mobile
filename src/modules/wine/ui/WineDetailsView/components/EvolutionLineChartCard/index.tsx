@@ -6,7 +6,7 @@ import { Circle, Line, Path, Rect, Svg } from 'react-native-svg';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { IWineEvolutionChart } from '@/modules/wine/types/IWineEvolution';
-import { getStyles } from '../WineEvolutionTab/styles';
+import { getStyles } from './styles';
 import { useEvolutionLineChart } from './presenters/useEvolutionLineChart';
 
 interface IProps {
@@ -19,8 +19,17 @@ const CHART_TEXT_VARIANT = 'subtitle_12_500' as const;
 export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => {
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
-    const { animatedChartStyle, onPlotPress, pinchGesture, plotWidth, selectedPoint, tooltipPosition } =
-        useEvolutionLineChart({ chart });
+    const {
+        animatedChartStyle,
+        onPlotPress,
+        pinchGesture,
+        plotWidth,
+        selectedPoint,
+        shouldRenderPlot,
+        shouldShowYAxis,
+        shouldUseNoDataStyle,
+        tooltipPosition,
+    } = useEvolutionLineChart({ chart, isSummary });
     const renderXAxisLabel = useCallback(
         (label: string, index: number) => (
             <Typography
@@ -45,7 +54,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
             <View style={styles.graphArea}>
                 <View style={isSummary ? styles.graphPlotRow : styles.metricPlotRow}>
                     <View style={isSummary ? styles.graphYLabels : styles.metricYLabels}>
-                        {chart.series.length ? (
+                        {shouldShowYAxis ? (
                             <>
                                 <Typography
                                     text={chart.yAxisLabels[0] ?? '-'}
@@ -79,14 +88,14 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                 style={[
                                     isSummary ? styles.graphPlot : styles.metricGraphPlot,
                                     { width: plotWidth },
-                                    chart.series.length === 0
+                                    shouldUseNoDataStyle
                                         ? isSummary
                                             ? styles.graphPlotNoData
                                             : styles.metricGraphPlotNoData
                                         : undefined,
                                 ]}
                             >
-                                {chart.series.length === 0 ? (
+                                {!shouldRenderPlot ? (
                                     <Typography text="-" variant={CHART_TEXT_VARIANT} style={styles.graphNoDataText} />
                                 ) : (
                                     <GestureDetector gesture={pinchGesture}>
@@ -95,6 +104,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 width={plotWidth}
                                                 height="100%"
                                                 viewBox={`0 0 ${chart.plotWidth} ${chart.plotHeight}`}
+                                                onPress={onPlotPress}
                                             >
                                                 <Rect
                                                     x="0"
@@ -103,7 +113,6 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                     height={chart.plotHeight}
                                                     fill={colors.background}
                                                     opacity={0.01}
-                                                    onPress={onPlotPress}
                                                 />
                                                 <Line
                                                     x1="0"
@@ -368,17 +377,18 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
             {isSummary ? (
                 <View style={styles.audienceSection}>
                     {chart.audienceControls?.[0] ? (
-                        <TouchableOpacity onPress={chart.audienceControls[0].onPress} style={styles.audienceHeader}>
+                        <View style={styles.audienceHeader}>
                             <Typography
                                 text={chart.audienceControls[0].title}
                                 variant="subtitle_12_500"
                                 style={styles.audienceTitle}
                             />
-                            <View
+                            <TouchableOpacity
                                 style={[
                                     styles.toggle,
                                     chart.audienceControls[0].isActive ? undefined : styles.toggleInactive,
                                 ]}
+                                onPress={chart.audienceControls[0].onPress}
                             >
                                 <View
                                     style={[
@@ -386,8 +396,8 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                         chart.audienceControls[0].isActive ? undefined : styles.toggleThumbInactive,
                                     ]}
                                 />
-                            </View>
-                        </TouchableOpacity>
+                            </TouchableOpacity>
+                        </View>
                     ) : null}
                     <View style={styles.chips}>
                         <View style={[styles.chip, styles.redChip]}>

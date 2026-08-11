@@ -3,7 +3,7 @@ import { FlatList, Image, LayoutChangeEvent, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { IWineEvolutionCarouselCard, IWineEvolutionColorStat } from '@/modules/wine/types/IWineEvolution';
-import { getStyles } from '../WineEvolutionTab/styles';
+import { getStyles } from './styles';
 
 interface IProps {
     card: IWineEvolutionCarouselCard;

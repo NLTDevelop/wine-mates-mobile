@@ -18,13 +18,6 @@ export const WineEvolutionAmateurRating = ({ ageGroups, rows }: IProps) => {
     return (
         <View style={styles.ratingCard}>
             <View style={styles.ratingTable}>
-                <View style={styles.ratingYearsHint}>
-                    <Typography
-                        text={t('wine.evolution.years')}
-                        variant="subtitle_10_400"
-                        style={styles.ratingYearsHintText}
-                    />
-                </View>
                 <View style={styles.ratingHeader}>
                     <Typography
                         text={t('wine.evolution.sex')}

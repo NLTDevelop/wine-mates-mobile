@@ -73,18 +73,10 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
         ({ item }: { item: IWineEvolutionExpertAssessment }) => (
             <View style={styles.expertItem}>
                 <View style={styles.expertMedalSlot}>
-                    {item.proScore === null ? (
-                        <Typography text="-" variant="h5" style={styles.expertNoData} />
-                    ) : (
-                        <RateMedal sliderValue={item.proScore as number} size={54} />
-                    )}
+                    {item.proScore && <RateMedal sliderValue={item.proScore as number} size={54} />}
                 </View>
                 <View style={styles.expertStarsSlot}>
-                    {item.userScore === null ? (
-                        <Typography text="-" variant="h5" style={styles.expertNoData} />
-                    ) : (
-                        <SmallStarRating rating={item.userScore} starSize={14} />
-                    )}
+                    {item.userScore && <SmallStarRating rating={item.userScore} starSize={14} />}
                 </View>
                 <Typography text={item.year} variant="subtitle_10_400" style={styles.expertYear} />
             </View>
@@ -192,9 +184,7 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                         </View>
                     ) : null}
 
-                    {assessmentChart.series.length ? (
-                        <EvolutionLineChartCard chart={assessmentChart} isSummary />
-                    ) : null}
+                    <EvolutionLineChartCard chart={assessmentChart} isSummary />
 
                     {expertAssessments.length ? (
                         <View style={styles.section}>

@@ -1,0 +1,1 @@
+export const EVOLUTION_CHART_TOOLTIP_WIDTH = 165;

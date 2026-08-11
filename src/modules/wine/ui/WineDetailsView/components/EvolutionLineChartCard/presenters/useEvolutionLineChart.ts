@@ -5,19 +5,22 @@ import { Gesture } from 'react-native-gesture-handler';
 import { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 import { IWineEvolutionChart, IWineEvolutionChartPoint } from '@/modules/wine/types/IWineEvolution';
+import { EVOLUTION_CHART_TOOLTIP_WIDTH } from '../constants';
 
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
-const POINT_PRESS_RADIUS = scaleHorizontal(28);
-const TOOLTIP_WIDTH = scaleHorizontal(112);
+const POINT_PRESS_RADIUS = scaleHorizontal(60);
+const TOOLTIP_WIDTH = scaleHorizontal(EVOLUTION_CHART_TOOLTIP_WIDTH);
 const TOOLTIP_OFFSET = scaleVertical(12);
 
 interface IProps {
     chart: IWineEvolutionChart;
+    isSummary: boolean;
 }
 
 interface ISelectedPoint extends IWineEvolutionChartPoint {
     color: string;
+    seriesId: string;
     year: string;
     valueText: string;
 }
@@ -42,8 +45,9 @@ const getClosestPoint = (chart: IWineEvolutionChart, locationX: number, location
                 closestPoint = {
                     ...point,
                     color: series.color,
+                    seriesId: series.id,
                     year: chart.xAxisLabels[point.index] ?? '-',
-                    valueText: point.value.toFixed(1),
+                    valueText: point.valueText,
                 };
             }
         });
@@ -52,7 +56,7 @@ const getClosestPoint = (chart: IWineEvolutionChart, locationX: number, location
     return closestDistance <= POINT_PRESS_RADIUS ? closestPoint : null;
 };
 
-export const useEvolutionLineChart = ({ chart }: IProps) => {
+export const useEvolutionLineChart = ({ chart, isSummary }: IProps) => {
     const [zoom, setZoom] = useState(MIN_ZOOM);
     const [selectedPointState, setSelectedPointState] = useState<ISelectedPointState | null>(null);
     const pinchScale = useSharedValue(1);
@@ -90,7 +94,11 @@ export const useEvolutionLineChart = ({ chart }: IProps) => {
         [chart, zoom],
     );
 
-    const selectedPoint = selectedPointState?.chartId === chart.id ? selectedPointState.point : null;
+    const isSelectedSeriesVisible = chart.series.some(series => series.id === selectedPointState?.point.seriesId);
+    const selectedPoint = selectedPointState?.chartId === chart.id && isSelectedSeriesVisible
+        ? selectedPointState.point
+        : null;
+    const shouldRenderPlot = isSummary || chart.series.length > 0;
 
     const tooltipPosition = useMemo(() => {
         if (!selectedPoint) {
@@ -110,6 +118,9 @@ export const useEvolutionLineChart = ({ chart }: IProps) => {
         pinchGesture,
         plotWidth: chart.plotWidth * zoom,
         selectedPoint,
+        shouldRenderPlot,
+        shouldShowYAxis: shouldRenderPlot,
+        shouldUseNoDataStyle: !shouldRenderPlot,
         tooltipPosition,
     };
 };
