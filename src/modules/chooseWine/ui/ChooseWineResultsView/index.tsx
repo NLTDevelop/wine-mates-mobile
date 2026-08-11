@@ -80,6 +80,7 @@ export const ChooseWineResultsView = observer(() => {
                 renderItem={renderItem}
                 style={styles.list}
                 keyboardShouldPersistTaps="handled"
+                automaticallyAdjustKeyboardInsets
                 contentContainerStyle={styles.contentContainer}
                 onEndReached={onEndReached}
                 onEndReachedThreshold={0.4}

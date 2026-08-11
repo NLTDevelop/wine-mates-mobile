@@ -45,7 +45,11 @@ export const QuickFilterSection = ({ title, items }: IProps) => {
                         <View style={styles.buttonContent}>
                             <Typography
                                 variant="subtitle_12_500"
-                                text={`${item.title } (${item.wineCountText})`}
+                                text={
+                                    item.wineCountText === undefined
+                                        ? item.title
+                                        : `${item.title} (${item.wineCountText})`
+                                }
                                 style={[
                                     styles.buttonText,
                                     styles.buttonTitleText,

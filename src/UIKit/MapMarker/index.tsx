@@ -1,13 +1,8 @@
-import { ReactNode, useMemo } from 'react';
-import { View } from 'react-native';
+import { ReactNode } from 'react';
 import { Marker, MapMarkerProps, LatLng } from 'react-native-maps';
-import { useUiContext } from '@/UIProvider';
-import { MapMarkerIcon } from '@assets/icons/MapMarkerIcon';
-import { PartyIcon } from '@assets/icons/PartyIcon';
-import { TastingIcon } from '@assets/icons/TastingIcon';
 import { EventType } from '@/entities/events/enums/EventType';
 import { useMapMarker } from './presenters/useMapMarker';
-import { getStyles } from './styles';
+import { MapMarkerContent } from './components/MapMarkerContent';
 
 interface IProps {
     onPress?: (id: number) => void;
@@ -27,14 +22,12 @@ export const MapMarker = ({
     eventId,
     eventType = EventType.Tastings,
 }: IProps) => {
-    const { colors } = useUiContext();
-    const styles = useMemo(() => getStyles(colors), [colors]);
-
     const markerCoordinate = coordinate || markerProps?.coordinate;
-    const { onPressHandler, isPartyEvent } = useMapMarker({
+    const { onPressHandler, isPartyEvent, markerIdentifier, shouldRenderMarkerContent } = useMapMarker({
         eventId,
         eventType,
         onPress,
+        hasCustomIcon: !!customIcon,
         coordinate: markerCoordinate,
         markerProps,
     });
@@ -49,18 +42,9 @@ export const MapMarker = ({
             coordinate={markerCoordinate}
             onPress={onPressHandler}
             tracksViewChanges={markerProps?.tracksViewChanges}
-            identifier={`event-marker-${eventId}`}
+            identifier={markerIdentifier}
         >
-            {customIcon ? (
-                customIcon
-            ) : (
-                <View style={styles.markerWrapper}>
-                    <MapMarkerIcon bodyColor={colors.background} emoji="" />
-                    <View style={styles.centerIcon}>
-                        {isPartyEvent ? <PartyIcon width={23} height={23} /> : <TastingIcon width={23} height={23} />}
-                    </View>
-                </View>
-            )}
+            {shouldRenderMarkerContent && (customIcon || <MapMarkerContent isPartyEvent={isPartyEvent} />)}
         </Marker>
     );
 };

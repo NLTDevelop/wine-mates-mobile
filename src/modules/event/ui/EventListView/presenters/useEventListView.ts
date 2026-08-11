@@ -2,10 +2,6 @@ import { useCallback, useState } from 'react';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
-import { IList } from '@/entities/IList';
-import { IEvent } from '@/entities/events/types/IEvent';
-import { ISavedEvent } from '@/entities/events/types/ISavedEvent';
-import { IAppliedEvent } from '@/entities/events/types/IAppliedEvent';
 import { eventsService } from '@/entities/events/EventsService';
 import { IAddEventDraft } from '@/modules/event/types/IAddEventDraft';
 import { IWineSetSearchItem } from '@/entities/wine/types/IWineSetSearchItem';
@@ -25,9 +21,6 @@ interface IRoute {
 
 interface IProps {
     t: ILocalization['t'];
-    createdEvents: IList<IEvent> | null;
-    savedEvents: IList<ISavedEvent> | null;
-    appliedEvents: IAppliedEvent[];
 }
 
 type Navigation = NativeStackNavigationProp<Record<string, object | undefined>>;
@@ -67,12 +60,10 @@ const mapWineImageToMedia = (
     };
 };
 
-export const useEventListView = ({ t, createdEvents, savedEvents, appliedEvents }: IProps) => {
+export const useEventListView = ({ t }: IProps) => {
     const navigation = useNavigation<Navigation>();
     const route = useRoute<RouteProp<IEventListRouteParams, 'EventListView'>>();
     const [screenIndex, setScreenIndex] = useState(getInitialScreenIndex(route.params?.initialTab));
-    const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const routes: IRoute[] = [
         { key: 'created', title: t('event.created') },
@@ -95,22 +86,11 @@ export const useEventListView = ({ t, createdEvents, savedEvents, appliedEvents 
         navigation.navigate('AddEventView');
     }, [navigation]);
 
-    const onCardPress = useCallback((eventId: number) => {
-        setSelectedEventId(eventId);
-        setIsModalVisible(true);
-    }, []);
-
-    const onCloseModal = useCallback(() => {
-        setIsModalVisible(false);
-        setSelectedEventId(null);
-    }, []);
-
-    const onModalReadMorePress = useCallback(
+    const onCardPress = useCallback(
         (eventId: number) => {
-            onCloseModal();
             navigation.navigate('EventDetailsView', { eventId });
         },
-        [navigation, onCloseModal],
+        [navigation],
     );
 
     const onEditPress = useCallback(
@@ -174,22 +154,13 @@ export const useEventListView = ({ t, createdEvents, savedEvents, appliedEvents 
         [navigation],
     );
 
-    const selectedCreatedEvent = createdEvents !== null ? createdEvents.rows.find(event => event.id === selectedEventId) ?? null : null;
-    const selectedSavedEvent = savedEvents !== null ? savedEvents.rows.find(event => event.id === selectedEventId) ?? null : null;
-    const selectedAppliedEvent = appliedEvents.length !== 0 ? appliedEvents.find(item => item.event.id === selectedEventId)?.event ?? null : null;
-    const selectedEvent = selectedCreatedEvent || selectedSavedEvent || selectedAppliedEvent || null;
-
     return {
         screenIndex,
         routes,
         onIndexChange,
         onAddEventPress,
         onReadMorePress,
-        selectedEvent,
-        isModalVisible,
         onCardPress,
-        onCloseModal,
-        onModalReadMorePress,
         onEditPress,
     };
 };

@@ -1,0 +1,102 @@
+diff --git a/node_modules/react-native-maps/ios/AirGoogleMaps/AIRGoogleMapMarker.m b/node_modules/react-native-maps/ios/AirGoogleMaps/AIRGoogleMapMarker.m
+index d729954..155a1c3 100644
+--- a/node_modules/react-native-maps/ios/AirGoogleMaps/AIRGoogleMapMarker.m
++++ b/node_modules/react-native-maps/ios/AirGoogleMaps/AIRGoogleMapMarker.m
+@@ -25,6 +25,61 @@ CGRect unionRect(CGRect a, CGRect b) {
+                       MAX(a.size.height, b.size.height));
+ }
+ 
++static UIImage *bundledMarkerImageForIdentifier(NSString *identifier) {
++    if (![identifier hasPrefix:@"asset-marker:"]) {
++        return nil;
++    }
++
++    NSArray<NSString *> *identifierParts = [identifier componentsSeparatedByString:@":"];
++    if (identifierParts.count < 2) {
++        return nil;
++    }
++
++    return [UIImage imageNamed:identifierParts[1]];
++}
++
++static UIImage *clusterMarkerImageForIdentifier(NSString *identifier) {
++    if (![identifier hasPrefix:@"cluster-marker:"]) {
++        return nil;
++    }
++
++    NSArray<NSString *> *identifierParts = [identifier componentsSeparatedByString:@":"];
++    if (identifierParts.count < 2) {
++        return nil;
++    }
++
++    NSString *clusterCount = identifierParts[1];
++    CGSize imageSize = CGSizeMake(50, 50);
++    UIGraphicsBeginImageContextWithOptions(imageSize, NO, 0.0);
++    CGContextRef context = UIGraphicsGetCurrentContext();
++    CGContextSetShadowWithColor(context, CGSizeMake(0, 1), 2, [UIColor colorWithWhite:0 alpha:0.3].CGColor);
++
++    UIBezierPath *circle = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(2, 2, 46, 46)];
++    [[UIColor colorWithRed:145.0 / 255.0 green:13.0 / 255.0 blue:13.0 / 255.0 alpha:1.0] setFill];
++    [circle fill];
++    CGContextSetShadowWithColor(context, CGSizeZero, 0, nil);
++
++    NSDictionary *textAttributes = @{
++        NSFontAttributeName: [UIFont boldSystemFontOfSize:16],
++        NSForegroundColorAttributeName: UIColor.whiteColor,
++    };
++    CGSize textSize = [clusterCount sizeWithAttributes:textAttributes];
++    CGPoint textOrigin = CGPointMake(
++        (imageSize.width - textSize.width) / 2.0,
++        (imageSize.height - textSize.height) / 2.0
++    );
++    [clusterCount drawAtPoint:textOrigin withAttributes:textAttributes];
++
++    UIImage *clusterImage = UIGraphicsGetImageFromCurrentImageContext();
++    UIGraphicsEndImageContext();
++    return clusterImage;
++}
++
++static UIImage *markerImageForIdentifier(NSString *identifier) {
++    UIImage *bundledImage = bundledMarkerImageForIdentifier(identifier);
++    return bundledImage ?: clusterMarkerImageForIdentifier(identifier);
++}
++
+ @interface AIRGoogleMapMarker ()
+ @end
+ 
+@@ -107,6 +162,10 @@ CGRect unionRect(CGRect a, CGRect b) {
+     }
+     if (_identifier){
+         [_realMarker setIdentifier:_identifier];
++        UIImage *bundledMarkerImage = markerImageForIdentifier(_identifier);
++        if (bundledMarkerImage) {
++            _realMarker.icon = bundledMarkerImage;
++        }
+     }
+     if (_title){
+         [_realMarker setTitle:_title];
+@@ -305,6 +364,11 @@ CGRect unionRect(CGRect a, CGRect b) {
+ - (void)setIdentifier:(NSString *)identifier {
+     _realMarker.identifier = identifier;
+     _identifier = identifier;
++
++    UIImage *bundledMarkerImage = markerImageForIdentifier(identifier);
++    if (bundledMarkerImage) {
++        _realMarker.icon = bundledMarkerImage;
++    }
+ }
+ 
+ - (NSString *)identifier {
+@@ -426,6 +490,12 @@ CGRect unionRect(CGRect a, CGRect b) {
+         _reloadImageCancellationBlock = nil;
+     }
+ 
++    UIImage *bundledImage = [UIImage imageNamed:_iconSrc];
++    if (bundledImage) {
++        _realMarker.icon = bundledImage;
++        return;
++    }
++
+     if (!_realMarker.icon) {
+         // prevent glitch with marker (cf. https://github.com/react-native-maps/react-native-maps/issues/3657)
+         UIImage *emptyImage = [[UIImage alloc] init];

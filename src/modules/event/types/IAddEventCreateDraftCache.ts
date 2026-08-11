@@ -41,4 +41,5 @@ export interface IAddEventCreateWineSetDraft {
 export interface IAddEventCreateDraftCache {
     form: IAddEventCreateFormDraft;
     wineSet: IAddEventCreateWineSetDraft | null;
+    defaultEventType?: EventType;
 }

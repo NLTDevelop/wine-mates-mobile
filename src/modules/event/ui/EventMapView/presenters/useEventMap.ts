@@ -6,6 +6,7 @@ import { eventsService } from '@/entities/events/EventsService';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { IEventFilters } from '@/modules/event/types/IEventFilters';
 import { EventType } from '@/entities/events/enums/EventType';
+import { IEventMapPin } from '@/entities/events/types/IEventMapPin';
 
 const KYIV_COORDINATES = {
     latitude: 50.4501,
@@ -28,7 +29,6 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
     const userLocation = locationModel.userLocation;
     const hasPermission = locationModel.hasPermission;
     const isLocationLoading = locationModel.isLoading;
-    const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoadingEvents, setIsLoadingEvents] = useState(false);
     const [selectedTab, setSelectedTab] = useState<'all' | 'tastings' | 'parties'>('all');
     const selectedEventType = useMemo(() => {
@@ -106,15 +106,6 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
         };
     }, [hasPermission, searchLocation, userLocation]);
 
-    const onMarkerPress = useCallback((markerId: number) => {
-        eventsModel.setSelectedEventId(markerId);
-        setIsModalVisible(true);
-    }, []);
-
-    const onCloseModal = useCallback(() => {
-        setIsModalVisible(false);
-    }, []);
-
     const onFavoritePress = useCallback(async (eventId: number) => {
         try {
             await eventsService.toggleSave(eventId);
@@ -127,7 +118,22 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
         setSelectedTab(tab);
     }, []);
 
-    const mapPins = eventsModel.mapPins;
+    const mapPins = eventsModel.mapPins.reduce<IEventMapPin[]>((result, pin) => {
+        const latitude = Number(pin.latitude);
+        const longitude = Number(pin.longitude);
+
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+            return result;
+        }
+
+        result.push({
+            ...pin,
+            latitude,
+            longitude,
+        });
+
+        return result;
+    }, []);
 
     const refetch = useCallback((location?: IUserLocation | null) => {
         const targetLocation = getTargetLocation(location);
@@ -140,13 +146,9 @@ export const useEventMap = ({ searchLocation, filters }: IProps = {}) => {
     return {
         mapPins,
         initialRegion,
-        selectedMarkerId: eventsModel.selectedEventId,
-        onMarkerPress,
         userLocation,
         isLocationLoading,
         isLoadingEvents,
-        isModalVisible,
-        onCloseModal,
         onFavoritePress,
         selectedTab,
         onTabChange,

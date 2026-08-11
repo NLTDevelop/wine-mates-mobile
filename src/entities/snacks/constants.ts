@@ -1,0 +1,1 @@
+export const MAX_FOOD_PAIRING_CUISINES = 3;

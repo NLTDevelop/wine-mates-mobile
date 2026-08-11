@@ -6,19 +6,20 @@ import { navigationRef } from '@/navigation/rootNavigator';
 import { userService } from '@/entities/users/UserService';
 
 type ProfileUserId = number | string;
-type PublicProfileNavigationOptions = Pick<IPublicProfileRouteParams, 'initialTab' | 'wineId' | 'vintages'>;
+export type PublicProfileNavigationOptions = Pick<IPublicProfileRouteParams, 'initialTab' | 'wineId' | 'vintages'>;
 
 export const useProfileNavigation = (
     userId?: ProfileUserId | null,
     wineExperienceLevel?: WineExperienceLevelEnum | null,
     onClose?: () => void,
+    navigationOptions?: PublicProfileNavigationOptions,
 ) => {
     const onUserPressById = useCallback(
         async (
             nextUserId: ProfileUserId,
             nextWineExperienceLevel: WineExperienceLevelEnum,
             nextOnClose?: () => void,
-            options?: PublicProfileNavigationOptions,
+            options: PublicProfileNavigationOptions = navigationOptions || {},
         ) => {
             if (!nextUserId || !navigationRef.isReady()) {
                 return;
@@ -54,13 +55,14 @@ export const useProfileNavigation = (
                 navigationRef.navigate('PublicWineryProfileView', {
                     userId: normalizedUserId,
                     initialProfile: response.data,
+                    ...options,
                 });
                 return;
             }
 
             navigationRef.navigate('PublicUserProfileView', { userId: normalizedUserId, ...options });
         },
-        [onClose],
+        [navigationOptions, onClose],
     );
 
     const onUserPress = useCallback(() => {
@@ -68,8 +70,8 @@ export const useProfileNavigation = (
             return;
         }
 
-        onUserPressById(userId, wineExperienceLevel);
-    }, [onUserPressById, userId, wineExperienceLevel]);
+        onUserPressById(userId, wineExperienceLevel, undefined, navigationOptions);
+    }, [navigationOptions, onUserPressById, userId, wineExperienceLevel]);
 
     return { onUserPress, onUserPressById };
 };

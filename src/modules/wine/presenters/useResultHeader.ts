@@ -9,11 +9,21 @@ import { clearWineSnackCuisinesCache } from '@/libs/storage/cacheUtils';
 import { wineModel } from '@/entities/wine/models/WineModel';
 import { clearWineModel } from '@/entities/wine/services/WineModelService';
 
-export const useResultHeader = (item: IWineDetails, fromScanner?: boolean) => {
+export const useResultHeader = (item: IWineDetails, fromScanner?: boolean, isAllVintagesSelected = false) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [isCreating, setIsCreating] = useState(false);
+    const [isVintageAlertVisible, setIsVintageAlertVisible] = useState(false);
+
+    const onCloseVintageAlert = useCallback(() => {
+        setIsVintageAlertVisible(false);
+    }, []);
 
     const onPress = useCallback(async () => {
+        if (isAllVintagesSelected) {
+            setIsVintageAlertVisible(true);
+            return;
+        }
+
         try {
             clearWineSnackCuisinesCache();
             const isNewVintage = item.currentVintage === null;
@@ -129,7 +139,7 @@ export const useResultHeader = (item: IWineDetails, fromScanner?: boolean) => {
                 localization.t('common.somethingWentWrong'),
             );
         }
-    }, [navigation, item, fromScanner]);
+    }, [navigation, item, fromScanner, isAllVintagesSelected]);
 
-    return { onPress, isCreating };
+    return { onPress, isCreating, isVintageAlertVisible, onCloseVintageAlert };
 };
