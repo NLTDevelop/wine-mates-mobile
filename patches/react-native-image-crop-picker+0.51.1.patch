@@ -28,10 +28,10 @@ index b9c494e..8a8973e 100644
      private void imagePickerResult(Activity activity, final int requestCode, final int resultCode, final Intent data) {
 diff --git a/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/InsetAwareUCropActivity.java b/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/InsetAwareUCropActivity.java
 new file mode 100644
-index 0000000..c41125e
+index 0000000..eb66b1e
 --- /dev/null
 +++ b/node_modules/react-native-image-crop-picker/android/src/main/java/com/reactnative/ivpusic/imagepicker/InsetAwareUCropActivity.java
-@@ -0,0 +1,36 @@
+@@ -0,0 +1,46 @@
 +package com.reactnative.ivpusic.imagepicker;
 +
 +import android.os.Bundle;
@@ -43,11 +43,21 @@ index 0000000..c41125e
 +import androidx.core.view.WindowInsetsCompat;
 +
 +import com.yalantis.ucrop.UCropActivity;
++import com.yalantis.ucrop.view.OverlayView;
++import com.yalantis.ucrop.view.UCropView;
 +
 +public class InsetAwareUCropActivity extends UCropActivity {
 +    @Override
 +    public void onCreate(@Nullable Bundle savedInstanceState) {
 +        super.onCreate(savedInstanceState);
++
++        UCropView cropView = findViewById(com.yalantis.ucrop.R.id.ucrop);
++        if (cropView != null) {
++            OverlayView overlayView = cropView.getOverlayView();
++            if (overlayView.isFreestyleCropEnabled()) {
++                overlayView.setFreestyleCropMode(OverlayView.FREESTYLE_CROP_MODE_ENABLE_WITH_PASS_THROUGH);
++            }
++        }
 +
 +        View contentView = findViewById(android.R.id.content);
 +        int initialPaddingLeft = contentView.getPaddingLeft();
