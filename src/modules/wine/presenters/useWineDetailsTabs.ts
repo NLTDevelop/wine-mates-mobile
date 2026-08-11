@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { WineDetailsTab } from '../enums/WineDetailsTab';
+import { toastService } from '@/libs/toast/toastService';
+import { localization } from '@/UIProvider/localization/Localization';
 
 export const useWineDetailsTabs = () => {
-    const navigation = useNavigation();
     const [activeTab, setActiveTab] = useState(WineDetailsTab.PROFILE);
     const [shouldRenderEvolution, setShouldRenderEvolution] = useState(false);
 
@@ -21,8 +21,8 @@ export const useWineDetailsTabs = () => {
     }, []);
 
     const onGetPremiumPress = useCallback(() => {
-        navigation.navigate('PaymentsView' as never);
-    }, [navigation]);
+        toastService.showInfo(localization.t('wineMarketplace.getPremiumUnavailable'));
+    }, []);
 
     return {
         isProfileActive: activeTab === WineDetailsTab.PROFILE,

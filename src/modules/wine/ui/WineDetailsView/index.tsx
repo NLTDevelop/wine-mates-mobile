@@ -47,6 +47,7 @@ export const WineDetailsView = observer(() => {
         showTastingAuthor,
         myReview,
         hasPremiumContentAccess,
+        hasPremiumSubscription,
         onPressBack,
         wineImageGallery,
         onWineImagePress,
@@ -186,7 +187,7 @@ export const WineDetailsView = observer(() => {
                                     onPurchasePress={onPurchasePress}
                                 />
                                 {shouldRenderEvolution ? (
-                                    hasPremiumContentAccess ? (
+                                    hasPremiumSubscription ? (
                                         <WineEvolutionTab
                                             wineId={details.id}
                                             onRegisterRefresh={onRegisterEvolutionRefresh}
