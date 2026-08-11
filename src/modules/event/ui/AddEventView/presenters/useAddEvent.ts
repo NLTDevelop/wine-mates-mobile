@@ -19,6 +19,8 @@ import { convertUtcEventDateTimeToLocal } from '@/modules/event/utils/eventDateT
 import { addEventWineSetDraftModel } from '@/entities/events/AddEventWineSetDraftModel';
 import { addEventCreateDraftCacheModel } from '@/entities/events/AddEventCreateDraftCacheModel';
 import { IAddEventCreateFormDraft } from '@/modules/event/types/IAddEventCreateDraftCache';
+import { userModel } from '@/entities/users/UserModel';
+import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 
 type IEventForm = IAddEventCreateFormDraft;
 
@@ -69,10 +71,19 @@ const getSelectedAvailableIds = (selectedIds: number[], availableIds: number[]) 
     return [availableIds[0]];
 };
 
+const getDefaultEventType = () => {
+    const wineExperienceLevel = userModel.user?.wineExperienceLevel;
+    const isExpert = wineExperienceLevel === WineExperienceLevelEnum.EXPERT;
+    const isWinery = Boolean(userModel.winery) || wineExperienceLevel === WineExperienceLevelEnum.CREATOR;
+
+    return isExpert || isWinery ? EventType.Tastings : EventType.Parties;
+};
+
 const getInitialForm = (
     draft?: IAddEventDraft | IAddEventCreateFormDraft,
     isEditMode = false,
     shouldPreserveDraftDateTime = false,
+    defaultEventType = EventType.Parties,
 ): IEventForm => {
     if (!draft) {
         return {
@@ -92,7 +103,7 @@ const getInitialForm = (
             language: 'ua',
             seats: '',
             sex: undefined,
-            eventType: EventType.Tastings,
+            eventType: defaultEventType,
             tastingType: TastingType.Regular,
             participationCondition: undefined,
             requiresConfirmation: false,
@@ -153,6 +164,16 @@ export const useAddEvent = () => {
     const isCreateMode = !isEditMode && !isDuplicateMode && !route.params?.draft;
     addEventCreateDraftCacheModel.syncUser();
     const cachedCreateDraft = isCreateMode ? addEventCreateDraftCacheModel.state : null;
+    const defaultEventType = getDefaultEventType();
+    const cachedCreateForm = cachedCreateDraft?.form
+        ? {
+              ...cachedCreateDraft.form,
+              eventType:
+                  cachedCreateDraft.defaultEventType === defaultEventType
+                      ? cachedCreateDraft.form.eventType
+                      : defaultEventType,
+          }
+        : undefined;
     const headerTitleKey = useMemo(() => {
         if (isEditMode) {
             return 'event.editEvent';
@@ -174,7 +195,12 @@ export const useAddEvent = () => {
     const { currencies, isCurrenciesLoading, onLoadCurrencies } = useUserCurrencies();
     const [isSeatsError, setIsSeatsError] = useState(false);
     const [form, setForm] = useState<IEventForm>(() => {
-        return getInitialForm(route.params?.draft || cachedCreateDraft?.form, isEditMode, !!cachedCreateDraft?.form);
+        return getInitialForm(
+            route.params?.draft || cachedCreateForm,
+            isEditMode,
+            Boolean(cachedCreateForm),
+            defaultEventType,
+        );
     });
 
     const isPartyEventType = form.eventType === EventType.Parties;
@@ -478,8 +504,9 @@ export const useAddEvent = () => {
         addEventCreateDraftCacheModel.state = {
             form,
             wineSet: addEventCreateDraftCacheModel.state?.wineSet || null,
+            defaultEventType,
         };
-    }, [form, isCreateMode]);
+    }, [defaultEventType, form, isCreateMode]);
 
     useEffect(() => {
         const pickedLocation = route.params?.pickedLocation;
@@ -553,6 +580,7 @@ export const useAddEvent = () => {
             addEventCreateDraftCacheModel.state = {
                 form,
                 wineSet: addEventCreateDraftCacheModel.state?.wineSet || null,
+                defaultEventType,
             };
         }
 
@@ -570,6 +598,7 @@ export const useAddEvent = () => {
         route.params?.initialSelectedWines,
         route.params?.draft?.repeatRule,
         isCreateMode,
+        defaultEventType,
     ]);
 
     const disabled =

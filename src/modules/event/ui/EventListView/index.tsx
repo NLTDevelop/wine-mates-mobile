@@ -17,7 +17,6 @@ import { EventCard } from '@/UIKit/EventCard';
 import { useRefresh } from '@/hooks/useRefresh';
 import { EmptyListView } from '@/UIKit/EmptyListView';
 import { Loader } from '@/UIKit/Loader';
-import { BottomModal } from '@/UIKit/BottomModal/ui';
 import { Button } from '@/UIKit/Button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FastImage from '@d11/react-native-fast-image';
@@ -44,19 +43,8 @@ export const EventListView = observer(() => {
         onLoadMoreCreated,
         onFavoritePress,
     } = useEventsList();
-    const {
-        screenIndex,
-        routes,
-        onIndexChange,
-        onReadMorePress,
-        onAddEventPress,
-        selectedEvent,
-        isModalVisible,
-        onCardPress,
-        onCloseModal,
-        onModalReadMorePress,
-        onEditPress,
-    } = useEventListView({ t, createdEvents, savedEvents, appliedEvents });
+    const { screenIndex, routes, onIndexChange, onReadMorePress, onAddEventPress, onCardPress, onEditPress } =
+        useEventListView({ t });
     const styles = useMemo(() => getStyles(colors, bottom), [colors, bottom]);
 
     const refresh = useRefresh(onRefresh);
@@ -190,44 +178,25 @@ export const EventListView = observer(() => {
     const isCreatedTab = routes[screenIndex]?.key === 'created';
 
     return (
-        <>
-            <ScreenContainer
-                edges={['top']}
-                withGradient
-                headerComponent={<HeaderWithBackButton title={t('event.listTitle')} />}
-            >
-                <View style={styles.container}>
-                    <TabView
-                        lazy
-                        swipeEnabled
-                        renderTabBar={renderTabBar}
-                        navigationState={{ index: screenIndex, routes }}
-                        renderScene={renderScene}
-                        onIndexChange={onIndexChange}
-                        initialLayout={{ width: size.width }}
-                    />
-                    {isCreatedTab && (
-                        <Button
-                            text={t('event.addEvent')}
-                            onPress={onAddEventPress}
-                            containerStyle={styles.addButton}
-                        />
-                    )}
-                </View>
-            </ScreenContainer>
-
-            {selectedEvent && isModalVisible && (
-                <BottomModal visible={isModalVisible} onClose={onCloseModal} title={t('eventDetails.title')}>
-                    <EventCard
-                        event={selectedEvent}
-                        isSelected={false}
-                        isModalContent
-                        onReadMorePress={onModalReadMorePress}
-                        onFavoritePress={onFavoritePress}
-                        onEditPress={onEditPress}
-                    />
-                </BottomModal>
-            )}
-        </>
+        <ScreenContainer
+            edges={['top']}
+            withGradient
+            headerComponent={<HeaderWithBackButton title={t('event.listTitle')} />}
+        >
+            <View style={styles.container}>
+                <TabView
+                    lazy
+                    swipeEnabled
+                    renderTabBar={renderTabBar}
+                    navigationState={{ index: screenIndex, routes }}
+                    renderScene={renderScene}
+                    onIndexChange={onIndexChange}
+                    initialLayout={{ width: size.width }}
+                />
+                {isCreatedTab && (
+                    <Button text={t('event.addEvent')} onPress={onAddEventPress} containerStyle={styles.addButton} />
+                )}
+            </View>
+        </ScreenContainer>
     );
 });

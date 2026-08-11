@@ -125,6 +125,7 @@ export const useAddWineSetView = ({
                 ...draft,
                 locationCountry: draft.locationCountry || '',
             },
+            defaultEventType: addEventCreateDraftCacheModel.state?.defaultEventType,
             wineSet: {
                 selectedWines,
                 repeatRule,

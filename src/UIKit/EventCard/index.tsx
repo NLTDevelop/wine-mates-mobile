@@ -27,7 +27,6 @@ interface IProps {
     onFavoritePress?: (eventId: number) => void;
     onEditPress?: (eventId: number) => void;
     onCardPress?: (eventId: number) => void;
-    isModalContent?: boolean;
     showDescription?: boolean;
     showFooter?: boolean;
     appliedEventStatus?: string | null;
@@ -41,7 +40,6 @@ export const EventCard = ({
     onFavoritePress,
     onEditPress,
     onCardPress,
-    isModalContent = false,
     showDescription = true,
     showFooter = true,
     appliedEventStatus = null,
@@ -86,7 +84,7 @@ export const EventCard = ({
         eventStatusSource,
     });
 
-    const canPressCard = !isModalContent && Boolean(onCardPress);
+    const canPressCard = Boolean(onCardPress);
 
     return (
         <Pressable
@@ -165,7 +163,7 @@ export const EventCard = ({
                 <Typography
                     text={event.description}
                     variant="body_400"
-                    numberOfLines={isModalContent ? undefined : 2}
+                    numberOfLines={2}
                     style={styles.descriptionText}
                 />
             )}

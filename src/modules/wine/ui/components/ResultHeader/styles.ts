@@ -65,7 +65,7 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: BUTTON_SIZE,
-            borderWidth: 1,
+            borderWidth: scaleHorizontal(1),
             borderColor: colors.primary,
         },
         medalContainer: {
@@ -86,7 +86,14 @@ export const getStyles = (colors: IColors) => {
         cardWrapper: {
             paddingHorizontal: scaleHorizontal(16),
             marginBottom: scaleVertical(16),
-        }
+        },
+        vintageAlertDescription: {
+            color: colors.text_light,
+            textAlign: 'center',
+        },
+        vintageAlertButton: {
+            width: '100%',
+        },
     });
     return styles;
 };

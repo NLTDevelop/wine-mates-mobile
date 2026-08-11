@@ -13,6 +13,7 @@ import {
 import { toastService } from '@/libs/toast/toastService';
 import { useColorShades } from '@/modules/wine/presenters/useColorShades';
 import { localization } from '@/UIProvider/localization/Localization';
+import { MAX_FOOD_PAIRING_CUISINES } from '@/entities/snacks/constants';
 
 export const useResultListHeader = (data: IWineDetails, vintages: IVintagesItem[]) => {
     const [aiUsage, setAiUsage] = useState(data.aiUsage);
@@ -22,7 +23,7 @@ export const useResultListHeader = (data: IWineDetails, vintages: IVintagesItem[
     const [isLoadingCuisines, setIsLoadingCuisines] = useState(false);
     const [cuisines, setCuisines] = useState<IWineSnackCuisine[]>([]);
     const [selectedCuisineItems, setSelectedCuisineItems] = useState<IWineSnackCuisineCacheItem[]>(() => {
-        return getWineSnackCuisinesCache(data.id) || [];
+        return (getWineSnackCuisinesCache(data.id) || []).slice(0, MAX_FOOD_PAIRING_CUISINES);
     });
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
 
@@ -80,7 +81,9 @@ export const useResultListHeader = (data: IWineDetails, vintages: IVintagesItem[
 
     useEffect(() => {
         setIsCuisineModalVisible(false);
-        setSelectedCuisineItems(getWineSnackCuisinesCache(data.id) || []);
+        setSelectedCuisineItems(
+            (getWineSnackCuisinesCache(data.id) || []).slice(0, MAX_FOOD_PAIRING_CUISINES),
+        );
         setCuisines([]);
     }, [data.id]);
 
@@ -128,7 +131,7 @@ export const useResultListHeader = (data: IWineDetails, vintages: IVintagesItem[
 
                 const cuisine = cuisines.find(item => item.id === id);
 
-                if (!cuisine) return prevState;
+                if (!cuisine || prevState.length >= MAX_FOOD_PAIRING_CUISINES) return prevState;
 
                 const nextState = [...prevState, { id: cuisine.id, name: cuisine.name }];
                 setWineSnackCuisinesCache(data.id, nextState);
@@ -140,10 +143,13 @@ export const useResultListHeader = (data: IWineDetails, vintages: IVintagesItem[
 
     const cuisineOptions = useMemo<IWineSnackCuisineOption[]>(() => {
         return cuisines.map(item => {
+            const isSelected = selectedCuisineIds.includes(item.id);
+
             return {
                 id: item.id,
                 name: item.name,
-                isSelected: selectedCuisineIds.includes(item.id),
+                isSelected,
+                isDisabled: selectedCuisineIds.length >= MAX_FOOD_PAIRING_CUISINES && !isSelected,
                 onPress: () => onToggleCuisine(item.id),
             };
         });

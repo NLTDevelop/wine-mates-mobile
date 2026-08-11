@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FlatList, ListRenderItem } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
@@ -7,7 +7,6 @@ import { IEvent } from '@/entities/events/types/IEvent';
 
 interface IProps {
     events: IEvent[];
-    selectedEventId: number | null;
     onReadMorePress: (eventId: number) => void;
     onFavoritePress: (eventId: number) => void;
     onEditPress: (eventId: number) => void;
@@ -16,7 +15,6 @@ interface IProps {
 
 export const WineEventList = ({
     events,
-    selectedEventId,
     onReadMorePress,
     onFavoritePress,
     onEditPress,
@@ -25,18 +23,18 @@ export const WineEventList = ({
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const renderItem: ListRenderItem<IEvent> = ({ item }) => (
+    const renderItem = useCallback<ListRenderItem<IEvent>>(({ item }) => (
         <EventCard
             event={item}
-            isSelected={selectedEventId === item.id}
+            isSelected={false}
             onReadMorePress={onReadMorePress}
             onFavoritePress={onFavoritePress}
             onEditPress={onEditPress}
             onCardPress={onCardPress}
         />
-    );
+    ), [onCardPress, onEditPress, onFavoritePress, onReadMorePress]);
 
-    const keyExtractor = (item: IEvent) => item.id.toString();
+    const keyExtractor = useCallback((item: IEvent) => item.id.toString(), []);
 
     return (
         <FlatList

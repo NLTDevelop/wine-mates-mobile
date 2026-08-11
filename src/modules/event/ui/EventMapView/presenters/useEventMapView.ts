@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IEvent } from '@/entities/events/types/IEvent';
@@ -40,8 +40,6 @@ const mapWineImageToMedia = (
 
 export const useEventMapView = ({ events, onFavoritePress }: IUseEventMapViewProps) => {
     const navigation = useNavigation<NavigationProp>();
-    const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const mapPins = useMemo(() => {
         return events.map(event => ({
@@ -52,43 +50,18 @@ export const useEventMapView = ({ events, onFavoritePress }: IUseEventMapViewPro
         }));
     }, [events]);
 
-    const selectedEvent = useMemo(() => {
-        return events.find(event => event.id === selectedEventId);
-    }, [events, selectedEventId]);
-
     const onAddEvent = useCallback(() => {
         navigation.navigate('AddEventView');
     }, [navigation]);
 
-    const onMarkerPress = useCallback((eventId: number) => {
-        setSelectedEventId(eventId);
-        setIsModalVisible(true);
-    }, []);
-
-    const onCardPress = useCallback((eventId: number) => {
-        setSelectedEventId(eventId);
-        setIsModalVisible(true);
-    }, []);
-
-    const onCloseModal = useCallback(() => {
-        setIsModalVisible(false);
-        setSelectedEventId(null);
-    }, []);
-
-    const onModalReadMorePress = useCallback(
+    const onCardPress = useCallback(
         (eventId: number) => {
-            setIsModalVisible(false);
             navigation.navigate('EventDetailsView', { eventId });
         },
         [navigation],
     );
 
-    const onModalFavoritePress = useCallback(
-        (eventId: number) => {
-            onFavoritePress(eventId);
-        },
-        [onFavoritePress],
-    );
+    const onMarkerPress = onCardPress;
 
     const onReadMorePress = useCallback(
         (eventId: number) => {
@@ -99,9 +72,6 @@ export const useEventMapView = ({ events, onFavoritePress }: IUseEventMapViewPro
 
     const onEditPress = useCallback(
         async (eventId: number) => {
-            setIsModalVisible(false);
-            setSelectedEventId(null);
-
             const response = await eventsService.getById(eventId);
             if (response.isError || !response.data) {
                 return;
@@ -163,14 +133,9 @@ export const useEventMapView = ({ events, onFavoritePress }: IUseEventMapViewPro
 
     return {
         mapPins,
-        selectedEvent,
-        isModalVisible,
         onAddEvent,
         onMarkerPress,
         onCardPress,
-        onCloseModal,
-        onModalReadMorePress,
-        onModalFavoritePress,
         onReadMorePress,
         onEditPress,
         onFavoritePress,

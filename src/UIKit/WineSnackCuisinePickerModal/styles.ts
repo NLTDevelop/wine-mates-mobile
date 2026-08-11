@@ -56,6 +56,9 @@ export const getStyles = (colors: IColors, bottomInset: number) => {
             paddingVertical: scaleVertical(12),
             paddingHorizontal: scaleHorizontal(4),
         },
+        disabledOption: {
+            opacity: 0.4,
+        },
         optionText: {
             flex: 1,
             color: colors.text,

@@ -6,7 +6,7 @@ import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { observer } from 'mobx-react-lite';
 import { Typography } from '../Typography';
-import { isAndroid } from '@/utils';
+import { isIOS } from '@/utils';
 
 interface IMapViewProps extends Partial<MapViewProps> {
     initialRegion?: Region;
@@ -51,22 +51,30 @@ const MapViewComponent = forwardRef<RNMapView, IMapViewProps>(
                 return (
                     <Marker
                         key={`cluster-${cluster.id}`}
-                        identifier={`cluster-${cluster.id}`}
+                        identifier={isIOS
+                            ? `cluster-marker:${cluster.properties.point_count}`
+                            : `cluster-${cluster.id}`}
                         coordinate={{
                             latitude: cluster.geometry.coordinates[1],
                             longitude: cluster.geometry.coordinates[0],
                         }}
                         onPress={cluster.onPress}
-                        tracksViewChanges={isAndroid}
+                        tracksViewChanges={!isIOS}
                         zIndex={4}
+                        anchor={{ x: 0.5, y: 0.5 }}
                     >
-                        <View style={[styles.clusterContainer, { backgroundColor: clusterColor || colors.primary }]}>
-                            <Typography
-                                variant="h6"
-                                style={[{ color: clusterTextColor || colors.background }]}
-                                text={cluster.properties.point_count}
-                            />
-                        </View>
+                        {!isIOS && (
+                            <View
+                                style={[styles.clusterContainer, { backgroundColor: clusterColor || colors.primary }]}
+                                collapsable={false}
+                            >
+                                <Typography
+                                    variant="h6"
+                                    style={[{ color: clusterTextColor || colors.background }]}
+                                    text={cluster.properties.point_count}
+                                />
+                            </View>
+                        )}
                     </Marker>
                 );
             },

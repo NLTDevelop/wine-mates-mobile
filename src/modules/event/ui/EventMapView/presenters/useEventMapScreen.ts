@@ -56,14 +56,9 @@ export const useEventMapScreen = () => {
     const onRefetchEventsRef = useRef(onRefetchEvents);
 
     const {
-        selectedEvent,
-        isModalVisible,
         onAddEvent,
         onMarkerPress,
         onCardPress,
-        onCloseModal,
-        onModalReadMorePress,
-        onModalFavoritePress,
         onReadMorePress,
         onEditPress,
         onFavoritePress,
@@ -249,10 +244,5 @@ export const useEventMapScreen = () => {
         onEditPress,
         onFavoritePress,
         onAddEvent,
-        selectedEvent,
-        isModalVisible,
-        onCloseModal,
-        onModalReadMorePress,
-        onModalFavoritePress,
     };
 };

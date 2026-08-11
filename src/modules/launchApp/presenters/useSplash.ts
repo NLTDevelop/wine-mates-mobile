@@ -7,6 +7,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
 
 const SPLASH_DELAY = 2000;
+const UNAUTHORIZED_STATUS = 401;
 
 const waitSplashDelay = () => {
     return new Promise<void>(resolve => {
@@ -49,10 +50,17 @@ export const useSplash = () => {
 
             if (userModel.token) {
                 const response = await userService.me();
-                if (response.isError) {
+                if (response.isError && response.status === UNAUTHORIZED_STATUS) {
                     userModel.clear();
                     navigation.reset({ index: 0, routes: [{ name: 'WelcomeView' }] });
                     return;
+                }
+
+                if (response.isError) {
+                    console.warn('useSplash -> me request failed without session reset:', {
+                        status: response.status,
+                        message: response.message,
+                    });
                 }
 
                 const locationPayload = await locationPromise;

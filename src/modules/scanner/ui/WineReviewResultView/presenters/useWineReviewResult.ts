@@ -19,6 +19,7 @@ import {
     setWineSnackCuisinesCache,
 } from '@/libs/storage/cacheUtils';
 import { wineModel } from '@/entities/wine/models/WineModel';
+import { MAX_FOOD_PAIRING_CUISINES } from '@/entities/snacks/constants';
 
 const DEFAULT_EXPERT_RATING = 70;
 
@@ -36,7 +37,7 @@ export const useWineReviewResult = () => {
     const [isLoadingCuisines, setIsLoadingCuisines] = useState(false);
     const [cuisines, setCuisines] = useState<IWineSnackCuisine[]>([]);
     const [selectedCuisineItems, setSelectedCuisineItems] = useState<IWineSnackCuisineCacheItem[]>(() => {
-        return getWineSnackCuisinesCache(cuisineCacheWineId) || [];
+        return (getWineSnackCuisinesCache(cuisineCacheWineId) || []).slice(0, MAX_FOOD_PAIRING_CUISINES);
     });
 
     const selectedCuisineIds = useMemo(() => {
@@ -118,7 +119,7 @@ export const useWineReviewResult = () => {
 
             const cuisine = cuisines.find(item => item.id === id);
 
-            if (!cuisine) {
+            if (!cuisine || prevState.length >= MAX_FOOD_PAIRING_CUISINES) {
                 return prevState;
             }
 
@@ -130,10 +131,13 @@ export const useWineReviewResult = () => {
 
     const cuisineOptions = useMemo<IWineSnackCuisineOption[]>(() => {
         return cuisines.map(item => {
+            const isSelected = selectedCuisineIds.includes(item.id);
+
             return {
                 id: item.id,
                 name: item.name,
-                isSelected: selectedCuisineIds.includes(item.id),
+                isSelected,
+                isDisabled: selectedCuisineIds.length >= MAX_FOOD_PAIRING_CUISINES && !isSelected,
                 onPress: () => onToggleCuisine(item.id),
             };
         });

@@ -21,7 +21,7 @@ export const usePublicWineryProfile = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute<RouteProp<RouteList, 'PublicWineryProfileView'>>();
     const { userId, initialProfile } = route.params;
-    const [activeTab, setActiveTab] = useState(PublicProfileTab.DESCRIPTION);
+    const [activeTab, setActiveTab] = useState(route.params.initialTab ?? PublicProfileTab.DESCRIPTION);
     const profileData = usePublicProfileData(userId, 'winery', initialProfile);
     const eventsData = usePublicProfileEvents(userId, activeTab === PublicProfileTab.EVENTS);
     const winesData = usePublicWineryWines(

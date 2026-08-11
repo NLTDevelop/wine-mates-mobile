@@ -2,12 +2,14 @@ import { ComponentType, memo, useEffect, useMemo, useRef } from 'react';
 import { View } from 'react-native';
 import RNMapView, { Region, MapPressEvent, Marker, MapMarkerProps } from 'react-native-maps';
 import { MapView } from '@/UIKit/MapView';
-import { MapMarker } from '@/UIKit/MapMarker';
+import { MapMarkerContent } from '@/UIKit/MapMarker/components/MapMarkerContent';
 import { getStyles } from './styles';
 import { useUiContext } from '@/UIProvider';
 import { IEventMapPin } from '@/entities/events/types/IEventMapPin';
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { SearchLocationMarkerIcon } from '@assets/icons/SearchLocationMarkerIcon';
+import { isIOS } from '@/utils';
+import { useEventMapMarkers } from '../../presenters/useEventMapMarkers';
 
 interface IEventMapProps {
     mapPins: IEventMapPin[];
@@ -24,7 +26,6 @@ type ClusterMarkerProps = MapMarkerProps & {
 };
 
 const ClusterMarker = Marker as ComponentType<ClusterMarkerProps>;
-
 export const EventMap = memo(
     ({
         mapPins,
@@ -39,16 +40,7 @@ export const EventMap = memo(
         const isFirstRegionSyncRef = useRef(true);
         const { colors } = useUiContext();
         const styles = useMemo(() => getStyles(colors), [colors]);
-        const isTastingsTab = selectedTab === 'tastings';
-        const isPartiesTab = selectedTab === 'parties';
-
-        const visibleMapPins = useMemo(() => {
-            return mapPins.filter((pin) => {
-                return selectedTab === 'all'
-                    || (isTastingsTab && pin.eventType === 'tastings')
-                    || (isPartiesTab && pin.eventType === 'parties');
-            });
-        }, [isPartiesTab, isTastingsTab, mapPins, selectedTab]);
+        const { markerItems } = useEventMapMarkers({ mapPins, selectedTab, onMarkerPress });
         useEffect(() => {
             if (isFirstRegionSyncRef.current) {
                 isFirstRegionSyncRef.current = false;
@@ -72,7 +64,21 @@ export const EventMap = memo(
                     clusterTextColor={colors.background}
                     clusterRadius={28}
                 >
-                    {searchLocation && (
+                    {searchLocation && isIOS && (
+                        <ClusterMarker
+                            key="search-location-marker-ios"
+                            identifier="asset-marker:SearchLocationMarker:search-location"
+                            coordinate={{
+                                latitude: searchLocation.latitude,
+                                longitude: searchLocation.longitude,
+                            }}
+                            cluster={false}
+                            tappable={false}
+                            zIndex={3}
+                            anchor={{ x: 0.5, y: 0.5 }}
+                        />
+                    )}
+                    {searchLocation && !isIOS && (
                         <ClusterMarker
                             key="search-location-marker"
                             identifier="search-location-marker"
@@ -82,23 +88,34 @@ export const EventMap = memo(
                             }}
                             cluster={false}
                             tappable={false}
-                            tracksViewChanges={false}
-                            zIndex={1}
+                            tracksViewChanges
+                            zIndex={3}
                             anchor={{ x: 0.5, y: 0.5 }}
                             centerOffset={{ x: 0, y: 0 }}
                         >
                             <SearchLocationMarkerIcon color={colors.primary} borderColor={colors.background} />
                         </ClusterMarker>
                     )}
-                    {visibleMapPins.map(pin => (
-                        <MapMarker
-                            key={pin.id}
-                            coordinate={{ latitude: pin.latitude, longitude: pin.longitude }}
-                            eventId={pin.id}
-                            eventType={pin.eventType}
-                            markerProps={{ zIndex: 2 }}
-                            onPress={onMarkerPress}
+                    {isIOS && markerItems.map(item => (
+                        <Marker
+                            key={`event-marker-ios-${item.id}`}
+                            identifier={`asset-marker:${item.isPartyEvent ? 'EventPartyMarker' : 'EventTastingMarker'}:${item.id}`}
+                            coordinate={item.coordinate}
+                            onPress={item.onPress}
+                            zIndex={2}
                         />
+                    ))}
+                    {!isIOS && markerItems.map(item => (
+                        <ClusterMarker
+                            key={item.id}
+                            identifier={`event-marker-${item.id}`}
+                            coordinate={item.coordinate}
+                            onPress={item.onPress}
+                            tracksViewChanges
+                            zIndex={2}
+                        >
+                            <MapMarkerContent isPartyEvent={item.isPartyEvent} />
+                        </ClusterMarker>
                     ))}
                 </MapView>
             </View>

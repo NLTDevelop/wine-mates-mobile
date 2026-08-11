@@ -24,6 +24,7 @@ import { snackService } from '@/entities/snacks/SnackService';
 import { IWineSnackCuisine } from '@/entities/snacks/types/IWineSnackCuisine';
 import { IWineSnackCuisineOption } from '@/entities/snacks/types/IWineSnackCuisineOption';
 import { useFoodPairing } from '@/UIKit/FoodPairing/presenters/useFoodPairing';
+import { MAX_FOOD_PAIRING_CUISINES } from '@/entities/snacks/constants';
 import { wineModel } from '@/entities/wine/models/WineModel';
 import { WineSetTastingStatus } from '@/entities/events/types/IWineSetItem';
 import { useSaveEventTastingDraftOnBlur } from '@/modules/tastings/presenters/useSaveEventTastingDraftOnBlur';
@@ -58,7 +59,7 @@ export const useTastingWineReviewResult = () => {
     const [isLoadingCuisines, setIsLoadingCuisines] = useState(false);
     const [cuisines, setCuisines] = useState<IWineSnackCuisine[]>([]);
     const [selectedCuisineItems, setSelectedCuisineItems] = useState<IWineSnackCuisineCacheItem[]>(() => {
-        return getWineSnackCuisinesCache(cuisineCacheWineId) || [];
+        return (getWineSnackCuisinesCache(cuisineCacheWineId) || []).slice(0, MAX_FOOD_PAIRING_CUISINES);
     });
     const isPremiumUser = userModel.user?.hasPremium || false;
     const isSelectedParametersVisible = !routeParams.isBlindTasting;
@@ -276,7 +277,7 @@ export const useTastingWineReviewResult = () => {
 
             const cuisine = cuisines.find(item => item.id === id);
 
-            if (!cuisine) {
+            if (!cuisine || prevState.length >= MAX_FOOD_PAIRING_CUISINES) {
                 return prevState;
             }
 
@@ -288,10 +289,13 @@ export const useTastingWineReviewResult = () => {
 
     const cuisineOptions = useMemo<IWineSnackCuisineOption[]>(() => {
         return cuisines.map(item => {
+            const isSelected = selectedCuisineIds.includes(item.id);
+
             return {
                 id: item.id,
                 name: item.name,
-                isSelected: selectedCuisineIds.includes(item.id),
+                isSelected,
+                isDisabled: selectedCuisineIds.length >= MAX_FOOD_PAIRING_CUISINES && !isSelected,
                 onPress: () => onToggleCuisine(item.id),
             };
         });

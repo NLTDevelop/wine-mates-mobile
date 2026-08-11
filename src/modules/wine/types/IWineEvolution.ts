@@ -48,6 +48,7 @@ export interface IWineEvolutionChartPoint {
     x: number;
     y: number;
     value: number;
+    valueText: string;
 }
 
 export interface IWineEvolutionAudienceControl {

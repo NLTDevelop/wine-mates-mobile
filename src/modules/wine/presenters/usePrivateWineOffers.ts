@@ -8,7 +8,7 @@ import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
 import { toastService } from '@/libs/toast/toastService';
 import { localization } from '@/UIProvider/localization/Localization';
 import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
-import { useProfileNavigation } from '@/hooks/useProfileNavigation';
+import { PublicProfileNavigationOptions, useProfileNavigation } from '@/hooks/useProfileNavigation';
 import { WineExperienceLevelEnum } from '@/entities/users/enums/WineExperienceLevelEnum';
 import { WineOfferVintages } from '@/entities/wine/types/WineOfferVintages';
 import { PublicProfileTab } from '@/modules/profile/enums/PublicProfileTab';
@@ -33,8 +33,15 @@ const normalizePriceRange = (range: IWineOfferPriceRange): IWineOfferPriceRange 
 
 export const usePrivateWineOffers = () => {
     const route = useRoute();
-    const { onUserPressById } = useProfileNavigation();
     const { wineId, wineDetails, vintages } = route.params as RouteParams;
+    const profileNavigationOptions = useMemo<PublicProfileNavigationOptions>(() => {
+        return {
+            initialTab: PublicProfileTab.WINES,
+            wineId,
+            vintages,
+        };
+    }, [vintages, wineId]);
+    const { onUserPressById } = useProfileNavigation(undefined, undefined, undefined, profileNavigationOptions);
     const [offers, setOffers] = useState<IWineOffer[]>([]);
     const [offersCount, setOffersCount] = useState(0);
     const [priceRange, setPriceRange] = useState<IWineOfferPriceRange | null>(null);
@@ -195,14 +202,10 @@ export const usePrivateWineOffers = () => {
     const createOnUserPress = useCallback(
         (userId: number, wineExperienceLevel?: WineExperienceLevelEnum | null) => {
             return () => {
-                onUserPressById(userId, wineExperienceLevel || WineExperienceLevelEnum.LOVER, undefined, {
-                    initialTab: PublicProfileTab.WINES,
-                    wineId,
-                    vintages,
-                });
+                onUserPressById(userId, wineExperienceLevel || WineExperienceLevelEnum.LOVER);
             };
         },
-        [onUserPressById, vintages, wineId],
+        [onUserPressById],
     );
 
     const items = useMemo<IPrivateOfferListItem[]>(() => {

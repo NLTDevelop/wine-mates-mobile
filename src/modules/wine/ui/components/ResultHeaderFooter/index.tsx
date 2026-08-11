@@ -51,7 +51,7 @@ export const ResultHeaderFooter = ({
                     type="secondary"
                     containerStyle={styles.button}
                     inProgress={isCreating}
-                    disabled={isCreating || isAllVintagesSelected}
+                    disabled={isCreating}
                     applyDisabledStyle={false}
                 />
                 <FavoriteButton onPress={onFavoritePress} size={40} disabled={isAllVintagesSelected} isSaved={item.isSaved} />

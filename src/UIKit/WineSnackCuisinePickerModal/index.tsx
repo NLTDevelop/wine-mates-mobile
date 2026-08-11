@@ -45,9 +45,18 @@ export const WineSnackCuisinePickerModal = ({
 
     const renderItem = useCallback(({ item }: { item: IWineSnackCuisineOption }) => {
         return (
-            <TouchableOpacity onPress={item.onPress} style={styles.option}>
+            <TouchableOpacity
+                onPress={item.onPress}
+                style={[styles.option, item.isDisabled && styles.disabledOption]}
+                disabled={item.isDisabled}
+            >
                 <Typography variant="h6" text={item.name} style={styles.optionText} />
-                <Checkbox isChecked={item.isSelected} onPress={item.onPress} isRound />
+                <Checkbox
+                    isChecked={item.isSelected}
+                    onPress={item.onPress}
+                    isRound
+                    disabled={item.isDisabled}
+                />
             </TouchableOpacity>
         );
     }, [styles]);
