@@ -6,9 +6,12 @@ export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         container: {
             width: '100%',
-            flexDirection: 'row',
             borderBottomWidth: scaleVertical(1),
             borderBottomColor: colors.border,
+        },
+        contentContainer: {
+            flexDirection: 'row',
+            flexGrow: 1,
         },
     });
 

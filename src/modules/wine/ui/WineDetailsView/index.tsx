@@ -37,6 +37,7 @@ export const WineDetailsView = observer(() => {
         hasCurrentVintageData,
         isVintageChanging,
         isAllVintagesSelected,
+        evolutionWineId,
         reviewsWineId,
         fromScanner,
         onUpdateIsSaved,
@@ -186,10 +187,10 @@ export const WineDetailsView = observer(() => {
                                     onEvolutionPress={onEvolutionPress}
                                     onPurchasePress={onPurchasePress}
                                 />
-                                {shouldRenderEvolution ? (
+                                {shouldRenderEvolution && evolutionWineId ? (
                                     hasPremiumSubscription ? (
                                         <WineEvolutionTab
-                                            wineId={details.id}
+                                            wineId={evolutionWineId}
                                             onRegisterRefresh={onRegisterEvolutionRefresh}
                                         />
                                     ) : (

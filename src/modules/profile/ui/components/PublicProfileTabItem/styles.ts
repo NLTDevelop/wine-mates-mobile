@@ -1,11 +1,13 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
-import { scaleVertical } from '@/utils';
+import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
         item: {
-            flex: 1,
+            minWidth: scaleHorizontal(100),
+            flexGrow: 1,
+            flexShrink: 0,
             alignItems: 'center',
         },
         text: {

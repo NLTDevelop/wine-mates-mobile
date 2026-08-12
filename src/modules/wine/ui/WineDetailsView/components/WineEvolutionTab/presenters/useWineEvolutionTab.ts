@@ -9,12 +9,11 @@ import { ILocalization } from '@/UIProvider/localization/ILocalization';
 import { wineService } from '@/entities/wine/services/WineService';
 import {
     IWineEvolutionAggregate,
-    IWineEvolutionResponse,
-    IWineEvolutionRatingByGroup,
+    IWineEvolutionDetailsResponse,
     IWineEvolutionStatistic,
     IWineEvolutionTasteCharacteristic,
-    IWineEvolutionWinePeakDistribution,
     IWineEvolutionYear,
+    IWineEvolutionYearsResponse,
 } from '@/entities/wine/types/IWineEvolution';
 import {
     IWineEvolutionCarouselCard,
@@ -65,185 +64,6 @@ const getChartColors = (colors: IColors) => [
 
 const formatScore = (value: number | null) => (value === null ? NO_DATA : value.toFixed(1));
 
-const getTastingYears = (currentYear: number, additionalYears: number[] = []) => {
-    const years = new Set([currentYear, ...additionalYears].filter(year => Number.isFinite(year)));
-
-    return [...years].sort((first, second) => second - first).map(year => `${year}`);
-};
-
-const createEmptyRatingByGroup = (): IWineEvolutionRatingByGroup => ({
-    men: {
-        '18_25': { avg: null, count: 0 },
-        '26_35': { avg: null, count: 0 },
-        '36_45': { avg: null, count: 0 },
-        '46_60': { avg: null, count: 0 },
-        '60_plus': { avg: null, count: 0 },
-    },
-    women: {
-        '18_25': { avg: null, count: 0 },
-        '26_35': { avg: null, count: 0 },
-        '36_45': { avg: null, count: 0 },
-        '46_60': { avg: null, count: 0 },
-        '60_plus': { avg: null, count: 0 },
-    },
-});
-
-const createWinePeakFromDistribution = (distribution: IWineEvolutionWinePeakDistribution[] | undefined) => {
-    const availableDistribution = Array.isArray(distribution) ? distribution : [];
-
-    if (!availableDistribution.length) {
-        return null;
-    }
-
-    const years = availableDistribution.map(item => item.year);
-
-    return {
-        from: Math.min(...years),
-        to: Math.max(...years),
-        distribution: availableDistribution,
-    };
-};
-
-const getWeightedAverage = (items: IWineEvolutionYear[], getValue: (item: IWineEvolutionYear) => number | null) => {
-    const totalReviews = items.reduce((total, item) => total + item.reviewCount, 0);
-    const weightedTotal = items.reduce((total, item) => {
-        const value = getValue(item);
-
-        return value === null ? total : total + value * item.reviewCount;
-    }, 0);
-
-    return totalReviews > 0 ? weightedTotal / totalReviews : null;
-};
-
-const createAggregateFromYears = (years: IWineEvolutionYear[]): IWineEvolutionAggregate => {
-    const createGroup = (group: 'men' | 'women', ageKey: (typeof AMATEUR_AGE_KEYS)[number]) => {
-        const count = years.reduce((total, item) => total + item.ratingByGroup[group][ageKey].count, 0);
-        const weightedTotal = years.reduce((total, item) => {
-            const rating = item.ratingByGroup[group][ageKey];
-
-            return rating.avg === null ? total : total + rating.avg * rating.count;
-        }, 0);
-
-        return {
-            avg: count > 0 ? weightedTotal / count : null,
-            count,
-        };
-    };
-
-    const distribution = years.flatMap(item => item.winePeak?.distribution ?? []);
-
-    return {
-        reviewCount: years.reduce((total, item) => total + item.reviewCount, 0),
-        avgUserRating: getWeightedAverage(years, item => item.avgUserRating),
-        avgExpertRating: getWeightedAverage(years, item => item.avgExpertRating),
-        ratingByGroup: {
-            men: {
-                '18_25': createGroup('men', '18_25'),
-                '26_35': createGroup('men', '26_35'),
-                '36_45': createGroup('men', '36_45'),
-                '46_60': createGroup('men', '46_60'),
-                '60_plus': createGroup('men', '60_plus'),
-            },
-            women: {
-                '18_25': createGroup('women', '18_25'),
-                '26_35': createGroup('women', '26_35'),
-                '36_45': createGroup('women', '36_45'),
-                '46_60': createGroup('women', '46_60'),
-                '60_plus': createGroup('women', '60_plus'),
-            },
-        },
-        winePeak: createWinePeakFromDistribution(distribution),
-        reviewers: null,
-    };
-};
-
-const normalizeEvolutionResponse = (
-    data: IWineEvolutionResponse | IWineEvolutionYear[],
-    wineId: number,
-): IWineEvolutionResponse => {
-    if (Array.isArray(data)) {
-        const years = getSortedYears(data);
-
-        return {
-            wineId,
-            vintage: null,
-            currentYear: years[0]?.year ?? new Date().getFullYear(),
-            years: years.map(item => item.year),
-            byYear: years,
-            allYears: createAggregateFromYears(years),
-            topColors: [],
-            topShades: [],
-            topAromas: [],
-            topFlavors: [],
-            tasteCharacteristics: [],
-        };
-    }
-
-    if (Array.isArray(data.byYear) && (data.byYear.length > 0 || data.allYears)) {
-        const byYear = getSortedYears(data.byYear);
-        const allYears =
-            data.allYears ??
-            ({
-                ...createAggregateFromYears(byYear),
-                reviewers: data.reviewers ?? null,
-            } as IWineEvolutionAggregate);
-        const normalizedAllYears = {
-            ...allYears,
-            reviewers: allYears.reviewers ?? data.reviewers ?? null,
-            topColors: allYears.topColors ?? data.topColors ?? [],
-            topAromas: allYears.topAromas ?? data.topAromas ?? [],
-            topFlavors: allYears.topFlavors ?? data.topFlavors ?? [],
-        };
-
-        return {
-            ...data,
-            currentYear: data.currentYear ?? byYear[0]?.year ?? new Date().getFullYear(),
-            years: data.years?.length ? data.years : byYear.map(item => item.year),
-            byYear,
-            allYears: normalizedAllYears,
-            reviewers: data.reviewers ?? normalizedAllYears.reviewers,
-            topColors: data.topColors ?? normalizedAllYears.topColors ?? [],
-            topShades: data.topShades ?? [],
-            topAromas: data.topAromas ?? normalizedAllYears.topAromas ?? [],
-            topFlavors: data.topFlavors ?? normalizedAllYears.topFlavors ?? [],
-            tasteCharacteristics: data.tasteCharacteristics ?? [],
-        };
-    }
-
-    const year = data.vintage ?? data.currentYear ?? new Date().getFullYear();
-    const yearData: IWineEvolutionYear = {
-        year,
-        reviewCount: data.reviewCount ?? 0,
-        avgUserRating: data.avgUserRating ?? null,
-        avgExpertRating: data.avgExpertRating ?? null,
-        ratingByGroup: data.ratingByGroup ?? createEmptyRatingByGroup(),
-        winePeak: createWinePeakFromDistribution(data.winePeaks),
-        topColors: data.topColors ?? [],
-        topAromas: data.topAromas ?? [],
-        topFlavors: data.topFlavors ?? [],
-        reviewers: data.reviewers ?? null,
-    };
-
-    return {
-        ...data,
-        currentYear: data.currentYear ?? new Date().getFullYear(),
-        years: data.years ?? [year],
-        byYear: [yearData],
-        allYears: {
-            ...yearData,
-            reviewers: data.reviewers ?? null,
-            topColors: data.topColors ?? [],
-            topAromas: data.topAromas ?? [],
-            topFlavors: data.topFlavors ?? [],
-        },
-        topColors: data.topColors ?? [],
-        topShades: data.topShades ?? [],
-        topAromas: data.topAromas ?? [],
-        topFlavors: data.topFlavors ?? [],
-        tasteCharacteristics: data.tasteCharacteristics ?? [],
-    };
-};
-
 const getSortedYears = (years: IWineEvolutionYear[]) =>
     (Array.isArray(years) ? [...years] : []).sort((first, second) => second.year - first.year);
 
@@ -262,7 +82,8 @@ const getGroupAverage = (group: { avg: number | null; count: number }) => (group
 
 const isWinePeakAvailable = (
     peak: IWineEvolutionYear['winePeak'],
-): peak is NonNullable<IWineEvolutionYear['winePeak']> => peak !== null && peak.from !== null && peak.to !== null;
+): peak is NonNullable<IWineEvolutionYear['winePeak']> =>
+    peak !== null && peak !== undefined && peak.from !== null && peak.to !== null;
 
 const createEvolutionRatingRows = (
     item: IWineEvolutionYear | IWineEvolutionAggregate,
@@ -339,40 +160,6 @@ const createAggregateCarouselCards = (
             additionalPeopleText: additionalPeople ? `+${additionalPeople}` : '',
         },
     ];
-};
-
-type EvolutionCarouselField = 'topColors' | 'topAromas' | 'topFlavors';
-
-const createEvolutionCarouselCards = (
-    idPrefix: string,
-    allYearsTitle: string,
-    years: IWineEvolutionYear[],
-    allYears: IWineEvolutionAggregate | undefined,
-    field: EvolutionCarouselField,
-    fallbackColors: string[],
-    t: ILocalization['t'],
-): IWineEvolutionCarouselCard[] => {
-    const cards: IWineEvolutionCarouselCard[] = [];
-    const addCard = (
-        id: string,
-        title: string,
-        statistics: IWineEvolutionStatistic[] | undefined,
-        reviewers: IWineEvolutionYear['reviewers'],
-    ) => {
-        const card = createAggregateCarouselCards(id, title, statistics ?? [], reviewers ?? null, fallbackColors, t)[0];
-
-        if (card) {
-            cards.push(card);
-        }
-    };
-
-    addCard(`${idPrefix}-all`, allYearsTitle, allYears?.[field], allYears?.reviewers);
-
-    getSortedYears(years).forEach(yearData => {
-        addCard(`${idPrefix}-${yearData.year}`, `${yearData.year}`, yearData[field], yearData.reviewers);
-    });
-
-    return cards;
 };
 
 const createEvolutionExpertAssessments = (data: IWineEvolutionYear[]): IWineEvolutionExpertAssessment[] =>
@@ -545,10 +332,12 @@ const getTasteValueText = (
         return NO_DATA;
     }
 
-    return [...levels].sort(
-        (first, second) =>
-            Math.abs(first.sortNumber - value.avgSortNumber!) - Math.abs(second.sortNumber - value.avgSortNumber!),
-    )[0]?.name ?? NO_DATA;
+    return (
+        [...levels].sort(
+            (first, second) =>
+                Math.abs(first.sortNumber - value.avgSortNumber!) - Math.abs(second.sortNumber - value.avgSortNumber!),
+        )[0]?.name ?? NO_DATA
+    );
 };
 
 const normalizeCharacteristicName = (name: string) => name.trim().toLocaleLowerCase();
@@ -700,10 +489,11 @@ interface IProps {
 }
 
 export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IProps) => {
-    const [evolutionData, setEvolutionData] = useState<IWineEvolutionResponse | null>(null);
+    const [timelineData, setTimelineData] = useState<IWineEvolutionYearsResponse | null>(null);
+    const [selectedEvolution, setSelectedEvolution] = useState<IWineEvolutionDetailsResponse | null>(null);
     const [isEvolutionLoading, setIsEvolutionLoading] = useState(true);
-    const [selectedYear, setSelectedYear] = useState('');
-    const [draftYear, setDraftYear] = useState('');
+    const [selectedYear, setSelectedYear] = useState(ALL_YEARS_VALUE);
+    const [draftYear, setDraftYear] = useState(ALL_YEARS_VALUE);
     const [isYearPickerVisible, setIsYearPickerVisible] = useState(false);
     const [expertActiveIndex, setExpertActiveIndex] = useState(0);
     const [colorActiveIndex, setColorActiveIndex] = useState(0);
@@ -714,6 +504,8 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
     const colorCarouselRef = useRef<ICarouselInstance>(null);
     const aromaCarouselRef = useRef<ICarouselInstance>(null);
     const tasteCarouselRef = useRef<ICarouselInstance>(null);
+    const selectedRequestIdRef = useRef(0);
+    const selectedYearRef = useRef(ALL_YEARS_VALUE);
     const chartColors = useMemo(() => getChartColors(colors), [colors]);
     const carouselItemWidth = scaleHorizontal(259);
 
@@ -723,66 +515,66 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
         configurablePanGesture.failOffsetY([-CAROUSEL_FAIL_OFFSET_Y, CAROUSEL_FAIL_OFFSET_Y]);
     }, []);
 
-    const getEvolution = useCallback(async () => {
-        setIsEvolutionLoading(true);
+    const loadTimeline = useCallback(async () => {
+        const response = await wineService.getEvolutionYears(wineId);
 
-        try {
-            const response = await wineService.getEvolution(wineId);
-
-            if (!response.isError && response.data) {
-                setEvolutionData(normalizeEvolutionResponse(response.data, wineId));
-            }
-        } finally {
-            setIsEvolutionLoading(false);
+        if (!response.isError && response.data) {
+            setTimelineData(response.data);
         }
     }, [wineId]);
 
+    const loadSelectedEvolution = useCallback(
+        async (year: string) => {
+            selectedRequestIdRef.current += 1;
+            const requestId = selectedRequestIdRef.current;
+            const numericYear = year === ALL_YEARS_VALUE ? undefined : Number(year);
+            const response = await wineService.getEvolution(wineId, numericYear);
+
+            if (requestId === selectedRequestIdRef.current && !response.isError && response.data) {
+                setSelectedEvolution(response.data);
+                return true;
+            }
+
+            return false;
+        },
+        [wineId],
+    );
+
+    const refreshEvolution = useCallback(async () => {
+        setIsEvolutionLoading(true);
+
+        try {
+            await Promise.all([loadTimeline(), loadSelectedEvolution(selectedYearRef.current)]);
+        } finally {
+            setIsEvolutionLoading(false);
+        }
+    }, [loadSelectedEvolution, loadTimeline]);
+
     useEffect(() => {
         const frameId = requestAnimationFrame(() => {
-            getEvolution();
+            refreshEvolution();
         });
 
         return () => {
             cancelAnimationFrame(frameId);
         };
-    }, [getEvolution]);
+    }, [refreshEvolution]);
 
     useEffect(() => {
-        onRegisterRefresh(getEvolution);
+        onRegisterRefresh(refreshEvolution);
 
         return () => onRegisterRefresh(null);
-    }, [getEvolution, onRegisterRefresh]);
+    }, [onRegisterRefresh, refreshEvolution]);
 
     const allYearsTitle = t('wine.evolution.allYears');
     const tastingYears = useMemo(() => {
-        const apiYears = (evolutionData?.years ?? []).filter(year => Number.isFinite(year));
+        const apiYears = (timelineData?.years ?? []).filter(year => Number.isFinite(year));
 
-        if (apiYears.length) {
-            return [...new Set(apiYears)].sort((first, second) => second - first).map(year => `${year}`);
-        }
-
-        return getTastingYears(evolutionData?.currentYear ?? new Date().getFullYear(), [
-            ...(evolutionData?.vintage ? [evolutionData.vintage] : []),
-        ]);
-    }, [evolutionData]);
+        return [...new Set(apiYears)].sort((first, second) => second - first).map(year => `${year}`);
+    }, [timelineData?.years]);
     const yearValues = useMemo(() => [ALL_YEARS_VALUE, ...tastingYears], [tastingYears]);
-    const activeYear = yearValues.includes(selectedYear)
-        ? selectedYear
-        : (tastingYears[0] ?? `${evolutionData?.currentYear ?? new Date().getFullYear()}`);
+    const activeYear = yearValues.includes(selectedYear) ? selectedYear : ALL_YEARS_VALUE;
     const activeDraftYear = yearValues.includes(draftYear) ? draftYear : activeYear;
-    const selectedEvolution = useMemo<IWineEvolutionYear | IWineEvolutionAggregate | undefined>(() => {
-        if (!evolutionData) {
-            return undefined;
-        }
-
-        if (activeYear === ALL_YEARS_VALUE) {
-            return evolutionData.allYears;
-        }
-
-        const years = Array.isArray(evolutionData.byYear) ? evolutionData.byYear : [];
-
-        return years.find(item => `${item.year}` === activeYear);
-    }, [activeYear, evolutionData]);
 
     const onYearPress = useCallback(() => {
         setDraftYear(activeYear);
@@ -800,10 +592,21 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
             })),
         [activeDraftYear, allYearsTitle, onYearSelect, yearValues],
     );
-    const onYearConfirm = useCallback(() => {
-        setSelectedYear(activeDraftYear);
+    const onYearConfirm = useCallback(async () => {
         setIsYearPickerVisible(false);
-    }, [activeDraftYear]);
+        setIsEvolutionLoading(true);
+
+        try {
+            const isLoaded = await loadSelectedEvolution(activeDraftYear);
+
+            if (isLoaded) {
+                selectedYearRef.current = activeDraftYear;
+                setSelectedYear(activeDraftYear);
+            }
+        } finally {
+            setIsEvolutionLoading(false);
+        }
+    }, [activeDraftYear, loadSelectedEvolution]);
 
     const onMenToggle = useCallback(() => setAudienceVisibility(current => ({ ...current, men: !current.men })), []);
     const onWomenToggle = useCallback(
@@ -812,66 +615,64 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
     );
 
     const expertAssessments = useMemo(
-        () => createEvolutionExpertAssessments(evolutionData?.byYear ?? []),
-        [evolutionData?.byYear],
+        () => createEvolutionExpertAssessments(timelineData?.charts.ratings ?? []),
+        [timelineData?.charts.ratings],
     );
+    const selectedYearTitle = activeYear === ALL_YEARS_VALUE ? allYearsTitle : activeYear;
     const connectedColorCards = useMemo(
         () =>
-            createEvolutionCarouselCards(
-                'all-colors',
-                allYearsTitle,
-                evolutionData?.byYear ?? [],
-                evolutionData?.allYears,
-                'topColors',
+            createAggregateCarouselCards(
+                `colors-${activeYear}`,
+                selectedYearTitle,
+                selectedEvolution?.topColors ?? [],
+                selectedEvolution?.reviewers ?? null,
                 chartColors,
                 t,
             ),
-        [allYearsTitle, chartColors, evolutionData?.allYears, evolutionData?.byYear, t],
+        [activeYear, chartColors, selectedEvolution?.reviewers, selectedEvolution?.topColors, selectedYearTitle, t],
     );
     const connectedAromaCards = useMemo(
         () =>
-            createEvolutionCarouselCards(
-                'all-aromas',
-                allYearsTitle,
-                evolutionData?.byYear ?? [],
-                evolutionData?.allYears,
-                'topAromas',
+            createAggregateCarouselCards(
+                `aromas-${activeYear}`,
+                selectedYearTitle,
+                selectedEvolution?.topAromas ?? [],
+                selectedEvolution?.reviewers ?? null,
                 chartColors,
                 t,
             ),
-        [allYearsTitle, chartColors, evolutionData?.allYears, evolutionData?.byYear, t],
+        [activeYear, chartColors, selectedEvolution?.reviewers, selectedEvolution?.topAromas, selectedYearTitle, t],
     );
     const connectedTasteCards = useMemo(
         () =>
-            createEvolutionCarouselCards(
-                'all-tastes',
-                allYearsTitle,
-                evolutionData?.byYear ?? [],
-                evolutionData?.allYears,
-                'topFlavors',
+            createAggregateCarouselCards(
+                `tastes-${activeYear}`,
+                selectedYearTitle,
+                selectedEvolution?.topFlavors ?? [],
+                selectedEvolution?.reviewers ?? null,
                 chartColors,
                 t,
             ),
-        [allYearsTitle, chartColors, evolutionData?.allYears, evolutionData?.byYear, t],
+        [activeYear, chartColors, selectedEvolution?.reviewers, selectedEvolution?.topFlavors, selectedYearTitle, t],
     );
     const connectedLineCharts = useMemo(
         () =>
             createEvolutionLineCharts(
-                evolutionData?.tasteCharacteristics ?? [],
-                evolutionData?.years ?? [],
+                timelineData?.charts.tasteCharacteristics ?? [],
+                timelineData?.years ?? [],
                 chartColors,
                 METRIC_GRAPH_PLOT_WIDTH,
                 allYearsTitle,
                 t,
             ),
-        [allYearsTitle, chartColors, evolutionData?.tasteCharacteristics, evolutionData?.years, t],
+        [allYearsTitle, chartColors, timelineData?.charts.tasteCharacteristics, timelineData?.years, t],
     );
     const connectedAssessmentChart = useMemo(
         () =>
             createEvolutionAssessmentChart(
-                evolutionData?.byYear ?? [],
-                evolutionData?.years ?? [],
-                evolutionData?.currentYear ?? new Date().getFullYear(),
+                timelineData?.charts.ratings ?? [],
+                timelineData?.years ?? [],
+                timelineData?.currentYear ?? new Date().getFullYear(),
                 chartColors,
                 SUMMARY_GRAPH_PLOT_WIDTH,
                 audienceVisibility,
@@ -882,9 +683,9 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
         [
             audienceVisibility,
             chartColors,
-            evolutionData?.byYear,
-            evolutionData?.currentYear,
-            evolutionData?.years,
+            timelineData?.charts.ratings,
+            timelineData?.currentYear,
+            timelineData?.years,
             onMenToggle,
             onWomenToggle,
             t,
@@ -981,7 +782,7 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
         winePeakYear,
         winePeakReviews,
         hasWinePeak: selectedWinePeak !== null,
-        isInitialLoading: isEvolutionLoading && evolutionData === null,
+        isInitialLoading: isEvolutionLoading && selectedEvolution === null,
         isYearPickerVisible,
         yearOptions,
         expertAssessments,

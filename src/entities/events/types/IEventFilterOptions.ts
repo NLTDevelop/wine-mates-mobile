@@ -21,6 +21,7 @@ export interface IEventFilterOptionsRequest {
 }
 
 export interface IEventFilterOptions {
+    totalCount: number;
     eventTypes: IEventFilterOption<EventType>[];
     sexOptions: IEventFilterOption<Sex>[];
     priceRange?: {

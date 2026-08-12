@@ -16,6 +16,12 @@ export const getStyles = (_colors: IColors) => {
             paddingHorizontal: scaleHorizontal(16),
             paddingBottom: scaleVertical(24),
         },
+        wineListContent: {
+            flexGrow: 1,
+            gap: scaleVertical(16),
+            paddingHorizontal: scaleHorizontal(16),
+            paddingBottom: scaleVertical(24),
+        },
     });
 
     return styles;

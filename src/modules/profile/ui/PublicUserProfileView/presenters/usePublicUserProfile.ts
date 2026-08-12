@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { PublicProfileTab } from '@/modules/profile/enums/PublicProfileTab';
@@ -7,10 +7,9 @@ import { IPublicProfileTabItem } from '@/modules/profile/types/IPublicProfileTab
 import { usePublicProfileData } from '@/modules/profile/presenters/usePublicProfileData';
 import { usePublicProfileEvents } from '@/modules/profile/presenters/usePublicProfileEvents';
 import { usePublicUserTastings } from '@/modules/profile/presenters/usePublicUserTastings';
+import { usePublicUserOffers } from '@/modules/profile/presenters/usePublicUserOffers';
 import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 import { localization } from '@/UIProvider/localization/Localization';
-import { wineOfferService } from '@/entities/wine/services/WineOfferService';
-import { IPrivateOfferListItem } from '@/modules/wine/types/IPrivateOfferListItem';
 
 type RouteList = {
     PublicUserProfileView: IPublicProfileRouteParams;
@@ -21,73 +20,12 @@ export const usePublicUserProfile = () => {
     const route = useRoute<RouteProp<RouteList, 'PublicUserProfileView'>>();
     const userId = route.params?.userId;
     const initialProfile = route.params?.initialProfile;
-    const wineId = route.params?.wineId;
-    const vintages = route.params?.vintages;
-    const hasWineOffersContext = Boolean(wineId && route.params?.initialTab === PublicProfileTab.WINES);
     const [activeTab, setActiveTab] = useState(route.params?.initialTab ?? PublicProfileTab.EVENTS);
-    const [offers, setOffers] = useState<IPrivateOfferListItem[]>([]);
-    const [isOffersLoading, setIsOffersLoading] = useState(hasWineOffersContext);
     const profileData = usePublicProfileData(userId, 'user', initialProfile);
     const eventsData = usePublicProfileEvents(userId, activeTab === PublicProfileTab.EVENTS);
     const tastingsData = usePublicUserTastings(userId, activeTab === PublicProfileTab.TASTINGS);
+    const offersData = usePublicUserOffers(userId, activeTab === PublicProfileTab.WINES);
     const shareData = useWineShareModal();
-
-    const onOfferPress = useCallback(() => undefined, []);
-
-    const fetchOffers = useCallback(async () => {
-        if (!hasWineOffersContext || !wineId || !userId) {
-            return;
-        }
-
-        try {
-            const response = await wineOfferService.getUserOffers({ wineId, vintages, offset: 0, limit: 100 });
-
-            if (response.isError || !response.data) {
-                setOffers([]);
-                return;
-            }
-
-            const sellerOffers = response.data.rows.filter(offer => offer.user?.id === userId);
-            setOffers(
-                sellerOffers.reduce<IPrivateOfferListItem[]>((result, offer) => {
-                    if (!offer.user) {
-                        return result;
-                    }
-
-                    result.push({
-                        id: offer.id,
-                        fullName: `${offer.user.firstName} ${offer.user.lastName}`.trim(),
-                        avatarUrl:
-                            offer.user.avatar?.smallUrl ||
-                            offer.user.avatar?.mediumUrl ||
-                            offer.user.avatar?.originalUrl ||
-                            null,
-                        priceText: `${offer.price} ${offer.currency}`,
-                        onPress: onOfferPress,
-                    });
-
-                    return result;
-                }, []),
-            );
-        } finally {
-            setIsOffersLoading(false);
-        }
-    }, [hasWineOffersContext, onOfferPress, userId, vintages, wineId]);
-
-    const loadOffers = useCallback(async () => {
-        if (!hasWineOffersContext || !wineId || !userId) {
-            return;
-        }
-
-        setIsOffersLoading(true);
-        await fetchOffers();
-    }, [fetchOffers, hasWineOffersContext, userId, wineId]);
-
-    useEffect(() => {
-        if (hasWineOffersContext && wineId && userId) {
-            fetchOffers();
-        }
-    }, [fetchOffers, hasWineOffersContext, userId, wineId]);
 
     const onPressBack = useCallback(() => {
         navigation.goBack();
@@ -111,24 +49,8 @@ export const usePublicUserProfile = () => {
 
     const onFollowPress = useCallback(() => undefined, []);
 
-    const tabs = useMemo<IPublicProfileTabItem[]>(() => {
-        const thirdTab = hasWineOffersContext
-            ? {
-                  key: PublicProfileTab.WINES,
-                  title: localization.t('publicProfile.offers'),
-                  isSelected: activeTab === PublicProfileTab.WINES,
-                  isDisabled: false,
-                  onPress: onWinesPress,
-              }
-            : {
-                  key: PublicProfileTab.TASTINGS,
-                  title: localization.t('publicProfile.tastings'),
-                  isSelected: activeTab === PublicProfileTab.TASTINGS,
-                  isDisabled: false,
-                  onPress: onTastingsPress,
-              };
-
-        return [
+    const tabs = useMemo<IPublicProfileTabItem[]>(
+        () => [
             {
                 key: PublicProfileTab.ACTIVITY,
                 title: localization.t('publicProfile.activity'),
@@ -143,9 +65,23 @@ export const usePublicUserProfile = () => {
                 isDisabled: false,
                 onPress: onEventsPress,
             },
-            thirdTab,
-        ];
-    }, [activeTab, hasWineOffersContext, onActivityPress, onEventsPress, onTastingsPress, onWinesPress]);
+            {
+                key: PublicProfileTab.TASTINGS,
+                title: localization.t('publicProfile.tastings'),
+                isSelected: activeTab === PublicProfileTab.TASTINGS,
+                isDisabled: false,
+                onPress: onTastingsPress,
+            },
+            {
+                key: PublicProfileTab.WINES,
+                title: localization.t('publicProfile.offers'),
+                isSelected: activeTab === PublicProfileTab.WINES,
+                isDisabled: false,
+                onPress: onWinesPress,
+            },
+        ],
+        [activeTab, onActivityPress, onEventsPress, onTastingsPress, onWinesPress],
+    );
 
     const onRefresh = useCallback(async () => {
         const requests = [profileData.loadProfile()];
@@ -155,11 +91,11 @@ export const usePublicUserProfile = () => {
         } else if (activeTab === PublicProfileTab.TASTINGS) {
             requests.push(tastingsData.onRefreshTastings());
         } else if (activeTab === PublicProfileTab.WINES) {
-            requests.push(loadOffers());
+            requests.push(offersData.onRefreshOffers());
         }
 
         await Promise.all(requests);
-    }, [activeTab, eventsData, loadOffers, profileData, tastingsData]);
+    }, [activeTab, eventsData, offersData, profileData, tastingsData]);
 
     const fullName = useMemo(() => {
         return `${profileData.profile?.user.firstName || ''} ${profileData.profile?.user.lastName || ''}`.trim();
@@ -206,11 +142,10 @@ export const usePublicUserProfile = () => {
         ...profileData,
         ...eventsData,
         ...tastingsData,
+        ...offersData,
         ...shareData,
         activeTab,
         tabs,
-        offers,
-        isOffersLoading,
         fullName,
         avatarUrl,
         bio,

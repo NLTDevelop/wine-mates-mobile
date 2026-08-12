@@ -11,6 +11,8 @@ import { IList } from '@/entities/IList';
 import { IWineOfferPriceRangeParams } from '../params/IWineOfferPriceRangeParams';
 import { IPartnerWineOffersParams } from '../params/IPartnerWineOffersParams';
 import { IWineSetSearchItem } from '../types/IWineSetSearchItem';
+import { IUserProfileOffersParams } from '../params/IUserProfileOffersParams';
+import { publicUserOffersModel } from '../models/PublicUserOffersModel';
 
 class WineOfferService {
     constructor(
@@ -40,6 +42,31 @@ class WineOfferService {
             });
         } catch (error) {
             console.warn('WineOfferService -> getUserOffers: ', error);
+            return { isError: true, message: '' };
+        }
+    };
+
+    getUserProfileOffers = async (
+        params: IUserProfileOffersParams,
+    ): Promise<IResponse<IList<IOfferedWineListItem>>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineOffers}/user-offers`,
+                params,
+            });
+
+            if (!response.isError && response.data) {
+                if (params.offset === 0) {
+                    publicUserOffersModel.list = response.data;
+                } else {
+                    publicUserOffersModel.append(response.data);
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.warn('WineOfferService -> getUserProfileOffers: ', error);
             return { isError: true, message: '' };
         }
     };

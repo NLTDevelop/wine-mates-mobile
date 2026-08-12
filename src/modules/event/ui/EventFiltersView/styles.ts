@@ -4,8 +4,11 @@ import { scaleHorizontal, scaleVertical } from '@/utils';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
-        container: {
+        screen: {
             flex: 1,
+        },
+        container: {
+            flexGrow: 1,
             paddingHorizontal: scaleHorizontal(16),
             paddingBottom: scaleVertical(16),
             gap: scaleVertical(16),
@@ -49,6 +52,21 @@ export const getStyles = (colors: IColors) => {
         },
         disabledText: {
             color: colors.text_light,
+        },
+        footer: {
+            paddingHorizontal: scaleHorizontal(16),
+            paddingTop: scaleVertical(12),
+            paddingBottom: scaleVertical(8),
+            backgroundColor: colors.background,
+        },
+        applyTextRow: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxWidth: '100%',
+        },
+        applyText: {
+            color: colors.text_inverted,
+            textAlign: 'center',
         },
         sexButton: {
             height: scaleVertical(48),

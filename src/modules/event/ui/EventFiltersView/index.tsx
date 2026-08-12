@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { HeaderWithBackButton } from '@/UIKit/HeaderWithBackButton';
@@ -11,6 +11,7 @@ import { getStyles } from './styles';
 import { CalendarIcon } from '@assets/icons/CalendarIcon';
 import { RangeSlider } from '@/UIKit/RangeSlider';
 import { QuickFilterSection } from '@/modules/chooseWine/ui/ChooseWineFiltersView/components/QuickFilterSection';
+import { Button } from '@/UIKit/Button';
 
 interface IProps {}
 
@@ -48,6 +49,7 @@ export const EventFiltersView = ({}: IProps) => {
         isDateDisabled,
         isAgeDisabled,
         isPriceDisabled,
+        applyEventCountText,
         onOpenCalendar,
         onCloseCalendar,
         onDayPress,
@@ -55,13 +57,13 @@ export const EventFiltersView = ({}: IProps) => {
         onAgeRangeChange,
         onPriceRangeChange,
         onReset,
+        onApply,
     } = useEventFiltersView({ t });
 
     return (
         <>
             <ScreenContainer
-                edges={['top']}
-                scrollEnabled
+                edges={['top', 'bottom']}
                 withGradient
                 headerComponent={
                     <HeaderWithBackButton
@@ -83,60 +85,78 @@ export const EventFiltersView = ({}: IProps) => {
                         <ActivityIndicator color={colors.primary} size="large" />
                     </View>
                 ) : (
-                    <View style={styles.container}>
-                        <View>
-                            <Typography text={t('eventFilters.radius')} variant="h5" style={styles.sectionTitle} />
-                            <RadiusButtons
-                                radiusOption1={radiusOption1}
-                                radiusOption5={radiusOption5}
-                                radiusOption10={radiusOption10}
-                                radiusOption50={radiusOption50}
-                            />
-                        </View>
-                        <View>
-                            <Typography text={t('eventFilters.date')} variant="h5" style={styles.sectionTitle} />
-                            <TouchableOpacity
-                                style={[styles.dateButton, isDateDisabled ? styles.disabledControl : undefined]}
-                                onPress={onOpenCalendar}
-                                disabled={isDateDisabled}
-                            >
-                                <Typography
-                                    text={selectedDateText || t('eventFilters.selectDate')}
-                                    variant="body_400"
-                                    style={isDateDisabled ? styles.disabledText : styles.dateText}
+                    <View style={styles.screen}>
+                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.container}>
+                            <View>
+                                <Typography text={t('eventFilters.radius')} variant="h5" style={styles.sectionTitle} />
+                                <RadiusButtons
+                                    radiusOption1={radiusOption1}
+                                    radiusOption5={radiusOption5}
+                                    radiusOption10={radiusOption10}
+                                    radiusOption50={radiusOption50}
                                 />
-                                <CalendarIcon color={colors.text_light} />
-                            </TouchableOpacity>
-                        </View>
-                        <View>
-                            <Typography text={t('eventFilters.age')} variant="h5" style={styles.sectionTitle} />
-                            <RangeSlider
-                                min={minAgeLimit}
-                                max={maxAgeLimit}
-                                minValue={selectedMinAge}
-                                maxValue={selectedMaxAge}
-                                allowedMin={allowedAgeMin}
-                                allowedMax={allowedAgeMax}
-                                onChange={onAgeRangeChange}
-                                isDisabled={isAgeDisabled}
+                            </View>
+                            <View>
+                                <Typography text={t('eventFilters.date')} variant="h5" style={styles.sectionTitle} />
+                                <TouchableOpacity
+                                    style={[styles.dateButton, isDateDisabled ? styles.disabledControl : undefined]}
+                                    onPress={onOpenCalendar}
+                                    disabled={isDateDisabled}
+                                >
+                                    <Typography
+                                        text={selectedDateText || t('eventFilters.selectDate')}
+                                        variant="body_400"
+                                        style={isDateDisabled ? styles.disabledText : styles.dateText}
+                                    />
+                                    <CalendarIcon color={colors.text_light} />
+                                </TouchableOpacity>
+                            </View>
+                            <View>
+                                <Typography text={t('eventFilters.age')} variant="h5" style={styles.sectionTitle} />
+                                <RangeSlider
+                                    min={minAgeLimit}
+                                    max={maxAgeLimit}
+                                    minValue={selectedMinAge}
+                                    maxValue={selectedMaxAge}
+                                    allowedMin={allowedAgeMin}
+                                    allowedMax={allowedAgeMax}
+                                    onChange={onAgeRangeChange}
+                                    isDisabled={isAgeDisabled}
+                                />
+                            </View>
+                            <View>
+                                <Typography text={t('event.price')} variant="h5" style={styles.sectionTitle} />
+                                <RangeSlider
+                                    min={minPriceLimit}
+                                    max={maxPriceLimit}
+                                    minValue={selectedMinPrice}
+                                    maxValue={selectedMaxPrice}
+                                    allowedMin={allowedPriceMin}
+                                    allowedMax={allowedPriceMax}
+                                    onChange={onPriceRangeChange}
+                                    valueSuffix={priceCurrencySuffix}
+                                    isDisabled={isPriceDisabled}
+                                />
+                            </View>
+                            <View>
+                                <QuickFilterSection title={t('eventFilters.sex')} items={sexFilterItems} />
+                            </View>
+                        </ScrollView>
+                        <View style={styles.footer}>
+                            <Button
+                                text={t('chooseWine.apply')}
+                                onPress={onApply}
+                                CenterAccessory={
+                                    <View style={styles.applyTextRow}>
+                                        <Typography variant="body_500" numberOfLines={1} style={styles.applyText}>
+                                            {t('chooseWine.apply')}{' '}
+                                            <Typography variant="subtitle_12_500" style={styles.applyText}>
+                                                {applyEventCountText}
+                                            </Typography>
+                                        </Typography>
+                                    </View>
+                                }
                             />
-                        </View>
-                        <View>
-                            <Typography text={t('event.price')} variant="h5" style={styles.sectionTitle} />
-                            <RangeSlider
-                                min={minPriceLimit}
-                                max={maxPriceLimit}
-                                minValue={selectedMinPrice}
-                                maxValue={selectedMaxPrice}
-                                allowedMin={allowedPriceMin}
-                                allowedMax={allowedPriceMax}
-                                onChange={onPriceRangeChange}
-                                valueSuffix={priceCurrencySuffix}
-                                isDisabled={isPriceDisabled}
-                            />
-                        </View>
-                        <View>
-                            <QuickFilterSection title={t('eventFilters.sex')} items={sexFilterItems} />
                         </View>
                     </View>
                 )}
@@ -156,7 +176,6 @@ export const EventFiltersView = ({}: IProps) => {
                     onMonthChange={onMonthChange}
                 />
             )}
-
         </>
     );
 };

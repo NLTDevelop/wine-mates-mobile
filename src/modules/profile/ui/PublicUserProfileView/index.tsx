@@ -3,7 +3,7 @@ import { FlatList, ListRenderItem, View } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { IEvent } from '@/entities/events/types/IEvent';
 import { IUserTastingListItem } from '@/entities/wine/types/IUserTastingsList';
-import { IPrivateOfferListItem } from '@/modules/wine/types/IPrivateOfferListItem';
+import { IOfferedWineListItem } from '@/entities/wine/types/IOfferedWineListItem';
 import { ErrorTypeEnum } from '@/entities/appState/enums/ErrorTypeEnum';
 import { PublicProfileTab } from '@/modules/profile/enums/PublicProfileTab';
 import { useUiContext } from '@/UIProvider';
@@ -22,7 +22,7 @@ import { PublicProfileHeader } from '@/modules/profile/ui/components/PublicProfi
 import { PublicProfileTabs } from '@/modules/profile/ui/components/PublicProfileTabs';
 import { PublicProfileLinksModal } from '@/modules/profile/ui/components/PublicProfileLinksModal';
 import { PublicUserTastingListItem } from './components/PublicUserTastingListItem';
-import { PrivateOfferItem } from '@/modules/wine/ui/PrivateWineOffersView/components/PrivateOfferItem';
+import { WineryWineListItem } from '@/modules/profile/ui/components/WineryWineListItem';
 import { usePublicUserProfile } from './presenters/usePublicUserProfile';
 import { getStyles } from './styles';
 import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
@@ -55,6 +55,7 @@ export const PublicUserProfileView = observer(() => {
         isTastingsLoading,
         isTastingsLoadingMore,
         isOffersLoading,
+        isOffersLoadingMore,
         isFollowDisabled,
         isLinksModalVisible,
         isShareModalVisible,
@@ -64,9 +65,11 @@ export const PublicUserProfileView = observer(() => {
         onRefresh,
         onLoadMoreEvents,
         onLoadMoreTastings,
+        onLoadMoreOffers,
         onEventPress,
         onFavoriteEventPress,
         onTastingPress,
+        onWinePress,
         onSearchTastings,
         scrollTastingsToTop,
         onOpenShareModal,
@@ -83,7 +86,7 @@ export const PublicUserProfileView = observer(() => {
         (item: IUserTastingListItem, index: number) => `${item.id.toString()}-${index}`,
         [],
     );
-    const offerKeyExtractor = useCallback((item: IPrivateOfferListItem) => item.id.toString(), []);
+    const offerKeyExtractor = useCallback((item: IOfferedWineListItem) => item.id.toString(), []);
     const renderEventItem = useCallback<ListRenderItem<IEvent>>(
         ({ item }) => (
             <EventCard
@@ -103,9 +106,11 @@ export const PublicUserProfileView = observer(() => {
         ),
         [onOpenShareModal, onTastingPress],
     );
-    const renderOfferItem = useCallback<ListRenderItem<IPrivateOfferListItem>>(
-        ({ item }) => <PrivateOfferItem item={item} />,
-        [],
+    const renderOfferItem = useCallback<ListRenderItem<IOfferedWineListItem>>(
+        ({ item }) => (
+            <WineryWineListItem item={item} offer={item.offer} onPress={onWinePress} onSharePress={onOpenShareModal} />
+        ),
+        [onOpenShareModal, onWinePress],
     );
     const profileHeader = (
         <View>
@@ -171,7 +176,9 @@ export const PublicUserProfileView = observer(() => {
                         renderItem={renderOfferItem}
                         keyExtractor={offerKeyExtractor}
                         refreshControl={refreshControl}
-                        contentContainerStyle={styles.listContent}
+                        onEndReached={onLoadMoreOffers}
+                        onEndReachedThreshold={0.4}
+                        contentContainerStyle={styles.wineListContent}
                         showsVerticalScrollIndicator={false}
                         ListHeaderComponent={profileHeader}
                         ListEmptyComponent={
@@ -181,6 +188,7 @@ export const PublicUserProfileView = observer(() => {
                                 text={t('publicProfile.noOffers')}
                             />
                         }
+                        ListFooterComponent={isOffersLoadingMore ? <ListFooterLoader /> : null}
                     />
                 ) : (
                     <FlatList
