@@ -9,6 +9,7 @@ import { GalleryIcon } from '@assets/icons/GalleryIcon';
 import { AddFileIcon } from '@assets/icons/AddFileIcon';
 import { useUiContext } from '@/UIProvider';
 import { useScanner } from '../../presenters/useScanner';
+import { ScannerFrame } from './components/ScannerFrame';
 import { getStyles } from './styles';
 
 export const ScannerView = () => {
@@ -17,21 +18,27 @@ export const ScannerView = () => {
     const styles = useMemo(() => getStyles(colors, top, bottom), [colors, top, bottom]);
     const { torch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress,
         onPreviewStarted, onPreviewStopped, device, cameraOutputs, isCameraActive, torchMode,
-        isTorchDisabled, hasPermission } = useScanner();
+        isTorchDisabled, shouldRenderCamera, cameraSessionKey, onCameraError,
+        onCameraInterruptionStarted, onCameraInterruptionEnded } = useScanner();
 
     return (
         <View style={styles.container}>
-            {!hasPermission || !device ? null : (
+            {!shouldRenderCamera || !device ? null : (
                 <>
                     <Camera
+                        key={cameraSessionKey}
                         isActive={isCameraActive}
                         device={device}
                         outputs={cameraOutputs}
                         torchMode={torchMode}
                         onPreviewStarted={onPreviewStarted}
                         onPreviewStopped={onPreviewStopped}
+                        onError={onCameraError}
+                        onInterruptionStarted={onCameraInterruptionStarted}
+                        onInterruptionEnded={onCameraInterruptionEnded}
                         style={StyleSheet.absoluteFill}
                     />
+                    <ScannerFrame />
                     <View style={styles.topBar}>
                         <TouchableOpacity onPress={onCrossPress} style={styles.button}>
                             <CrossIcon color={colors.icon} width={20} height={20} />
@@ -53,7 +60,7 @@ export const ScannerView = () => {
                         <TouchableOpacity onPress={onTakePhotoPress} style={styles.mainShotButton}>
                             <View style={styles.mainShotInner} />
                         </TouchableOpacity>
-                      
+
                         <TouchableOpacity onPress={onCreatePress} style={styles.bottomButtons}>
                             <AddFileIcon color={colors.icon} width={24} height={24} />
                         </TouchableOpacity>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAppState } from '@react-native-community/hooks';
 import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { BackHandler } from 'react-native';
@@ -7,7 +7,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { openCropper, openPicker } from 'react-native-image-crop-picker';
 import type { Image as ImageCropPickerResult } from 'react-native-image-crop-picker';
 import { useCameraDevice, useCameraPermission, usePhotoOutput } from 'react-native-vision-camera';
-import type { CameraOrientation } from 'react-native-vision-camera';
+import type { CameraOrientation, InterruptionReason } from 'react-native-vision-camera';
 import ImageResizer from 'react-native-image-resizer';
 import { IWineImage } from '@/entities/wine/types/IWineImage';
 import { wineSetScannerModel } from '@/entities/events/WineSetScannerModel';
@@ -18,6 +18,9 @@ import { toastService } from '@/libs/toast/toastService';
 import { getWineScannerReturnAction } from '@/modules/scanner/utils/getWineScannerReturnAction';
 
 const SCANNER_CROP_MAX_SIZE = 2048;
+const SCANNER_CROP_ASPECT_RATIO_WIDTH = 9;
+const SCANNER_CROP_ASPECT_RATIO_HEIGHT = 16;
+const SCANNER_CROP_HEIGHT = SCANNER_CROP_MAX_SIZE * SCANNER_CROP_ASPECT_RATIO_HEIGHT / SCANNER_CROP_ASPECT_RATIO_WIDTH;
 
 interface IImageCropPickerError {
     code?: string;
@@ -77,15 +80,23 @@ export const useScanner = () => {
     const isFocused = useIsFocused();
     const [torch, setTorch] = useState<'on' | 'off'>('off');
     const [isPreviewStarted, setIsPreviewStarted] = useState(false);
+    const [cameraSessionKey, setCameraSessionKey] = useState(0);
+    const cameraRetryCountRef = useRef(0);
     const { hasPermission, requestPermission } = useCameraPermission();
     const device = useCameraDevice('back');
     const photoOutput = usePhotoOutput({ quality: 1, qualityPrioritization: 'quality' });
     const cameraOutputs = useMemo(() => [photoOutput], [photoOutput]);
     const isCameraActive = isFocused && appState === 'active';
+    const shouldRenderCamera = hasPermission && !!device && isCameraActive;
     const torchMode = isCameraActive && isPreviewStarted ? torch : undefined;
     const isTorchDisabled = !isCameraActive || !isPreviewStarted;
 
-    const prepareCameraImage = async ({ uri, width, height, orientation }: {
+    const prepareCameraImage = async ({
+        uri,
+        width,
+        height,
+        orientation,
+    }: {
         uri: string;
         width: number;
         height: number;
@@ -140,6 +151,7 @@ export const useScanner = () => {
 
     useEffect(() => {
         if (appState !== 'active' || !isFocused) {
+            cameraRetryCountRef.current = 0;
             Promise.resolve().then(() => setTorch('off'));
         }
     }, [appState, isFocused]);
@@ -153,23 +165,45 @@ export const useScanner = () => {
         setTorch('off');
     }, []);
 
-    const onUseCroppedImage = useCallback(async (croppedImage: ImageCropPickerResult) => {
-        try {
-            wineModel.image = await normalizeCroppedImageToJpeg(croppedImage);
-            navigation.navigate('ScanResultsListView');
-        } catch (error) {
-            console.error('Error normalizing cropped scanner photo:', error);
-            toastService.showError(
-                localization.t('common.errorHappened'),
-                localization.t('common.somethingWentWrong'),
-            );
+    const onCameraError = useCallback((error: Error) => {
+        console.error('Scanner camera session error:', error);
+
+        if (isIOS && cameraRetryCountRef.current === 0) {
+            cameraRetryCountRef.current += 1;
+            setCameraSessionKey(previousKey => previousKey + 1);
         }
-    }, [navigation]);
+    }, []);
+
+    const onCameraInterruptionStarted = useCallback((reason: InterruptionReason) => {
+        console.warn('Scanner camera session interrupted:', reason);
+        setIsPreviewStarted(false);
+        setTorch('off');
+    }, []);
+
+    const onCameraInterruptionEnded = useCallback(() => {
+        setCameraSessionKey(previousKey => previousKey + 1);
+    }, []);
+
+    const onUseCroppedImage = useCallback(
+        async (croppedImage: ImageCropPickerResult) => {
+            try {
+                wineModel.image = await normalizeCroppedImageToJpeg(croppedImage);
+                navigation.navigate('ScanResultsListView');
+            } catch (error) {
+                console.error('Error normalizing cropped scanner photo:', error);
+                toastService.showError(
+                    localization.t('common.errorHappened'),
+                    localization.t('common.somethingWentWrong'),
+                );
+            }
+        },
+        [navigation],
+    );
 
     const onGalleryPress = useCallback(async () => {
         const cropperOptions = {
             mediaType: 'photo' as const,
-            freeStyleCropEnabled: true,
+            freeStyleCropEnabled: false,
             compressImageMaxWidth: SCANNER_CROP_MAX_SIZE,
             compressImageMaxHeight: SCANNER_CROP_MAX_SIZE,
             compressImageQuality: 1,
@@ -186,7 +220,7 @@ export const useScanner = () => {
                 const croppedImage = await openPicker({
                     ...cropperOptions,
                     width: SCANNER_CROP_MAX_SIZE,
-                    height: SCANNER_CROP_MAX_SIZE,
+                    height: SCANNER_CROP_HEIGHT,
                     cropping: true,
                     waitAnimationEnd: true,
                 });
@@ -217,14 +251,12 @@ export const useScanner = () => {
             return;
         }
 
-        const cropDimensions = getCropDimensions(asset.width, asset.height);
-
         try {
             const croppedImage = await openCropper({
                 ...cropperOptions,
                 path: asset.uri,
-                width: cropDimensions.width,
-                height: cropDimensions.height,
+                width: SCANNER_CROP_MAX_SIZE,
+                height: SCANNER_CROP_HEIGHT,
             });
             await onUseCroppedImage(croppedImage);
         } catch (error) {
@@ -300,8 +332,23 @@ export const useScanner = () => {
     }, [isCameraActive, isPreviewStarted]);
 
     return {
-        torch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress,
-        onPreviewStarted, onPreviewStopped, device, cameraOutputs, isCameraActive, torchMode,
-        isTorchDisabled, hasPermission,
+        torch,
+        onGalleryPress,
+        onTakePhotoPress,
+        onCrossPress,
+        onCreatePress,
+        onTorchPress,
+        onPreviewStarted,
+        onPreviewStopped,
+        device,
+        cameraOutputs,
+        isCameraActive,
+        torchMode,
+        isTorchDisabled,
+        shouldRenderCamera,
+        cameraSessionKey,
+        onCameraError,
+        onCameraInterruptionStarted,
+        onCameraInterruptionEnded,
     };
 };

@@ -194,6 +194,7 @@
         "reviewCount": ["review", "reviews", "reviews"],
         "whatsInYourGlass": "What’s in your glass?",
         "enterData": "(Enter data manually or scan the label)",
+        "wineLabel": "Wine label",
         "cropLabelPhoto": "Crop wine label",
         "tasteWine": "Taste Wine"
     },
