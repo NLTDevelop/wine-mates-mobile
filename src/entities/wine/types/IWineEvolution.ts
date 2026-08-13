@@ -90,7 +90,7 @@ export interface IWineEvolutionYear {
     avgUserRating: number | null;
     avgExpertRating: number | null;
     ratingByGroup: IWineEvolutionRatingByGroup;
-    winePeak: IWineEvolutionWinePeak | null;
+    winePeak?: IWineEvolutionWinePeak | null;
     topColors?: IWineEvolutionStatistic[];
     topAromas?: IWineEvolutionStatistic[];
     topFlavors?: IWineEvolutionStatistic[];
@@ -104,22 +104,30 @@ export interface IWineEvolutionAggregate extends Omit<IWineEvolutionYear, 'year'
     topFlavors?: IWineEvolutionStatistic[];
 }
 
-export interface IWineEvolutionResponse {
+export interface IWineEvolutionDetailsResponse {
     wineId: number;
     vintage: number | null;
-    currentYear?: number;
-    years?: number[];
-    byYear?: IWineEvolutionYear[];
-    allYears?: IWineEvolutionAggregate;
-    reviewCount?: number;
-    avgUserRating?: number | null;
-    avgExpertRating?: number | null;
-    ratingByGroup?: IWineEvolutionRatingByGroup;
-    winePeaks?: IWineEvolutionWinePeakDistribution[];
-    reviewers?: IWineEvolutionReviewers | null;
-    topColors?: IWineEvolutionStatistic[];
-    topShades?: IWineEvolutionStatistic[];
-    topAromas?: IWineEvolutionStatistic[];
-    topFlavors?: IWineEvolutionStatistic[];
-    tasteCharacteristics?: IWineEvolutionTasteCharacteristic[];
+    currentYear: number;
+    year?: number;
+    reviewCount: number;
+    avgUserRating: number | null;
+    avgExpertRating: number | null;
+    ratingByGroup: IWineEvolutionRatingByGroup;
+    winePeak: IWineEvolutionWinePeak | null;
+    reviewers: IWineEvolutionReviewers | null;
+    topColors: IWineEvolutionStatistic[];
+    topAromas: IWineEvolutionStatistic[];
+    topFlavors: IWineEvolutionStatistic[];
+    tasteCharacteristics: IWineEvolutionTasteCharacteristic[];
+}
+
+export interface IWineEvolutionYearsResponse {
+    wineId: number;
+    vintage: number | null;
+    currentYear: number;
+    years: number[];
+    charts: {
+        ratings: IWineEvolutionYear[];
+        tasteCharacteristics: IWineEvolutionTasteCharacteristic[];
+    };
 }

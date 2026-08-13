@@ -37,14 +37,16 @@ const getRateColorStatistics = (rateDetails: IRateDetails): IWineDetails['statis
         userCount: 1,
     };
 
-    return [{
-        id: rateDetails.color.id,
-        colorHex: rateDetails.color.colorHex,
-        name: rateDetails.color.name,
-        pale: rateDetails.color.tone === 'pale' ? selectedShade : emptyShade,
-        medium: rateDetails.color.tone === 'medium' ? selectedShade : emptyShade,
-        deep: rateDetails.color.tone === 'deep' ? selectedShade : emptyShade,
-    }];
+    return [
+        {
+            id: rateDetails.color.id,
+            colorHex: rateDetails.color.colorHex,
+            name: rateDetails.color.name,
+            pale: rateDetails.color.tone === 'pale' ? selectedShade : emptyShade,
+            medium: rateDetails.color.tone === 'medium' ? selectedShade : emptyShade,
+            deep: rateDetails.color.tone === 'deep' ? selectedShade : emptyShade,
+        },
+    ];
 };
 
 const mergeRateDetails = (wineDetails: IWineDetails, rateDetails: IRateDetails): IWineDetails => {
@@ -93,148 +95,161 @@ export const useWineDetails = () => {
     const [isVintageChanging, setIsVintageChanging] = useState(false);
     const [localIsSaved, setLocalIsSaved] = useState<boolean | undefined>(undefined);
     const [rateId, setRateId] = useState<number | null>(null);
+    const [evolutionWineId, setEvolutionWineId] = useState<number | null>(wineDetailsData?.id ?? wineId ?? null);
     const isResettingRef = useRef(false);
     const selectedWineIdRef = useRef<number | null>(wineDetailsData?.id ?? wineId ?? null);
 
-    const getDetails = useCallback(async (params?: { vintages?: 'All' }) => {
-        try {
-            if (notificationRateId) {
-                const rateResponse = await wineService.getRateDetails(notificationRateId);
+    const getDetails = useCallback(
+        async (params?: { vintages?: 'All' }) => {
+            try {
+                if (notificationRateId) {
+                    const rateResponse = await wineService.getRateDetails(notificationRateId);
 
-                if (rateResponse.isError || !rateResponse.data) {
-                    toastService.showError(
-                        localization.t('common.errorHappened'),
-                        rateResponse.message || localization.t('common.somethingWentWrong'),
-                    );
-                    setIsError(true);
+                    if (rateResponse.isError || !rateResponse.data) {
+                        toastService.showError(
+                            localization.t('common.errorHappened'),
+                            rateResponse.message || localization.t('common.somethingWentWrong'),
+                        );
+                        setIsError(true);
+                        return;
+                    }
+
+                    const wineResponse = await wineService.getById(rateResponse.data.wineId);
+
+                    if (wineResponse.isError || !wineResponse.data) {
+                        toastService.showError(
+                            localization.t('common.errorHappened'),
+                            wineResponse.message || localization.t('common.somethingWentWrong'),
+                        );
+                        setIsError(true);
+                        return;
+                    }
+
+                    const notificationWineId = rateResponse.data.wineId;
+                    const notificationDetails = mergeRateDetails(wineResponse.data, rateResponse.data);
+                    setEvolutionWineId(currentWineId => currentWineId ?? notificationWineId);
+                    selectedWineIdRef.current = notificationWineId;
+                    wineModel.selectedWineId = notificationWineId;
+                    setDetails(notificationDetails);
+                    wineModel.vintages = notificationDetails.vintages;
+                    setLocalIsSaved(notificationDetails.isSaved);
+                    setIsError(false);
                     return;
                 }
 
-                const wineResponse = await wineService.getById(rateResponse.data.wineId);
+                const selectedWineId = selectedWineIdRef.current;
+                if (!selectedWineId) return;
 
-                if (wineResponse.isError || !wineResponse.data) {
+                const detailsParams = {
+                    rateId,
+                    vintages: params ? params.vintages : undefined,
+                };
+
+                const response = rateId
+                    ? await myWineService.getMyWineDetails(selectedWineId, detailsParams)
+                    : await wineService.getById(selectedWineId, params);
+
+                if (response.isError || !response.data) {
                     toastService.showError(
                         localization.t('common.errorHappened'),
-                        wineResponse.message || localization.t('common.somethingWentWrong'),
+                        response.message || localization.t('common.somethingWentWrong'),
                     );
                     setIsError(true);
-                    return;
+                } else {
+                    setDetails(response.data);
+                    wineModel.vintages = response.data.vintages;
+                    setLocalIsSaved(response.data.isSaved);
+                    setIsError(false);
                 }
+            } catch (error) {
+                console.error('getTastes error: ', JSON.stringify(error, null, 2));
+            } finally {
+            }
+        },
+        [notificationRateId, rateId],
+    );
 
-                const notificationDetails = mergeRateDetails(wineResponse.data, rateResponse.data);
-                selectedWineIdRef.current = rateResponse.data.wineId;
-                wineModel.selectedWineId = rateResponse.data.wineId;
-                setDetails(notificationDetails);
-                wineModel.vintages = notificationDetails.vintages;
-                setLocalIsSaved(notificationDetails.isSaved);
-                setIsError(false);
+    const getVintageDetails = useCallback(
+        async (params?: { vintages?: 'All' }) => {
+            try {
+                await getDetails(params);
+            } finally {
+                setIsVintageChanging(false);
+            }
+        },
+        [getDetails],
+    );
+
+    const onVintageChange = useCallback(
+        async (item: IDropdownItem) => {
+            const isNoneVintage = item.value === NONE_VINTAGE_DROPDOWN_VALUE;
+            const isAllVintages =
+                item.value === null ||
+                (typeof item.label === 'string' &&
+                    item.label.toLowerCase() === localization.t('wine.allVintages').toLowerCase()) ||
+                (typeof item.value === 'string' && item.value.toLowerCase() === 'all');
+
+            setIsVintageChanging(true);
+
+            if (isAllVintages) {
+                setIsAllVintagesSelected(true);
+                setHasSelectedVintageData(true);
+                await getVintageDetails({ vintages: 'All' });
                 return;
             }
 
-            const selectedWineId = selectedWineIdRef.current;
-            if (!selectedWineId) return;
+            setIsAllVintagesSelected(false);
+            const selectedWineId = item.id ? Number(item.id) : null;
+            const selectedVintage = isNoneVintage || item.value === null ? null : Number(item.value);
 
-            const detailsParams = {
-                rateId,
-                vintages: params ? params.vintages : undefined,
-            }; 
-
-            const response = rateId
-                ? await myWineService.getMyWineDetails(selectedWineId, detailsParams)
-                : await wineService.getById(selectedWineId, params);
-
-            if (response.isError || !response.data) {
-                toastService.showError(
-                    localization.t('common.errorHappened'),
-                    response.message || localization.t('common.somethingWentWrong'),
-                );
-                setIsError(true);
-            } else {
-                setDetails(response.data);
-                wineModel.vintages = response.data.vintages;
-                setLocalIsSaved(response.data.isSaved);
-                setIsError(false);
+            if (selectedWineId && selectedWineId !== selectedWineIdRef.current) {
+                setHasSelectedVintageData(true);
+                selectedWineIdRef.current = selectedWineId;
+                wineModel.selectedWineId = selectedWineId;
+                await getVintageDetails();
+                return;
             }
-        } catch (error) {
-            console.error('getTastes error: ', JSON.stringify(error, null, 2));
-        } finally {
-            
-        }
-    }, [notificationRateId, rateId]);
 
-    const getVintageDetails = useCallback(async (params?: { vintages?: 'All' }) => {
-        try {
-            await getDetails(params);
-        } finally {
+            if (selectedWineId && selectedWineId === selectedWineIdRef.current) {
+                setHasSelectedVintageData(true);
+                await getVintageDetails();
+                return;
+            }
+
+            if (selectedVintage !== null && Number.isNaN(selectedVintage)) {
+                setIsVintageChanging(false);
+                return;
+            }
+
+            setHasSelectedVintageData(false);
+            if (details) {
+                setDetails({
+                    ...details,
+                    vintage: selectedVintage,
+                    isTasted: false,
+                    currentVintage: null,
+                    averageUserRating: 0,
+                    averageExpertRating: 0,
+                    countUserRating: 0,
+                    countExpertRating: 0,
+                    totalReviews: 0,
+                    aiTastingNote: undefined,
+                    aiSnacks: [],
+                    myReview: null,
+                    statistics: {
+                        topColors: [],
+                        topAromas: [],
+                        topFlavors: [],
+                        tasteCharacteristics: [],
+                        topWinePeaks: [],
+                    },
+                });
+                clearWineReviewsListModel();
+            }
             setIsVintageChanging(false);
-        }
-    }, [getDetails]);
-
-    const onVintageChange = useCallback(async (item: IDropdownItem) => {
-        const isNoneVintage = item.value === NONE_VINTAGE_DROPDOWN_VALUE;
-        const isAllVintages = item.value === null
-            || (typeof item.label === 'string' && item.label.toLowerCase() === localization.t('wine.allVintages').toLowerCase())
-            || (typeof item.value === 'string' && item.value.toLowerCase() === 'all');
-
-        setIsVintageChanging(true);
-
-        if (isAllVintages) {
-            setIsAllVintagesSelected(true);
-            setHasSelectedVintageData(true);
-            await getVintageDetails({ vintages: 'All' });
-            return;
-        }
-
-        setIsAllVintagesSelected(false);
-        const selectedWineId = item.id ? Number(item.id) : null;
-        const selectedVintage = isNoneVintage || item.value === null ? null : Number(item.value);
-
-        if (selectedWineId && selectedWineId !== selectedWineIdRef.current) {
-            setHasSelectedVintageData(true);
-            selectedWineIdRef.current = selectedWineId;
-            wineModel.selectedWineId = selectedWineId;
-            await getVintageDetails();
-            return;
-        }
-
-        if (selectedWineId && selectedWineId === selectedWineIdRef.current) {
-            setHasSelectedVintageData(true);
-            await getVintageDetails();
-            return;
-        }
-
-        if (selectedVintage !== null && Number.isNaN(selectedVintage)) {
-            setIsVintageChanging(false);
-            return;
-        }
-
-        setHasSelectedVintageData(false);
-        if (details) {
-            setDetails({
-                ...details,
-                vintage: selectedVintage,
-                isTasted: false,
-                currentVintage: null,
-                averageUserRating: 0,
-                averageExpertRating: 0,
-                countUserRating: 0,
-                countExpertRating: 0,
-                totalReviews: 0,
-                aiTastingNote: undefined,
-                aiSnacks: [],
-                myReview: null,
-                statistics: {
-                    topColors: [],
-                    topAromas: [],
-                    topFlavors: [],
-                    tasteCharacteristics: [],
-                    topWinePeaks: [],
-                },
-            });
-            clearWineReviewsListModel();
-        }
-        setIsVintageChanging(false);
-    }, [details, getVintageDetails]);
+        },
+        [details, getVintageDetails],
+    );
 
     useEffect(() => {
         const frameId = requestAnimationFrame(() => {
@@ -268,14 +283,14 @@ export const useWineDetails = () => {
     }, [wineId, wineDetailsData, notificationRateId, initialVintages, getDetails]);
 
     const hasCurrentVintageData = !!details?.currentVintage && typeof details.currentVintage === 'object';
-    const reviewsWineId = hasSelectedVintageData
-        ? details?.id ?? wineId ?? null
-        : null;
+    const reviewsWineId = hasSelectedVintageData ? (details?.id ?? wineId ?? null) : null;
 
-    const detailsWithLocalIsSaved = details ? {
-        ...details,
-        isSaved: localIsSaved ?? details.isSaved,
-    } : null;
+    const detailsWithLocalIsSaved = details
+        ? {
+              ...details,
+              isSaved: localIsSaved ?? details.isSaved,
+          }
+        : null;
 
     const wineImagePhotos = useMemo<IGalleryPhoto[]>(() => {
         const image = details?.image || details?.defaultImage;
@@ -285,17 +300,18 @@ export const useWineDetails = () => {
             return [];
         }
 
-        return [{
-            id: `wine-details-image-${details.id}`,
-            uri,
-        }];
+        return [
+            {
+                id: `wine-details-image-${details.id}`,
+                uri,
+            },
+        ];
     }, [details]);
     const wineImageGallery = useGallery({ photos: wineImagePhotos });
     const onWineImagePress = wineImageGallery.items[0]?.onPress;
 
     const hasPremiumContentAccess = Boolean(
-        userModel.user?.hasPremium ||
-        (details?.wineryUserId && details.wineryUserId === userModel.user?.id),
+        userModel.user?.hasPremium || (details?.wineryUserId && details.wineryUserId === userModel.user?.id),
     );
 
     const onUpdateIsSaved = useCallback((isSaved: boolean) => {
@@ -309,10 +325,7 @@ export const useWineDetails = () => {
     const onEvolutionRefresh = useCallback(async () => {
         const detailsRefresh = isAllVintagesSelected ? { vintages: 'All' as const } : undefined;
 
-        await Promise.all([
-            getDetails(detailsRefresh),
-            evolutionRefreshRef.current?.() || Promise.resolve(),
-        ]);
+        await Promise.all([getDetails(detailsRefresh), evolutionRefreshRef.current?.() || Promise.resolve()]);
     }, [getDetails, isAllVintagesSelected]);
 
     const resetToHome = useCallback(() => {
@@ -355,7 +368,7 @@ export const useWineDetails = () => {
             return undefined;
         }
 
-        return navigation.addListener('beforeRemove', (event) => {
+        return navigation.addListener('beforeRemove', event => {
             if (isResettingRef.current) {
                 return;
             }
@@ -380,6 +393,7 @@ export const useWineDetails = () => {
         isVintageChanging,
         isAllVintagesSelected,
         wineId,
+        evolutionWineId,
         reviewsWineId,
         fromScanner,
         onUpdateIsSaved,

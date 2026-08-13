@@ -36,7 +36,7 @@ import { wineChooserResultsModel } from '../models/WineChooserResultsModel';
 import { wineModel } from '../models/WineModel';
 import { wineReviewsListModel } from '../models/WineReviewsListModel';
 import { IRateDetails } from '../types/IRateDetails';
-import { IWineEvolutionResponse, IWineEvolutionYear } from '../types/IWineEvolution';
+import { IWineEvolutionDetailsResponse, IWineEvolutionYearsResponse } from '../types/IWineEvolution';
 
 class WineService {
     constructor(
@@ -76,16 +76,31 @@ class WineService {
         }
     };
 
-    getEvolution = async (id: number): Promise<IResponse<IWineEvolutionResponse | IWineEvolutionYear[]>> => {
+    getEvolution = async (id: number, year?: number): Promise<IResponse<IWineEvolutionDetailsResponse>> => {
         try {
             const response = await this._requester.request({
                 method: 'GET',
                 url: `${this._links.wineEvolution}/${id}/evolution`,
+                params: typeof year === 'number' ? { year } : undefined,
             });
 
             return response;
         } catch (error) {
             console.warn('WineService -> getEvolution: ', error);
+            return { isError: true, data: null, message: '' } as any;
+        }
+    };
+
+    getEvolutionYears = async (id: number): Promise<IResponse<IWineEvolutionYearsResponse>> => {
+        try {
+            const response = await this._requester.request({
+                method: 'GET',
+                url: `${this._links.wineEvolution}/${id}/evolution/years`,
+            });
+
+            return response;
+        } catch (error) {
+            console.warn('WineService -> getEvolutionYears: ', error);
             return { isError: true, data: null, message: '' } as any;
         }
     };
