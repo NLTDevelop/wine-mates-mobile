@@ -10,7 +10,6 @@ import { TasteCharacteristicItem } from '@/UIKit/TasteCharacteristicItem';
 import { IStatistic, IVintagesItem, IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { StatisticCard } from '../StatisticCard';
-import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
 import { FoodPairing } from '@/UIKit/FoodPairing';
 import { TastingNote } from '../TastingNote';
 import { wineReviewsListModel } from '@/entities/wine/models/WineReviewsListModel';
@@ -159,10 +158,6 @@ export const ResultListHeader = ({
                         ))}
                     </View>
                 </>
-            )}
-
-            {data.statistics.topWinePeaks && data.statistics.topWinePeaks.length > 0 && (
-                <WinePeaksGrid peaks={data.statistics.topWinePeaks} showWithoutPremium={hasPremiumContentAccess} />
             )}
 
             {tasteCharacteristics.length > 0 && (

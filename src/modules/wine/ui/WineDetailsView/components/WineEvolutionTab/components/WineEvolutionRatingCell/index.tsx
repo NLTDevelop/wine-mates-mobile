@@ -4,7 +4,7 @@ import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { IWineEvolutionRating } from '@/modules/wine/types/IWineEvolution';
-import { getStyles } from '../../styles';
+import { getStyles } from './styles';
 
 interface IProps {
     rating: IWineEvolutionRating;

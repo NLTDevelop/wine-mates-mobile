@@ -3,6 +3,7 @@ export interface IWineEvolutionExpertAssessment {
     year: string;
     proScore: number | null;
     userScore: number | null;
+    userScoreText: string;
 }
 
 export interface IWineEvolutionRating {

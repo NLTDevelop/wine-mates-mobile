@@ -7,6 +7,7 @@ import { RateMedal } from '@/UIKit/RateMedal/ui';
 import { SmallStarRating } from '@/UIKit/SmallStarRating';
 import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
+import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { IWineEvolutionCarouselCard, IWineEvolutionExpertAssessment } from '@/modules/wine/types/IWineEvolution';
 import { EvolutionColorCarouselCard } from '../EvolutionColorCarouselCard';
 import { EvolutionLineChartCard } from '../EvolutionLineChartCard';
@@ -28,6 +29,7 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
         tastingYear,
         proAssessmentScore,
         wineLoverScore,
+        wineLoverScoreText,
         hasProAssessment,
         hasWineLoverScore,
         winePeakYear,
@@ -39,6 +41,8 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
         expertAssessments,
         expertActiveIndex,
         expertCarouselRef,
+        expertCarouselItemWidth,
+        onExpertItemLayout,
         onExpertProgressChange,
         onConfigureCarouselPanGesture,
         colorCards,
@@ -71,17 +75,37 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
 
     const renderExpertItem = useCallback(
         ({ item }: { item: IWineEvolutionExpertAssessment }) => (
-            <View style={styles.expertItem}>
+            <View style={styles.expertItem} onLayout={onExpertItemLayout}>
                 <View style={styles.expertMedalSlot}>
-                    {item.proScore && <RateMedal sliderValue={item.proScore as number} size={54} />}
+                    {item.proScore !== null ? (
+                        <RateMedal sliderValue={item.proScore} size={54} />
+                    ) : (
+                        <Typography text="-" variant="h5" style={styles.expertNoData} />
+                    )}
                 </View>
-                <View style={styles.expertStarsSlot}>
-                    {item.userScore && <SmallStarRating rating={item.userScore} starSize={14} />}
-                </View>
+                <Typography
+                    text={t('wine.evolution.proAssessment')}
+                    variant="subtitle_8_400"
+                    style={styles.expertRatingLabel}
+                />
+                {item.userScore !== null ? (
+                    <View style={styles.expertWineLoverScore}>
+                        <SmallStarRating rating={item.userScore} starSize={16} />
+                        <Typography text={`${item.userScoreText}`} variant="subtitle_12_400" style={styles.expertScore} />
+                    </View>
+                ) : (
+                    <Typography text="-" variant="h5" style={styles.expertNoData} />
+                )}
+
+                <Typography
+                    text={t('wine.evolution.wineLoverRating')}
+                    variant="subtitle_8_400"
+                    style={styles.expertRatingLabel}
+                />
                 <Typography text={item.year} variant="subtitle_10_400" style={styles.expertYear} />
             </View>
         ),
-        [styles],
+        [onExpertItemLayout, styles, t],
     );
 
     const renderColorItem = useCallback(
@@ -147,7 +171,17 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                 </View>
                                 <View style={styles.proAssessment}>
                                     {hasWineLoverScore ? (
-                                        <SmallStarRating rating={wineLoverScore as number} starSize={16} />
+                                        <View style={styles.selectedWineLoverRating}>
+                                            <SmallStarRating rating={wineLoverScore as number} starSize={26} />
+                                            <View style={styles.selectedRatingValueRow}>
+                                                <Typography
+                                                    text={wineLoverScoreText}
+                                                    variant="h5"
+                                                    style={styles.selectedRatingValue}
+                                                />
+                                                <FilledStarIcon width={16} height={16} color={colors.stars} />
+                                            </View>
+                                        </View>
                                     ) : (
                                         <Typography text="-" variant="h5" style={styles.proAssessmentNoData} />
                                     )}
@@ -194,12 +228,14 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                 style={styles.sectionTitle}
                             />
                             <Carousel
+                                key={expertCarouselItemWidth}
                                 ref={expertCarouselRef}
+                                defaultIndex={expertActiveIndex}
                                 loop={false}
                                 overscrollEnabled={false}
                                 pagingEnabled={false}
                                 snapEnabled
-                                width={styles.expertItem.width as number}
+                                width={expertCarouselItemWidth}
                                 height={styles.expertCarousel.height as number}
                                 style={styles.expertCarousel}
                                 data={expertAssessments}

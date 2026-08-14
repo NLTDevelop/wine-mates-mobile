@@ -55,7 +55,7 @@ export const getStyles = (colors: IColors) => {
             minHeight: scaleVertical(78),
             paddingVertical: scaleVertical(6),
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             gap: scaleVertical(2),
             backgroundColor: colors.background,
             borderWidth: scaleVertical(1),
@@ -73,17 +73,31 @@ export const getStyles = (colors: IColors) => {
             width: '100%',
             textAlign: 'center',
         },
+        selectedWineLoverRating: {
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: scaleVertical(2),
+        },
+        selectedRatingValueRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: scaleHorizontal(4),
+        },
+        selectedRatingValue: {
+            color: colors.text,
+        },
         expertCarousel: {
             width: '100%',
-            height: scaleVertical(100),
+            height: scaleVertical(134),
         },
         expertCarouselNoData: {
             alignItems: 'center',
             justifyContent: 'center',
         },
         expertItem: {
-            width: scaleHorizontal(96),
-            gap: scaleVertical(8),
+            gap: scaleVertical(2),
+            alignSelf: 'center',
             alignItems: 'center',
             justifyContent: 'center',
         },
@@ -91,9 +105,20 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'center',
         },
-        expertStarsSlot: {
+        expertWineLoverScore: {
+            flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
+            gap: scaleHorizontal(4),
+            marginTop: scaleVertical(4),
+        },
+        expertScore: {
+            color: colors.text,
+        },
+        expertRatingLabel: {
+            minHeight: scaleVertical(10),
+            color: colors.icon,
+            textAlign: 'center',
         },
         expertYear: {
             color: colors.icon,
@@ -104,97 +129,6 @@ export const getStyles = (colors: IColors) => {
         },
         proAssessmentNoData: {
             color: colors.icon,
-        },
-        ratingCard: {
-            backgroundColor: colors.background,
-            borderWidth: scaleVertical(1),
-            borderColor: colors.border,
-            borderRadius: scaleVertical(8),
-            overflow: 'hidden',
-        },
-        ratingTable: {
-            gap: 0,
-        },
-        ratingYearsHint: {
-            height: scaleVertical(20),
-            paddingLeft: scaleHorizontal(8),
-            justifyContent: 'center',
-            backgroundColor: colors.evolution_background_grey,
-        },
-        ratingYearsHintText: {
-            color: colors.text_light,
-        },
-        ratingHeader: {
-            height: scaleVertical(40),
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: colors.evolution_background_grey,
-            borderBottomWidth: scaleVertical(1),
-            borderBottomColor: colors.border_light,
-        },
-        ratingRow: {
-            height: scaleVertical(47),
-            flexDirection: 'row',
-            alignItems: 'center',
-            borderBottomWidth: scaleVertical(1),
-            borderBottomColor: colors.border_light,
-        },
-        ratingLabel: {
-            width: scaleHorizontal(68),
-            paddingLeft: scaleHorizontal(8),
-            color: colors.text,
-        },
-        ratingCell: {
-            width: scaleHorizontal(55),
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        ratingHeaderCell: {
-            height: scaleVertical(25),
-            position: 'relative',
-        },
-        ratingHeaderAccent: {
-            position: 'absolute',
-            top: 0,
-            alignSelf: 'center',
-            width: scaleHorizontal(36),
-            height: scaleVertical(2),
-            borderRadius: scaleVertical(2),
-        },
-        ratingHeaderAccentRed: {
-            backgroundColor: colors.evolutionChartRed,
-        },
-        ratingHeaderAccentGreen: {
-            backgroundColor: colors.evolutionChartGreen,
-        },
-        ratingHeaderAccentBlue: {
-            backgroundColor: colors.evolutionChartBlue,
-        },
-        ratingHeaderAccentYellow: {
-            backgroundColor: colors.evolutionChartYellow,
-        },
-        ratingHeaderAccentPurple: {
-            backgroundColor: colors.evolutionChartPurple,
-        },
-        ratingHeaderText: {
-            width: '100%',
-            color: colors.text,
-            textAlign: 'center',
-        },
-        ratingValue: {
-            color: colors.text,
-            textAlign: 'center',
-        },
-        ratingReviews: {
-            color: colors.text_light,
-            textAlign: 'center',
-        },
-        ratingValueRow: {
-            width: '100%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: scaleHorizontal(2),
         },
         winePeakCard: {
             height: scaleVertical(48),
