@@ -7,6 +7,7 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { useRoute, useIsFocused } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { wineModel } from '@/entities/wine/models/WineModel';
+import { getHasDetailedTasting } from '@/modules/wine/presenters/getHasDetailedTasting';
 
 interface IEventVintageResponse extends IVintage {
     avgExpertRating?: number | null;
@@ -119,9 +120,11 @@ export const useTastingWineDetails = () => {
         isSaved: localIsSaved ?? details.isSaved,
     } : null;
     const reviewsWineId = details?.id ?? wineId ?? null;
+    const isFoodPairingVisible = details ? getHasDetailedTasting(details) : false;
 
     return {
         details: detailsWithLocalIsSaved,
+        isFoodPairingVisible,
         isError,
         getDetails,
         isAllVintagesSelected,

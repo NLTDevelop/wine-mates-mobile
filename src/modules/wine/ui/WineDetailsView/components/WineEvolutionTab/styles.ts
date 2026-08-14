@@ -87,17 +87,12 @@ export const getStyles = (colors: IColors) => {
         selectedRatingValue: {
             color: colors.text,
         },
-        expertCarousel: {
-            width: '100%',
-            height: scaleVertical(134),
-        },
-        expertCarouselNoData: {
-            alignItems: 'center',
-            justifyContent: 'center',
+        expertList: {
+            gap: scaleHorizontal(12),
+            paddingVertical: scaleVertical(4),
         },
         expertItem: {
             gap: scaleVertical(2),
-            alignSelf: 'center',
             alignItems: 'center',
             justifyContent: 'center',
         },

@@ -18,9 +18,10 @@ import { wineReviewsListModel } from '@/entities/wine/models/WineReviewsListMode
 interface IProps {
     data: IWineDetails;
     hasReviews?: boolean;
+    isFoodPairingVisible: boolean;
 }
 
-export const TastingResultListHeader = ({ data, hasReviews }: IProps) => {
+export const TastingResultListHeader = ({ data, hasReviews, isFoodPairingVisible }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
@@ -122,8 +123,13 @@ export const TastingResultListHeader = ({ data, hasReviews }: IProps) => {
 
             {data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
 
-            {data.aiSnacks?.length ? (
-                <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton isLocked={!isPremiumUser} />
+            {isFoodPairingVisible ? (
+                <FoodPairing
+                    generatedSnacks={data.aiSnacks}
+                    snacks={data.aiSnacks || null}
+                    hideGenerateButton
+                    isLocked={!isPremiumUser}
+                />
             ) : null}
 
             {(hasReviews || (wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0)) && (

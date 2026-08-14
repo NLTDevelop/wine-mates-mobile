@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useWindowDimensions } from 'react-native';
-import type { LayoutChangeEvent } from 'react-native';
+import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import type { ICarouselInstance } from 'react-native-reanimated-carousel';
 import type { PanGesture } from 'react-native-gesture-handler';
 import { declOfWord, getContrastColor, scaleHorizontal, scaleVertical } from '@/utils';
@@ -44,8 +43,6 @@ const CHARACTERISTIC_NAME_ALIASES: Record<string, string[]> = {
 };
 const CAROUSEL_ACTIVE_OFFSET_X = 12;
 const CAROUSEL_FAIL_OFFSET_Y = 8;
-const EXPERT_ITEM_GAP = 12;
-const SCREEN_HORIZONTAL_PADDING = 32;
 const METRIC_GRAPH_PLOT_WIDTH = scaleHorizontal(233);
 const SUMMARY_GRAPH_PLOT_WIDTH = scaleHorizontal(276);
 const DEFAULT_CAROUSEL_HEIGHT = scaleVertical(420);
@@ -493,7 +490,6 @@ interface IProps {
 }
 
 export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IProps) => {
-    const { width: screenWidth } = useWindowDimensions();
     const [timelineData, setTimelineData] = useState<IWineEvolutionYearsResponse | null>(null);
     const [selectedEvolution, setSelectedEvolution] = useState<IWineEvolutionDetailsResponse | null>(null);
     const [isEvolutionLoading, setIsEvolutionLoading] = useState(true);
@@ -501,21 +497,16 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
     const [draftYear, setDraftYear] = useState(ALL_YEARS_VALUE);
     const [isYearPickerVisible, setIsYearPickerVisible] = useState(false);
     const [expertActiveIndex, setExpertActiveIndex] = useState(0);
-    const [expertMaxContentWidth, setExpertMaxContentWidth] = useState(0);
     const [colorActiveIndex, setColorActiveIndex] = useState(0);
     const [aromaActiveIndex, setAromaActiveIndex] = useState(0);
     const [tasteActiveIndex, setTasteActiveIndex] = useState(0);
     const [audienceVisibility, setAudienceVisibility] = useState({ men: true, women: true });
-    const expertCarouselRef = useRef<ICarouselInstance>(null);
     const colorCarouselRef = useRef<ICarouselInstance>(null);
     const aromaCarouselRef = useRef<ICarouselInstance>(null);
     const tasteCarouselRef = useRef<ICarouselInstance>(null);
     const selectedRequestIdRef = useRef(0);
     const selectedYearRef = useRef(ALL_YEARS_VALUE);
     const chartColors = useMemo(() => getChartColors(colors), [colors]);
-    const expertCarouselItemWidth = expertMaxContentWidth
-        ? expertMaxContentWidth + scaleHorizontal(EXPERT_ITEM_GAP)
-        : Math.max(screenWidth - scaleHorizontal(SCREEN_HORIZONTAL_PADDING), 1);
     const carouselItemWidth = scaleHorizontal(259);
 
     const onConfigureCarouselPanGesture = useCallback((panGesture: PanGesture) => {
@@ -704,15 +695,6 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
     const [colorCarouselHeight, setColorCarouselHeight] = useState(DEFAULT_CAROUSEL_HEIGHT);
     const [aromaCarouselHeight, setAromaCarouselHeight] = useState(DEFAULT_CAROUSEL_HEIGHT);
     const [tasteCarouselHeight, setTasteCarouselHeight] = useState(DEFAULT_CAROUSEL_HEIGHT);
-    const onExpertItemLayout = useCallback((event: LayoutChangeEvent) => {
-        const width = event?.nativeEvent?.layout?.width;
-
-        if (!width) {
-            return;
-        }
-
-        setExpertMaxContentWidth(currentWidth => Math.max(currentWidth, Math.ceil(width)));
-    }, []);
     const onColorCardLayout = useCallback((event: LayoutChangeEvent) => {
         const height = event?.nativeEvent?.layout?.height;
 
@@ -744,11 +726,16 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
     const getCarouselIndex = useCallback((itemsCount: number, absoluteProgress: number) => {
         return Math.max(0, Math.min(Math.max(itemsCount - 1, 0), Math.round(absoluteProgress)));
     }, []);
-    const onExpertProgressChange = useCallback(
-        (_: number, absoluteProgress: number) => {
-            setExpertActiveIndex(getCarouselIndex(expertAssessments.length, absoluteProgress));
+    const onExpertScroll = useCallback(
+        (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+            const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+            const maxOffset = Math.max(contentSize.width - layoutMeasurement.width, 0);
+            const scrollProgress = maxOffset > 0 ? Math.min(1, Math.max(0, contentOffset.x / maxOffset)) : 0;
+            const nextIndex = Math.round(scrollProgress * Math.max(expertAssessments.length - 1, 0));
+
+            setExpertActiveIndex(nextIndex);
         },
-        [expertAssessments.length, getCarouselIndex],
+        [expertAssessments.length],
     );
     const onColorProgressChange = useCallback(
         (_: number, absoluteProgress: number) => {
@@ -795,7 +782,6 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
     return {
         tastingYear: activeYear === ALL_YEARS_VALUE ? allYearsTitle : activeYear,
         proAssessmentScore,
-        wineLoverScore,
         wineLoverScoreText,
         hasProAssessment: proAssessmentScore !== null,
         hasWineLoverScore: wineLoverScore !== null,
@@ -807,10 +793,7 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
         yearOptions,
         expertAssessments,
         expertActiveIndex: Math.min(expertActiveIndex, Math.max(expertAssessments.length - 1, 0)),
-        expertCarouselRef,
-        expertCarouselItemWidth,
-        onExpertItemLayout,
-        onExpertProgressChange,
+        onExpertScroll,
         onConfigureCarouselPanGesture,
         colorCarouselHeight,
         onColorCardLayout,

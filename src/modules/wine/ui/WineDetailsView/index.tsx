@@ -30,6 +30,7 @@ export const WineDetailsView = observer(() => {
 
     const {
         details,
+        detailsRenderKey,
         vintages,
         isError,
         getDetails,
@@ -139,6 +140,7 @@ export const WineDetailsView = observer(() => {
                                             onPurchasePress={onPurchasePress}
                                         />
                                         <ResultListHeader
+                                            key={detailsRenderKey}
                                             data={details}
                                             vintages={vintages}
                                             onVintageChange={onVintageChange}

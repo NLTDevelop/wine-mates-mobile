@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
@@ -28,7 +28,6 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
     const {
         tastingYear,
         proAssessmentScore,
-        wineLoverScore,
         wineLoverScoreText,
         hasProAssessment,
         hasWineLoverScore,
@@ -40,10 +39,7 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
         yearOptions,
         expertAssessments,
         expertActiveIndex,
-        expertCarouselRef,
-        expertCarouselItemWidth,
-        onExpertItemLayout,
-        onExpertProgressChange,
+        onExpertScroll,
         onConfigureCarouselPanGesture,
         colorCards,
         colorActiveIndex,
@@ -75,7 +71,7 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
 
     const renderExpertItem = useCallback(
         ({ item }: { item: IWineEvolutionExpertAssessment }) => (
-            <View style={styles.expertItem} onLayout={onExpertItemLayout}>
+            <View style={styles.expertItem}>
                 <View style={styles.expertMedalSlot}>
                     {item.proScore !== null ? (
                         <RateMedal sliderValue={item.proScore} size={54} />
@@ -105,8 +101,10 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                 <Typography text={item.year} variant="subtitle_10_400" style={styles.expertYear} />
             </View>
         ),
-        [onExpertItemLayout, styles, t],
+        [styles, t],
     );
+
+    const expertKeyExtractor = useCallback((item: IWineEvolutionExpertAssessment) => item.id, []);
 
     const renderColorItem = useCallback(
         ({ item }: { item: IWineEvolutionCarouselCard }) => (
@@ -172,14 +170,14 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                 <View style={styles.proAssessment}>
                                     {hasWineLoverScore ? (
                                         <View style={styles.selectedWineLoverRating}>
-                                            <SmallStarRating rating={wineLoverScore as number} starSize={26} />
+                                            {/* <SmallStarRating rating={wineLoverScore as number} starSize={26} /> */}
                                             <View style={styles.selectedRatingValueRow}>
                                                 <Typography
                                                     text={wineLoverScoreText}
-                                                    variant="h5"
+                                                    variant="subtitle_32_500"
                                                     style={styles.selectedRatingValue}
                                                 />
-                                                <FilledStarIcon width={16} height={16} color={colors.stars} />
+                                                <FilledStarIcon width={24} height={24} color={colors.stars} />
                                             </View>
                                         </View>
                                     ) : (
@@ -227,21 +225,15 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                 variant="h4"
                                 style={styles.sectionTitle}
                             />
-                            <Carousel
-                                key={expertCarouselItemWidth}
-                                ref={expertCarouselRef}
-                                defaultIndex={expertActiveIndex}
-                                loop={false}
-                                overscrollEnabled={false}
-                                pagingEnabled={false}
-                                snapEnabled
-                                width={expertCarouselItemWidth}
-                                height={styles.expertCarousel.height as number}
-                                style={styles.expertCarousel}
+                            <FlatList
+                                horizontal
                                 data={expertAssessments}
-                                onProgressChange={onExpertProgressChange}
-                                onConfigurePanGesture={onConfigureCarouselPanGesture}
                                 renderItem={renderExpertItem}
+                                keyExtractor={expertKeyExtractor}
+                                contentContainerStyle={styles.expertList}
+                                showsHorizontalScrollIndicator={false}
+                                onScroll={onExpertScroll}
+                                scrollEventThrottle={16}
                             />
                             <EvolutionCarouselDots count={expertAssessments.length} activeIndex={expertActiveIndex} />
                         </View>

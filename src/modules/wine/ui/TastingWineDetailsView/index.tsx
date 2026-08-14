@@ -22,6 +22,7 @@ export const TastingWineDetailsView = observer(() => {
 
     const {
         details,
+        isFoodPairingVisible,
         isError,
         getDetails,
         isAllVintagesSelected,
@@ -63,7 +64,13 @@ export const TastingWineDetailsView = observer(() => {
                         refreshControl={refreshControl}
                         onEndReached={onEndReached}
                         contentContainerStyle={styles.containerStyle}
-                        ListHeaderComponent={<TastingResultListHeader data={details} hasReviews={data.length > 0} />}
+                        ListHeaderComponent={
+                            <TastingResultListHeader
+                                data={details}
+                                hasReviews={data.length > 0}
+                                isFoodPairingVisible={isFoodPairingVisible}
+                            />
+                        }
                         ListFooterComponent={isReviewsLoading && data?.length ? <ListFooterLoader /> : null}
                     />
                 )}
