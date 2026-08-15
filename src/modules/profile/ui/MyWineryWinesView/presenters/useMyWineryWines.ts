@@ -48,6 +48,7 @@ export const useMyWineryWines = () => {
     const [isTemplateDownloading, setIsTemplateDownloading] = useState(false);
     const [isCsvImportAlertVisible, setIsCsvImportAlertVisible] = useState(false);
     const [isError, setIsError] = useState(false);
+    const [hasSearchCriteria, setHasSearchCriteria] = useState(false);
     const [selectedWine, setSelectedWine] = useState<IWineListItem | null>(null);
     const [selectedOffer, setSelectedOffer] = useState<IWineOfferSummary | null>(null);
     const listRef = useRef<FlatList<IOfferedWineListItem>>(null);
@@ -125,6 +126,7 @@ export const useMyWineryWines = () => {
 
     const onSearch = useCallback(async (query: IWineListSearchQuery) => {
         searchQueryRef.current = query;
+        setHasSearchCriteria(Boolean(query.search.trim() || query.typeId || query.colorId));
         onResetPaginationRequests();
         await loadWines(0, 'initial');
     }, [loadWines, onResetPaginationRequests]);
@@ -357,6 +359,10 @@ export const useMyWineryWines = () => {
         isCsvImportAlertVisible,
         isOfferModalVisible: Boolean(selectedWine),
         isError,
+        emptyTitle: localization.t(hasSearchCriteria ? 'wine.noResultsTitle' : 'wine.emptyListTitle'),
+        emptyDescription: localization.t(
+            hasSearchCriteria ? 'wine.noResultsDescription' : 'wine.emptyListDescription',
+        ),
         selectedWine,
         selectedOffer,
         listRef,

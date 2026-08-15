@@ -139,5 +139,23 @@ export const useMyWine = () => {
         [navigation],
     );
 
-    return { data, onRefresh, onEndReached, onItemPress, isLoading, getList, scrollToTop, listRef };
+    const filters = wineListsModel.filters;
+    const hasSearchCriteria = Boolean(
+        wineListsModel.search.trim() || filters.types.length || filters.colors.length,
+    );
+
+    return {
+        data,
+        onRefresh,
+        onEndReached,
+        onItemPress,
+        isLoading,
+        getList,
+        scrollToTop,
+        listRef,
+        emptyTitle: localization.t(hasSearchCriteria ? 'wine.noResultsTitle' : 'wine.emptyListTitle'),
+        emptyDescription: localization.t(
+            hasSearchCriteria ? 'wine.noResultsDescription' : 'wine.emptyListDescription',
+        ),
+    };
 };

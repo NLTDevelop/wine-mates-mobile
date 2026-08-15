@@ -195,7 +195,7 @@
         "whatsInYourGlass": "Що у вашому келиху?",
         "enterData": "(Введіть дані вручну або проскануйте етикетку)",
         "wineLabel": "Етикетка вина",
-        "cropLabelPhoto": "Обріжте етикетку вина",
+        "cropLabelPhoto": "Наведіть на етикетку",
         "tasteWine": "Скуштуйте вино"
     },
     "wine": {
@@ -338,6 +338,10 @@
         "shareWineMessenger": "Поділитися в месенджері",
         "shareWineCopyLink": "Копіювати посилання",
         "shareWineLinkCopied": "Посилання на вино скопійовано до буферу обміну",
+        "emptyListTitle": "Тут поки немає вин",
+        "emptyListDescription": "Щойно вина з’являться, ви побачите їх у цьому списку.",
+        "noResultsTitle": "Вина не знайдено",
+        "noResultsDescription": "Спробуйте змінити параметри пошуку або скинути фільтри.",
         "customVintage": "Власний вінтаж",
         "expertScoreTitle": "Оцінка винного профі",
         "similarity": "Збіг по фото"
@@ -728,6 +732,8 @@
         "downloadReport": "Завантажити звіт",
         "reportSaved": "Звіт збережено",
         "noReportViewerApp": "На цьому пристрої немає застосунку, який може відкрити цей тип файлу.",
+        "accessDeniedTitle": "Ця подія недоступна",
+        "accessDeniedDescription": "Перегляд цієї події недоступний. Перевірте посилання або зверніться до організатора.",
         "duplicate": "Дублювати"
     },
     "eventGuests": {

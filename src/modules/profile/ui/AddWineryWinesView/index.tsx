@@ -79,6 +79,7 @@ export const AddWineryWinesView = observer(() => {
                             isLoading={isLoading}
                             image={<EmptyWineListIcon />}
                             text={t('profile.noAvailableWineryWines')}
+                            description={t('wine.noResultsDescription')}
                         />
                     }
                 />

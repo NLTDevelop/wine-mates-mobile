@@ -101,6 +101,7 @@ export const MyWinesForSaleView = () => {
                             isLoading={isLoading}
                             image={<EmptyWineListIcon />}
                             text={t('profile.noWinesForSale')}
+                            description={t('wine.emptyListDescription')}
                         />
                     }
                 />

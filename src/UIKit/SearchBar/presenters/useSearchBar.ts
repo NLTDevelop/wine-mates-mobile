@@ -1,19 +1,19 @@
 import { useCallback, useState } from 'react';
-import { NativeSyntheticEvent, TextInputFocusEventData } from 'react-native';
+import { TextInputProps } from 'react-native';
 
 export const useSearchBar = (
-    onChangeText?: (text: string) => void,
-    onFocus?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void,
-    onBlur?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void,
+    onChangeText?: TextInputProps['onChangeText'],
+    onFocus?: TextInputProps['onFocus'],
+    onBlur?: TextInputProps['onBlur'],
 ) => {
     const [isFocused, setIsFocused] = useState(false);
 
-    const onFocusInput = useCallback((event: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    const onFocusInput = useCallback<NonNullable<TextInputProps['onFocus']>>(event => {
         setIsFocused(true);
         onFocus?.(event);
     }, [onFocus]);
 
-    const onBlurInput = useCallback((event: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    const onBlurInput = useCallback<NonNullable<TextInputProps['onBlur']>>(event => {
         setIsFocused(false);
         onBlur?.(event);
     }, [onBlur]);

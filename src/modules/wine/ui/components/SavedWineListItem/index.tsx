@@ -10,6 +10,8 @@ import { useSavedWineListItem } from '@/modules/wine/presenters/useSavedWineList
 import { useSavedWineListItemView } from './presenters/useSavedWineListItemView';
 import { WineShareModal } from '@/UIKit/WineShareModal';
 import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
+import { EmptyListView } from '@/UIKit/EmptyListView';
+import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 
 interface IProps {
     listId: number;
@@ -18,7 +20,7 @@ interface IProps {
 }
 
 export const SavedWineListItem = ({ listId, title, onLongPress }: IProps) => {
-    const { colors } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { wines, isLoading, onWinePress, onExpand, onCollapse } = useSavedWineListItem(listId);
@@ -61,6 +63,13 @@ export const SavedWineListItem = ({ listId, title, onLongPress }: IProps) => {
                         ItemSeparatorComponent={renderSeparator}
                         style={styles.list}
                         scrollEnabled={false}
+                        ListEmptyComponent={
+                            <EmptyListView
+                                image={<EmptyWineListIcon width={120} height={120} />}
+                                text={t('wine.emptyListTitle')}
+                                description={t('wine.emptyListDescription')}
+                            />
+                        }
                     />
                 )}
             </FavoriteListDropdown>

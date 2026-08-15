@@ -17,10 +17,21 @@ import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShar
 import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
 
 export const MyWine = observer(() => {
-    const { colors , t } = useUiContext();
+    const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { data, onRefresh, onEndReached, onItemPress, isLoading, getList, listRef, scrollToTop } = useMyWine();
+    const {
+        data,
+        onRefresh,
+        onEndReached,
+        onItemPress,
+        isLoading,
+        getList,
+        listRef,
+        scrollToTop,
+        emptyTitle,
+        emptyDescription,
+    } = useMyWine();
     const { refreshControl } = useRefresh(onRefresh);
     const {
         isShareModalVisible,
@@ -63,7 +74,8 @@ export const MyWine = observer(() => {
                     <EmptyListView
                         isLoading={isLoading}
                         image={<EmptyWineListIcon />}
-                        text={t('common.nothingFoundTitle')}
+                        text={emptyTitle}
+                        description={emptyDescription}
                     />
                 }
             />

@@ -36,6 +36,8 @@ export const MyWineryWinesView = observer(() => {
         isCsvImportAlertVisible,
         isOfferModalVisible,
         isError,
+        emptyTitle,
+        emptyDescription,
         selectedWine,
         selectedOffer,
         listRef,
@@ -109,7 +111,8 @@ export const MyWineryWinesView = observer(() => {
                         <EmptyListView
                             isLoading={isLoading}
                             image={<EmptyWineListIcon />}
-                            text={t('profile.noWineryWines')}
+                            text={emptyTitle}
+                            description={emptyDescription}
                         />
                     }
                 />

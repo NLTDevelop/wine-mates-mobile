@@ -91,6 +91,7 @@ export const ChooseWineResultsView = observer(() => {
                         isLoading={isLoading}
                         image={<EmptyWineListIcon />}
                         text={t('chooseWine.noResults')}
+                        description={t('wine.noResultsDescription')}
                     />
                 }
                 showsVerticalScrollIndicator={false}

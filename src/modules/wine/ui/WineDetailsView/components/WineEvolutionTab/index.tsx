@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { FlatList, TouchableOpacity, View } from 'react-native';
-import Carousel from 'react-native-reanimated-carousel';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { RateMedal } from '@/UIKit/RateMedal/ui';
@@ -8,7 +7,11 @@ import { SmallStarRating } from '@/UIKit/SmallStarRating';
 import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
-import { IWineEvolutionCarouselCard, IWineEvolutionExpertAssessment } from '@/modules/wine/types/IWineEvolution';
+import {
+    IWineEvolutionCarouselCard,
+    IWineEvolutionChart,
+    IWineEvolutionExpertAssessment,
+} from '@/modules/wine/types/IWineEvolution';
 import { EvolutionColorCarouselCard } from '../EvolutionColorCarouselCard';
 import { EvolutionLineChartCard } from '../EvolutionLineChartCard';
 import { WineEvolutionAmateurRating } from '../WineEvolutionAmateurRating';
@@ -40,25 +43,15 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
         expertAssessments,
         expertActiveIndex,
         onExpertScroll,
-        onConfigureCarouselPanGesture,
         colorCards,
         colorActiveIndex,
-        colorCarouselRef,
-        onColorProgressChange,
-        colorCarouselHeight,
-        onColorCardLayout,
+        onColorScroll,
         aromaCards,
         aromaActiveIndex,
-        aromaCarouselRef,
-        onAromaProgressChange,
-        aromaCarouselHeight,
-        onAromaCardLayout,
+        onAromaScroll,
         tasteCards,
         tasteActiveIndex,
-        tasteCarouselRef,
-        onTasteProgressChange,
-        tasteCarouselHeight,
-        onTasteCardLayout,
+        onTasteScroll,
         amateurAgeGroups,
         amateurRatingRows,
         assessmentChart,
@@ -107,25 +100,28 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
     const expertKeyExtractor = useCallback((item: IWineEvolutionExpertAssessment) => item.id, []);
 
     const renderColorItem = useCallback(
-        ({ item }: { item: IWineEvolutionCarouselCard }) => (
-            <EvolutionColorCarouselCard card={item} onLayout={onColorCardLayout} />
-        ),
-        [onColorCardLayout],
+        ({ item }: { item: IWineEvolutionCarouselCard }) => <EvolutionColorCarouselCard card={item} />,
+        [],
     );
 
     const renderAromaItem = useCallback(
-        ({ item }: { item: IWineEvolutionCarouselCard }) => (
-            <EvolutionColorCarouselCard card={item} onLayout={onAromaCardLayout} />
-        ),
-        [onAromaCardLayout],
+        ({ item }: { item: IWineEvolutionCarouselCard }) => <EvolutionColorCarouselCard card={item} />,
+        [],
     );
 
     const renderTasteItem = useCallback(
-        ({ item }: { item: IWineEvolutionCarouselCard }) => (
-            <EvolutionColorCarouselCard card={item} onLayout={onTasteCardLayout} />
-        ),
-        [onTasteCardLayout],
+        ({ item }: { item: IWineEvolutionCarouselCard }) => <EvolutionColorCarouselCard card={item} />,
+        [],
     );
+
+    const carouselKeyExtractor = useCallback((item: IWineEvolutionCarouselCard) => item.id, []);
+
+    const renderLineChartItem = useCallback(
+        ({ item }: { item: IWineEvolutionChart }) => <EvolutionLineChartCard chart={item} />,
+        [],
+    );
+
+    const lineChartKeyExtractor = useCallback((item: IWineEvolutionChart) => item.id, []);
 
     return (
         <>
@@ -170,7 +166,6 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                 <View style={styles.proAssessment}>
                                     {hasWineLoverScore ? (
                                         <View style={styles.selectedWineLoverRating}>
-                                            {/* <SmallStarRating rating={wineLoverScore as number} starSize={26} /> */}
                                             <View style={styles.selectedRatingValueRow}>
                                                 <Typography
                                                     text={wineLoverScoreText}
@@ -186,7 +181,7 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                     <Typography
                                         text={t('wine.evolution.wineLoversRating')}
                                         variant="subtitle_10_400"
-                                        style={styles.proAssessmentLabel}
+                                        style={[styles.proAssessmentLabel, styles.selectedWineLoverRatingLabel]}
                                     />
                                 </View>
                             </View>
@@ -249,17 +244,18 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                 />
                             </View>
                             <View style={styles.carouselViewport}>
-                                <Carousel
-                                    ref={colorCarouselRef}
-                                    loop={false}
-                                    overscrollEnabled={false}
-                                    width={carouselItemWidth}
-                                    height={colorCarouselHeight}
-                                    style={styles.carousel}
+                                <FlatList
+                                    horizontal
                                     data={colorCards}
-                                    onProgressChange={onColorProgressChange}
-                                    onConfigurePanGesture={onConfigureCarouselPanGesture}
                                     renderItem={renderColorItem}
+                                    keyExtractor={carouselKeyExtractor}
+                                    contentContainerStyle={styles.carouselList}
+                                    showsHorizontalScrollIndicator={false}
+                                    snapToInterval={carouselItemWidth}
+                                    disableIntervalMomentum
+                                    decelerationRate="fast"
+                                    onScroll={onColorScroll}
+                                    scrollEventThrottle={16}
                                 />
                             </View>
                             <EvolutionCarouselDots count={colorCards.length} activeIndex={colorActiveIndex} />
@@ -276,17 +272,18 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                 />
                             </View>
                             <View style={styles.carouselViewport}>
-                                <Carousel
-                                    ref={aromaCarouselRef}
-                                    loop={false}
-                                    overscrollEnabled={false}
-                                    width={carouselItemWidth}
-                                    height={aromaCarouselHeight}
-                                    style={styles.carousel}
+                                <FlatList
+                                    horizontal
                                     data={aromaCards}
-                                    onProgressChange={onAromaProgressChange}
-                                    onConfigurePanGesture={onConfigureCarouselPanGesture}
                                     renderItem={renderAromaItem}
+                                    keyExtractor={carouselKeyExtractor}
+                                    contentContainerStyle={styles.carouselList}
+                                    showsHorizontalScrollIndicator={false}
+                                    snapToInterval={carouselItemWidth}
+                                    disableIntervalMomentum
+                                    decelerationRate="fast"
+                                    onScroll={onAromaScroll}
+                                    scrollEventThrottle={16}
                                 />
                             </View>
                             <EvolutionCarouselDots count={aromaCards.length} activeIndex={aromaActiveIndex} />
@@ -303,17 +300,18 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                 />
                             </View>
                             <View style={styles.carouselViewport}>
-                                <Carousel
-                                    ref={tasteCarouselRef}
-                                    loop={false}
-                                    overscrollEnabled={false}
-                                    width={carouselItemWidth}
-                                    height={tasteCarouselHeight}
-                                    style={styles.carousel}
+                                <FlatList
+                                    horizontal
                                     data={tasteCards}
-                                    onProgressChange={onTasteProgressChange}
-                                    onConfigurePanGesture={onConfigureCarouselPanGesture}
                                     renderItem={renderTasteItem}
+                                    keyExtractor={carouselKeyExtractor}
+                                    contentContainerStyle={styles.carouselList}
+                                    showsHorizontalScrollIndicator={false}
+                                    snapToInterval={carouselItemWidth}
+                                    disableIntervalMomentum
+                                    decelerationRate="fast"
+                                    onScroll={onTasteScroll}
+                                    scrollEventThrottle={16}
                                 />
                             </View>
                             <EvolutionCarouselDots count={tasteCards.length} activeIndex={tasteActiveIndex} />
@@ -329,14 +327,13 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                     style={styles.metricSectionTitle}
                                 />
                             </View>
-                            <View style={styles.metricList}>
-                                {lineCharts[0] ? <EvolutionLineChartCard chart={lineCharts[0]} /> : null}
-                                {lineCharts[1] ? <EvolutionLineChartCard chart={lineCharts[1]} /> : null}
-                                {lineCharts[2] ? <EvolutionLineChartCard chart={lineCharts[2]} /> : null}
-                                {lineCharts[3] ? <EvolutionLineChartCard chart={lineCharts[3]} /> : null}
-                                {lineCharts[4] ? <EvolutionLineChartCard chart={lineCharts[4]} /> : null}
-                                {lineCharts[5] ? <EvolutionLineChartCard chart={lineCharts[5]} /> : null}
-                            </View>
+                            <FlatList
+                                data={lineCharts}
+                                renderItem={renderLineChartItem}
+                                keyExtractor={lineChartKeyExtractor}
+                                contentContainerStyle={styles.metricList}
+                                scrollEnabled={false}
+                            />
                         </View>
                     ) : null}
                 </View>

@@ -11,6 +11,8 @@ export interface IWineEvolutionRating {
     reviews: number;
     scoreText: string;
     reviewsText: string;
+    isActive: boolean;
+    onPress: () => void;
 }
 
 export interface IWineEvolutionRatingRow {
@@ -52,9 +54,30 @@ export interface IWineEvolutionChartPoint {
     valueText: string;
 }
 
+export interface IWineEvolutionXAxisLabel {
+    id: string;
+    text: string;
+    style: {
+        position: 'absolute';
+        bottom: number;
+        left: number;
+        width: number;
+    };
+}
+
 export interface IWineEvolutionAudienceControl {
     id: 'men' | 'women';
     title: string;
+    isActive: boolean;
+    onPress: () => void;
+    ageControls: IWineEvolutionAgeControl[];
+}
+
+export interface IWineEvolutionAgeControl {
+    id: string;
+    title: string;
+    color: string;
+    backgroundColor: string;
     isActive: boolean;
     onPress: () => void;
 }

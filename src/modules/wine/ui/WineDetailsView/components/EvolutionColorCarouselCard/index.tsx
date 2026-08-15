@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { FlatList, Image, LayoutChangeEvent, View } from 'react-native';
+import { FlatList, Image, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { IWineEvolutionCarouselCard, IWineEvolutionColorStat } from '@/modules/wine/types/IWineEvolution';
@@ -7,10 +7,9 @@ import { getStyles } from './styles';
 
 interface IProps {
     card: IWineEvolutionCarouselCard;
-    onLayout: (event: LayoutChangeEvent) => void;
 }
 
-export const EvolutionColorCarouselCard = ({ card, onLayout }: IProps) => {
+export const EvolutionColorCarouselCard = ({ card }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
@@ -35,7 +34,7 @@ export const EvolutionColorCarouselCard = ({ card, onLayout }: IProps) => {
     const keyExtractor = useCallback((item: IWineEvolutionColorStat, index: number) => `${item.label}-${index}`, []);
 
     return (
-        <View style={styles.carouselItem} onLayout={onLayout}>
+        <View style={styles.carouselItem}>
             <View style={styles.statCard}>
                 {card.isEmpty ? (
                     <View style={styles.emptyCard}>

@@ -74,9 +74,17 @@ export const getStyles = (colors: IColors) => {
             textAlign: 'center',
         },
         selectedWineLoverRating: {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
             alignItems: 'center',
             justifyContent: 'center',
-            gap: scaleVertical(2),
+        },
+        selectedWineLoverRatingLabel: {
+            position: 'absolute',
+            bottom: scaleVertical(6),
         },
         selectedRatingValueRow: {
             flexDirection: 'row',
@@ -173,8 +181,9 @@ export const getStyles = (colors: IColors) => {
         carouselViewport: {
             marginLeft: scaleHorizontal(16),
         },
-        carousel: {
-            overflow: 'visible',
+        carouselList: {
+            gap: scaleHorizontal(12),
+            paddingRight: scaleHorizontal(16),
         },
         metricSection: {
             gap: scaleVertical(8),

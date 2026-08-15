@@ -7,25 +7,24 @@ export const getStyles = (colors: IColors) => {
         container: {
             flex: 1,
             alignItems: 'center',
-            paddingHorizontal: scaleHorizontal(16),
-            paddingVertical: scaleVertical(24),
-            gap: scaleVertical(16),
-        },
-        content: {
-            flex: 1,
-            width: '100%',
-            alignItems: 'center',
             justifyContent: 'center',
+            paddingHorizontal: scaleHorizontal(32),
+            paddingBottom: scaleVertical(48),
+        },
+        image: {
+            width: scaleHorizontal(216),
+            height: scaleHorizontal(216),
         },
         title: {
-            marginTop: scaleVertical(16),
-            marginBottom: scaleVertical(12),
+            color: colors.text,
+            marginTop: scaleVertical(20),
             textAlign: 'center',
         },
         description: {
             color: colors.text_light,
+            marginTop: scaleVertical(12),
+            maxWidth: scaleHorizontal(300),
             textAlign: 'center',
-            paddingHorizontal: scaleHorizontal(16),
         },
     });
 

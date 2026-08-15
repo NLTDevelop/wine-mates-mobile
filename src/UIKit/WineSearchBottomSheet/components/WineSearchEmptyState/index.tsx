@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
+import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 import { getStyles } from './styles';
 
 interface IProps {
@@ -10,7 +11,7 @@ interface IProps {
 }
 
 export const WineSearchEmptyState = ({ text, isLoading }: IProps) => {
-    const { colors } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     if (isLoading) {
@@ -24,7 +25,13 @@ export const WineSearchEmptyState = ({ text, isLoading }: IProps) => {
     return (
         <View style={styles.container}>
             <View style={styles.content}>
-                <Typography variant="body_400" text={text} style={styles.text} />
+                <EmptyWineListIcon />
+                <Typography variant="h5" text={text} style={styles.title} />
+                <Typography
+                    variant="body_500"
+                    text={t('wine.noResultsDescription')}
+                    style={styles.description}
+                />
             </View>
         </View>
     );

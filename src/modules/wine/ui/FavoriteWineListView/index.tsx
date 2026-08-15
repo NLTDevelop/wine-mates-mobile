@@ -17,6 +17,8 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import { WineShareModal } from '@/UIKit/WineShareModal';
 import { useWineShareModal } from '@/UIKit/WineShareModal/presenters/useWineShareModal';
 import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
+import { EmptyListView } from '@/UIKit/EmptyListView';
+import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 
 type RootStackParamList = {
     FavoriteWineListView: {
@@ -31,7 +33,7 @@ export const FavoriteWineListView = observer(() => {
 
     const { params } = useRoute<FavoriteWineListViewRouteProp>();
     const { listId, listName } = params;
-    const { colors } = useUiContext();
+    const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     const { wines, isLoading, isError, onWinePress, loadWines } = useFavoriteWineListView(listId);
@@ -79,6 +81,13 @@ export const FavoriteWineListView = observer(() => {
                         ItemSeparatorComponent={renderSeparator}
                         refreshControl={refreshControl}
                         contentContainerStyle={styles.containerStyle}
+                        ListEmptyComponent={
+                            <EmptyListView
+                                image={<EmptyWineListIcon />}
+                                text={t('wine.emptyListTitle')}
+                                description={t('wine.emptyListDescription')}
+                            />
+                        }
                     />
                 )}
                 <WineShareModal
