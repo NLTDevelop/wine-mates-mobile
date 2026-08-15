@@ -14,6 +14,7 @@ import { toastService } from '@/libs/toast/toastService';
 import { useColorShades } from '@/modules/wine/presenters/useColorShades';
 import { localization } from '@/UIProvider/localization/Localization';
 import { MAX_FOOD_PAIRING_CUISINES } from '@/entities/snacks/constants';
+import { getHasDetailedTasting } from '@/modules/wine/presenters/getHasDetailedTasting';
 
 export const useResultListHeader = (data: IWineDetails, vintages: IVintagesItem[]) => {
     const [aiUsage, setAiUsage] = useState(data.aiUsage);
@@ -26,6 +27,7 @@ export const useResultListHeader = (data: IWineDetails, vintages: IVintagesItem[
         return (getWineSnackCuisinesCache(data.id) || []).slice(0, MAX_FOOD_PAIRING_CUISINES);
     });
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
+    const isFoodPairingVisible = useMemo(() => getHasDetailedTasting(data), [data]);
 
     const tasteCharacteristics = useMemo(() => {
         return data.statistics.tasteCharacteristics?.filter(item => item?.levels && item?.selectedIndex != null) ?? [];
@@ -77,7 +79,8 @@ export const useResultListHeader = (data: IWineDetails, vintages: IVintagesItem[
     useEffect(() => {
         setSnacks(data.aiSnacks || null);
         setAiUsage(data.aiUsage);
-    }, [data.aiSnacks, data.aiUsage, data.id]);
+        setIsGeneratingSnacks(false);
+    }, [data.aiSnacks, data.aiUsage, data.id, data.vintage]);
 
     useEffect(() => {
         setIsCuisineModalVisible(false);
@@ -85,7 +88,7 @@ export const useResultListHeader = (data: IWineDetails, vintages: IVintagesItem[
             (getWineSnackCuisinesCache(data.id) || []).slice(0, MAX_FOOD_PAIRING_CUISINES),
         );
         setCuisines([]);
-    }, [data.id]);
+    }, [data.id, data.vintage]);
 
     const loadCuisines = useCallback(async () => {
         try {
@@ -196,6 +199,7 @@ export const useResultListHeader = (data: IWineDetails, vintages: IVintagesItem[
         colorShadeItems,
         tasteCharacteristics,
         isVintageTasted,
+        isFoodPairingVisible,
         aiUsage,
         snacks,
         isGeneratingSnacks,

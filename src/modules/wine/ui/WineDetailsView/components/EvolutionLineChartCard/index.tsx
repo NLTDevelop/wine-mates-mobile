@@ -1,13 +1,12 @@
 import { useCallback, useMemo } from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
-import { GestureDetector } from 'react-native-gesture-handler';
-import Animated from 'react-native-reanimated';
 import { Circle, Line, Path, Rect, Svg } from 'react-native-svg';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
-import { IWineEvolutionChart } from '@/modules/wine/types/IWineEvolution';
+import { IWineEvolutionChart, IWineEvolutionXAxisLabel } from '@/modules/wine/types/IWineEvolution';
 import { getStyles } from './styles';
 import { useEvolutionLineChart } from './presenters/useEvolutionLineChart';
+import { EvolutionAgeRatingFilter } from '../EvolutionAgeRatingFilter';
 
 interface IProps {
     chart: IWineEvolutionChart;
@@ -20,23 +19,26 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
     const { colors } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const {
-        animatedChartStyle,
         onPlotPress,
-        pinchGesture,
+        onScroll,
+        onScrollViewportLayout,
+        onTooltipLayout,
         plotWidth,
+        scrollViewRef,
         selectedPoint,
         shouldRenderPlot,
         shouldShowYAxis,
         shouldUseNoDataStyle,
         tooltipPosition,
+        xAxisLabelItems,
     } = useEvolutionLineChart({ chart, isSummary });
     const renderXAxisLabel = useCallback(
-        (label: string, index: number) => (
+        (item: IWineEvolutionXAxisLabel) => (
             <Typography
-                key={`${label}-${index}`}
-                text={label}
+                key={item.id}
+                text={item.text}
                 variant={CHART_TEXT_VARIANT}
-                style={styles.graphXAxisLabel}
+                style={[styles.graphXAxisLabel, item.style]}
                 numberOfLines={1}
             />
         ),
@@ -74,14 +76,74 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                     style={styles.graphYAxis}
                                     numberOfLines={2}
                                 />
+                                {chart.yAxisLabels[3] !== undefined ? (
+                                    <Typography
+                                        text={chart.yAxisLabels[3]}
+                                        variant={CHART_TEXT_VARIANT}
+                                        style={styles.graphYAxis}
+                                    />
+                                ) : null}
+                                {chart.yAxisLabels[4] !== undefined ? (
+                                    <Typography
+                                        text={chart.yAxisLabels[4]}
+                                        variant={CHART_TEXT_VARIANT}
+                                        style={styles.graphYAxis}
+                                    />
+                                ) : null}
+                                {chart.yAxisLabels[5] !== undefined ? (
+                                    <Typography
+                                        text={chart.yAxisLabels[5]}
+                                        variant={CHART_TEXT_VARIANT}
+                                        style={styles.graphYAxis}
+                                    />
+                                ) : null}
+                                {chart.yAxisLabels[6] !== undefined ? (
+                                    <Typography
+                                        text={chart.yAxisLabels[6]}
+                                        variant={CHART_TEXT_VARIANT}
+                                        style={styles.graphYAxis}
+                                    />
+                                ) : null}
+                                {chart.yAxisLabels[7] !== undefined ? (
+                                    <Typography
+                                        text={chart.yAxisLabels[7]}
+                                        variant={CHART_TEXT_VARIANT}
+                                        style={styles.graphYAxis}
+                                    />
+                                ) : null}
+                                {chart.yAxisLabels[8] !== undefined ? (
+                                    <Typography
+                                        text={chart.yAxisLabels[8]}
+                                        variant={CHART_TEXT_VARIANT}
+                                        style={styles.graphYAxis}
+                                    />
+                                ) : null}
+                                {chart.yAxisLabels[9] !== undefined ? (
+                                    <Typography
+                                        text={chart.yAxisLabels[9]}
+                                        variant={CHART_TEXT_VARIANT}
+                                        style={styles.graphYAxis}
+                                    />
+                                ) : null}
+                                {chart.yAxisLabels[10] !== undefined ? (
+                                    <Typography
+                                        text={chart.yAxisLabels[10]}
+                                        variant={CHART_TEXT_VARIANT}
+                                        style={styles.graphYAxis}
+                                    />
+                                ) : null}
                             </>
                         ) : null}
                     </View>
                     <ScrollView
+                        ref={scrollViewRef}
                         horizontal
                         nestedScrollEnabled
                         showsHorizontalScrollIndicator={false}
                         style={styles.graphScrollViewport}
+                        onLayout={onScrollViewportLayout}
+                        onScroll={onScroll}
+                        scrollEventThrottle={16}
                     >
                         <View style={[styles.graphScrollContent, { width: plotWidth }]}>
                             <View
@@ -98,8 +160,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                 {!shouldRenderPlot ? (
                                     <Typography text="-" variant={CHART_TEXT_VARIANT} style={styles.graphNoDataText} />
                                 ) : (
-                                    <GestureDetector gesture={pinchGesture}>
-                                        <Animated.View style={[styles.chartZoomLayer, animatedChartStyle]}>
+                                    <View style={styles.chartZoomLayer}>
                                             <Svg
                                                 width={plotWidth}
                                                 height="100%"
@@ -169,6 +230,61 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                         y1={chart.gridY[5]}
                                                         x2={chart.plotWidth}
                                                         y2={chart.gridY[5]}
+                                                        stroke={colors.evolution_background_grey}
+                                                        strokeWidth={1}
+                                                        strokeDasharray="2 5"
+                                                    />
+                                                ) : null}
+                                                {chart.gridY[6] !== undefined ? (
+                                                    <Line
+                                                        x1="0"
+                                                        y1={chart.gridY[6]}
+                                                        x2={chart.plotWidth}
+                                                        y2={chart.gridY[6]}
+                                                        stroke={colors.evolution_background_grey}
+                                                        strokeWidth={1}
+                                                        strokeDasharray="2 5"
+                                                    />
+                                                ) : null}
+                                                {chart.gridY[7] !== undefined ? (
+                                                    <Line
+                                                        x1="0"
+                                                        y1={chart.gridY[7]}
+                                                        x2={chart.plotWidth}
+                                                        y2={chart.gridY[7]}
+                                                        stroke={colors.evolution_background_grey}
+                                                        strokeWidth={1}
+                                                        strokeDasharray="2 5"
+                                                    />
+                                                ) : null}
+                                                {chart.gridY[8] !== undefined ? (
+                                                    <Line
+                                                        x1="0"
+                                                        y1={chart.gridY[8]}
+                                                        x2={chart.plotWidth}
+                                                        y2={chart.gridY[8]}
+                                                        stroke={colors.evolution_background_grey}
+                                                        strokeWidth={1}
+                                                        strokeDasharray="2 5"
+                                                    />
+                                                ) : null}
+                                                {chart.gridY[9] !== undefined ? (
+                                                    <Line
+                                                        x1="0"
+                                                        y1={chart.gridY[9]}
+                                                        x2={chart.plotWidth}
+                                                        y2={chart.gridY[9]}
+                                                        stroke={colors.evolution_background_grey}
+                                                        strokeWidth={1}
+                                                        strokeDasharray="2 5"
+                                                    />
+                                                ) : null}
+                                                {chart.gridY[10] !== undefined ? (
+                                                    <Line
+                                                        x1="0"
+                                                        y1={chart.gridY[10]}
+                                                        x2={chart.plotWidth}
+                                                        y2={chart.gridY[10]}
                                                         stroke={colors.evolution_background_grey}
                                                         strokeWidth={1}
                                                         strokeDasharray="2 5"
@@ -340,7 +456,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                         cy={selectedPoint.y}
                                                         r={5}
                                                         fill={selectedPoint.color}
-                                                        stroke={colors.background}
+                                                        stroke={selectedPoint.color}
                                                         strokeWidth={2}
                                                         onPress={onPlotPress}
                                                     />
@@ -350,12 +466,8 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 <View
                                                     pointerEvents="none"
                                                     style={[styles.graphTooltip, tooltipPosition]}
+                                                    onLayout={onTooltipLayout}
                                                 >
-                                                    <Typography
-                                                        text={selectedPoint.year}
-                                                        variant="subtitle_10_400"
-                                                        style={styles.graphTooltipYear}
-                                                    />
                                                     <Typography
                                                         text={selectedPoint.valueText}
                                                         variant="subtitle_12_500"
@@ -363,12 +475,16 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                     />
                                                 </View>
                                             ) : null}
-                                        </Animated.View>
-                                    </GestureDetector>
+                                    </View>
                                 )}
                             </View>
-                            <View style={[isSummary ? styles.graphXAxis : styles.metricXAxis, { width: plotWidth }]}>
-                                {chart.xAxisLabels.map(renderXAxisLabel)}
+                            <View
+                                style={[
+                                    isSummary ? styles.graphXAxis : styles.metricXAxis,
+                                    { width: plotWidth },
+                                ]}
+                            >
+                                {xAxisLabelItems.map(renderXAxisLabel)}
                             </View>
                         </View>
                     </ScrollView>
@@ -400,26 +516,21 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                         </View>
                     ) : null}
                     <View style={styles.chips}>
-                        <View style={[styles.chip, styles.redChip]}>
-                            <View style={[styles.chipDot, styles.redChipDot]} />
-                            <Typography text="18-25" variant="subtitle_10_400" style={styles.chipText} />
-                        </View>
-                        <View style={[styles.chip, styles.greenChip]}>
-                            <View style={[styles.chipDot, styles.greenChipDot]} />
-                            <Typography text="26-35" variant="subtitle_10_400" style={styles.chipText} />
-                        </View>
-                        <View style={[styles.chip, styles.blueChip]}>
-                            <View style={[styles.chipDot, styles.blueChipDot]} />
-                            <Typography text="36-45" variant="subtitle_10_400" style={styles.chipText} />
-                        </View>
-                        <View style={[styles.chip, styles.yellowChip]}>
-                            <View style={[styles.chipDot, styles.yellowChipDot]} />
-                            <Typography text="46-60" variant="subtitle_10_400" style={styles.chipText} />
-                        </View>
-                        <View style={[styles.chip, styles.purpleChip]}>
-                            <View style={[styles.chipDot, styles.purpleChipDot]} />
-                            <Typography text="60+" variant="subtitle_10_400" style={styles.chipText} />
-                        </View>
+                        {chart.audienceControls?.[0]?.ageControls[0] ? (
+                            <EvolutionAgeRatingFilter control={chart.audienceControls[0].ageControls[0]} />
+                        ) : null}
+                        {chart.audienceControls?.[0]?.ageControls[1] ? (
+                            <EvolutionAgeRatingFilter control={chart.audienceControls[0].ageControls[1]} />
+                        ) : null}
+                        {chart.audienceControls?.[0]?.ageControls[2] ? (
+                            <EvolutionAgeRatingFilter control={chart.audienceControls[0].ageControls[2]} />
+                        ) : null}
+                        {chart.audienceControls?.[0]?.ageControls[3] ? (
+                            <EvolutionAgeRatingFilter control={chart.audienceControls[0].ageControls[3]} />
+                        ) : null}
+                        {chart.audienceControls?.[0]?.ageControls[4] ? (
+                            <EvolutionAgeRatingFilter control={chart.audienceControls[0].ageControls[4]} />
+                        ) : null}
                     </View>
                     {chart.audienceControls?.[1] ? (
                         <TouchableOpacity onPress={chart.audienceControls[1].onPress} style={styles.audienceHeader}>
@@ -444,26 +555,21 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                         </TouchableOpacity>
                     ) : null}
                     <View style={styles.chips}>
-                        <View style={[styles.chip, styles.redChip]}>
-                            <View style={[styles.chipDot, styles.redChipDot]} />
-                            <Typography text="18-25" variant="subtitle_10_400" style={styles.chipText} />
-                        </View>
-                        <View style={[styles.chip, styles.greenChip]}>
-                            <View style={[styles.chipDot, styles.greenChipDot]} />
-                            <Typography text="26-35" variant="subtitle_10_400" style={styles.chipText} />
-                        </View>
-                        <View style={[styles.chip, styles.blueChip]}>
-                            <View style={[styles.chipDot, styles.blueChipDot]} />
-                            <Typography text="36-45" variant="subtitle_10_400" style={styles.chipText} />
-                        </View>
-                        <View style={[styles.chip, styles.yellowChip]}>
-                            <View style={[styles.chipDot, styles.yellowChipDot]} />
-                            <Typography text="46-60" variant="subtitle_10_400" style={styles.chipText} />
-                        </View>
-                        <View style={[styles.chip, styles.purpleChip]}>
-                            <View style={[styles.chipDot, styles.purpleChipDot]} />
-                            <Typography text="60+" variant="subtitle_10_400" style={styles.chipText} />
-                        </View>
+                        {chart.audienceControls?.[1]?.ageControls[0] ? (
+                            <EvolutionAgeRatingFilter control={chart.audienceControls[1].ageControls[0]} />
+                        ) : null}
+                        {chart.audienceControls?.[1]?.ageControls[1] ? (
+                            <EvolutionAgeRatingFilter control={chart.audienceControls[1].ageControls[1]} />
+                        ) : null}
+                        {chart.audienceControls?.[1]?.ageControls[2] ? (
+                            <EvolutionAgeRatingFilter control={chart.audienceControls[1].ageControls[2]} />
+                        ) : null}
+                        {chart.audienceControls?.[1]?.ageControls[3] ? (
+                            <EvolutionAgeRatingFilter control={chart.audienceControls[1].ageControls[3]} />
+                        ) : null}
+                        {chart.audienceControls?.[1]?.ageControls[4] ? (
+                            <EvolutionAgeRatingFilter control={chart.audienceControls[1].ageControls[4]} />
+                        ) : null}
                     </View>
                 </View>
             ) : null}

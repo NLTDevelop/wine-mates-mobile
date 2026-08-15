@@ -72,7 +72,8 @@ export const ScanResultsListView = observer(() => {
                         <EmptyListView
                             isLoading={isLoading}
                             image={<EmptyWineListIcon />}
-                            text={t('common.nothingFoundTitle')}
+                            text={t('wine.noResultsTitle')}
+                            description={t('wine.noResultsDescription')}
                         />
                     }
                 />

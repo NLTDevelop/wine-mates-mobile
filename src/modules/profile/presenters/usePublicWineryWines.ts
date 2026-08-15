@@ -18,6 +18,7 @@ export const usePublicWineryWines = (wineryId: number | undefined, isEnabled: bo
     const list = wineryLinkedWinesModel.list;
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [hasSearchCriteria, setHasSearchCriteria] = useState(false);
     const listRef = useRef<FlatList<IOfferedWineListItem>>(null);
     const searchQueryRef = useRef<IWineListSearchQuery>({ search: '' });
     const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
@@ -91,12 +92,14 @@ export const usePublicWineryWines = (wineryId: number | undefined, isEnabled: bo
 
     const onSearchWines = useCallback(async (query: IWineListSearchQuery) => {
         searchQueryRef.current = query;
+        setHasSearchCriteria(Boolean(query.search.trim() || query.typeId || query.colorId));
         onResetPaginationRequests();
         await loadWines(0);
     }, [loadWines, onResetPaginationRequests]);
 
     const onResetWinesSearch = useCallback(() => {
         searchQueryRef.current = { search: '' };
+        setHasSearchCriteria(false);
         onResetPaginationRequests();
     }, [onResetPaginationRequests]);
 
@@ -128,6 +131,12 @@ export const usePublicWineryWines = (wineryId: number | undefined, isEnabled: bo
         wines: list?.rows || [],
         isWinesLoading: isLoading,
         isWinesLoadingMore: isLoadingMore,
+        winesEmptyTitle: localization.t(
+            hasSearchCriteria ? 'wine.noResultsTitle' : 'wine.emptyListTitle',
+        ),
+        winesEmptyDescription: localization.t(
+            hasSearchCriteria ? 'wine.noResultsDescription' : 'wine.emptyListDescription',
+        ),
         winesListRef: listRef,
         onRefreshWines,
         onLoadMoreWines,

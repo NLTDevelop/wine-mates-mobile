@@ -81,7 +81,7 @@ export interface IWineEvolutionReviewer {
 
 export interface IWineEvolutionReviewers {
     totalCount: number;
-    users: IWineEvolutionReviewer[];
+    users?: IWineEvolutionReviewer[];
 }
 
 export interface IWineEvolutionYear {
@@ -104,30 +104,27 @@ export interface IWineEvolutionAggregate extends Omit<IWineEvolutionYear, 'year'
     topFlavors?: IWineEvolutionStatistic[];
 }
 
-export interface IWineEvolutionDetailsResponse {
-    wineId: number;
-    vintage: number | null;
-    currentYear: number;
-    year?: number;
-    reviewCount: number;
-    avgUserRating: number | null;
-    avgExpertRating: number | null;
-    ratingByGroup: IWineEvolutionRatingByGroup;
-    winePeak: IWineEvolutionWinePeak | null;
-    reviewers: IWineEvolutionReviewers | null;
-    topColors: IWineEvolutionStatistic[];
-    topAromas: IWineEvolutionStatistic[];
-    topFlavors: IWineEvolutionStatistic[];
-    tasteCharacteristics: IWineEvolutionTasteCharacteristic[];
+export interface IWineEvolutionYearValue<T> {
+    year: number;
+    items: T[];
 }
 
-export interface IWineEvolutionYearsResponse {
+export interface IWineEvolutionByYear<TAllYears, TByYear> {
+    allYears: TAllYears;
+    byYear: TByYear[];
+}
+
+export interface IWineEvolutionResponse {
     wineId: number;
     vintage: number | null;
     currentYear: number;
     years: number[];
-    charts: {
-        ratings: IWineEvolutionYear[];
-        tasteCharacteristics: IWineEvolutionTasteCharacteristic[];
-    };
+    yearOptions: Array<'all' | number>;
+    ratings: IWineEvolutionByYear<Omit<IWineEvolutionYear, 'year'>, IWineEvolutionYear>;
+    winePeak: IWineEvolutionByYear<IWineEvolutionWinePeak | null, IWineEvolutionWinePeak & { year: number }>;
+    reviewers: IWineEvolutionByYear<IWineEvolutionReviewers | null, IWineEvolutionReviewers & { year: number }>;
+    topColors: IWineEvolutionByYear<IWineEvolutionStatistic[], IWineEvolutionYearValue<IWineEvolutionStatistic>>;
+    topAromas: IWineEvolutionByYear<IWineEvolutionStatistic[], IWineEvolutionYearValue<IWineEvolutionStatistic>>;
+    topFlavors: IWineEvolutionByYear<IWineEvolutionStatistic[], IWineEvolutionYearValue<IWineEvolutionStatistic>>;
+    tasteCharacteristics: IWineEvolutionTasteCharacteristic[];
 }

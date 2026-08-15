@@ -25,6 +25,7 @@ import { usePublicWineryProfile } from './presenters/usePublicWineryProfile';
 import { getStyles } from './styles';
 import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
 import { WineListSearchBar } from '@/modules/profile/ui/components/WineListSearchBar';
+import { EmptyWineListIcon } from '@assets/icons/EmptyWineListIcon';
 
 export const PublicWineryProfileView = observer(() => {
     const { colors, t } = useUiContext();
@@ -51,6 +52,8 @@ export const PublicWineryProfileView = observer(() => {
         isEventsLoadingMore,
         isWinesLoading,
         isWinesLoadingMore,
+        winesEmptyTitle,
+        winesEmptyDescription,
         isLinksModalVisible,
         isShareModalVisible,
         winesListRef,
@@ -174,7 +177,12 @@ export const PublicWineryProfileView = observer(() => {
                         showsVerticalScrollIndicator={false}
                         ListHeaderComponent={profileHeader}
                         ListEmptyComponent={
-                            <EmptyListView isLoading={isWinesLoading} text={t('publicProfile.noWines')} />
+                            <EmptyListView
+                                isLoading={isWinesLoading}
+                                image={<EmptyWineListIcon />}
+                                text={winesEmptyTitle}
+                                description={winesEmptyDescription}
+                            />
                         }
                         ListFooterComponent={isWinesLoadingMore ? <ListFooterLoader /> : null}
                     />

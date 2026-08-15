@@ -10,7 +10,6 @@ import { TasteCharacteristicItem } from '@/UIKit/TasteCharacteristicItem';
 import { IStatistic, IVintagesItem, IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { StatisticCard } from '../StatisticCard';
-import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
 import { FoodPairing } from '@/UIKit/FoodPairing';
 import { TastingNote } from '../TastingNote';
 import { wineReviewsListModel } from '@/entities/wine/models/WineReviewsListModel';
@@ -57,6 +56,7 @@ export const ResultListHeader = ({
         colorShadeItems,
         tasteCharacteristics,
         isVintageTasted,
+        isFoodPairingVisible,
         aiUsage,
         snacks,
         isGeneratingSnacks,
@@ -161,10 +161,6 @@ export const ResultListHeader = ({
                 </>
             )}
 
-            {data.statistics.topWinePeaks && data.statistics.topWinePeaks.length > 0 && (
-                <WinePeaksGrid peaks={data.statistics.topWinePeaks} showWithoutPremium={hasPremiumContentAccess} />
-            )}
-
             {tasteCharacteristics.length > 0 && (
                 <>
                     <View style={styles.titleContainer}>
@@ -187,45 +183,49 @@ export const ResultListHeader = ({
 
             {data.aiTastingNote ? <TastingNote note={data.aiTastingNote} /> : null}
 
-            <View style={styles.limitContainer}>
-                {aiUsage?.left === 0 ? (
-                    <>
-                        <Typography text={t('wine.foodPairingAttempts.label3')} />
-                        <Typography text={t('wine.foodPairingAttempts.label4')} />
-                        <Button
-                            text={t('aiAttempts.subscribe')}
-                            onPress={onSubscribePress}
-                            containerStyle={styles.subscribeButton}
-                        />
-                    </>
-                ) : (
-                    <Typography variant="h6">
-                        {t('wine.foodPairingAttempts.label1')}{' '}
-                        <Typography
-                            text={`${aiUsage?.left}/${aiUsage?.total}`}
-                            variant="h5"
-                            style={styles.limitCountText}
-                        />{' '}
-                        {t('wine.foodPairingAttempts.label2')}
-                    </Typography>
-                )}
-            </View>
+            {isFoodPairingVisible ? (
+                <>
+                    <View style={styles.limitContainer}>
+                        {aiUsage?.left === 0 ? (
+                            <>
+                                <Typography text={t('wine.foodPairingAttempts.label3')} />
+                                <Typography text={t('wine.foodPairingAttempts.label4')} />
+                                <Button
+                                    text={t('aiAttempts.subscribe')}
+                                    onPress={onSubscribePress}
+                                    containerStyle={styles.subscribeButton}
+                                />
+                            </>
+                        ) : (
+                            <Typography variant="h6">
+                                {t('wine.foodPairingAttempts.label1')}{' '}
+                                <Typography
+                                    text={`${aiUsage?.left}/${aiUsage?.total}`}
+                                    variant="h5"
+                                    style={styles.limitCountText}
+                                />{' '}
+                                {t('wine.foodPairingAttempts.label2')}
+                            </Typography>
+                        )}
+                    </View>
 
-            <FoodPairing
-                generatedSnacks={data.aiSnacks}
-                snacks={snacks}
-                isGenerating={isGeneratingSnacks}
-                onGeneratePress={onGenerateSnacksPress}
-                cuisineSelectButtonText={cuisineSelectButtonText}
-                onCuisineSelectPress={onOpenCuisinePickerPress}
-                isLocked={!hasPremiumContentAccess}
-            />
+                    <FoodPairing
+                        generatedSnacks={data.aiSnacks}
+                        snacks={snacks}
+                        isGenerating={isGeneratingSnacks}
+                        onGeneratePress={onGenerateSnacksPress}
+                        cuisineSelectButtonText={cuisineSelectButtonText}
+                        onCuisineSelectPress={onOpenCuisinePickerPress}
+                        isLocked={!hasPremiumContentAccess}
+                    />
+                </>
+            ) : null}
 
             {(hasReviews || (wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0)) && (
                 <Typography text={t('wine.reviews')} variant="h3" style={styles.title} />
             )}
 
-            {isCuisineModalVisible ? (
+            {isFoodPairingVisible && isCuisineModalVisible ? (
                 <WineSnackCuisinePickerModal
                     visible={isCuisineModalVisible}
                     options={cuisineOptions}

@@ -5,9 +5,12 @@ import { IEventDetail } from '@/entities/events/types/IEvent';
 import { eventsService } from '@/entities/events/EventsService';
 import { userModel } from '@/entities/users/UserModel';
 
+const FORBIDDEN_STATUS = 403;
+
 export const useEventDetails = (eventId: number, isEventDetailsTabFocused: boolean) => {
     const [eventDetail, setEventDetail] = useState<IEventDetail | null>(null);
     const [isError, setIsError] = useState(false);
+    const [isAccessDenied, setIsAccessDenied] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const hasLoadedRef = useRef(false);
@@ -20,20 +23,23 @@ export const useEventDetails = (eventId: number, isEventDetailsTabFocused: boole
             }
 
             try {
-                const [response, respAppliedEvents] = await Promise.all([
+                const [response] = await Promise.all([
                     eventsService.getById(eventId),
                     eventsService.getAppliedEvents(),
                 ]);
 
-                if (!response.isError && !respAppliedEvents.isError && response.data && respAppliedEvents.data) {
+                if (!response.isError && response.data) {
                     setEventDetail(response.data);
                     setIsError(false);
+                    setIsAccessDenied(false);
                 } else {
                     setIsError(true);
+                    setIsAccessDenied(response.status === FORBIDDEN_STATUS);
                 }
             } catch (error) {
                 console.warn('useEventDetails -> loadEventDetails: ', error);
                 setIsError(true);
+                setIsAccessDenied(false);
             } finally {
                 hasLoadedRef.current = true;
                 if (showLoader) {
@@ -85,6 +91,7 @@ export const useEventDetails = (eventId: number, isEventDetailsTabFocused: boole
         isEventOwner: Boolean(eventDetail?.ownerId && eventDetail.ownerId === userModel.user?.id),
         setEventDetail,
         isError,
+        shouldShowAccessDenied: !isLoading && isAccessDenied,
         isLoading,
         isRefreshing,
         onRefresh,

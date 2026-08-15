@@ -186,6 +186,7 @@ export const PublicUserProfileView = observer(() => {
                                 isLoading={isOffersLoading}
                                 image={<EmptyWineListIcon />}
                                 text={t('publicProfile.noOffers')}
+                                description={t('wine.emptyListDescription')}
                             />
                         }
                         ListFooterComponent={isOffersLoadingMore ? <ListFooterLoader /> : null}
@@ -208,6 +209,7 @@ export const PublicUserProfileView = observer(() => {
                                 isLoading={isTastingsLoading}
                                 image={<EmptyWineListIcon />}
                                 text={t('publicProfile.noTastings')}
+                                description={t('wine.emptyListDescription')}
                             />
                         }
                         ListFooterComponent={isTastingsLoadingMore ? <ListFooterLoader /> : null}

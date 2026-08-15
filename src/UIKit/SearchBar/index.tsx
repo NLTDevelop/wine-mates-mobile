@@ -5,6 +5,7 @@ import { getStyles } from './styles';
 import { CrossIcon } from '@assets/icons/CrossIcon';
 import { useSearchBar } from './presenters/useSearchBar';
 import { SearchIcon } from '@assets/icons/SearchIcon';
+import { SEARCH_TEXT_INPUT_PROPS } from './constants';
 
 interface IProps extends TextInputProps {
     containerStyle?: ViewStyle;
@@ -28,6 +29,7 @@ export const SearchBar = forwardRef<TextInput, IProps>((props, ref) => {
                 onFocus={onFocusInput}
                 onBlur={onBlurInput}
                 {...restProps}
+                {...SEARCH_TEXT_INPUT_PROPS}
             />
             {value ? (
                 <TouchableOpacity style={styles.button} onPress={onClearText}>

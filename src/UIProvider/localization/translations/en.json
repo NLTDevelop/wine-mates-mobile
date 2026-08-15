@@ -195,7 +195,7 @@
         "whatsInYourGlass": "What’s in your glass?",
         "enterData": "(Enter data manually or scan the label)",
         "wineLabel": "Wine label",
-        "cropLabelPhoto": "Crop wine label",
+        "cropLabelPhoto": "Point to the label",
         "tasteWine": "Taste Wine"
     },
     "wine": {
@@ -261,6 +261,7 @@
             "allYears": "All years",
             "proAssessment": "Wine pro rating",
             "wineLoversRating": "Wine lover rating",
+            "wineLoverRating": "Wine lover rating",
             "tasteDynamicsExpertRatings": "Wine taste dynamics",
             "amateurRating": "Wine Lovers rating with reference to gender and age of the dynamics of the expert's assessment of this wine over the years",
             "winePeak": "Wine peak",
@@ -333,6 +334,10 @@
         "shareWineMessenger": "Share on messenger",
         "shareWineCopyLink": "Copy link",
         "shareWineLinkCopied": "Wine link copied to clipboard",
+        "emptyListTitle": "No wines here yet",
+        "emptyListDescription": "When wines appear, you’ll see them in this list.",
+        "noResultsTitle": "No wines found",
+        "noResultsDescription": "Try changing your search or clearing the filters.",
         "customVintage": "Custom vintage",
         "expertScoreTitle": "Wine pro rating",
         "similarity": "Photo match"
@@ -723,6 +728,8 @@
         "downloadReport": "Download report",
         "reportSaved": "Report saved",
         "noReportViewerApp": "There is no app on this device that can open this file type.",
+        "accessDeniedTitle": "This event is unavailable",
+        "accessDeniedDescription": "This event cannot be viewed. Check the link or contact the organizer.",
         "duplicate": "Duplicate"
     },
     "eventGuests": {

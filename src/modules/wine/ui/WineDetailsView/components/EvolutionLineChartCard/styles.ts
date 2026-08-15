@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
-import { EVOLUTION_CHART_TOOLTIP_WIDTH } from './constants';
+import { EVOLUTION_CHART_TOOLTIP_MAX_WIDTH } from './constants';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -48,8 +48,8 @@ export const getStyles = (colors: IColors) => {
         },
         graphTooltip: {
             position: 'absolute',
-            width: scaleHorizontal(EVOLUTION_CHART_TOOLTIP_WIDTH),
-            minHeight: scaleVertical(44),
+            maxWidth: scaleHorizontal(EVOLUTION_CHART_TOOLTIP_MAX_WIDTH),
+            minHeight: scaleVertical(32),
             paddingHorizontal: scaleHorizontal(8),
             paddingVertical: scaleVertical(6),
             alignItems: 'center',
@@ -58,17 +58,6 @@ export const getStyles = (colors: IColors) => {
             borderWidth: scaleVertical(1),
             borderColor: colors.border,
             borderRadius: scaleVertical(8),
-            shadowColor: colors.shadow,
-            shadowOffset: {
-                width: 0,
-                height: scaleVertical(2),
-            },
-            shadowOpacity: 0.15,
-            shadowRadius: scaleVertical(4),
-            elevation: 4,
-        },
-        graphTooltipYear: {
-            color: colors.icon,
         },
         graphTooltipValue: {
             color: colors.text,
@@ -92,12 +81,10 @@ export const getStyles = (colors: IColors) => {
             paddingLeft: 0,
             flexDirection: 'row',
             alignItems: 'flex-end',
-            justifyContent: 'space-between',
         },
         graphXAxisLabel: {
             color: colors.icon,
             textAlign: 'center',
-            flex: 1,
             lineHeight: scaleVertical(14),
         },
         audienceSection: {
@@ -138,59 +125,6 @@ export const getStyles = (colors: IColors) => {
             flexWrap: 'wrap',
             gap: scaleVertical(8),
         },
-        chip: {
-            height: scaleVertical(20),
-            paddingHorizontal: scaleHorizontal(6),
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: scaleHorizontal(4),
-            borderWidth: scaleVertical(1),
-            borderRadius: scaleVertical(20),
-        },
-        chipDot: {
-            width: scaleVertical(8),
-            height: scaleVertical(8),
-            borderRadius: scaleVertical(8),
-        },
-        chipText: {
-            color: colors.text,
-        },
-        redChip: {
-            borderColor: colors.evolutionChartRed,
-            backgroundColor: colors.evolutionChartRedBackground,
-        },
-        greenChip: {
-            borderColor: colors.evolutionChartGreen,
-            backgroundColor: colors.evolutionChartGreenBackground,
-        },
-        blueChip: {
-            borderColor: colors.evolutionChartBlue,
-            backgroundColor: colors.evolutionChartBlueBackground,
-        },
-        yellowChip: {
-            borderColor: colors.evolutionChartYellow,
-            backgroundColor: colors.evolutionChartYellowBackground,
-        },
-        purpleChip: {
-            borderColor: colors.evolutionChartPurple,
-            backgroundColor: colors.evolutionChartPurpleBackground,
-            opacity: 0.4,
-        },
-        redChipDot: {
-            backgroundColor: colors.evolutionChartRed,
-        },
-        greenChipDot: {
-            backgroundColor: colors.evolutionChartGreen,
-        },
-        blueChipDot: {
-            backgroundColor: colors.evolutionChartBlue,
-        },
-        yellowChipDot: {
-            backgroundColor: colors.evolutionChartYellow,
-        },
-        purpleChipDot: {
-            backgroundColor: colors.evolutionChartPurple,
-        },
         metricCard: {
             gap: scaleVertical(12),
             padding: scaleHorizontal(16),
@@ -227,7 +161,6 @@ export const getStyles = (colors: IColors) => {
             paddingLeft: 0,
             flexDirection: 'row',
             alignItems: 'flex-end',
-            justifyContent: 'space-between',
         },
     });
 

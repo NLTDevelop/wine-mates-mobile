@@ -291,6 +291,9 @@ export const useWineDetails = () => {
               isSaved: localIsSaved ?? details.isSaved,
           }
         : null;
+    const detailsRenderKey = details
+        ? `${details.id}-${details.vintage ?? 'none'}-${isAllVintagesSelected ? 'all' : 'single'}`
+        : '';
 
     const wineImagePhotos = useMemo<IGalleryPhoto[]>(() => {
         const image = details?.image || details?.defaultImage;
@@ -384,6 +387,7 @@ export const useWineDetails = () => {
 
     return {
         details: detailsWithLocalIsSaved,
+        detailsRenderKey,
         vintages: wineModel.vintages ?? [],
         isError,
         getDetails,

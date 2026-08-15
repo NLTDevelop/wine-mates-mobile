@@ -9,7 +9,6 @@ import { IStatistic, IWineDetails } from '@/entities/wine/types/IWineDetails';
 import { IWineTasteCharacteristic } from '@/entities/wine/types/IWineTasteCharacteristic';
 import { userModel } from '@/entities/users/UserModel';
 import { useColorShades } from '@/modules/wine/presenters/useColorShades';
-import { WinePeaksGrid } from '@/UIKit/WinePeaksGrid';
 import { FoodPairing } from '@/UIKit/FoodPairing';
 import { StatisticCard } from '../../../components/StatisticCard';
 import { TastingNote } from '../../../components/TastingNote';
@@ -19,9 +18,10 @@ import { wineReviewsListModel } from '@/entities/wine/models/WineReviewsListMode
 interface IProps {
     data: IWineDetails;
     hasReviews?: boolean;
+    isFoodPairingVisible: boolean;
 }
 
-export const TastingResultListHeader = ({ data, hasReviews }: IProps) => {
+export const TastingResultListHeader = ({ data, hasReviews, isFoodPairingVisible }: IProps) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const { colorShadeItems } = useColorShades(data.statistics.topColors);
@@ -101,10 +101,6 @@ export const TastingResultListHeader = ({ data, hasReviews }: IProps) => {
                 </>
             )}
 
-            {data.statistics.topWinePeaks && data.statistics.topWinePeaks.length > 0 && (
-                <WinePeaksGrid peaks={data.statistics.topWinePeaks} showWithoutPremium />
-            )}
-
             {tasteCharacteristics.length > 0 && (
                 <>
                     <View style={styles.titleContainer}>
@@ -127,8 +123,13 @@ export const TastingResultListHeader = ({ data, hasReviews }: IProps) => {
 
             {data.aiTastingNote ? <TastingNote note={data.aiTastingNote}/> : null}
 
-            {data.aiSnacks?.length ? (
-                <FoodPairing generatedSnacks={data.aiSnacks} hideGenerateButton isLocked={!isPremiumUser} />
+            {isFoodPairingVisible ? (
+                <FoodPairing
+                    generatedSnacks={data.aiSnacks}
+                    snacks={data.aiSnacks || null}
+                    hideGenerateButton
+                    isLocked={!isPremiumUser}
+                />
             ) : null}
 
             {(hasReviews || (wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0)) && (

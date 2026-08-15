@@ -6,6 +6,7 @@ import { CrossIcon } from '@assets/icons/CrossIcon';
 import { useSearchBarWithFilter } from './presenters/useSearchBarWithFilter';
 import { SearchIcon } from '@assets/icons/SearchIcon';
 import { FilterIcon } from '@assets/icons/FilterIcon';
+import { SEARCH_TEXT_INPUT_PROPS } from '@/UIKit/SearchBar/constants';
 
 interface IProps extends TextInputProps {
     containerStyle?: ViewStyle;
@@ -30,6 +31,7 @@ export const SearchBarWithFilter = (props: IProps) => {
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 {...textInputProps}
+                {...SEARCH_TEXT_INPUT_PROPS}
             />
             {value ? <TouchableOpacity style={styles.button} onPress={onClearText} >
                 <CrossIcon width={12} height={12} color={colors.icon}/>

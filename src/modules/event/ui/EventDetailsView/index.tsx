@@ -12,6 +12,7 @@ import { EventDetailsTab } from './components/EventDetailsTab';
 import { GuestsTab } from './components/EventGuestsTab';
 import { getStyles } from './styles';
 import { useEventDetails } from './presenters/useEventDetails';
+import { EventAccessDeniedState } from './components/EventAccessDeniedState';
 
 interface IRoute {
     key: 'eventDetails' | 'guests';
@@ -27,8 +28,16 @@ export const EventDetailsView = observer(() => {
     const { eventId, screenIndex, routes, onIndexChange, onPressBack } = useEventDetailsView({ t });
     const styles = useMemo(() => getStyles(colors), [colors]);
     const isEventDetailsTabFocused = screenIndex === 0;
-    const { eventDetail, isEventOwner, setEventDetail, isError, isLoading, isRefreshing, onRefresh } =
-        useEventDetails(eventId, isEventDetailsTabFocused);
+    const {
+        eventDetail,
+        isEventOwner,
+        setEventDetail,
+        isError,
+        shouldShowAccessDenied,
+        isLoading,
+        isRefreshing,
+        onRefresh,
+    } = useEventDetails(eventId, isEventDetailsTabFocused);
 
     const renderScene = function renderScene({ route: sceneRoute }: ISceneProps) {
         if (sceneRoute.key === 'eventDetails') {
@@ -67,15 +76,19 @@ export const EventDetailsView = observer(() => {
             headerComponent={<HeaderWithBackButton title={t('eventDetails.title')} onPressBack={onPressBack} />}
         >
             <View style={styles.container}>
-                <TabView
-                    lazy
-                    swipeEnabled
-                    renderTabBar={renderTabBar}
-                    navigationState={{ index: screenIndex, routes }}
-                    renderScene={renderScene}
-                    onIndexChange={onIndexChange}
-                    initialLayout={{ width: size.width }}
-                />
+                {shouldShowAccessDenied ? (
+                    <EventAccessDeniedState />
+                ) : (
+                    <TabView
+                        lazy
+                        swipeEnabled
+                        renderTabBar={renderTabBar}
+                        navigationState={{ index: screenIndex, routes }}
+                        renderScene={renderScene}
+                        onIndexChange={onIndexChange}
+                        initialLayout={{ width: size.width }}
+                    />
+                )}
             </View>
         </ScreenContainer>
     );

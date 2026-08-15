@@ -1,17 +1,24 @@
-/* eslint-disable react-hooks/immutability */
-import { useCallback, useMemo, useState } from 'react';
-import type { GestureResponderEvent } from 'react-native';
-import { Gesture } from 'react-native-gesture-handler';
-import { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type {
+    GestureResponderEvent,
+    LayoutChangeEvent,
+    NativeScrollEvent,
+    NativeSyntheticEvent,
+    ScrollView,
+} from 'react-native';
 import { scaleHorizontal, scaleVertical } from '@/utils';
-import { IWineEvolutionChart, IWineEvolutionChartPoint } from '@/modules/wine/types/IWineEvolution';
-import { EVOLUTION_CHART_TOOLTIP_WIDTH } from '../constants';
+import {
+    IWineEvolutionChart,
+    IWineEvolutionChartPoint,
+    IWineEvolutionXAxisLabel,
+} from '@/modules/wine/types/IWineEvolution';
+import { EVOLUTION_CHART_TOOLTIP_MAX_WIDTH, EVOLUTION_CHART_VISIBLE_YEARS } from '../constants';
 
-const MIN_ZOOM = 1;
-const MAX_ZOOM = 3;
 const POINT_PRESS_RADIUS = scaleHorizontal(60);
-const TOOLTIP_WIDTH = scaleHorizontal(EVOLUTION_CHART_TOOLTIP_WIDTH);
+const TOOLTIP_MAX_WIDTH = scaleHorizontal(EVOLUTION_CHART_TOOLTIP_MAX_WIDTH);
+const TOOLTIP_FALLBACK_HEIGHT = scaleVertical(32);
 const TOOLTIP_OFFSET = scaleVertical(12);
+const TOOLTIP_HORIZONTAL_GUTTER = scaleHorizontal(8);
 
 interface IProps {
     chart: IWineEvolutionChart;
@@ -21,7 +28,6 @@ interface IProps {
 interface ISelectedPoint extends IWineEvolutionChartPoint {
     color: string;
     seriesId: string;
-    year: string;
     valueText: string;
 }
 
@@ -30,7 +36,10 @@ interface ISelectedPointState {
     point: ISelectedPoint;
 }
 
-const clampZoom = (zoom: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom));
+interface ITooltipSize {
+    width: number;
+    height: number;
+}
 
 const getClosestPoint = (chart: IWineEvolutionChart, locationX: number, locationY: number): ISelectedPoint | null => {
     let closestPoint: ISelectedPoint | null = null;
@@ -46,7 +55,6 @@ const getClosestPoint = (chart: IWineEvolutionChart, locationX: number, location
                     ...point,
                     color: series.color,
                     seriesId: series.id,
-                    year: chart.xAxisLabels[point.index] ?? '-',
                     valueText: point.valueText,
                 };
             }
@@ -56,71 +64,138 @@ const getClosestPoint = (chart: IWineEvolutionChart, locationX: number, location
     return closestDistance <= POINT_PRESS_RADIUS ? closestPoint : null;
 };
 
+const getTooltipMeasurementKey = (chartId: string, point: ISelectedPoint) =>
+    `${chartId}-${point.seriesId}-${point.index}-${point.valueText}`;
+
 export const useEvolutionLineChart = ({ chart, isSummary }: IProps) => {
-    const [zoom, setZoom] = useState(MIN_ZOOM);
+    const scrollViewRef = useRef<ScrollView>(null);
+    const scrollOffsetRef = useRef(0);
+    const tooltipMeasurementKeyRef = useRef<string | null>(null);
     const [selectedPointState, setSelectedPointState] = useState<ISelectedPointState | null>(null);
-    const pinchScale = useSharedValue(1);
-
-    const onZoomEnd = useCallback((nextZoom: number) => {
-        setZoom(clampZoom(nextZoom));
-    }, []);
-
-    const pinchGesture = useMemo(
-        () =>
-            Gesture.Pinch()
-                .onUpdate(event => {
-                    pinchScale.value = Math.min(MAX_ZOOM / zoom, Math.max(MIN_ZOOM / zoom, event.scale));
-                })
-                .onEnd(event => {
-                    const nextZoom = clampZoom(zoom * event.scale);
-
-                    pinchScale.value = withSpring(1);
-                    runOnJS(onZoomEnd)(nextZoom);
-                }),
-        [onZoomEnd, pinchScale, zoom],
-    );
-
-    const animatedChartStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: pinchScale.value }],
-    }));
+    const [tooltipSize, setTooltipSize] = useState<ITooltipSize | null>(null);
+    const [viewportWidth, setViewportWidth] = useState(0);
 
     const onPlotPress = useCallback(
         (event: GestureResponderEvent) => {
             const { locationX, locationY } = event.nativeEvent;
-            const point = getClosestPoint(chart, locationX / zoom, locationY);
+            const point = getClosestPoint(chart, locationX, locationY);
+            const nextTooltipMeasurementKey = point ? getTooltipMeasurementKey(chart.id, point) : null;
+
+            if (tooltipMeasurementKeyRef.current !== nextTooltipMeasurementKey) {
+                tooltipMeasurementKeyRef.current = null;
+                setTooltipSize(null);
+            }
 
             setSelectedPointState(point ? { chartId: chart.id, point } : null);
         },
-        [chart, zoom],
+        [chart],
     );
 
     const isSelectedSeriesVisible = chart.series.some(series => series.id === selectedPointState?.point.seriesId);
     const selectedPoint = selectedPointState?.chartId === chart.id && isSelectedSeriesVisible
         ? selectedPointState.point
         : null;
+    const tooltipMeasurementKey = selectedPoint ? getTooltipMeasurementKey(chart.id, selectedPoint) : null;
     const shouldRenderPlot = isSummary || chart.series.length > 0;
+    const xAxisLabelItems = useMemo<IWineEvolutionXAxisLabel[]>(() => {
+        const slotsCount = Math.max(chart.xAxisLabels.length, EVOLUTION_CHART_VISIBLE_YEARS);
+        const slotWidth = chart.plotWidth / slotsCount;
+
+        return chart.xAxisLabels.map((text, index) => ({
+            id: `${text}-${index}`,
+            text,
+            style: {
+                position: 'absolute',
+                bottom: 0,
+                left: slotWidth * index,
+                width: slotWidth,
+            },
+        }));
+    }, [chart.plotWidth, chart.xAxisLabels]);
+
+    const onTooltipLayout = useCallback((event: LayoutChangeEvent) => {
+        if (!tooltipMeasurementKey || tooltipMeasurementKeyRef.current === tooltipMeasurementKey) {
+            return;
+        }
+
+        const { width, height } = event.nativeEvent.layout;
+
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+
+        tooltipMeasurementKeyRef.current = tooltipMeasurementKey;
+        setTooltipSize({ width, height });
+    }, [tooltipMeasurementKey]);
+
+    const onScrollViewportLayout = useCallback((event: LayoutChangeEvent) => {
+        setViewportWidth(event.nativeEvent.layout.width);
+    }, []);
+
+    const onScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        scrollOffsetRef.current = event.nativeEvent.contentOffset.x;
+    }, []);
 
     const tooltipPosition = useMemo(() => {
         if (!selectedPoint) {
             return undefined;
         }
 
-        const scaledX = selectedPoint.x * zoom;
-        const left = Math.min(Math.max(0, scaledX - TOOLTIP_WIDTH / 2), chart.plotWidth * zoom - TOOLTIP_WIDTH);
-        const top = Math.max(0, selectedPoint.y - scaleVertical(54) - TOOLTIP_OFFSET);
+        const tooltipWidth = tooltipSize?.width ?? TOOLTIP_MAX_WIDTH;
+        const tooltipHeight = tooltipSize?.height ?? TOOLTIP_FALLBACK_HEIGHT;
+        const maxLeft = Math.max(0, chart.plotWidth - tooltipWidth);
+        const left = Math.min(Math.max(0, selectedPoint.x - tooltipWidth / 2), maxLeft);
+        const topAbovePoint = selectedPoint.y - tooltipHeight - TOOLTIP_OFFSET;
+        const maxTop = Math.max(0, chart.plotHeight - tooltipHeight);
+        const top = topAbovePoint >= 0
+            ? topAbovePoint
+            : Math.min(selectedPoint.y + TOOLTIP_OFFSET, maxTop);
 
         return { left, top };
-    }, [chart.plotWidth, selectedPoint, zoom]);
+    }, [chart.plotHeight, chart.plotWidth, selectedPoint, tooltipSize]);
+
+    useEffect(() => {
+        if (!selectedPoint || viewportWidth <= 0 || chart.plotWidth <= viewportWidth) {
+            return;
+        }
+
+        const tooltipWidth = Math.min(TOOLTIP_MAX_WIDTH, chart.plotWidth);
+        const maxTooltipLeft = Math.max(0, chart.plotWidth - tooltipWidth);
+        const tooltipLeft = Math.min(Math.max(0, selectedPoint.x - tooltipWidth / 2), maxTooltipLeft);
+        const tooltipRight = tooltipLeft + tooltipWidth;
+        const visibleLeft = scrollOffsetRef.current + TOOLTIP_HORIZONTAL_GUTTER;
+        const visibleRight = scrollOffsetRef.current + viewportWidth - TOOLTIP_HORIZONTAL_GUTTER;
+        let nextOffset = scrollOffsetRef.current;
+
+        if (tooltipLeft < visibleLeft) {
+            nextOffset = tooltipLeft - TOOLTIP_HORIZONTAL_GUTTER;
+        } else if (tooltipRight > visibleRight) {
+            nextOffset = tooltipRight - viewportWidth + TOOLTIP_HORIZONTAL_GUTTER;
+        }
+
+        const maxOffset = Math.max(0, chart.plotWidth - viewportWidth);
+        const normalizedOffset = Math.min(Math.max(0, nextOffset), maxOffset);
+
+        if (normalizedOffset === scrollOffsetRef.current) {
+            return;
+        }
+
+        scrollOffsetRef.current = normalizedOffset;
+        scrollViewRef.current?.scrollTo({ x: normalizedOffset, animated: true });
+    }, [chart.plotWidth, selectedPoint, viewportWidth]);
 
     return {
-        animatedChartStyle,
         onPlotPress,
-        pinchGesture,
-        plotWidth: chart.plotWidth * zoom,
+        onScroll,
+        onScrollViewportLayout,
+        onTooltipLayout,
+        plotWidth: chart.plotWidth,
+        scrollViewRef,
         selectedPoint,
         shouldRenderPlot,
         shouldShowYAxis: shouldRenderPlot,
         shouldUseNoDataStyle: !shouldRenderPlot,
         tooltipPosition,
+        xAxisLabelItems,
     };
 };

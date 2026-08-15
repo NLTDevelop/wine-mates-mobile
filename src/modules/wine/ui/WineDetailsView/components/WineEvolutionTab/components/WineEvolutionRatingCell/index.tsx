@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { IWineEvolutionRating } from '@/modules/wine/types/IWineEvolution';
-import { getStyles } from '../../styles';
+import { getStyles } from './styles';
 
 interface IProps {
     rating: IWineEvolutionRating;
@@ -15,7 +15,11 @@ export const WineEvolutionRatingCell = ({ rating }: IProps) => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
-        <View style={styles.ratingCell}>
+        <TouchableOpacity
+            style={[styles.ratingCell, rating.isActive ? undefined : styles.ratingCellInactive]}
+            onPress={rating.onPress}
+            activeOpacity={0.7}
+        >
             {rating.score === null ? (
                 <Typography text="-" variant="subtitle_12_400" style={styles.ratingValue} />
             ) : (
@@ -27,6 +31,6 @@ export const WineEvolutionRatingCell = ({ rating }: IProps) => {
                     <Typography text={rating.reviewsText} variant="subtitle_12_400" style={styles.ratingReviews} />
                 </>
             )}
-        </View>
+        </TouchableOpacity>
     );
 };
