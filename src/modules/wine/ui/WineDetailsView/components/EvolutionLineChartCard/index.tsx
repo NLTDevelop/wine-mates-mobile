@@ -292,6 +292,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[0] ? (
                                                     <Path
+                                                        key={`${chart.series[0].id}-${chart.series[0].color}-line`}
                                                         d={chart.series[0].path}
                                                         fill="none"
                                                         stroke={chart.series[0].color}
@@ -302,6 +303,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[1] ? (
                                                     <Path
+                                                        key={`${chart.series[1].id}-${chart.series[1].color}-line`}
                                                         d={chart.series[1].path}
                                                         fill="none"
                                                         stroke={chart.series[1].color}
@@ -312,6 +314,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[2] ? (
                                                     <Path
+                                                        key={`${chart.series[2].id}-${chart.series[2].color}-line`}
                                                         d={chart.series[2].path}
                                                         fill="none"
                                                         stroke={chart.series[2].color}
@@ -322,6 +325,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[3] ? (
                                                     <Path
+                                                        key={`${chart.series[3].id}-${chart.series[3].color}-line`}
                                                         d={chart.series[3].path}
                                                         fill="none"
                                                         stroke={chart.series[3].color}
@@ -332,6 +336,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[4] ? (
                                                     <Path
+                                                        key={`${chart.series[4].id}-${chart.series[4].color}-line`}
                                                         d={chart.series[4].path}
                                                         fill="none"
                                                         stroke={chart.series[4].color}
@@ -342,6 +347,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[5] ? (
                                                     <Path
+                                                        key={`${chart.series[5].id}-${chart.series[5].color}-line`}
                                                         d={chart.series[5].path}
                                                         fill="none"
                                                         stroke={chart.series[5].color}
@@ -352,6 +358,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[6] ? (
                                                     <Path
+                                                        key={`${chart.series[6].id}-${chart.series[6].color}-line`}
                                                         d={chart.series[6].path}
                                                         fill="none"
                                                         stroke={chart.series[6].color}
@@ -362,6 +369,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[7] ? (
                                                     <Path
+                                                        key={`${chart.series[7].id}-${chart.series[7].color}-line`}
                                                         d={chart.series[7].path}
                                                         fill="none"
                                                         stroke={chart.series[7].color}
@@ -372,6 +380,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[8] ? (
                                                     <Path
+                                                        key={`${chart.series[8].id}-${chart.series[8].color}-line`}
                                                         d={chart.series[8].path}
                                                         fill="none"
                                                         stroke={chart.series[8].color}
@@ -382,6 +391,7 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[9] ? (
                                                     <Path
+                                                        key={`${chart.series[9].id}-${chart.series[9].color}-line`}
                                                         d={chart.series[9].path}
                                                         fill="none"
                                                         stroke={chart.series[9].color}
@@ -392,60 +402,70 @@ export const EvolutionLineChartCard = ({ chart, isSummary = false }: IProps) => 
                                                 ) : null}
                                                 {chart.series[0] ? (
                                                     <Path
+                                                        key={`${chart.series[0].id}-${chart.series[0].color}-markers`}
                                                         d={chart.series[0].markersPath}
                                                         fill={chart.series[0].color}
                                                     />
                                                 ) : null}
                                                 {chart.series[1] ? (
                                                     <Path
+                                                        key={`${chart.series[1].id}-${chart.series[1].color}-markers`}
                                                         d={chart.series[1].markersPath}
                                                         fill={chart.series[1].color}
                                                     />
                                                 ) : null}
                                                 {chart.series[2] ? (
                                                     <Path
+                                                        key={`${chart.series[2].id}-${chart.series[2].color}-markers`}
                                                         d={chart.series[2].markersPath}
                                                         fill={chart.series[2].color}
                                                     />
                                                 ) : null}
                                                 {chart.series[3] ? (
                                                     <Path
+                                                        key={`${chart.series[3].id}-${chart.series[3].color}-markers`}
                                                         d={chart.series[3].markersPath}
                                                         fill={chart.series[3].color}
                                                     />
                                                 ) : null}
                                                 {chart.series[4] ? (
                                                     <Path
+                                                        key={`${chart.series[4].id}-${chart.series[4].color}-markers`}
                                                         d={chart.series[4].markersPath}
                                                         fill={chart.series[4].color}
                                                     />
                                                 ) : null}
                                                 {chart.series[5] ? (
                                                     <Path
+                                                        key={`${chart.series[5].id}-${chart.series[5].color}-markers`}
                                                         d={chart.series[5].markersPath}
                                                         fill={chart.series[5].color}
                                                     />
                                                 ) : null}
                                                 {chart.series[6] ? (
                                                     <Path
+                                                        key={`${chart.series[6].id}-${chart.series[6].color}-markers`}
                                                         d={chart.series[6].markersPath}
                                                         fill={chart.series[6].color}
                                                     />
                                                 ) : null}
                                                 {chart.series[7] ? (
                                                     <Path
+                                                        key={`${chart.series[7].id}-${chart.series[7].color}-markers`}
                                                         d={chart.series[7].markersPath}
                                                         fill={chart.series[7].color}
                                                     />
                                                 ) : null}
                                                 {chart.series[8] ? (
                                                     <Path
+                                                        key={`${chart.series[8].id}-${chart.series[8].color}-markers`}
                                                         d={chart.series[8].markersPath}
                                                         fill={chart.series[8].color}
                                                     />
                                                 ) : null}
                                                 {chart.series[9] ? (
                                                     <Path
+                                                        key={`${chart.series[9].id}-${chart.series[9].color}-markers`}
                                                         d={chart.series[9].markersPath}
                                                         fill={chart.series[9].color}
                                                     />

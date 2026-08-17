@@ -10,10 +10,6 @@ export const getStyles = (colors: IColors) => {
             alignItems: 'center',
             justifyContent: 'center',
         },
-        ratingCellInactive: {
-            backgroundColor: colors.background_disabled,
-            opacity: 0.55,
-        },
         ratingValue: {
             color: colors.text,
             textAlign: 'center',

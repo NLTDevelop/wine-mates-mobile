@@ -57,6 +57,16 @@ export type IColors = {
     evolutionChartPurpleBackground: string;
     evolutionChartOrange: string;
     evolutionChartBurgundy: string;
+    evolutionChartWomenMagenta: string;
+    evolutionChartWomenMagentaBackground: string;
+    evolutionChartWomenTeal: string;
+    evolutionChartWomenTealBackground: string;
+    evolutionChartWomenOrange: string;
+    evolutionChartWomenOrangeBackground: string;
+    evolutionChartWomenSlate: string;
+    evolutionChartWomenSlateBackground: string;
+    evolutionChartWomenBrown: string;
+    evolutionChartWomenBrownBackground: string;
     evolutionColorRed: string;
     evolutionColorOrange: string;
     evolutionColorPink: string;
