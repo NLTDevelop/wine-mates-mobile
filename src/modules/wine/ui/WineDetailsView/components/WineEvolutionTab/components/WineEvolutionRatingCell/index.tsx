@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
@@ -15,11 +15,7 @@ export const WineEvolutionRatingCell = ({ rating }: IProps) => {
     const styles = useMemo(() => getStyles(colors), [colors]);
 
     return (
-        <TouchableOpacity
-            style={[styles.ratingCell, rating.isActive ? undefined : styles.ratingCellInactive]}
-            onPress={rating.onPress}
-            activeOpacity={0.7}
-        >
+        <View style={styles.ratingCell}>
             {rating.score === null ? (
                 <Typography text="-" variant="subtitle_12_400" style={styles.ratingValue} />
             ) : (
@@ -31,6 +27,6 @@ export const WineEvolutionRatingCell = ({ rating }: IProps) => {
                     <Typography text={rating.reviewsText} variant="subtitle_12_400" style={styles.ratingReviews} />
                 </>
             )}
-        </TouchableOpacity>
+        </View>
     );
 };

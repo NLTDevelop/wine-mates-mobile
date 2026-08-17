@@ -11,8 +11,6 @@ export interface IWineEvolutionRating {
     reviews: number;
     scoreText: string;
     reviewsText: string;
-    isActive: boolean;
-    onPress: () => void;
 }
 
 export interface IWineEvolutionRatingRow {

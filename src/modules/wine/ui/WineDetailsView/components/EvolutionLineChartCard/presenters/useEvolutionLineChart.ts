@@ -70,6 +70,7 @@ const getTooltipMeasurementKey = (chartId: string, point: ISelectedPoint) =>
 export const useEvolutionLineChart = ({ chart, isSummary }: IProps) => {
     const scrollViewRef = useRef<ScrollView>(null);
     const scrollOffsetRef = useRef(0);
+    const autoScrollKeyRef = useRef<string | null>(null);
     const tooltipMeasurementKeyRef = useRef<string | null>(null);
     const [selectedPointState, setSelectedPointState] = useState<ISelectedPointState | null>(null);
     const [tooltipSize, setTooltipSize] = useState<ITooltipSize | null>(null);
@@ -135,6 +136,28 @@ export const useEvolutionLineChart = ({ chart, isSummary }: IProps) => {
     const onScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
         scrollOffsetRef.current = event.nativeEvent.contentOffset.x;
     }, []);
+
+    useEffect(() => {
+        if (viewportWidth <= 0) {
+            return undefined;
+        }
+
+        const autoScrollKey = `${chart.id}-${chart.xAxisLabels.join(',')}-${chart.plotWidth}-${viewportWidth}`;
+        if (autoScrollKeyRef.current === autoScrollKey) {
+            return undefined;
+        }
+
+        autoScrollKeyRef.current = autoScrollKey;
+        const maxOffset = Math.max(0, chart.plotWidth - viewportWidth);
+        scrollOffsetRef.current = maxOffset;
+        const frameId = requestAnimationFrame(() => {
+            scrollViewRef.current?.scrollTo({ x: maxOffset, animated: false });
+        });
+
+        return () => {
+            cancelAnimationFrame(frameId);
+        };
+    }, [chart.id, chart.plotWidth, chart.xAxisLabels, viewportWidth]);
 
     const tooltipPosition = useMemo(() => {
         if (!selectedPoint) {
