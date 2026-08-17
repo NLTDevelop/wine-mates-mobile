@@ -79,6 +79,7 @@ export const RangeSlider = ({
         allowedMin,
         allowedMax,
         thumbOffset,
+        initialSliderWidth: actualSliderLength,
         onValuesLive: (nextMin, nextMax) => {
             setLiveValues({ min: nextMin, max: nextMax });
         },
