@@ -15,7 +15,10 @@ interface IProps {
     rating: number;
     maxStars: number;
     step: number;
+    starWidth: number;
+    spreadStars: boolean;
     onChange?: (rating: number) => void;
+    onPreviewChange?: (rating: number) => void;
 }
 
 const clamp = (value: number, min: number, max: number) => {
@@ -24,28 +27,99 @@ const clamp = (value: number, min: number, max: number) => {
     return Math.min(max, Math.max(min, value));
 };
 
-export const usePreciseStarRating = ({ rating, maxStars, step, onChange }: IProps) => {
+export const usePreciseStarRating = ({
+    rating,
+    maxStars,
+    step,
+    starWidth,
+    spreadStars,
+    onChange,
+    onPreviewChange,
+}: IProps) => {
     const containerWidth = useSharedValue(0);
     const progress = useSharedValue(clamp(rating / maxStars, 0, 1));
     const completionScale = useSharedValue(1);
+    const lastPreviewRating = useSharedValue(rating);
 
     useEffect(() => {
         progress.value = clamp(rating / maxStars, 0, 1);
-    }, [maxStars, progress, rating]);
+        lastPreviewRating.value = rating;
+    }, [lastPreviewRating, maxStars, progress, rating]);
+
+    const getSteppedRating = (progressValue: number) => {
+        'worklet';
+
+        const rawRating = progressValue * maxStars;
+        const steppedRating = Math.round(rawRating / step) * step;
+
+        return Number(clamp(steppedRating, 0, maxStars).toFixed(10));
+    };
+
+    const getRatingForLocation = (locationX: number) => {
+        'worklet';
+
+        if (starWidth <= 0 || maxStars <= 0) {
+            return 0;
+        }
+
+        const starSlotWidth = spreadStars && maxStars > 1
+            ? (containerWidth.value - starWidth) / (maxStars - 1)
+            : containerWidth.value / maxStars;
+        if (starSlotWidth <= 0) {
+            return 0;
+        }
+
+        const activeWidth = Math.max(maxStars - 1, 0) * starSlotWidth + starWidth;
+        const clampedLocation = clamp(locationX, 0, activeWidth);
+        const starIndex = Math.min(Math.floor(clampedLocation / starSlotWidth), maxStars - 1);
+        const locationWithinSlot = clampedLocation - starIndex * starSlotWidth;
+
+        if (locationWithinSlot >= starWidth) {
+            return starIndex + 1;
+        }
+
+        return starIndex + locationWithinSlot / starWidth;
+    };
+
+    const getFillWidth = (ratingValue: number) => {
+        'worklet';
+
+        const clampedRating = clamp(ratingValue, 0, maxStars);
+        const starSlotWidth = spreadStars && maxStars > 1
+            ? (containerWidth.value - starWidth) / (maxStars - 1)
+            : containerWidth.value / maxStars;
+        if (starSlotWidth <= 0) {
+            return 0;
+        }
+
+        const activeWidth = Math.max(maxStars - 1, 0) * starSlotWidth + starWidth;
+
+        if (clampedRating >= maxStars) {
+            return activeWidth;
+        }
+
+        const fullStars = Math.floor(clampedRating);
+        const partialStar = clampedRating - fullStars;
+
+        return fullStars * starSlotWidth + partialStar * starWidth;
+    };
 
     const updateProgress = (locationX: number) => {
         'worklet';
 
-        if (containerWidth.value <= 0) return;
-        progress.value = clamp(locationX / containerWidth.value, 0, 1);
+        progress.value = getRatingForLocation(locationX) / maxStars;
+
+        const nextRating = getSteppedRating(progress.value);
+        if (onPreviewChange && nextRating !== lastPreviewRating.value) {
+            lastPreviewRating.value = nextRating;
+            scheduleOnRN(onPreviewChange, nextRating);
+        }
     };
 
     const commitRating = () => {
         'worklet';
 
-        const rawRating = progress.value * maxStars;
-        const steppedRating = Math.round(rawRating / step) * step;
-        const nextRating = Number(clamp(steppedRating, 0, maxStars).toFixed(10));
+        const nextRating = getSteppedRating(progress.value);
 
         progress.value = withTiming(nextRating / maxStars, { duration: 80 });
         completionScale.value = withSequence(
@@ -83,9 +157,11 @@ export const usePreciseStarRating = ({ rating, maxStars, step, onChange }: IProp
 
     const gesture = Gesture.Race(panGesture, tapGesture);
 
-    const fillOverlayStyle = useAnimatedStyle(() => ({
-        width: progress.value * containerWidth.value,
-    }));
+    const fillOverlayStyle = useAnimatedStyle(() => {
+        return {
+            width: getFillWidth(progress.value * maxStars),
+        };
+    });
 
     const fillContentStyle = useAnimatedStyle(() => ({
         width: containerWidth.value,

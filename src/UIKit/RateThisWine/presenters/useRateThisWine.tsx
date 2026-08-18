@@ -6,6 +6,8 @@ import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { EmptyStarIcon } from '@assets/icons/EmptyStarIcon';
 import { Typography } from '@/UIKit/Typography';
 import { scaleVertical } from '@/utils';
+import { getWineLoverRatingDescription } from '../utils/getWineLoverRatingDescription';
+import { STAR_SIZE } from '../constants';
 
 interface StarIconProps {
     type: 'full' | 'half' | 'empty' | 'quarter' | 'three-quarter' | 'fraction';
@@ -15,10 +17,16 @@ interface StarIconProps {
     isFullTastingReview?: boolean
 }
 
-export const useRateThisWine = (disabled: boolean, starRate: number, sliderValue: number, hasChangedRating: boolean = false, isFullTastingReview) => {
+export const useRateThisWine = (disabled: boolean, starRate: number, sliderValue: number, hasChangedRating: boolean = false, isFullTastingReview, starSize: number = STAR_SIZE, onStarRatePreview?: (rating: number) => void, emptyRatingDescriptionText?: string) => {
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
     const [debouncedSliderValue, setDebouncedSliderValue] = useState(sliderValue);
+    const [previewRating, setPreviewRating] = useState({
+        sourceRating: starRate,
+        value: starRate,
+    });
+    const displayedStarRate = previewRating.sourceRating === starRate ? previewRating.value : starRate;
+    const starWidth = scaleVertical(starSize);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -117,19 +125,20 @@ export const useRateThisWine = (disabled: boolean, starRate: number, sliderValue
         ? (hasChangedRating ? t('wine.ratedWine') : t('wine.didNotRateWine'))
         : isFullTastingReview ? t('wine.rateThisWineShort') : t('wine.rateThisWine');
 
-    const getRatingDescription = useCallback((rating: number): string => {
-        if (rating >= 5.0) return t('wine.ratingScale.exceptional');
-        if (rating >= 4.5) return t('wine.ratingScale.veryHighQuality');
-        if (rating >= 4.0) return t('wine.ratingScale.good');
-        if (rating >= 3.5) return t('wine.ratingScale.average');
-        if (rating >= 3.0) return t('wine.ratingScale.mediocre');
-        if (rating >= 2.5) return t('wine.ratingScale.poor');
-        return t('wine.ratingScale.defective');
-    }, [t]);
-
     const currentRatingDescription = useMemo(() => {
-        return getRatingDescription(starRate);
-    }, [starRate, getRatingDescription]);
+        return getWineLoverRatingDescription(displayedStarRate, t);
+    }, [displayedStarRate, t]);
+    const currentRatingDescriptionText = displayedStarRate > 0 || emptyRatingDescriptionText === undefined
+        ? `${displayedStarRate.toFixed(1)} ${currentRatingDescription}`
+        : emptyRatingDescriptionText;
+
+    const onPreviewStarRateChange = useCallback((rating: number) => {
+        setPreviewRating({
+            sourceRating: starRate,
+            value: rating,
+        });
+        onStarRatePreview?.(rating);
+    }, [onStarRatePreview, starRate]);
 
     return {
         StarIconComponent,
@@ -137,6 +146,10 @@ export const useRateThisWine = (disabled: boolean, starRate: number, sliderValue
         decorators,
         title,
         currentRatingDescription,
+        currentRatingDescriptionText,
+        displayedStarRate,
+        onPreviewStarRateChange,
+        starWidth,
         debouncedSliderValue,
     };
 };

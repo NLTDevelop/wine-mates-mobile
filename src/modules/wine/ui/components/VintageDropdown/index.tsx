@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { CustomDropdown } from '@/UIKit/CustomDropdown/ui';
 import { IVintage, IVintagesItem } from '@/entities/wine/types/IWineDetails';
 import { IDropdownItem } from '@/UIKit/CustomDropdown/types/IDropdownItem';
-import { NONE_VINTAGE_DROPDOWN_VALUE, useVintageDropdown } from '../../../presenters/useVintageDropdown';
+import { useVintageDropdown } from '../../../presenters/useVintageDropdown';
 import { CustomVintageFooter } from '../CustomVintageFooter';
 import { getStyles } from './styles';
 import { View } from 'react-native';
@@ -38,7 +38,7 @@ export const VintageDropdown = ({ vintages, currentVintage, selectedVintage, isA
         });
 
     const renderRatingInfo = useCallback((dropdownItem: IVintageDropdownItem) => {
-        if (dropdownItem.hideRatingInfo || dropdownItem.value === null || dropdownItem.value === NONE_VINTAGE_DROPDOWN_VALUE) {
+        if (dropdownItem.hideRatingInfo || dropdownItem.value === null) {
             return null;
         }
 

@@ -7,6 +7,7 @@ export const getStyles = (_colors: IColors) => {
         dropdown: {
             width: '100%',
             minHeight: scaleVertical(36),
+            paddingHorizontal: scaleHorizontal(8),
         },
         rateContainer: {
             flexDirection: 'row',

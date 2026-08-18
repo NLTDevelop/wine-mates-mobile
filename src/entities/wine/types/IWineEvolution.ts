@@ -27,6 +27,14 @@ export interface IWineEvolutionStatistic {
     name: string;
     colorHex: string | null;
     userCount: number;
+    pale?: IWineEvolutionColorShade | null;
+    medium?: IWineEvolutionColorShade | null;
+    deep?: IWineEvolutionColorShade | null;
+}
+
+export interface IWineEvolutionColorShade {
+    colorHex: string;
+    userCount: number;
 }
 
 export interface IWineEvolutionTasteCharacteristicLevel {
@@ -90,6 +98,7 @@ export interface IWineEvolutionYear {
     avgUserRating: number | null;
     avgExpertRating: number | null;
     ratingByGroup: IWineEvolutionRatingByGroup;
+    ratingByGroupWithExperts?: IWineEvolutionRatingByGroup;
     winePeak?: IWineEvolutionWinePeak | null;
     topColors?: IWineEvolutionStatistic[];
     topAromas?: IWineEvolutionStatistic[];
