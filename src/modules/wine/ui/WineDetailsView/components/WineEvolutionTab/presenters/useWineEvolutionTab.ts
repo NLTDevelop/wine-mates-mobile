@@ -217,6 +217,11 @@ const createEvolutionCarouselCards = (
         t,
         shouldUseColorShades,
     );
+
+    if (allYearsCard.isEmpty) {
+        return [];
+    }
+
     const yearCards = [...statistics.byYear]
         .filter(item => item.items.length > 0)
         .sort((first, second) => second.year - first.year)
@@ -558,7 +563,7 @@ const createEvolutionAssessmentChart = (
     const series = visibleSeries.flatMap(item => {
         const values = chartYears.map(year => {
             const yearData = dataByYear.get(year);
-            const groupRating = yearData?.ratingByGroupWithExperts?.[item.group][item.ageKey];
+            const groupRating = yearData?.ratingByGroup?.[item.group][item.ageKey];
 
             return groupRating ? getGroupAverage(groupRating) : null;
         });

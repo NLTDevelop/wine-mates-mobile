@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useUiContext } from '@/UIProvider';
 import { localization } from '@/UIProvider/localization/Localization';
 import { getStyles } from './styles';
+import { Typography } from '@/UIKit/Typography';
 
 export const ScannerFrame = () => {
     const { colors } = useUiContext();
@@ -17,7 +18,9 @@ export const ScannerFrame = () => {
             <View style={[styles.corner, styles.bottomLeftCorner]} />
             <View style={[styles.corner, styles.bottomRightCorner]} />
             <View style={styles.labelContainer}>
-                <Text style={styles.label}>{localization.t('scanner.wineLabel')}</Text>
+                <Typography variant="body_500" style={styles.label} numberOfLines={2}>
+                    {localization.t('scanner.wineLabel')}
+                </Typography>
             </View>
         </View>
     );

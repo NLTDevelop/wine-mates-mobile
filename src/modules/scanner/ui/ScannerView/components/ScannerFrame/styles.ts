@@ -50,6 +50,7 @@ export const getStyles = (colors: IColors, topInset: number, bottomInset: number
             bottom: scaleVertical(-22),
             alignSelf: 'center',
             minHeight: scaleVertical(44),
+            maxWidth: scaleHorizontal(180),
             paddingHorizontal: scaleHorizontal(18),
             justifyContent: 'center',
             backgroundColor: colors.background,
@@ -57,8 +58,7 @@ export const getStyles = (colors: IColors, topInset: number, bottomInset: number
         },
         label: {
             color: colors.text,
-            fontSize: scaleHorizontal(16),
-            fontWeight: '600',
+            textAlign: 'center',
         },
     });
 
