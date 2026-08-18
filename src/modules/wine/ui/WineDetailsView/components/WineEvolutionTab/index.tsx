@@ -81,7 +81,11 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                 {item.userScore !== null ? (
                     <View style={styles.expertWineLoverScore}>
                         <SmallStarRating rating={item.userScore} starSize={16} />
-                        <Typography text={`${item.userScoreText}`} variant="subtitle_12_400" style={styles.expertScore} />
+                        <Typography
+                            text={`${item.userScoreText}`}
+                            variant="subtitle_12_400"
+                            style={styles.expertScore}
+                        />
                     </View>
                 ) : (
                     <Typography text="-" variant="h5" style={styles.expertNoData} />
@@ -133,14 +137,20 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
             ) : (
                 <View style={styles.root}>
                     <View style={styles.section}>
-                        <Typography text={t('wine.evolution.yearOfTasting')} variant="h4" style={styles.sectionTitle} />
+                        <View>
+                            <Typography
+                                text={t('wine.evolution.yearOfTasting')}
+                                variant="h4"
+                                style={styles.sectionTitle}
+                            />
+                            <Typography
+                                text={t('wine.evolution.chooseWineYear')}
+                                variant="subtitle_12_400"
+                                style={styles.yearPickerLabel}
+                            />
+                        </View>
                         <View style={styles.yearContent}>
                             <View style={styles.yearPickerColumn}>
-                                <Typography
-                                    text={t('wine.evolution.chooseWineYear')}
-                                    variant="subtitle_12_400"
-                                    style={styles.yearPickerLabel}
-                                />
                                 <TouchableOpacity style={styles.yearPicker} onPress={onYearPress}>
                                     <Typography
                                         text={tastingYear}
@@ -189,7 +199,7 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                     <View style={styles.section}>
                         <Typography
                             text={t('wine.evolution.amateurRating')}
-                            variant="subtitle_12_500"
+                            variant="h4"
                             style={styles.sectionTitle}
                         />
                         <WineEvolutionAmateurRating ageGroups={amateurAgeGroups} rows={amateurRatingRows} />
@@ -197,7 +207,18 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
 
                     {hasWinePeak ? (
                         <View style={styles.section}>
-                            <Typography text={t('wine.evolution.winePeak')} variant="h4" style={styles.sectionTitle} />
+                            <View style={styles.winePeakHeader}>
+                                <Typography
+                                    text={t('wine.evolution.winePeak')}
+                                    variant="h4"
+                                    style={styles.sectionTitle}
+                                />
+                                <Typography
+                                    text={t('wine.evolution.winePeakDescription')}
+                                    variant="subtitle_12_400"
+                                    style={styles.winePeakDescription}
+                                />
+                            </View>
                             <View style={styles.winePeakCard}>
                                 <Typography text={winePeakYear} variant="h5" style={styles.winePeakYear} />
                                 <Typography

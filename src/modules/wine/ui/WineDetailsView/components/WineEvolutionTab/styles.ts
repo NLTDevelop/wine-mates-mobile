@@ -111,6 +111,12 @@ export const getStyles = (colors: IColors) => {
         proAssessmentNoData: {
             color: colors.icon,
         },
+        winePeakHeader: {
+            gap: scaleVertical(2),
+        },
+        winePeakDescription: {
+            color: colors.text_light,
+        },
         winePeakCard: {
             height: scaleVertical(48),
             alignItems: 'center',
