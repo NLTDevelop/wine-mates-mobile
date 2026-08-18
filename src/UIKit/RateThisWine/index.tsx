@@ -11,6 +11,7 @@ import { useUiContext } from '@/UIProvider';
 import { getStyles } from './styles';
 import { RateMedal } from '../RateMedal/ui';
 import { PreciseStarRating } from './components/PreciseStarRating';
+import { STAR_SIZE } from './constants';
 
 interface IProps {
     sliderValue: number;
@@ -43,6 +44,9 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
         decorators,
         title,
         currentRatingDescription,
+        displayedStarRate,
+        onPreviewStarRateChange,
+        starWidth,
         debouncedSliderValue,
     } = useRateThisWine(disabled, starRate, sliderValue, hasChangedRating, isFullTastingReview);
 
@@ -64,7 +68,7 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                     <View style={styles.ratingDescriptionRow}>
                         <FilledStarIcon width={16} height={16} color={colors.stars} />
                         <Typography
-                            text={`${starRate.toFixed(1)} ${currentRatingDescription}`}
+                            text={`${displayedStarRate.toFixed(1)} ${currentRatingDescription}`}
                             variant="body_400"
                             style={styles.ratingDescription}
                         />
@@ -104,7 +108,7 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                         rating={starRate}
                         step={PRECISE_STAR_STEP}
                         StarIconComponent={StarIconComponent}
-                        starSize={36}
+                        starSize={STAR_SIZE}
                         starStyle={styles.star}
                         emptyColor={colors.icon}
                     />
@@ -115,8 +119,10 @@ export const RateThisWine = ({ sliderValue, handleSliderChange, starRate, onStar
                         key={ratingStarsKey}
                         rating={starRate}
                         onChange={onStarRateChange}
+                        onPreviewChange={onPreviewStarRateChange}
+                        starWidth={starWidth}
                         StarIconComponent={StarIconComponent}
-                        starSize={36}
+                        starSize={STAR_SIZE}
                         starStyle={styles.star}
                         color={colors.stars}
                         emptyColor={colors.icon}

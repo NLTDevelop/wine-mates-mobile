@@ -1,6 +1,5 @@
-import { ComponentProps, ReactElement, useMemo } from 'react';
+import { useMemo } from 'react';
 import { View } from 'react-native';
-import StarRating from 'react-native-star-rating-widget';
 import { useUiContext } from '@/UIProvider';
 import { Typography } from '@/UIKit/Typography';
 import { RangeSlider } from '@/UIKit/RangeSlider';
@@ -8,6 +7,7 @@ import { Tooltip } from '@/UIKit/Tooltip';
 import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import { InfoIcon } from '@assets/icons/InfoIcon';
 import { useRateThisWine } from '@/UIKit/RateThisWine/presenters/useRateThisWine';
+import { PreciseStarRating } from '@/UIKit/RateThisWine/components/PreciseStarRating';
 import { getStyles } from './styles';
 
 interface IProps {
@@ -26,9 +26,7 @@ interface IProps {
     onUserRatingEnd: (value: number) => void;
 }
 
-const DecimalStarRating = StarRating as unknown as (
-    props: Omit<ComponentProps<typeof StarRating>, 'step'> & { step?: number | 'half' | 'quarter' | 'full' },
-) => ReactElement;
+const STAR_SIZE = 40;
 
 export const RatingFilter = ({
     isLoverRating,
@@ -48,7 +46,22 @@ export const RatingFilter = ({
     const { colors, t } = useUiContext();
     const styles = useMemo(() => getStyles(colors), [colors]);
 
-    const { StarIconComponent, tooltipContent } = useRateThisWine(false, userRating, expertRatingMin, false, false);
+    const {
+        StarIconComponent,
+        tooltipContent,
+        starWidth,
+        currentRatingDescriptionText,
+        onPreviewStarRateChange,
+    } = useRateThisWine(
+        false,
+        userRating,
+        expertRatingMin,
+        false,
+        false,
+        STAR_SIZE,
+        onUserRatingChange,
+        userRatingHintText,
+    );
 
     return (
         <>
@@ -58,7 +71,11 @@ export const RatingFilter = ({
                     <Tooltip content={tooltipContent}>
                         <View style={styles.hintRow}>
                             <FilledStarIcon width={16} height={16} color={colors.stars} />
-                            <Typography variant="subtitle_12_400" text={userRatingHintText} style={styles.hintText} />
+                            <Typography
+                                variant="subtitle_12_400"
+                                text={currentRatingDescriptionText}
+                                style={styles.hintText}
+                            />
                             <InfoIcon width={16} height={16} color={colors.primary} />
                         </View>
                     </Tooltip>
@@ -66,16 +83,19 @@ export const RatingFilter = ({
             </View>
             {isLoverRating ? (
                 <View style={styles.starsContainer}>
-                    <DecimalStarRating
+                    <PreciseStarRating
                         rating={userRating}
-                        onChange={onUserRatingChange}
-                        onRatingEnd={onUserRatingEnd}
+                        onChange={onUserRatingEnd}
+                        onPreviewChange={onPreviewStarRateChange}
                         step={0.1}
+                        starWidth={starWidth}
                         StarIconComponent={StarIconComponent}
-                        starSize={40}
-                        style={styles.starRating}
+                        starSize={STAR_SIZE}
+                        containerStyle={styles.starRating}
+                        ratingStyle={styles.starContainer}
                         starStyle={styles.star}
-                        starContainerStyle={styles.starContainer}
+                        spreadStars
+                        color={colors.stars}
                         emptyColor={colors.icon}
                     />
                 </View>

@@ -21,6 +21,8 @@ import {
     IWineEvolutionRatingRow,
 } from '@/modules/wine/types/IWineEvolution';
 import { EVOLUTION_CHART_VISIBLE_YEARS } from '../../EvolutionLineChartCard/constants';
+import { getWineLoverRatingDescription } from '@/UIKit/RateThisWine/utils/getWineLoverRatingDescription';
+import { createColorShadeItems } from '@/modules/wine/presenters/createColorShadeItems';
 
 const NO_DATA = '-';
 const ALL_YEARS_VALUE = 'all';
@@ -159,8 +161,24 @@ const createEvolutionCarouselCard = (
     reviewers: IWineEvolutionAggregate['reviewers'],
     fallbackColors: string[],
     t: ILocalization['t'],
+    shouldUseColorShades = false,
 ): IWineEvolutionCarouselCard => {
-    const visibleStatistics = (Array.isArray(statistics) ? statistics : []).slice(0, 5);
+    const availableStatistics = Array.isArray(statistics) ? statistics : [];
+    const visibleColors = shouldUseColorShades
+        ? createColorShadeItems(availableStatistics, t)
+              .slice(0, 5)
+              .map(item => ({
+                  label: item.label,
+                  reviews: item.reviews,
+                  reviewsText: item.count,
+                  backgroundColor: item.colorHex,
+                  textColor: getContrastColor(item.colorHex),
+              }))
+        : availableStatistics
+              .slice(0, 5)
+              .map((statistic, index) =>
+                  createEvolutionStatistic(statistic, fallbackColors[index % fallbackColors.length], t),
+              );
 
     const avatarUrls = (reviewers?.users ?? [])
         .map(user => user.avatar?.mediumUrl || user.avatar?.smallUrl || user.avatar?.originalUrl || '')
@@ -172,13 +190,11 @@ const createEvolutionCarouselCard = (
     return {
         id,
         year: title,
-        colors: visibleStatistics.map((statistic, index) =>
-            createEvolutionStatistic(statistic, fallbackColors[index % fallbackColors.length], t),
-        ),
+        colors: visibleColors,
         avatarUrls,
         additionalPeople,
         additionalPeopleText: additionalPeople ? `+${additionalPeople}` : '',
-        isEmpty: !visibleStatistics.length,
+        isEmpty: !visibleColors.length,
     };
 };
 
@@ -189,6 +205,7 @@ const createEvolutionCarouselCards = (
     reviewers: IWineEvolutionResponse['reviewers'],
     fallbackColors: string[],
     t: ILocalization['t'],
+    shouldUseColorShades = false,
 ): IWineEvolutionCarouselCard[] => {
     const reviewersByYear = new Map(reviewers.byYear.map(item => [item.year, item]));
     const allYearsCard = createEvolutionCarouselCard(
@@ -198,6 +215,7 @@ const createEvolutionCarouselCards = (
         reviewers.allYears,
         fallbackColors,
         t,
+        shouldUseColorShades,
     );
     const yearCards = [...statistics.byYear]
         .filter(item => item.items.length > 0)
@@ -210,6 +228,7 @@ const createEvolutionCarouselCards = (
                 reviewersByYear.get(item.year) ?? null,
                 fallbackColors,
                 t,
+                shouldUseColorShades,
             ),
         );
 
@@ -539,8 +558,9 @@ const createEvolutionAssessmentChart = (
     const series = visibleSeries.flatMap(item => {
         const values = chartYears.map(year => {
             const yearData = dataByYear.get(year);
+            const groupRating = yearData?.ratingByGroupWithExperts?.[item.group][item.ageKey];
 
-            return yearData ? getGroupAverage(yearData.ratingByGroup[item.group][item.ageKey]) : null;
+            return groupRating ? getGroupAverage(groupRating) : null;
         });
 
         return values.some(value => value !== null)
@@ -741,6 +761,7 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
                       evolution.reviewers,
                       chartColors,
                       t,
+                      true,
                   )
                 : [],
         [allYearsTitle, chartColors, evolution, t],
@@ -866,6 +887,9 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
     const proAssessmentScore = hasSelectedYearData ? (selectedEvolution?.avgExpertRating ?? null) : null;
     const wineLoverScore = hasSelectedYearData ? (selectedEvolution?.avgUserRating ?? null) : null;
     const wineLoverScoreText = formatScore(wineLoverScore);
+    const wineLoverRatingDescription = wineLoverScore === null
+        ? NO_DATA
+        : getWineLoverRatingDescription(wineLoverScore, t);
     const selectedWinePeak = isWinePeakAvailable(selectedEvolution?.winePeak ?? null)
         ? selectedEvolution?.winePeak
         : null;
@@ -885,6 +909,7 @@ export const useWineEvolutionTab = ({ colors, wineId, t, onRegisterRefresh }: IP
         tastingYear: activeYear === ALL_YEARS_VALUE ? allYearsTitle : activeYear,
         proAssessmentScore,
         wineLoverScoreText,
+        wineLoverRatingDescription,
         hasProAssessment: proAssessmentScore !== null,
         hasWineLoverScore: wineLoverScore !== null,
         winePeakYear,

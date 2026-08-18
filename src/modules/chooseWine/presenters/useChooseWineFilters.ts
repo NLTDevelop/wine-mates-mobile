@@ -570,6 +570,7 @@ export const useChooseWineFilters = () => {
 
         return cloneFilters(savedFilters);
     });
+    const latestFiltersRef = useRef(filters);
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const [isApplying, setIsApplying] = useState(false);
     const [loadingPickerKey] = useState<WineChooserPickerKey | null>(null);
@@ -607,6 +608,10 @@ export const useChooseWineFilters = () => {
         showLoadError
     });
     const latestFilterOptionsRef = useRef(filterOptions);
+
+    useEffect(() => {
+        latestFiltersRef.current = filters;
+    }, [filters]);
 
     useEffect(() => {
         latestFilterOptionsRef.current = filterOptions;
@@ -854,11 +859,15 @@ export const useChooseWineFilters = () => {
         [isLoverRating, loadFilterOptions, mode],
     );
 
-    const { debouncedWrapper: debouncedLoadUserRatingFilterOptions, cancelDebounce: cancelUserRatingDebounce } =
-        useDebounce((actualFilters: IWineChooserFilters, shouldApplyTasteFilters: boolean) => {
+    const loadUserRatingFilterOptions = useCallback(
+        (actualFilters: IWineChooserFilters, shouldApplyTasteFilters: boolean) => {
             isUserRatingInteractingRef.current = false;
             loadActualFilterOptions(actualFilters, shouldApplyTasteFilters);
-        }, 500);
+        },
+        [loadActualFilterOptions],
+    );
+    const { debouncedWrapper: debouncedLoadUserRatingFilterOptions, cancelDebounce: cancelUserRatingDebounce } =
+        useDebounce(loadUserRatingFilterOptions, 500);
 
     const types = filterOptions.types;
     const colors = filterOptions.colors;
@@ -1718,32 +1727,21 @@ export const useChooseWineFilters = () => {
     );
 
     const onUserRatingChange = useCallback(
-        (minUserRating: number) => {
-            const nextFilters = {
-                ...filters,
-                minUserRating,
-            };
-
+        () => {
             isUserRatingInteractingRef.current = true;
-            shouldSkipNextFilterOptionsSyncRef.current = true;
             cancelUserRatingDebounce();
-            saveModeFilters(mode, nextFilters);
-            setFilters(nextFilters);
         },
-        [
-            cancelUserRatingDebounce,
-            filters,
-            mode,
-        ],
+        [cancelUserRatingDebounce],
     );
 
     const onUserRatingEnd = useCallback(
         (minUserRating: number) => {
             const nextFilters = {
-                ...filters,
+                ...latestFiltersRef.current,
                 minUserRating,
             };
 
+            latestFiltersRef.current = nextFilters;
             isUserRatingInteractingRef.current = true;
             shouldSkipNextFilterOptionsSyncRef.current = true;
             saveModeFilters(mode, nextFilters);
@@ -1756,7 +1754,6 @@ export const useChooseWineFilters = () => {
         [
             applyTasteCharacteristics,
             debouncedLoadUserRatingFilterOptions,
-            filters,
             isTasteCharacteristicsLocked,
             mode,
         ],

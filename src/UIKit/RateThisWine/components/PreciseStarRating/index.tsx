@@ -11,6 +11,7 @@ type StarIconComponent = NonNullable<ComponentProps<typeof StarRatingDisplay>['S
 interface IProps {
     rating: number;
     onChange?: (rating: number) => void;
+    onPreviewChange?: (rating: number) => void;
     StarIconComponent: StarIconComponent;
     starSize: number;
     starStyle?: StyleProp<ViewStyle>;
@@ -18,11 +19,16 @@ interface IProps {
     emptyColor: string;
     maxStars?: number;
     step?: number;
+    starWidth: number;
+    containerStyle?: StyleProp<ViewStyle>;
+    ratingStyle?: StyleProp<ViewStyle>;
+    spreadStars?: boolean;
 }
 
 export const PreciseStarRating = ({
     rating,
     onChange,
+    onPreviewChange,
     StarIconComponent,
     starSize,
     starStyle,
@@ -30,6 +36,10 @@ export const PreciseStarRating = ({
     emptyColor,
     maxStars = 5,
     step = 0.1,
+    starWidth,
+    containerStyle,
+    ratingStyle,
+    spreadStars = false,
 }: IProps) => {
     const styles = useMemo(() => getStyles(), []);
     const {
@@ -38,13 +48,21 @@ export const PreciseStarRating = ({
         fillContentStyle,
         completionStyle,
         onLayout,
-    } = usePreciseStarRating({ rating, maxStars, step, onChange });
+    } = usePreciseStarRating({
+        rating,
+        maxStars,
+        step,
+        starWidth,
+        spreadStars,
+        onChange,
+        onPreviewChange,
+    });
 
     return (
         <GestureDetector gesture={gesture}>
             <Animated.View
                 collapsable={false}
-                style={[styles.container, completionStyle]}
+                style={[styles.container, containerStyle, completionStyle]}
                 onLayout={onLayout}
             >
                 <StarRatingDisplay
@@ -54,6 +72,7 @@ export const PreciseStarRating = ({
                     StarIconComponent={StarIconComponent}
                     starSize={starSize}
                     starStyle={starStyle}
+                    style={ratingStyle}
                     emptyColor={emptyColor}
                 />
                 <Animated.View
@@ -68,6 +87,7 @@ export const PreciseStarRating = ({
                             StarIconComponent={StarIconComponent}
                             starSize={starSize}
                             starStyle={starStyle}
+                            style={ratingStyle}
                             color={color}
                         />
                     </Animated.View>

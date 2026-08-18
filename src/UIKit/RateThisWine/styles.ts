@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
+import { STAR_GAP } from './constants';
 
 export const getStyles = (colors: IColors) => {
     const styles = StyleSheet.create({
@@ -45,7 +46,9 @@ export const getStyles = (colors: IColors) => {
             marginLeft: scaleHorizontal(24),
         },
         star: {
-            marginRight: scaleHorizontal(24),
+            marginHorizontal: 0,
+            marginLeft: 0,
+            marginRight: scaleHorizontal(STAR_GAP),
         },
         starIconContainer: {
             justifyContent: 'center',

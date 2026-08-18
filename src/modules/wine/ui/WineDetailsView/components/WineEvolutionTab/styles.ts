@@ -73,28 +73,6 @@ export const getStyles = (colors: IColors) => {
             width: '100%',
             textAlign: 'center',
         },
-        selectedWineLoverRating: {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        selectedWineLoverRatingLabel: {
-            position: 'absolute',
-            bottom: scaleVertical(6),
-        },
-        selectedRatingValueRow: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: scaleHorizontal(4),
-        },
-        selectedRatingValue: {
-            color: colors.text,
-        },
         expertList: {
             gap: scaleHorizontal(12),
             paddingVertical: scaleVertical(4),
@@ -161,6 +139,13 @@ export const getStyles = (colors: IColors) => {
         },
         carouselHeaderTitle: {
             color: colors.text,
+        },
+        carouselHeaderText: {
+            flex: 1,
+            gap: scaleVertical(2),
+        },
+        carouselHeaderDescription: {
+            color: colors.text_light,
         },
         carouselActions: {
             flexDirection: 'row',

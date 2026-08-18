@@ -32,11 +32,11 @@ export const useVintageDropdown = ({
         const startYear = 2010;
         const yearsSet = new Set<number>();
         let shouldShowNoneVintage = false;
-        let noneVintageWineId: number | undefined;
+        let noneVintage: IVintage | undefined;
 
         const years: IVintageDropdownItem[] = [];
         const allVintagesLabel = localization.t('wine.allVintages', { locale });
-        const noneVintageLabel = localization.t('wine.nonVintage', { locale });
+        const noneVintageLabel = localization.t('wine.nonVintageShort', { locale });
 
         const ensureAllVintagesItem = () => {
             if (years.some(item => item.value === null)) return;
@@ -47,13 +47,16 @@ export const useVintageDropdown = ({
             });
         };
         
-        const ensureNoneVintageItem = (wineId?: number) => {
+        const ensureNoneVintageItem = (vintage?: IVintage) => {
             if (years.some(item => item.value === NONE_VINTAGE_DROPDOWN_VALUE)) return;
             years.push({
                 label: noneVintageLabel,
                 value: NONE_VINTAGE_DROPDOWN_VALUE,
-                id: wineId,
-                hideRatingInfo: true,
+                id: vintage?.wineId,
+                averageUserRating: vintage?.averageUserRating,
+                averageExpertRating: vintage?.averageExpertRating,
+                totalReviews: vintage?.totalReviews,
+                countExpertRating: vintage?.countExpertRating,
             });
         };
 
@@ -86,7 +89,7 @@ export const useVintageDropdown = ({
 
             if (v.vintage === null) {
                 shouldShowNoneVintage = true;
-                noneVintageWineId = noneVintageWineId ?? v.wineId;
+                noneVintage = noneVintage ?? v;
                 return;
             }
 
@@ -106,7 +109,7 @@ export const useVintageDropdown = ({
 
         if (currentVintage && typeof currentVintage === 'object' && currentVintage.vintage === null) {
             shouldShowNoneVintage = true;
-            noneVintageWineId = noneVintageWineId ?? currentVintage.wineId;
+            noneVintage = noneVintage ?? currentVintage;
         }
 
         if (currentVintage && typeof currentVintage === 'object' && currentVintage.vintage !== null && !yearsSet.has(currentVintage.vintage)) {
@@ -141,7 +144,7 @@ export const useVintageDropdown = ({
         }
 
         ensureAllVintagesItem();
-        ensureNoneVintageItem(shouldShowNoneVintage ? noneVintageWineId : undefined);
+        ensureNoneVintageItem(shouldShowNoneVintage ? noneVintage : undefined);
 
         years.sort((a, b) => {
             if (a.value === null) return -1;

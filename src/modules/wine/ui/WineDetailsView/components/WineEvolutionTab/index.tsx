@@ -6,7 +6,6 @@ import { RateMedal } from '@/UIKit/RateMedal/ui';
 import { SmallStarRating } from '@/UIKit/SmallStarRating';
 import { UniversalPickerBottomModal } from '@/UIKit/UniversalPickerBottomModal';
 import { ArrowDownIcon } from '@assets/icons/ArrowDownIcon';
-import { FilledStarIcon } from '@assets/icons/FilledStarIcon';
 import {
     IWineEvolutionCarouselCard,
     IWineEvolutionChart,
@@ -19,6 +18,7 @@ import { EvolutionCarouselDots } from '../EvolutionCarouselDots';
 import { useWineEvolutionTab } from './presenters/useWineEvolutionTab';
 import { getStyles } from './styles';
 import { Loader } from '@/UIKit/Loader';
+import { WineLoverRatingBadge } from './components/WineLoverRatingBadge';
 
 interface IProps {
     wineId: number;
@@ -32,6 +32,7 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
         tastingYear,
         proAssessmentScore,
         wineLoverScoreText,
+        wineLoverRatingDescription,
         hasProAssessment,
         hasWineLoverScore,
         winePeakYear,
@@ -165,23 +166,20 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                                 </View>
                                 <View style={styles.proAssessment}>
                                     {hasWineLoverScore ? (
-                                        <View style={styles.selectedWineLoverRating}>
-                                            <View style={styles.selectedRatingValueRow}>
-                                                <Typography
-                                                    text={wineLoverScoreText}
-                                                    variant="subtitle_32_500"
-                                                    style={styles.selectedRatingValue}
-                                                />
-                                                <FilledStarIcon width={24} height={24} color={colors.stars} />
-                                            </View>
-                                        </View>
+                                        <WineLoverRatingBadge
+                                            brand={t('common.logo')}
+                                            score={wineLoverScoreText}
+                                            description={wineLoverRatingDescription}
+                                            textColor={colors.text}
+                                            starColor={colors.stars}
+                                        />
                                     ) : (
                                         <Typography text="-" variant="h5" style={styles.proAssessmentNoData} />
                                     )}
                                     <Typography
                                         text={t('wine.evolution.wineLoversRating')}
                                         variant="subtitle_10_400"
-                                        style={[styles.proAssessmentLabel, styles.selectedWineLoverRatingLabel]}
+                                        style={styles.proAssessmentLabel}
                                     />
                                 </View>
                             </View>
@@ -237,11 +235,18 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                     {colorCards.length ? (
                         <View style={styles.carouselSection}>
                             <View style={styles.carouselHeader}>
-                                <Typography
-                                    text={t('wine.evolution.color')}
-                                    variant="h5"
-                                    style={styles.carouselHeaderTitle}
-                                />
+                                <View style={styles.carouselHeaderText}>
+                                    <Typography
+                                        text={t('wine.evolution.color')}
+                                        variant="h5"
+                                        style={styles.carouselHeaderTitle}
+                                    />
+                                    <Typography
+                                        text={t('wine.evolution.colorDescription')}
+                                        variant="subtitle_12_400"
+                                        style={styles.carouselHeaderDescription}
+                                    />
+                                </View>
                             </View>
                             <View style={styles.carouselViewport}>
                                 <FlatList
@@ -265,11 +270,18 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                     {aromaCards.length ? (
                         <View style={styles.carouselSection}>
                             <View style={styles.carouselHeader}>
-                                <Typography
-                                    text={t('wine.evolution.aroma')}
-                                    variant="h5"
-                                    style={styles.carouselHeaderTitle}
-                                />
+                                <View style={styles.carouselHeaderText}>
+                                    <Typography
+                                        text={t('wine.evolution.aroma')}
+                                        variant="h5"
+                                        style={styles.carouselHeaderTitle}
+                                    />
+                                    <Typography
+                                        text={t('wine.evolution.aromaDescription')}
+                                        variant="subtitle_12_400"
+                                        style={styles.carouselHeaderDescription}
+                                    />
+                                </View>
                             </View>
                             <View style={styles.carouselViewport}>
                                 <FlatList
@@ -293,11 +305,18 @@ export const WineEvolutionTab = ({ wineId, onRegisterRefresh }: IProps) => {
                     {tasteCards.length ? (
                         <View style={styles.carouselSection}>
                             <View style={styles.carouselHeader}>
-                                <Typography
-                                    text={t('wine.evolution.taste')}
-                                    variant="h5"
-                                    style={styles.carouselHeaderTitle}
-                                />
+                                <View style={styles.carouselHeaderText}>
+                                    <Typography
+                                        text={t('wine.evolution.taste')}
+                                        variant="h5"
+                                        style={styles.carouselHeaderTitle}
+                                    />
+                                    <Typography
+                                        text={t('wine.evolution.tasteDescription')}
+                                        variant="subtitle_12_400"
+                                        style={styles.carouselHeaderDescription}
+                                    />
+                                </View>
                             </View>
                             <View style={styles.carouselViewport}>
                                 <FlatList
