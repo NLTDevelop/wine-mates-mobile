@@ -28,23 +28,13 @@ const getRateColorStatistics = (rateDetails: IRateDetails): IWineDetails['statis
         return [];
     }
 
-    const emptyShade = {
-        colorHex: rateDetails.color.colorHex,
-        userCount: 0,
-    };
-    const selectedShade = {
-        colorHex: rateDetails.color.colorHex,
-        userCount: 1,
-    };
-
     return [
         {
             id: rateDetails.color.id,
             colorHex: rateDetails.color.colorHex,
             name: rateDetails.color.name,
-            pale: rateDetails.color.tone === 'pale' ? selectedShade : emptyShade,
-            medium: rateDetails.color.tone === 'medium' ? selectedShade : emptyShade,
-            deep: rateDetails.color.tone === 'deep' ? selectedShade : emptyShade,
+            tone: rateDetails.color.tone,
+            userCount: 1,
         },
     ];
 };

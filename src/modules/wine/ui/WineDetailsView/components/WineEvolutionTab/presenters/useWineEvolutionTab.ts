@@ -7,11 +7,14 @@ import { ILocalization } from '@/UIProvider/localization/ILocalization';
 import { wineService } from '@/entities/wine/services/WineService';
 import {
     IWineEvolutionAggregate,
+    IWineEvolutionByYear,
     IWineEvolutionResponse,
     IWineEvolutionStatistic,
     IWineEvolutionTasteCharacteristic,
     IWineEvolutionYear,
+    IWineEvolutionYearValue,
 } from '@/entities/wine/types/IWineEvolution';
+import { IColorStatistic } from '@/entities/wine/types/IColorStatistic';
 import {
     IWineEvolutionCarouselCard,
     IWineEvolutionChart,
@@ -154,10 +157,10 @@ const createEvolutionStatistic = (
     textColor: getContrastColor(item.colorHex ?? fallbackColor),
 });
 
-const createEvolutionCarouselCard = (
+const createEvolutionCarouselCard = <T extends IWineEvolutionStatistic>(
     id: string,
     title: string,
-    statistics: IWineEvolutionStatistic[],
+    statistics: T[],
     reviewers: IWineEvolutionAggregate['reviewers'],
     fallbackColors: string[],
     t: ILocalization['t'],
@@ -165,8 +168,7 @@ const createEvolutionCarouselCard = (
 ): IWineEvolutionCarouselCard => {
     const availableStatistics = Array.isArray(statistics) ? statistics : [];
     const visibleColors = shouldUseColorShades
-        ? createColorShadeItems(availableStatistics, t)
-              .slice(0, 5)
+        ? createColorShadeItems(availableStatistics as unknown as IColorStatistic[], t)
               .map(item => ({
                   label: item.label,
                   reviews: item.reviews,
@@ -175,33 +177,33 @@ const createEvolutionCarouselCard = (
                   textColor: getContrastColor(item.colorHex),
               }))
         : availableStatistics
-              .slice(0, 5)
               .map((statistic, index) =>
                   createEvolutionStatistic(statistic, fallbackColors[index % fallbackColors.length], t),
               );
 
-    const avatarUrls = (reviewers?.users ?? [])
-        .map(user => user.avatar?.mediumUrl || user.avatar?.smallUrl || user.avatar?.originalUrl || '')
-        .filter(Boolean)
-        .slice(0, 3);
+    const avatarItems = (reviewers?.users ?? []).slice(0, 4).map(user => ({
+        id: user.id,
+        avatarUrl: user.avatar?.mediumUrl || user.avatar?.smallUrl || user.avatar?.originalUrl || null,
+        fullName: `${user.firstName} ${user.lastName}`.trim(),
+    }));
     const totalReviewers = reviewers?.totalCount ?? 0;
-    const additionalPeople = totalReviewers > 3 ? totalReviewers - 3 : 0;
+    const additionalPeople = Math.max(0, totalReviewers - avatarItems.length);
 
     return {
         id,
         year: title,
         colors: visibleColors,
-        avatarUrls,
+        avatarItems,
         additionalPeople,
         additionalPeopleText: additionalPeople ? `+${additionalPeople}` : '',
         isEmpty: !visibleColors.length,
     };
 };
 
-const createEvolutionCarouselCards = (
+const createEvolutionCarouselCards = <T extends IWineEvolutionStatistic>(
     id: string,
     allYearsTitle: string,
-    statistics: IWineEvolutionResponse['topColors'],
+    statistics: IWineEvolutionByYear<T[], IWineEvolutionYearValue<T>>,
     reviewers: IWineEvolutionResponse['reviewers'],
     fallbackColors: string[],
     t: ILocalization['t'],

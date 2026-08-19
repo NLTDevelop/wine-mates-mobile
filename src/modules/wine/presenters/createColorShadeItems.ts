@@ -1,60 +1,28 @@
 import { ILocalization } from '@/UIProvider/localization/ILocalization';
-import {
-    IColorShadeItem,
-    IColorStatisticWithShades,
-} from '@/modules/wine/types/IColorShadeItem';
+import { IColorStatistic } from '@/entities/wine/types/IColorStatistic';
+import { IColorShadeItem } from '@/modules/wine/types/IColorShadeItem';
 import { declOfWord } from '@/utils';
 
 export const createColorShadeItems = (
-    topColors: IColorStatisticWithShades[] | null,
+    topColors: IColorStatistic[] | null,
     t: ILocalization['t'],
 ) => {
     if (!topColors) {
         return [];
     }
 
-    const items: IColorShadeItem[] = [];
+    return topColors.map<IColorShadeItem>(colorItem => {
+        const toneLabel = colorItem.tone ? t(`wine.${colorItem.tone}`) : null;
 
-    topColors.forEach(colorItem => {
-        if (colorItem.pale?.userCount && colorItem.pale.userCount > 0) {
-            items.push({
-                id: `${colorItem.id}-pale`,
-                colorHex: colorItem.pale.colorHex,
-                label: `${t('wine.pale')} ${colorItem.name}`,
-                reviews: colorItem.pale.userCount,
-                count: `(${declOfWord(
-                    Number(colorItem.pale.userCount),
-                    t('scanner.reviewCount') as unknown as Array<string>,
-                )})`,
-            });
-        }
-
-        if (colorItem.medium?.userCount && colorItem.medium.userCount > 0) {
-            items.push({
-                id: `${colorItem.id}-medium`,
-                colorHex: colorItem.medium.colorHex,
-                label: `${t('wine.medium')} ${colorItem.name}`,
-                reviews: colorItem.medium.userCount,
-                count: `(${declOfWord(
-                    Number(colorItem.medium.userCount),
-                    t('scanner.reviewCount') as unknown as Array<string>,
-                )})`,
-            });
-        }
-
-        if (colorItem.deep?.userCount && colorItem.deep.userCount > 0) {
-            items.push({
-                id: `${colorItem.id}-deep`,
-                colorHex: colorItem.deep.colorHex,
-                label: `${t('wine.deep')} ${colorItem.name}`,
-                reviews: colorItem.deep.userCount,
-                count: `(${declOfWord(
-                    Number(colorItem.deep.userCount),
-                    t('scanner.reviewCount') as unknown as Array<string>,
-                )})`,
-            });
-        }
+        return {
+            id: `${colorItem.id}-${colorItem.tone ?? colorItem.colorHex}`,
+            colorHex: colorItem.colorHex,
+            label: toneLabel ? `${toneLabel} ${colorItem.name}` : colorItem.name,
+            reviews: colorItem.userCount,
+            count: `(${declOfWord(
+                colorItem.userCount,
+                t('scanner.reviewCount') as unknown as Array<string>,
+            )})`,
+        };
     });
-
-    return items;
 };

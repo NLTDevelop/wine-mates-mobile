@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { IColorStatistic } from '@/entities/wine/types/IWineDetails';
+import { IColorStatistic } from '@/entities/wine/types/IColorStatistic';
 import { useUiContext } from '@/UIProvider';
 import { createColorShadeItems } from '@/modules/wine/presenters/createColorShadeItems';
 

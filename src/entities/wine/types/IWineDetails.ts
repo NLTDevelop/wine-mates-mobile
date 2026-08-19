@@ -3,6 +3,7 @@ import { IWineTasteCharacteristic } from './IWineTasteCharacteristic';
 import { ISnack } from '@/entities/snacks/types/ISnack';
 import { IWineReviewsListItem } from './IWineReviewsListItem';
 import { IAIUsage } from './IRateContext';
+import { IColorStatistic } from './IColorStatistic';
 
 export interface IStatistic {
     id: number;
@@ -23,20 +24,6 @@ export interface IVintage {
 }
 
 export type IVintagesItem = number | string | IVintage;
-
-export interface IColorShade {
-    colorHex: string;
-    userCount: number;
-}
-
-export interface IColorStatistic {
-    id: number;
-    colorHex: string;
-    name: string;
-    pale: IColorShade;
-    medium: IColorShade;
-    deep: IColorShade;
-}
 
 export interface IWinePeakStatistic {
     year: number;
