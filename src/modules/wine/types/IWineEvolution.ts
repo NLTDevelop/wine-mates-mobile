@@ -26,11 +26,17 @@ export interface IWineEvolutionColorStat {
     textColor: string;
 }
 
+export interface IWineEvolutionAvatarItem {
+    id: number;
+    avatarUrl: string | null;
+    fullName: string;
+}
+
 export interface IWineEvolutionCarouselCard {
     id: string;
     year: string;
     colors: IWineEvolutionColorStat[];
-    avatarUrls: string[];
+    avatarItems: IWineEvolutionAvatarItem[];
     additionalPeople: number;
     additionalPeopleText: string;
     isEmpty?: boolean;

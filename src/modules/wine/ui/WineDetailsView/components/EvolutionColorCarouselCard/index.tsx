@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
-import { FlatList, Image, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { useUiContext } from '@/UIProvider';
+import { Avatar } from '@/UIKit/Avatar';
 import { Typography } from '@/UIKit/Typography';
 import { IWineEvolutionCarouselCard, IWineEvolutionColorStat } from '@/modules/wine/types/IWineEvolution';
 import { getStyles } from './styles';
@@ -51,14 +52,37 @@ export const EvolutionColorCarouselCard = ({ card }: IProps) => {
                         />
                         <View style={styles.avatarContent}>
                             <View style={styles.avatarRow}>
-                                {card.avatarUrls[0] ? (
-                                    <Image source={{ uri: card.avatarUrls[0] }} style={styles.avatar} />
+                                {card.avatarItems[0] ? (
+                                    <Avatar
+                                        size={24}
+                                        avatarUrl={card.avatarItems[0].avatarUrl}
+                                        fullname={card.avatarItems[0].fullName}
+                                        containerStyle={styles.avatar}
+                                    />
                                 ) : null}
-                                {card.avatarUrls[1] ? (
-                                    <Image source={{ uri: card.avatarUrls[1] }} style={styles.avatar} />
+                                {card.avatarItems[1] ? (
+                                    <Avatar
+                                        size={24}
+                                        avatarUrl={card.avatarItems[1].avatarUrl}
+                                        fullname={card.avatarItems[1].fullName}
+                                        containerStyle={styles.avatar}
+                                    />
                                 ) : null}
-                                {card.avatarUrls[2] ? (
-                                    <Image source={{ uri: card.avatarUrls[2] }} style={styles.avatar} />
+                                {card.avatarItems[2] ? (
+                                    <Avatar
+                                        size={24}
+                                        avatarUrl={card.avatarItems[2].avatarUrl}
+                                        fullname={card.avatarItems[2].fullName}
+                                        containerStyle={styles.avatar}
+                                    />
+                                ) : null}
+                                {card.avatarItems[3] ? (
+                                    <Avatar
+                                        size={24}
+                                        avatarUrl={card.avatarItems[3].avatarUrl}
+                                        fullname={card.avatarItems[3].fullName}
+                                        containerStyle={styles.avatar}
+                                    />
                                 ) : null}
                                 {card.additionalPeople > 0 ? (
                                     <View style={styles.additionalPeople}>
