@@ -10,6 +10,7 @@ import { EventMapHeader } from '@/modules/event/ui/EventMapView/components/Event
 import { useEventMapScreen } from './presenters/useEventMapScreen';
 import { getStyles } from './styles';
 import { ScreenHeader } from '@/UIKit/ScreenHeader';
+import { PermissionGuardModal } from '@/UIKit/PermissionGuardModal';
 
 export const EventMapView = observer(() => {
     const { colors } = useUiContext();
@@ -35,6 +36,7 @@ export const EventMapView = observer(() => {
         onUpdateEvent,
         onMapPress,
         searchLocation,
+        permissionModalProps,
     } = useEventMapScreen();
 
     return (
@@ -79,6 +81,7 @@ export const EventMapView = observer(() => {
                     />
                 </>
             )}
+            <PermissionGuardModal {...permissionModalProps} />
         </ScreenContainer>
     );
 });

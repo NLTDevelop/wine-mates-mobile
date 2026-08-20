@@ -20,6 +20,7 @@ import { WineSearchBottomSheet } from '@/UIKit/WineSearchBottomSheet';
 import { useWineSearch } from '@/UIKit/WineSearchBottomSheet/presenters/useWineSearch';
 import { WineSearchModeEnum } from '@/UIKit/WineSearchBottomSheet/enums/WineSearchModeEnum';
 import { WINE_LIST_PERFORMANCE_PROPS } from '@/UIKit/WineListItem/constants';
+import { WineListSearchBar } from '@/modules/profile/ui/components/WineListSearchBar';
 import { useMyWinesForSale } from './presenters/useMyWinesForSale';
 import { getStyles } from './styles';
 
@@ -33,6 +34,8 @@ export const MyWinesForSaleView = () => {
         isLoadingMore,
         isError,
         isOfferModalVisible,
+        emptyTitle,
+        emptyDescription,
         selectedWine,
         selectedOffer,
         listRef,
@@ -40,6 +43,8 @@ export const MyWinesForSaleView = () => {
         wineSearchEmptyText,
         onRefresh,
         onEndReached,
+        onSearch,
+        scrollToTop,
         onPressBack,
         onItemPress,
         onOfferPress,
@@ -83,6 +88,9 @@ export const MyWinesForSaleView = () => {
                     <HeaderWithBackButton title={t('profile.myWinesForSale')} onPressBack={onPressBack} isCentered />
                 }
             >
+                <View style={styles.searchContainer}>
+                    <WineListSearchBar onSearch={onSearch} scrollToTop={scrollToTop} />
+                </View>
                 <FlatList
                     {...WINE_LIST_PERFORMANCE_PROPS}
                     ref={listRef}
@@ -100,8 +108,8 @@ export const MyWinesForSaleView = () => {
                         <EmptyListView
                             isLoading={isLoading}
                             image={<EmptyWineListIcon />}
-                            text={t('profile.noWinesForSale')}
-                            description={t('wine.emptyListDescription')}
+                            text={emptyTitle}
+                            description={emptyDescription}
                         />
                     }
                 />

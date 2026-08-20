@@ -9,6 +9,7 @@ import { useUiContext } from '@/UIProvider';
 import { useAvatarCamera } from '../../presenters/useAvatarCamera';
 import { getStyles } from './styles';
 import { CameraMask } from './components/CameraMask';
+import { PermissionGuardModal } from '@/UIKit/PermissionGuardModal';
 
 const { width: screenWidth } = Dimensions.get('window');
 const CIRCLE_SIZE = screenWidth * 0.9;
@@ -17,7 +18,7 @@ export const AvatarCameraView = () => {
     const { colors } = useUiContext();
     const { top, bottom } = useSafeAreaInsets();
     const styles = useMemo(() => getStyles(colors, top, bottom), [colors, top, bottom]);
-    const { onGalleryPress, onTakePhotoPress, onCrossPress, onSwitchCamera, device, cameraOutputs, isCameraActive, hasPermission, hasBothCameras } = useAvatarCamera(CIRCLE_SIZE);
+    const { onGalleryPress, onTakePhotoPress, onCrossPress, onSwitchCamera, device, cameraOutputs, isCameraActive, hasPermission, hasBothCameras, permissionModalProps } = useAvatarCamera(CIRCLE_SIZE);
 
     return (
         <View style={styles.container}>
@@ -54,6 +55,7 @@ export const AvatarCameraView = () => {
                     </View>
                 </>
             )}
+            <PermissionGuardModal {...permissionModalProps} />
         </View>
     );
 };

@@ -11,11 +11,13 @@ import { useEventMapView } from '@/modules/event/ui/EventMapView/presenters/useE
 import { IUserLocation } from '@/entities/location/types/IUserLocation';
 import { EventStackParamList } from '@/navigation/eventStackNavigator/types';
 import { getCurrentLocationPayload } from '@/libs/locations/getCurrentLocationPayload';
+import { usePermissionGuard } from '@/hooks/usePermissionGuard';
 
 type Navigation = NativeStackNavigationProp<EventStackParamList>;
 
 export const useEventMapScreen = () => {
     const navigation = useNavigation<Navigation>();
+    const { onEnsurePermissionAccess, permissionModalProps } = usePermissionGuard();
     const [isRefetching, setIsRefetching] = useState(false);
     const [searchLocation, setSearchLocation] = useState<IUserLocation | null>(null);
     const isRefetchingRef = useRef(false);
@@ -153,7 +155,10 @@ export const useEventMapScreen = () => {
                         return;
                     }
 
-                    const locationPayload = await getCurrentLocationPayload();
+                    const hasLocationPermission = await onEnsurePermissionAccess('geolocation');
+                    const locationPayload = hasLocationPermission
+                        ? await getCurrentLocationPayload()
+                        : null;
                     if (!isActive) {
                         return;
                     }
@@ -165,7 +170,7 @@ export const useEventMapScreen = () => {
                         }
                         : userLocationRef.current || null;
 
-                    locationModel.setHasPermission(!!locationPayload);
+                    locationModel.setHasPermission(hasLocationPermission && !!locationPayload);
                     if (locationPayload) {
                         locationModel.setUserLocation(nextLocation);
                     }
@@ -184,7 +189,7 @@ export const useEventMapScreen = () => {
             return () => {
                 isActive = false;
             };
-        }, [refetchEvents]),
+        }, [onEnsurePermissionAccess, refetchEvents]),
     );
 
     const onUpdateEvent = useCallback(async () => {
@@ -244,5 +249,6 @@ export const useEventMapScreen = () => {
         onEditPress,
         onFavoritePress,
         onAddEvent,
+        permissionModalProps,
     };
 };

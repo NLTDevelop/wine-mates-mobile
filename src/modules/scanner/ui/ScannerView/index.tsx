@@ -11,6 +11,7 @@ import { useUiContext } from '@/UIProvider';
 import { useScanner } from '../../presenters/useScanner';
 import { ScannerFrame } from './components/ScannerFrame';
 import { getStyles } from './styles';
+import { PermissionGuardModal } from '@/UIKit/PermissionGuardModal';
 
 export const ScannerView = () => {
     const { colors } = useUiContext();
@@ -19,7 +20,7 @@ export const ScannerView = () => {
     const { torch, onGalleryPress, onTakePhotoPress, onCrossPress, onCreatePress, onTorchPress,
         onPreviewStarted, onPreviewStopped, device, cameraOutputs, isCameraActive, torchMode,
         isTorchDisabled, shouldRenderCamera, cameraSessionKey, onCameraError,
-        onCameraInterruptionStarted, onCameraInterruptionEnded } = useScanner();
+        onCameraInterruptionStarted, onCameraInterruptionEnded, permissionModalProps } = useScanner();
 
     return (
         <View style={styles.container}>
@@ -67,6 +68,7 @@ export const ScannerView = () => {
                     </View>
                 </>
             )}
+            <PermissionGuardModal {...permissionModalProps} />
         </View>
     );
 };

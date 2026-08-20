@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { openCropper, openPicker } from 'react-native-image-crop-picker';
 import type { Image as ImageCropPickerResult } from 'react-native-image-crop-picker';
-import { useCameraDevice, useCameraPermission, usePhotoOutput } from 'react-native-vision-camera';
+import { useCameraDevice, usePhotoOutput } from 'react-native-vision-camera';
 import type { CameraOrientation, InterruptionReason } from 'react-native-vision-camera';
 import ImageResizer from 'react-native-image-resizer';
 import { IWineImage } from '@/entities/wine/types/IWineImage';
@@ -16,6 +16,7 @@ import { isAndroid, isIOS } from '@/utils';
 import { localization } from '@/UIProvider/localization/Localization';
 import { toastService } from '@/libs/toast/toastService';
 import { getWineScannerReturnAction } from '@/modules/scanner/utils/getWineScannerReturnAction';
+import { usePermissionGuard } from '@/hooks/usePermissionGuard';
 
 const SCANNER_CROP_MAX_SIZE = 2048;
 const SCANNER_CROP_ASPECT_RATIO_WIDTH = 9;
@@ -76,18 +77,19 @@ const normalizeCroppedImageToJpeg = async (croppedImage: ImageCropPickerResult):
 
 export const useScanner = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const { onEnsurePermissionAccess, permissionModalProps } = usePermissionGuard();
     const appState = useAppState();
     const isFocused = useIsFocused();
     const [torch, setTorch] = useState<'on' | 'off'>('off');
     const [isPreviewStarted, setIsPreviewStarted] = useState(false);
     const [cameraSessionKey, setCameraSessionKey] = useState(0);
+    const [hasCameraPermission, setHasCameraPermission] = useState(false);
     const cameraRetryCountRef = useRef(0);
-    const { hasPermission, requestPermission } = useCameraPermission();
     const device = useCameraDevice('back');
     const photoOutput = usePhotoOutput({ quality: 1, qualityPrioritization: 'quality' });
     const cameraOutputs = useMemo(() => [photoOutput], [photoOutput]);
     const isCameraActive = isFocused && appState === 'active';
-    const shouldRenderCamera = hasPermission && !!device && isCameraActive;
+    const shouldRenderCamera = hasCameraPermission && !!device && isCameraActive;
     const torchMode = isCameraActive && isPreviewStarted ? torch : undefined;
     const isTorchDisabled = !isCameraActive || !isPreviewStarted;
 
@@ -138,10 +140,17 @@ export const useScanner = () => {
     };
 
     useEffect(() => {
-        if (!hasPermission) {
-            requestPermission();
+        if (appState !== 'active') {
+            return;
         }
-    }, [hasPermission, requestPermission]);
+
+        const ensureCameraPermission = async () => {
+            const hasPermission = await onEnsurePermissionAccess('camera');
+            setHasCameraPermission(hasPermission);
+        };
+
+        ensureCameraPermission();
+    }, [appState, onEnsurePermissionAccess]);
 
     useFocusEffect(
         useCallback(() => {
@@ -350,5 +359,6 @@ export const useScanner = () => {
         onCameraError,
         onCameraInterruptionStarted,
         onCameraInterruptionEnded,
+        permissionModalProps,
     };
 };

@@ -790,6 +790,9 @@
     "permissions": {
         "locationTitle": "Location Permission",
         "locationMessage": "The app needs access to your location to show events near you",
+        "cameraTitle": "Camera Permission",
+        "cameraMessage": "Allow camera access to take photos and scan wine labels.",
+        "openSettings": "Open settings",
         "locationUnavailable": "Unable to get your location. Please check location permissions and try again.",
         "askLater": "Ask later",
         "cancel": "Cancel",

@@ -5,7 +5,7 @@ import { EventType } from '@/entities/events/enums/EventType';
 import { Sex } from '@/entities/events/enums/Sex';
 import { ParticipationCondition } from '@/entities/events/enums/ParticipationCondition';
 import { useUiContext } from '@/UIProvider';
-import { useLocationPermission } from '@/hooks/useLocationPermission';
+import { locationModel } from '@/entities/location/LocationModel';
 import { config } from '@/config';
 import { IEventDetailsPreviewData } from '../types/IEventDetailsPreviewData';
 import { IEventContactOption } from '../types/IEventContactOption';
@@ -37,7 +37,7 @@ interface IEventDetailWithPaymentMethods extends IEventDetail {
 
 export const useEventDetailsData = (eventDetail: IEventDetail | null) => {
     const { t, locale } = useUiContext();
-    const { userLocation } = useLocationPermission();
+    const userLocation = locationModel.userLocation;
 
     const getValueOrDash = (value?: string | number | null) => {
         if (value === null || value === undefined || value === '') {
