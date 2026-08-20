@@ -23,6 +23,8 @@ interface IProps {
     onGeneratePress?: () => void;
     cuisineSelectButtonText?: string;
     onCuisineSelectPress?: () => void;
+    showDescription?: boolean;
+    isDetailedTastingRequired?: boolean;
 }
 
 export const FoodPairing = ({
@@ -36,9 +38,11 @@ export const FoodPairing = ({
     onGeneratePress: controlledOnGeneratePress,
     cuisineSelectButtonText,
     onCuisineSelectPress,
+    showDescription = false,
+    isDetailedTastingRequired = false,
 }: IProps) => {
     const { colors, t } = useUiContext();
-    const styles = useMemo(() => getStyles(colors, isLocked), [colors, isLocked]);
+    const styles = useMemo(() => getStyles(colors, isLocked, showDescription), [colors, isLocked, showDescription]);
 
     const foodPairing = useFoodPairing(setLimits, generatedSnacks, onGenerateSuccess);
     const snacks = controlledSnacks !== undefined ? controlledSnacks : foodPairing.snacks;
@@ -53,7 +57,7 @@ export const FoodPairing = ({
                     <Typography variant="subtitle_20_500" text={t('wine.foodPairing')} />
                     <CrownIcon />
                 </View>
-                {!hideGenerateButton && (
+                {!hideGenerateButton && !isDetailedTastingRequired && (
                     <Button
                         text={t('common.generate')}
                         onPress={onGeneratePress}
@@ -63,7 +67,14 @@ export const FoodPairing = ({
                     />
                 )}
             </View>
-            {cuisineSelectButtonText && onCuisineSelectPress ? (
+            {showDescription ? (
+                <Typography
+                    variant="body_400"
+                    text={t('wine.foodPairingDescription')}
+                    style={styles.description}
+                />
+            ) : null}
+            {!isDetailedTastingRequired && cuisineSelectButtonText && onCuisineSelectPress ? (
                 <WineSnackCuisineSelectButton
                     text={cuisineSelectButtonText}
                     onPress={onCuisineSelectPress}
@@ -82,7 +93,15 @@ export const FoodPairing = ({
                     ))
                 ) : (
                     <View style={styles.emptyContainer}>
-                        <Typography variant="body_500" text={t('wine.emptyFoodPairing')} style={styles.emptyText} />
+                        <Typography
+                            variant="body_500"
+                            text={t(
+                                isDetailedTastingRequired
+                                    ? 'wine.detailedTastingRequiredForFoodPairing'
+                                    : 'wine.emptyFoodPairing',
+                            )}
+                            style={styles.emptyText}
+                        />
                     </View>
                 )}
                 {isLocked && <LockContainer />}

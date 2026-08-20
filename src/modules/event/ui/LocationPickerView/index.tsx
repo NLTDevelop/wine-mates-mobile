@@ -10,6 +10,7 @@ import { LocationSearchInput } from './components/LocationSearchInput/ui';
 import { MapMarker } from '@/UIKit/MapMarker';
 import { ScreenContainer } from '@/UIKit/ScreenContainer';
 import { ArrowIcon } from '@assets/icons/ArrowIcon';
+import { PermissionGuardModal } from '@/UIKit/PermissionGuardModal';
 
 export const LocationPickerView = () => {
     const { colors, t } = useUiContext();
@@ -31,6 +32,7 @@ export const LocationPickerView = () => {
         onSelectSuggestion,
         onConfirm,
         onPressBack,
+        permissionModalProps,
     } = useLocationPickerView();
 
     return (
@@ -89,6 +91,7 @@ export const LocationPickerView = () => {
                     />
                 </View>
             </View>
+            <PermissionGuardModal {...permissionModalProps} />
         </ScreenContainer>
     );
 };

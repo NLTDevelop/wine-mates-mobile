@@ -17,6 +17,8 @@ import { localization } from '@/UIProvider/localization/Localization';
 import { toastService } from '@/libs/toast/toastService';
 import { IWineSearchResultItem } from '@/UIKit/WineSearchBottomSheet/types/IWineSearchResultItem';
 import { getWineDisplaySubtitle, getWineDisplayTitle } from '@/entities/wine/utils/wineDisplayFormatter';
+import { IWineListSearchQuery } from '@/modules/profile/types/IWineListSearchQuery';
+import { usePaginationRequestGuard } from '@/hooks/usePaginationRequestGuard';
 
 const LIMIT = 10;
 
@@ -53,18 +55,18 @@ export const useMyWinesForSale = ({
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [isError, setIsError] = useState(false);
+    const [hasSearchCriteria, setHasSearchCriteria] = useState(false);
     const [selectedWine, setSelectedWine] = useState<IWineOfferTarget | null>(null);
     const [selectedOffer, setSelectedOffer] = useState<IWineOfferSummary | null>(null);
     const [shouldReturnToSearch, setShouldReturnToSearch] = useState(false);
     const listRef = useRef<FlatList<IOfferedWineListItem>>(null);
-    const activeOffsetRef = useRef<number | null>(null);
+    const searchQueryRef = useRef<IWineListSearchQuery>({ search: '' });
+    const listRequestIdRef = useRef(0);
+    const { onTryStartPaginationRequest, onResetPaginationRequests } = usePaginationRequestGuard();
 
     const loadWines = useCallback(async (offset: number, mode: 'initial' | 'refresh' | 'more') => {
-        if (activeOffsetRef.current === offset) {
-            return;
-        }
+        const requestId = mode === 'more' ? listRequestIdRef.current : ++listRequestIdRef.current;
 
-        activeOffsetRef.current = offset;
         if (mode === 'initial') {
             setIsLoading(true);
         } else if (mode === 'refresh') {
@@ -75,7 +77,15 @@ export const useMyWinesForSale = ({
 
         try {
             setIsError(false);
-            const response = await wineOfferService.getMyOffers({ offset, limit: LIMIT });
+            const response = await wineOfferService.getMyOffers({
+                offset,
+                limit: LIMIT,
+                ...searchQueryRef.current,
+            });
+
+            if (requestId !== listRequestIdRef.current) {
+                return;
+            }
 
             if (response.isError || !response.data) {
                 setIsError(true);
@@ -99,6 +109,10 @@ export const useMyWinesForSale = ({
                 };
             });
         } catch (error) {
+            if (requestId !== listRequestIdRef.current) {
+                return;
+            }
+
             console.error('useMyWinesForSale -> loadWines: ', error);
             setIsError(true);
             toastService.showError(
@@ -106,17 +120,21 @@ export const useMyWinesForSale = ({
                 localization.t('common.somethingWentWrong'),
             );
         } finally {
-            activeOffsetRef.current = null;
-            setIsLoading(false);
-            setIsRefreshing(false);
-            setIsLoadingMore(false);
+            if (requestId === listRequestIdRef.current) {
+                setIsLoading(false);
+                setIsRefreshing(false);
+                setIsLoadingMore(false);
+            }
         }
     }, []);
 
     useEffect(() => {
-        const frameId = requestAnimationFrame(() => loadWines(0, 'initial'));
+        const frameId = requestAnimationFrame(() => {
+            onResetPaginationRequests();
+            loadWines(0, 'initial');
+        });
         return () => cancelAnimationFrame(frameId);
-    }, [loadWines]);
+    }, [loadWines, onResetPaginationRequests]);
 
     useEffect(() => {
         const scannerWine = route.params?.selectedWine;
@@ -143,16 +161,35 @@ export const useMyWinesForSale = ({
     }, [navigation, onHideSearchModal, onReopenSearchModal, route.params?.selectedWine, route.params?.shouldReopenWineSearch]);
 
     const onRefresh = useCallback(async () => {
+        onResetPaginationRequests();
         await loadWines(0, 'refresh');
-    }, [loadWines]);
+    }, [loadWines, onResetPaginationRequests]);
+
+    const scrollToTop = useCallback(() => {
+        listRef.current?.scrollToOffset({ offset: 0, animated: true });
+    }, []);
+
+    const onSearch = useCallback(async (query: IWineListSearchQuery) => {
+        searchQueryRef.current = query;
+        setHasSearchCriteria(Boolean(query.search.trim() || query.typeId || query.colorId));
+        onResetPaginationRequests();
+        await loadWines(0, 'initial');
+    }, [loadWines, onResetPaginationRequests]);
 
     const onEndReached = useCallback(async () => {
         const offset = list?.rows.length || 0;
-        if (!list || isLoading || isRefreshing || isLoadingMore || offset >= list.count) {
+        if (
+            !list ||
+            isLoading ||
+            isRefreshing ||
+            isLoadingMore ||
+            offset >= list.count ||
+            !onTryStartPaginationRequest(offset)
+        ) {
             return;
         }
         await loadWines(offset, 'more');
-    }, [isLoading, isLoadingMore, isRefreshing, list, loadWines]);
+    }, [isLoading, isLoadingMore, isRefreshing, list, loadWines, onTryStartPaginationRequest]);
 
     const onPressBack = useCallback(() => {
         navigation.goBack();
@@ -270,6 +307,10 @@ export const useMyWinesForSale = ({
         isLoadingMore,
         isError,
         isOfferModalVisible: Boolean(selectedWine),
+        emptyTitle: localization.t(hasSearchCriteria ? 'wine.noResultsTitle' : 'profile.noWinesForSale'),
+        emptyDescription: localization.t(
+            hasSearchCriteria ? 'wine.noResultsDescription' : 'wine.emptyListDescription',
+        ),
         selectedWine,
         selectedOffer,
         listRef,
@@ -277,6 +318,8 @@ export const useMyWinesForSale = ({
         wineSearchEmptyText,
         onRefresh,
         onEndReached,
+        onSearch,
+        scrollToTop,
         onPressBack,
         onItemPress,
         onOfferPress,

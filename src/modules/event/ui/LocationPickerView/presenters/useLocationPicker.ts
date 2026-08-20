@@ -23,7 +23,7 @@ const createSessionToken = () => {
 
 export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }: IUseLocationPickerProps) => {
     const { language } = useUiContext();
-    const { userLocation } = useLocationPermission();
+    const { userLocation, permissionModalProps } = useLocationPermission();
     const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number; label?: string; placeName?: string; countryName?: string } | null>(
         initialLocation || null
     );
@@ -254,5 +254,6 @@ export const useLocationPicker = ({ initialLocation, onSelectLocation, onClose }
         onSearchChange,
         onSelectSuggestion,
         onConfirm,
+        permissionModalProps,
     };
 };

@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { IColors } from '@/UIProvider/theme/IColors';
 import { scaleHorizontal, scaleVertical } from '@/utils';
 
-export const getStyles = (colors: IColors, isLocked: boolean = false) => {
+export const getStyles = (colors: IColors, isLocked: boolean = false, showDescription: boolean = false) => {
     const styles = StyleSheet.create({
         container: {
             marginHorizontal: scaleHorizontal(16),
@@ -12,7 +12,7 @@ export const getStyles = (colors: IColors, isLocked: boolean = false) => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: scaleVertical(12),
+            marginBottom: scaleVertical(showDescription ? 4 : 12),
         },
         row: {
             flexDirection: 'row',
@@ -22,6 +22,10 @@ export const getStyles = (colors: IColors, isLocked: boolean = false) => {
         button: {
             height: scaleVertical(36),
             minWidth: scaleHorizontal(109),
+        },
+        description: {
+            color: colors.text_light,
+            marginBottom: scaleVertical(12),
         },
         cuisineSelectButton: {
             marginBottom: scaleVertical(16),

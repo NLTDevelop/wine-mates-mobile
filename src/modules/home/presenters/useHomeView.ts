@@ -16,8 +16,13 @@ import { getCurrentLocationPayload } from '@/libs/locations/getCurrentLocationPa
 import { IHomeSectionsListParams } from '@/entities/homeSections/params/IHomeSectionsListParams';
 import { locationModel } from '@/entities/location/LocationModel';
 import { userService } from '@/entities/users/UserService';
+import { usePermissionGuard } from '@/hooks/usePermissionGuard';
+import { notificationService } from '@/libs/notificationService/NotificationService';
+import { AuthorizationStatus } from '@notifee/react-native';
 
 const EMPTY_FIELD = '-';
+
+type TEnsureLocationPermission = () => Promise<boolean>;
 
 const DEFAULT_SECTIONS: IUpdateHomeSectionItemDto[] = [
     {
@@ -84,7 +89,10 @@ const getCachedLocationParams = (): IHomeSectionsListParams | null => {
     };
 };
 
-const getHomeSectionsListParams = async (shouldRecheckLocation = false): Promise<IHomeSectionsListParams> => {
+const getHomeSectionsListParams = async (
+    onEnsureLocationPermission: TEnsureLocationPermission,
+    shouldRecheckLocation = false,
+): Promise<IHomeSectionsListParams> => {
     try {
         const cachedLocationParams = getCachedLocationParams();
 
@@ -92,7 +100,10 @@ const getHomeSectionsListParams = async (shouldRecheckLocation = false): Promise
             return cachedLocationParams;
         }
 
-        if (!shouldRecheckLocation && !locationModel.hasPermission && !locationModel.isLoading) {
+        const hasPermission = await onEnsureLocationPermission();
+        locationModel.setHasPermission(hasPermission);
+
+        if (!hasPermission) {
             throwLocationUnavailableError();
         }
 
@@ -105,6 +116,7 @@ const getHomeSectionsListParams = async (shouldRecheckLocation = false): Promise
                 latitude: location.latitude,
                 longitude: location.longitude,
             });
+            await userService.location(location);
 
             return {
                 lat: location.latitude,
@@ -270,6 +282,7 @@ const createPeopleTalking = (section: IHomeSection, locale: string) => {
 };
 
 export const useHomeView = (locale: string) => {
+    const { onEnsurePermissionAccess, permissionModalProps } = usePermissionGuard();
     const isMountedRef = useRef(true);
     const [draftSections, setDraftSections] = useState<IHomeSection[]>([]);
     const [placementSections, setPlacementSections] = useState<IHomeSection[]>([]);
@@ -305,11 +318,28 @@ export const useHomeView = (locale: string) => {
     const hasConfiguredSections = activeVisibleSections.length > 0;
     const canConfigurePlacement = hasVisibleSections && !isPlacementEditMode;
 
+    const onEnsureLocationPermission = useCallback(() => {
+        return onEnsurePermissionAccess('geolocation');
+    }, [onEnsurePermissionAccess]);
+
+    const onRegisterNotifications = useCallback(async () => {
+        try {
+            const authorizationStatus = await notificationService.requestPermissions();
+            await notificationService.createChannels();
+
+            if (authorizationStatus !== AuthorizationStatus.DENIED) {
+                await notificationService.register();
+            }
+        } catch (error) {
+            console.warn('useHomeView -> onRegisterNotifications: ', error);
+        }
+    }, []);
+
     const requestHomeSections = useCallback(async (shouldRecheckLocation = false) => {
-        const params = await getHomeSectionsListParams(shouldRecheckLocation);
+        const params = await getHomeSectionsListParams(onEnsureLocationPermission, shouldRecheckLocation);
 
         return homeSectionsService.list(params);
-    }, []);
+    }, [onEnsureLocationPermission]);
 
     const onRemovePlacementSection = useCallback((key: HomeSectionKey) => {
         setPlacementSections(currentSections => currentSections.map(section => {
@@ -391,8 +421,11 @@ export const useHomeView = (locale: string) => {
 
     useEffect(() => {
         const loadHomeSections = async () => {
+            let shouldRegisterNotifications = false;
+
             try {
                 const response = await requestHomeSections();
+                shouldRegisterNotifications = true;
 
                 if (!isMountedRef.current) {
                     return;
@@ -415,10 +448,14 @@ export const useHomeView = (locale: string) => {
                     setIsLoading(false);
                 }
             }
+
+            if (isMountedRef.current && shouldRegisterNotifications) {
+                await onRegisterNotifications();
+            }
         };
 
         loadHomeSections();
-    }, [requestHomeSections]);
+    }, [onRegisterNotifications, requestHomeSections]);
 
     const onRefresh = useCallback(async () => {
         setIsRefreshing(true);
@@ -559,7 +596,7 @@ export const useHomeView = (locale: string) => {
         setIsSaving(true);
 
         try {
-            const params = await getHomeSectionsListParams(true);
+            const params = await getHomeSectionsListParams(onEnsureLocationPermission, true);
             const normalizedDraft = getNormalizedSections(draftSections);
             const payloadSections = getSectionPayload(normalizedDraft);
 
@@ -580,7 +617,7 @@ export const useHomeView = (locale: string) => {
         } finally {
             setIsSaving(false);
         }
-    }, [draftSections, isSaving]);
+    }, [draftSections, isSaving, onEnsureLocationPermission]);
 
     const onSavePlacementSections = useCallback(async () => {
         if (isSaving) {
@@ -590,7 +627,7 @@ export const useHomeView = (locale: string) => {
         setIsSaving(true);
 
         try {
-            const params = await getHomeSectionsListParams(true);
+            const params = await getHomeSectionsListParams(onEnsureLocationPermission, true);
             const normalizedPlacementSections = getNormalizedSections(placementSections);
             const payloadSections = getSectionPayload(normalizedPlacementSections);
             const response = await homeSectionsService.update({
@@ -610,7 +647,7 @@ export const useHomeView = (locale: string) => {
         } finally {
             setIsSaving(false);
         }
-    }, [isSaving, placementSections]);
+    }, [isSaving, onEnsureLocationPermission, placementSections]);
 
     return {
         visibleSections,
@@ -633,5 +670,6 @@ export const useHomeView = (locale: string) => {
         onOpenPlacementConfig,
         onReorderPlacementSections,
         onSavePlacementSections,
+        permissionModalProps,
     };
 };

@@ -1,8 +1,6 @@
-import { PermissionsAndroid } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import type { GeolocationResponse } from '@react-native-community/geolocation';
 import * as RNLocalize from 'react-native-localize';
-import { isAndroid } from '@/utils';
 import { LocationDto } from '@/entities/users/dto/Location.dto';
 
 const GEOLOCATION_ERROR_CODES = {
@@ -17,18 +15,6 @@ const GEOLOCATION_TIMEOUT = {
 const GEOLOCATION_MAXIMUM_AGE = {
     STANDARD: 10000,
     HIGH_ACCURACY: 5000,
-};
-
-const requestLocationPermission = async () => {
-    if (isAndroid) {
-        const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        );
-
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-    }
-
-    return true;
 };
 
 const getCurrentPosition = (highAccuracy: boolean) => {
@@ -58,12 +44,6 @@ const getCurrentPosition = (highAccuracy: boolean) => {
 };
 
 export const getCurrentLocationPayload = async (): Promise<LocationDto | null> => {
-    const granted = await requestLocationPermission();
-
-    if (!granted) {
-        return null;
-    }
-
     try {
         const position = await getCurrentPosition(false);
 

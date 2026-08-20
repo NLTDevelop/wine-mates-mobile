@@ -54,6 +54,7 @@ export const useLocationPickerView = () => {
         onSearchChange,
         onSelectSuggestion,
         onConfirm,
+        permissionModalProps,
     } = useLocationPicker({
         initialLocation,
         onSelectLocation,
@@ -91,5 +92,6 @@ export const useLocationPickerView = () => {
         onSelectSuggestion,
         onConfirm,
         onPressBack: navigation.goBack,
+        permissionModalProps,
     };
 };

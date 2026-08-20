@@ -5,6 +5,10 @@ export interface IMyWineOffersParams {
     vintages?: WineOfferVintages;
     minPrice?: number;
     maxPrice?: number;
+    search?: string;
+    sort?: string | number;
+    typeId?: string | number;
+    colorId?: string | number;
     offset: number;
     limit: number;
 }

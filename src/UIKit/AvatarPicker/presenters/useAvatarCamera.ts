@@ -2,11 +2,12 @@ import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useAppState } from '@react-native-community/hooks';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCameraDevice, useCameraPermission, usePhotoOutput } from 'react-native-vision-camera';
-import type { CameraPosition } from 'react-native-vision-camera';
+import { useCameraDevice, usePhotoOutput } from 'react-native-vision-camera';
+import type { TargetCameraPosition } from 'react-native-vision-camera';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { useUiContext } from '@/UIProvider';
 import { isAndroid } from '@/utils';
+import { usePermissionGuard } from '@/hooks/usePermissionGuard';
 
 interface IAvatarImage {
     uri: string;
@@ -16,11 +17,12 @@ interface IAvatarImage {
 
 export const useAvatarCamera = (targetSize: number) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const { onEnsurePermissionAccess, permissionModalProps } = usePermissionGuard();
     const { colors } = useUiContext();
     const appState = useAppState();
     const isFocused = useIsFocused();
-    const [cameraPosition, setCameraPosition] = useState<CameraPosition>('front');
-    const { hasPermission, requestPermission } = useCameraPermission();
+    const [cameraPosition, setCameraPosition] = useState<TargetCameraPosition>('front');
+    const [hasPermission, setHasPermission] = useState(false);
     const device = useCameraDevice(cameraPosition);
     const backDevice = useCameraDevice('back');
     const frontDevice = useCameraDevice('front');
@@ -44,10 +46,17 @@ export const useAvatarCamera = (targetSize: number) => {
     }), [targetSize, colors]);
 
     useEffect(() => {
-        if (!hasPermission) {
-            requestPermission();
+        if (appState !== 'active') {
+            return;
         }
-    }, [hasPermission, requestPermission]);
+
+        const ensureCameraPermission = async () => {
+            const isGranted = await onEnsurePermissionAccess('camera');
+            setHasPermission(isGranted);
+        };
+
+        ensureCameraPermission();
+    }, [appState, onEnsurePermissionAccess]);
 
     const onGalleryPress = async () => {
         try {
@@ -120,5 +129,6 @@ export const useAvatarCamera = (targetSize: number) => {
         isCameraActive,
         hasPermission,
         hasBothCameras: !!frontDevice && !!backDevice,
+        permissionModalProps,
     };
 };

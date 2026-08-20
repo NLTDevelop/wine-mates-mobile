@@ -184,42 +184,42 @@ export const ResultListHeader = ({
             {data.aiTastingNote ? <TastingNote note={data.aiTastingNote} /> : null}
 
             {isFoodPairingVisible ? (
-                <>
-                    <View style={styles.limitContainer}>
-                        {aiUsage?.left === 0 ? (
-                            <>
-                                <Typography text={t('wine.foodPairingAttempts.label3')} />
-                                <Typography text={t('wine.foodPairingAttempts.label4')} />
-                                <Button
-                                    text={t('aiAttempts.subscribe')}
-                                    onPress={onSubscribePress}
-                                    containerStyle={styles.subscribeButton}
-                                />
-                            </>
-                        ) : (
-                            <Typography variant="h6">
-                                {t('wine.foodPairingAttempts.label1')}{' '}
-                                <Typography
-                                    text={`${aiUsage?.left}/${aiUsage?.total}`}
-                                    variant="h5"
-                                    style={styles.limitCountText}
-                                />{' '}
-                                {t('wine.foodPairingAttempts.label2')}
-                            </Typography>
-                        )}
-                    </View>
-
-                    <FoodPairing
-                        generatedSnacks={data.aiSnacks}
-                        snacks={snacks}
-                        isGenerating={isGeneratingSnacks}
-                        onGeneratePress={onGenerateSnacksPress}
-                        cuisineSelectButtonText={cuisineSelectButtonText}
-                        onCuisineSelectPress={onOpenCuisinePickerPress}
-                        isLocked={!hasPremiumContentAccess}
-                    />
-                </>
+                <View style={styles.limitContainer}>
+                    {aiUsage?.left === 0 ? (
+                        <>
+                            <Typography text={t('wine.foodPairingAttempts.label3')} />
+                            <Typography text={t('wine.foodPairingAttempts.label4')} />
+                            <Button
+                                text={t('aiAttempts.subscribe')}
+                                onPress={onSubscribePress}
+                                containerStyle={styles.subscribeButton}
+                            />
+                        </>
+                    ) : (
+                        <Typography variant="h6">
+                            {t('wine.foodPairingAttempts.label1')}{' '}
+                            <Typography
+                                text={`${aiUsage?.left}/${aiUsage?.total}`}
+                                variant="h5"
+                                style={styles.limitCountText}
+                            />{' '}
+                            {t('wine.foodPairingAttempts.label2')}
+                        </Typography>
+                    )}
+                </View>
             ) : null}
+
+            <FoodPairing
+                generatedSnacks={data.aiSnacks}
+                snacks={snacks}
+                isGenerating={isGeneratingSnacks}
+                onGeneratePress={onGenerateSnacksPress}
+                cuisineSelectButtonText={cuisineSelectButtonText}
+                onCuisineSelectPress={onOpenCuisinePickerPress}
+                isLocked={!hasPremiumContentAccess && isFoodPairingVisible}
+                showDescription
+                isDetailedTastingRequired={!isFoodPairingVisible}
+            />
 
             {(hasReviews || (wineReviewsListModel.list && wineReviewsListModel.list.rows.length > 0)) && (
                 <Typography text={t('wine.reviews')} variant="h3" style={styles.title} />
