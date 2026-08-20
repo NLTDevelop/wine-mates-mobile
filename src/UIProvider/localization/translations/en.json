@@ -303,6 +303,8 @@
         "tastes": "Tastes",
         "rating": "Rating",
         "foodPairing": "Food pairing",
+        "foodPairingDescription": "Food pairing is the selection of dishes whose flavors and aromas complement the wine harmoniously.",
+        "detailedTastingRequiredForFoodPairing": "Complete a detailed tasting of this wine to generate recommended cuisines and food pairings.",
         "emptyFoodPairing": "No food pairings yet. Click Generate to get food pairing recommendations for this wine.",
         "snackCuisines": "Choose world cuisines",
         "noSnackCuisines": "No cuisines available.",
